@@ -33,7 +33,7 @@ export default async function FaqPage() {
           <Accordion type="single" collapsible className="border-y border-line">
             {faqs.map((f) => (
               <AccordionItem key={f.id} value={f.id} className="border-line">
-                <AccordionTrigger className="py-5 text-lg font-medium hover:no-underline hover:text-rose-deep [&>svg]:size-5 [&>svg]:text-rose-deep">
+                <AccordionTrigger headingLevel={2} className="py-5 text-lg font-medium hover:no-underline hover:text-rose-deep [&>svg]:size-5 [&>svg]:text-rose-deep">
                   {f.question}
                 </AccordionTrigger>
                 <AccordionContent className="max-w-2xl pb-5 text-base leading-relaxed text-muted">{f.answer}</AccordionContent>

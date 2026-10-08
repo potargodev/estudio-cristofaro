@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Servidor autocontenido para la imagen Docker (Easypanel)
   output: "standalone",
+  // Metadatos (title, description) siempre en el <head>, también en páginas
+  // dinámicas como /diagnostico: no los manda "en streaming".
+  htmlLimitedBots: /.*/,
+  // "radix-ui" reexporta todos los primitivos: importar solo lo que se usa en cada página
+  experimental: { optimizePackageImports: ["radix-ui"] },
   eslint: { ignoreDuringBuilds: true },
   async redirects() {
     // URLs del sitio viejo → nuevas rutas
