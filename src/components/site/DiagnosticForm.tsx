@@ -1,7 +1,9 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { animate, m, useReducedMotion } from "motion/react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { submitLead, type LeadFormState } from "@/app/actions/leads";
+import { Button } from "@/components/ui/button";
 import { CONTRIBUTOR_TYPES } from "@/lib/types";
 import { Field, Honeypot, SentMessage, inputClass } from "./form-fields";
 
@@ -28,7 +30,35 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
   const [type, setType] = useState(defaultType && CONTRIBUTOR_TYPES[defaultType] ? defaultType : "");
   const [stepError, setStepError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const stepRefs = useRef<(HTMLFieldSetElement | null)[]>([]);
+  const direction = useRef(1);
+  const mounted = useRef(false);
+  const reduce = useReducedMotion();
   const v = state.values;
+
+  // Transición deslizante: el paso nuevo entra desde el lado hacia el que se avanza.
+  // Los cuatro pasos quedan siempre montados para no perder lo que se cargó.
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    const el = stepRefs.current[step];
+    if (!el) return;
+    el.querySelector<HTMLElement>("legend")?.focus({ preventScroll: true });
+    if (reduce) return;
+    const controls = animate(
+      el,
+      { opacity: [0, 1], x: [direction.current * 32, 0] },
+      { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
+    );
+    return () => controls.stop();
+  }, [step, reduce]);
+
+  function goTo(next: number) {
+    direction.current = next > step ? 1 : -1;
+    setStep(next);
+  }
 
   if (state.ok) {
     return (
@@ -51,13 +81,13 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
       return;
     }
     setStepError(null);
-    setStep((s) => Math.min(s + 1, STEP_TITLES.length - 1));
+    goTo(Math.min(step + 1, STEP_TITLES.length - 1));
   }
 
   const last = step === STEP_TITLES.length - 1;
 
   return (
-    <form ref={formRef} action={action} className="relative" noValidate>
+    <form ref={formRef} action={action} className="relative -mx-1 overflow-x-clip px-1" noValidate>
       <input type="hidden" name="source" value="diagnostico" />
       {plan && <input type="hidden" name="plan" value={plan} />}
       <Honeypot />
@@ -66,7 +96,14 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
       <ol className="mb-8 grid grid-cols-4 gap-2" aria-label="Pasos del diagnóstico">
         {STEP_TITLES.map((t, i) => (
           <li key={t} aria-current={i === step ? "step" : undefined}>
-            <span className={`block h-1 rounded-full ${i <= step ? "bg-navy" : "bg-line"}`} />
+            <span className="block h-1 overflow-hidden rounded-full bg-line">
+              <m.span
+                className="block h-full origin-left rounded-full bg-navy"
+                initial={false}
+                animate={{ scaleX: i <= step ? 1 : 0 }}
+                transition={{ duration: reduce ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </span>
             <span className={`mt-2 hidden text-[13px] sm:block ${i === step ? "font-medium text-ink" : "text-muted"}`}>
               {i + 1}. {t}
             </span>
@@ -74,8 +111,8 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         ))}
       </ol>
 
-      <fieldset className={step === 0 ? "block" : "hidden"}>
-        <legend className="text-2xl font-semibold tracking-tight">¿Cómo estás inscripto hoy?</legend>
+      <fieldset ref={(el) => { stepRefs.current[0] = el; }} className={step === 0 ? "block" : "hidden"}>
+        <legend tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">¿Cómo estás inscripto hoy?</legend>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           {Object.entries(CONTRIBUTOR_TYPES).map(([value, label]) => (
             <label
@@ -98,8 +135,8 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         </div>
       </fieldset>
 
-      <fieldset className={step === 1 ? "block space-y-5" : "hidden"}>
-        <legend className="text-2xl font-semibold tracking-tight">Contanos de tu actividad</legend>
+      <fieldset ref={(el) => { stepRefs.current[1] = el; }} className={step === 1 ? "block space-y-5" : "hidden"}>
+        <legend tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">Contanos de tu actividad</legend>
         <Field label="¿A qué te dedicás?" name="activity" hint="Ej: diseño gráfico, comercio de ropa, consultoría.">
           <input id="activity" name="activity" defaultValue={v?.activity} className={inputClass} />
         </Field>
@@ -121,8 +158,8 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         </div>
       </fieldset>
 
-      <fieldset className={step === 2 ? "block" : "hidden"}>
-        <legend className="text-2xl font-semibold tracking-tight">¿Qué necesitás resolver?</legend>
+      <fieldset ref={(el) => { stepRefs.current[2] = el; }} className={step === 2 ? "block" : "hidden"}>
+        <legend tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">¿Qué necesitás resolver?</legend>
         <p className="mt-2 text-muted">Podés marcar varias.</p>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           {NEEDS.map((n) => (
@@ -134,8 +171,8 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         </div>
       </fieldset>
 
-      <fieldset className={step === 3 ? "block space-y-5" : "hidden"}>
-        <legend className="text-2xl font-semibold tracking-tight">¿Cómo te contactamos?</legend>
+      <fieldset ref={(el) => { stepRefs.current[3] = el; }} className={step === 3 ? "block space-y-5" : "hidden"}>
+        <legend tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">¿Cómo te contactamos?</legend>
         <Field label="Nombre y apellido" name="name" error={state.errors?.name}>
           <input id="name" name="name" autoComplete="name" defaultValue={v?.name} className={inputClass} aria-invalid={Boolean(state.errors?.name)} />
         </Field>
@@ -160,27 +197,22 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
 
       <div className="mt-8 flex items-center justify-between gap-3">
         {step > 0 ? (
-          <button type="button" onClick={() => setStep((s) => s - 1)} className="rounded-md px-4 py-3 font-medium text-muted hover:text-ink">
+          <Button type="button" variant="ghost" size="xl" onClick={() => goTo(step - 1)} className="text-muted hover:text-ink">
             Volver
-          </button>
+          </Button>
         ) : (
           <span />
         )}
         {/* Keys distintas: si React reusara el mismo <button> y le cambiara el type a
             "submit" durante el clic en "Seguir", el navegador enviaría el formulario. */}
         {last ? (
-          <button
-            key="enviar"
-            type="submit"
-            disabled={pending}
-            className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep disabled:opacity-60"
-          >
+          <Button key="enviar" type="submit" size="xl" disabled={pending} className="px-6">
             {pending ? "Enviando…" : "Enviar diagnóstico"}
-          </button>
+          </Button>
         ) : (
-          <button key="seguir" type="button" onClick={next} className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep">
+          <Button key="seguir" type="button" size="xl" onClick={next} className="px-6">
             Seguir
-          </button>
+          </Button>
         )}
       </div>
     </form>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CtaBand } from "@/components/site/CtaBand";
 import { PageHeader } from "@/components/site/PageHeader";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getFaqs } from "@/lib/data";
 
 export const revalidate = 300;
@@ -29,19 +30,16 @@ export default async function FaqPage() {
       <PageHeader title="Preguntas frecuentes" />
       <section className="border-b border-line">
         <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-          <div className="divide-y divide-line border-y border-line">
+          <Accordion type="single" collapsible className="border-y border-line">
             {faqs.map((f) => (
-              <details key={f.id} className="group py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-medium">
+              <AccordionItem key={f.id} value={f.id} className="border-line">
+                <AccordionTrigger className="py-5 text-lg font-medium hover:no-underline hover:text-rose-deep [&>svg]:size-5 [&>svg]:text-rose-deep">
                   {f.question}
-                  <span aria-hidden className="text-2xl leading-none text-rose-deep transition-transform group-open:rotate-45">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 max-w-2xl leading-relaxed text-muted">{f.answer}</p>
-              </details>
+                </AccordionTrigger>
+                <AccordionContent className="max-w-2xl pb-5 text-base leading-relaxed text-muted">{f.answer}</AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </div>
       </section>
       <CtaBand title="¿No encontraste tu pregunta?" text="Escribinos y te respondemos en menos de 24 horas hábiles." />

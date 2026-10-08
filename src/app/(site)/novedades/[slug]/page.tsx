@@ -27,7 +27,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     <>
       <article className="border-b border-line">
         <div className="mx-auto max-w-2xl px-4 pb-16 pt-14 sm:px-6 sm:pt-20">
-          <Link href="/novedades" className="text-sm text-rose-deep underline-offset-4 hover:underline">
+          <Link href="/novedades" className="link-underline text-sm text-rose-deep">
             Novedades
           </Link>
           <h1 className="mt-4 text-4xl leading-[1.1] font-display">{post.title}</h1>

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { CtaBand } from "@/components/site/CtaBand";
 import { PageHeader } from "@/components/site/PageHeader";
 import { PlanCard } from "@/components/site/PlanCard";
+import { Reveal } from "@/components/motion/Reveal";
+import { Button } from "@/components/ui/button";
 import { segments, services } from "@/lib/content";
 import { getPlans } from "@/lib/data";
 
@@ -31,21 +33,18 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
 
   return (
     <>
-      <PageHeader title={segment.title} intro={segment.intro}>
+      <PageHeader eyebrow={segment.name} title={segment.title} intro={segment.intro}>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href={`/diagnostico?tipo=${segment.contributorType}`}
-            className="rounded-md bg-navy px-5 py-3 font-medium text-paper hover:bg-navy-deep"
-          >
-            Pedir diagnóstico gratis
-          </Link>
+          <Button asChild size="xl">
+            <Link href={`/diagnostico?tipo=${segment.contributorType}`}>Pedir diagnóstico gratis</Link>
+          </Button>
         </div>
       </PageHeader>
 
       <section className="border-b border-line">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-2">
           <div>
-            <h2 className="text-2xl font-display">Si te pasa esto</h2>
+            <Reveal className="text-2xl font-display">Si te pasa esto</Reveal>
             <ul className="mt-6 space-y-4">
               {segment.pains.map((p) => (
                 <li key={p} className="border-l-2 border-line pl-4 leading-relaxed text-muted">
@@ -55,7 +54,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
             </ul>
           </div>
           <div>
-            <h2 className="text-2xl font-display">Esto es lo que hacemos</h2>
+            <Reveal className="text-2xl font-display">Esto es lo que hacemos</Reveal>
             <ul className="mt-6 space-y-3">
               {segment.includes.map((item) => (
                 <li key={item} className="flex gap-3 leading-relaxed">
@@ -73,7 +72,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
       {plans.length > 0 && (
         <section className="border-b border-line bg-surface/60">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-            <h2 className="text-2xl font-display">{plans.length > 1 ? "Planes" : "Plan"} para tu caso</h2>
+            <Reveal className="text-2xl font-display">{plans.length > 1 ? "Planes" : "Plan"} para tu caso</Reveal>
             <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {plans.map((p) => (
                 <PlanCard key={p.id} plan={p} />
@@ -89,7 +88,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
           <ul className="mt-4 flex flex-wrap gap-3">
             {related.map((s) => (
               <li key={s.slug}>
-                <Link href={`/servicios/${s.slug}`} className="inline-block rounded-md border border-line bg-surface px-4 py-2 hover:border-navy">
+                <Link href={`/servicios/${s.slug}`} className="card-hover inline-block rounded-md border border-line bg-surface px-4 py-2 hover:border-navy/50">
                   {s.name}
                 </Link>
               </li>

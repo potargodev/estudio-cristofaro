@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { submitLead, type LeadFormState } from "@/app/actions/leads";
+import { Button } from "@/components/ui/button";
 import { Field, Honeypot, SentMessage, inputClass } from "./form-fields";
 
 const initial: LeadFormState = { ok: false };
@@ -37,9 +38,9 @@ export function ContactForm() {
           {state.message}
         </p>
       )}
-      <button type="submit" disabled={pending} className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep disabled:opacity-60">
+      <Button type="submit" size="xl" disabled={pending} className="px-6">
         {pending ? "Enviando…" : "Enviar consulta"}
-      </button>
+      </Button>
     </form>
   );
 }

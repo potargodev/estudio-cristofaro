@@ -27,7 +27,7 @@ export default async function NovedadesPage() {
                 <li key={p.id} className="py-8">
                   <p className="text-sm text-muted">{formatDate(p.published_at)}</p>
                   <h2 className="mt-2 text-2xl leading-snug font-display">
-                    <Link href={`/novedades/${p.slug}`} className="hover:text-rose-deep">
+                    <Link href={`/novedades/${p.slug}`} className="transition-colors hover:text-rose-deep">
                       {p.title}
                     </Link>
                   </h2>

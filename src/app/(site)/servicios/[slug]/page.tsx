@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CtaBand } from "@/components/site/CtaBand";
+import { Reveal } from "@/components/motion/Reveal";
 import { PageHeader } from "@/components/site/PageHeader";
 import { segments, services } from "@/lib/content";
 
@@ -30,11 +31,11 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
-      <PageHeader title={`Servicio ${service.name.toLowerCase()}`} intro={service.summary} />
+      <PageHeader eyebrow="Servicio" title={`Servicio ${service.name.toLowerCase()}`} intro={service.summary} />
       <section className="border-b border-line">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1.6fr_1fr]">
           <div>
-            <h2 className="text-2xl font-display">Qué incluye</h2>
+            <Reveal className="text-2xl font-display">Qué incluye</Reveal>
             <ul className="mt-6 divide-y divide-line border-y border-line">
               {service.items.map((item) => (
                 <li key={item} className="flex gap-3 py-4 leading-relaxed">
@@ -51,7 +52,7 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
             <ul className="mt-4 space-y-2">
               {forSegments.map((seg) => (
                 <li key={seg.slug}>
-                  <Link href={`/${seg.slug}`} className="text-rose-deep underline-offset-4 hover:underline">
+                  <Link href={`/${seg.slug}`} className="link-underline text-rose-deep">
                     {seg.name}
                   </Link>
                 </li>
@@ -59,7 +60,7 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
             </ul>
             <div className="mt-8 rounded-md border border-line bg-surface p-5">
               <p className="font-medium">¿Tenés una duda puntual sobre este servicio?</p>
-              <Link href="/contacto" className="mt-3 inline-block font-medium text-rose-deep underline-offset-4 hover:underline">
+              <Link href="/contacto" className="link-underline mt-3 inline-block font-medium text-rose-deep">
                 Escribinos
               </Link>
             </div>

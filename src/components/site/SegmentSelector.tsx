@@ -7,18 +7,20 @@ import { cn } from "@/lib/utils";
 
 // Selector "¿Qué tipo de contribuyente sos?". Al pasar el mouse (o con el foco
 // del teclado) la fila se expande y muestra parte de lo que incluye ese segmento.
-// En pantallas táctiles el primer toque expande y el segundo entra a la landing.
+// Con el dedo, el primer toque expande y el segundo entra a la landing. Se decide
+// por pointerType (no por media queries) para que funcione también en equipos híbridos.
 export function SegmentSelector({ segments }: { segments: Segment[] }) {
   const [active, setActive] = useState<string | null>(null);
-  const canHover = useRef<boolean | null>(null);
-
-  function hoverCapable() {
-    canHover.current ??= window.matchMedia("(hover: hover)").matches;
-    return canHover.current;
-  }
+  const pointer = useRef<string>("mouse");
 
   return (
-    <ul className="border-t border-ink/80" onMouseLeave={() => hoverCapable() && setActive(null)}>
+    <ul
+      className="border-t border-ink/80"
+      onPointerDown={(e) => {
+        pointer.current = e.pointerType;
+      }}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setActive(null)}
+    >
       {segments.map((s) => {
         const open = active === s.slug;
         const panelId = `segmento-${s.slug}`;
@@ -26,8 +28,9 @@ export function SegmentSelector({ segments }: { segments: Segment[] }) {
           <li
             key={s.slug}
             className={cn("border-b border-line transition-colors duration-300", open && "bg-surface")}
-            onMouseEnter={() => hoverCapable() && setActive(s.slug)}
-            onFocus={() => setActive(s.slug)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setActive(s.slug)}
+            // Solo el foco de teclado despliega (un toque también enfoca el link)
+            onFocus={(e) => (e.target as HTMLElement).matches(":focus-visible") && setActive(s.slug)}
           >
             <Link
               href={`/${s.slug}`}
@@ -35,7 +38,7 @@ export function SegmentSelector({ segments }: { segments: Segment[] }) {
               aria-controls={panelId}
               onClick={(e) => {
                 // Táctil: el primer toque solo despliega la fila
-                if (!hoverCapable() && !open) {
+                if (pointer.current !== "mouse" && !open) {
                   e.preventDefault();
                   setActive(s.slug);
                 }

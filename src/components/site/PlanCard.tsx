@@ -1,12 +1,15 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import type { Plan } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export function PlanCard({ plan }: { plan: Plan }) {
   return (
     <article
-      className={`flex flex-col rounded-md border p-6 ${
-        plan.highlighted ? "border-navy bg-surface ring-1 ring-navy" : "border-line bg-surface"
-      }`}
+      className={cn(
+        "card-hover flex flex-col rounded-md border bg-surface p-6",
+        plan.highlighted ? "border-navy ring-1 ring-navy" : "border-line hover:border-navy/40",
+      )}
     >
       {plan.highlighted && <p className="mb-3 text-sm font-medium text-rose-deep">El más elegido</p>}
       <h3 className="text-xl font-semibold">{plan.name}</h3>
@@ -22,14 +25,9 @@ export function PlanCard({ plan }: { plan: Plan }) {
           </li>
         ))}
       </ul>
-      <Link
-        href={`/diagnostico?plan=${encodeURIComponent(plan.name)}`}
-        className={`mt-6 rounded-md px-4 py-2.5 text-center font-medium ${
-          plan.highlighted ? "bg-navy text-paper hover:bg-navy-deep" : "border border-navy/40 text-navy hover:bg-navy-soft"
-        }`}
-      >
-        Pedir propuesta
-      </Link>
+      <Button asChild size="lg" variant={plan.highlighted ? "default" : "outline"} className="mt-6 h-11 text-base">
+        <Link href={`/diagnostico?plan=${encodeURIComponent(plan.name)}`}>Pedir propuesta</Link>
+      </Button>
     </article>
   );
 }

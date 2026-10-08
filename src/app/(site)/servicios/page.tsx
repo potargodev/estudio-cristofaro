@@ -24,7 +24,7 @@ export default function ServiciosPage() {
               <div>
                 <h2 className="text-2xl font-display">{s.name}</h2>
                 <p className="mt-2 text-muted">{s.summary}</p>
-                <Link href={`/servicios/${s.slug}`} className="mt-4 inline-block font-medium text-rose-deep underline-offset-4 hover:underline">
+                <Link href={`/servicios/${s.slug}`} className="link-underline mt-4 inline-block font-medium text-rose-deep">
                   Ver detalle
                 </Link>
               </div>
