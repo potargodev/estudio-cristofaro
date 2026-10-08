@@ -1,6 +1,6 @@
 # Estudio Cristofaro · Web + Backoffice (fase 1)
 
-Next.js 15 (App Router) · Tailwind 4 · Supabase · Resend · Vercel
+Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · Nodemailer (SMTP) · Docker / Easypanel
 
 ## Qué incluye
 
@@ -12,36 +12,51 @@ Next.js 15 (App Router) · Tailwind 4 · Supabase · Resend · Vercel
 - `/diagnostico`: formulario de 4 pasos que crea una consulta en el backoffice.
 - Botón flotante de WhatsApp, SEO por página, sitemap, robots, JSON-LD (AccountingService y FAQPage), imagen para compartir generada.
 - Redirecciones de las URLs viejas (`/index.html`, `/features.html`, `/about.html`, `/faq.html`, `/contact.html`).
-- Si Supabase todavía no está conectado, la web funciona igual con contenido de respaldo (`src/lib/content.ts`).
+- Si la base no está configurada o no responde, la web funciona igual con contenido de respaldo (`src/lib/content.ts`). El build nunca necesita la base.
+- Formulario de consultas con honeypot y límite de 5 envíos cada 10 minutos por IP.
 
 **Backoffice (`/admin`)**
-- Login con Supabase Auth. Roles: admin y contador (cliente queda listo para la fase 2).
+- Login con email y contraseña (Better Auth), sin registro público. Roles: admin y contador (cliente queda listo para la fase 2).
 - Resumen: consultas del mes, sin contactar, conversión, clientes activos, abono total, próximas acciones y origen de consultas.
 - Consultas: tablero kanban (Nuevas → Contactadas → Presupuesto enviado → Ganadas / Perdidas), búsqueda, ficha con seguimiento, responsable, próxima acción, notas, respuesta directa por WhatsApp o mail y botón **Convertir en cliente**.
 - Clientes: listado con filtros, alta y edición (CUIT, régimen, categoría, servicios, abono).
 - Contenidos: novedades, planes y preguntas frecuentes editables sin tocar código.
-- Mails automáticos por consulta nueva (aviso al estudio + confirmación al interesado) con Resend.
+- Usuarios (solo admin): alta de contadores con contraseña inicial, cambio de rol y desactivación.
+- Mails automáticos por consulta nueva (aviso al estudio + confirmación al interesado) por SMTP.
+- Multi-estudio: cada página y cada action filtra por el estudio del usuario logueado.
 
-**Preparado para la fase 2** (tablas creadas, sin pantallas todavía): `obligations` (vencimientos por cliente), `documents` (archivos en Storage), `client_users` (acceso de clientes al portal). Todo el modelo lleva `studio_id`, listo para multi-estudio.
+**Preparado para la fase 2** (tablas creadas, sin pantallas todavía): `obligations` (vencimientos por cliente), `documents` (archivos), `client_users` (acceso de clientes al portal). Todo el modelo lleva `studio_id`, listo para multi-estudio.
 
-## Puesta en marcha
+## Desarrollo local
 
-1. **Instalar**
-   ```bash
-   npm install
-   cp .env.example .env.local
-   ```
-2. **Supabase**: crear un proyecto, ir a *SQL Editor* y correr en orden:
-   - `supabase/migrations/0001_init.sql`
-   - `supabase/seed.sql`
-3. Completar `.env.local` con `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY` (*Project Settings → API*).
-4. **Primer usuario**: *Authentication → Users → Add user*. Copiar su UUID y correr el insert que está al final de `supabase/seed.sql`.
-5. **Mails (opcional)**: crear cuenta en Resend, verificar el dominio y completar `RESEND_API_KEY`, `RESEND_FROM` y `STUDIO_NOTIFY_EMAIL`.
-6. `npm run dev` → web en `http://localhost:3000`, backoffice en `/admin`.
+Necesitás Node 22 y Docker.
 
-## Deploy en Vercel
+```bash
+npm install
+cp .env.example .env.local      # completar; para local alcanza con los valores de abajo
+docker compose up -d            # Postgres 16 en localhost:5432
+npm run db:migrate              # crea las tablas (migraciones de /drizzle)
+npm run db:seed                 # estudio, planes, preguntas y usuario admin
+npm run dev                     # web en http://localhost:3000, backoffice en /admin
+```
 
-Importar el repo, cargar las mismas variables de entorno (con `NEXT_PUBLIC_SITE_URL=https://estudiocristofaro.com`) y apuntar el dominio.
+Valores mínimos de `.env.local` para desarrollo:
+
+```
+DATABASE_URL=postgres://cristofaro:cristofaro@localhost:5432/cristofaro
+BETTER_AUTH_SECRET=cualquier-texto-largo-solo-para-local
+BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+ADMIN_EMAIL=vos@estudiocristofaro.com
+ADMIN_PASSWORD=una-clave-de-8-o-mas
+```
+
+### Base de datos
+
+- El esquema está en `src/db/schema.ts`. Después de cambiarlo: `npm run db:generate` crea la migración nueva en `/drizzle` (se commitea) y `npm run db:migrate` la aplica.
+- El contenedor aplica las migraciones pendientes solo, cada vez que arranca.
+- `npm run db:seed` se puede correr varias veces: no duplica el estudio, los planes, las preguntas ni el usuario admin.
+- Los usuarios viven en la tabla `users` (Better Auth) con su `role` y `studio_id`; las sesiones en `sessions` y las contraseñas hasheadas en `accounts`.
 
 ## Contenido real pendiente
 
