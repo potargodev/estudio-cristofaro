@@ -1,7 +1,13 @@
 import Link from "next/link";
+import { Reveal } from "@/components/motion/Reveal";
 import { CtaBand } from "@/components/site/CtaBand";
+import { Differentials } from "@/components/site/Differentials";
+import { IndustriesMarquee } from "@/components/site/IndustriesMarquee";
 import { MonthReceipt } from "@/components/site/MonthReceipt";
-import { differentials, segments, services, steps, testimonials } from "@/lib/content";
+import { SegmentSelector } from "@/components/site/SegmentSelector";
+import { StatsBand } from "@/components/site/StatsBand";
+import { Button } from "@/components/ui/button";
+import { segments, services, steps, testimonials } from "@/lib/content";
 import { formatDate, getPosts } from "@/lib/data";
 
 export const revalidate = 300;
@@ -24,12 +30,12 @@ export default async function HomePage() {
               avisamos antes de cada vencimiento y te respondemos en menos de 24 horas hábiles.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/diagnostico" className="rounded-md bg-navy px-5 py-3 font-medium text-paper hover:bg-navy-deep">
-                Pedir diagnóstico gratis
-              </Link>
-              <Link href="/planes" className="rounded-md border border-ink/20 px-5 py-3 font-medium hover:bg-surface">
-                Ver planes
-              </Link>
+              <Button asChild size="xl">
+                <Link href="/diagnostico">Pedir diagnóstico gratis</Link>
+              </Button>
+              <Button asChild size="xl" variant="outline">
+                <Link href="/planes">Ver planes</Link>
+              </Button>
             </div>
           </div>
           <MonthReceipt />
@@ -40,49 +46,23 @@ export default async function HomePage() {
       <section className="border-b border-line">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.6fr]">
           <div>
-            <h2 className="text-3xl font-display">¿Qué tipo de contribuyente sos?</h2>
+            <Reveal className="text-3xl font-display">¿Qué tipo de contribuyente sos?</Reveal>
             <p className="mt-3 max-w-sm text-muted">Elegí tu caso y te mostramos qué hacemos por vos.</p>
           </div>
-          <ul className="border-t border-ink/80">
-            {segments.map((s) => (
-              <li key={s.slug} className="border-b border-line">
-                <Link
-                  href={`/${s.slug}`}
-                  className="group flex items-center justify-between gap-6 py-5 transition-colors hover:bg-surface sm:px-3"
-                >
-                  <span>
-                    <span className="block text-xl font-medium">{s.question}</span>
-                    <span className="mt-1 block text-[15px] text-muted">{s.title}</span>
-                  </span>
-                  <svg aria-hidden viewBox="0 0 24 24" className="size-6 shrink-0 text-rose-deep transition-transform group-hover:translate-x-1">
-                    <path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <SegmentSelector segments={segments} />
         </div>
       </section>
 
-      {/* Diferenciales */}
-      <section className="border-b border-line bg-surface">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="max-w-2xl text-3xl font-display">Lo que cambia cuando trabajás con nosotros</h2>
-          <dl className="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2">
-            {differentials.map((d) => (
-              <div key={d.title} className="border-l-2 border-rose pl-5">
-                <dt className="text-lg font-semibold">{d.title}</dt>
-                <dd className="mt-1.5 leading-relaxed text-muted">{d.text}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+      {/* Diferenciales (bento) */}
+      <Differentials />
+
+      {/* El estudio en números */}
+      <StatsBand />
 
       {/* Cómo trabajamos — es una secuencia real, por eso va numerada */}
       <section className="border-b border-line">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="text-3xl font-display">Cómo empezamos</h2>
+          <Reveal className="text-3xl font-display">Cómo empezamos</Reveal>
           <ol className="mt-10 grid gap-8 md:grid-cols-4">
             {steps.map((s, i) => (
               <li key={s.title}>
@@ -101,15 +81,20 @@ export default async function HomePage() {
       <section className="border-b border-line">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="text-3xl font-display">Servicios</h2>
-            <Link href="/servicios" className="font-medium text-rose-deep underline-offset-4 hover:underline">
+            <Reveal className="text-3xl font-display">Servicios</Reveal>
+            <Link href="/servicios" className="link-underline font-medium text-rose-deep">
               Ver todos los servicios
             </Link>
           </div>
           <div className="mt-8 grid gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
             {services.map((s) => (
-              <Link key={s.slug} href={`/servicios/${s.slug}`} className="bg-paper p-6 hover:bg-surface">
-                <h3 className="text-lg font-semibold">{s.name}</h3>
+              <Link key={s.slug} href={`/servicios/${s.slug}`} className="group bg-paper p-6 transition-colors duration-200 hover:bg-surface">
+                <h3 className="flex items-center justify-between text-lg font-semibold">
+                  {s.name}
+                  <svg aria-hidden viewBox="0 0 24 24" className="size-5 text-rose-deep opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:opacity-100 motion-reduce:transition-none">
+                    <path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-muted">{s.summary}</p>
               </Link>
             ))}
@@ -121,7 +106,7 @@ export default async function HomePage() {
       {testimonials.length > 0 && (
         <section className="border-b border-line bg-surface">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-            <h2 className="text-3xl font-display">Lo que dicen nuestros clientes</h2>
+            <Reveal className="text-3xl font-display">Lo que dicen nuestros clientes</Reveal>
             <div className="mt-10 grid gap-10 md:grid-cols-3">
               {testimonials.map((t) => (
                 <figure key={t.quote}>
@@ -141,8 +126,8 @@ export default async function HomePage() {
         <section className="border-b border-line">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 className="text-3xl font-display">Novedades</h2>
-              <Link href="/novedades" className="font-medium text-rose-deep underline-offset-4 hover:underline">
+              <Reveal className="text-3xl font-display">Novedades</Reveal>
+              <Link href="/novedades" className="link-underline font-medium text-rose-deep">
                 Ver todas
               </Link>
             </div>
@@ -151,7 +136,7 @@ export default async function HomePage() {
                 <article key={p.id} className="border-t border-ink/80 pt-5">
                   <p className="text-sm text-muted">{formatDate(p.published_at)}</p>
                   <h3 className="mt-2 text-xl font-semibold leading-snug">
-                    <Link href={`/novedades/${p.slug}`} className="hover:text-rose-deep">
+                    <Link href={`/novedades/${p.slug}`} className="transition-colors hover:text-rose-deep">
                       {p.title}
                     </Link>
                   </h3>
@@ -162,6 +147,9 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Rubros de clientes */}
+      <IndustriesMarquee />
 
       <CtaBand />
     </>

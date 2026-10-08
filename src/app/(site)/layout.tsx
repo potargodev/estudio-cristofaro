@@ -1,3 +1,4 @@
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
@@ -35,6 +36,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main id="contenido">{children}</main>
       <Footer />
       <WhatsAppButton />
+      <SmoothScroll />
     </>
   );
 }

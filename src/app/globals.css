@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* El sitio es solo claro: las variantes dark: de shadcn no se activan por la
+   preferencia del sistema (solo con una clase .dark que no usamos). */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Identidad de marca Estudio Cristofaro (manual de marca, octubre 2026).
    Azul noche como color principal, rosé como acento y una escala de pizarras. */
@@ -26,6 +31,49 @@
   /* Títulos: Belgan Aesthetic (fuente de marca). Mientras no esté la licencia
      web cargada en src/fonts, se usa Forum, la más parecida de Google Fonts. */
   --font-display: "Belgan Aesthetic", var(--font-forum), ui-serif, Georgia, serif;
+
+  /* Tokens de shadcn/ui mapeados a la marca. Ojo: "muted" en este proyecto es el
+     color de texto secundario; para fondos suaves se usa navy-soft. */
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-navy);
+  --color-primary-foreground: var(--color-paper);
+  --color-secondary: var(--color-navy-soft);
+  --color-secondary-foreground: var(--color-navy);
+  --color-muted-foreground: var(--color-muted);
+  --color-accent: var(--color-navy-soft);
+  --color-accent-foreground: var(--color-navy);
+  --color-destructive: var(--color-danger);
+  --color-border: var(--color-line);
+  --color-input: var(--color-line);
+  --color-ring: var(--color-navy);
+
+  --radius: 0.375rem;
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Variables que leen algunos componentes de shadcn (sonner) */
+:root {
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-ink);
+  --border: var(--color-line);
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
 }
 
 html {
@@ -72,33 +120,103 @@ body {
     radial-gradient(circle var(--hole) at var(--hole) 100%, transparent 98%, #000) 0 100% / calc(var(--hole) * 3) 51% repeat-x;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .stamp-in {
-    animation: stamp 520ms cubic-bezier(0.2, 0.8, 0.2, 1) 700ms both;
-  }
-  .row-in {
-    animation: row 380ms ease-out both;
+/* ───────────── Microinteracciones (etapa 3) ─────────────
+   Todo con transform/opacity y desactivado con prefers-reduced-motion. */
+
+/* Links de texto: el subrayado crece desde la izquierda */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 280ms var(--ease-out-soft);
+}
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Tarjetas con link: leve elevación y borde más marcado */
+.card-hover {
+  transition:
+    transform 260ms var(--ease-out-soft),
+    box-shadow 260ms var(--ease-out-soft),
+    border-color 200ms ease,
+    background-color 200ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -22px rgba(28, 34, 53, 0.55);
+}
+
+/* Marquesina de rubros: lenta y pausable */
+.marquee-track {
+  animation: marquee var(--marquee-duration, 48s) linear infinite;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
   }
 }
 
-@keyframes stamp {
-  from {
-    opacity: 0;
-    transform: rotate(-14deg) scale(1.6);
-  }
-  to {
-    opacity: 1;
-    transform: rotate(-8deg) scale(1);
-  }
+/* Íconos del bento: se animan una vez al pasar el mouse por la tarjeta */
+.group:hover .bell-swing {
+  animation: bell 900ms var(--ease-out-soft);
+  transform-origin: 50% 8%;
+}
+@keyframes bell {
+  20% { transform: rotate(14deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(6deg); }
+  80% { transform: rotate(-3deg); }
+}
+.group:hover .clock-hand {
+  animation: clock-hand 1100ms var(--ease-out-soft);
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+}
+@keyframes clock-hand {
+  to { transform: rotate(360deg); }
+}
+.group:hover .coin-drop {
+  animation: coin 700ms var(--ease-out-soft);
+}
+@keyframes coin {
+  0% { transform: translateY(-5px); opacity: 0; }
+  60% { transform: translateY(1px); opacity: 1; }
+  100% { transform: translateY(0); }
+}
+.report-line {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+.group:hover .report-line {
+  animation: report-line 700ms var(--ease-out-soft) both;
+}
+.group:hover .report-line:nth-child(2) { animation-delay: 90ms; }
+.group:hover .report-line:nth-child(3) { animation-delay: 180ms; }
+@keyframes report-line {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
-@keyframes row {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .group:hover .bell-swing,
+  .group:hover .clock-hand,
+  .group:hover .coin-drop,
+  .group:hover .report-line {
+    animation: none;
   }
-  to {
-    opacity: 1;
+  .card-hover,
+  .link-underline {
+    transition: none;
+  }
+  .card-hover:hover {
     transform: none;
   }
 }

@@ -165,23 +165,47 @@ export const services: Service[] = [
   },
 ];
 
-export const differentials = [
+// `icon` define el ícono animado de cada tarjeta de la grilla bento del home.
+export const differentials: { icon: "abono" | "respuesta" | "alertas" | "informe"; title: string; text: string }[] = [
   {
+    icon: "abono",
     title: "Abono fijo",
     text: "Sabés cuánto pagás por mes antes de empezar. Sin extras por cada consulta.",
   },
   {
+    icon: "respuesta",
     title: "Respuesta en menos de 24 h hábiles",
     text: "Por WhatsApp, mail o desde el portal. Siempre con un contador que conoce tu caso.",
   },
   {
+    icon: "alertas",
     title: "Alertas antes de cada vencimiento",
     text: "Te avisamos qué hay que pagar y cuándo, con el importe listo.",
   },
   {
+    icon: "informe",
     title: "Un informe por mes, en criollo",
     text: "Qué pagaste, qué viene y qué conviene hacer. Una página, sin jerga.",
   },
+];
+
+// TODO contenido real: reemplazar por los números reales del estudio antes de publicar.
+// Se muestran en la franja de números del home con un contador animado.
+export const stats: { value: number; prefix?: string; suffix?: string; label: string }[] = [
+  { value: 25, prefix: "+", label: "años de trayectoria" }, // TODO: años reales
+  { value: 180, prefix: "+", label: "clientes activos" }, // TODO: cantidad real
+  { value: 600, prefix: "+", label: "presentaciones por mes" }, // TODO: promedio real
+];
+
+// Rubros de clientes que aparecen en la marquesina del home.
+export const industries = [
+  "Comercios",
+  "Profesionales",
+  "Gastronomía",
+  "Salud",
+  "Construcción",
+  "Servicios",
+  "Emprendedores digitales",
 ];
 
 export const steps = [
