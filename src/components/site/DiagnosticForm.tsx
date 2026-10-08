@@ -166,8 +166,11 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         ) : (
           <span />
         )}
+        {/* Keys distintas: si React reusara el mismo <button> y le cambiara el type a
+            "submit" durante el clic en "Seguir", el navegador enviaría el formulario. */}
         {last ? (
           <button
+            key="enviar"
             type="submit"
             disabled={pending}
             className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep disabled:opacity-60"
@@ -175,7 +178,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
             {pending ? "Enviando…" : "Enviar diagnóstico"}
           </button>
         ) : (
-          <button type="button" onClick={next} className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep">
+          <button key="seguir" type="button" onClick={next} className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep">
             Seguir
           </button>
         )}
