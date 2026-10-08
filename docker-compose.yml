@@ -1,0 +1,23 @@
+# Postgres para desarrollo local. En producción la base es un servicio de Easypanel.
+#   docker compose up -d
+#   DATABASE_URL=postgres://cristofaro:cristofaro@localhost:5432/cristofaro
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cristofaro
+      POSTGRES_PASSWORD: cristofaro
+      POSTGRES_DB: cristofaro
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cristofaro -d cristofaro"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

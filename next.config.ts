@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Servidor autocontenido para la imagen Docker (Easypanel)
+  output: "standalone",
   eslint: { ignoreDuringBuilds: true },
   async redirects() {
     // URLs del sitio viejo → nuevas rutas
