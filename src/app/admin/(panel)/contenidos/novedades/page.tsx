@@ -5,6 +5,7 @@ import { AdminPageHeader } from "@/components/admin/AdminField";
 import { getDb } from "@/db";
 import { posts as postsTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
+import { adminButton } from "@/components/admin/styles";
 
 export const metadata: Metadata = { title: "Novedades" };
 
@@ -23,7 +24,7 @@ export default async function NovedadesAdminPage() {
       </Link>
       <div className="mt-2">
         <AdminPageHeader title="Novedades">
-          <Link href="/admin/contenidos/novedades/nueva" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
+          <Link href="/admin/contenidos/novedades/nueva" className={adminButton.primary}>
             Nueva novedad
           </Link>
         </AdminPageHeader>

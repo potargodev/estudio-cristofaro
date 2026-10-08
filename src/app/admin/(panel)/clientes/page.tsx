@@ -2,12 +2,14 @@ import { and, asc, eq, ilike, or } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
-import { adminInput } from "@/components/admin/ui";
+import { FormSelect } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { clients as clientsTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { likeTerm } from "@/lib/search";
 import { REGIMES, type Client, type TaxRegime } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import { adminButton } from "@/components/admin/styles";
 
 export const metadata: Metadata = { title: "Clientes" };
 
@@ -56,7 +58,7 @@ export default async function ClientesPage({
   return (
     <>
       <AdminPageHeader title="Clientes">
-        <Link href="/admin/clientes/nuevo" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
+        <Link href="/admin/clientes/nuevo" className={adminButton.primary}>
           Nuevo cliente
         </Link>
       </AdminPageHeader>
@@ -66,32 +68,37 @@ export default async function ClientesPage({
           <label htmlFor="q" className="text-sm text-muted">
             Buscar
           </label>
-          <input id="q" name="q" defaultValue={q} placeholder="Nombre, CUIT o contacto" className={`${adminInput} w-64`} />
+          <Input id="q" name="q" defaultValue={q} placeholder="Nombre, CUIT o contacto" className="w-64" />
         </div>
         <div>
           <label htmlFor="regimen" className="text-sm text-muted">
             Régimen
           </label>
-          <select id="regimen" name="regimen" defaultValue={regimen ?? ""} className={adminInput}>
-            <option value="">Todos</option>
-            {Object.entries(REGIMES).map(([v, l]) => (
-              <option key={v} value={v}>
-                {l}
-              </option>
-            ))}
-          </select>
+          <FormSelect
+            id="regimen"
+            name="regimen"
+            defaultValue={regimen ?? ""}
+            options={[{ value: "", label: "Todos" }, ...Object.entries(REGIMES).map(([value, label]) => ({ value, label }))]}
+            className="w-56"
+          />
         </div>
         <div>
           <label htmlFor="estado" className="text-sm text-muted">
             Estado
           </label>
-          <select id="estado" name="estado" defaultValue={estado} className={adminInput}>
-            <option value="activos">Activos</option>
-            <option value="inactivos">Inactivos</option>
-            <option value="todos">Todos</option>
-          </select>
+          <FormSelect
+            id="estado"
+            name="estado"
+            defaultValue={estado}
+            options={[
+              { value: "activos", label: "Activos" },
+              { value: "inactivos", label: "Inactivos" },
+              { value: "todos", label: "Todos" },
+            ]}
+            className="w-40"
+          />
         </div>
-        <button type="submit" className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] hover:border-navy">
+        <button type="submit" className={adminButton.secondary}>
           Filtrar
         </button>
       </form>

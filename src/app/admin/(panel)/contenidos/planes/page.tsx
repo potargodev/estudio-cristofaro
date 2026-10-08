@@ -3,12 +3,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { deletePlan, savePlan } from "@/app/admin/actions";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
-import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { SubmitButton, FormCheckbox, FormSelect } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { plans as plansTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { segments } from "@/lib/content";
 import type { Plan } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export const metadata: Metadata = { title: "Planes" };
 
@@ -18,39 +20,31 @@ function PlanFields({ plan }: { plan?: Plan }) {
     <div className="grid gap-3 sm:grid-cols-2">
       {plan && <input type="hidden" name="id" value={plan.id} />}
       <AdminField label="Nombre" htmlFor={`n-${k}`}>
-        <input id={`n-${k}`} name="name" required defaultValue={plan?.name} className={adminInput} />
+        <Input id={`n-${k}`} name="name" required defaultValue={plan?.name} />
       </AdminField>
       <AdminField label="Precio" htmlFor={`pr-${k}`} hint='Ej: "Desde $45.000 / mes". Vacío muestra "Precio a medida".'>
-        <input id={`pr-${k}`} name="price_label" defaultValue={plan?.price_label ?? ""} className={adminInput} />
+        <Input id={`pr-${k}`} name="price_label" defaultValue={plan?.price_label ?? ""} />
       </AdminField>
       <AdminField label="Segmento" htmlFor={`s-${k}`} hint="Define en qué landing aparece.">
-        <select id={`s-${k}`} name="segment" defaultValue={plan?.segment ?? ""} className={adminInput}>
-          <option value="">Solo en la página de planes</option>
-          {segments.map((s) => (
-            <option key={s.slug} value={s.slug}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+        <FormSelect
+          id={`s-${k}`}
+          name="segment"
+          defaultValue={plan?.segment ?? ""}
+          options={[{ value: "", label: "Solo en la página de planes" }, ...segments.map((s) => ({ value: s.slug, label: s.name }))]}
+        />
       </AdminField>
       <AdminField label="Orden" htmlFor={`o-${k}`}>
-        <input id={`o-${k}`} name="position" type="number" defaultValue={plan?.position ?? 0} className={adminInput} />
+        <Input id={`o-${k}`} name="position" type="number" defaultValue={plan?.position ?? 0} />
       </AdminField>
       <AdminField label="Descripción" htmlFor={`d-${k}`} className="sm:col-span-2">
-        <textarea id={`d-${k}`} name="description" rows={2} defaultValue={plan?.description ?? ""} className={adminInput} />
+        <Textarea id={`d-${k}`} name="description" rows={2} defaultValue={plan?.description ?? ""} />
       </AdminField>
       <AdminField label="Qué incluye" htmlFor={`f-${k}`} hint="Un ítem por línea." className="sm:col-span-2">
-        <textarea id={`f-${k}`} name="features" rows={5} defaultValue={plan?.features.join("\n") ?? ""} className={adminInput} />
+        <Textarea id={`f-${k}`} name="features" rows={5} defaultValue={plan?.features.join("\n") ?? ""} />
       </AdminField>
       <div className="flex flex-wrap gap-5 sm:col-span-2">
-        <label className="flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="highlighted" defaultChecked={plan?.highlighted ?? false} className="size-4 accent-[var(--color-navy)]" />
-          Destacado
-        </label>
-        <label className="flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="published" defaultChecked={plan?.published ?? true} className="size-4 accent-[var(--color-navy)]" />
-          Publicado
-        </label>
+        <FormCheckbox id={`highlighted-${k}`} name="highlighted" label="Destacado" defaultChecked={plan?.highlighted ?? false} />
+        <FormCheckbox id={`published-${k}`} name="published" label="Publicado" defaultChecked={plan?.published ?? true} />
       </div>
     </div>
   );
@@ -74,9 +68,7 @@ export default async function PlanesAdminPage({ searchParams }: { searchParams: 
         <AdminPageHeader title="Planes" />
       </div>
       {guardado && (
-        <div className="mb-4">
-          <Notice>Cambios guardados.</Notice>
-        </div>
+        <Notice>Cambios guardados.</Notice>
       )}
       {error && (
         <div className="mb-4">

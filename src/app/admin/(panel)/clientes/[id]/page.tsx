@@ -37,9 +37,7 @@ export default async function ClientePage({
         </Link>
         <h1 className="mb-6 mt-2 text-2xl font-semibold tracking-tight">{client.business_name}</h1>
         {(guardado || nuevo) && (
-          <div className="mb-4">
-            <Notice>{nuevo ? "Cliente creado." : "Cambios guardados."}</Notice>
-          </div>
+          <Notice>{nuevo ? "Cliente creado." : "Cambios guardados."}</Notice>
         )}
         {error && (
           <div className="mb-4">

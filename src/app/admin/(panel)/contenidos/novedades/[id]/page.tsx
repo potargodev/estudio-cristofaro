@@ -8,6 +8,7 @@ import { getDb } from "@/db";
 import { posts } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
+import { adminButton } from "@/components/admin/styles";
 
 export const metadata: Metadata = { title: "Editar novedad" };
 
@@ -36,16 +37,14 @@ export default async function EditarNovedadPage({
       <div className="mt-2">
         <AdminPageHeader title="Editar novedad">
           {post.published && (
-            <Link href={`/novedades/${post.slug}`} target="_blank" className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] hover:border-navy">
+            <Link href={`/novedades/${post.slug}`} target="_blank" className={adminButton.secondary}>
               Ver en la web
             </Link>
           )}
         </AdminPageHeader>
       </div>
       {guardado && (
-        <div className="mb-4">
-          <Notice>Cambios guardados.</Notice>
-        </div>
+        <Notice>Cambios guardados.</Notice>
       )}
       {error && (
         <div className="mb-4">

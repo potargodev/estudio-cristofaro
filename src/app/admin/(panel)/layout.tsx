@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { SubmitButton } from "@/components/admin/ui";
 import { Monogram } from "@/components/site/Logo";
+import { Toaster } from "@/components/ui/sonner";
 import { requireStaff } from "@/lib/auth";
 import { isDbConfigured } from "@/db";
 import { signOut } from "../actions";
@@ -55,6 +56,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
         </div>
       </aside>
       <main className="min-w-0 px-4 py-6 sm:px-8 sm:py-8">{children}</main>
+      <Toaster position="bottom-right" />
     </div>
   );
 }

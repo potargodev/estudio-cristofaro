@@ -5,6 +5,7 @@ import { getDb } from "@/db";
 import { clients, leads } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { LEAD_SOURCES, LEAD_STATUSES, type Lead } from "@/lib/types";
+import { adminButton } from "@/components/admin/styles";
 
 function fmtDate(d: string | Date) {
   return new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short" }).format(new Date(d));
@@ -64,7 +65,7 @@ export default async function AdminHome() {
   return (
     <>
       <AdminPageHeader title={`Hola${user.name ? `, ${user.name.split(" ")[0]}` : ""}`}>
-        <Link href="/admin/consultas/nueva" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
+        <Link href="/admin/consultas/nueva" className={adminButton.primary}>
           Cargar consulta
         </Link>
       </AdminPageHeader>

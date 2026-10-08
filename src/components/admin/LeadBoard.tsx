@@ -1,8 +1,10 @@
 "use client";
 
+import { LayoutGroup, LazyMotion, domMax, m, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useOptimistic, useTransition, useState } from "react";
 import { moveLead } from "@/app/admin/actions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES, type Lead, type LeadStatus } from "@/lib/types";
 
 type BoardLead = Pick<
@@ -23,6 +25,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
   );
   const [, startTransition] = useTransition();
   const [over, setOver] = useState<LeadStatus | null>(null);
+  const reduce = useReducedMotion();
 
   function move(id: string, status: LeadStatus) {
     startTransition(async () => {
@@ -31,7 +34,10 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
     });
   }
 
+  // domMax suma las animaciones de layout: la tarjeta se desliza a su nueva columna
   return (
+    <LazyMotion features={domMax}>
+    <LayoutGroup>
     <div className="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-8 sm:px-8">
       <div className="grid min-w-[1100px] grid-cols-5 gap-3">
         {LEAD_STATUSES.map((col) => {
@@ -51,7 +57,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                 const id = e.dataTransfer.getData("text/plain");
                 if (id) move(id, col.value);
               }}
-              className={`flex min-h-[60vh] flex-col rounded-md border p-2 ${
+              className={`flex min-h-[60vh] flex-col rounded-md border p-2 transition-colors duration-200 ${
                 over === col.value ? "border-navy bg-navy-soft" : "border-line bg-paper"
               }`}
             >
@@ -63,11 +69,18 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                 {items.map((l) => {
                   const overdue = l.next_action_at && l.next_action_at < new Date().toISOString().slice(0, 10);
                   return (
-                    <li
+                    <m.li
                       key={l.id}
+                      layoutId={reduce ? undefined : l.id}
+                      layout={reduce ? false : "position"}
+                      transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                      className="rounded-md"
+                    >
+                    {/* Arrastre nativo (HTML5) en un div interno: motion usa onDragStart para su propio gesto */}
+                    <div
                       draggable
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", l.id)}
-                      className="cursor-grab rounded-md border border-line bg-surface p-3 shadow-sm active:cursor-grabbing"
+                      className="cursor-grab rounded-md border border-line bg-surface p-3 shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing"
                     >
                       <Link href={`/admin/consultas/${l.id}`} className="block font-medium leading-snug hover:text-rose-deep">
                         {l.name}
@@ -87,22 +100,20 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                         <span>{LEAD_SOURCES[l.source]}</span>
                         <span>{ago(l.created_at)}</span>
                       </div>
-                      <label className="sr-only" htmlFor={`mv-${l.id}`}>
-                        Mover a
-                      </label>
-                      <select
-                        id={`mv-${l.id}`}
-                        value={l.status}
-                        onChange={(e) => move(l.id, e.target.value as LeadStatus)}
-                        className="mt-2 w-full rounded border border-line bg-paper px-2 py-1 text-xs"
-                      >
-                        {LEAD_STATUSES.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                    </li>
+                      <Select value={l.status} onValueChange={(v) => move(l.id, v as LeadStatus)}>
+                        <SelectTrigger size="sm" aria-label={`Estado de ${l.name}`} className="mt-2 h-7 w-full bg-paper text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {LEAD_STATUSES.map((s) => (
+                            <SelectItem key={s.value} value={s.value} className="text-xs">
+                              {s.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    </m.li>
                   );
                 })}
               </ul>
@@ -111,5 +122,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
         })}
       </div>
     </div>
+    </LayoutGroup>
+    </LazyMotion>
   );
 }

@@ -3,11 +3,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { deleteFaq, saveFaq } from "@/app/admin/actions";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
-import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { SubmitButton, FormCheckbox } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { faqs as faqsTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import type { Faq } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export const metadata: Metadata = { title: "Preguntas frecuentes" };
 
@@ -17,19 +19,16 @@ function FaqFields({ faq }: { faq?: Faq }) {
     <>
       {faq && <input type="hidden" name="id" value={faq.id} />}
       <AdminField label="Pregunta" htmlFor={`q-${k}`}>
-        <input id={`q-${k}`} name="question" required defaultValue={faq?.question} className={adminInput} />
+        <Input id={`q-${k}`} name="question" required defaultValue={faq?.question} />
       </AdminField>
       <AdminField label="Respuesta" htmlFor={`a-${k}`}>
-        <textarea id={`a-${k}`} name="answer" required rows={3} defaultValue={faq?.answer} className={adminInput} />
+        <Textarea id={`a-${k}`} name="answer" required rows={3} defaultValue={faq?.answer} />
       </AdminField>
       <div className="flex flex-wrap items-end gap-4">
         <AdminField label="Orden" htmlFor={`p-${k}`}>
-          <input id={`p-${k}`} name="position" type="number" defaultValue={faq?.position ?? 0} className={`${adminInput} w-24`} />
+          <Input id={`p-${k}`} name="position" type="number" defaultValue={faq?.position ?? 0} className="w-24" />
         </AdminField>
-        <label className="mb-2 flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="published" defaultChecked={faq?.published ?? true} className="size-4 accent-[var(--color-navy)]" />
-          Publicada
-        </label>
+        <FormCheckbox id={`published-${k}`} name="published" label="Publicada" defaultChecked={faq?.published ?? true} />
       </div>
     </>
   );
@@ -53,9 +52,7 @@ export default async function PreguntasAdminPage({ searchParams }: { searchParam
         <AdminPageHeader title="Preguntas frecuentes" />
       </div>
       {guardado && (
-        <div className="mb-4">
-          <Notice>Cambios guardados.</Notice>
-        </div>
+        <Notice>Cambios guardados.</Notice>
       )}
       {error && (
         <div className="mb-4">

@@ -1,7 +1,9 @@
 import { deletePost, savePost } from "@/app/admin/actions";
 import type { Post } from "@/lib/types";
 import { AdminField } from "./AdminField";
-import { SubmitButton, adminInput } from "./ui";
+import { SubmitButton, FormCheckbox } from "./ui";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export function PostForm({ post }: { post?: Pick<Post, "id" | "title" | "slug" | "excerpt" | "body" | "published"> }) {
   return (
@@ -9,21 +11,18 @@ export function PostForm({ post }: { post?: Pick<Post, "id" | "title" | "slug" |
       <form action={savePost} className="grid gap-4 rounded-md border border-line bg-surface p-6">
         {post && <input type="hidden" name="id" value={post.id} />}
         <AdminField label="Título" htmlFor="title">
-          <input id="title" name="title" required defaultValue={post?.title} className={adminInput} />
+          <Input id="title" name="title" required defaultValue={post?.title} />
         </AdminField>
         <AdminField label="URL" htmlFor="slug" hint="Se genera sola a partir del título si la dejás vacía.">
-          <input id="slug" name="slug" defaultValue={post?.slug} placeholder="recategorizacion-monotributo" className={adminInput} />
+          <Input id="slug" name="slug" defaultValue={post?.slug} placeholder="recategorizacion-monotributo" />
         </AdminField>
         <AdminField label="Resumen" htmlFor="excerpt" hint="Una o dos oraciones. Aparece en el listado y en Google.">
-          <textarea id="excerpt" name="excerpt" rows={2} defaultValue={post?.excerpt ?? ""} className={adminInput} />
+          <Textarea id="excerpt" name="excerpt" rows={2} defaultValue={post?.excerpt ?? ""} />
         </AdminField>
         <AdminField label="Texto" htmlFor="body" hint="Separá los párrafos con una línea en blanco.">
-          <textarea id="body" name="body" rows={16} defaultValue={post?.body ?? ""} className={`${adminInput} leading-relaxed`} />
+          <Textarea id="body" name="body" rows={16} defaultValue={post?.body ?? ""} className="leading-relaxed" />
         </AdminField>
-        <label className="flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="published" defaultChecked={post?.published ?? false} className="size-4 accent-[var(--color-navy)]" />
-          Publicada en la web
-        </label>
+        <FormCheckbox id="published" name="published" label="Publicada en la web" defaultChecked={post?.published ?? false} />
         <div>
           <SubmitButton>{post ? "Guardar cambios" : "Crear novedad"}</SubmitButton>
         </div>

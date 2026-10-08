@@ -1,6 +1,8 @@
 import { AdminField } from "./AdminField";
-import { SubmitButton, adminInput } from "./ui";
+import { SubmitButton, FormCheckbox, FormSelect } from "./ui";
 import { REGIMES, type Client } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export function ClientForm({
   action,
@@ -15,54 +17,49 @@ export function ClientForm({
     <form action={action} className="grid gap-4 rounded-md border border-line bg-surface p-6 sm:grid-cols-2">
       {client && <input type="hidden" name="id" value={client.id} />}
       <AdminField label="Razón social o nombre" htmlFor="business_name" className="sm:col-span-2">
-        <input id="business_name" name="business_name" required defaultValue={client?.business_name} className={adminInput} />
+        <Input id="business_name" name="business_name" required defaultValue={client?.business_name} />
       </AdminField>
       <AdminField label="CUIT" htmlFor="cuit" hint="Solo números o con guiones.">
-        <input id="cuit" name="cuit" inputMode="numeric" defaultValue={client?.cuit ?? ""} className={adminInput} />
+        <Input id="cuit" name="cuit" inputMode="numeric" defaultValue={client?.cuit ?? ""} />
       </AdminField>
       <AdminField label="Régimen" htmlFor="regime">
-        <select id="regime" name="regime" defaultValue={client?.regime ?? "monotributo"} className={adminInput}>
-          {Object.entries(REGIMES).map(([v, l]) => (
-            <option key={v} value={v}>
-              {l}
-            </option>
-          ))}
-        </select>
+        <FormSelect
+          id="regime"
+          name="regime"
+          defaultValue={client?.regime ?? "monotributo"}
+          options={Object.entries(REGIMES).map(([value, label]) => ({ value, label }))}
+        />
       </AdminField>
       <AdminField label="Categoría o tipo" htmlFor="category" hint="Ej: categoría D, SAS, SRL.">
-        <input id="category" name="category" defaultValue={client?.category ?? ""} className={adminInput} />
+        <Input id="category" name="category" defaultValue={client?.category ?? ""} />
       </AdminField>
       <AdminField label="Abono mensual ($)" htmlFor="monthly_fee">
-        <input
+        <Input
           id="monthly_fee"
           name="monthly_fee"
           inputMode="decimal"
           defaultValue={client?.monthly_fee != null ? String(client.monthly_fee) : ""}
-          className={adminInput}
         />
       </AdminField>
       <AdminField label="Contacto" htmlFor="contact_name">
-        <input id="contact_name" name="contact_name" defaultValue={client?.contact_name ?? ""} className={adminInput} />
+        <Input id="contact_name" name="contact_name" defaultValue={client?.contact_name ?? ""} />
       </AdminField>
       <AdminField label="Teléfono" htmlFor="phone">
-        <input id="phone" name="phone" defaultValue={client?.phone ?? ""} className={adminInput} />
+        <Input id="phone" name="phone" defaultValue={client?.phone ?? ""} />
       </AdminField>
       <AdminField label="Email" htmlFor="email">
-        <input id="email" name="email" type="email" defaultValue={client?.email ?? ""} className={adminInput} />
+        <Input id="email" name="email" type="email" defaultValue={client?.email ?? ""} />
       </AdminField>
       <AdminField label="Domicilio fiscal" htmlFor="address">
-        <input id="address" name="address" defaultValue={client?.address ?? ""} className={adminInput} />
+        <Input id="address" name="address" defaultValue={client?.address ?? ""} />
       </AdminField>
       <AdminField label="Servicios contratados" htmlFor="services" hint="Uno por línea." className="sm:col-span-2">
-        <textarea id="services" name="services" rows={4} defaultValue={client?.services.join("\n") ?? ""} className={adminInput} />
+        <Textarea id="services" name="services" rows={4} defaultValue={client?.services.join("\n") ?? ""} />
       </AdminField>
       <AdminField label="Notas" htmlFor="notes" className="sm:col-span-2">
-        <textarea id="notes" name="notes" rows={4} defaultValue={client?.notes ?? ""} className={adminInput} />
+        <Textarea id="notes" name="notes" rows={4} defaultValue={client?.notes ?? ""} />
       </AdminField>
-      <label className="flex items-center gap-2 text-[15px] sm:col-span-2">
-        <input type="checkbox" name="active" defaultChecked={client?.active ?? true} className="size-4 accent-[var(--color-navy)]" />
-        Cliente activo
-      </label>
+      <FormCheckbox id="active" name="active" label="Cliente activo" defaultChecked={client?.active ?? true} />
       <div className="sm:col-span-2">
         <SubmitButton>{submitLabel}</SubmitButton>
       </div>

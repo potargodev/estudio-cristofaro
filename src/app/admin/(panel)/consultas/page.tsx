@@ -3,11 +3,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { LeadBoard } from "@/components/admin/LeadBoard";
-import { adminInput } from "@/components/admin/ui";
+
 import { getDb } from "@/db";
 import { leads } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { likeTerm } from "@/lib/search";
+import { Input } from "@/components/ui/input";
+import { adminButton } from "@/components/admin/styles";
 
 export const metadata: Metadata = { title: "Consultas" };
 
@@ -53,9 +55,9 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
           <label htmlFor="q" className="sr-only">
             Buscar
           </label>
-          <input id="q" name="q" defaultValue={q} placeholder="Buscar por nombre, email, empresa…" className={`${adminInput} mt-0 w-64`} />
+          <Input id="q" name="q" defaultValue={q} placeholder="Buscar por nombre, email, empresa…" className="w-64" />
         </form>
-        <Link href="/admin/consultas/nueva" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
+        <Link href="/admin/consultas/nueva" className={adminButton.primary}>
           Cargar consulta
         </Link>
       </AdminPageHeader>

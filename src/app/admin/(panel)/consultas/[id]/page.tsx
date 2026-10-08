@@ -4,13 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { convertLeadToClient, deleteLead, updateLead } from "@/app/admin/actions";
 import { AdminField, Notice } from "@/components/admin/AdminField";
-import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { SubmitButton, FormSelect } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { leads, users } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { site } from "@/lib/site";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { adminButton } from "@/components/admin/styles";
 
 export const metadata: Metadata = { title: "Consulta" };
 
@@ -67,7 +70,7 @@ export default async function ConsultaPage({
               href={waLink(lead.phone, lead.name)}
               target="_blank"
               rel="noopener"
-              className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] font-medium hover:border-navy"
+              className={adminButton.secondary}
             >
               Responder por WhatsApp
             </a>
@@ -75,7 +78,7 @@ export default async function ConsultaPage({
           {lead.email && (
             <a
               href={`mailto:${lead.email}?subject=${encodeURIComponent(`Tu consulta en ${site.name}`)}`}
-              className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] font-medium hover:border-navy"
+              className={adminButton.secondary}
             >
               Responder por mail
             </a>
@@ -83,7 +86,7 @@ export default async function ConsultaPage({
           {lead.client_id ? (
             <Link
               href={`/admin/clientes/${lead.client_id}`}
-              className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep"
+              className={adminButton.primary}
             >
               Ver cliente
             </Link>
@@ -97,9 +100,7 @@ export default async function ConsultaPage({
       </div>
 
       {guardado && (
-        <div className="mb-4">
-          <Notice>Cambios guardados.</Notice>
-        </div>
+        <Notice>Cambios guardados.</Notice>
       )}
       {error && (
         <div className="mb-4">
@@ -150,48 +151,42 @@ export default async function ConsultaPage({
           <input type="hidden" name="id" value={lead.id} />
           <h2 className="font-semibold sm:col-span-2">Seguimiento</h2>
           <AdminField label="Estado" htmlFor="status">
-            <select id="status" name="status" defaultValue={lead.status} className={adminInput}>
-              {LEAD_STATUSES.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
+            <FormSelect id="status" name="status" defaultValue={lead.status} options={LEAD_STATUSES} />
           </AdminField>
           <AdminField label="Responsable" htmlFor="assigned_to">
-            <select id="assigned_to" name="assigned_to" defaultValue={lead.assigned_to ?? ""} className={adminInput}>
-              <option value="">Sin asignar</option>
-              {staff.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name || "Sin nombre"}
-                  {p.active ? "" : " (desactivado)"}
-                </option>
-              ))}
-            </select>
+            <FormSelect
+              id="assigned_to"
+              name="assigned_to"
+              defaultValue={lead.assigned_to ?? ""}
+              options={[
+                { value: "", label: "Sin asignar" },
+                ...staff.map((p) => ({ value: p.id, label: `${p.name || "Sin nombre"}${p.active ? "" : " (desactivado)"}` })),
+              ]}
+            />
           </AdminField>
           <AdminField label="Próxima acción" htmlFor="next_action">
-            <input id="next_action" name="next_action" defaultValue={lead.next_action ?? ""} placeholder="Ej: enviar presupuesto" className={adminInput} />
+            <Input id="next_action" name="next_action" defaultValue={lead.next_action ?? ""} placeholder="Ej: enviar presupuesto" />
           </AdminField>
           <AdminField label="Fecha" htmlFor="next_action_at">
-            <input id="next_action_at" name="next_action_at" type="date" defaultValue={lead.next_action_at ?? ""} className={adminInput} />
+            <Input id="next_action_at" name="next_action_at" type="date" defaultValue={lead.next_action_at ?? ""} />
           </AdminField>
           <AdminField label="Nombre" htmlFor="name">
-            <input id="name" name="name" defaultValue={lead.name} className={adminInput} />
+            <Input id="name" name="name" defaultValue={lead.name} />
           </AdminField>
           <AdminField label="Empresa" htmlFor="company">
-            <input id="company" name="company" defaultValue={lead.company ?? ""} className={adminInput} />
+            <Input id="company" name="company" defaultValue={lead.company ?? ""} />
           </AdminField>
           <AdminField label="Email" htmlFor="email">
-            <input id="email" name="email" type="email" defaultValue={lead.email ?? ""} className={adminInput} />
+            <Input id="email" name="email" type="email" defaultValue={lead.email ?? ""} />
           </AdminField>
           <AdminField label="Teléfono" htmlFor="phone">
-            <input id="phone" name="phone" defaultValue={lead.phone ?? ""} className={adminInput} />
+            <Input id="phone" name="phone" defaultValue={lead.phone ?? ""} />
           </AdminField>
           <AdminField label="Notas internas" htmlFor="notes" className="sm:col-span-2">
-            <textarea id="notes" name="notes" rows={5} defaultValue={lead.notes ?? ""} className={adminInput} />
+            <Textarea id="notes" name="notes" rows={5} defaultValue={lead.notes ?? ""} />
           </AdminField>
           <AdminField label="Motivo si se perdió" htmlFor="lost_reason" className="sm:col-span-2">
-            <input id="lost_reason" name="lost_reason" defaultValue={lead.lost_reason ?? ""} placeholder="Ej: precio, eligió otro estudio" className={adminInput} />
+            <Input id="lost_reason" name="lost_reason" defaultValue={lead.lost_reason ?? ""} placeholder="Ej: precio, eligió otro estudio" />
           </AdminField>
           <div className="sm:col-span-2">
             <SubmitButton>Guardar cambios</SubmitButton>

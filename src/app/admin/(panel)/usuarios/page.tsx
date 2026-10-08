@@ -2,11 +2,12 @@ import { asc, desc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { createStaffUser, setUserActive, updateUserRole } from "@/app/admin/actions";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
-import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { SubmitButton, FormSelect } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth";
 import { ROLES } from "@/lib/types";
+import { Input } from "@/components/ui/input";
 
 export const metadata: Metadata = { title: "Usuarios" };
 
@@ -51,9 +52,7 @@ export default async function UsuariosPage({
         Las personas del estudio que pueden entrar al backoffice. Los administradores además gestionan los usuarios.
       </p>
       {notice && (
-        <div className="mb-4">
-          <Notice>{notices[notice]}</Notice>
-        </div>
+        <Notice>{notices[notice]}</Notice>
       )}
       {error && (
         <div className="mb-4">
@@ -94,13 +93,13 @@ export default async function UsuariosPage({
                         <label htmlFor={`role-${u.id}`} className="sr-only">
                           Rol de {u.name}
                         </label>
-                        <select id={`role-${u.id}`} name="role" defaultValue={u.role} className={`${adminInput} mt-0 w-40`}>
-                          {STAFF_ROLES.map((r) => (
-                            <option key={r} value={r}>
-                              {ROLES[r]}
-                            </option>
-                          ))}
-                        </select>
+                        <FormSelect
+                          id={`role-${u.id}`}
+                          name="role"
+                          defaultValue={u.role}
+                          options={STAFF_ROLES.map((r) => ({ value: r, label: ROLES[r] }))}
+                          className="mt-0 w-40"
+                        />
                         <SubmitButton variant="secondary" pendingText="…">
                           Cambiar
                         </SubmitButton>
@@ -139,22 +138,16 @@ export default async function UsuariosPage({
       <h2 className="mb-3 mt-10 text-lg font-semibold">Agregar usuario</h2>
       <form action={createStaffUser} className="grid gap-4 rounded-md border border-dashed border-line p-5 sm:grid-cols-2">
         <AdminField label="Nombre y apellido" htmlFor="name">
-          <input id="name" name="name" required autoComplete="off" className={adminInput} />
+          <Input id="name" name="name" required autoComplete="off" />
         </AdminField>
         <AdminField label="Email" htmlFor="email">
-          <input id="email" name="email" type="email" required autoComplete="off" className={adminInput} />
+          <Input id="email" name="email" type="email" required autoComplete="off" />
         </AdminField>
         <AdminField label="Contraseña inicial" htmlFor="password" hint="Mínimo 8 caracteres. Pasásela a la persona por un canal seguro.">
-          <input id="password" name="password" type="text" required minLength={8} autoComplete="new-password" className={adminInput} />
+          <Input id="password" name="password" type="text" required minLength={8} autoComplete="new-password" />
         </AdminField>
         <AdminField label="Rol" htmlFor="role">
-          <select id="role" name="role" defaultValue="contador" className={adminInput}>
-            {STAFF_ROLES.map((r) => (
-              <option key={r} value={r}>
-                {ROLES[r]}
-              </option>
-            ))}
-          </select>
+          <FormSelect id="role" name="role" defaultValue="contador" options={STAFF_ROLES.map((r) => ({ value: r, label: ROLES[r] }))} />
         </AdminField>
         <div className="sm:col-span-2">
           <SubmitButton pendingText="Creando…">Crear usuario</SubmitButton>

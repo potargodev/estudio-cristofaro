@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { adminInput } from "@/components/admin/ui";
+
 import { Monogram } from "@/components/site/Logo";
 import { signIn, type ActionState } from "../actions";
+import { Input } from "@/components/ui/input";
 
 const initial: ActionState = { ok: false };
 
@@ -24,11 +25,11 @@ export function LoginForm() {
         <label htmlFor="email" className="block text-sm font-medium">
           Email
         </label>
-        <input id="email" name="email" type="email" autoComplete="email" required className={adminInput} />
+        <Input id="email" name="email" type="email" autoComplete="email" required />
         <label htmlFor="password" className="mt-4 block text-sm font-medium">
           Contraseña
         </label>
-        <input id="password" name="password" type="password" autoComplete="current-password" required className={adminInput} />
+        <Input id="password" name="password" type="password" autoComplete="current-password" required />
         {state.message && (
           <p role="alert" className="mt-4 text-sm text-danger">
             {state.message}

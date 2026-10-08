@@ -1,3 +1,7 @@
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SaveToast } from "./SaveToast";
+
 export function AdminField({
   label,
   htmlFor,
@@ -13,25 +17,29 @@ export function AdminField({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={htmlFor} className="block text-sm font-medium text-ink/80">
+      <Label htmlFor={htmlFor} className="mb-1 text-sm font-medium text-ink/80">
         {label}
-      </label>
+      </Label>
       {children}
       {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
     </div>
   );
 }
 
-export function Notice({ tone = "ok", children }: { tone?: "ok" | "error"; children: React.ReactNode }) {
+/**
+ * Aviso del backoffice. Los de éxito ("Cambios guardados.") se muestran como
+ * toast; los errores quedan fijos en la página como Alert.
+ */
+export function Notice({ tone = "ok", children }: { tone?: "ok" | "error"; children: string }) {
+  if (tone === "ok") return <SaveToast message={children} />;
   return (
-    <p
-      role="status"
-      className={`rounded-md px-4 py-2.5 text-[15px] ${
-        tone === "ok" ? "bg-navy-soft text-navy-deep" : "bg-danger/10 text-danger"
-      }`}
-    >
-      {children}
-    </p>
+    <Alert variant="destructive" className="border-danger/30 bg-danger/5">
+      <svg aria-hidden viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <circle cx="8" cy="8" r="6.5" />
+        <path d="M8 4.8v3.6M8 11v.2" />
+      </svg>
+      <AlertDescription className="text-[15px] text-danger">{children}</AlertDescription>
+    </Alert>
   );
 }
 
