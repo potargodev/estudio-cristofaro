@@ -46,14 +46,16 @@ export function MonthReceipt() {
         <p className="mt-5 text-[13px] leading-relaxed text-muted">
           Cada mes recibís esta página: qué se presentó, qué se pagó y qué viene.
         </p>
+      </div>
 
-        <div
-          aria-hidden
-          className="stamp-in absolute -right-3 top-24 rotate-[-8deg] rounded-[6px] border-[3px] border-rose px-3 py-1.5 text-center text-rose-deep"
-        >
-          <span className="block text-[11px] font-semibold leading-tight">Todo</span>
-          <span className="block text-lg font-bold leading-tight">al día</span>
-        </div>
+      {/* Fuera del bloque perforado (su máscara lo recortaba) y sobre el margen
+          superior, para no tapar ninguna fila del resumen. */}
+      <div
+        aria-hidden
+        className="stamp-in absolute -top-5 right-3 sm:-right-4 rotate-[-8deg] rounded-[6px] border-[3px] border-rose bg-surface px-3 py-1.5 text-center text-rose-deep"
+      >
+        <span className="block text-[11px] font-semibold leading-tight">Todo</span>
+        <span className="block text-lg font-bold leading-tight">al día</span>
       </div>
     </figure>
   );
