@@ -1,11 +1,14 @@
+import { and, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { updateClientRecord } from "@/app/admin/actions";
 import { Notice } from "@/components/admin/AdminField";
 import { ClientForm } from "@/components/admin/ClientForm";
+import { getDb } from "@/db";
+import { clients } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
-import type { Client } from "@/lib/types";
+import { isUuid } from "@/lib/ids";
 
 export const metadata: Metadata = { title: "Cliente" };
 
@@ -18,10 +21,13 @@ export default async function ClientePage({
 }) {
   const { id } = await params;
   const { guardado, nuevo, error } = await searchParams;
-  const { supabase } = await requireStaff();
-  const { data } = await supabase.from("clients").select("*").eq("id", id).maybeSingle();
-  if (!data) notFound();
-  const client = data as Client;
+  const { studioId } = await requireStaff();
+  if (!isUuid(id)) notFound();
+  const [client] = await getDb()
+    .select()
+    .from(clients)
+    .where(and(eq(clients.id, id), eq(clients.studio_id, studioId)));
+  if (!client) notFound();
 
   return (
     <div className="grid max-w-6xl gap-6 xl:grid-cols-[1fr_320px]">

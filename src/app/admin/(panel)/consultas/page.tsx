@@ -1,26 +1,50 @@
+import { and, desc, eq, ilike, or } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { LeadBoard } from "@/components/admin/LeadBoard";
 import { adminInput } from "@/components/admin/ui";
+import { getDb } from "@/db";
+import { leads } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
+import { likeTerm } from "@/lib/search";
 
 export const metadata: Metadata = { title: "Consultas" };
 
 export default async function ConsultasPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q } = await searchParams;
-  const { supabase } = await requireStaff();
+  const { studioId } = await requireStaff();
 
-  let query = supabase
-    .from("leads")
-    .select("id, name, company, contributor_type, source, status, created_at, next_action, next_action_at")
-    .order("created_at", { ascending: false })
-    .limit(400);
-  if (q) {
-    const term = q.replace(/[%,()]/g, " ").trim();
-    query = query.or(`name.ilike.%${term}%,email.ilike.%${term}%,company.ilike.%${term}%,phone.ilike.%${term}%`);
+  const term = q ? likeTerm(q) : null;
+  let rows: Parameters<typeof LeadBoard>[0]["leads"] = [];
+  let error: string | null = null;
+  try {
+    rows = await getDb()
+      .select({
+        id: leads.id,
+        name: leads.name,
+        company: leads.company,
+        contributor_type: leads.contributor_type,
+        source: leads.source,
+        status: leads.status,
+        created_at: leads.created_at,
+        next_action: leads.next_action,
+        next_action_at: leads.next_action_at,
+      })
+      .from(leads)
+      .where(
+        and(
+          eq(leads.studio_id, studioId),
+          term
+            ? or(ilike(leads.name, term), ilike(leads.email, term), ilike(leads.company, term), ilike(leads.phone, term))
+            : undefined,
+        ),
+      )
+      .orderBy(desc(leads.created_at))
+      .limit(400);
+  } catch (e) {
+    error = (e as Error).message;
   }
-  const { data: leads, error } = await query;
 
   return (
     <>
@@ -37,9 +61,9 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
       </AdminPageHeader>
       <p className="mb-4 text-sm text-muted">Arrastrá las tarjetas entre columnas o usá el selector de cada una para cambiar el estado.</p>
       {error ? (
-        <p className="text-danger">No se pudieron cargar las consultas: {error.message}</p>
+        <p className="text-danger">No se pudieron cargar las consultas: {error}</p>
       ) : (
-        <LeadBoard leads={leads ?? []} />
+        <LeadBoard leads={rows} />
       )}
     </>
   );

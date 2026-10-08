@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { site } from "./site";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, type LeadSource } from "./types";
 
@@ -19,12 +19,24 @@ function esc(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
 
+/** Transporte SMTP (correo de Hostinger). Null si falta alguna variable: no se envía nada. */
+function getTransport() {
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_FROM } = process.env;
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !MAIL_FROM) return null;
+  const port = Number(SMTP_PORT) || 465;
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port,
+    secure: port === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+}
+
 export async function sendLeadEmails(lead: LeadMail) {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM;
-  if (!key || !from) return;
-  const resend = new Resend(key);
-  const notifyTo = process.env.STUDIO_NOTIFY_EMAIL ?? site.email;
+  const transport = getTransport();
+  if (!transport) return;
+  const from = process.env.MAIL_FROM!;
+  const notifyTo = process.env.STUDIO_NOTIFY_EMAIL || site.email;
 
   const rows: [string, string | null | undefined][] = [
     ["Nombre", lead.name],
@@ -44,7 +56,7 @@ export async function sendLeadEmails(lead: LeadMail) {
     .join("");
 
   const jobs: Promise<unknown>[] = [
-    resend.emails.send({
+    transport.sendMail({
       from,
       to: notifyTo,
       replyTo: lead.email ?? undefined,
@@ -55,7 +67,7 @@ export async function sendLeadEmails(lead: LeadMail) {
 
   if (lead.email) {
     jobs.push(
-      resend.emails.send({
+      transport.sendMail({
         from,
         to: lead.email,
         subject: "Recibimos tu consulta",
@@ -67,5 +79,7 @@ export async function sendLeadEmails(lead: LeadMail) {
     );
   }
 
-  await Promise.allSettled(jobs);
+  // Un error de SMTP nunca rompe el envío del formulario: la consulta ya quedó guardada.
+  const results = await Promise.allSettled(jobs);
+  for (const r of results) if (r.status === "rejected") console.error("[mail] No se pudo enviar", r.reason);
 }

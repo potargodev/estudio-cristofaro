@@ -1,41 +1,20 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  let response = NextResponse.next({ request });
-  if (!url || !anonKey) return response;
+// Cookie de sesión de Better Auth (con prefijo __Secure- cuando el sitio va por HTTPS)
+const SESSION_COOKIES = ["better-auth.session_token", "__Secure-better-auth.session_token"];
 
-  const supabase = createServerClient(url, anonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        response = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
-      },
-    },
-  });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isLogin = request.nextUrl.pathname.startsWith("/admin/login");
-  if (!user && !isLogin) {
+// Chequeo rápido de la cookie de sesión para todo /admin salvo el login.
+// La validación real (sesión vigente, rol y estudio) la hace requireStaff()
+// en el servidor, en cada página y en cada action.
+export function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/admin/login")) return NextResponse.next();
+  if (!SESSION_COOKIES.some((name) => request.cookies.get(name)?.value)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/admin/login";
+    loginUrl.search = "";
     return NextResponse.redirect(loginUrl);
   }
-  if (user && isLogin) {
-    const panelUrl = request.nextUrl.clone();
-    panelUrl.pathname = "/admin";
-    return NextResponse.redirect(panelUrl);
-  }
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

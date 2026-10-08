@@ -1,9 +1,16 @@
 "use server";
 
+import { headers } from "next/headers";
 import { z } from "zod";
+import { getDb, isDbConfigured } from "@/db";
+import { leads } from "@/db/schema";
 import { getStudioId } from "@/lib/data";
 import { sendLeadEmails } from "@/lib/email";
-import { createServiceClient } from "@/lib/supabase/server";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+
+// Máximo de consultas por IP: 5 cada 10 minutos (además del honeypot)
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
 
 export interface LeadFormState {
   ok: boolean;
@@ -85,10 +92,16 @@ export async function submitLead(_prev: LeadFormState, formData: FormData): Prom
   const plan = str(formData, "plan");
   const message = [plan ? `Plan de interés: ${plan}` : null, lead.message || null].filter(Boolean).join("\n\n") || null;
 
-  const sb = createServiceClient();
-  const studioId = await getStudioId();
-  if (!sb || !studioId) {
-    console.warn("[leads] Supabase no configurado: la consulta no se guardó.", lead);
+  if (!rateLimit(clientIp(await headers()), RATE_LIMIT, RATE_WINDOW_MS)) {
+    return {
+      ok: false,
+      message: "Recibimos varias consultas seguidas desde tu conexión. Probá de nuevo en unos minutos o escribinos por WhatsApp.",
+      values,
+    };
+  }
+
+  if (!isDbConfigured) {
+    console.warn("[leads] DATABASE_URL no configurada: la consulta no se guardó.", lead);
     return {
       ok: false,
       message: "No pudimos enviar el formulario. Escribinos por WhatsApp o a contacto@estudiocristofaro.com.",
@@ -96,21 +109,25 @@ export async function submitLead(_prev: LeadFormState, formData: FormData): Prom
     };
   }
 
-  const { error } = await sb.from("leads").insert({
-    studio_id: studioId,
-    name: lead.name,
-    email: lead.email || null,
-    phone: lead.phone || null,
-    company: lead.company || null,
-    contributor_type: lead.contributor_type || null,
-    activity: lead.activity || null,
-    employees: lead.employees || null,
-    needs: lead.needs,
-    message,
-    source: lead.source,
-  });
-
-  if (error) {
+  try {
+    const studioId = await getStudioId();
+    if (!studioId) throw new Error(`No existe el estudio "${process.env.STUDIO_SLUG ?? "cristofaro"}". ¿Corriste npm run db:seed?`);
+    await getDb()
+      .insert(leads)
+      .values({
+        studio_id: studioId,
+        name: lead.name,
+        email: lead.email || null,
+        phone: lead.phone || null,
+        company: lead.company || null,
+        contributor_type: lead.contributor_type || null,
+        activity: lead.activity || null,
+        employees: lead.employees || null,
+        needs: lead.needs,
+        message,
+        source: lead.source,
+      });
+  } catch (error) {
     console.error("[leads] Error al guardar", error);
     return {
       ok: false,

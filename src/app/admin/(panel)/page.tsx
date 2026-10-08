@@ -1,41 +1,61 @@
+import { and, asc, desc, eq, isNotNull, lte, notInArray } from "drizzle-orm";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
+import { getDb } from "@/db";
+import { clients, leads } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { LEAD_SOURCES, LEAD_STATUSES, type Lead } from "@/lib/types";
 
-function fmtDate(d: string) {
+function fmtDate(d: string | Date) {
   return new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short" }).format(new Date(d));
 }
 
 const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
 export default async function AdminHome() {
-  const { supabase, profile } = await requireStaff();
+  const user = await requireStaff();
+  const db = getDb();
 
   const today = new Date();
-  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const inAWeek = new Date(today.getTime() + 7 * 86400000).toISOString().slice(0, 10);
 
-  const [{ data: leads }, { data: upcoming }, { data: clients }] = await Promise.all([
-    supabase.from("leads").select("id, name, status, source, created_at").order("created_at", { ascending: false }).limit(500),
-    supabase
-      .from("leads")
-      .select("id, name, next_action, next_action_at, status")
-      .not("next_action_at", "is", null)
-      .lte("next_action_at", inAWeek)
-      .not("status", "in", "(ganado,perdido)")
-      .order("next_action_at"),
-    supabase.from("clients").select("id, monthly_fee, active"),
+  const [all, upcomingRows, clientRows] = await Promise.all([
+    db
+      .select({ id: leads.id, name: leads.name, status: leads.status, source: leads.source, created_at: leads.created_at })
+      .from(leads)
+      .where(eq(leads.studio_id, user.studioId))
+      .orderBy(desc(leads.created_at))
+      .limit(500),
+    db
+      .select({
+        id: leads.id,
+        name: leads.name,
+        next_action: leads.next_action,
+        next_action_at: leads.next_action_at,
+        status: leads.status,
+      })
+      .from(leads)
+      .where(
+        and(
+          eq(leads.studio_id, user.studioId),
+          isNotNull(leads.next_action_at),
+          lte(leads.next_action_at, inAWeek),
+          notInArray(leads.status, ["ganado", "perdido"]),
+        ),
+      )
+      .orderBy(asc(leads.next_action_at)),
+    db
+      .select({ id: clients.id, monthly_fee: clients.monthly_fee, active: clients.active })
+      .from(clients)
+      .where(eq(clients.studio_id, user.studioId)),
   ]);
 
-  const all = (leads ?? []) as Pick<Lead, "id" | "name" | "status" | "source" | "created_at">[];
   const thisMonth = all.filter((l) => l.created_at >= monthStart);
   const won = thisMonth.filter((l) => l.status === "ganado").length;
   const closed = thisMonth.filter((l) => l.status === "ganado" || l.status === "perdido").length;
-  const clientRows = (clients ?? []) as { id: string; monthly_fee: number | null; active: boolean }[];
   const activeClients = clientRows.filter((c) => c.active);
   const mrr = activeClients.reduce((sum, c) => sum + (Number(c.monthly_fee) || 0), 0);
-  const upcomingRows = (upcoming ?? []) as Pick<Lead, "id" | "name" | "next_action" | "next_action_at" | "status">[];
   const bySource = Object.entries(
     thisMonth.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.source]: (acc[l.source] ?? 0) + 1 }), {}),
   ).sort((a, b) => b[1] - a[1]);
@@ -43,7 +63,7 @@ export default async function AdminHome() {
 
   return (
     <>
-      <AdminPageHeader title={`Hola${profile.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}`}>
+      <AdminPageHeader title={`Hola${user.name ? `, ${user.name.split(" ")[0]}` : ""}`}>
         <Link href="/admin/consultas/nueva" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
           Cargar consulta
         </Link>

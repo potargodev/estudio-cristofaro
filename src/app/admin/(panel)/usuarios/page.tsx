@@ -1,0 +1,165 @@
+import { asc, desc, eq } from "drizzle-orm";
+import type { Metadata } from "next";
+import { createStaffUser, setUserActive, updateUserRole } from "@/app/admin/actions";
+import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
+import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { getDb } from "@/db";
+import { users } from "@/db/schema";
+import { requireAdmin } from "@/lib/auth";
+import { ROLES } from "@/lib/types";
+
+export const metadata: Metadata = { title: "Usuarios" };
+
+const errors: Record<string, string> = {
+  campos: "Completá nombre, email y contraseña.",
+  email: "Revisá el email.",
+  password: "La contraseña inicial tiene que tener al menos 8 caracteres.",
+  repetido: "Ya existe un usuario con ese email.",
+  propio: "No podés cambiar tu propio rol ni desactivar tu usuario.",
+  guardar: "No se pudo guardar. Probá de nuevo.",
+};
+
+const notices: Record<string, string> = {
+  creado: "Usuario creado. Pasale el email y la contraseña inicial.",
+  guardado: "Rol actualizado.",
+  desactivado: "Usuario desactivado. Se cerraron sus sesiones abiertas.",
+  activado: "Usuario reactivado.",
+};
+
+const STAFF_ROLES = ["admin", "contador"] as const;
+
+export default async function UsuariosPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const admin = await requireAdmin();
+  const team = await getDb()
+    .select({ id: users.id, name: users.name, email: users.email, role: users.role, active: users.active })
+    .from(users)
+    .where(eq(users.studioId, admin.studioId))
+    .orderBy(desc(users.active), asc(users.name));
+
+  const notice = Object.keys(notices).find((k) => params[k]);
+  const error = params.error ? (errors[params.error] ?? errors.guardar) : null;
+
+  return (
+    <div className="max-w-4xl">
+      <AdminPageHeader title="Usuarios" />
+      <p className="mb-6 max-w-2xl text-muted">
+        Las personas del estudio que pueden entrar al backoffice. Los administradores además gestionan los usuarios.
+      </p>
+      {notice && (
+        <div className="mb-4">
+          <Notice>{notices[notice]}</Notice>
+        </div>
+      )}
+      {error && (
+        <div className="mb-4">
+          <Notice tone="error">{error}</Notice>
+        </div>
+      )}
+
+      <div className="overflow-x-auto rounded-md border border-line bg-surface">
+        <table className="w-full min-w-[680px] text-left text-[15px]">
+          <thead className="border-b border-line bg-paper text-sm text-muted">
+            <tr>
+              <th className="px-4 py-2.5 font-medium">Nombre</th>
+              <th className="px-4 py-2.5 font-medium">Rol</th>
+              <th className="px-4 py-2.5 font-medium">Estado</th>
+              <th className="px-4 py-2.5 text-right font-medium">
+                <span className="sr-only">Acciones</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line">
+            {team.map((u) => {
+              const self = u.id === admin.id;
+              return (
+                <tr key={u.id} className={u.active ? "" : "text-muted"}>
+                  <td className="px-4 py-3">
+                    <span className="block font-medium">
+                      {u.name}
+                      {self && <span className="ml-1.5 text-sm font-normal text-muted">(vos)</span>}
+                    </span>
+                    <span className="block text-sm text-muted">{u.email}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {self || u.role === "cliente" ? (
+                      ROLES[u.role]
+                    ) : (
+                      <form action={updateUserRole} className="flex items-center gap-2">
+                        <input type="hidden" name="id" value={u.id} />
+                        <label htmlFor={`role-${u.id}`} className="sr-only">
+                          Rol de {u.name}
+                        </label>
+                        <select id={`role-${u.id}`} name="role" defaultValue={u.role} className={`${adminInput} mt-0 w-40`}>
+                          {STAFF_ROLES.map((r) => (
+                            <option key={r} value={r}>
+                              {ROLES[r]}
+                            </option>
+                          ))}
+                        </select>
+                        <SubmitButton variant="secondary" pendingText="…">
+                          Cambiar
+                        </SubmitButton>
+                      </form>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">{u.active ? "Activo" : "Desactivado"}</td>
+                  <td className="px-4 py-3 text-right">
+                    {!self && (
+                      <form action={setUserActive}>
+                        <input type="hidden" name="id" value={u.id} />
+                        <input type="hidden" name="active" value={u.active ? "0" : "1"} />
+                        {u.active ? (
+                          <SubmitButton
+                            variant="danger"
+                            pendingText="Desactivando…"
+                            confirm={`¿Desactivar a ${u.name}? No va a poder entrar al backoffice.`}
+                          >
+                            Desactivar
+                          </SubmitButton>
+                        ) : (
+                          <SubmitButton variant="secondary" pendingText="Activando…">
+                            Reactivar
+                          </SubmitButton>
+                        )}
+                      </form>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <h2 className="mb-3 mt-10 text-lg font-semibold">Agregar usuario</h2>
+      <form action={createStaffUser} className="grid gap-4 rounded-md border border-dashed border-line p-5 sm:grid-cols-2">
+        <AdminField label="Nombre y apellido" htmlFor="name">
+          <input id="name" name="name" required autoComplete="off" className={adminInput} />
+        </AdminField>
+        <AdminField label="Email" htmlFor="email">
+          <input id="email" name="email" type="email" required autoComplete="off" className={adminInput} />
+        </AdminField>
+        <AdminField label="Contraseña inicial" htmlFor="password" hint="Mínimo 8 caracteres. Pasásela a la persona por un canal seguro.">
+          <input id="password" name="password" type="text" required minLength={8} autoComplete="new-password" className={adminInput} />
+        </AdminField>
+        <AdminField label="Rol" htmlFor="role">
+          <select id="role" name="role" defaultValue="contador" className={adminInput}>
+            {STAFF_ROLES.map((r) => (
+              <option key={r} value={r}>
+                {ROLES[r]}
+              </option>
+            ))}
+          </select>
+        </AdminField>
+        <div className="sm:col-span-2">
+          <SubmitButton pendingText="Creando…">Crear usuario</SubmitButton>
+        </div>
+      </form>
+    </div>
+  );
+}

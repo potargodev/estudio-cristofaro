@@ -1,15 +1,20 @@
+import { desc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
+import { getDb } from "@/db";
+import { posts as postsTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
-import type { Post } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Novedades" };
 
 export default async function NovedadesAdminPage() {
-  const { supabase } = await requireStaff();
-  const { data } = await supabase.from("posts").select("id, title, slug, published, published_at, updated_at").order("updated_at", { ascending: false });
-  const posts = (data ?? []) as (Pick<Post, "id" | "title" | "slug" | "published" | "published_at"> & { updated_at: string })[];
+  const { studioId } = await requireStaff();
+  const posts = await getDb()
+    .select({ id: postsTable.id, title: postsTable.title, slug: postsTable.slug, published: postsTable.published })
+    .from(postsTable)
+    .where(eq(postsTable.studio_id, studioId))
+    .orderBy(desc(postsTable.updated_at));
 
   return (
     <>

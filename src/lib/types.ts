@@ -1,48 +1,15 @@
+import type { clients, leads, userRole } from "@/db/schema";
+
 export type LeadStatus = "nuevo" | "contactado" | "presupuesto" | "ganado" | "perdido";
 export type LeadSource = "diagnostico" | "contacto" | "whatsapp" | "manual" | "otro";
 export type TaxRegime = "monotributo" | "responsable_inscripto" | "sociedad" | "exento" | "otro";
 
-export interface Lead {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  company: string | null;
-  contributor_type: string | null;
-  activity: string | null;
-  employees: string | null;
-  needs: string[];
-  message: string | null;
-  source: LeadSource;
-  status: LeadStatus;
-  assigned_to: string | null;
-  next_action: string | null;
-  next_action_at: string | null;
-  notes: string | null;
-  lost_reason: string | null;
-  client_id: string | null;
-}
+// Filas tal como las devuelve Drizzle (fechas como Date, numeric como string).
+export type Lead = typeof leads.$inferSelect;
+export type Client = typeof clients.$inferSelect;
+export type UserRole = (typeof userRole.enumValues)[number];
 
-export interface Client {
-  id: string;
-  created_at: string;
-  business_name: string;
-  cuit: string | null;
-  regime: TaxRegime;
-  category: string | null;
-  services: string[];
-  monthly_fee: number | null;
-  contact_name: string | null;
-  email: string | null;
-  phone: string | null;
-  address: string | null;
-  notes: string | null;
-  active: boolean;
-  lead_id: string | null;
-}
-
+// Contenidos públicos: mismo formato para la base y para el respaldo de src/lib/content.ts.
 export interface Post {
   id: string;
   slug: string;
@@ -73,12 +40,11 @@ export interface Plan {
   published: boolean;
 }
 
-export interface Profile {
-  id: string;
-  studio_id: string;
-  full_name: string | null;
-  role: "admin" | "contador" | "cliente";
-}
+export const ROLES: Record<UserRole, string> = {
+  admin: "Administrador",
+  contador: "Contador",
+  cliente: "Cliente",
+};
 
 export const LEAD_STATUSES: { value: LeadStatus; label: string }[] = [
   { value: "nuevo", label: "Nuevas" },

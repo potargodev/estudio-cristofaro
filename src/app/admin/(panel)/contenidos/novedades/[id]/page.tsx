@@ -1,10 +1,13 @@
+import { and, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { PostForm } from "@/components/admin/PostForm";
+import { getDb } from "@/db";
+import { posts } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
-import type { Post } from "@/lib/types";
+import { isUuid } from "@/lib/ids";
 
 export const metadata: Metadata = { title: "Editar novedad" };
 
@@ -17,10 +20,13 @@ export default async function EditarNovedadPage({
 }) {
   const { id } = await params;
   const { guardado, error } = await searchParams;
-  const { supabase } = await requireStaff();
-  const { data } = await supabase.from("posts").select("*").eq("id", id).maybeSingle();
-  if (!data) notFound();
-  const post = data as Post;
+  const { studioId } = await requireStaff();
+  if (!isUuid(id)) notFound();
+  const [post] = await getDb()
+    .select()
+    .from(posts)
+    .where(and(eq(posts.id, id), eq(posts.studio_id, studioId)));
+  if (!post) notFound();
 
   return (
     <div className="max-w-3xl">

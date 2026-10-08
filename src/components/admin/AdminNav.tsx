@@ -8,13 +8,16 @@ const items = [
   { href: "/admin/consultas", label: "Consultas" },
   { href: "/admin/clientes", label: "Clientes" },
   { href: "/admin/contenidos", label: "Contenidos" },
+  { href: "/admin/usuarios", label: "Usuarios", adminOnly: true },
 ];
 
-export function AdminNav() {
+export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
   return (
     <nav aria-label="Backoffice" className="flex gap-1 overflow-x-auto md:flex-col">
-      {items.map((item) => {
+      {items
+        .filter((item) => !item.adminOnly || isAdmin)
+        .map((item) => {
         const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
         return (
           <Link

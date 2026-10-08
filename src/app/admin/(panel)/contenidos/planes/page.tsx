@@ -1,8 +1,11 @@
+import { asc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { deletePlan, savePlan } from "@/app/admin/actions";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { getDb } from "@/db";
+import { plans as plansTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { segments } from "@/lib/content";
 import type { Plan } from "@/lib/types";
@@ -55,9 +58,12 @@ function PlanFields({ plan }: { plan?: Plan }) {
 
 export default async function PlanesAdminPage({ searchParams }: { searchParams: Promise<{ guardado?: string; error?: string }> }) {
   const { guardado, error } = await searchParams;
-  const { supabase } = await requireStaff();
-  const { data } = await supabase.from("plans").select("*").order("position");
-  const plans = (data ?? []) as Plan[];
+  const { studioId } = await requireStaff();
+  const plans: Plan[] = await getDb()
+    .select()
+    .from(plansTable)
+    .where(eq(plansTable.studio_id, studioId))
+    .orderBy(asc(plansTable.position));
 
   return (
     <div className="max-w-3xl">

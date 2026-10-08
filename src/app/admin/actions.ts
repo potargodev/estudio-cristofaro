@@ -1,10 +1,18 @@
 "use server";
 
+import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { requireStaff } from "@/lib/auth";
-import { createSessionClient } from "@/lib/supabase/server";
-import type { LeadStatus, TaxRegime } from "@/lib/types";
+import { getDb } from "@/db";
+import { clients, faqs, leads, plans, posts, sessions, users } from "@/db/schema";
+import { requireAdmin, requireStaff } from "@/lib/auth";
+import { getAuth } from "@/lib/auth-server";
+import type { LeadStatus, TaxRegime, UserRole } from "@/lib/types";
+import { createUserWithPassword } from "@/lib/users";
+
+// Cada action valida la sesión y el rol con requireStaff/requireAdmin y
+// todas las queries filtran por el studio_id del usuario.
 
 // ───────────── helpers ─────────────
 
@@ -32,8 +40,23 @@ function slugify(text: string) {
     .slice(0, 80);
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Id de un formulario, solo si es un uuid válido (si no, Postgres tira error). */
+function id(fd: FormData, key = "id"): string | null {
+  const v = s(fd, key);
+  return v && UUID_RE.test(v) ? v : null;
+}
+
+/** Código de error de Postgres (Drizzle lo envuelve en `cause`). */
+function pgCode(error: unknown): string | undefined {
+  const e = error as { code?: string; cause?: { code?: string } };
+  return e?.code ?? e?.cause?.code;
+}
+
 const LEAD_STATUSES: LeadStatus[] = ["nuevo", "contactado", "presupuesto", "ganado", "perdido"];
 const REGIMES: TaxRegime[] = ["monotributo", "responsable_inscripto", "sociedad", "exento", "otro"];
+const STAFF_ROLES: UserRole[] = ["admin", "contador"];
 
 function revalidateSite() {
   revalidatePath("/", "layout");
@@ -50,93 +73,131 @@ export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionSt
   const email = s(fd, "email");
   const password = s(fd, "password");
   if (!email || !password) return { ok: false, message: "Completá email y contraseña." };
-  const supabase = await createSessionClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return { ok: false, message: "Email o contraseña incorrectos." };
+  try {
+    await getAuth().api.signInEmail({ body: { email, password }, headers: await headers() });
+  } catch (error) {
+    // Errores de Better Auth (APIError). Se compara por status y no con instanceof:
+    // la clase viene de un paquete interno y no siempre es la misma instancia.
+    const status = (error as { status?: string }).status;
+    if (status === "FORBIDDEN") {
+      return { ok: false, message: "Tu usuario está desactivado. Pedile acceso a un administrador del estudio." };
+    }
+    if (status !== "UNAUTHORIZED" && status !== "BAD_REQUEST") console.error("[auth] Error al iniciar sesión", error);
+    return { ok: false, message: "Email o contraseña incorrectos." };
+  }
   redirect("/admin");
 }
 
 export async function signOut() {
-  const supabase = await createSessionClient();
-  await supabase.auth.signOut();
+  try {
+    await getAuth().api.signOut({ headers: await headers() });
+  } catch {
+    // Sin sesión: no hay nada que cerrar
+  }
   redirect("/admin/login");
 }
 
 // ───────────── consultas ─────────────
 
-export async function moveLead(id: string, status: LeadStatus) {
-  if (!LEAD_STATUSES.includes(status)) return { ok: false };
-  const { supabase } = await requireStaff();
-  const { error } = await supabase.from("leads").update({ status }).eq("id", id);
+export async function moveLead(leadId: string, status: LeadStatus) {
+  if (!LEAD_STATUSES.includes(status) || !UUID_RE.test(leadId)) return { ok: false };
+  const { studioId } = await requireStaff();
+  const rows = await getDb()
+    .update(leads)
+    .set({ status })
+    .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)))
+    .returning({ id: leads.id });
   revalidatePath("/admin/consultas");
   revalidatePath("/admin");
-  return { ok: !error };
+  return { ok: rows.length > 0 };
 }
 
 export async function createLead(fd: FormData) {
-  const { supabase, profile } = await requireStaff();
+  const user = await requireStaff();
   const name = s(fd, "name");
   if (!name) redirect("/admin/consultas/nueva?error=nombre");
-  const { data, error } = await supabase
-    .from("leads")
-    .insert({
-      studio_id: profile.studio_id,
-      name,
-      email: s(fd, "email"),
-      phone: s(fd, "phone"),
-      company: s(fd, "company"),
-      contributor_type: s(fd, "contributor_type"),
-      activity: s(fd, "activity"),
-      message: s(fd, "message"),
-      source: (s(fd, "source") as "whatsapp" | "manual" | "otro" | null) ?? "manual",
-      assigned_to: profile.id,
-    })
-    .select("id")
-    .single();
-  if (error || !data) redirect("/admin/consultas/nueva?error=guardar");
+  const source = s(fd, "source");
+  let newId: string | null = null;
+  try {
+    const [row] = await getDb()
+      .insert(leads)
+      .values({
+        studio_id: user.studioId,
+        name,
+        email: s(fd, "email"),
+        phone: s(fd, "phone"),
+        company: s(fd, "company"),
+        contributor_type: s(fd, "contributor_type"),
+        activity: s(fd, "activity"),
+        message: s(fd, "message"),
+        source: source === "whatsapp" || source === "otro" ? source : "manual",
+        assigned_to: user.id,
+      })
+      .returning({ id: leads.id });
+    newId = row?.id ?? null;
+  } catch (error) {
+    console.error("[admin] createLead", error);
+  }
+  if (!newId) redirect("/admin/consultas/nueva?error=guardar");
   revalidatePath("/admin/consultas");
-  redirect(`/admin/consultas/${data.id}`);
+  redirect(`/admin/consultas/${newId}`);
+}
+
+/** Responsable válido: un usuario activo del mismo estudio con rol de staff. */
+async function staffOfStudio(userId: string | null, studioId: string) {
+  if (!userId || !UUID_RE.test(userId)) return null;
+  const [row] = await getDb()
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.id, userId), eq(users.studioId, studioId), inArray(users.role, STAFF_ROLES)));
+  return row?.id ?? null;
 }
 
 export async function updateLead(fd: FormData) {
-  const { supabase } = await requireStaff();
-  const id = s(fd, "id");
-  if (!id) return;
+  const { studioId } = await requireStaff();
+  const leadId = id(fd);
+  if (!leadId) return;
   const status = s(fd, "status") as LeadStatus | null;
-  await supabase
-    .from("leads")
-    .update({
+  const rows = await getDb()
+    .update(leads)
+    .set({
       name: s(fd, "name") ?? undefined,
       email: s(fd, "email"),
       phone: s(fd, "phone"),
       company: s(fd, "company"),
       status: status && LEAD_STATUSES.includes(status) ? status : undefined,
-      assigned_to: s(fd, "assigned_to"),
+      assigned_to: await staffOfStudio(s(fd, "assigned_to"), studioId),
       next_action: s(fd, "next_action"),
       next_action_at: s(fd, "next_action_at"),
       notes: s(fd, "notes"),
       lost_reason: s(fd, "lost_reason"),
     })
-    .eq("id", id);
+    .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)))
+    .returning({ id: leads.id });
+  if (rows.length === 0) redirect("/admin/consultas");
   revalidatePath("/admin/consultas");
-  revalidatePath(`/admin/consultas/${id}`);
+  revalidatePath(`/admin/consultas/${leadId}`);
   revalidatePath("/admin");
-  redirect(`/admin/consultas/${id}?guardado=1`);
+  redirect(`/admin/consultas/${leadId}?guardado=1`);
 }
 
 export async function deleteLead(fd: FormData) {
-  const { supabase } = await requireStaff();
-  const id = s(fd, "id");
-  if (id) await supabase.from("leads").delete().eq("id", id);
+  const { studioId } = await requireStaff();
+  const leadId = id(fd);
+  if (leadId) await getDb().delete(leads).where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)));
   revalidatePath("/admin/consultas");
   redirect("/admin/consultas");
 }
 
 export async function convertLeadToClient(fd: FormData) {
-  const { supabase, profile } = await requireStaff();
-  const id = s(fd, "id");
-  if (!id) return;
-  const { data: lead } = await supabase.from("leads").select("*").eq("id", id).single();
+  const { studioId } = await requireStaff();
+  const leadId = id(fd);
+  if (!leadId) return;
+  const db = getDb();
+  const [lead] = await db
+    .select()
+    .from(leads)
+    .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)));
   if (!lead) redirect("/admin/consultas");
   if (lead.client_id) redirect(`/admin/clientes/${lead.client_id}`);
 
@@ -145,27 +206,36 @@ export async function convertLeadToClient(fd: FormData) {
     responsable_inscripto: "responsable_inscripto",
     sociedad: "sociedad",
   };
-  const { data: client, error } = await supabase
-    .from("clients")
-    .insert({
-      studio_id: profile.studio_id,
-      business_name: lead.company || lead.name,
-      contact_name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      regime: regimeByType[lead.contributor_type ?? ""] ?? "otro",
-      notes: [lead.activity && `Actividad: ${lead.activity}`, lead.notes].filter(Boolean).join("\n\n") || null,
-      services: lead.needs ?? [],
-      lead_id: lead.id,
-    })
-    .select("id")
-    .single();
-  if (error || !client) redirect(`/admin/consultas/${id}?error=convertir`);
-
-  await supabase.from("leads").update({ status: "ganado", client_id: client.id }).eq("id", id);
+  let clientId: string | null = null;
+  try {
+    clientId = await db.transaction(async (tx) => {
+      const [client] = await tx
+        .insert(clients)
+        .values({
+          studio_id: studioId,
+          business_name: lead.company || lead.name,
+          contact_name: lead.name,
+          email: lead.email,
+          phone: lead.phone,
+          regime: regimeByType[lead.contributor_type ?? ""] ?? "otro",
+          notes: [lead.activity && `Actividad: ${lead.activity}`, lead.notes].filter(Boolean).join("\n\n") || null,
+          services: lead.needs ?? [],
+          lead_id: lead.id,
+        })
+        .returning({ id: clients.id });
+      await tx
+        .update(leads)
+        .set({ status: "ganado", client_id: client.id })
+        .where(and(eq(leads.id, lead.id), eq(leads.studio_id, studioId)));
+      return client.id;
+    });
+  } catch (error) {
+    console.error("[admin] convertLeadToClient", error);
+  }
+  if (!clientId) redirect(`/admin/consultas/${leadId}?error=convertir`);
   revalidatePath("/admin/consultas");
   revalidatePath("/admin/clientes");
-  redirect(`/admin/clientes/${client.id}?nuevo=1`);
+  redirect(`/admin/clientes/${clientId}?nuevo=1`);
 }
 
 // ───────────── clientes ─────────────
@@ -173,13 +243,14 @@ export async function convertLeadToClient(fd: FormData) {
 function clientPayload(fd: FormData) {
   const regime = s(fd, "regime") as TaxRegime | null;
   const fee = s(fd, "monthly_fee");
+  const feeNumber = fee ? Number(fee.replace(/\./g, "").replace(",", ".")) || null : null;
   return {
     business_name: s(fd, "business_name") ?? "Sin nombre",
     cuit: s(fd, "cuit")?.replace(/[^0-9]/g, "") || null,
-    regime: regime && REGIMES.includes(regime) ? regime : "otro",
+    regime: regime && REGIMES.includes(regime) ? regime : ("otro" as const),
     category: s(fd, "category"),
     services: lines(fd, "services"),
-    monthly_fee: fee ? Number(fee.replace(/\./g, "").replace(",", ".")) || null : null,
+    monthly_fee: feeNumber != null ? feeNumber.toFixed(2) : null,
     contact_name: s(fd, "contact_name"),
     email: s(fd, "email"),
     phone: s(fd, "phone"),
@@ -190,34 +261,53 @@ function clientPayload(fd: FormData) {
 }
 
 export async function createClientRecord(fd: FormData) {
-  const { supabase, profile } = await requireStaff();
+  const { studioId } = await requireStaff();
   if (!s(fd, "business_name")) redirect("/admin/clientes/nuevo?error=nombre");
-  const { data, error } = await supabase
-    .from("clients")
-    .insert({ studio_id: profile.studio_id, ...clientPayload(fd) })
-    .select("id")
-    .single();
-  if (error || !data) redirect(`/admin/clientes/nuevo?error=${error?.code === "23505" ? "cuit" : "guardar"}`);
+  let newId: string | null = null;
+  let errorCode: string | undefined;
+  try {
+    const [row] = await getDb()
+      .insert(clients)
+      .values({ studio_id: studioId, ...clientPayload(fd) })
+      .returning({ id: clients.id });
+    newId = row?.id ?? null;
+  } catch (error) {
+    errorCode = pgCode(error);
+    if (errorCode !== "23505") console.error("[admin] createClientRecord", error);
+  }
+  if (!newId) redirect(`/admin/clientes/nuevo?error=${errorCode === "23505" ? "cuit" : "guardar"}`);
   revalidatePath("/admin/clientes");
-  redirect(`/admin/clientes/${data.id}?nuevo=1`);
+  redirect(`/admin/clientes/${newId}?nuevo=1`);
 }
 
 export async function updateClientRecord(fd: FormData) {
-  const { supabase } = await requireStaff();
-  const id = s(fd, "id");
-  if (!id) return;
-  const { error } = await supabase.from("clients").update(clientPayload(fd)).eq("id", id);
+  const { studioId } = await requireStaff();
+  const clientId = id(fd);
+  if (!clientId) return;
+  let result = "guardado=1";
+  try {
+    const rows = await getDb()
+      .update(clients)
+      .set(clientPayload(fd))
+      .where(and(eq(clients.id, clientId), eq(clients.studio_id, studioId)))
+      .returning({ id: clients.id });
+    if (rows.length === 0) result = "error=guardar";
+  } catch (error) {
+    const code = pgCode(error);
+    if (code !== "23505") console.error("[admin] updateClientRecord", error);
+    result = `error=${code === "23505" ? "cuit" : "guardar"}`;
+  }
   revalidatePath("/admin/clientes");
-  redirect(`/admin/clientes/${id}?${error ? `error=${error.code === "23505" ? "cuit" : "guardar"}` : "guardado=1"}`);
+  redirect(`/admin/clientes/${clientId}?${result}`);
 }
 
 // ───────────── novedades ─────────────
 
 export async function savePost(fd: FormData) {
-  const { supabase, profile } = await requireStaff();
-  const id = s(fd, "id");
+  const { studioId } = await requireStaff();
+  const postId = id(fd);
   const title = s(fd, "title");
-  if (!title) redirect(id ? `/admin/contenidos/novedades/${id}?error=titulo` : "/admin/contenidos/novedades/nueva?error=titulo");
+  if (!title) redirect(postId ? `/admin/contenidos/novedades/${postId}?error=titulo` : "/admin/contenidos/novedades/nueva?error=titulo");
   const published = fd.get("published") !== null;
   const payload = {
     title,
@@ -226,31 +316,46 @@ export async function savePost(fd: FormData) {
     body: s(fd, "body") ?? "",
     published,
   };
+  const db = getDb();
 
-  if (id) {
-    const { data: current } = await supabase.from("posts").select("published_at").eq("id", id).single();
-    const { error } = await supabase
-      .from("posts")
-      .update({ ...payload, published_at: published ? current?.published_at ?? new Date().toISOString() : current?.published_at ?? null })
-      .eq("id", id);
+  if (postId) {
+    const [current] = await db
+      .select({ published_at: posts.published_at })
+      .from(posts)
+      .where(and(eq(posts.id, postId), eq(posts.studio_id, studioId)));
+    if (!current) redirect("/admin/contenidos/novedades");
+    let failed = false;
+    try {
+      await db
+        .update(posts)
+        .set({ ...payload, published_at: published ? (current.published_at ?? new Date()) : current.published_at })
+        .where(and(eq(posts.id, postId), eq(posts.studio_id, studioId)));
+    } catch {
+      failed = true; // slug repetido dentro del estudio
+    }
     revalidateSite();
-    redirect(`/admin/contenidos/novedades/${id}?${error ? "error=slug" : "guardado=1"}`);
+    redirect(`/admin/contenidos/novedades/${postId}?${failed ? "error=slug" : "guardado=1"}`);
   }
 
-  const { data, error } = await supabase
-    .from("posts")
-    .insert({ studio_id: profile.studio_id, ...payload, published_at: published ? new Date().toISOString() : null })
-    .select("id")
-    .single();
-  if (error || !data) redirect("/admin/contenidos/novedades/nueva?error=slug");
+  let newId: string | null = null;
+  try {
+    const [row] = await db
+      .insert(posts)
+      .values({ studio_id: studioId, ...payload, published_at: published ? new Date() : null })
+      .returning({ id: posts.id });
+    newId = row?.id ?? null;
+  } catch {
+    // slug repetido dentro del estudio
+  }
+  if (!newId) redirect("/admin/contenidos/novedades/nueva?error=slug");
   revalidateSite();
-  redirect(`/admin/contenidos/novedades/${data.id}?guardado=1`);
+  redirect(`/admin/contenidos/novedades/${newId}?guardado=1`);
 }
 
 export async function deletePost(fd: FormData) {
-  const { supabase } = await requireStaff();
-  const id = s(fd, "id");
-  if (id) await supabase.from("posts").delete().eq("id", id);
+  const { studioId } = await requireStaff();
+  const postId = id(fd);
+  if (postId) await getDb().delete(posts).where(and(eq(posts.id, postId), eq(posts.studio_id, studioId)));
   revalidateSite();
   redirect("/admin/contenidos/novedades");
 }
@@ -258,8 +363,8 @@ export async function deletePost(fd: FormData) {
 // ───────────── preguntas frecuentes ─────────────
 
 export async function saveFaq(fd: FormData) {
-  const { supabase, profile } = await requireStaff();
-  const id = s(fd, "id");
+  const { studioId } = await requireStaff();
+  const faqId = id(fd);
   const question = s(fd, "question");
   const answer = s(fd, "answer");
   if (!question || !answer) redirect("/admin/contenidos/preguntas?error=campos");
@@ -269,16 +374,17 @@ export async function saveFaq(fd: FormData) {
     position: Number(s(fd, "position") ?? 0) || 0,
     published: fd.get("published") !== null,
   };
-  if (id) await supabase.from("faqs").update(payload).eq("id", id);
-  else await supabase.from("faqs").insert({ studio_id: profile.studio_id, ...payload });
+  const db = getDb();
+  if (faqId) await db.update(faqs).set(payload).where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
+  else await db.insert(faqs).values({ studio_id: studioId, ...payload });
   revalidateSite();
   redirect("/admin/contenidos/preguntas?guardado=1");
 }
 
 export async function deleteFaq(fd: FormData) {
-  const { supabase } = await requireStaff();
-  const id = s(fd, "id");
-  if (id) await supabase.from("faqs").delete().eq("id", id);
+  const { studioId } = await requireStaff();
+  const faqId = id(fd);
+  if (faqId) await getDb().delete(faqs).where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
   revalidateSite();
   redirect("/admin/contenidos/preguntas");
 }
@@ -286,8 +392,8 @@ export async function deleteFaq(fd: FormData) {
 // ───────────── planes ─────────────
 
 export async function savePlan(fd: FormData) {
-  const { supabase, profile } = await requireStaff();
-  const id = s(fd, "id");
+  const { studioId } = await requireStaff();
+  const planId = id(fd);
   const name = s(fd, "name");
   if (!name) redirect("/admin/contenidos/planes?error=nombre");
   const payload = {
@@ -300,16 +406,80 @@ export async function savePlan(fd: FormData) {
     position: Number(s(fd, "position") ?? 0) || 0,
     published: fd.get("published") !== null,
   };
-  if (id) await supabase.from("plans").update(payload).eq("id", id);
-  else await supabase.from("plans").insert({ studio_id: profile.studio_id, ...payload });
+  const db = getDb();
+  if (planId) await db.update(plans).set(payload).where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
+  else await db.insert(plans).values({ studio_id: studioId, ...payload });
   revalidateSite();
   redirect("/admin/contenidos/planes?guardado=1");
 }
 
 export async function deletePlan(fd: FormData) {
-  const { supabase } = await requireStaff();
-  const id = s(fd, "id");
-  if (id) await supabase.from("plans").delete().eq("id", id);
+  const { studioId } = await requireStaff();
+  const planId = id(fd);
+  if (planId) await getDb().delete(plans).where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
   revalidateSite();
   redirect("/admin/contenidos/planes");
+}
+
+// ───────────── usuarios (solo admin) ─────────────
+
+export async function createStaffUser(fd: FormData) {
+  const admin = await requireAdmin();
+  const name = s(fd, "name");
+  const email = s(fd, "email")?.toLowerCase() ?? null;
+  const password = s(fd, "password");
+  const role = s(fd, "role") as UserRole | null;
+  if (!name || !email || !password) redirect("/admin/usuarios?error=campos");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) redirect("/admin/usuarios?error=email");
+  if (password.length < 8) redirect("/admin/usuarios?error=password");
+
+  let result = "creado=1";
+  try {
+    await createUserWithPassword(getDb(), {
+      studioId: admin.studioId,
+      name,
+      email,
+      password,
+      role: role && STAFF_ROLES.includes(role) ? role : "contador",
+    });
+  } catch (error) {
+    const code = pgCode(error);
+    if (code !== "23505") console.error("[admin] createStaffUser", error);
+    result = `error=${code === "23505" ? "repetido" : "guardar"}`;
+  }
+  revalidatePath("/admin/usuarios");
+  redirect(`/admin/usuarios?${result}`);
+}
+
+export async function updateUserRole(fd: FormData) {
+  const admin = await requireAdmin();
+  const userId = id(fd);
+  const role = s(fd, "role") as UserRole | null;
+  if (!userId || !role || !STAFF_ROLES.includes(role)) redirect("/admin/usuarios?error=guardar");
+  // Un admin no puede quitarse el rol a sí mismo (el estudio podría quedar sin admin)
+  if (userId === admin.id) redirect("/admin/usuarios?error=propio");
+  await getDb()
+    .update(users)
+    .set({ role })
+    .where(and(eq(users.id, userId), eq(users.studioId, admin.studioId)));
+  revalidatePath("/admin/usuarios");
+  redirect("/admin/usuarios?guardado=1");
+}
+
+export async function setUserActive(fd: FormData) {
+  const admin = await requireAdmin();
+  const userId = id(fd);
+  const active = s(fd, "active") === "1";
+  if (!userId) redirect("/admin/usuarios?error=guardar");
+  if (userId === admin.id) redirect("/admin/usuarios?error=propio");
+  const db = getDb();
+  const rows = await db
+    .update(users)
+    .set({ active })
+    .where(and(eq(users.id, userId), eq(users.studioId, admin.studioId)))
+    .returning({ id: users.id });
+  // Al desactivar se cierran todas sus sesiones abiertas
+  if (!active && rows.length > 0) await db.delete(sessions).where(eq(sessions.userId, userId));
+  revalidatePath("/admin/usuarios");
+  redirect(`/admin/usuarios?${active ? "activado=1" : "desactivado=1"}`);
 }

@@ -3,7 +3,7 @@ import type { Post } from "@/lib/types";
 import { AdminField } from "./AdminField";
 import { SubmitButton, adminInput } from "./ui";
 
-export function PostForm({ post }: { post?: Post }) {
+export function PostForm({ post }: { post?: Pick<Post, "id" | "title" | "slug" | "excerpt" | "body" | "published"> }) {
   return (
     <>
       <form action={savePost} className="grid gap-4 rounded-md border border-line bg-surface p-6">

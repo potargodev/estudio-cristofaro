@@ -1,8 +1,11 @@
+import { asc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { deleteFaq, saveFaq } from "@/app/admin/actions";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { getDb } from "@/db";
+import { faqs as faqsTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import type { Faq } from "@/lib/types";
 
@@ -34,9 +37,12 @@ function FaqFields({ faq }: { faq?: Faq }) {
 
 export default async function PreguntasAdminPage({ searchParams }: { searchParams: Promise<{ guardado?: string; error?: string }> }) {
   const { guardado, error } = await searchParams;
-  const { supabase } = await requireStaff();
-  const { data } = await supabase.from("faqs").select("*").order("position");
-  const faqs = (data ?? []) as Faq[];
+  const { studioId } = await requireStaff();
+  const faqs: Faq[] = await getDb()
+    .select()
+    .from(faqsTable)
+    .where(eq(faqsTable.studio_id, studioId))
+    .orderBy(asc(faqsTable.position));
 
   return (
     <div className="max-w-3xl">

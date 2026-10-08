@@ -7,7 +7,7 @@ import { signIn, type ActionState } from "../actions";
 
 const initial: ActionState = { ok: false };
 
-export default function LoginPage() {
+export function LoginForm() {
   const [state, action, pending] = useActionState(signIn, initial);
   return (
     <div className="grid min-h-dvh place-items-center bg-navy-deep px-4">

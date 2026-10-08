@@ -1,12 +1,16 @@
+import { and, asc, eq, inArray } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { convertLeadToClient, deleteLead, updateLead } from "@/app/admin/actions";
 import { AdminField, Notice } from "@/components/admin/AdminField";
 import { SubmitButton, adminInput } from "@/components/admin/ui";
+import { getDb } from "@/db";
+import { leads, users } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
+import { isUuid } from "@/lib/ids";
 import { site } from "@/lib/site";
-import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES, type Lead, type Profile } from "@/lib/types";
+import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Consulta" };
 
@@ -26,15 +30,22 @@ export default async function ConsultaPage({
 }) {
   const { id } = await params;
   const { guardado, error } = await searchParams;
-  const { supabase } = await requireStaff();
+  const { studioId } = await requireStaff();
+  if (!isUuid(id)) notFound();
+  const db = getDb();
 
-  const [{ data }, { data: team }] = await Promise.all([
-    supabase.from("leads").select("*").eq("id", id).maybeSingle(),
-    supabase.from("profiles").select("id, full_name, role").in("role", ["admin", "contador"]),
+  const [[lead], staff] = await Promise.all([
+    db
+      .select()
+      .from(leads)
+      .where(and(eq(leads.id, id), eq(leads.studio_id, studioId))),
+    db
+      .select({ id: users.id, name: users.name, active: users.active })
+      .from(users)
+      .where(and(eq(users.studioId, studioId), inArray(users.role, ["admin", "contador"])))
+      .orderBy(asc(users.name)),
   ]);
-  if (!data) notFound();
-  const lead = data as Lead;
-  const staff = (team ?? []) as Pick<Profile, "id" | "full_name" | "role">[];
+  if (!lead) notFound();
 
   const created = new Intl.DateTimeFormat("es-AR", { dateStyle: "long", timeStyle: "short" }).format(new Date(lead.created_at));
 
@@ -152,7 +163,8 @@ export default async function ConsultaPage({
               <option value="">Sin asignar</option>
               {staff.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.full_name ?? "Sin nombre"}
+                  {p.name || "Sin nombre"}
+                  {p.active ? "" : " (desactivado)"}
                 </option>
               ))}
             </select>

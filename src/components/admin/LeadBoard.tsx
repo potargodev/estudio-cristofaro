@@ -10,7 +10,7 @@ type BoardLead = Pick<
   "id" | "name" | "company" | "contributor_type" | "source" | "status" | "created_at" | "next_action" | "next_action_at"
 >;
 
-function ago(iso: string) {
+function ago(iso: string | Date) {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
   if (days <= 0) return "hoy";
   if (days === 1) return "ayer";

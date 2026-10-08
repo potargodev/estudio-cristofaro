@@ -2,7 +2,7 @@ import type { Faq, Plan, Post } from "./types";
 
 // Contenido estático de la web. Planes, preguntas frecuentes y novedades
 // se administran desde el backoffice; estos valores son el respaldo
-// mientras Supabase no está configurado.
+// cuando la base no está configurada o no responde.
 
 export interface Segment {
   slug: string;

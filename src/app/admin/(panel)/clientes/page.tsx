@@ -1,8 +1,12 @@
+import { and, asc, eq, ilike, or } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { adminInput } from "@/components/admin/ui";
+import { getDb } from "@/db";
+import { clients as clientsTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
+import { likeTerm } from "@/lib/search";
 import { REGIMES, type Client, type TaxRegime } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Clientes" };
@@ -20,18 +24,34 @@ export default async function ClientesPage({
   searchParams: Promise<{ q?: string; regimen?: string; estado?: string }>;
 }) {
   const { q, regimen, estado = "activos" } = await searchParams;
-  const { supabase } = await requireStaff();
+  const { studioId } = await requireStaff();
 
-  let query = supabase.from("clients").select("*").order("business_name");
-  if (q) {
-    const term = q.replace(/[%,()]/g, " ").trim();
-    query = query.or(`business_name.ilike.%${term}%,cuit.ilike.%${term.replace(/[^0-9]/g, "") || term}%,contact_name.ilike.%${term}%`);
+  const term = q?.trim() ? likeTerm(q) : null;
+  const cuitDigits = q?.replace(/[^0-9]/g, "");
+  let clients: Client[] = [];
+  let error: string | null = null;
+  try {
+    clients = await getDb()
+      .select()
+      .from(clientsTable)
+      .where(
+        and(
+          eq(clientsTable.studio_id, studioId),
+          term
+            ? or(
+                ilike(clientsTable.business_name, term),
+                ilike(clientsTable.cuit, cuitDigits ? likeTerm(cuitDigits) : term),
+                ilike(clientsTable.contact_name, term),
+              )
+            : undefined,
+          regimen && regimen in REGIMES ? eq(clientsTable.regime, regimen as TaxRegime) : undefined,
+          estado === "activos" ? eq(clientsTable.active, true) : estado === "inactivos" ? eq(clientsTable.active, false) : undefined,
+        ),
+      )
+      .orderBy(asc(clientsTable.business_name));
+  } catch (e) {
+    error = (e as Error).message;
   }
-  if (regimen && regimen in REGIMES) query = query.eq("regime", regimen);
-  if (estado === "activos") query = query.eq("active", true);
-  if (estado === "inactivos") query = query.eq("active", false);
-  const { data, error } = await query;
-  const clients = (data ?? []) as Client[];
 
   return (
     <>
@@ -76,7 +96,7 @@ export default async function ClientesPage({
         </button>
       </form>
 
-      {error && <p className="text-danger">No se pudieron cargar los clientes: {error.message}</p>}
+      {error && <p className="text-danger">No se pudieron cargar los clientes: {error}</p>}
 
       <div className="overflow-x-auto rounded-md border border-line bg-surface">
         <table className="w-full min-w-[720px] text-left text-[15px]">
