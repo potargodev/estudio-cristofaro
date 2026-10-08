@@ -16,7 +16,7 @@ export default async function HomePage() {
         <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 pb-16 pt-14 sm:px-6 md:grid-cols-[1.15fr_1fr] md:pb-24 md:pt-20">
           <div>
             <p className="text-[15px] text-muted">Estudio contable en CABA y Gran Buenos Aires</p>
-            <h1 className="mt-4 text-[2.6rem] font-semibold leading-[1.04] tracking-[-0.025em] sm:text-6xl">
+            <h1 className="mt-4 text-[2.6rem] leading-[1.04] sm:text-6xl font-display">
               Tu contador, siempre al día. Sin papeles, sin sorpresas.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
@@ -24,7 +24,7 @@ export default async function HomePage() {
               avisamos antes de cada vencimiento y te respondemos en menos de 24 horas hábiles.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/diagnostico" className="rounded-md bg-green px-5 py-3 font-medium text-paper hover:bg-green-deep">
+              <Link href="/diagnostico" className="rounded-md bg-navy px-5 py-3 font-medium text-paper hover:bg-navy-deep">
                 Pedir diagnóstico gratis
               </Link>
               <Link href="/planes" className="rounded-md border border-ink/20 px-5 py-3 font-medium hover:bg-surface">
@@ -40,7 +40,7 @@ export default async function HomePage() {
       <section className="border-b border-line">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.6fr]">
           <div>
-            <h2 className="text-3xl font-semibold tracking-tight">¿Qué tipo de contribuyente sos?</h2>
+            <h2 className="text-3xl font-display">¿Qué tipo de contribuyente sos?</h2>
             <p className="mt-3 max-w-sm text-muted">Elegí tu caso y te mostramos qué hacemos por vos.</p>
           </div>
           <ul className="border-t border-ink/80">
@@ -54,7 +54,7 @@ export default async function HomePage() {
                     <span className="block text-xl font-medium">{s.question}</span>
                     <span className="mt-1 block text-[15px] text-muted">{s.title}</span>
                   </span>
-                  <svg aria-hidden viewBox="0 0 24 24" className="size-6 shrink-0 text-green transition-transform group-hover:translate-x-1">
+                  <svg aria-hidden viewBox="0 0 24 24" className="size-6 shrink-0 text-rose-deep transition-transform group-hover:translate-x-1">
                     <path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </Link>
@@ -67,10 +67,10 @@ export default async function HomePage() {
       {/* Diferenciales */}
       <section className="border-b border-line bg-surface">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="max-w-2xl text-3xl font-semibold tracking-tight">Lo que cambia cuando trabajás con nosotros</h2>
+          <h2 className="max-w-2xl text-3xl font-display">Lo que cambia cuando trabajás con nosotros</h2>
           <dl className="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2">
             {differentials.map((d) => (
-              <div key={d.title} className="border-l-2 border-green pl-5">
+              <div key={d.title} className="border-l-2 border-rose pl-5">
                 <dt className="text-lg font-semibold">{d.title}</dt>
                 <dd className="mt-1.5 leading-relaxed text-muted">{d.text}</dd>
               </div>
@@ -82,11 +82,11 @@ export default async function HomePage() {
       {/* Cómo trabajamos — es una secuencia real, por eso va numerada */}
       <section className="border-b border-line">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="text-3xl font-semibold tracking-tight">Cómo empezamos</h2>
+          <h2 className="text-3xl font-display">Cómo empezamos</h2>
           <ol className="mt-10 grid gap-8 md:grid-cols-4">
             {steps.map((s, i) => (
               <li key={s.title}>
-                <span className="grid size-9 place-items-center rounded-full border border-green text-sm font-semibold text-green">
+                <span className="grid size-9 place-items-center rounded-full border border-rose font-display text-lg text-rose-deep">
                   {i + 1}
                 </span>
                 <h3 className="mt-4 text-lg font-semibold">{s.title}</h3>
@@ -101,8 +101,8 @@ export default async function HomePage() {
       <section className="border-b border-line">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="text-3xl font-semibold tracking-tight">Servicios</h2>
-            <Link href="/servicios" className="font-medium text-green underline-offset-4 hover:underline">
+            <h2 className="text-3xl font-display">Servicios</h2>
+            <Link href="/servicios" className="font-medium text-rose-deep underline-offset-4 hover:underline">
               Ver todos los servicios
             </Link>
           </div>
@@ -121,7 +121,7 @@ export default async function HomePage() {
       {testimonials.length > 0 && (
         <section className="border-b border-line bg-surface">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-            <h2 className="text-3xl font-semibold tracking-tight">Lo que dicen nuestros clientes</h2>
+            <h2 className="text-3xl font-display">Lo que dicen nuestros clientes</h2>
             <div className="mt-10 grid gap-10 md:grid-cols-3">
               {testimonials.map((t) => (
                 <figure key={t.quote}>
@@ -141,8 +141,8 @@ export default async function HomePage() {
         <section className="border-b border-line">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 className="text-3xl font-semibold tracking-tight">Novedades</h2>
-              <Link href="/novedades" className="font-medium text-green underline-offset-4 hover:underline">
+              <h2 className="text-3xl font-display">Novedades</h2>
+              <Link href="/novedades" className="font-medium text-rose-deep underline-offset-4 hover:underline">
                 Ver todas
               </Link>
             </div>
@@ -151,7 +151,7 @@ export default async function HomePage() {
                 <article key={p.id} className="border-t border-ink/80 pt-5">
                   <p className="text-sm text-muted">{formatDate(p.published_at)}</p>
                   <h3 className="mt-2 text-xl font-semibold leading-snug">
-                    <Link href={`/novedades/${p.slug}`} className="hover:text-green">
+                    <Link href={`/novedades/${p.slug}`} className="hover:text-rose-deep">
                       {p.title}
                     </Link>
                   </h3>

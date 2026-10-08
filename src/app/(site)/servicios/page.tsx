@@ -22,9 +22,9 @@ export default function ServiciosPage() {
           {services.map((s) => (
             <article key={s.slug} id={s.slug} className="grid gap-6 py-12 md:grid-cols-[1fr_1.6fr]">
               <div>
-                <h2 className="text-2xl font-semibold tracking-tight">{s.name}</h2>
+                <h2 className="text-2xl font-display">{s.name}</h2>
                 <p className="mt-2 text-muted">{s.summary}</p>
-                <Link href={`/servicios/${s.slug}`} className="mt-4 inline-block font-medium text-green underline-offset-4 hover:underline">
+                <Link href={`/servicios/${s.slug}`} className="mt-4 inline-block font-medium text-rose-deep underline-offset-4 hover:underline">
                   Ver detalle
                 </Link>
               </div>

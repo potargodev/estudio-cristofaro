@@ -5,7 +5,7 @@ import { Logo } from "./Logo";
 
 export function Footer() {
   return (
-    <footer className="bg-green-deep text-paper">
+    <footer className="bg-navy text-paper">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Logo inverted />
@@ -15,7 +15,7 @@ export function Footer() {
           <p className="mt-4 text-sm text-paper/75">{site.hours}</p>
         </div>
         <div>
-          <h2 className="text-sm font-semibold">Para quién</h2>
+          <h2 className="text-xs font-medium uppercase tracking-[0.14em] text-rose-light">Para quién</h2>
           <ul className="mt-3 space-y-2 text-sm text-paper/75">
             {segments.map((s) => (
               <li key={s.slug}>
@@ -27,7 +27,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h2 className="text-sm font-semibold">Servicios</h2>
+          <h2 className="text-xs font-medium uppercase tracking-[0.14em] text-rose-light">Servicios</h2>
           <ul className="mt-3 space-y-2 text-sm text-paper/75">
             {services.map((s) => (
               <li key={s.slug}>
@@ -39,7 +39,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h2 className="text-sm font-semibold">Contacto</h2>
+          <h2 className="text-xs font-medium uppercase tracking-[0.14em] text-rose-light">Contacto</h2>
           <ul className="mt-3 space-y-2 text-sm text-paper/75">
             <li>
               <a href={whatsappLink()} className="hover:text-paper">

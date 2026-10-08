@@ -52,7 +52,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                 if (id) move(id, col.value);
               }}
               className={`flex min-h-[60vh] flex-col rounded-md border p-2 ${
-                over === col.value ? "border-green bg-green-soft" : "border-line bg-paper"
+                over === col.value ? "border-navy bg-navy-soft" : "border-line bg-paper"
               }`}
             >
               <h2 className="flex items-center justify-between px-2 py-1.5 text-sm font-semibold">
@@ -69,7 +69,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", l.id)}
                       className="cursor-grab rounded-md border border-line bg-surface p-3 shadow-sm active:cursor-grabbing"
                     >
-                      <Link href={`/admin/consultas/${l.id}`} className="block font-medium leading-snug hover:text-green">
+                      <Link href={`/admin/consultas/${l.id}`} className="block font-medium leading-snug hover:text-rose-deep">
                         {l.name}
                       </Link>
                       {(l.company || l.contributor_type) && (

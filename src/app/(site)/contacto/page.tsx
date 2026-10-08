@@ -19,7 +19,7 @@ export default function ContactoPage() {
             <div>
               <dt className="text-sm text-muted">WhatsApp</dt>
               <dd className="mt-1 text-lg font-medium">
-                <a href={whatsappLink()} target="_blank" rel="noopener" className="text-green underline-offset-4 hover:underline">
+                <a href={whatsappLink()} target="_blank" rel="noopener" className="text-rose-deep underline-offset-4 hover:underline">
                   {site.phone}
                 </a>
               </dd>
@@ -27,7 +27,7 @@ export default function ContactoPage() {
             <div>
               <dt className="text-sm text-muted">Email</dt>
               <dd className="mt-1 text-lg font-medium">
-                <a href={`mailto:${site.email}`} className="text-green underline-offset-4 hover:underline">
+                <a href={`mailto:${site.email}`} className="text-rose-deep underline-offset-4 hover:underline">
                   {site.email}
                 </a>
               </dd>

@@ -26,8 +26,8 @@ export default async function NovedadesPage() {
               {posts.map((p) => (
                 <li key={p.id} className="py-8">
                   <p className="text-sm text-muted">{formatDate(p.published_at)}</p>
-                  <h2 className="mt-2 text-2xl font-semibold leading-snug tracking-tight">
-                    <Link href={`/novedades/${p.slug}`} className="hover:text-green">
+                  <h2 className="mt-2 text-2xl leading-snug font-display">
+                    <Link href={`/novedades/${p.slug}`} className="hover:text-rose-deep">
                       {p.title}
                     </Link>
                   </h2>

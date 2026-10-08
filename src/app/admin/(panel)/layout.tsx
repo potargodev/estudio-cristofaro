@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { SubmitButton } from "@/components/admin/ui";
+import { Monogram } from "@/components/site/Logo";
 import { requireStaff } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { signOut } from "../actions";
@@ -31,13 +32,13 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-dvh bg-paper md:grid md:grid-cols-[220px_1fr]">
-      <aside className="bg-green-deep px-3 py-3 text-paper md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:px-4 md:py-6">
+      <aside className="bg-navy-deep px-3 py-3 text-paper md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:px-4 md:py-6">
         <div className="mb-3 flex items-center justify-between md:mb-8 md:block">
           <Link href="/admin" className="flex items-center gap-2">
-            <span aria-hidden className="grid size-8 place-items-center rounded-[5px] bg-paper font-bold text-green-deep">
-              C
+            <span className="grid size-9 place-items-center rounded-full border border-rose-light/60 text-rose-light">
+              <Monogram className="size-6" />
             </span>
-            <span className="font-semibold">Cristofaro</span>
+            <span className="font-display text-xl">Cristofaro</span>
           </Link>
           <Link href="/" className="text-sm text-paper/70 hover:text-paper md:mt-3 md:block">
             Ver sitio

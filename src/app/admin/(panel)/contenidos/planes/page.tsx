@@ -41,11 +41,11 @@ function PlanFields({ plan }: { plan?: Plan }) {
       </AdminField>
       <div className="flex flex-wrap gap-5 sm:col-span-2">
         <label className="flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="highlighted" defaultChecked={plan?.highlighted ?? false} className="size-4 accent-[var(--color-green)]" />
+          <input type="checkbox" name="highlighted" defaultChecked={plan?.highlighted ?? false} className="size-4 accent-[var(--color-navy)]" />
           Destacado
         </label>
         <label className="flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="published" defaultChecked={plan?.published ?? true} className="size-4 accent-[var(--color-green)]" />
+          <input type="checkbox" name="published" defaultChecked={plan?.published ?? true} className="size-4 accent-[var(--color-navy)]" />
           Publicado
         </label>
       </div>
@@ -61,7 +61,7 @@ export default async function PlanesAdminPage({ searchParams }: { searchParams: 
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/contenidos" className="text-sm text-green underline-offset-4 hover:underline">
+      <Link href="/admin/contenidos" className="text-sm text-rose-deep underline-offset-4 hover:underline">
         Contenidos
       </Link>
       <div className="mt-2">
@@ -86,7 +86,7 @@ export default async function PlanesAdminPage({ searchParams }: { searchParams: 
                 <span className="font-semibold">{p.name}</span>
                 <span className="ml-2 text-sm text-muted">{p.price_label || "Precio a medida"}</span>
               </span>
-              <span className="text-sm text-green group-open:hidden">Editar</span>
+              <span className="text-sm text-rose-deep group-open:hidden">Editar</span>
             </summary>
             <div className="border-t border-line p-5">
               <form action={savePlan} className="grid gap-4">

@@ -31,7 +31,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-[15px] transition-colors ${active ? "text-green font-medium" : "text-ink/80 hover:text-ink"}`}
+                className={`text-[15px] transition-colors ${active ? "text-rose-deep font-medium" : "text-ink/80 hover:text-ink"}`}
               >
                 {item.label}
               </Link>
@@ -39,7 +39,7 @@ export function Header() {
           })}
           <Link
             href="/diagnostico"
-            className="rounded-md bg-green px-4 py-2 text-[15px] font-medium text-paper hover:bg-green-deep"
+            className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep"
           >
             Pedir diagnóstico gratis
           </Link>
@@ -67,7 +67,7 @@ export function Header() {
           </ul>
           <Link
             href="/diagnostico"
-            className="mt-4 block rounded-md bg-green px-4 py-3 text-center font-medium text-paper"
+            className="mt-4 block rounded-md bg-navy px-4 py-3 text-center font-medium text-paper"
           >
             Pedir diagnóstico gratis
           </Link>

@@ -50,3 +50,18 @@ Importar el repo, cargar las mismas variables de entorno (con `NEXT_PUBLIC_SITE_
 - Montos de los planes: desde el backoffice → Contenidos → Planes.
 - Horario y dirección de la oficina (`src/lib/site.ts`).
 - Revisar y ajustar los textos de servicios y segmentos con el estudio.
+
+## Identidad de marca
+
+Colores, tipografías y logos salen del manual de marca (octubre 2026).
+
+- **Colores** (`src/app/globals.css`): azul noche `navy` (#1c2235) como principal, rosé `rose` (#a57c6d) como acento, escala de pizarras y fondo `paper` cálido. Las variantes `rose-deep` y `rose-light` existen para que el texto rosé cumpla contraste sobre fondo claro y oscuro.
+- **Logos** (`public/marca/`): `logo-horizontal.svg`, `sello.svg`, `nombre.svg` y `monograma.svg`, extraídos en vector del manual. Los componentes `Logo` y `Monogram` los usan como máscara, así toman el color del texto.
+- **Tipografías**: Archivo para textos. Para títulos la marca usa **Belgan Aesthetic**, que no está en Google Fonts y requiere licencia comercial; mientras tanto se muestra **Forum**, la más parecida. Para activar Belgan: copiar el archivo con licencia web a `public/fonts/belgan-aesthetic.woff2` y agregar en `globals.css`:
+  ```css
+  @font-face {
+    font-family: "Belgan Aesthetic";
+    src: url("/fonts/belgan-aesthetic.woff2") format("woff2");
+    font-display: swap;
+  }
+  ```

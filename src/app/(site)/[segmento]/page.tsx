@@ -35,7 +35,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href={`/diagnostico?tipo=${segment.contributorType}`}
-            className="rounded-md bg-green px-5 py-3 font-medium text-paper hover:bg-green-deep"
+            className="rounded-md bg-navy px-5 py-3 font-medium text-paper hover:bg-navy-deep"
           >
             Pedir diagnóstico gratis
           </Link>
@@ -45,7 +45,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
       <section className="border-b border-line">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-2">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Si te pasa esto</h2>
+            <h2 className="text-2xl font-display">Si te pasa esto</h2>
             <ul className="mt-6 space-y-4">
               {segment.pains.map((p) => (
                 <li key={p} className="border-l-2 border-line pl-4 leading-relaxed text-muted">
@@ -55,11 +55,11 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
             </ul>
           </div>
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Esto es lo que hacemos</h2>
+            <h2 className="text-2xl font-display">Esto es lo que hacemos</h2>
             <ul className="mt-6 space-y-3">
               {segment.includes.map((item) => (
                 <li key={item} className="flex gap-3 leading-relaxed">
-                  <svg aria-hidden viewBox="0 0 16 16" className="mt-1.5 size-4 shrink-0 text-green">
+                  <svg aria-hidden viewBox="0 0 16 16" className="mt-1.5 size-4 shrink-0 text-rose-deep">
                     <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   {item}
@@ -73,7 +73,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
       {plans.length > 0 && (
         <section className="border-b border-line bg-surface/60">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-            <h2 className="text-2xl font-semibold tracking-tight">{plans.length > 1 ? "Planes" : "Plan"} para tu caso</h2>
+            <h2 className="text-2xl font-display">{plans.length > 1 ? "Planes" : "Plan"} para tu caso</h2>
             <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {plans.map((p) => (
                 <PlanCard key={p.id} plan={p} />
@@ -89,7 +89,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
           <ul className="mt-4 flex flex-wrap gap-3">
             {related.map((s) => (
               <li key={s.slug}>
-                <Link href={`/servicios/${s.slug}`} className="inline-block rounded-md border border-line bg-surface px-4 py-2 hover:border-green">
+                <Link href={`/servicios/${s.slug}`} className="inline-block rounded-md border border-line bg-surface px-4 py-2 hover:border-navy">
                   {s.name}
                 </Link>
               </li>

@@ -1,24 +1,37 @@
 import Link from "next/link";
 
+// Logo horizontal del manual de marca (sello + "Estudio Cristofaro & Asociados").
+// Se dibuja como máscara para que tome el color del texto: azul noche sobre
+// fondo claro y rosé sobre fondo oscuro, igual que en el manual.
 export function Logo({ inverted = false }: { inverted?: boolean }) {
   return (
-    <Link href="/" className="group inline-flex items-center gap-2.5" aria-label="Estudio Cristofaro & Asociados, inicio">
+    <Link
+      href="/"
+      className={`inline-flex shrink-0 ${inverted ? "text-rose-light" : "text-navy"}`}
+      aria-label="Estudio Cristofaro & Asociados, inicio"
+    >
       <span
         aria-hidden
-        className={`grid size-9 place-items-center rounded-[5px] text-lg font-bold ${
-          inverted ? "bg-paper text-green-deep" : "bg-green text-paper"
-        }`}
-      >
-        C
-      </span>
-      <span className="leading-none">
-        <span className={`block text-[17px] font-semibold tracking-tight ${inverted ? "text-paper" : "text-ink"}`}>
-          Cristofaro
-        </span>
-        <span className={`mt-0.5 block text-[12px] ${inverted ? "text-paper/70" : "text-muted"}`}>
-          Estudio contable &amp; asociados
-        </span>
-      </span>
+        className="block h-10 aspect-[325.56/72.03] bg-current sm:h-11"
+        style={{
+          mask: "url(/marca/logo-horizontal.svg) center / contain no-repeat",
+          WebkitMask: "url(/marca/logo-horizontal.svg) center / contain no-repeat",
+        }}
+      />
     </Link>
+  );
+}
+
+// Monograma "EC" del sello, para espacios chicos (backoffice, íconos).
+export function Monogram({ className = "size-8" }: { className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`block bg-current ${className}`}
+      style={{
+        mask: "url(/marca/monograma.svg) center / contain no-repeat",
+        WebkitMask: "url(/marca/monograma.svg) center / contain no-repeat",
+      }}
+    />
   );
 }

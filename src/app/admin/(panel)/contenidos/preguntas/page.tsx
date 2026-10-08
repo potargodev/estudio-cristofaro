@@ -24,7 +24,7 @@ function FaqFields({ faq }: { faq?: Faq }) {
           <input id={`p-${k}`} name="position" type="number" defaultValue={faq?.position ?? 0} className={`${adminInput} w-24`} />
         </AdminField>
         <label className="mb-2 flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="published" defaultChecked={faq?.published ?? true} className="size-4 accent-[var(--color-green)]" />
+          <input type="checkbox" name="published" defaultChecked={faq?.published ?? true} className="size-4 accent-[var(--color-navy)]" />
           Publicada
         </label>
       </div>
@@ -40,7 +40,7 @@ export default async function PreguntasAdminPage({ searchParams }: { searchParam
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/contenidos" className="text-sm text-green underline-offset-4 hover:underline">
+      <Link href="/admin/contenidos" className="text-sm text-rose-deep underline-offset-4 hover:underline">
         Contenidos
       </Link>
       <div className="mt-2">

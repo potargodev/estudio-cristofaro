@@ -1,5 +1,5 @@
 export const inputClass =
-  "mt-1.5 block w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-[16px] placeholder:text-muted/70 focus:border-green focus:outline-none focus:ring-2 focus:ring-green/25";
+  "mt-1.5 block w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-[16px] placeholder:text-muted/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/25";
 
 export function Field({
   label,
@@ -43,8 +43,8 @@ export function Honeypot() {
 
 export function SentMessage({ title, text }: { title: string; text: string }) {
   return (
-    <div role="status" className="rounded-md border border-green bg-green-soft p-6">
-      <p className="text-lg font-semibold text-green-deep">{title}</p>
+    <div role="status" className="rounded-md border border-navy bg-navy-soft p-6">
+      <p className="text-lg font-semibold text-navy-deep">{title}</p>
       <p className="mt-2 leading-relaxed text-ink/80">{text}</p>
     </div>
   );

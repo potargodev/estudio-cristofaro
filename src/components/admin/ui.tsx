@@ -3,7 +3,7 @@
 import { useFormStatus } from "react-dom";
 
 export const adminInput =
-  "mt-1 block w-full rounded-md border border-line bg-surface px-3 py-2 text-[15px] focus:border-green focus:outline-none focus:ring-2 focus:ring-green/25";
+  "mt-1 block w-full rounded-md border border-line bg-surface px-3 py-2 text-[15px] focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/25";
 
 export function SubmitButton({
   children,
@@ -18,8 +18,8 @@ export function SubmitButton({
 }) {
   const { pending } = useFormStatus();
   const styles = {
-    primary: "bg-green text-paper hover:bg-green-deep",
-    secondary: "border border-line bg-surface hover:border-green",
+    primary: "bg-navy text-paper hover:bg-navy-deep",
+    secondary: "border border-line bg-surface hover:border-navy",
     danger: "border border-danger/40 text-danger hover:bg-danger/5",
   }[variant];
   return (

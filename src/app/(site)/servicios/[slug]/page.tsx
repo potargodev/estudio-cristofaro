@@ -34,11 +34,11 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
       <section className="border-b border-line">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1.6fr_1fr]">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Qué incluye</h2>
+            <h2 className="text-2xl font-display">Qué incluye</h2>
             <ul className="mt-6 divide-y divide-line border-y border-line">
               {service.items.map((item) => (
                 <li key={item} className="flex gap-3 py-4 leading-relaxed">
-                  <svg aria-hidden viewBox="0 0 16 16" className="mt-1.5 size-4 shrink-0 text-green">
+                  <svg aria-hidden viewBox="0 0 16 16" className="mt-1.5 size-4 shrink-0 text-rose-deep">
                     <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   {item}
@@ -51,7 +51,7 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
             <ul className="mt-4 space-y-2">
               {forSegments.map((seg) => (
                 <li key={seg.slug}>
-                  <Link href={`/${seg.slug}`} className="text-green underline-offset-4 hover:underline">
+                  <Link href={`/${seg.slug}`} className="text-rose-deep underline-offset-4 hover:underline">
                     {seg.name}
                   </Link>
                 </li>
@@ -59,7 +59,7 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
             </ul>
             <div className="mt-8 rounded-md border border-line bg-surface p-5">
               <p className="font-medium">¿Tenés una duda puntual sobre este servicio?</p>
-              <Link href="/contacto" className="mt-3 inline-block font-medium text-green underline-offset-4 hover:underline">
+              <Link href="/contacto" className="mt-3 inline-block font-medium text-rose-deep underline-offset-4 hover:underline">
                 Escribinos
               </Link>
             </div>

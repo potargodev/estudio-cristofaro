@@ -34,7 +34,7 @@ export default async function FaqPage() {
               <details key={f.id} className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-medium">
                   {f.question}
-                  <span aria-hidden className="text-2xl leading-none text-green transition-transform group-open:rotate-45">
+                  <span aria-hidden className="text-2xl leading-none text-rose-deep transition-transform group-open:rotate-45">
                     +
                   </span>
                 </summary>

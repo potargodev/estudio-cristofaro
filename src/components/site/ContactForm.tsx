@@ -37,7 +37,7 @@ export function ContactForm() {
           {state.message}
         </p>
       )}
-      <button type="submit" disabled={pending} className="rounded-md bg-green px-6 py-3 font-medium text-paper hover:bg-green-deep disabled:opacity-60">
+      <button type="submit" disabled={pending} className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep disabled:opacity-60">
         {pending ? "Enviando…" : "Enviar consulta"}
       </button>
     </form>

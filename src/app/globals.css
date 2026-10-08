@@ -1,18 +1,31 @@
 @import "tailwindcss";
 
+/* Identidad de marca Estudio Cristofaro (manual de marca, octubre 2026).
+   Azul noche como color principal, rosé como acento y una escala de pizarras. */
 @theme {
-  --color-paper: #f2f4f1;
+  --color-paper: #f7f5f3;
   --color-surface: #ffffff;
-  --color-ink: #13221d;
-  --color-muted: #56665f;
-  --color-line: #cad3cd;
-  --color-green: #1f5c4a;
-  --color-green-deep: #163f33;
-  --color-green-soft: #e1ebe6;
-  --color-marker: #e8d35a;
+  --color-ink: #1b1e26;
+  --color-muted: #5a6176;
+  --color-line: #dddbdf;
+
+  --color-navy: #1c2235;
+  --color-navy-deep: #141826;
+  --color-navy-soft: #eceef3;
+  --color-slate: #464d61;
+  --color-slate-light: #9ba3ba;
+
+  --color-rose: #a57c6d;
+  --color-rose-deep: #7d5848;
+  --color-rose-light: #c9a596;
+  --color-rose-soft: #f1e7e2;
+
   --color-danger: #a33a2a;
 
-  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  /* Títulos: Belgan Aesthetic (fuente de marca). Mientras no esté la licencia
+     web cargada en src/fonts, se usa Forum, la más parecida de Google Fonts. */
+  --font-display: "Belgan Aesthetic", var(--font-forum), ui-serif, Georgia, serif;
 }
 
 html {
@@ -26,13 +39,19 @@ body {
   font-feature-settings: "tnum" 1;
 }
 
+.font-display {
+  font-weight: 400;
+  letter-spacing: 0;
+  font-feature-settings: normal;
+}
+
 :focus-visible {
-  outline: 2px solid var(--color-green);
+  outline: 2px solid var(--color-navy);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: var(--color-marker);
+  background: var(--color-rose-soft);
   color: var(--color-ink);
 }
 

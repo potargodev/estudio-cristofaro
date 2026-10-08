@@ -66,7 +66,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
       <ol className="mb-8 grid grid-cols-4 gap-2" aria-label="Pasos del diagnóstico">
         {STEP_TITLES.map((t, i) => (
           <li key={t} aria-current={i === step ? "step" : undefined}>
-            <span className={`block h-1 rounded-full ${i <= step ? "bg-green" : "bg-line"}`} />
+            <span className={`block h-1 rounded-full ${i <= step ? "bg-navy" : "bg-line"}`} />
             <span className={`mt-2 hidden text-[13px] sm:block ${i === step ? "font-medium text-ink" : "text-muted"}`}>
               {i + 1}. {t}
             </span>
@@ -81,7 +81,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
             <label
               key={value}
               className={`flex cursor-pointer items-center gap-3 rounded-md border px-4 py-3.5 ${
-                type === value ? "border-green bg-green-soft" : "border-line bg-surface hover:border-green/50"
+                type === value ? "border-navy bg-navy-soft" : "border-line bg-surface hover:border-navy/50"
               }`}
             >
               <input
@@ -90,7 +90,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
                 value={value}
                 checked={type === value}
                 onChange={() => setType(value)}
-                className="size-4 accent-[var(--color-green)]"
+                className="size-4 accent-[var(--color-navy)]"
               />
               <span>{label}</span>
             </label>
@@ -112,7 +112,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
             {EMPLOYEES.map((e) => (
               <label key={e} className="cursor-pointer">
                 <input type="radio" name="employees" value={e} className="peer sr-only" defaultChecked={v?.employees ? v.employees === e : e === "Ninguno"} />
-                <span className="inline-block rounded-md border border-line bg-surface px-4 py-2 peer-checked:border-green peer-checked:bg-green-soft peer-focus-visible:ring-2 peer-focus-visible:ring-green">
+                <span className="inline-block rounded-md border border-line bg-surface px-4 py-2 peer-checked:border-navy peer-checked:bg-navy-soft peer-focus-visible:ring-2 peer-focus-visible:ring-navy">
                   {e}
                 </span>
               </label>
@@ -126,8 +126,8 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         <p className="mt-2 text-muted">Podés marcar varias.</p>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           {NEEDS.map((n) => (
-            <label key={n} className="flex cursor-pointer items-start gap-3 rounded-md border border-line bg-surface px-4 py-3.5 has-[:checked]:border-green has-[:checked]:bg-green-soft">
-              <input type="checkbox" name="needs" value={n} defaultChecked={v?.needs.includes(n)} className="mt-1 size-4 accent-[var(--color-green)]" />
+            <label key={n} className="flex cursor-pointer items-start gap-3 rounded-md border border-line bg-surface px-4 py-3.5 has-[:checked]:border-navy has-[:checked]:bg-navy-soft">
+              <input type="checkbox" name="needs" value={n} defaultChecked={v?.needs.includes(n)} className="mt-1 size-4 accent-[var(--color-navy)]" />
               <span>{n}</span>
             </label>
           ))}
@@ -170,12 +170,12 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-green px-6 py-3 font-medium text-paper hover:bg-green-deep disabled:opacity-60"
+            className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep disabled:opacity-60"
           >
             {pending ? "Enviando…" : "Enviar diagnóstico"}
           </button>
         ) : (
-          <button type="button" onClick={next} className="rounded-md bg-green px-6 py-3 font-medium text-paper hover:bg-green-deep">
+          <button type="button" onClick={next} className="rounded-md bg-navy px-6 py-3 font-medium text-paper hover:bg-navy-deep">
             Seguir
           </button>
         )}

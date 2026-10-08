@@ -27,7 +27,7 @@ export function Notice({ tone = "ok", children }: { tone?: "ok" | "error"; child
     <p
       role="status"
       className={`rounded-md px-4 py-2.5 text-[15px] ${
-        tone === "ok" ? "bg-green-soft text-green-deep" : "bg-danger/10 text-danger"
+        tone === "ok" ? "bg-navy-soft text-navy-deep" : "bg-danger/10 text-danger"
       }`}
     >
       {children}

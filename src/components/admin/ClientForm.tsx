@@ -60,7 +60,7 @@ export function ClientForm({
         <textarea id="notes" name="notes" rows={4} defaultValue={client?.notes ?? ""} className={adminInput} />
       </AdminField>
       <label className="flex items-center gap-2 text-[15px] sm:col-span-2">
-        <input type="checkbox" name="active" defaultChecked={client?.active ?? true} className="size-4 accent-[var(--color-green)]" />
+        <input type="checkbox" name="active" defaultChecked={client?.active ?? true} className="size-4 accent-[var(--color-navy)]" />
         Cliente activo
       </label>
       <div className="sm:col-span-2">

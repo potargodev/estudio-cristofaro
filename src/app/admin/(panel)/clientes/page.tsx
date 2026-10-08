@@ -36,7 +36,7 @@ export default async function ClientesPage({
   return (
     <>
       <AdminPageHeader title="Clientes">
-        <Link href="/admin/clientes/nuevo" className="rounded-md bg-green px-4 py-2 text-[15px] font-medium text-paper hover:bg-green-deep">
+        <Link href="/admin/clientes/nuevo" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
           Nuevo cliente
         </Link>
       </AdminPageHeader>
@@ -71,7 +71,7 @@ export default async function ClientesPage({
             <option value="todos">Todos</option>
           </select>
         </div>
-        <button type="submit" className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] hover:border-green">
+        <button type="submit" className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] hover:border-navy">
           Filtrar
         </button>
       </form>
@@ -93,7 +93,7 @@ export default async function ClientesPage({
             {clients.map((c) => (
               <tr key={c.id} className={c.active ? "" : "text-muted"}>
                 <td className="px-4 py-3">
-                  <Link href={`/admin/clientes/${c.id}`} className="font-medium hover:text-green">
+                  <Link href={`/admin/clientes/${c.id}`} className="font-medium hover:text-rose-deep">
                     {c.business_name}
                   </Link>
                   {c.category && <span className="block text-sm text-muted">{c.category}</span>}

@@ -26,7 +26,7 @@ export default async function ClientePage({
   return (
     <div className="grid max-w-6xl gap-6 xl:grid-cols-[1fr_320px]">
       <div>
-        <Link href="/admin/clientes" className="text-sm text-green underline-offset-4 hover:underline">
+        <Link href="/admin/clientes" className="text-sm text-rose-deep underline-offset-4 hover:underline">
           Clientes
         </Link>
         <h1 className="mb-6 mt-2 text-2xl font-semibold tracking-tight">{client.business_name}</h1>
@@ -48,7 +48,7 @@ export default async function ClientePage({
           <div className="rounded-md border border-line bg-surface p-5">
             <h2 className="font-semibold">Origen</h2>
             <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
-            <Link href={`/admin/consultas/${client.lead_id}`} className="mt-2 inline-block text-green underline-offset-4 hover:underline">
+            <Link href={`/admin/consultas/${client.lead_id}`} className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline">
               Ver consulta original
             </Link>
           </div>

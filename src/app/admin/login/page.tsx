@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { adminInput } from "@/components/admin/ui";
+import { Monogram } from "@/components/site/Logo";
 import { signIn, type ActionState } from "../actions";
 
 const initial: ActionState = { ok: false };
@@ -9,11 +10,11 @@ const initial: ActionState = { ok: false };
 export default function LoginPage() {
   const [state, action, pending] = useActionState(signIn, initial);
   return (
-    <div className="grid min-h-dvh place-items-center bg-green-deep px-4">
+    <div className="grid min-h-dvh place-items-center bg-navy-deep px-4">
       <form action={action} className="w-full max-w-sm rounded-md bg-paper p-7 shadow-xl">
         <div className="mb-6 flex items-center gap-2.5">
-          <span aria-hidden className="grid size-9 place-items-center rounded-[5px] bg-green text-lg font-bold text-paper">
-            C
+          <span className="grid size-10 place-items-center rounded-full bg-navy text-rose-light">
+            <Monogram className="size-7" />
           </span>
           <div>
             <h1 className="font-semibold leading-tight">Backoffice</h1>
@@ -36,7 +37,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={pending}
-          className="mt-6 w-full rounded-md bg-green px-4 py-2.5 font-medium text-paper hover:bg-green-deep disabled:opacity-60"
+          className="mt-6 w-full rounded-md bg-navy px-4 py-2.5 font-medium text-paper hover:bg-navy-deep disabled:opacity-60"
         >
           {pending ? "Ingresando…" : "Ingresar"}
         </button>

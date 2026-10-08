@@ -31,7 +31,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
           </label>
           <input id="q" name="q" defaultValue={q} placeholder="Buscar por nombre, email, empresa…" className={`${adminInput} mt-0 w-64`} />
         </form>
-        <Link href="/admin/consultas/nueva" className="rounded-md bg-green px-4 py-2 text-[15px] font-medium text-paper hover:bg-green-deep">
+        <Link href="/admin/consultas/nueva" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
           Cargar consulta
         </Link>
       </AdminPageHeader>

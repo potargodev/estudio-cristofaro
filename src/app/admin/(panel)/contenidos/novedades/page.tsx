@@ -13,12 +13,12 @@ export default async function NovedadesAdminPage() {
 
   return (
     <>
-      <Link href="/admin/contenidos" className="text-sm text-green underline-offset-4 hover:underline">
+      <Link href="/admin/contenidos" className="text-sm text-rose-deep underline-offset-4 hover:underline">
         Contenidos
       </Link>
       <div className="mt-2">
         <AdminPageHeader title="Novedades">
-          <Link href="/admin/contenidos/novedades/nueva" className="rounded-md bg-green px-4 py-2 text-[15px] font-medium text-paper hover:bg-green-deep">
+          <Link href="/admin/contenidos/novedades/nueva" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
             Nueva novedad
           </Link>
         </AdminPageHeader>
@@ -28,7 +28,7 @@ export default async function NovedadesAdminPage() {
           <li key={p.id}>
             <Link href={`/admin/contenidos/novedades/${p.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
               <span className="font-medium">{p.title}</span>
-              <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs ${p.published ? "bg-green-soft text-green-deep" : "bg-line/60 text-muted"}`}>
+              <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs ${p.published ? "bg-navy-soft text-navy-deep" : "bg-line/60 text-muted"}`}>
                 {p.published ? "Publicada" : "Borrador"}
               </span>
             </Link>

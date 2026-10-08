@@ -17,7 +17,7 @@ export default async function DiagnosticoPage({
     <section className="border-b border-line">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 md:grid-cols-[1fr_1.7fr] md:py-20">
         <div>
-          <h1 className="text-4xl font-semibold leading-[1.08] tracking-tight">Diagnóstico gratis</h1>
+          <h1 className="text-4xl leading-[1.08] font-display">Diagnóstico gratis</h1>
           <p className="mt-4 text-lg leading-relaxed text-muted">
             Cuatro preguntas cortas. Con eso un contador revisa tu caso y te manda una propuesta con abono fijo.
           </p>

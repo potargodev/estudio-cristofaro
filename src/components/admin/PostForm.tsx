@@ -21,7 +21,7 @@ export function PostForm({ post }: { post?: Post }) {
           <textarea id="body" name="body" rows={16} defaultValue={post?.body ?? ""} className={`${adminInput} leading-relaxed`} />
         </AdminField>
         <label className="flex items-center gap-2 text-[15px]">
-          <input type="checkbox" name="published" defaultChecked={post?.published ?? false} className="size-4 accent-[var(--color-green)]" />
+          <input type="checkbox" name="published" defaultChecked={post?.published ?? false} className="size-4 accent-[var(--color-navy)]" />
           Publicada en la web
         </label>
         <div>

@@ -40,7 +40,7 @@ export default async function ConsultaPage({
 
   return (
     <div className="max-w-5xl">
-      <Link href="/admin/consultas" className="text-sm text-green underline-offset-4 hover:underline">
+      <Link href="/admin/consultas" className="text-sm text-rose-deep underline-offset-4 hover:underline">
         Consultas
       </Link>
       <div className="mb-6 mt-2 flex flex-wrap items-start justify-between gap-4">
@@ -56,7 +56,7 @@ export default async function ConsultaPage({
               href={waLink(lead.phone, lead.name)}
               target="_blank"
               rel="noopener"
-              className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] font-medium hover:border-green"
+              className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] font-medium hover:border-navy"
             >
               Responder por WhatsApp
             </a>
@@ -64,7 +64,7 @@ export default async function ConsultaPage({
           {lead.email && (
             <a
               href={`mailto:${lead.email}?subject=${encodeURIComponent(`Tu consulta en ${site.name}`)}`}
-              className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] font-medium hover:border-green"
+              className="rounded-md border border-line bg-surface px-4 py-2 text-[15px] font-medium hover:border-navy"
             >
               Responder por mail
             </a>
@@ -72,7 +72,7 @@ export default async function ConsultaPage({
           {lead.client_id ? (
             <Link
               href={`/admin/clientes/${lead.client_id}`}
-              className="rounded-md bg-green px-4 py-2 text-[15px] font-medium text-paper hover:bg-green-deep"
+              className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep"
             >
               Ver cliente
             </Link>
@@ -118,7 +118,7 @@ export default async function ConsultaPage({
                 <dd>
                   <ul className="mt-1 flex flex-wrap gap-1.5">
                     {lead.needs.map((n) => (
-                      <li key={n} className="rounded-full bg-green-soft px-2.5 py-0.5 text-sm text-green-deep">
+                      <li key={n} className="rounded-full bg-navy-soft px-2.5 py-0.5 text-sm text-navy-deep">
                         {n}
                       </li>
                     ))}

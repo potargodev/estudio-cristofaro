@@ -16,7 +16,7 @@ export default async function NuevoClientePage({ searchParams }: { searchParams:
   const { error } = await searchParams;
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/clientes" className="text-sm text-green underline-offset-4 hover:underline">
+      <Link href="/admin/clientes" className="text-sm text-rose-deep underline-offset-4 hover:underline">
         Clientes
       </Link>
       <div className="mt-2">

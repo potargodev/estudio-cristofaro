@@ -27,10 +27,10 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     <>
       <article className="border-b border-line">
         <div className="mx-auto max-w-2xl px-4 pb-16 pt-14 sm:px-6 sm:pt-20">
-          <Link href="/novedades" className="text-sm text-green underline-offset-4 hover:underline">
+          <Link href="/novedades" className="text-sm text-rose-deep underline-offset-4 hover:underline">
             Novedades
           </Link>
-          <h1 className="mt-4 text-4xl font-semibold leading-[1.1] tracking-tight">{post.title}</h1>
+          <h1 className="mt-4 text-4xl leading-[1.1] font-display">{post.title}</h1>
           <p className="mt-4 text-sm text-muted">{formatDate(post.published_at)}</p>
           {post.excerpt && <p className="mt-6 text-xl leading-relaxed text-muted">{post.excerpt}</p>}
           <div className="prose-body mt-8 text-[17px]">

@@ -40,7 +40,7 @@ export async function sendLeadEmails(lead: LeadMail) {
   ];
   const table = rows
     .filter(([, v]) => v)
-    .map(([k, v]) => `<tr><td style="padding:4px 12px 4px 0;color:#5b6b64">${k}</td><td style="padding:4px 0">${esc(String(v))}</td></tr>`)
+    .map(([k, v]) => `<tr><td style="padding:4px 12px 4px 0;color:#5a6176">${k}</td><td style="padding:4px 0">${esc(String(v))}</td></tr>`)
     .join("");
 
   const jobs: Promise<unknown>[] = [

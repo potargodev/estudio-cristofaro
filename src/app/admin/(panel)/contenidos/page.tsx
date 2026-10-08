@@ -25,7 +25,7 @@ export default async function ContenidosPage() {
       <p className="mb-6 max-w-2xl text-muted">Lo que cambies acá se publica en el sitio en pocos segundos.</p>
       <div className="grid gap-4 md:grid-cols-3">
         {sections.map((s) => (
-          <Link key={s.href} href={s.href} className="rounded-md border border-line bg-surface p-5 hover:border-green">
+          <Link key={s.href} href={s.href} className="rounded-md border border-line bg-surface p-5 hover:border-navy">
             <h2 className="flex items-baseline justify-between text-lg font-semibold">
               {s.title}
               <span className="text-sm font-normal text-muted">{s.count ?? 0}</span>

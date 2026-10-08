@@ -44,7 +44,7 @@ export default async function AdminHome() {
   return (
     <>
       <AdminPageHeader title={`Hola${profile.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}`}>
-        <Link href="/admin/consultas/nueva" className="rounded-md bg-green px-4 py-2 text-[15px] font-medium text-paper hover:bg-green-deep">
+        <Link href="/admin/consultas/nueva" className="rounded-md bg-navy px-4 py-2 text-[15px] font-medium text-paper hover:bg-navy-deep">
           Cargar consulta
         </Link>
       </AdminPageHeader>
@@ -116,8 +116,8 @@ export default async function AdminHome() {
                   <span>{LEAD_SOURCES[source as Lead["source"]] ?? source}</span>
                   <span className="font-medium">{count}</span>
                 </div>
-                <div className="mt-1.5 h-2 rounded-full bg-green-soft">
-                  <div className="h-2 rounded-full bg-green" style={{ width: `${(count / thisMonth.length) * 100}%` }} />
+                <div className="mt-1.5 h-2 rounded-full bg-navy-soft">
+                  <div className="h-2 rounded-full bg-navy" style={{ width: `${(count / thisMonth.length) * 100}%` }} />
                 </div>
               </li>
             ))}
