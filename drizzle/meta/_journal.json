@@ -15,6 +15,13 @@
       "when": 1791506783560,
       "tag": "0001_portal",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791507628282,
+      "tag": "0002_tango",
+      "breakpoints": true
     }
   ]
 }

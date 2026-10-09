@@ -14,6 +14,7 @@ import {
   date,
   index,
   integer,
+  jsonb,
   numeric,
   pgEnum,
   pgTable,
@@ -43,6 +44,9 @@ export const obligationStatus = pgEnum("obligation_status", ["pendiente", "en_pr
 export const documentSource = pgEnum("document_source", ["estudio", "cliente"]);
 export const requestType = pgEnum("request_type", ["consulta", "factura", "empleado", "otro"]);
 export const requestStatus = pgEnum("request_status", ["abierta", "en_curso", "resuelta"]);
+export const integrationType = pgEnum("integration_type", ["tango"]);
+export const integrationStatus = pgEnum("integration_status", ["activa", "pausada"]);
+export const syncStatus = pgEnum("sync_status", ["en_curso", "ok", "error"]);
 
 // ───────────────────────── Estudios ─────────────────────────
 
@@ -350,4 +354,93 @@ export const request_messages = pgTable(
     created_at: createdAt(),
   },
   (t) => [index("request_messages_request_idx").on(t.request_id, t.created_at)],
+);
+
+// ───────────────────────── Integraciones (Tango Gestión) ─────────────────────────
+
+// Una integración por estudio y tipo. La clave del conector se guarda hasheada
+// (SHA-256): se muestra una sola vez al generarla.
+export const integrations = pgTable(
+  "integrations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    type: integrationType("type").notNull(),
+    status: integrationStatus("status").notNull().default("activa"),
+    connector_key_hash: text("connector_key_hash").unique(),
+    key_prefix: text("key_prefix"), // primeros caracteres, para reconocer la clave sin mostrarla
+    key_created_at: timestamp("key_created_at", { withTimezone: true }),
+    // Mapeo configurable de campos del JSON de Tango (ver src/lib/integrations/tango/mapping.ts)
+    settings: jsonb("settings").$type<Record<string, unknown>>().notNull().default({}),
+    last_seen_at: timestamp("last_seen_at", { withTimezone: true }), // último contacto del conector
+    last_sync_at: timestamp("last_sync_at", { withTimezone: true }), // última sincronización completa
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [unique("integrations_studio_type_key").on(t.studio_id, t.type)],
+);
+
+// Log de sincronizaciones (y pruebas de conexión) de cada integración
+export const integration_syncs = pgTable(
+  "integration_syncs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    integration_id: uuid("integration_id")
+      .notNull()
+      .references(() => integrations.id, { onDelete: "cascade" }),
+    sync_id: text("sync_id").notNull(), // id que manda el conector
+    kind: text("kind").notNull().default("sync"), // sync | test
+    status: syncStatus("status").notNull().default("en_curso"),
+    companies: integer("companies").notNull().default(0),
+    records: integer("records").notNull().default(0),
+    message: text("message"),
+    started_at: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+    finished_at: timestamp("finished_at", { withTimezone: true }),
+  },
+  (t) => [
+    unique("integration_syncs_sync_key").on(t.integration_id, t.sync_id),
+    index("integration_syncs_started_idx").on(t.integration_id, t.started_at),
+  ],
+);
+
+// Empresas de Tango (cada base de datos de Tango). Si el estudio usa una
+// empresa por cliente, se puede asignar cada una a un cliente de la plataforma.
+export const tango_companies = pgTable(
+  "tango_companies",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    company_id: text("company_id").notNull(), // ID de empresa de Tango (header Company)
+    name: text("name"),
+    client_id: uuid("client_id").references(() => clients.id, { onDelete: "set null" }),
+    last_sync_at: timestamp("last_sync_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [unique("tango_companies_studio_company_key").on(t.studio_id, t.company_id)],
+);
+
+// Registros traídos de Tango, siempre con el JSON crudo. client_id vincula un
+// cliente de Tango (proceso 2117) con un cliente de la plataforma.
+export const tango_records = pgTable(
+  "tango_records",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    company_id: text("company_id").notNull(),
+    process: integer("process").notNull(), // 2117 = Clientes
+    external_id: text("external_id").notNull(),
+    raw: jsonb("raw").notNull(),
+    client_id: uuid("client_id").references(() => clients.id, { onDelete: "set null" }),
+    synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique("tango_records_key").on(t.studio_id, t.company_id, t.process, t.external_id),
+    index("tango_records_client_idx").on(t.client_id),
+  ],
 );
