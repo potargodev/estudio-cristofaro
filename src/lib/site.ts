@@ -4,7 +4,7 @@ export const site = {
   shortName: "Cristofaro",
   promise: "Tu contador, siempre al día. Sin papeles, sin sorpresas.",
   description:
-    "Estudio contable en CABA para monotributistas, PyMEs, sociedades y empleadores. Abono fijo, respuesta en menos de 24 h hábiles y alertas antes de cada vencimiento.",
+    "Estudio contable para PyMEs de servicios en CABA y GBA: impuestos, contabilidad y sueldos con un equipo con nombre y apellido, y una plataforma donde ves qué está hecho, qué pagar y qué viene.",
   phone: "+54 11 4530 4368",
   phoneHref: "tel:+541145304368",
   whatsapp: "541145304368",

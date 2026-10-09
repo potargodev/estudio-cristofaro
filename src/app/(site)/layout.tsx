@@ -1,7 +1,9 @@
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
-import { Footer } from "@/components/site/Footer";
-import { Header } from "@/components/site/Header";
-import { WhatsAppButton } from "@/components/site/WhatsAppButton";
+import { Cursor } from "@/components/web/Cursor";
+import { MotionBoot } from "@/components/web/MotionBoot";
+import { PageTransitions } from "@/components/web/PageTransitions";
+import { SiteFooter } from "@/components/web/SiteFooter";
+import { SiteHeader } from "@/components/web/SiteHeader";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { site } from "@/lib/site";
 
@@ -30,16 +32,18 @@ function getJsonLd() {
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="site">
+      <MotionBoot />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getJsonLd()) }} />
-      <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-surface focus:px-3 focus:py-2">
+      <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-paper focus:px-3 focus:py-2 focus:text-night">
         Saltar al contenido
       </a>
-      <Header />
+      <SiteHeader />
       <main id="contenido">{children}</main>
-      <Footer />
-      <WhatsAppButton />
+      <SiteFooter />
       <SmoothScroll />
-    </>
+      <PageTransitions />
+      <Cursor />
+    </div>
   );
 }

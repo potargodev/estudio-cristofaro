@@ -52,11 +52,24 @@
   --color-input: var(--color-line);
   --color-ring: var(--color-navy);
 
-  --radius: 0.375rem;
-  --radius-sm: calc(var(--radius) - 2px);
-  --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) + 2px);
-  --radius-xl: calc(var(--radius) + 6px);
+  /* Dirección "Precisión": geometría recta. Tarjetas, paneles e imágenes en 0;
+     botones e inputs usan rounded-[2px] explícito. rounded-full queda solo para
+     puntos e indicadores. */
+  --radius: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+
+  /* Base oscura de la web y del sistema */
+  --color-night: #0f1320;
+  --color-hair: rgb(247 245 243 / 0.08);
+  --color-hair-strong: rgb(247 245 243 / 0.16);
+  --color-hair-ink: rgb(27 30 38 / 0.12);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -64,6 +77,163 @@
   --shadow-brand-sm: 0 6px 16px -10px rgba(28, 34, 53, 0.35);
   --shadow-brand: 0 18px 40px -24px rgba(28, 34, 53, 0.45);
   --shadow-brand-lg: 0 34px 70px -30px rgba(20, 24, 38, 0.6), 0 12px 24px -16px rgba(28, 34, 53, 0.35);
+}
+
+/* ───────────── Web pública: dirección "Precisión" ───────────── */
+
+html:has(.site) {
+  background: var(--color-night);
+}
+.site {
+  background: var(--color-night);
+  color: var(--color-paper);
+}
+.site ::selection {
+  background: var(--color-rose-light);
+  color: var(--color-night);
+}
+.site :focus-visible {
+  outline: 1px solid var(--color-rose-light);
+  outline-offset: 3px;
+}
+
+/* Titulares enormes en Forum */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  font-size: clamp(3.6rem, 9vw, 10rem);
+}
+.display-md {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.6rem, 5.6vw, 6rem);
+}
+.display-sm {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  font-size: clamp(2rem, 3.6vw, 3.6rem);
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Guías verticales de la retícula de 12 columnas */
+.grid-guides {
+  pointer-events: none;
+  background-image: linear-gradient(to right, var(--color-hair) 1px, transparent 1px);
+  background-size: calc(100% / 12) 100%;
+}
+
+/* Subrayado que se dibuja al pasar el mouse */
+.u-draw {
+  background-image: linear-gradient(var(--color-rose-light), var(--color-rose-light));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 450ms var(--ease-expo);
+}
+.u-draw:hover,
+.u-draw:focus-visible,
+.u-draw[aria-current="page"] {
+  background-size: 100% 1px;
+}
+
+/* Fotos: duotono azul noche / rosé con grano fino */
+.duotone {
+  /* sin position: la pone quien la usa (relative o absolute) */
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--color-navy);
+}
+.duotone img {
+  filter: grayscale(1) contrast(1.08) brightness(0.92);
+  mix-blend-mode: luminosity;
+}
+.duotone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(var(--color-rose-light), var(--color-rose-light));
+  mix-blend-mode: soft-light;
+  opacity: 0.35;
+}
+
+/* Intro de la home (una vez por sesión) y titulares con máscara: el estado
+   inicial lo pone un script en línea solo si hay movimiento permitido */
+.intro [data-intro-heading],
+.js-motion [data-split="hero"]:not([data-split-done]) {
+  visibility: hidden;
+}
+.intro [data-intro="fade"] {
+  opacity: 0;
+}
+.intro [data-intro="line"] {
+  transform: scaleX(0);
+}
+.motion-timeout [data-intro-heading],
+.motion-timeout [data-split="hero"] {
+  visibility: visible !important;
+}
+.motion-timeout [data-intro] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Transición entre páginas (View Transitions): cortina azul noche */
+::view-transition-old(root) {
+  animation: vt-out 520ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+::view-transition-new(root) {
+  animation: vt-in 700ms cubic-bezier(0.16, 1, 0.3, 1) 380ms both;
+}
+@keyframes vt-out {
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+@keyframes vt-in {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Cursor propio (solo puntero fino) */
+html.has-cursor .site,
+html.has-cursor .site a,
+html.has-cursor .site button {
+  cursor: none;
+}
+html.has-cursor .site input,
+html.has-cursor .site textarea,
+html.has-cursor .site select {
+  cursor: text;
+}
+
+/* Marquesina de texto con contorno */
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(247 245 243 / 0.32);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+  .u-draw {
+    transition: none;
+  }
 }
 
 /* Variables que leen algunos componentes de shadcn (sonner) */
@@ -313,4 +483,52 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="menu-in"] {
+    animation: none !important;
+  }
+}
+
+@keyframes hero-wipe {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Pestañas de la web: la pantalla nueva entra barriendo con una máscara */
+.tab-mask {
+  animation: tab-mask 0.9s var(--ease-expo) both;
+}
+@keyframes tab-mask {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-mask {
+    animation-duration: 1ms;
+  }
+}
+
+/* La home ya cierra con su propio bloque de agenda: el footer no lo repite */
+.site:has(#agendar) [data-footer-cta] {
+  display: none;
 }
