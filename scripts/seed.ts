@@ -7,7 +7,8 @@ import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "../src/db/schema";
-import { faqs, plans, studios, users } from "../src/db/schema";
+import { faqs, plans, service_plans, studios, users } from "../src/db/schema";
+import { SERVICE_PLANS } from "../src/lib/service-plans";
 import { createUserWithPassword } from "../src/lib/users";
 
 const STUDIO = { slug: process.env.STUDIO_SLUG || "cristofaro", name: "Estudio Cristofaro & Asociados" };
@@ -120,6 +121,14 @@ async function main() {
       newPlans++;
     }
     console.log(`Planes: ${newPlans} nuevos, ${PLANS.length - newPlans} ya estaban.`);
+
+    // Planes de servicio de las organizaciones (Negocio en Orden, etc.)
+    const insertedServicePlans = await db
+      .insert(service_plans)
+      .values(SERVICE_PLANS.map((p) => ({ ...p, features: [...p.features], studio_id: studio.id })))
+      .onConflictDoNothing({ target: [service_plans.studio_id, service_plans.key] })
+      .returning({ id: service_plans.id });
+    console.log(`Planes de servicio: ${insertedServicePlans.length} nuevos, ${SERVICE_PLANS.length - insertedServicePlans.length} ya estaban.`);
 
     let newFaqs = 0;
     for (const [i, faq] of FAQS.entries()) {

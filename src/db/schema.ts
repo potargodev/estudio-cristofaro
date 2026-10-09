@@ -47,6 +47,13 @@ export const requestStatus = pgEnum("request_status", ["abierta", "en_curso", "r
 export const integrationType = pgEnum("integration_type", ["tango"]);
 export const integrationStatus = pgEnum("integration_status", ["activa", "pausada"]);
 export const syncStatus = pgEnum("sync_status", ["en_curso", "ok", "error"]);
+export const organizationStatus = pgEnum("organization_status", ["onboarding", "activa", "pausada", "baja"]);
+export const riskLevel = pgEnum("risk_level", ["bajo", "medio", "alto"]);
+export const orgRole = pgEnum("org_role", ["administrador", "direccion", "administracion", "rrhh", "consulta"]);
+export const membershipStatus = pgEnum("membership_status", ["activa", "suspendida", "revocada"]);
+export const invitationStatus = pgEnum("invitation_status", ["pendiente", "aceptada", "revocada", "vencida"]);
+export const staffAssignment = pgEnum("staff_assignment", ["responsable", "colaborador"]);
+export const auditResult = pgEnum("audit_result", ["ok", "denegado", "error"]);
 
 // ───────────────────────── Estudios ─────────────────────────
 
@@ -162,7 +169,10 @@ export const leads = pgTable(
     contributor_type: text("contributor_type"),
     activity: text("activity"),
     employees: text("employees"),
-    needs: text("needs").array().notNull().default(sql`'{}'::text[]`),
+    needs: text("needs")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     message: text("message"),
     source: leadSource("source").notNull().default("contacto"),
     status: leadStatus("status").notNull().default("nuevo"),
@@ -171,37 +181,221 @@ export const leads = pgTable(
     next_action_at: date("next_action_at"),
     notes: text("notes"),
     lost_reason: text("lost_reason"),
-    client_id: uuid("client_id").references((): AnyPgColumn => clients.id, { onDelete: "set null" }),
+    organization_id: uuid("organization_id").references((): AnyPgColumn => organizations.id, { onDelete: "set null" }),
   },
   (t) => [index("leads_studio_status_idx").on(t.studio_id, t.status)],
 );
 
-// ───────────────────────── Clientes ─────────────────────────
+// ───────────────────────── Planes de servicio ─────────────────────────
+// Planes comerciales que contrata cada organización (Negocio en Orden, Empresa
+// en Control, Gestión Estratégica). No confundir con `plans`, que son las
+// tarjetas de precios de la web pública.
 
-export const clients = pgTable(
-  "clients",
+export const service_plans = pgTable(
+  "service_plans",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     studio_id: uuid("studio_id")
       .notNull()
       .references(() => studios.id, { onDelete: "cascade" }),
+    key: text("key").notNull(), // negocio_en_orden | empresa_en_control | gestion_estrategica
+    name: text("name").notNull(),
+    description: text("description"),
+    max_legal_entities: integer("max_legal_entities").notNull(),
+    max_users: integer("max_users").notNull(),
+    max_modules: integer("max_modules").notNull(),
+    features: text("features")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    position: integer("position").notNull().default(0),
+    active: boolean("active").notNull().default(true),
     created_at: createdAt(),
-    updated_at: updatedAt(),
-    business_name: text("business_name").notNull(),
-    cuit: text("cuit"),
-    regime: taxRegime("regime").notNull().default("otro"),
-    category: text("category"), // categoría de monotributo, tipo societario, etc.
-    services: text("services").array().notNull().default(sql`'{}'::text[]`),
-    monthly_fee: numeric("monthly_fee", { precision: 12, scale: 2 }),
+  },
+  (t) => [unique("service_plans_studio_key").on(t.studio_id, t.key)],
+);
+
+// ───────────────────────── Organizaciones ─────────────────────────
+// Empresa cliente: espacio aislado con sus razones sociales, miembros, módulos
+// y responsables del estudio. Reemplaza a la vieja tabla `clients` (los ids se
+// conservaron en la migración, así los links viejos siguen funcionando).
+
+export interface LimitOverrides {
+  legal_entities?: number;
+  users?: number;
+  modules?: number;
+}
+
+export const organizations = pgTable(
+  "organizations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    service_plan_id: uuid("service_plan_id").references(() => service_plans.id, { onDelete: "set null" }),
+    status: organizationStatus("status").notNull().default("onboarding"),
+    risk_level: riskLevel("risk_level").notNull().default("bajo"),
+    notes: text("notes"),
     contact_name: text("contact_name"),
     email: text("email"),
     phone: text("phone"),
-    address: text("address"),
-    notes: text("notes"),
-    active: boolean("active").notNull().default(true),
+    services: text("services")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    monthly_fee: numeric("monthly_fee", { precision: 12, scale: 2 }),
+    // Excepciones a los límites del plan, otorgadas por el estudio (quedan auditadas)
+    limit_overrides: jsonb("limit_overrides").$type<LimitOverrides>().notNull().default({}),
     lead_id: uuid("lead_id").references((): AnyPgColumn => leads.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
   },
-  (t) => [uniqueIndex("clients_studio_cuit_idx").on(t.studio_id, t.cuit).where(sql`${t.cuit} is not null`)],
+  (t) => [index("organizations_studio_idx").on(t.studio_id, t.name)],
+);
+
+// Razones sociales (CUIT) de cada organización. El CUIT es único por estudio.
+export const legal_entities = pgTable(
+  "legal_entities",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit"),
+    business_name: text("business_name").notNull(),
+    regime: taxRegime("regime").notNull().default("otro"),
+    category: text("category"), // categoría de monotributo, tipo societario, etc.
+    tax_address: text("tax_address"), // domicilio fiscal
+    active: boolean("active").notNull().default(true),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex("legal_entities_studio_cuit_idx")
+      .on(t.studio_id, t.cuit)
+      .where(sql`${t.cuit} is not null`),
+    index("legal_entities_org_idx").on(t.organization_id),
+  ],
+);
+
+// Equipo del estudio asignado a cada organización: un responsable principal y colaboradores
+export const organization_staff = pgTable(
+  "organization_staff",
+  {
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    assignment: staffAssignment("assignment").notNull().default("colaborador"),
+    created_at: createdAt(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.organization_id, t.user_id] }),
+    uniqueIndex("organization_staff_one_lead_idx")
+      .on(t.organization_id)
+      .where(sql`${t.assignment} = 'responsable'`),
+  ],
+);
+
+// Miembros de cada organización con su rol. Un usuario puede pertenecer a varias.
+export const memberships = pgTable(
+  "memberships",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: orgRole("role").notNull().default("consulta"),
+    status: membershipStatus("status").notNull().default("activa"),
+    invited_by: uuid("invited_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [unique("memberships_org_user_key").on(t.organization_id, t.user_id), index("memberships_user_idx").on(t.user_id)],
+);
+
+// Invitaciones: el token viaja solo en el mail; acá se guarda su SHA-256.
+// Las de roles sensibles que crea un admin de la organización quedan
+// pendientes de confirmación del estudio (needs_approval sin approved_at).
+export const invitations = pgTable(
+  "invitations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+    name: text("name"),
+    role: orgRole("role").notNull(),
+    token_hash: text("token_hash").notNull().unique(),
+    expires_at: timestamp("expires_at", { withTimezone: true }).notNull(),
+    status: invitationStatus("status").notNull().default("pendiente"),
+    invited_by: uuid("invited_by").references(() => users.id, { onDelete: "set null" }),
+    needs_approval: boolean("needs_approval").notNull().default(false),
+    approved_by: uuid("approved_by").references(() => users.id, { onDelete: "set null" }),
+    approved_at: timestamp("approved_at", { withTimezone: true }),
+    accepted_by: uuid("accepted_by").references(() => users.id, { onDelete: "set null" }),
+    accepted_at: timestamp("accepted_at", { withTimezone: true }),
+    revoked_at: timestamp("revoked_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("invitations_org_idx").on(t.organization_id, t.status), index("invitations_email_idx").on(t.email, t.status)],
+);
+
+// Módulos del catálogo (src/lib/modules/catalog.ts) habilitados por organización
+export const organization_modules = pgTable(
+  "organization_modules",
+  {
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    module_key: text("module_key").notNull(),
+    active: boolean("active").notNull().default(true),
+    config: jsonb("config").$type<Record<string, unknown>>().notNull().default({}),
+    activated_by: uuid("activated_by").references(() => users.id, { onDelete: "set null" }),
+    activated_at: timestamp("activated_at", { withTimezone: true }).notNull().defaultNow(),
+    updated_at: updatedAt(),
+  },
+  (t) => [primaryKey({ columns: [t.organization_id, t.module_key] })],
+);
+
+// ───────────────────────── Auditoría ─────────────────────────
+// Toda acción sensible (src/lib/audit.ts). Es solo de escritura desde la app:
+// no se edita ni se borra.
+
+export const audit_log = pgTable(
+  "audit_log",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+    actor_id: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    actor_label: text("actor_label"), // email o "sistema", para leerlo aunque se borre el usuario
+    action: text("action").notNull(), // ej: invitacion.crear, documento.descargar
+    entity_type: text("entity_type"),
+    entity_id: text("entity_id"),
+    result: auditResult("result").notNull().default("ok"),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({}),
+    ip: text("ip"),
+    created_at: createdAt(),
+  },
+  (t) => [index("audit_log_org_idx").on(t.organization_id, t.created_at), index("audit_log_studio_idx").on(t.studio_id, t.created_at)],
 );
 
 // ───────────────────────── Contenidos ─────────────────────────
@@ -246,7 +440,10 @@ export const plans = pgTable("plans", {
   segment: text("segment"), // monotributistas | pymes-y-sociedades | empleadores | emprendedores
   price_label: text("price_label"), // ej: "Desde $45.000 / mes". Vacío = "Consultá"
   description: text("description"),
-  features: text("features").array().notNull().default(sql`'{}'::text[]`),
+  features: text("features")
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
   highlighted: boolean("highlighted").notNull().default(false),
   position: integer("position").notNull().default(0),
   published: boolean("published").notNull().default(true),
@@ -255,21 +452,7 @@ export const plans = pgTable("plans", {
 
 // ───────────────────────── Fase 2: portal del cliente ─────────────────────────
 
-// Usuarios cliente con acceso al portal
-export const client_users = pgTable(
-  "client_users",
-  {
-    client_id: uuid("client_id")
-      .notNull()
-      .references(() => clients.id, { onDelete: "cascade" }),
-    user_id: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-  },
-  (t) => [primaryKey({ columns: [t.client_id, t.user_id] })],
-);
-
-// Vencimientos por cliente (generados según terminación de CUIT y régimen)
+// Vencimientos por organización (y razón social, si aplica)
 export const obligations = pgTable(
   "obligations",
   {
@@ -277,9 +460,10 @@ export const obligations = pgTable(
     studio_id: uuid("studio_id")
       .notNull()
       .references(() => studios.id, { onDelete: "cascade" }),
-    client_id: uuid("client_id")
+    organization_id: uuid("organization_id")
       .notNull()
-      .references(() => clients.id, { onDelete: "cascade" }),
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    legal_entity_id: uuid("legal_entity_id").references((): AnyPgColumn => legal_entities.id, { onDelete: "set null" }),
     tax: text("tax").notNull(), // IVA, IIBB, Ganancias, Monotributo, F.931, etc.
     period: text("period").notNull(), // ej: 2026-09
     due_date: date("due_date").notNull(),
@@ -291,7 +475,7 @@ export const obligations = pgTable(
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
-  (t) => [index("obligations_due_idx").on(t.studio_id, t.due_date), index("obligations_client_idx").on(t.client_id, t.due_date)],
+  (t) => [index("obligations_due_idx").on(t.studio_id, t.due_date), index("obligations_org_idx").on(t.organization_id, t.due_date)],
 );
 
 // Documentos: archivos en disco (UPLOADS_DIR) con nombre aleatorio; acá el nombre original.
@@ -302,9 +486,10 @@ export const documents = pgTable(
     studio_id: uuid("studio_id")
       .notNull()
       .references(() => studios.id, { onDelete: "cascade" }),
-    client_id: uuid("client_id")
+    organization_id: uuid("organization_id")
       .notNull()
-      .references(() => clients.id, { onDelete: "cascade" }),
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    legal_entity_id: uuid("legal_entity_id").references((): AnyPgColumn => legal_entities.id, { onDelete: "set null" }),
     name: text("name").notNull(), // nombre original del archivo
     storage_path: text("storage_path").notNull(), // ruta relativa dentro de UPLOADS_DIR
     mime_type: text("mime_type"),
@@ -317,7 +502,7 @@ export const documents = pgTable(
     reviewed_at: timestamp("reviewed_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [index("documents_client_idx").on(t.client_id, t.created_at)],
+  (t) => [index("documents_org_idx").on(t.organization_id, t.created_at)],
 );
 
 // Solicitudes del cliente (consulta, pedido de factura, alta o baja de empleado, otro)
@@ -328,9 +513,10 @@ export const requests = pgTable(
     studio_id: uuid("studio_id")
       .notNull()
       .references(() => studios.id, { onDelete: "cascade" }),
-    client_id: uuid("client_id")
+    organization_id: uuid("organization_id")
       .notNull()
-      .references(() => clients.id, { onDelete: "cascade" }),
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    legal_entity_id: uuid("legal_entity_id").references((): AnyPgColumn => legal_entities.id, { onDelete: "set null" }),
     type: requestType("type").notNull().default("consulta"),
     subject: text("subject").notNull(),
     status: requestStatus("status").notNull().default("abierta"),
@@ -338,7 +524,7 @@ export const requests = pgTable(
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
-  (t) => [index("requests_studio_status_idx").on(t.studio_id, t.status), index("requests_client_idx").on(t.client_id)],
+  (t) => [index("requests_studio_status_idx").on(t.studio_id, t.status), index("requests_org_idx").on(t.organization_id)],
 );
 
 // Mensajes de cada solicitud (el primero es el del cliente) con adjunto opcional
@@ -408,7 +594,7 @@ export const integration_syncs = pgTable(
 );
 
 // Empresas de Tango (cada base de datos de Tango). Si el estudio usa una
-// empresa por cliente, se puede asignar cada una a un cliente de la plataforma.
+// empresa por cliente, se puede asignar cada una a una organización.
 export const tango_companies = pgTable(
   "tango_companies",
   {
@@ -418,15 +604,16 @@ export const tango_companies = pgTable(
       .references(() => studios.id, { onDelete: "cascade" }),
     company_id: text("company_id").notNull(), // ID de empresa de Tango (header Company)
     name: text("name"),
-    client_id: uuid("client_id").references(() => clients.id, { onDelete: "set null" }),
+    organization_id: uuid("organization_id").references((): AnyPgColumn => organizations.id, { onDelete: "set null" }),
+    legal_entity_id: uuid("legal_entity_id").references((): AnyPgColumn => legal_entities.id, { onDelete: "set null" }),
     last_sync_at: timestamp("last_sync_at", { withTimezone: true }),
     created_at: createdAt(),
   },
   (t) => [unique("tango_companies_studio_company_key").on(t.studio_id, t.company_id)],
 );
 
-// Registros traídos de Tango, siempre con el JSON crudo. client_id vincula un
-// cliente de Tango (proceso 2117) con un cliente de la plataforma.
+// Registros traídos de Tango, siempre con el JSON crudo. organization_id y
+// legal_entity_id vinculan un cliente de Tango (proceso 2117) con una razón social.
 export const tango_records = pgTable(
   "tango_records",
   {
@@ -438,11 +625,9 @@ export const tango_records = pgTable(
     process: integer("process").notNull(), // 2117 = Clientes
     external_id: text("external_id").notNull(),
     raw: jsonb("raw").notNull(),
-    client_id: uuid("client_id").references(() => clients.id, { onDelete: "set null" }),
+    organization_id: uuid("organization_id").references((): AnyPgColumn => organizations.id, { onDelete: "set null" }),
+    legal_entity_id: uuid("legal_entity_id").references((): AnyPgColumn => legal_entities.id, { onDelete: "set null" }),
     synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [
-    unique("tango_records_key").on(t.studio_id, t.company_id, t.process, t.external_id),
-    index("tango_records_client_idx").on(t.client_id),
-  ],
+  (t) => [unique("tango_records_key").on(t.studio_id, t.company_id, t.process, t.external_id), index("tango_records_org_idx").on(t.organization_id)],
 );

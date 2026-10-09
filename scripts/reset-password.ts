@@ -12,7 +12,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { randomInt } from "node:crypto";
 import postgres from "postgres";
 import * as schema from "../src/db/schema";
-import { accounts, sessions, users } from "../src/db/schema";
+import { accounts, audit_log, sessions, users } from "../src/db/schema";
 
 const ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const block = () => Array.from({ length: 5 }, () => ALPHABET[randomInt(ALPHABET.length)]).join("");
@@ -50,6 +50,15 @@ async function main() {
       else await tx.insert(accounts).values({ accountId: user.id, providerId: "credential", userId: user.id, password: hash });
       await tx.update(users).set({ mustChangePassword: true, active: true }).where(eq(users.id, user.id));
       await tx.delete(sessions).where(eq(sessions.userId, user.id));
+      // Queda en la auditoría (la contraseña nunca se guarda en texto plano)
+      await tx.insert(audit_log).values({
+        studio_id: user.studioId,
+        actor_label: "consola (reset-password)",
+        action: "usuario.reset_password",
+        entity_type: "usuario",
+        entity_id: user.id,
+        metadata: { email: user.email },
+      });
     });
     console.log("");
     console.log(`Contraseña temporal para ${email} (se muestra una sola vez):`);
