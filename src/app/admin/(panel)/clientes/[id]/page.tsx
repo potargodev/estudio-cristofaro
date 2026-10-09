@@ -1,4 +1,4 @@
-import { and, count, eq, inArray, isNull } from "drizzle-orm";
+import { and, count, eq, inArray, isNull, max } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -15,7 +15,7 @@ import {
   type ClientTabKey,
 } from "@/components/admin/ClientTabs";
 import { getDb } from "@/db";
-import { clients, documents, requests } from "@/db/schema";
+import { clients, documents, requests, tango_companies, tango_records } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 
@@ -49,7 +49,7 @@ export default async function ClientePage({
   const tab: ClientTabKey = CLIENT_TABS.some((t) => t.key === sp.tab) ? (sp.tab as ClientTabKey) : "datos";
 
   // Contadores de las pestañas: documentos nuevos del cliente y solicitudes abiertas
-  const [[newDocs], [openReqs]] = await Promise.all([
+  const [[newDocs], [openReqs], [tango], [tangoCompany]] = await Promise.all([
     db
       .select({ n: count() })
       .from(documents)
@@ -58,7 +58,19 @@ export default async function ClientePage({
       .select({ n: count() })
       .from(requests)
       .where(and(eq(requests.client_id, id), eq(requests.studio_id, studioId), inArray(requests.status, ["abierta", "en_curso"]))),
+    // Vínculo con Tango: como cliente de Tango o como empresa de Tango asignada
+    db
+      .select({ n: count(), lastSync: max(tango_records.synced_at) })
+      .from(tango_records)
+      .where(and(eq(tango_records.client_id, id), eq(tango_records.studio_id, studioId))),
+    db
+      .select({ companyId: tango_companies.company_id, lastSync: tango_companies.last_sync_at })
+      .from(tango_companies)
+      .where(and(eq(tango_companies.client_id, id), eq(tango_companies.studio_id, studioId)))
+      .limit(1),
   ]);
+  const tangoSync = tango.n > 0 ? tango.lastSync : (tangoCompany?.lastSync ?? null);
+  const tangoLinked = tango.n > 0 || Boolean(tangoCompany);
 
   const notice = Object.keys(NOTICES).find((k) => sp[k]);
   const errorText =
@@ -80,6 +92,18 @@ export default async function ClientePage({
       <div className="mb-4 mt-2 flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">{client.business_name}</h1>
         {!client.active && <span className="rounded-full bg-line/60 px-2.5 py-0.5 text-xs text-muted">Inactivo</span>}
+        {tangoLinked && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e3efe6] px-2.5 py-0.5 text-xs font-medium text-[#24583a]">
+            Vinculado con Tango
+            {tangoCompany && !tango.n ? ` (empresa ${tangoCompany.companyId})` : ""}
+            <span className="font-normal">
+              · última sincronización{" "}
+              {tangoSync
+                ? new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(tangoSync))
+                : "pendiente"}
+            </span>
+          </span>
+        )}
       </div>
       {notice && <Notice>{sp.nuevo && tab === "datos" ? NOTICES.nuevo : NOTICES[notice]}</Notice>}
       {errorText && (

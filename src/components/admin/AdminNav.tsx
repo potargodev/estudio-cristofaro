@@ -10,6 +10,7 @@ const items = [
   { href: "/admin/solicitudes", label: "Solicitudes" },
   { href: "/admin/contenidos", label: "Contenidos" },
   { href: "/admin/usuarios", label: "Usuarios", adminOnly: true },
+  { href: "/admin/integraciones", label: "Integraciones", adminOnly: true },
 ];
 
 export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
