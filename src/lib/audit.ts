@@ -89,6 +89,12 @@ export const AUDIT_LABELS: Record<string, string> = {
   "usuario.reset_password": "Reseteó la contraseña",
   "usuario.2fa_activar": "Activó el segundo factor",
   "permiso.denegado": "Acción sin permiso bloqueada",
+  "agenda.reservar": "Agendó una llamada",
+  "agenda.reprogramar": "Reprogramó una llamada",
+  "agenda.cancelar": "Canceló una llamada",
+  "agenda.disponibilidad": "Actualizó su disponibilidad",
+  "agenda.google_conectar": "Conectó Google Calendar",
+  "agenda.google_desconectar": "Desconectó Google Calendar",
 };
 
 export const auditLabel = (action: string) => AUDIT_LABELS[action] ?? action;

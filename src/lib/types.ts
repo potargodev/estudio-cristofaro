@@ -1,7 +1,7 @@
 import type { leads, legal_entities, organizations, userRole } from "@/db/schema";
 
 export type LeadStatus = "nuevo" | "contactado" | "presupuesto" | "ganado" | "perdido";
-export type LeadSource = "diagnostico" | "contacto" | "whatsapp" | "manual" | "otro";
+export type LeadSource = "diagnostico" | "contacto" | "whatsapp" | "manual" | "otro" | "agenda";
 export type TaxRegime = "monotributo" | "responsable_inscripto" | "sociedad" | "exento" | "otro";
 
 // Filas tal como las devuelve Drizzle (fechas como Date, numeric como string).
@@ -61,6 +61,7 @@ export const LEAD_SOURCES: Record<LeadSource, string> = {
   whatsapp: "WhatsApp",
   manual: "Carga manual",
   otro: "Otro",
+  agenda: "Agenda online",
 };
 
 export const REGIMES: Record<TaxRegime, string> = {

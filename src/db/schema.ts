@@ -38,7 +38,7 @@ const updatedAt = () =>
 
 export const userRole = pgEnum("user_role", ["admin", "contador", "cliente"]);
 export const leadStatus = pgEnum("lead_status", ["nuevo", "contactado", "presupuesto", "ganado", "perdido"]);
-export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro"]);
+export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro", "agenda"]);
 export const taxRegime = pgEnum("tax_regime", ["monotributo", "responsable_inscripto", "sociedad", "exento", "otro"]);
 export const obligationStatus = pgEnum("obligation_status", ["pendiente", "en_proceso", "presentado", "pagado", "vencido"]);
 export const documentSource = pgEnum("document_source", ["estudio", "cliente"]);
@@ -54,6 +54,8 @@ export const membershipStatus = pgEnum("membership_status", ["activa", "suspendi
 export const invitationStatus = pgEnum("invitation_status", ["pendiente", "aceptada", "revocada", "vencida"]);
 export const staffAssignment = pgEnum("staff_assignment", ["responsable", "colaborador"]);
 export const auditResult = pgEnum("audit_result", ["ok", "denegado", "error"]);
+export const bookingStatus = pgEnum("booking_status", ["confirmada", "cancelada"]);
+export const bookingOrigin = pgEnum("booking_origin", ["web", "portal", "estudio"]);
 
 // ───────────────────────── Estudios ─────────────────────────
 
@@ -649,4 +651,88 @@ export const tango_records = pgTable(
     synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [unique("tango_records_key").on(t.studio_id, t.company_id, t.process, t.external_id), index("tango_records_org_idx").on(t.organization_id)],
+);
+
+// ───────────────────────── Agenda (llamadas con Google Meet) ─────────────────────────
+
+/** Franjas de un día: [{ start: "09:00", end: "13:00" }, …] */
+export type DayRanges = { start: string; end: string }[];
+/** Horario semanal: clave 1 = lunes … 7 = domingo */
+export type WeeklyHours = Partial<Record<"1" | "2" | "3" | "4" | "5" | "6" | "7", DayRanges>>;
+
+// Disponibilidad de cada persona del estudio para recibir llamadas
+export const availability = pgTable("availability", {
+  user_id: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  active: boolean("active").notNull().default(false), // acepta reservas
+  public: boolean("public").notNull().default(false), // aparece en /agendar (web)
+  timezone: text("timezone").notNull().default("America/Argentina/Buenos_Aires"),
+  weekly: jsonb("weekly").$type<WeeklyHours>().notNull().default({}),
+  duration_minutes: integer("duration_minutes").notNull().default(30), // 15 | 30 | 45
+  buffer_minutes: integer("buffer_minutes").notNull().default(10), // margen entre llamadas
+  min_notice_hours: integer("min_notice_hours").notNull().default(12), // anticipación mínima
+  blocked_dates: text("blocked_dates").array().notNull().default(sql`'{}'::text[]`), // YYYY-MM-DD
+  manual_meeting_url: text("manual_meeting_url"), // link fijo si no hay Google conectado
+  updated_at: updatedAt(),
+});
+
+// Conexión con Google Calendar (separada del login). Tokens cifrados con AES-GCM (ENCRYPTION_KEY).
+export const calendar_connections = pgTable("calendar_connections", {
+  user_id: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  google_email: text("google_email"),
+  access_token_enc: text("access_token_enc").notNull(),
+  refresh_token_enc: text("refresh_token_enc"),
+  expires_at: timestamp("expires_at", { withTimezone: true }),
+  scope: text("scope"),
+  connected_at: timestamp("connected_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Llamadas agendadas (desde la web, el portal o el estudio)
+export const bookings = pgTable(
+  "bookings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    host_user_id: uuid("host_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+    lead_id: uuid("lead_id").references(() => leads.id, { onDelete: "set null" }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    origin: bookingOrigin("origin").notNull().default("web"),
+    status: bookingStatus("status").notNull().default("confirmada"),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone"),
+    reason: text("reason"),
+    starts_at: timestamp("starts_at", { withTimezone: true }).notNull(),
+    ends_at: timestamp("ends_at", { withTimezone: true }).notNull(),
+    meet_url: text("meet_url"),
+    google_event_id: text("google_event_id"),
+    // Link para reprogramar o cancelar sin login: solo se guarda el SHA-256
+    manage_token_hash: text("manage_token_hash").notNull().unique(),
+    sequence: integer("sequence").notNull().default(0), // versión para el .ics
+    reminder_24h_at: timestamp("reminder_24h_at", { withTimezone: true }),
+    reminder_1h_at: timestamp("reminder_1h_at", { withTimezone: true }),
+    cancelled_at: timestamp("cancelled_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [
+    index("bookings_host_idx").on(t.host_user_id, t.starts_at),
+    index("bookings_studio_idx").on(t.studio_id, t.starts_at),
+    index("bookings_org_idx").on(t.organization_id),
+    index("bookings_lead_idx").on(t.lead_id),
+  ],
 );
