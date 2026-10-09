@@ -1,4 +1,4 @@
-# Estudio Cristofaro · Web + Backoffice (fase 1)
+# Estudio Cristofaro · Web, portal de clientes y backoffice
 
 Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · Nodemailer (SMTP) · Docker / Easypanel
 
@@ -8,7 +8,7 @@ Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · No
 - Home con la nueva propuesta de valor: el resumen mensual del hero se completa en vivo, selector "¿Qué tipo de contribuyente sos?" que se despliega, diferenciales en grilla bento, números del estudio, proceso, servicios, novedades y marquesina de rubros.
 - Landings por segmento: `/monotributistas`, `/pymes-y-sociedades`, `/empleadores`, `/emprendedores`.
 - `/servicios` y una página por servicio (`/servicios/contable`, `impositivo`, `laboral`, `societario`).
-- `/planes`, `/equipo`, `/novedades`, `/preguntas-frecuentes`, `/contacto`.
+- `/planes`, `/equipo` (retratos con especialidad), `/novedades`, `/preguntas-frecuentes`, `/contacto`, `/agendar` (llamada con Google Meet) y `/privacidad`.
 - `/diagnostico`: formulario de 4 pasos que crea una consulta en el backoffice.
 - Botón flotante de WhatsApp, SEO por página, sitemap, robots, JSON-LD (AccountingService y FAQPage), imagen para compartir generada.
 - Redirecciones de las URLs viejas (`/index.html`, `/features.html`, `/about.html`, `/faq.html`, `/contact.html`).
@@ -17,22 +17,18 @@ Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · No
 - Movimiento sutil con [motion](https://motion.dev) y scroll suave con Lenis (solo en la web pública). Con `prefers-reduced-motion` no hay animaciones: se ve directo el estado final.
 
 **Backoffice (`/admin`)**
-- Login con email y contraseña (Better Auth), sin registro público. Roles: admin y contador (cliente queda listo para la fase 2).
-- Resumen: consultas del mes, sin contactar, conversión, clientes activos, abono total, próximas acciones y origen de consultas.
-- Consultas: tablero kanban (Nuevas → Contactadas → Presupuesto enviado → Ganadas / Perdidas), búsqueda, ficha con seguimiento, responsable, próxima acción, notas, respuesta directa por WhatsApp o mail y botón **Convertir en cliente**.
-- Clientes: listado con filtros, alta y edición (CUIT, régimen, categoría, servicios, abono).
-- Contenidos: novedades, planes y preguntas frecuentes editables sin tocar código.
-- Usuarios (solo admin): alta de contadores con contraseña inicial, cambio de rol y desactivación (cierra sus sesiones).
-- Formularios, selects, diálogos de confirmación, avisos y toasts con [shadcn/ui](https://ui.shadcn.com) (copiado en `src/components/ui` y adaptado a la marca).
-- Mails automáticos por consulta nueva (aviso al estudio + confirmación al interesado) por SMTP.
-- Multi-estudio: cada página y cada action filtra por el estudio del usuario logueado.
+- Acceso del estudio con email, contraseña y segundo factor obligatorio (TOTP + códigos de respaldo). Roles: admin y contador.
+- Resumen: KPIs, gráficos por semana de consultas y vencimientos, próximas llamadas, solicitudes abiertas y documentos nuevos.
+- Consultas (kanban) con **Convertir en cliente**, que crea la organización con su razón social.
+- **Organizaciones** (reemplaza a Clientes; las URLs viejas redirigen): listado con plan, responsable, módulos y alertas; ficha con *General y razones sociales*, *Plan y módulos* (límites del plan y excepciones auditadas), *Miembros e invitaciones*, *Equipo del estudio*, *Vencimientos*, *Documentos*, *Solicitudes*, *Integraciones* y *Actividad* (línea de tiempo desde la auditoría).
+- **Agenda**: vista semanal, disponibilidad por persona y conexión con Google Calendar.
+- Contenidos, usuarios del estudio e integraciones. Todo filtrado por estudio en el servidor y con auditoría de las acciones sensibles.
 
 **Portal del cliente (`/portal`)**
-- Login propio en `/portal/login` (mismo Better Auth). Un usuario cliente solo ve datos de su cliente: cada query lo valida en el servidor. Un cliente nunca entra a `/admin` y el staff no usa `/portal`.
-- Inicio (próximos vencimientos, último documento, solicitudes abiertas), Vencimientos y pagos (con link de pago o VEP), Documentos (descarga y carga de comprobantes PDF, JPG, PNG o XLSX de hasta 10 MB, por período y categoría) y Solicitudes (consulta, pedido de factura, alta o baja de empleado; con mensajes y adjuntos).
-- En el backoffice: pestañas Vencimientos, Documentos, Solicitudes y Acceso al portal en la ficha del cliente (la contraseña inicial se muestra una sola vez), `/admin/solicitudes`, importación de vencimientos desde CSV o XLSX con vista previa y cruce por CUIT, y en el resumen las solicitudes abiertas y los documentos nuevos.
-- Avisos por mail (si hay SMTP): al cliente por documento nuevo, vencimiento cargado o respuesta; al estudio cuando el cliente sube algo o crea una solicitud.
-- Archivos en disco (`UPLOADS_DIR`) con nombres aleatorios; solo se bajan por `/api/archivos/[id]`, que verifica permisos.
+- Sin contraseñas ni registro público: Google o enlace por mail, solo con invitación vigente o membresía activa.
+- Una persona puede pertenecer a varias organizaciones (selector arriba). Roles Administrador, Dirección, Administración, Recursos Humanos y Consulta; la matriz de permisos está en `src/lib/permissions.ts` y se valida siempre en el servidor.
+- Inicio como tablero (este mes, responsable del estudio con botón para agendar, actividad), Vencimientos, Documentos, Solicitudes, módulos activos de la organización (catálogo en `src/lib/modules/catalog.ts`) y **Mi equipo** para el administrador (invitar, revocar, cambiar roles, contador de usuarios del plan).
+- Archivos privados: solo se bajan por `/api/archivos/[id]`, que verifica la membresía y el permiso, y cada descarga queda auditada.
 
 **Integración con Tango Gestión (v1: conexión y clientes)**
 - `/admin/integraciones` (solo admin): activar Tango, generar o regenerar la clave del conector (se muestra una sola vez, con el `config.json` listo para bajar), estado de la conexión, log de las últimas 20 sincronizaciones, empresas de Tango ↔ clientes y mapeo configurable de campos.

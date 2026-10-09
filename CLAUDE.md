@@ -18,6 +18,12 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 - Google OAuth configurado: `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` cargados en staging, redirect `https://app.estudiocristofaro.com/api/auth/callback/google`.
 - SMTP pendiente: el mail del dominio está en el cPanel de Duplika (`mail.estudiocristofaro.com`). Hasta configurarlo, los mails no salen (se registran en el log).
 - Reset de contraseña del estudio desde la consola de `web`: `node dist/reset-password.mjs <email>`.
+- Agenda: `ENCRYPTION_KEY` (cifra los tokens de Google Calendar; no cambiarla) y, opcional, `CRON_SECRET`. Los recordatorios corren solos cada 5 minutos (instrumentation.ts).
+- Acceso: el estudio entra con contraseña + 2FA obligatorio; los clientes, con Google o enlace por mail y solo con invitación.
+
+## Gotchas
+- No usar `loading.tsx` en layouts con formularios: con `redirect()` en server actions el router de Next queda colgado. Usar `<Suspense>` dentro de la página.
+- Nada que no sea una action en archivos `"use server"` (cualquier función exportada queda expuesta como endpoint).
 
 ## Reglas no negociables
 - Multi-tenant: toda query y toda action valida en el servidor el estudio y la organización del usuario. Nunca confiar en IDs que vengan del navegador. Probar el aislamiento forzando IDs.
