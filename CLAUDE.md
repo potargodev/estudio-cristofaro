@@ -10,6 +10,15 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 - Deploy: Docker en Easypanel (VPS Hostinger). Staging en https://app.estudiocristofaro.com. NO usar Vercel ni Supabase.
 - El build nunca depende de la base de datos.
 
+## Entorno
+- Staging en Easypanel: proyecto `cristofaro`, servicios `web` (app, Dockerfile) y `db` (Postgres 16), VPS `srv1983285` (Hostinger).
+- Deploy automático: cada push a `main` dispara el webhook de Easypanel y se despliega solo en staging. Las migraciones de `/drizzle` se aplican al arrancar el contenedor.
+- La app escucha en el puerto 3000 y `0.0.0.0` (fijos en el Dockerfile). Healthcheck: `GET /api/health`.
+- Volumen persistente `/data/uploads` montado en `web` (`UPLOADS_DIR`): ahí viven los archivos del portal; no están en el Postgres.
+- Google OAuth configurado: `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` cargados en staging, redirect `https://app.estudiocristofaro.com/api/auth/callback/google`.
+- SMTP pendiente: el mail del dominio está en el cPanel de Duplika (`mail.estudiocristofaro.com`). Hasta configurarlo, los mails no salen (se registran en el log).
+- Reset de contraseña del estudio desde la consola de `web`: `node dist/reset-password.mjs <email>`.
+
 ## Reglas no negociables
 - Multi-tenant: toda query y toda action valida en el servidor el estudio y la organización del usuario. Nunca confiar en IDs que vengan del navegador. Probar el aislamiento forzando IDs.
 - Archivos privados: solo se descargan por rutas autenticadas que verifican permisos.

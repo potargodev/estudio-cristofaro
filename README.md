@@ -140,6 +140,22 @@ node dist/seed.mjs
 
 Crea el estudio, los planes, las preguntas frecuentes y el usuario admin. Se puede volver a correr sin duplicar nada. Después de entrar por primera vez a `/admin`, sacá `ADMIN_PASSWORD` de las variables de entorno. Los demás usuarios se crean desde **/admin/usuarios**.
 
+### Resetear la contraseña de alguien del estudio
+
+Si una persona del estudio (admin o contador) pierde su contraseña, desde el servicio `web` → **Console**:
+
+```bash
+node dist/reset-password.mjs persona@estudiocristofaro.com
+```
+
+- Genera una contraseña temporal aleatoria y la muestra **una sola vez** en la consola. Pasásela por un canal seguro.
+- Cierra todas las sesiones abiertas de esa persona.
+- En el próximo ingreso la obliga a elegir una contraseña nueva antes de usar el backoffice.
+- Solo funciona con usuarios del estudio; los clientes entran con Google o enlace por mail.
+- No desactiva el segundo factor (2FA) si la persona lo tiene configurado.
+
+En desarrollo: `npm run reset-password -- persona@estudiocristofaro.com`.
+
 ### 6. Healthcheck
 
 `GET /api/health` devuelve `200 {"ok":true,"db":"ok"}` si la app y la base responden, y `503` si la base no contesta. La imagen ya trae un `HEALTHCHECK` con ese endpoint; en Easypanel podés usar la misma ruta para el monitoreo.
