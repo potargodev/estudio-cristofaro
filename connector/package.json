@@ -1,0 +1,14 @@
+{
+  "name": "conector-tango-cristofaro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Conector local entre Tango Gestión (API Delta) y la plataforma del Estudio Cristofaro",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test-conexion": "node index.mjs test",
+    "sync": "node index.mjs sync",
+    "watch": "node index.mjs watch",
+    "mock": "node mock/server.mjs"
+  }
+}

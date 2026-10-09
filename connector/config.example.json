@@ -1,0 +1,10 @@
+{
+  "tangoUrl": "http://localhost:17000",
+  "apiAuthorization": "PEGAR_ACA_EL_TOKEN_DE_LA_API_DE_TANGO",
+  "companies": [{ "id": 1, "name": "Nombre de la empresa en Tango" }],
+  "platformUrl": "https://app.estudiocristofaro.com",
+  "connectorKey": "PEGAR_ACA_LA_CLAVE_DEL_CONECTOR",
+  "pageSize": 100,
+  "intervalMinutes": 60,
+  "logFile": "logs/conector.log"
+}
