@@ -49,7 +49,7 @@ export function SiteFooter() {
           <div className="lg:col-span-4">
             <Logo inverted />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-paper/60">
-              Estudio contable para PyMEs de servicios en CABA y GBA. {site.hours}.
+              Contabilidad empresarial para PyMEs de servicios en CABA y GBA. {site.hours}.
             </p>
           </div>
           {columns.map((c) => (

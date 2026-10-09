@@ -165,7 +165,7 @@ export function CompanyPanel() {
           >
             <div className="flex justify-between px-1 pb-3 text-[11px] text-paper/45">
               <span className="tabular">9:41</span>
-              <span>Cristofaro</span>
+              <span>Estudio Cristofaro</span>
             </div>
             <div className="space-y-2">
               {NOTIFS.map((n) => (

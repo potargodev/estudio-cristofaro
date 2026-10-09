@@ -9,11 +9,11 @@ export function Container({ className, children }: { className?: string; childre
 }
 
 /** Índice fino de sección: número tabular en rosé + nombre (sin mayúsculas forzadas) */
-export function SectionIndex({ n, children, className }: { n: string; children: React.ReactNode; className?: string }) {
+export function SectionIndex({ n, children, className, light = false }: { n: string; children: React.ReactNode; className?: string; light?: boolean }) {
   return (
-    <p className={cn("flex items-center gap-3 text-[13px] text-paper/60", className)}>
-      <span className="tabular text-rose-light">{n}</span>
-      <span aria-hidden className="h-px w-8 bg-hair-strong" />
+    <p className={cn("flex items-center gap-3 text-[13px]", light ? "text-muted" : "text-paper/60", className)}>
+      <span className={cn("tabular", light ? "text-rose-deep" : "text-rose-light")}>{n}</span>
+      <span aria-hidden className={cn("h-px w-8", light ? "bg-hair-ink" : "bg-hair-strong")} />
       <span>{children}</span>
     </p>
   );

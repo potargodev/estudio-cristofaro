@@ -1,7 +1,7 @@
 // La URL pública no está acá: se lee en runtime con getSiteUrl() (src/lib/runtime-config.ts).
 export const site = {
   name: "Estudio Cristofaro & Asociados",
-  shortName: "Cristofaro",
+  shortName: "Estudio Cristofaro",
   promise: "Tu contador, siempre al día. Sin papeles, sin sorpresas.",
   description:
     "Estudio contable para PyMEs de servicios en CABA y GBA: impuestos, contabilidad y sueldos con un equipo con nombre y apellido, y una plataforma donde ves qué está hecho, qué pagar y qué viene.",

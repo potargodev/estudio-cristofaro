@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(getSiteUrl()),
     title: {
-      default: `Estudio contable en CABA | ${site.name}`,
+      default: `${site.name} · Contabilidad empresarial en CABA y GBA`,
       template: `%s | ${site.name}`,
     },
     description: site.description,
@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: "es_AR",
       siteName: site.name,
-      title: `${site.name} · Estudio contable en CABA`,
+      title: `${site.name} · Contabilidad empresarial`,
       description: site.description,
     },
     alternates: { canonical: "/" },

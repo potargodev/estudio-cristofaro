@@ -33,7 +33,7 @@ const CHAOS = [
 /** Pieza del dashboard: arranca dispersa y vuela a su lugar con el scroll */
 function Piece({ i, className, children }: { i: number; className?: string; children: React.ReactNode }) {
   return (
-    <div data-piece={i} className={`border border-hair bg-navy-deep ${className ?? ""}`}>
+    <div data-piece={i} className={`border border-hair-ink bg-surface ${className ?? ""}`}>
       {children}
     </div>
   );
@@ -72,32 +72,32 @@ export function ChaosToOrder() {
   }, []);
 
   return (
-    <section ref={root} aria-labelledby="caos-titulo" className="border-t border-hair bg-navy-deep">
+    <section ref={root} aria-labelledby="caos-titulo" className="bg-paper text-ink">
       <div data-pin className="flex min-h-[100svh] items-center py-24 lg:py-0">
         <Container>
           <div className="grid items-center gap-14 lg:grid-cols-12">
             <div className="relative lg:col-span-5">
-              <SectionIndex n="02">Del caos al orden</SectionIndex>
+              <SectionIndex n="02" light>Del caos al orden</SectionIndex>
               <div className="relative mt-8">
                 <div data-before>
-                  <h2 id="caos-titulo" className="display-sm text-paper">
+                  <h2 id="caos-titulo" className="display-sm text-ink">
                     Hoy: la administración vive en WhatsApp, mails y planillas.
                   </h2>
-                  <ul className="mt-8 space-y-3 text-[15px] text-paper/60">
+                  <ul className="mt-8 space-y-3 text-[15px] text-muted">
                     {BEFORE.map((b) => (
-                      <li key={b} className="border-l border-hair-strong pl-4">
+                      <li key={b} className="border-l border-hair-ink pl-4">
                         {b}
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div data-after className="mt-14 lg:absolute lg:inset-0 lg:mt-0">
-                  <p className="display-sm text-paper">
-                    Con Cristofaro: todo en un lugar, con alguien que responde.
+                  <p className="display-sm text-ink">
+                    Con Estudio Cristofaro: todo en un lugar, con alguien que responde.
                   </p>
-                  <ul className="mt-8 space-y-3 text-[15px] text-paper/80">
+                  <ul className="mt-8 space-y-3 text-[15px] text-ink/85">
                     {AFTER.map((b) => (
-                      <li key={b} className="border-l border-rose-light pl-4">
+                      <li key={b} className="border-l border-rose pl-4">
                         {b}
                       </li>
                     ))}
@@ -108,14 +108,14 @@ export function ChaosToOrder() {
 
             {/* El panel que se arma */}
             <div className="relative lg:col-span-7" aria-label="Panel de la empresa, ordenado" role="img">
-              <div data-frame className="border border-hair-strong bg-night p-4 sm:p-6">
-                <div className="flex items-center justify-between border-b border-hair pb-3 text-[12px] text-paper/50">
+              <div data-frame className="border border-hair-ink bg-surface p-4 sm:p-6">
+                <div className="flex items-center justify-between border-b border-hair-ink pb-3 text-[12px] text-muted">
                   <span>Agencia Norte · octubre</span>
                   <span className="tabular">8 de 10 resuelto</span>
                 </div>
                 <div className="mt-4 grid grid-cols-6 gap-3">
                   <div className="col-span-6 sm:col-span-4">
-                    <p data-frame-line className="mb-2 border-b border-hair pb-1 text-[11px] text-rose-light">
+                    <p data-frame-line className="mb-2 border-b border-hair-ink pb-1 text-[11px] text-rose-deep">
                       Vencimientos
                     </p>
                     {[
@@ -123,42 +123,42 @@ export function ChaosToOrder() {
                       ["Ganancias anticipo 5", "13/10", "$214.900"],
                       ["Ingresos Brutos CABA", "16/10", "$98.420"],
                     ].map(([t, d, a], k) => (
-                      <Piece key={t} i={k} className="mb-2 grid grid-cols-[1fr_auto_auto] gap-3 px-3 py-2 text-[12px] text-paper/80">
+                      <Piece key={t} i={k} className="mb-2 grid grid-cols-[1fr_auto_auto] gap-3 px-3 py-2 text-[12px] text-ink/85">
                         <span>{t}</span>
-                        <span className="tabular text-paper/50">{d}</span>
+                        <span className="tabular text-muted">{d}</span>
                         <span className="tabular">{a}</span>
                       </Piece>
                     ))}
                   </div>
                   <div className="col-span-6 sm:col-span-2">
-                    <p data-frame-line className="mb-2 border-b border-hair pb-1 text-[11px] text-rose-light">
+                    <p data-frame-line className="mb-2 border-b border-hair-ink pb-1 text-[11px] text-rose-deep">
                       Documentos
                     </p>
                     {["factura-0012.pdf", "recibos-sept.pdf"].map((f, k) => (
-                      <Piece key={f} i={3 + k} className="mb-2 flex items-center gap-2 px-3 py-2 text-[12px] text-paper/80">
-                        <FileText className="size-3.5 text-rose-light" aria-hidden />
+                      <Piece key={f} i={3 + k} className="mb-2 flex items-center gap-2 px-3 py-2 text-[12px] text-ink/85">
+                        <FileText className="size-3.5 text-rose-deep" aria-hidden />
                         {f}
                       </Piece>
                     ))}
                   </div>
                   <div className="col-span-6 sm:col-span-3">
-                    <p data-frame-line className="mb-2 border-b border-hair pb-1 text-[11px] text-rose-light">
+                    <p data-frame-line className="mb-2 border-b border-hair-ink pb-1 text-[11px] text-rose-deep">
                       Solicitudes
                     </p>
-                    <Piece i={5} className="px-3 py-2 text-[12px] text-paper/80">
-                      <span className="block bg-[#1f3a2c] px-2 py-1 text-[#cfe9d8]">¿Me pasás el VEP de IVA?</span>
-                      <span className="mt-1 block border-l border-rose-light pl-2 text-paper/60">Listo: está en Vencimientos.</span>
+                    <Piece i={5} className="px-3 py-2 text-[12px] text-ink/85">
+                      <span className="block bg-[#dcf2e3] px-2 py-1 text-[#1d4a30]">¿Me pasás el VEP de IVA?</span>
+                      <span className="mt-1 block border-l border-rose pl-2 text-muted">Listo: está en Vencimientos.</span>
                     </Piece>
                   </div>
                   <div className="col-span-6 sm:col-span-3">
-                    <p data-frame-line className="mb-2 border-b border-hair pb-1 text-[11px] text-rose-light">
+                    <p data-frame-line className="mb-2 border-b border-hair-ink pb-1 text-[11px] text-rose-deep">
                       Resumen del mes
                     </p>
-                    <Piece i={6} className="flex items-center gap-2 px-3 py-2 text-[12px] text-paper/80">
-                      <Mail className="size-3.5 text-rose-light" aria-hidden />
+                    <Piece i={6} className="flex items-center gap-2 px-3 py-2 text-[12px] text-ink/85">
+                      <Mail className="size-3.5 text-rose-deep" aria-hidden />
                       Tu septiembre, en una página
                     </Piece>
-                    <Piece i={7} className="mt-2 px-3 py-2 text-[12px] text-paper/60">
+                    <Piece i={7} className="mt-2 px-3 py-2 text-[12px] text-muted">
                       Responde: Lucía G. · menos de 24 h
                     </Piece>
                   </div>

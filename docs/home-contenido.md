@@ -25,7 +25,7 @@ Fuente: brief de producto. Público: PyMEs de servicios de CABA y GBA, de 5 a 30
   - Mandás el mismo comprobante tres veces.
   - Para saber cuánto pagaste tenés que reconstruirlo.
   - Nadie sabe quién tiene que responder.
-- Con Cristofaro: todo en un lugar, con alguien que responde.
+- Con Estudio Cristofaro: todo en un lugar, con alguien que responde.
   - Alertas antes de cada vencimiento, con el importe listo.
   - Subís cada documento una vez y queda ordenado.
   - Un resumen mensual de una página, en criollo.

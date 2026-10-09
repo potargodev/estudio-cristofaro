@@ -38,7 +38,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
             <span className="grid size-9 place-items-center rounded-full border border-rose-light/60 text-rose-light">
               <Monogram className="size-6" />
             </span>
-            <span className="font-display text-xl">Cristofaro</span>
+            <span className="font-display text-xl">Estudio Cristofaro</span>
           </Link>
           <Link href="/" className="text-sm text-paper/70 hover:text-paper md:mt-3 md:block">
             Ver sitio
