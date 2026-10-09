@@ -1,71 +1,117 @@
-import { and, eq } from "drizzle-orm";
+import { and, count, eq, inArray, isNull } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { updateClientRecord } from "@/app/admin/actions";
 import { Notice } from "@/components/admin/AdminField";
 import { ClientForm } from "@/components/admin/ClientForm";
+import {
+  CLIENT_TABS,
+  DocumentsTab,
+  ObligationsTab,
+  PortalTab,
+  RequestsTab,
+  TabNav,
+  type ClientTabKey,
+} from "@/components/admin/ClientTabs";
 import { getDb } from "@/db";
-import { clients } from "@/db/schema";
+import { clients, documents, requests } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 
 export const metadata: Metadata = { title: "Cliente" };
+
+const NOTICES: Record<string, string> = {
+  guardado: "Cambios guardados.",
+  nuevo: "Cliente creado.",
+  activado: "Acceso al portal reactivado.",
+  desactivado: "Acceso al portal quitado. Se cerraron sus sesiones.",
+};
 
 export default async function ClientePage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ guardado?: string; nuevo?: string; error?: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const { id } = await params;
-  const { guardado, nuevo, error } = await searchParams;
+  const sp = await searchParams;
   const { studioId } = await requireStaff();
   if (!isUuid(id)) notFound();
-  const [client] = await getDb()
+  const db = getDb();
+  const [client] = await db
     .select()
     .from(clients)
     .where(and(eq(clients.id, id), eq(clients.studio_id, studioId)));
   if (!client) notFound();
 
-  return (
-    <div className="grid max-w-6xl gap-6 xl:grid-cols-[1fr_320px]">
-      <div>
-        <Link href="/admin/clientes" className="text-sm text-rose-deep underline-offset-4 hover:underline">
-          Clientes
-        </Link>
-        <h1 className="mb-6 mt-2 text-2xl font-semibold tracking-tight">{client.business_name}</h1>
-        {(guardado || nuevo) && (
-          <Notice>{nuevo ? "Cliente creado." : "Cambios guardados."}</Notice>
-        )}
-        {error && (
-          <div className="mb-4">
-            <Notice tone="error">{error === "cuit" ? "Ya hay un cliente con ese CUIT." : "No se pudo guardar. Probá de nuevo."}</Notice>
-          </div>
-        )}
-        <ClientForm action={updateClientRecord} client={client} submitLabel="Guardar cambios" />
-      </div>
+  const tab: ClientTabKey = CLIENT_TABS.some((t) => t.key === sp.tab) ? (sp.tab as ClientTabKey) : "datos";
 
-      <aside className="space-y-4 xl:pt-14">
-        {client.lead_id && (
-          <div className="rounded-md border border-line bg-surface p-5">
-            <h2 className="font-semibold">Origen</h2>
-            <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
-            <Link href={`/admin/consultas/${client.lead_id}`} className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline">
-              Ver consulta original
-            </Link>
-          </div>
-        )}
-        <div className="rounded-md border border-dashed border-line p-5">
-          <h2 className="font-semibold">Próximamente</h2>
-          <ul className="mt-2 space-y-1.5 text-[15px] text-muted">
-            <li>Calendario de vencimientos según CUIT</li>
-            <li>Documentos y comprobantes</li>
-            <li>Acceso del cliente al portal</li>
-          </ul>
+  // Contadores de las pestañas: documentos nuevos del cliente y solicitudes abiertas
+  const [[newDocs], [openReqs]] = await Promise.all([
+    db
+      .select({ n: count() })
+      .from(documents)
+      .where(and(eq(documents.client_id, id), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at))),
+    db
+      .select({ n: count() })
+      .from(requests)
+      .where(and(eq(requests.client_id, id), eq(requests.studio_id, studioId), inArray(requests.status, ["abierta", "en_curso"]))),
+  ]);
+
+  const notice = Object.keys(NOTICES).find((k) => sp[k]);
+  const errorText =
+    tab === "datos" && sp.error
+      ? sp.error === "cuit"
+        ? "Ya hay un cliente con ese CUIT."
+        : "No se pudo guardar. Probá de nuevo."
+      : tab === "vencimientos" && sp.error
+        ? "Revisá los datos del vencimiento: impuesto, período, fecha, monto y un link que empiece con https://."
+        : tab === "solicitudes" && sp.error
+          ? sp.error
+          : null;
+
+  return (
+    <div className="max-w-6xl">
+      <Link href="/admin/clientes" className="text-sm text-rose-deep underline-offset-4 hover:underline">
+        Clientes
+      </Link>
+      <div className="mb-4 mt-2 flex flex-wrap items-center gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight">{client.business_name}</h1>
+        {!client.active && <span className="rounded-full bg-line/60 px-2.5 py-0.5 text-xs text-muted">Inactivo</span>}
+      </div>
+      {notice && <Notice>{sp.nuevo && tab === "datos" ? NOTICES.nuevo : NOTICES[notice]}</Notice>}
+      {errorText && (
+        <div className="mb-4">
+          <Notice tone="error">{errorText}</Notice>
         </div>
-      </aside>
+      )}
+
+      <TabNav clientId={client.id} active={tab} counts={{ documentos: newDocs.n, solicitudes: openReqs.n }} />
+
+      {tab === "datos" && (
+        <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
+          <ClientForm action={updateClientRecord} client={client} submitLabel="Guardar cambios" />
+          <aside className="space-y-4">
+            {client.lead_id && (
+              <div className="rounded-md border border-line bg-surface p-5">
+                <h2 className="font-semibold">Origen</h2>
+                <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
+                <Link href={`/admin/consultas/${client.lead_id}`} className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline">
+                  Ver consulta original
+                </Link>
+              </div>
+            )}
+          </aside>
+        </div>
+      )}
+      {tab === "vencimientos" && <ObligationsTab clientId={client.id} studioId={studioId} />}
+      {tab === "documentos" && <DocumentsTab clientId={client.id} studioId={studioId} error={sp.error} />}
+      {tab === "solicitudes" && <RequestsTab clientId={client.id} studioId={studioId} />}
+      {tab === "portal" && (
+        <PortalTab clientId={client.id} studioId={studioId} defaultName={client.contact_name ?? client.business_name} defaultEmail={client.email ?? ""} />
+      )}
     </div>
   );
 }
