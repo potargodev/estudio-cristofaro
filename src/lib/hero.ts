@@ -10,6 +10,9 @@ export interface HeroSlide {
   mobilePosition: string;
 }
 
+// Fotos previstas (docs/home-contenido.md): reunión con un cliente, videollamada
+// por Meet, equipo en la oficina, revisión del informe mensual y un cliente en su
+// agencia. Hoy son placeholders: reemplazar los archivos manteniendo los nombres.
 export const HERO_SLIDES: HeroSlide[] = [
   { src: "/hero/hero-1.jpg", alt: "", position: "65% 50%", mobilePosition: "68% 50%" },
   { src: "/hero/hero-2.jpg", alt: "", position: "70% 55%", mobilePosition: "72% 50%" },
@@ -19,4 +22,4 @@ export const HERO_SLIDES: HeroSlide[] = [
 ];
 
 /** Segundos que se ve cada foto */
-export const HERO_INTERVAL = 7;
+export const HERO_INTERVAL = 6;

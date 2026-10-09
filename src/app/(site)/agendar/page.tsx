@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/agendar" },
 };
 
-export default async function AgendarPage() {
+export default async function AgendarPage({ searchParams }: { searchParams: Promise<{ inicio?: string }> }) {
+  const { inicio } = await searchParams;
   const studioId = await getStudioId().catch(() => null);
   const days = studioId ? toPickerDays(await availableSlots(await getHosts(studioId, { publicOnly: true }))) : [];
   return (
@@ -21,7 +22,7 @@ export default async function AgendarPage() {
         intro="Elegí un horario y hablamos por videollamada. Te llega la confirmación con el link de Google Meet y un archivo para sumarla a tu calendario."
       />
       <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-        <BookingForm days={days} />
+        <BookingForm days={days} initial={typeof inicio === "string" ? inicio : undefined} />
       </section>
     </>
   );

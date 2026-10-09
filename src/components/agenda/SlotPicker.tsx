@@ -13,9 +13,11 @@ export interface PickerDay {
  * Elegir día y horario. Deja el horario elegido en un input oculto "start"
  * (ISO): el servidor lo vuelve a validar al confirmar.
  */
-export function SlotPicker({ days, error }: { days: PickerDay[]; error?: string }) {
-  const [day, setDay] = useState(days[0]?.date ?? "");
-  const [start, setStart] = useState("");
+export function SlotPicker({ days, error, initial }: { days: PickerDay[]; error?: string; initial?: string }) {
+  // `initial`: horario elegido en la home (?inicio=ISO), si sigue libre
+  const pre = initial ? days.find((d) => d.slots.some((s) => s.iso === initial)) : undefined;
+  const [day, setDay] = useState(pre?.date ?? days[0]?.date ?? "");
+  const [start, setStart] = useState(pre ? initial! : "");
   const current = days.find((d) => d.date === day);
   if (days.length === 0) {
     return (

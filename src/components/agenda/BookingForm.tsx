@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SlotPicker, type PickerDay } from "./SlotPicker";
 
 /** Formulario de /agendar: horario + datos de contacto */
-export function BookingForm({ days }: { days: PickerDay[] }) {
+export function BookingForm({ days, initial }: { days: PickerDay[]; initial?: string }) {
   const [state, action, pending] = useActionState<BookingState, FormData>(bookCall, { ok: false });
   const e = state.errors ?? {};
   return (
@@ -15,7 +15,7 @@ export function BookingForm({ days }: { days: PickerDay[] }) {
       <Honeypot />
       <section className="rounded-md border border-line bg-surface p-6 shadow-brand-sm">
         <h2 className="mb-4 text-lg font-semibold">1. Elegí día y horario</h2>
-        <SlotPicker days={days} error={e.start} />
+        <SlotPicker days={days} error={e.start} initial={initial} />
       </section>
       <section className="rounded-md border border-line bg-surface p-6 shadow-brand-sm">
         <h2 className="mb-4 text-lg font-semibold">2. Tus datos</h2>
