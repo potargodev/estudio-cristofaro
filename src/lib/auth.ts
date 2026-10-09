@@ -17,6 +17,7 @@ export interface StaffUser {
   role: UserRole;
   studioId: string;
   mustChangePassword: boolean;
+  twoFactorEnabled: boolean;
 }
 
 /** Sesión válida del pedido actual (consulta la base) o null. */
@@ -37,6 +38,7 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
     role: (u.role ?? "contador") as UserRole,
     studioId: u.studioId,
     mustChangePassword: Boolean(u.mustChangePassword),
+    twoFactorEnabled: Boolean(u.twoFactorEnabled),
   };
 });
 
@@ -53,6 +55,8 @@ export async function requireStaff(): Promise<StaffUser> {
   if (user.role !== "admin" && user.role !== "contador") redirect("/admin/sin-acceso");
   // Contraseña temporal (reset-password): nada del backoffice hasta cambiarla
   if (user.mustChangePassword) redirect("/admin/cambiar-clave");
+  // Segundo factor obligatorio para el estudio: hasta configurarlo, solo esa pantalla
+  if (!user.twoFactorEnabled) redirect("/admin/seguridad");
   return user;
 }
 

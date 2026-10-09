@@ -9,14 +9,10 @@ export function middleware(request: NextRequest) {
   let response: NextResponse;
 
   // /admin/* y /portal/* salvo sus logins: chequeo rápido de la cookie de sesión.
-  // La validación real (sesión vigente, rol, estudio y cliente) la hacen
-  // requireStaff() y requireClient() en el servidor.
+  // La validación real (sesión vigente, rol, estudio y organización) la hacen
+  // requireStaff() y requireMember() en el servidor.
   const area = pathname.startsWith("/admin") ? "admin" : pathname.startsWith("/portal") ? "portal" : null;
-  if (
-    area &&
-    !pathname.startsWith(`/${area}/login`) &&
-    !SESSION_COOKIES.some((name) => request.cookies.get(name)?.value)
-  ) {
+  if (area && !pathname.startsWith(`/${area}/login`) && !SESSION_COOKIES.some((name) => request.cookies.get(name)?.value)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = `/${area}/login`;
     loginUrl.search = "";

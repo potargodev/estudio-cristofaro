@@ -84,6 +84,8 @@ export const users = pgTable(
     active: boolean("active").notNull().default(true),
     // Contraseña temporal (scripts/reset-password.ts): hay que cambiarla al entrar
     mustChangePassword: boolean("must_change_password").notNull().default(false),
+    // Segundo factor (plugin twoFactor de Better Auth): obligatorio para el estudio
+    twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
@@ -136,6 +138,23 @@ export const accounts = pgTable(
       .$onUpdate(() => new Date()),
   },
   (t) => [index("accounts_user_idx").on(t.userId)],
+);
+
+// Secreto TOTP y códigos de respaldo (cifrados por Better Auth) de cada usuario con 2FA
+export const two_factors = pgTable(
+  "two_factors",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    secret: text("secret").notNull(),
+    backupCodes: text("backup_codes").notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    verified: boolean("verified").notNull().default(true),
+    failedVerificationCount: integer("failed_verification_count").notNull().default(0),
+    lockedUntil: timestamp("locked_until", { withTimezone: true }),
+  },
+  (t) => [index("two_factors_user_idx").on(t.userId), index("two_factors_secret_idx").on(t.secret)],
 );
 
 export const verifications = pgTable("verifications", {

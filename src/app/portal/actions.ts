@@ -8,7 +8,7 @@ import { getDb } from "@/db";
 import { documents, request_messages, requests } from "@/db/schema";
 import { ORG_COOKIE, getCurrentUser, getMemberships, requireMember } from "@/lib/auth";
 import { audit } from "@/lib/audit";
-import { getAuth } from "@/lib/auth-server";
+import { AUTH_ERRORS, getAuth, googleEnabled, type AuthErrorCode } from "@/lib/auth-server";
 import { isUuid } from "@/lib/ids";
 import { notifyStudio } from "@/lib/notify";
 import { can } from "@/lib/permissions";
@@ -32,20 +32,46 @@ export interface PortalLoginState {
   message?: string;
 }
 
-export async function portalSignIn(_prev: PortalLoginState, fd: FormData): Promise<PortalLoginState> {
-  const email = s(fd, "email");
-  const password = s(fd, "password");
-  if (!email || !password) return { ok: false, message: "Completá email y contraseña." };
+/** Solo rutas internas del portal (evita redirecciones abiertas) */
+function safeNext(value: string | null) {
+  return value && /^\/(portal|invitacion)(\/|\?|$)/.test(value) && !value.includes("//") ? value : "/portal";
+}
+
+function authMessage(error: unknown, fallback: string) {
+  const code = (error as { body?: { code?: string } }).body?.code;
+  return code && code in AUTH_ERRORS ? AUTH_ERRORS[code as AuthErrorCode] : fallback;
+}
+
+/** Enlace mágico: solo sale si el email tiene invitación vigente o membresía activa */
+export async function requestMagicLink(_prev: PortalLoginState, fd: FormData): Promise<PortalLoginState> {
+  const email = s(fd, "email")?.toLowerCase() ?? null;
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, message: "Revisá el email." };
+  const next = safeNext(s(fd, "next"));
   try {
-    await getAuth().api.signInEmail({ body: { email, password }, headers: await headers() });
+    await getAuth().api.signInMagicLink({
+      body: { email, callbackURL: next, errorCallbackURL: "/portal/login" },
+      headers: await headers(),
+    });
   } catch (error) {
     const status = (error as { status?: string }).status;
-    if (status === "FORBIDDEN") return { ok: false, message: "Tu acceso está desactivado. Escribile al estudio." };
-    if (status !== "UNAUTHORIZED" && status !== "BAD_REQUEST") console.error("[portal] Error al iniciar sesión", error);
-    return { ok: false, message: "Email o contraseña incorrectos." };
+    if (status === "TOO_MANY_REQUESTS") return { ok: false, message: "Pediste varios enlaces seguidos. Esperá un minuto." };
+    if (status !== "FORBIDDEN") console.error("[portal] magic link", error);
+    return { ok: false, message: authMessage(error, "No pudimos mandarte el enlace. Probá de nuevo.") };
   }
-  // requireClient manda al backoffice a quien no sea cliente
-  redirect("/portal");
+  return { ok: true, message: `Te mandamos un enlace a ${email}. Abrilo desde este dispositivo: vence en 15 minutos.` };
+}
+
+/** "Continuar con Google": arma la URL de Google y redirige */
+export async function signInWithGoogle(fd: FormData) {
+  if (!googleEnabled()) redirect("/portal/login");
+  const next = safeNext(s(fd, "next"));
+  const res = await getAuth().api.signInSocial({
+    body: { provider: "google", callbackURL: next, errorCallbackURL: "/portal/login" },
+    headers: await headers(),
+  });
+  const url = (res as { url?: string }).url;
+  if (!url) redirect("/portal/login?error=google");
+  redirect(url);
 }
 
 export async function portalSignOut() {

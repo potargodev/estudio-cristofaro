@@ -7,7 +7,8 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { faqs, leads, plans, posts, sessions, users } from "@/db/schema";
 import { requireAdmin, requireStaff } from "@/lib/auth";
-import { getAuth } from "@/lib/auth-server";
+import { audit } from "@/lib/audit";
+import { AUTH_ERRORS, getAuth, type AuthErrorCode } from "@/lib/auth-server";
 import type { LeadStatus, UserRole } from "@/lib/types";
 import { createUserWithPassword } from "@/lib/users";
 
@@ -69,22 +70,33 @@ export interface ActionState {
 // ───────────── sesión ─────────────
 
 export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionState> {
-  const email = s(fd, "email");
+  const email = s(fd, "email")?.toLowerCase() ?? null;
   const password = s(fd, "password");
   if (!email || !password) return { ok: false, message: "Completá email y contraseña." };
+  let twoFactor = false;
   try {
-    await getAuth().api.signInEmail({ body: { email, password }, headers: await headers() });
+    const res = await getAuth().api.signInEmail({ body: { email, password }, headers: await headers() });
+    // Con 2FA activo Better Auth no abre la sesión todavía: pide el código
+    twoFactor = Boolean((res as { twoFactorRedirect?: boolean }).twoFactorRedirect);
   } catch (error) {
     // Errores de Better Auth (APIError). Se compara por status y no con instanceof:
     // la clase viene de un paquete interno y no siempre es la misma instancia.
-    const status = (error as { status?: string }).status;
-    if (status === "FORBIDDEN") {
+    const e = error as { status?: string; body?: { code?: string; message?: string } };
+    await audit({
+      studioId: null,
+      actorLabel: email,
+      action: "sesion.rechazada",
+      result: "denegado",
+      metadata: { via: "contraseña", motivo: e.body?.code ?? e.status },
+    });
+    if (e.status === "FORBIDDEN") {
+      if (e.body?.code && e.body.code in AUTH_ERRORS) return { ok: false, message: AUTH_ERRORS[e.body.code as AuthErrorCode] };
       return { ok: false, message: "Tu usuario está desactivado. Pedile acceso a un administrador del estudio." };
     }
-    if (status !== "UNAUTHORIZED" && status !== "BAD_REQUEST") console.error("[auth] Error al iniciar sesión", error);
+    if (e.status !== "UNAUTHORIZED" && e.status !== "BAD_REQUEST") console.error("[auth] Error al iniciar sesión", error);
     return { ok: false, message: "Email o contraseña incorrectos." };
   }
-  redirect("/admin");
+  redirect(twoFactor ? "/admin/login/verificar" : "/admin");
 }
 
 export async function signOut() {
@@ -183,7 +195,10 @@ export async function updateLead(fd: FormData) {
 export async function deleteLead(fd: FormData) {
   const { studioId } = await requireStaff();
   const leadId = id(fd);
-  if (leadId) await getDb().delete(leads).where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)));
+  if (leadId)
+    await getDb()
+      .delete(leads)
+      .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)));
   revalidatePath("/admin/consultas");
   redirect("/admin/consultas");
 }
@@ -242,7 +257,10 @@ export async function savePost(fd: FormData) {
 export async function deletePost(fd: FormData) {
   const { studioId } = await requireStaff();
   const postId = id(fd);
-  if (postId) await getDb().delete(posts).where(and(eq(posts.id, postId), eq(posts.studio_id, studioId)));
+  if (postId)
+    await getDb()
+      .delete(posts)
+      .where(and(eq(posts.id, postId), eq(posts.studio_id, studioId)));
   revalidateSite();
   redirect("/admin/contenidos/novedades");
 }
@@ -262,7 +280,11 @@ export async function saveFaq(fd: FormData) {
     published: fd.get("published") !== null,
   };
   const db = getDb();
-  if (faqId) await db.update(faqs).set(payload).where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
+  if (faqId)
+    await db
+      .update(faqs)
+      .set(payload)
+      .where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
   else await db.insert(faqs).values({ studio_id: studioId, ...payload });
   revalidateSite();
   redirect("/admin/contenidos/preguntas?guardado=1");
@@ -271,7 +293,10 @@ export async function saveFaq(fd: FormData) {
 export async function deleteFaq(fd: FormData) {
   const { studioId } = await requireStaff();
   const faqId = id(fd);
-  if (faqId) await getDb().delete(faqs).where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
+  if (faqId)
+    await getDb()
+      .delete(faqs)
+      .where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
   revalidateSite();
   redirect("/admin/contenidos/preguntas");
 }
@@ -294,7 +319,11 @@ export async function savePlan(fd: FormData) {
     published: fd.get("published") !== null,
   };
   const db = getDb();
-  if (planId) await db.update(plans).set(payload).where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
+  if (planId)
+    await db
+      .update(plans)
+      .set(payload)
+      .where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
   else await db.insert(plans).values({ studio_id: studioId, ...payload });
   revalidateSite();
   redirect("/admin/contenidos/planes?guardado=1");
@@ -303,7 +332,10 @@ export async function savePlan(fd: FormData) {
 export async function deletePlan(fd: FormData) {
   const { studioId } = await requireStaff();
   const planId = id(fd);
-  if (planId) await getDb().delete(plans).where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
+  if (planId)
+    await getDb()
+      .delete(plans)
+      .where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
   revalidateSite();
   redirect("/admin/contenidos/planes");
 }
