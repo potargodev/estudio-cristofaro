@@ -75,6 +75,8 @@ export const users = pgTable(
       .references(() => studios.id, { onDelete: "cascade" }),
     // Desactivar en lugar de borrar: conserva el historial (responsable de consultas, etc.)
     active: boolean("active").notNull().default(true),
+    // Contraseña temporal (scripts/reset-password.ts): hay que cambiarla al entrar
+    mustChangePassword: boolean("must_change_password").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()

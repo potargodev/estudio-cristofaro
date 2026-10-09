@@ -14,15 +14,23 @@ export interface StaffUser {
   email: string;
   role: UserRole;
   studioId: string;
+  mustChangePassword: boolean;
 }
 
 /** Sesión válida del pedido actual (consulta la base) o null. */
 export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
   const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) return null;
-  const u = session.user as typeof session.user & { role?: string; studioId?: string; active?: boolean };
+  const u = session.user as typeof session.user & { role?: string; studioId?: string; active?: boolean; mustChangePassword?: boolean };
   if (!u.studioId || u.active === false) return null;
-  return { id: u.id, name: u.name, email: u.email, role: (u.role ?? "contador") as UserRole, studioId: u.studioId };
+  return {
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    role: (u.role ?? "contador") as UserRole,
+    studioId: u.studioId,
+    mustChangePassword: Boolean(u.mustChangePassword),
+  };
 });
 
 /**
@@ -36,6 +44,8 @@ export async function requireStaff(): Promise<StaffUser> {
   // Un cliente nunca entra al backoffice: va a su portal
   if (user.role === "cliente") redirect("/portal");
   if (user.role !== "admin" && user.role !== "contador") redirect("/admin/sin-acceso");
+  // Contraseña temporal (reset-password): nada del backoffice hasta cambiarla
+  if (user.mustChangePassword) redirect("/admin/cambiar-clave");
   return user;
 }
 

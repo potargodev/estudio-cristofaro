@@ -52,6 +52,7 @@ function createAuth() {
         role: { type: "string", required: false, defaultValue: "contador", input: false },
         studioId: { type: "string", required: true, input: false },
         active: { type: "boolean", required: false, defaultValue: true, input: false },
+        mustChangePassword: { type: "boolean", required: false, defaultValue: false, input: false },
       },
     },
     advanced: { database: { generateId: "uuid" } },
