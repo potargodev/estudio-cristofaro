@@ -20,6 +20,7 @@ import {
   LEGACY_TABS,
   ORG_TABS,
   ObligationsTab,
+  PlanTab,
   RequestsTab,
   StaffTab,
   TabNav,
@@ -95,9 +96,11 @@ export default async function OrganizacionPage({
       ? "Revisá los datos del vencimiento: impuesto, período, fecha, monto y un link que empiece con https://."
       : sp.error === "usuario"
         ? "Elegí a alguien del estudio."
-        : sp.error === "archivo"
-          ? null
-          : sp.error
+        : sp.error === "plan" || sp.error === "modulo"
+          ? "Opción inválida."
+          : sp.error === "archivo"
+            ? null
+            : sp.error
     : null;
 
   return (
@@ -182,7 +185,7 @@ export default async function OrganizacionPage({
         />
       )}
       {tab === "actividad" && <ActivityTimeline orgId={org.id} studioId={studioId} before={sp.antes} />}
-      {tab === "plan" && <p className="rounded-md border border-dashed border-line p-6 text-muted">Esta sección se está terminando de construir.</p>}
+      {tab === "plan" && <PlanTab orgId={org.id} studioId={studioId} planId={org.service_plan_id} />}
     </div>
   );
 }

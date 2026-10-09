@@ -1,7 +1,9 @@
 import { ArrowRight, Download } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, Empty, obligationTone, requestTone } from "@/components/portal/ui";
+import { LeadContact } from "@/components/portal/LeadContact";
 import { requireMember } from "@/lib/auth";
+import { getOrgStaff } from "@/lib/organizations";
 import { can, canCreateRequests, canSeeRequests } from "@/lib/permissions";
 import { getLatestStudioDocument, getRequests, getUpcomingObligations } from "@/lib/portal-data";
 import { OBLIGATION_STATUS, REQUEST_STATUS, REQUEST_TYPES, categoryLabel, dateLabel, moneyLabel, periodLabel, todayISO } from "@/lib/portal-types";
@@ -13,11 +15,13 @@ export default async function PortalHome() {
     documents: can(me.orgRole, "documentos.ver"),
     requests: canSeeRequests(me.orgRole),
   };
-  const [upcoming, lastDoc, openRequests] = await Promise.all([
+  const [upcoming, lastDoc, openRequests, staff] = await Promise.all([
     show.obligations ? getUpcomingObligations(me) : [],
     show.documents ? getLatestStudioDocument(me) : null,
     show.requests ? getRequests(me, true) : [],
+    getOrgStaff(me.organizationId),
   ]);
+  const lead = staff.find((t) => t.assignment === "responsable") ?? null;
   const today = todayISO();
   // Saluda por el nombre solo si el usuario tiene uno propio (no la razón social)
   const first = me.name && me.name !== me.organizationName ? me.name.split(" ")[0] : "";
@@ -62,6 +66,7 @@ export default async function PortalHome() {
         )}
 
         <div className="grid content-start gap-4">
+          <LeadContact lead={lead} team={staff.filter((t) => t.assignment !== "responsable")} />
           {show.documents && (
             <Card>
               <h2 className="font-semibold">Último documento del estudio</h2>

@@ -1,4 +1,4 @@
-import { and, asc, count, eq, ilike, inArray, isNull, or } from "drizzle-orm";
+import { and, asc, count, eq, gt, ilike, inArray, isNull, or } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
@@ -41,7 +41,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
 
   const [orgs, plans] = await Promise.all([
     db
-      .select({ org: organizations, planName: service_plans.name })
+      .select({ org: organizations, planName: service_plans.name, plan: service_plans })
       .from(organizations)
       .leftJoin(service_plans, eq(service_plans.id, organizations.service_plan_id))
       .where(
@@ -59,14 +59,23 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
         ),
       )
       .orderBy(asc(organizations.name)),
-    db.select({ id: service_plans.id, name: service_plans.name }).from(service_plans).where(eq(service_plans.studio_id, studioId)).orderBy(asc(service_plans.position)),
+    db
+      .select({ id: service_plans.id, name: service_plans.name })
+      .from(service_plans)
+      .where(eq(service_plans.studio_id, studioId))
+      .orderBy(asc(service_plans.position)),
   ]);
 
   const ids = orgs.map((o) => o.org.id);
   const none = ids.length === 0;
-  const [leads, entities, mods, admins, pendingApproval, openReqs, newDocs] = await Promise.all([
+  const [leads, entities, mods, admins, pendingApproval, openReqs, newDocs, seats, pendingSeats] = await Promise.all([
     getLeadsFor(ids),
-    none ? [] : db.select({ org: legal_entities.organization_id, cuit: legal_entities.cuit }).from(legal_entities).where(inArray(legal_entities.organization_id, ids)),
+    none
+      ? []
+      : db
+          .select({ org: legal_entities.organization_id, cuit: legal_entities.cuit })
+          .from(legal_entities)
+          .where(inArray(legal_entities.organization_id, ids)),
     none
       ? []
       : db
@@ -101,6 +110,21 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
           .from(documents)
           .where(and(inArray(documents.organization_id, ids), eq(documents.source, "cliente"), isNull(documents.reviewed_at)))
           .groupBy(documents.organization_id),
+    // Lugares de usuarios ocupados: membresías activas + invitaciones pendientes vigentes
+    none
+      ? []
+      : db
+          .select({ org: memberships.organization_id, n: count() })
+          .from(memberships)
+          .where(and(inArray(memberships.organization_id, ids), eq(memberships.status, "activa")))
+          .groupBy(memberships.organization_id),
+    none
+      ? []
+      : db
+          .select({ org: invitations.organization_id, n: count() })
+          .from(invitations)
+          .where(and(inArray(invitations.organization_id, ids), eq(invitations.status, "pendiente"), gt(invitations.expires_at, new Date())))
+          .groupBy(invitations.organization_id),
   ]);
   const group = <T extends { org: string }>(rows: T[]) => {
     const m = new Map<string, T[]>();
@@ -114,6 +138,8 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
   const approvalCount = counts(pendingApproval);
   const reqCount = counts(openReqs);
   const docCount = counts(newDocs);
+  const seatCount = counts(seats);
+  const pendingSeatCount = counts(pendingSeats);
 
   return (
     <>
@@ -138,7 +164,11 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
             id="estado"
             name="estado"
             defaultValue={estado}
-            options={[{ value: "vigentes", label: "Vigentes" }, ...Object.entries(ORGANIZATION_STATUSES).map(([value, label]) => ({ value, label })), { value: "todas", label: "Todas" }]}
+            options={[
+              { value: "vigentes", label: "Vigentes" },
+              ...Object.entries(ORGANIZATION_STATUSES).map(([value, label]) => ({ value, label })),
+              { value: "todas", label: "Todas" },
+            ]}
             className="w-48"
           />
         </div>
@@ -171,7 +201,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
-            {orgs.map(({ org, planName }) => {
+            {orgs.map(({ org, planName, plan }) => {
               const les = byOrgEntities.get(org.id) ?? [];
               const ms = byOrgModules.get(org.id) ?? [];
               const alerts: { label: string; tone: Tone }[] = [];
@@ -181,6 +211,14 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
               if (approvalCount.get(org.id)) alerts.push({ label: `${approvalCount.get(org.id)} invitación por confirmar`, tone: "danger" });
               if (reqCount.get(org.id)) alerts.push({ label: `${reqCount.get(org.id)} solicitudes abiertas`, tone: "neutral" });
               if (docCount.get(org.id)) alerts.push({ label: `${docCount.get(org.id)} documentos nuevos`, tone: "neutral" });
+              if (plan) {
+                const extra = org.limit_overrides ?? {};
+                const exceeds =
+                  les.length > plan.max_legal_entities + (extra.legal_entities ?? 0) ||
+                  (seatCount.get(org.id) ?? 0) + (pendingSeatCount.get(org.id) ?? 0) > plan.max_users + (extra.users ?? 0) ||
+                  ms.length > plan.max_modules + (extra.modules ?? 0);
+                if (exceeds) alerts.push({ label: "Excede el plan", tone: "danger" });
+              }
               if (org.risk_level === "alto") alerts.push({ label: `Riesgo ${RISK_LEVELS.alto.toLowerCase()}`, tone: "danger" });
               return (
                 <tr key={org.id} className={org.status === "baja" ? "text-muted" : ""}>
@@ -200,7 +238,15 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
                   </td>
                   <td className="px-4 py-3.5 align-top">
                     <span className="flex flex-wrap gap-1.5">
-                      {alerts.length === 0 ? <span className="text-sm text-muted">Sin alertas</span> : alerts.map((a) => <Badge key={a.label} tone={a.tone}>{a.label}</Badge>)}
+                      {alerts.length === 0 ? (
+                        <span className="text-sm text-muted">Sin alertas</span>
+                      ) : (
+                        alerts.map((a) => (
+                          <Badge key={a.label} tone={a.tone}>
+                            {a.label}
+                          </Badge>
+                        ))
+                      )}
                     </span>
                   </td>
                 </tr>

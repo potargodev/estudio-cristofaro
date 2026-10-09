@@ -1,14 +1,9 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { Paperclip } from "lucide-react";
 import Link from "next/link";
-import { assignStaff, removeStaff } from "@/app/admin/organization-actions";
-import {
-  deleteDocument,
-  deleteObligation,
-  replyRequest,
-  saveObligation,
-  uploadStudioDocument,
-} from "@/app/admin/portal-actions";
+import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
+import { isModuleAvailable } from "@/components/portal/modules/registry";
+import { deleteDocument, deleteObligation, replyRequest, saveObligation, uploadStudioDocument } from "@/app/admin/portal-actions";
 import { AdminField } from "@/components/admin/AdminField";
 import { adminButton } from "@/components/admin/styles";
 import { FormSelect, SubmitButton } from "@/components/admin/ui";
@@ -16,8 +11,19 @@ import { Badge, obligationTone, requestTone } from "@/components/portal/ui";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
-import { documents, legal_entities, obligations, request_messages, requests, tango_companies, tango_records, users } from "@/db/schema";
-import { getOrgStaff, getStudioStaff } from "@/lib/organizations";
+import {
+  documents,
+  legal_entities,
+  obligations,
+  organization_modules,
+  request_messages,
+  requests,
+  tango_companies,
+  tango_records,
+  users,
+} from "@/db/schema";
+import { MODULES } from "@/lib/modules/catalog";
+import { getOrgLimits, getOrgStaff, getServicePlans, getStudioStaff } from "@/lib/organizations";
 import { formatCuit } from "@/lib/types";
 import {
   DOCUMENT_CATEGORIES,
@@ -92,7 +98,12 @@ function EntityField({ id, entities, defaultValue }: { id: string; entities: Ent
   if (entities.length < 2) return null;
   return (
     <AdminField label="Razón social" htmlFor={id}>
-      <FormSelect id={id} name="legal_entity_id" defaultValue={defaultValue ?? ""} options={[{ value: "", label: "Toda la organización" }, ...entities]} />
+      <FormSelect
+        id={id}
+        name="legal_entity_id"
+        defaultValue={defaultValue ?? ""}
+        options={[{ value: "", label: "Toda la organización" }, ...entities]}
+      />
     </AdminField>
   );
 }
@@ -228,7 +239,17 @@ function DocList({ docs, orgId, highlightNew }: { docs: DocumentRow[]; orgId: st
   );
 }
 
-export async function DocumentsTab({ orgId, studioId, error, entities }: { orgId: string; studioId: string; error?: string; entities: EntityOption[] }) {
+export async function DocumentsTab({
+  orgId,
+  studioId,
+  error,
+  entities,
+}: {
+  orgId: string;
+  studioId: string;
+  error?: string;
+  entities: EntityOption[];
+}) {
   const db = getDb();
   const docs = await db
     .select()
@@ -242,7 +263,9 @@ export async function DocumentsTab({ orgId, studioId, error, entities }: { orgId
     await db
       .update(documents)
       .set({ reviewed_at: new Date() })
-      .where(and(eq(documents.organization_id, orgId), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)));
+      .where(
+        and(eq(documents.organization_id, orgId), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)),
+      );
   }
   return (
     <div className="space-y-8">
@@ -355,7 +378,12 @@ export async function RequestThread({
           <Input id={`file-${r.id}`} name="file" type="file" accept={ACCEPT_ATTR} className="h-auto py-1.5" />
         </AdminField>
         <AdminField label="Estado" htmlFor={`status-${r.id}`}>
-          <FormSelect id={`status-${r.id}`} name="status" defaultValue={r.status === "abierta" ? "en_curso" : r.status} options={REQUEST_STATUS_OPTIONS} />
+          <FormSelect
+            id={`status-${r.id}`}
+            name="status"
+            defaultValue={r.status === "abierta" ? "en_curso" : r.status}
+            options={REQUEST_STATUS_OPTIONS}
+          />
         </AdminField>
         <div className="sm:col-span-2">
           <SubmitButton pendingText="Enviando…">Responder y guardar</SubmitButton>
@@ -371,7 +399,8 @@ export async function RequestsTab({ orgId, studioId }: { orgId: string; studioId
     .from(requests)
     .where(and(eq(requests.organization_id, orgId), eq(requests.studio_id, studioId)))
     .orderBy(asc(requests.status), desc(requests.updated_at));
-  if (rows.length === 0) return <p className="rounded-md border border-dashed border-line p-5 text-muted">La organización todavía no hizo solicitudes.</p>;
+  if (rows.length === 0)
+    return <p className="rounded-md border border-dashed border-line p-5 text-muted">La organización todavía no hizo solicitudes.</p>;
   return (
     <div className="space-y-4">
       {rows.map((r) => (
@@ -390,8 +419,8 @@ export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: s
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
       <section>
         <p className="mb-4 max-w-2xl text-muted">
-          El responsable principal es la cara visible del estudio para la organización: aparece en el inicio de su portal con sus datos de
-          contacto. Los colaboradores participan del día a día.
+          El responsable principal es la cara visible del estudio para la organización: aparece en el inicio de su portal con sus datos de contacto.
+          Los colaboradores participan del día a día.
         </p>
         {!lead && (
           <div className="mb-4">
@@ -422,7 +451,12 @@ export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: s
                 <form action={removeStaff}>
                   <input type="hidden" name="organization_id" value={orgId} />
                   <input type="hidden" name="user_id" value={t.id} />
-                  <SubmitButton variant="danger" pendingText="…" confirm={`¿Quitar a ${t.name} del equipo de esta organización?`} confirmLabel="Quitar">
+                  <SubmitButton
+                    variant="danger"
+                    pendingText="…"
+                    confirm={`¿Quitar a ${t.name} del equipo de esta organización?`}
+                    confirmLabel="Quitar"
+                  >
                     Quitar
                   </SubmitButton>
                 </form>
@@ -470,7 +504,14 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
       .from(tango_companies)
       .where(and(eq(tango_companies.organization_id, orgId), eq(tango_companies.studio_id, studioId))),
     db
-      .select({ id: tango_records.id, company: tango_records.company_id, external: tango_records.external_id, synced: tango_records.synced_at, entity: legal_entities.business_name, cuit: legal_entities.cuit })
+      .select({
+        id: tango_records.id,
+        company: tango_records.company_id,
+        external: tango_records.external_id,
+        synced: tango_records.synced_at,
+        entity: legal_entities.business_name,
+        cuit: legal_entities.cuit,
+      })
       .from(tango_records)
       .leftJoin(legal_entities, eq(legal_entities.id, tango_records.legal_entity_id))
       .where(and(eq(tango_records.organization_id, orgId), eq(tango_records.studio_id, studioId)))
@@ -532,6 +573,155 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
           </ul>
         </section>
       )}
+    </div>
+  );
+}
+
+// ───────────── plan y módulos ─────────────
+
+function Meter({ label, used, max, extra }: { label: string; used: number; max: number | null; extra: number }) {
+  const over = max != null && used > max;
+  const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
+  return (
+    <div className="rounded-md border border-line bg-surface p-4">
+      <p className="text-sm text-muted">{label}</p>
+      <p className={cn("mt-1 font-display text-3xl", over && "text-danger")}>
+        {used}
+        <span className="text-lg text-muted"> / {max ?? "∞"}</span>
+      </p>
+      {max != null && (
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden>
+          <div className={cn("h-full rounded-full", over ? "bg-danger" : "bg-rose")} style={{ width: `${pct}%` }} />
+        </div>
+      )}
+      {extra > 0 && <p className="mt-2 text-xs text-rose-deep">Incluye +{extra} por excepción</p>}
+      {over && <p className="mt-1 text-xs text-danger">Excede el plan</p>}
+    </div>
+  );
+}
+
+export async function PlanTab({ orgId, studioId, planId }: { orgId: string; studioId: string; planId: string | null }) {
+  const [plans, limits, mods] = await Promise.all([
+    getServicePlans(studioId),
+    getOrgLimits(orgId),
+    getDb().select().from(organization_modules).where(eq(organization_modules.organization_id, orgId)),
+  ]);
+  const active = new Set(mods.filter((m) => m.active).map((m) => m.module_key));
+  const plan = plans.find((p) => p.id === planId);
+  return (
+    <div className="space-y-8">
+      <section className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+        <form action={setOrganizationPlan} className="rounded-md border border-line bg-surface p-5">
+          <input type="hidden" name="organization_id" value={orgId} />
+          <h2 className="font-semibold">Plan contratado</h2>
+          <AdminField label="Plan" htmlFor="plan-select" className="mt-3">
+            <FormSelect
+              id="plan-select"
+              name="service_plan_id"
+              defaultValue={planId ?? ""}
+              options={[
+                { value: "", label: "Sin plan" },
+                ...plans.map((p) => ({
+                  value: p.id,
+                  label: `${p.name} · ${p.max_legal_entities} CUIT · ${p.max_users} usuarios · ${p.max_modules} módulos`,
+                })),
+              ]}
+            />
+          </AdminField>
+          <div className="mt-3">
+            <SubmitButton>Guardar plan</SubmitButton>
+          </div>
+          {plan && (
+            <ul className="mt-4 space-y-1 text-sm text-muted">
+              {plan.features.map((f) => (
+                <li key={f}>· {f}</li>
+              ))}
+            </ul>
+          )}
+        </form>
+        <div className="grid content-start gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          <Meter
+            label="Razones sociales"
+            used={limits.used.legal_entities}
+            max={limits.max?.legal_entities ?? null}
+            extra={limits.extra.legal_entities}
+          />
+          <Meter label="Usuarios" used={limits.used.users} max={limits.max?.users ?? null} extra={limits.extra.users} />
+          <Meter label="Módulos" used={limits.used.modules} max={limits.max?.modules ?? null} extra={limits.extra.modules} />
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-lg font-semibold">Módulos del catálogo</h2>
+          <p className="text-sm text-muted">Se activan sin tocar código. Los que todavía no tienen pantalla muestran “Próximamente” en el portal.</p>
+        </div>
+        <ul className="grid gap-3 md:grid-cols-2">
+          {MODULES.map((m) => {
+            const on = active.has(m.key);
+            return (
+              <li
+                key={m.key}
+                className={cn("flex flex-col justify-between gap-3 rounded-md border bg-surface p-4", on ? "border-rose/60" : "border-line")}
+              >
+                <div>
+                  <p className="flex flex-wrap items-center gap-2 font-medium">
+                    {m.name}
+                    {on && <Badge tone="ok">Activo</Badge>}
+                    {!isModuleAvailable(m.key) && <Badge tone="neutral">Próximamente</Badge>}
+                  </p>
+                  <p className="mt-1 text-sm text-muted">{m.description}</p>
+                </div>
+                <form action={setOrganizationModule}>
+                  <input type="hidden" name="organization_id" value={orgId} />
+                  <input type="hidden" name="module_key" value={m.key} />
+                  <input type="hidden" name="active" value={on ? "0" : "1"} />
+                  {on ? (
+                    <SubmitButton
+                      variant="danger"
+                      pendingText="…"
+                      confirm={`¿Desactivar ${m.name}? La organización deja de verlo en el portal.`}
+                      confirmLabel="Desactivar"
+                    >
+                      Desactivar
+                    </SubmitButton>
+                  ) : (
+                    <SubmitButton variant="secondary" pendingText="…">
+                      Activar
+                    </SubmitButton>
+                  )}
+                </form>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section className="rounded-md border border-dashed border-line p-5">
+        <h2 className="font-semibold">Excepción a los límites del plan</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
+          Suma lugares por encima del plan sin cambiarlo (por ejemplo, una razón social más mientras se cotiza el upgrade). Queda registrada en la
+          actividad con el motivo.
+        </p>
+        <form action={setLimitOverrides} className="mt-3 grid gap-3 sm:grid-cols-4">
+          <input type="hidden" name="organization_id" value={orgId} />
+          <AdminField label="Razones sociales extra" htmlFor="ov-le">
+            <Input id="ov-le" name="legal_entities" type="number" min={0} max={50} defaultValue={limits.extra.legal_entities} />
+          </AdminField>
+          <AdminField label="Usuarios extra" htmlFor="ov-users">
+            <Input id="ov-users" name="users" type="number" min={0} max={50} defaultValue={limits.extra.users} />
+          </AdminField>
+          <AdminField label="Módulos extra" htmlFor="ov-mods">
+            <Input id="ov-mods" name="modules" type="number" min={0} max={50} defaultValue={limits.extra.modules} />
+          </AdminField>
+          <AdminField label="Motivo" htmlFor="ov-reason">
+            <Input id="ov-reason" name="reason" required placeholder="Ej: aprobado por Dirección hasta el upgrade" />
+          </AdminField>
+          <div className="sm:col-span-4">
+            <SubmitButton>Guardar excepción</SubmitButton>
+          </div>
+        </form>
+      </section>
     </div>
   );
 }

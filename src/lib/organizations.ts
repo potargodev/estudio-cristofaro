@@ -20,11 +20,13 @@ export async function studioOrganization(organizationId: string | null | undefin
 
 export type LimitKey = "legal_entities" | "users" | "modules";
 
-export const LIMIT_LABELS: Record<LimitKey, string> = {
-  legal_entities: "razones sociales",
-  users: "usuarios",
-  modules: "módulos",
+export const LIMIT_LABELS: Record<LimitKey, [string, string]> = {
+  legal_entities: ["razón social", "razones sociales"],
+  users: ["usuario", "usuarios"],
+  modules: ["módulo", "módulos"],
 };
+
+const limitLabel = (key: LimitKey, n: number) => LIMIT_LABELS[key][n === 1 ? 0 : 1];
 
 export interface OrgLimits {
   planName: string | null;
@@ -86,7 +88,7 @@ export async function getOrgLimits(organizationId: string): Promise<OrgLimits> {
 export function checkLimit(limits: OrgLimits, key: LimitKey, adding = 1): string | null {
   if (!limits.max) return null;
   if (limits.used[key] + adding <= limits.max[key]) return null;
-  return `El plan ${limits.planName} permite hasta ${limits.max[key]} ${LIMIT_LABELS[key]} y ya están en uso ${limits.used[key]}. Para sumar más hay que cambiar de plan o pedirle una excepción al estudio.`;
+  return `El plan ${limits.planName} permite hasta ${limits.max[key]} ${limitLabel(key, limits.max[key])} y ya ${limits.used[key] === 1 ? "hay 1 en uso" : `hay ${limits.used[key]} en uso`}. Para sumar más hay que cambiar de plan o pedirle una excepción al estudio.`;
 }
 
 /** Responsable principal y colaboradores del estudio asignados a la organización */

@@ -4,10 +4,11 @@ import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { leads, legal_entities, organization_staff, organizations, service_plans, users } from "@/db/schema";
+import { leads, legal_entities, organization_modules, organization_staff, organizations, service_plans, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { requireStaff } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
+import { getModule, isModuleKey } from "@/lib/modules/catalog";
 import { checkLimit, getOrgLimits, studioOrganization } from "@/lib/organizations";
 import { insertOrganization } from "@/lib/organizations-write";
 import type { OrganizationStatus, RiskLevel, TaxRegime } from "@/lib/types";
@@ -132,7 +133,10 @@ export async function updateOrganization(fd: FormData) {
     monthly_fee: feeNumber != null ? feeNumber.toFixed(2) : null,
     notes: s(fd, "notes"),
   };
-  await getDb().update(organizations).set(changes).where(and(eq(organizations.id, org.id), eq(organizations.studio_id, staff.studioId)));
+  await getDb()
+    .update(organizations)
+    .set(changes)
+    .where(and(eq(organizations.id, org.id), eq(organizations.studio_id, staff.studioId)));
   const changed = (Object.keys(changes) as (keyof typeof changes)[]).filter((k) => String(changes[k]) !== String(org[k]));
   if (changed.length) {
     await audit({
@@ -202,7 +206,8 @@ export async function saveLegalEntity(fd: FormData) {
       });
     }
   } catch (error) {
-    if (pgCode(error) === "23505") redirect(ficha(org.id, "general", `error=${encodeURIComponent("Ya hay una razón social con ese CUIT en el estudio.")}`));
+    if (pgCode(error) === "23505")
+      redirect(ficha(org.id, "general", `error=${encodeURIComponent("Ya hay una razón social con ese CUIT en el estudio.")}`));
     throw error;
   }
   revalidateOrg(org.id);
@@ -217,7 +222,8 @@ export async function deleteLegalEntity(fd: FormData) {
   const db = getDb();
   const all = await db.select({ id: legal_entities.id }).from(legal_entities).where(eq(legal_entities.organization_id, org.id));
   // Siempre queda al menos una razón social
-  if (all.length <= 1) redirect(ficha(org.id, "general", `error=${encodeURIComponent("La organización tiene que tener al menos una razón social.")}`));
+  if (all.length <= 1)
+    redirect(ficha(org.id, "general", `error=${encodeURIComponent("La organización tiene que tener al menos una razón social.")}`));
   if (id && isUuid(id)) {
     const [le] = await db
       .delete(legal_entities)
@@ -286,7 +292,14 @@ export async function removeStaff(fd: FormData) {
       .where(and(eq(organization_staff.organization_id, org.id), eq(organization_staff.user_id, userId)))
       .returning({ user: organization_staff.user_id });
     if (rows.length) {
-      await audit({ studioId: staff.studioId, organizationId: org.id, actor: staff, action: "equipo.quitar", entityType: "usuario", entityId: userId });
+      await audit({
+        studioId: staff.studioId,
+        organizationId: org.id,
+        actor: staff,
+        action: "equipo.quitar",
+        entityType: "usuario",
+        entityId: userId,
+      });
     }
   }
   revalidateOrg(org.id);
@@ -348,4 +361,116 @@ export async function convertLeadToOrganization(fd: FormData) {
   revalidatePath("/admin/consultas");
   revalidateOrg(orgId);
   redirect(ficha(orgId, "general", "nueva=1"));
+}
+
+// ───────────── plan, módulos y excepciones ─────────────
+
+export async function setOrganizationPlan(fd: FormData) {
+  const staff = await requireStaff();
+  const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
+  if (!org) redirect("/admin/organizaciones");
+  const planId = s(fd, "service_plan_id");
+  const plan = planId ? await studioPlan(planId, staff.studioId) : null;
+  if (planId && !plan) redirect(ficha(org.id, "plan", "error=plan"));
+  if ((plan?.id ?? null) !== org.service_plan_id) {
+    const [before] = org.service_plan_id
+      ? await getDb().select({ name: service_plans.name }).from(service_plans).where(eq(service_plans.id, org.service_plan_id))
+      : [];
+    await getDb()
+      .update(organizations)
+      .set({ service_plan_id: plan?.id ?? null })
+      .where(and(eq(organizations.id, org.id), eq(organizations.studio_id, staff.studioId)));
+    await audit({
+      studioId: staff.studioId,
+      organizationId: org.id,
+      actor: staff,
+      action: "organizacion.plan",
+      entityType: "organizacion",
+      entityId: org.id,
+      metadata: { de: before?.name ?? "sin plan", a: plan?.name ?? "sin plan" },
+    });
+  }
+  revalidateOrg(org.id);
+  redirect(ficha(org.id, "plan", "guardado=1"));
+}
+
+/** Activa o desactiva un módulo del catálogo (al activar, respeta el límite del plan) */
+export async function setOrganizationModule(fd: FormData) {
+  const staff = await requireStaff();
+  const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
+  if (!org) redirect("/admin/organizaciones");
+  const key = s(fd, "module_key");
+  if (!isModuleKey(key)) redirect(ficha(org.id, "plan", "error=modulo"));
+  const activate = s(fd, "active") === "1";
+  const db = getDb();
+  const [current] = await db
+    .select({ active: organization_modules.active })
+    .from(organization_modules)
+    .where(and(eq(organization_modules.organization_id, org.id), eq(organization_modules.module_key, key)));
+  if (activate && !current?.active) {
+    const limitError = checkLimit(await getOrgLimits(org.id), "modules");
+    if (limitError) {
+      await audit({
+        studioId: staff.studioId,
+        organizationId: org.id,
+        actor: staff,
+        action: "modulo.activar",
+        result: "denegado",
+        metadata: { modulo: key, motivo: "límite del plan" },
+      });
+      redirect(ficha(org.id, "plan", `error=${encodeURIComponent(limitError)}`));
+    }
+  }
+  if (activate !== Boolean(current?.active)) {
+    await db
+      .insert(organization_modules)
+      .values({ organization_id: org.id, module_key: key, active: activate, activated_by: staff.id })
+      .onConflictDoUpdate({
+        target: [organization_modules.organization_id, organization_modules.module_key],
+        set: activate ? { active: true, activated_by: staff.id, activated_at: new Date() } : { active: false },
+      });
+    await audit({
+      studioId: staff.studioId,
+      organizationId: org.id,
+      actor: staff,
+      action: activate ? "modulo.activar" : "modulo.desactivar",
+      entityType: "modulo",
+      entityId: key,
+      metadata: { modulo: getModule(key)?.name ?? key },
+    });
+  }
+  revalidateOrg(org.id);
+  redirect(ficha(org.id, "plan", "guardado=1"));
+}
+
+/** Excepción explícita a los límites del plan: requiere motivo y queda auditada */
+export async function setLimitOverrides(fd: FormData) {
+  const staff = await requireStaff();
+  const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
+  if (!org) redirect("/admin/organizaciones");
+  const reason = s(fd, "reason");
+  if (!reason) redirect(ficha(org.id, "plan", `error=${encodeURIComponent("Escribí el motivo de la excepción: queda en la auditoría.")}`));
+  const num = (k: string) => Math.min(50, Math.max(0, Math.trunc(Number(s(fd, k) ?? 0)) || 0));
+  const overrides = { legal_entities: num("legal_entities"), users: num("users"), modules: num("modules") };
+  await getDb()
+    .update(organizations)
+    .set({ limit_overrides: overrides })
+    .where(and(eq(organizations.id, org.id), eq(organizations.studio_id, staff.studioId)));
+  await audit({
+    studioId: staff.studioId,
+    organizationId: org.id,
+    actor: staff,
+    action: "organizacion.excepcion",
+    entityType: "organizacion",
+    entityId: org.id,
+    metadata: {
+      motivo: reason,
+      antes: org.limit_overrides,
+      extra_razones_sociales: overrides.legal_entities,
+      extra_usuarios: overrides.users,
+      extra_modulos: overrides.modules,
+    },
+  });
+  revalidateOrg(org.id);
+  redirect(ficha(org.id, "plan", "guardado=1"));
 }
