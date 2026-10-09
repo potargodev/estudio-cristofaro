@@ -13,12 +13,10 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# La URL pública queda fija en el build (metadatos, sitemap, mails)
-ARG NEXT_PUBLIC_SITE_URL=https://estudiocristofaro.com
-ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
-# Sin DATABASE_URL a propósito: la web pública se genera con el contenido de
-# respaldo y se actualiza sola contra la base cuando el contenedor arranca.
+# El build no necesita base ni variables del sitio: SITE_URL, SITE_NOINDEX,
+# DATABASE_URL, etc. se leen en runtime, así la misma imagen sirve para
+# staging y producción.
 RUN npm run build && npm run build:scripts
 
 # ───────── 3. Runtime ─────────

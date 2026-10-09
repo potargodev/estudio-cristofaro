@@ -5,12 +5,37 @@ import { nextCookies } from "better-auth/next-js";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { accounts, sessions, users, verifications } from "@/db/schema";
+import { getSiteUrl } from "./runtime-config";
+
+/**
+ * Orígenes desde los que se acepta login: el de BETTER_AUTH_URL, el de SITE_URL
+ * y los que se agreguen en BETTER_AUTH_TRUSTED_ORIGINS (separados por coma).
+ * Pasar de staging a producción es solo cambiar esas variables.
+ */
+function trustedOrigins(): string[] {
+  const candidates = [
+    process.env.BETTER_AUTH_URL,
+    getSiteUrl(),
+    ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS ?? "").split(","),
+  ];
+  const origins = new Set<string>();
+  for (const value of candidates) {
+    try {
+      if (value?.trim()) origins.add(new URL(value.trim()).origin);
+    } catch {
+      console.warn(`[auth] Origen inválido ignorado: ${value}`);
+    }
+  }
+  return [...origins];
+}
 
 function createAuth() {
   const db = getDb();
   return betterAuth({
     appName: "Estudio Cristofaro",
-    baseURL: process.env.BETTER_AUTH_URL,
+    // Sin BETTER_AUTH_URL se usa SITE_URL
+    baseURL: process.env.BETTER_AUTH_URL?.trim() || getSiteUrl(),
+    trustedOrigins: trustedOrigins(),
     secret: process.env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
       provider: "pg",

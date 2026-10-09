@@ -6,13 +6,8 @@ import { Reveal } from "@/components/motion/Reveal";
 import { PageHeader } from "@/components/site/PageHeader";
 import { segments, services } from "@/lib/content";
 
-// Sin dynamicParams = false: con esa opción, después de un revalidatePath("/", "layout")
-// Next 15 devolvía 404 (NoFallbackError) en las páginas pre-generadas. Los slugs
-// desconocidos siguen dando 404 por el notFound() de la página.
-
-export function generateStaticParams() {
-  return services.map((s) => ({ slug: s.slug }));
-}
+// Se renderiza en cada pedido (lee SITE_URL/SITE_NOINDEX en runtime). Los slugs
+// desconocidos dan 404 por el notFound() de la página.
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

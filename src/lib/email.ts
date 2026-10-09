@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { getSiteUrl } from "./runtime-config";
 import { site } from "./site";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, type LeadSource } from "./types";
 
@@ -61,7 +62,7 @@ export async function sendLeadEmails(lead: LeadMail) {
       to: notifyTo,
       replyTo: lead.email ?? undefined,
       subject: `Nueva consulta: ${lead.name}`,
-      html: `<p>Entró una consulta desde la web.</p><table>${table}</table><p><a href="${site.url}/admin/consultas">Abrir en el backoffice</a></p>`,
+      html: `<p>Entró una consulta desde la web.</p><table>${table}</table><p><a href="${getSiteUrl()}/admin/consultas">Abrir en el backoffice</a></p>`,
     }),
   ];
 

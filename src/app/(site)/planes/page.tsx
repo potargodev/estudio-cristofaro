@@ -4,8 +4,6 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { PlanCard } from "@/components/site/PlanCard";
 import { getPlans } from "@/lib/data";
 
-export const revalidate = 300;
-
 export const metadata: Metadata = {
   title: "Planes y abonos mensuales",
   description: "Abonos fijos para monotributistas, Responsables Inscriptos, sociedades y empleadores. Sabés cuánto pagás antes de empezar.",

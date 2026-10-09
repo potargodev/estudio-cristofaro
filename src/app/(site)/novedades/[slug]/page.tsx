@@ -4,8 +4,6 @@ import { notFound } from "next/navigation";
 import { CtaBand } from "@/components/site/CtaBand";
 import { formatDate, getPost } from "@/lib/data";
 
-export const revalidate = 300;
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);

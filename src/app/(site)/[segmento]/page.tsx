@@ -9,14 +9,8 @@ import { Button } from "@/components/ui/button";
 import { segments, services } from "@/lib/content";
 import { getPlans } from "@/lib/data";
 
-export const revalidate = 300;
-// Sin dynamicParams = false: con esa opción, después de un revalidatePath("/", "layout")
-// Next 15 devolvía 404 (NoFallbackError) en las páginas pre-generadas. Los slugs
-// desconocidos siguen dando 404 por el notFound() de la página.
-
-export function generateStaticParams() {
-  return segments.map((s) => ({ segmento: s.slug }));
-}
+// Se renderiza en cada pedido (lee SITE_URL/SITE_NOINDEX en runtime). Los slugs
+// desconocidos dan 404 por el notFound() de la página.
 
 export async function generateMetadata({ params }: { params: Promise<{ segmento: string }> }): Promise<Metadata> {
   const { segmento } = await params;

@@ -10,8 +10,6 @@ import { Button } from "@/components/ui/button";
 import { segments, services, steps, testimonials } from "@/lib/content";
 import { formatDate, getPosts } from "@/lib/data";
 
-export const revalidate = 300;
-
 export default async function HomePage() {
   const posts = await getPosts(2);
 

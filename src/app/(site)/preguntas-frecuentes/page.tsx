@@ -4,8 +4,6 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getFaqs } from "@/lib/data";
 
-export const revalidate = 300;
-
 export const metadata: Metadata = {
   title: "Preguntas frecuentes",
   description: "Cómo trabajamos, cómo es el abono, qué necesitás para empezar y cómo es el cambio de contador.",

@@ -1,7 +1,7 @@
+// La URL pública no está acá: se lee en runtime con getSiteUrl() (src/lib/runtime-config.ts).
 export const site = {
   name: "Estudio Cristofaro & Asociados",
   shortName: "Cristofaro",
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://estudiocristofaro.com").replace(/\/$/, ""),
   promise: "Tu contador, siempre al día. Sin papeles, sin sorpresas.",
   description:
     "Estudio contable en CABA para monotributistas, PyMEs, sociedades y empleadores. Abono fijo, respuesta en menos de 24 h hábiles y alertas antes de cada vencimiento.",

@@ -4,8 +4,6 @@ import { CtaBand } from "@/components/site/CtaBand";
 import { PageHeader } from "@/components/site/PageHeader";
 import { formatDate, getPosts } from "@/lib/data";
 
-export const revalidate = 300;
-
 export const metadata: Metadata = {
   title: "Novedades impositivas y laborales",
   description: "Vencimientos, cambios de ARCA y temas contables explicados en simple.",
