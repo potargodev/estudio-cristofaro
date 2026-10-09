@@ -220,25 +220,39 @@ export const steps = [
 // Ejemplo: { quote: "…", author: "Nombre A.", role: "Comercio minorista, 8 empleados" }
 export const testimonials: { quote: string; author: string; role: string }[] = [];
 
-// TODO contenido real: nombres, matrícula y foto del equipo.
-export const team = [
+// TODO contenido real: nombres, matrícula, especialidad y foto del equipo.
+// `photo`: ruta en /public/equipo (ver el README de esa carpeta). Sin foto se
+// muestra un monograma con las iniciales.
+export interface TeamMember {
+  name: string;
+  role: string;
+  detail: string;
+  bio: string;
+  specialty: string;
+  photo?: string;
+}
+
+export const team: TeamMember[] = [
   {
     name: "Nombre Apellido",
     role: "Contador Público · Socio fundador",
     detail: "Matrícula CPCECABA T° — F° —",
     bio: "Completar con trayectoria, especialidad y años de experiencia.",
+    specialty: "Planificación fiscal y sociedades",
   },
   {
     name: "Nombre Apellido",
     role: "Contadora Pública · Impuestos",
     detail: "Matrícula CPCECABA T° — F° —",
     bio: "Completar con trayectoria y especialidad.",
+    specialty: "IVA, Ganancias e Ingresos Brutos",
   },
   {
     name: "Nombre Apellido",
     role: "Liquidación de sueldos",
     detail: "",
     bio: "Completar con trayectoria y especialidad.",
+    specialty: "Sueldos, cargas sociales y F.931",
   },
 ];
 

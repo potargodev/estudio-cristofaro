@@ -19,3 +19,6 @@ export const site = {
 export function whatsappLink(text = "Hola, quiero consultar por servicios contables.") {
   return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 }
+
+/** A dónde lleva "Agendar una llamada" (contacto hasta que esté la agenda online) */
+export const SCHEDULE_HREF = "/contacto";

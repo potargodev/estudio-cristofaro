@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: "12mb" },
   },
   eslint: { ignoreDuringBuilds: true },
+  // Fotos del hero y del equipo: AVIF/WebP en el tamaño justo para cada pantalla
+  images: { formats: ["image/avif", "image/webp"], qualities: [70, 75, 80] },
   async redirects() {
     // URLs del sitio viejo → nuevas rutas
     return [
