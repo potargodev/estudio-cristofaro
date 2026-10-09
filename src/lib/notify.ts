@@ -10,7 +10,7 @@ import { site } from "./site";
 // Avisos por mail del portal. Si el SMTP no está configurado no se envía nada
 // (sendMail no hace nada) y la acción sigue igual.
 
-function layout(title: string, body: string, cta?: { href: string; label: string }) {
+export function mailLayout(title: string, body: string, cta?: { href: string; label: string }) {
   return `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55;color:#1b1e26;max-width:560px">
 <p style="font-size:18px;margin:0 0 12px">${esc(title)}</p>
 ${body}
@@ -64,7 +64,7 @@ export async function notifyOrganization(studioId: string, organizationId: strin
       await sendMail({
         to,
         subject: "Tenés un documento nuevo en tu portal",
-        html: layout("Tenés un documento nuevo", `<p>El estudio subió <strong>${esc(event.documentName)}</strong> a tu portal.</p>`, {
+        html: mailLayout("Tenés un documento nuevo", `<p>El estudio subió <strong>${esc(event.documentName)}</strong> a tu portal.</p>`, {
           href: `${portal}/documentos`,
           label: "Ver documentos",
         }),
@@ -76,7 +76,7 @@ export async function notifyOrganization(studioId: string, organizationId: strin
       await sendMail({
         to,
         subject: event.items.length === 1 ? "Cargamos un vencimiento nuevo" : `Cargamos ${event.items.length} vencimientos nuevos`,
-        html: layout("Vencimientos cargados", `<ul>${list}</ul>`, {
+        html: mailLayout("Vencimientos cargados", `<ul>${list}</ul>`, {
           href: `${portal}/vencimientos`,
           label: "Ver vencimientos",
         }),
@@ -85,7 +85,7 @@ export async function notifyOrganization(studioId: string, organizationId: strin
       await sendMail({
         to,
         subject: `Respuesta a tu solicitud: ${event.subject}`,
-        html: layout("Te respondimos", `<p>Hay una respuesta del estudio en tu solicitud <strong>${esc(event.subject)}</strong>.</p>`, {
+        html: mailLayout("Te respondimos", `<p>Hay una respuesta del estudio en tu solicitud <strong>${esc(event.subject)}</strong>.</p>`, {
           href: `${portal}/solicitudes`,
           label: "Ver la respuesta",
         }),
@@ -109,16 +109,27 @@ type StudioEvent =
       organizationId: string;
       subject: string;
       message: string;
-    };
+    }
+  | { kind: "aprobacion"; organizationName: string; organizationId: string; email: string; role: string; invitedBy: string };
 
 export async function notifyStudio(event: StudioEvent) {
   const to = process.env.STUDIO_NOTIFY_EMAIL || site.email;
   const href = `${getSiteUrl()}/admin/organizaciones/${event.organizationId}`;
-  if (event.kind === "documento") {
+  if (event.kind === "aprobacion") {
+    await sendMail({
+      to,
+      subject: `${event.organizationName}: invitación por confirmar (${event.role})`,
+      html: mailLayout(
+        "Invitación con rol sensible",
+        `<p><strong>${esc(event.invitedBy)}</strong> invitó a <strong>${esc(event.email)}</strong> a <strong>${esc(event.organizationName)}</strong> con el rol <strong>${esc(event.role)}</strong>. La invitación no sale hasta que alguien del estudio la confirme.</p>`,
+        { href: `${href}?tab=miembros`, label: "Revisar y confirmar" },
+      ),
+    });
+  } else if (event.kind === "documento") {
     await sendMail({
       to,
       subject: `${event.organizationName} subió un documento`,
-      html: layout(
+      html: mailLayout(
         "Documento nuevo de un cliente",
         `<p><strong>${esc(event.organizationName)}</strong> subió <strong>${esc(event.documentName)}</strong> desde el portal.</p>`,
         { href: `${href}?tab=documentos`, label: "Ver en el backoffice" },
@@ -128,7 +139,7 @@ export async function notifyStudio(event: StudioEvent) {
     await sendMail({
       to,
       subject: `Nueva solicitud de ${event.organizationName}: ${event.subject}`,
-      html: layout(
+      html: mailLayout(
         "Solicitud nueva",
         `<p><strong>${esc(event.organizationName)}</strong> creó una solicitud: <strong>${esc(event.subject)}</strong></p><p style="white-space:pre-line">${esc(event.message)}</p>`,
         { href: `${href}?tab=solicitudes`, label: "Responder" },

@@ -44,7 +44,7 @@ export async function sendLeadEmails(lead: LeadMail) {
     ["Email", lead.email],
     ["Teléfono", lead.phone],
     ["Empresa", lead.company],
-    ["Tipo", lead.contributor_type ? CONTRIBUTOR_TYPES[lead.contributor_type] ?? lead.contributor_type : null],
+    ["Tipo", lead.contributor_type ? (CONTRIBUTOR_TYPES[lead.contributor_type] ?? lead.contributor_type) : null],
     ["Actividad", lead.activity],
     ["Empleados", lead.employees],
     ["Necesita", lead.needs?.join(", ")],
@@ -87,15 +87,37 @@ export async function sendLeadEmails(lead: LeadMail) {
 
 /**
  * Envía un mail simple. Si el SMTP no está configurado no hace nada, y si falla
- * solo lo registra: nunca rompe la acción que lo dispara.
+ * solo lo registra: nunca rompe la acción que lo dispara. Devuelve si salió.
  */
-export async function sendMail({ to, subject, html, replyTo }: { to: string | string[]; subject: string; html: string; replyTo?: string }) {
+export async function sendMail({
+  to,
+  subject,
+  html,
+  replyTo,
+  attachments,
+}: {
+  to: string | string[];
+  subject: string;
+  html: string;
+  replyTo?: string;
+  attachments?: { filename: string; content: string; contentType?: string }[];
+}): Promise<boolean> {
   const transport = getTransport();
   const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
-  if (!transport || recipients.length === 0) return;
+  if (!transport || recipients.length === 0) {
+    if (recipients.length) console.info(`[mail] SMTP sin configurar: no se envió "${subject}" a ${recipients.join(", ")}`);
+    return false;
+  }
   try {
-    await transport.sendMail({ from: process.env.MAIL_FROM!, to: recipients, subject, html, replyTo });
+    await transport.sendMail({ from: process.env.MAIL_FROM!, to: recipients, subject, html, replyTo, attachments });
+    return true;
   } catch (error) {
     console.error("[mail] No se pudo enviar", subject, error);
+    return false;
   }
+}
+
+/** ¿Hay SMTP configurado? (para avisar en la interfaz que hay que pasar el enlace a mano) */
+export function mailEnabled() {
+  return getTransport() !== null;
 }

@@ -2,6 +2,16 @@ import { and, asc, count, eq, inArray, isNull, max } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+  staffApproveInvitation,
+  staffChangeRole,
+  staffInvite,
+  staffReactivateMember,
+  staffResend,
+  staffRevokeInvitation,
+  staffRevokeMember,
+} from "@/app/admin/member-actions";
+import { ActivityTimeline } from "@/components/admin/ActivityTimeline";
 import { Notice } from "@/components/admin/AdminField";
 import { LegalEntitiesSection, OrganizationGeneralForm } from "@/components/admin/OrganizationForms";
 import {
@@ -16,6 +26,7 @@ import {
   type OrgTabKey,
 } from "@/components/admin/OrganizationTabs";
 import { Badge } from "@/components/portal/ui";
+import { TeamPanel } from "@/components/team/TeamPanel";
 import { getDb } from "@/db";
 import { documents, legal_entities, requests, tango_records } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
@@ -47,11 +58,17 @@ export default async function OrganizacionPage({
   const tab: OrgTabKey = ORG_TABS.some((t) => t.key === asked) ? (asked as OrgTabKey) : "general";
 
   const [entities, [newDocs], [openReqs], [tango], limits, team] = await Promise.all([
-    db.select().from(legal_entities).where(and(eq(legal_entities.organization_id, org.id), eq(legal_entities.studio_id, studioId))).orderBy(asc(legal_entities.created_at)),
+    db
+      .select()
+      .from(legal_entities)
+      .where(and(eq(legal_entities.organization_id, org.id), eq(legal_entities.studio_id, studioId)))
+      .orderBy(asc(legal_entities.created_at)),
     db
       .select({ n: count() })
       .from(documents)
-      .where(and(eq(documents.organization_id, org.id), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at))),
+      .where(
+        and(eq(documents.organization_id, org.id), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)),
+      ),
     db
       .select({ n: count() })
       .from(requests)
@@ -69,6 +86,9 @@ export default async function OrganizacionPage({
     ? `${limits.used.legal_entities} de ${limits.max.legal_entities} según el plan ${limits.planName}`
     : "Sin plan asignado: no se aplican límites";
 
+  const usersText = limits.max
+    ? `${limits.used.users} de ${limits.max.users} usuarios del plan ${limits.planName} (incluye invitaciones pendientes)`
+    : "Sin plan asignado: no se aplican límites";
   const notice = Object.keys(NOTICES).find((k) => sp[k]);
   const errorText = sp.error
     ? sp.error === "vencimiento"
@@ -95,7 +115,9 @@ export default async function OrganizacionPage({
             <span className="font-normal">
               · última sincronización{" "}
               {tango.lastSync
-                ? new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(tango.lastSync))
+                ? new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(
+                    new Date(tango.lastSync),
+                  )
                 : "pendiente"}
             </span>
           </span>
@@ -120,7 +142,10 @@ export default async function OrganizacionPage({
             <div className="rounded-md border border-line bg-surface p-5">
               <h2 className="font-semibold">Responsable del estudio</h2>
               <p className="mt-1 text-[15px] text-muted">{lead ? `${lead.name} · ${lead.email}` : "Sin asignar."}</p>
-              <Link href={`/admin/organizaciones/${org.id}?tab=equipo`} className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline">
+              <Link
+                href={`/admin/organizaciones/${org.id}?tab=equipo`}
+                className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline"
+              >
                 Gestionar equipo
               </Link>
             </div>
@@ -141,9 +166,23 @@ export default async function OrganizacionPage({
       {tab === "documentos" && <DocumentsTab orgId={org.id} studioId={studioId} error={sp.error} entities={entityOptions} />}
       {tab === "solicitudes" && <RequestsTab orgId={org.id} studioId={studioId} />}
       {tab === "integraciones" && <IntegrationsTab orgId={org.id} studioId={studioId} />}
-      {(tab === "plan" || tab === "miembros" || tab === "actividad") && (
-        <p className="rounded-md border border-dashed border-line p-6 text-muted">Esta sección se está terminando de construir.</p>
+      {tab === "miembros" && (
+        <TeamPanel
+          organizationId={org.id}
+          usersText={usersText}
+          actions={{
+            invite: staffInvite,
+            resend: staffResend,
+            revokeInvitation: staffRevokeInvitation,
+            changeRole: staffChangeRole,
+            revoke: staffRevokeMember,
+            reactivate: staffReactivateMember,
+            approve: staffApproveInvitation,
+          }}
+        />
       )}
+      {tab === "actividad" && <ActivityTimeline orgId={org.id} studioId={studioId} before={sp.antes} />}
+      {tab === "plan" && <p className="rounded-md border border-dashed border-line p-6 text-muted">Esta sección se está terminando de construir.</p>}
     </div>
   );
 }
