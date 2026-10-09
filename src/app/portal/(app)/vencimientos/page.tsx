@@ -30,7 +30,7 @@ export default async function VencimientosPage() {
   return (
     <>
       <PageTitle title="Vencimientos y pagos" intro="Lo que cargó el estudio para vos. Si hay link de pago o VEP, lo tenés en cada uno." />
-      {rows.length === 0 && <Empty>Todavía no hay vencimientos cargados.</Empty>}
+      {rows.length === 0 && <Empty art="calendario">Todavía no hay vencimientos cargados.</Empty>}
       {[
         { title: "Pendientes", items: pending },
         { title: "Presentados y pagados", items: done },

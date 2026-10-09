@@ -84,7 +84,7 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
         </Card>
       )}
 
-      {docs.length === 0 && <Empty>Todavía no hay documentos.</Empty>}
+      {docs.length === 0 && <Empty art="carpeta">Todavía no hay documentos.</Empty>}
       {periods.map((p) => (
         <section key={p || "sin"} className="mb-8">
           <h2 className="mb-3 text-lg font-semibold first-letter:uppercase">{periodLabel(p || null)}</h2>

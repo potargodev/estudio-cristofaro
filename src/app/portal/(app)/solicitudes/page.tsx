@@ -29,7 +29,7 @@ export default async function SolicitudesPage() {
         )}
       </PageTitle>
       {rows.length === 0 ? (
-        <Empty>Todavía no hiciste solicitudes.</Empty>
+        <Empty art="charla">Todavía no hiciste solicitudes.</Empty>
       ) : (
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
           {rows.map((r) => (

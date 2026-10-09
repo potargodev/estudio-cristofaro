@@ -1,8 +1,9 @@
-import { and, asc, desc, eq, inArray, isNotNull, isNull, lte, notInArray } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, isNotNull, isNull, lt, lte, notInArray } from "drizzle-orm";
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { getDb } from "@/db";
-import { documents, leads, organizations, requests } from "@/db/schema";
+import { documents, leads, obligations, organizations, requests } from "@/db/schema";
+import { WeeklyBars } from "@/components/admin/WeeklyBars";
 import { REQUEST_STATUS, REQUEST_TYPES } from "@/lib/portal-types";
 import { requireStaff } from "@/lib/auth";
 import { LEAD_SOURCES, LEAD_STATUSES, type Lead } from "@/lib/types";
@@ -22,7 +23,15 @@ export default async function AdminHome() {
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const inAWeek = new Date(today.getTime() + 7 * 86400000).toISOString().slice(0, 10);
 
-  const [all, upcomingRows, clientRows, openRequests, newDocs] = await Promise.all([
+  // Semanas (lunes) para los gráficos: 8 hacia atrás para consultas, 8 hacia adelante para vencimientos
+  const monday = new Date(today);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const week = (offset: number) => new Date(monday.getTime() + offset * 7 * 86400000);
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const short = (d: Date) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "numeric" }).format(d);
+
+  const [all, upcomingRows, clientRows, openRequests, newDocs, dueRows] = await Promise.all([
     db
       .select({ id: leads.id, name: leads.name, status: leads.status, source: leads.source, created_at: leads.created_at })
       .from(leads)
@@ -53,29 +62,63 @@ export default async function AdminHome() {
       .where(eq(organizations.studio_id, user.studioId)),
     // Portal: solicitudes abiertas y documentos de clientes que nadie vio
     db
-      .select({ id: requests.id, subject: requests.subject, type: requests.type, status: requests.status, client_id: requests.organization_id, client: organizations.name })
+      .select({
+        id: requests.id,
+        subject: requests.subject,
+        type: requests.type,
+        status: requests.status,
+        client_id: requests.organization_id,
+        client: organizations.name,
+      })
       .from(requests)
       .innerJoin(organizations, eq(organizations.id, requests.organization_id))
       .where(and(eq(requests.studio_id, user.studioId), inArray(requests.status, ["abierta", "en_curso"])))
       .orderBy(desc(requests.updated_at))
       .limit(50),
     db
-      .select({ id: documents.id, name: documents.name, client_id: documents.organization_id, client: organizations.name, created_at: documents.created_at })
+      .select({
+        id: documents.id,
+        name: documents.name,
+        client_id: documents.organization_id,
+        client: organizations.name,
+        created_at: documents.created_at,
+      })
       .from(documents)
       .innerJoin(organizations, eq(organizations.id, documents.organization_id))
       .where(and(eq(documents.studio_id, user.studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)))
       .orderBy(desc(documents.created_at))
       .limit(50),
+    db
+      .select({ due: obligations.due_date })
+      .from(obligations)
+      .where(
+        and(
+          eq(obligations.studio_id, user.studioId),
+          gte(obligations.due_date, iso(week(0))),
+          lt(obligations.due_date, iso(week(8))),
+          notInArray(obligations.status, ["presentado", "pagado"]),
+        ),
+      ),
   ]);
+  const leadsByWeek = Array.from({ length: 8 }, (_, i) => {
+    const from = week(i - 7),
+      to = week(i - 6);
+    return { label: short(from), value: all.filter((l) => l.created_at >= from && l.created_at < to).length };
+  });
+  const dueByWeek = Array.from({ length: 8 }, (_, i) => {
+    const from = iso(week(i)),
+      to = iso(week(i + 1));
+    return { label: short(week(i)), value: dueRows.filter((o) => o.due >= from && o.due < to).length };
+  });
 
   const thisMonth = all.filter((l) => l.created_at >= monthStart);
   const won = thisMonth.filter((l) => l.status === "ganado").length;
   const closed = thisMonth.filter((l) => l.status === "ganado" || l.status === "perdido").length;
   const activeClients = clientRows.filter((c) => c.status === "activa" || c.status === "onboarding");
   const mrr = activeClients.reduce((sum, c) => sum + (Number(c.monthly_fee) || 0), 0);
-  const bySource = Object.entries(
-    thisMonth.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.source]: (acc[l.source] ?? 0) + 1 }), {}),
-  ).sort((a, b) => b[1] - a[1]);
+  const bySource = Object.entries(thisMonth.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.source]: (acc[l.source] ?? 0) + 1 }), {})).sort(
+    (a, b) => b[1] - a[1],
+  );
   const todayStr = today.toISOString().slice(0, 10);
 
   return (
@@ -86,20 +129,25 @@ export default async function AdminHome() {
         </Link>
       </AdminPageHeader>
 
-      <dl className="grid gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-2 xl:grid-cols-4">
+      <dl className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Consultas este mes", value: String(thisMonth.length) },
           { label: "Sin contactar", value: String(all.filter((l) => l.status === "nuevo").length) },
           { label: "Conversión del mes", value: closed ? `${Math.round((won / closed) * 100)}%` : "—" },
           { label: "Organizaciones activas", value: String(activeClients.length), sub: mrr ? `${money.format(mrr)} / mes` : undefined },
         ].map((k) => (
-          <div key={k.label} className="bg-surface p-5">
+          <div key={k.label} className="rounded-md border border-line bg-surface p-6 shadow-brand-sm">
             <dt className="text-sm text-muted">{k.label}</dt>
-            <dd className="mt-1 text-3xl font-semibold tracking-tight">{k.value}</dd>
+            <dd className="mt-2 font-display text-5xl leading-none text-navy">{k.value}</dd>
             {k.sub && <dd className="mt-0.5 text-sm text-muted">{k.sub}</dd>}
           </div>
         ))}
       </dl>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <WeeklyBars title="Consultas por semana (últimas 8)" data={leadsByWeek} highlight={7} />
+        <WeeklyBars title="Vencimientos pendientes por semana (próximas 8)" data={dueByWeek} tone="rose" highlight={0} />
+      </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section>
@@ -115,7 +163,10 @@ export default async function AdminHome() {
             {openRequests.length === 0 && <li className="px-4 py-5 text-muted">No hay solicitudes abiertas.</li>}
             {openRequests.slice(0, 6).map((r) => (
               <li key={r.id}>
-                <Link href={`/admin/organizaciones/${r.client_id}?tab=solicitudes#${r.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+                <Link
+                  href={`/admin/organizaciones/${r.client_id}?tab=solicitudes#${r.id}`}
+                  className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-paper"
+                >
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{r.subject}</span>
                     <span className="block text-sm text-muted">
@@ -136,7 +187,10 @@ export default async function AdminHome() {
             {newDocs.length === 0 && <li className="px-4 py-5 text-muted">No hay documentos sin revisar.</li>}
             {newDocs.slice(0, 6).map((d) => (
               <li key={d.id}>
-                <Link href={`/admin/organizaciones/${d.client_id}?tab=documentos`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+                <Link
+                  href={`/admin/organizaciones/${d.client_id}?tab=documentos`}
+                  className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-paper"
+                >
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{d.name}</span>
                     <span className="block text-sm text-muted">{d.client}</span>
@@ -160,7 +214,7 @@ export default async function AdminHome() {
             <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
               {upcomingRows.map((l) => (
                 <li key={l.id}>
-                  <Link href={`/admin/consultas/${l.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+                  <Link href={`/admin/consultas/${l.id}`} className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-paper">
                     <span>
                       <span className="block font-medium">{l.name}</span>
                       <span className="block text-sm text-muted">{l.next_action ?? "Seguimiento"}</span>
@@ -179,7 +233,7 @@ export default async function AdminHome() {
           <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
             {all.slice(0, 8).map((l) => (
               <li key={l.id}>
-                <Link href={`/admin/consultas/${l.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+                <Link href={`/admin/consultas/${l.id}`} className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-paper">
                   <span className="font-medium">{l.name}</span>
                   <span className="text-sm text-muted">
                     {LEAD_STATUSES.find((s) => s.value === l.status)?.label} · {fmtDate(l.created_at)}

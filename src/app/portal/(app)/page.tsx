@@ -5,7 +5,8 @@ import { LeadContact } from "@/components/portal/LeadContact";
 import { requireMember } from "@/lib/auth";
 import { getOrgStaff } from "@/lib/organizations";
 import { can, canCreateRequests, canSeeRequests } from "@/lib/permissions";
-import { getLatestStudioDocument, getRequests, getUpcomingObligations } from "@/lib/portal-data";
+import { MonthCard, Ring, SplitBar, Timeline } from "@/components/portal/Dashboard";
+import { getLatestStudioDocument, getMonthSummary, getRequests, getTimeline, getUpcomingObligations } from "@/lib/portal-data";
 import { OBLIGATION_STATUS, REQUEST_STATUS, REQUEST_TYPES, categoryLabel, dateLabel, moneyLabel, periodLabel, todayISO } from "@/lib/portal-types";
 
 export default async function PortalHome() {
@@ -15,12 +16,17 @@ export default async function PortalHome() {
     documents: can(me.orgRole, "documentos.ver"),
     requests: canSeeRequests(me.orgRole),
   };
-  const [upcoming, lastDoc, openRequests, staff] = await Promise.all([
+  const [upcoming, lastDoc, openRequests, staff, month, timeline] = await Promise.all([
     show.obligations ? getUpcomingObligations(me) : [],
     show.documents ? getLatestStudioDocument(me) : null,
     show.requests ? getRequests(me, true) : [],
     getOrgStaff(me.organizationId),
+    getMonthSummary(me),
+    getTimeline(me),
   ]);
+  const monthName = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" }).format(
+    new Date(),
+  );
   const lead = staff.find((t) => t.assignment === "responsable") ?? null;
   const today = todayISO();
   // Saluda por el nombre solo si el usuario tiene uno propio (no la razón social)
@@ -31,39 +37,54 @@ export default async function PortalHome() {
       <h1 className="font-display text-3xl sm:text-4xl">Hola{first ? `, ${first}` : ""}</h1>
       <p className="mt-2 text-muted">Lo que viene, lo último que te mandamos y tus consultas abiertas.</p>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-[1.4fr_1fr]">
-        {show.obligations && (
-          <Card>
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="font-semibold">Próximos vencimientos</h2>
-              <Link href="/portal/vencimientos" className="link-underline text-sm text-rose-deep">
-                Ver todos
-              </Link>
-            </div>
-            {upcoming.length === 0 ? (
-              <div className="mt-3">
-                <Empty>No tenés vencimientos pendientes.</Empty>
+      {(month.obligations || month.documents || month.requests) && (
+        <MonthCard month={monthName} className="mt-6">
+          {month.obligations && <Ring value={month.obligations.done} total={month.obligations.total} label="vencimientos del mes al día" empty="No hay vencimientos este mes" />}
+          {month.documents && (
+            <SplitBar title="Documentos del mes" a={month.documents.fromStudio} b={month.documents.fromClient} labelA="del estudio" labelB="tuyos" />
+          )}
+          {month.requests && (
+            <SplitBar title="Solicitudes del mes" a={month.requests.resolved} b={month.requests.open} labelA="resueltas" labelB="en curso" />
+          )}
+        </MonthCard>
+      )}
+
+      <div className="mt-4 grid gap-4 md:grid-cols-[1.4fr_1fr]">
+        <div className="grid content-start gap-4">
+          {show.obligations && (
+            <Card>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="font-semibold">Próximos vencimientos</h2>
+                <Link href="/portal/vencimientos" className="link-underline text-sm text-rose-deep">
+                  Ver todos
+                </Link>
               </div>
-            ) : (
-              <ul className="mt-3 divide-y divide-line">
-                {upcoming.map((o) => (
-                  <li key={o.id} className="flex items-center justify-between gap-3 py-3">
-                    <div className="min-w-0">
-                      <p className="font-medium">{o.tax}</p>
-                      <p className="text-sm text-muted">
-                        {periodLabel(o.period)} · vence el {dateLabel(o.due_date)}
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="font-medium tabular-nums">{moneyLabel(o.amount)}</p>
-                      <Badge tone={obligationTone(o.status, o.due_date, today)}>{OBLIGATION_STATUS[o.status]}</Badge>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-        )}
+              {upcoming.length === 0 ? (
+                <div className="mt-3">
+                  <Empty>No tenés vencimientos pendientes.</Empty>
+                </div>
+              ) : (
+                <ul className="mt-3 divide-y divide-line">
+                  {upcoming.map((o) => (
+                    <li key={o.id} className="flex items-center justify-between gap-3 py-3">
+                      <div className="min-w-0">
+                        <p className="font-medium">{o.tax}</p>
+                        <p className="text-sm text-muted">
+                          {periodLabel(o.period)} · vence el {dateLabel(o.due_date)}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="font-medium tabular-nums">{moneyLabel(o.amount)}</p>
+                        <Badge tone={obligationTone(o.status, o.due_date, today)}>{OBLIGATION_STATUS[o.status]}</Badge>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          )}
+          <Timeline items={timeline} />
+        </div>
 
         <div className="grid content-start gap-4">
           <LeadContact lead={lead} team={staff.filter((t) => t.assignment !== "responsable")} />

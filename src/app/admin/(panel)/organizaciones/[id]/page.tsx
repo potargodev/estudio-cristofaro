@@ -135,56 +135,58 @@ export default async function OrganizacionPage({
 
       <TabNav orgId={org.id} active={tab} counts={{ documentos: newDocs.n, solicitudes: openReqs.n }} />
 
-      {tab === "general" && (
-        <div className="grid gap-8 xl:grid-cols-[1fr_320px]">
-          <div className="space-y-8">
-            <OrganizationGeneralForm org={org} />
-            <LegalEntitiesSection orgId={org.id} entities={entities} limitText={limitText} />
-          </div>
-          <aside className="space-y-4">
-            <div className="rounded-md border border-line bg-surface p-5">
-              <h2 className="font-semibold">Responsable del estudio</h2>
-              <p className="mt-1 text-[15px] text-muted">{lead ? `${lead.name} · ${lead.email}` : "Sin asignar."}</p>
-              <Link
-                href={`/admin/organizaciones/${org.id}?tab=equipo`}
-                className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline"
-              >
-                Gestionar equipo
-              </Link>
+      <div key={tab} className="tab-in">
+        {tab === "general" && (
+          <div className="grid gap-8 xl:grid-cols-[1fr_320px]">
+            <div className="space-y-8">
+              <OrganizationGeneralForm org={org} />
+              <LegalEntitiesSection orgId={org.id} entities={entities} limitText={limitText} />
             </div>
-            {org.lead_id && (
+            <aside className="space-y-4">
               <div className="rounded-md border border-line bg-surface p-5">
-                <h2 className="font-semibold">Origen</h2>
-                <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
-                <Link href={`/admin/consultas/${org.lead_id}`} className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline">
-                  Ver consulta original
+                <h2 className="font-semibold">Responsable del estudio</h2>
+                <p className="mt-1 text-[15px] text-muted">{lead ? `${lead.name} · ${lead.email}` : "Sin asignar."}</p>
+                <Link
+                  href={`/admin/organizaciones/${org.id}?tab=equipo`}
+                  className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline"
+                >
+                  Gestionar equipo
                 </Link>
               </div>
-            )}
-          </aside>
-        </div>
-      )}
-      {tab === "equipo" && <StaffTab orgId={org.id} studioId={studioId} />}
-      {tab === "vencimientos" && <ObligationsTab orgId={org.id} studioId={studioId} entities={entityOptions} />}
-      {tab === "documentos" && <DocumentsTab orgId={org.id} studioId={studioId} error={sp.error} entities={entityOptions} />}
-      {tab === "solicitudes" && <RequestsTab orgId={org.id} studioId={studioId} />}
-      {tab === "integraciones" && <IntegrationsTab orgId={org.id} studioId={studioId} />}
-      {tab === "miembros" && (
-        <TeamPanel
-          organizationId={org.id}
-          usersText={usersText}
-          actions={{
-            invite: staffInvite,
-            resend: staffResend,
-            revokeInvitation: staffRevokeInvitation,
-            changeRole: staffChangeRole,
-            revoke: staffRevokeMember,
-            reactivate: staffReactivateMember,
-            approve: staffApproveInvitation,
-          }}
-        />
-      )}
-      {tab === "actividad" && <ActivityTimeline orgId={org.id} studioId={studioId} before={sp.antes} />}
+              {org.lead_id && (
+                <div className="rounded-md border border-line bg-surface p-5">
+                  <h2 className="font-semibold">Origen</h2>
+                  <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
+                  <Link href={`/admin/consultas/${org.lead_id}`} className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline">
+                    Ver consulta original
+                  </Link>
+                </div>
+              )}
+            </aside>
+          </div>
+        )}
+        {tab === "equipo" && <StaffTab orgId={org.id} studioId={studioId} />}
+        {tab === "vencimientos" && <ObligationsTab orgId={org.id} studioId={studioId} entities={entityOptions} />}
+        {tab === "documentos" && <DocumentsTab orgId={org.id} studioId={studioId} error={sp.error} entities={entityOptions} />}
+        {tab === "solicitudes" && <RequestsTab orgId={org.id} studioId={studioId} />}
+        {tab === "integraciones" && <IntegrationsTab orgId={org.id} studioId={studioId} />}
+        {tab === "miembros" && (
+          <TeamPanel
+            organizationId={org.id}
+            usersText={usersText}
+            actions={{
+              invite: staffInvite,
+              resend: staffResend,
+              revokeInvitation: staffRevokeInvitation,
+              changeRole: staffChangeRole,
+              revoke: staffRevokeMember,
+              reactivate: staffReactivateMember,
+              approve: staffApproveInvitation,
+            }}
+          />
+        )}
+        {tab === "actividad" && <ActivityTimeline orgId={org.id} studioId={studioId} before={sp.antes} />}
+      </div>
       {tab === "plan" && <PlanTab orgId={org.id} studioId={studioId} planId={org.service_plan_id} />}
     </div>
   );
