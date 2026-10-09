@@ -33,7 +33,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
         ].map(([k, v]) => (
           <div key={k} className="bg-night p-5">
             <p className="text-[12px] text-paper/55">{k}</p>
-            <p className="tabular mt-3 font-display text-[clamp(1.9rem,3vw,2.6rem)] leading-none text-paper">{v}</p>
+            <p className="tabular mt-3 font-display text-[clamp(1.7rem,2.3vw,2.3rem)] leading-none text-paper">{v}</p>
           </div>
         ))}
         <div className="bg-night p-5 sm:col-span-3">

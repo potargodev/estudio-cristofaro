@@ -6,7 +6,7 @@ import { reducedMotion } from "@/lib/motion/gsap";
 const WORDS = ["agencias", "consultoras", "software", "arquitectura"];
 
 /**
- * Marquesina gigante en Forum con contorno. Avanza sola y acelera (o se da
+ * Marquesina gigante en la serif de títulos, con contorno. Avanza sola y acelera (o se da
  * vuelta) según la velocidad del scroll. Con reduced-motion queda quieta.
  */
 export function SegmentsMarquee() {

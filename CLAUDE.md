@@ -35,7 +35,7 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 
 ## Estilo
 - Textos de interfaz en español rioplatense (voseo), lenguaje simple para clientes y preciso para el estudio.
-- Identidad de marca: azul noche #1c2235, rosé #a57c6d, pizarra; títulos en Forum (hasta tener la licencia de Belgan Aesthetic) y textos en Archivo.
+- Identidad de marca: azul noche #1c2235, rosé #a57c6d, pizarra; títulos y números grandes en Gilda Display (reemplazó a Forum en el rediseño, elegida por el cliente) y textos en Archivo.
 - Mobile first. Respetar prefers-reduced-motion.
 
 ## Forma de trabajo

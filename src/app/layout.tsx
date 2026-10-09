@@ -1,23 +1,24 @@
 import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
-import { Archivo, Forum } from "next/font/google";
+import { Archivo, Gilda_Display } from "next/font/google";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { getSiteUrl, isNoIndex } from "@/lib/runtime-config";
 import { site } from "@/lib/site";
 import "./globals.css";
 
-// Tipografías del manual de marca: Archivo para textos y Belgan Aesthetic para
-// títulos. Forum queda como reemplazo de Belgan hasta cargar su licencia web.
+// Tipografías: Archivo para textos y UI; Gilda Display (serif elegante y sobria,
+// elegida por el cliente en el rediseño en lugar de Forum) para titulares y
+// números grandes.
 const archivo = Archivo({
   subsets: ["latin"],
   variable: "--font-archivo",
   display: "swap",
 });
 
-const forum = Forum({
+const serif = Gilda_Display({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-forum",
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -52,7 +53,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   await connection();
   return (
-    <html lang="es-AR" className={`${archivo.variable} ${forum.variable}`}>
+    <html lang="es-AR" className={`${archivo.variable} ${serif.variable}`}>
       <body className="min-h-dvh antialiased">
         <MotionProvider>{children}</MotionProvider>
       </body>

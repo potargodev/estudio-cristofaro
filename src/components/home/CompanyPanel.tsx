@@ -114,21 +114,21 @@ export function CompanyPanel() {
               <div className="mt-6 grid gap-px bg-hair sm:grid-cols-3">
                 <div className="bg-night p-4">
                   <p className="text-[12px] text-paper/55">Resuelto</p>
-                  <p className="tabular mt-3 font-display text-[clamp(2.2rem,3.4vw,3rem)] leading-none text-paper">
+                  <p className="tabular mt-3 font-display text-[clamp(1.9rem,2.5vw,2.5rem)] leading-none text-paper">
                     <Counter value={8} />
                     <span className="text-paper/35">/10</span>
                   </p>
                 </div>
                 <div className="bg-night p-4">
                   <p className="text-[12px] text-paper/55">A pagar en octubre</p>
-                  <p className="tabular mt-3 font-display text-[clamp(2.2rem,3.4vw,3rem)] leading-none text-paper">
+                  <p className="tabular mt-3 font-display text-[clamp(1.9rem,2.5vw,2.5rem)] leading-none text-paper">
                     <Counter value={DEMO.toPay} prefix="$" />
                   </p>
                   <p className="mt-2 text-[12px] text-paper/45">3 pagos pendientes</p>
                 </div>
                 <div className="bg-night p-4">
                   <p className="text-[12px] text-paper/55">Documentos por confirmar</p>
-                  <p className="tabular mt-3 font-display text-[clamp(2.2rem,3.4vw,3rem)] leading-none text-rose-light">
+                  <p className="tabular mt-3 font-display text-[clamp(1.9rem,2.5vw,2.5rem)] leading-none text-rose-light">
                     <Counter value={2} />
                   </p>
                 </div>
