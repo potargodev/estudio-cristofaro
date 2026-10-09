@@ -55,7 +55,7 @@ Valores mínimos de `.env.local` para desarrollo:
 DATABASE_URL=postgres://cristofaro:cristofaro@localhost:5432/cristofaro
 BETTER_AUTH_SECRET=cualquier-texto-largo-solo-para-local
 BETTER_AUTH_URL=http://localhost:3000
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+SITE_URL=http://localhost:3000
 ADMIN_EMAIL=vos@estudiocristofaro.com
 ADMIN_PASSWORD=una-clave-de-8-o-mas
 ```
@@ -69,7 +69,7 @@ ADMIN_PASSWORD=una-clave-de-8-o-mas
 
 ## Deploy en Easypanel (VPS de Hostinger)
 
-La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la base es un servicio Postgres del mismo proyecto de Easypanel. Cada vez que el contenedor arranca aplica solo las migraciones pendientes y después levanta el servidor en el puerto 3000.
+La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la base es un servicio Postgres del mismo proyecto de Easypanel. Cada vez que el contenedor arranca aplica solo las migraciones pendientes y después levanta el servidor en el puerto 3000. La configuración (URL, modo staging, base, login, mails) se lee en runtime: la misma imagen sirve para staging y producción.
 
 ### 1. Proyecto y base de datos
 
@@ -91,15 +91,17 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 | `DATABASE_URL` | La Internal connection URL del paso 1 |
 | `BETTER_AUTH_SECRET` | Texto aleatorio largo: `openssl rand -base64 32`. No cambiarlo después (cierra todas las sesiones) |
 | `BETTER_AUTH_URL` | `https://estudiocristofaro.com` |
-| `NEXT_PUBLIC_SITE_URL` | `https://estudiocristofaro.com` (se fija al compilar; si cambia, hay que redeployar) |
+| `SITE_URL` | `https://estudiocristofaro.com` (se lee en runtime: cambiarla no requiere recompilar) |
+| `SITE_NOINDEX` | Vacía en producción; `true` en staging |
+| `BETTER_AUTH_TRUSTED_ORIGINS` | Opcional: otros orígenes permitidos para el login, separados por coma |
 | `STUDIO_SLUG` | `cristofaro` |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Usuario admin que crea el seed (mínimo 8 caracteres) |
-| `SMTP_HOST` / `SMTP_PORT` | `smtp.hostinger.com` / `465` |
-| `SMTP_USER` / `SMTP_PASS` | Casilla de Hostinger que envía los avisos y su contraseña |
+| `SMTP_HOST` / `SMTP_PORT` | SMTP del proveedor de la casilla del dominio (ej. puerto `465`) |
+| `SMTP_USER` / `SMTP_PASS` | Casilla de `@estudiocristofaro.com` que envía los avisos y su contraseña |
 | `MAIL_FROM` | `Estudio Cristofaro <avisos@estudiocristofaro.com>` (la misma casilla de `SMTP_USER`) |
 | `STUDIO_NOTIFY_EMAIL` | Dónde llegan los avisos de consultas nuevas |
 
-Si faltan las variables SMTP la web funciona igual, solo que no manda mails.
+Si faltan las variables SMTP la web funciona igual, solo que no manda mails (las consultas se guardan en el backoffice). Usá el SMTP del proveedor donde está la casilla de `estudiocristofaro.com`: si se envía desde otro servidor, los mails caen en spam.
 
 ### 3. Dominio y SSL
 
@@ -131,6 +133,47 @@ Crea el estudio, los planes, las preguntas frecuentes y el usuario admin. Se pue
 ### Actualizar
 
 Push a `main` (con Auto Deploy) o **Deploy** a mano. Si el cambio trae migraciones nuevas en `/drizzle`, se aplican solas al arrancar el contenedor nuevo.
+
+## Staging (app.estudiocristofaro.com)
+
+Antes de reemplazar el sitio actual, la web nueva se publica como versión de prueba en `https://app.estudiocristofaro.com`, con la misma imagen y el mismo proceso de la sección anterior. Lo único que cambia son las variables:
+
+```
+SITE_URL=https://app.estudiocristofaro.com
+BETTER_AUTH_URL=https://app.estudiocristofaro.com
+SITE_NOINDEX=true
+```
+
+Con `SITE_NOINDEX=true` el staging no aparece en Google ni compite con el sitio actual:
+
+- `robots.txt` responde `Disallow: /` para todos los buscadores y el sitemap sale vacío.
+- Todas las páginas llevan `<meta name="robots" content="noindex, nofollow">`.
+- Todas las respuestas llevan el header `X-Robots-Tag: noindex, nofollow` (también las imágenes y archivos de `public/`).
+- Canonical, JSON-LD, imagen para compartir y links de los mails usan `SITE_URL`.
+
+DNS: un registro **A** con nombre `app` apuntando a la IP del VPS, sin tocar `@`, `www` ni los MX (el sitio actual y el correo siguen como están). Verificá que propagó (por ejemplo en dnschecker.org) antes de agregar el dominio en Easypanel, así el certificado SSL sale bien de entrada.
+
+Para revisar que el modo staging está activo:
+
+```bash
+curl -s https://app.estudiocristofaro.com/robots.txt          # Disallow: /
+curl -sI https://app.estudiocristofaro.com/ | grep -i robots  # X-Robots-Tag: noindex, nofollow
+```
+
+## Pasaje a producción
+
+Cuando el estudio apruebe el staging:
+
+1. **DNS**: cambiá los registros **A** de `@` y `www` a la IP del VPS (los MX no se tocan). Conviene bajar antes el TTL a 300 para que el cambio se propague rápido.
+2. **Easypanel → servicio `web` → Domains**: agregá `estudiocristofaro.com` (puerto 3000, HTTPS) y `www.estudiocristofaro.com` con redirección al dominio principal.
+3. **Variables** (sin tocar código ni recompilar; alcanza con guardar y reiniciar):
+   - `SITE_URL=https://estudiocristofaro.com`
+   - `BETTER_AUTH_URL=https://estudiocristofaro.com`
+   - `SITE_NOINDEX`: borrarla (o `false`).
+4. **Redirigir el staging**: en Domains, cambiá `app.estudiocristofaro.com` a una redirección **301** hacia `https://estudiocristofaro.com` (conservando la ruta). Así cualquier link que haya circulado del staging termina en el sitio definitivo.
+5. **Verificar**: `robots.txt` sin `Disallow: /` y con el sitemap del dominio principal, sin header `X-Robots-Tag`, login en `/admin` y una consulta de prueba. Después, dar de alta el sitio y el sitemap en Google Search Console.
+
+Las sesiones del backoffice abiertas en `app.` no sirven en el dominio nuevo: hay que volver a iniciar sesión (no hace falta cambiar `BETTER_AUTH_SECRET`).
 
 ## Contenido real pendiente
 
