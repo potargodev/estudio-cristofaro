@@ -6,7 +6,7 @@ import { toast } from "sonner";
 // Los avisos de éxito llegan por la URL después del redirect de cada action
 // (?guardado=1, ?nuevo=1, …). Se muestran una vez como toast y se limpian de la
 // URL para que no se repitan al recargar.
-const SUCCESS_PARAMS = ["guardado", "nuevo", "creado", "activado", "desactivado"];
+const SUCCESS_PARAMS = ["guardado", "nuevo", "creado", "activado", "desactivado", "subido", "creada", "enviado"];
 
 export function SaveToast({ message }: { message: string }) {
   useEffect(() => {
