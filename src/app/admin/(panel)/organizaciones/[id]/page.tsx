@@ -26,10 +26,13 @@ import {
   TabNav,
   type OrgTabKey,
 } from "@/components/admin/OrganizationTabs";
+import { Suspense } from "react";
+import { CallsList } from "@/components/admin/CallsList";
+import { ListSkeleton } from "@/components/ui/skeleton-blocks";
 import { Badge } from "@/components/portal/ui";
 import { TeamPanel } from "@/components/team/TeamPanel";
 import { getDb } from "@/db";
-import { documents, legal_entities, requests, tango_records } from "@/db/schema";
+import { bookings, documents, legal_entities, requests, tango_records } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { getOrgLimits, getOrgStaff, studioOrganization } from "@/lib/organizations";
 import { ORGANIZATION_STATUSES } from "@/lib/types";
@@ -152,6 +155,12 @@ export default async function OrganizacionPage({
                 >
                   Gestionar equipo
                 </Link>
+              </div>
+              <div>
+                <h2 className="mb-2 font-semibold">Llamadas</h2>
+                <Suspense fallback={<ListSkeleton rows={2} />}>
+                  <CallsList studioId={studioId} where={eq(bookings.organization_id, org.id)} empty="Todavía no agendaron llamadas." />
+                </Suspense>
               </div>
               {org.lead_id && (
                 <div className="rounded-md border border-line bg-surface p-5">

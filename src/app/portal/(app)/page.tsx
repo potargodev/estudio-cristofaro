@@ -5,8 +5,10 @@ import { LeadContact } from "@/components/portal/LeadContact";
 import { requireMember } from "@/lib/auth";
 import { getOrgStaff } from "@/lib/organizations";
 import { can, canCreateRequests, canSeeRequests } from "@/lib/permissions";
-import { MonthCard, Ring, SplitBar, Timeline } from "@/components/portal/Dashboard";
-import { getLatestStudioDocument, getMonthSummary, getRequests, getTimeline, getUpcomingObligations } from "@/lib/portal-data";
+import { Suspense } from "react";
+import { MonthCard, Ring, SplitBar, TimelineSection } from "@/components/portal/Dashboard";
+import { ListSkeleton } from "@/components/ui/skeleton-blocks";
+import { getLatestStudioDocument, getMonthSummary, getRequests, getUpcomingObligations } from "@/lib/portal-data";
 import { OBLIGATION_STATUS, REQUEST_STATUS, REQUEST_TYPES, categoryLabel, dateLabel, moneyLabel, periodLabel, todayISO } from "@/lib/portal-types";
 
 export default async function PortalHome() {
@@ -16,13 +18,12 @@ export default async function PortalHome() {
     documents: can(me.orgRole, "documentos.ver"),
     requests: canSeeRequests(me.orgRole),
   };
-  const [upcoming, lastDoc, openRequests, staff, month, timeline] = await Promise.all([
+  const [upcoming, lastDoc, openRequests, staff, month] = await Promise.all([
     show.obligations ? getUpcomingObligations(me) : [],
     show.documents ? getLatestStudioDocument(me) : null,
     show.requests ? getRequests(me, true) : [],
     getOrgStaff(me.organizationId),
     getMonthSummary(me),
-    getTimeline(me),
   ]);
   const monthName = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" }).format(
     new Date(),
@@ -39,7 +40,14 @@ export default async function PortalHome() {
 
       {(month.obligations || month.documents || month.requests) && (
         <MonthCard month={monthName} className="mt-6">
-          {month.obligations && <Ring value={month.obligations.done} total={month.obligations.total} label="vencimientos del mes al día" empty="No hay vencimientos este mes" />}
+          {month.obligations && (
+            <Ring
+              value={month.obligations.done}
+              total={month.obligations.total}
+              label="vencimientos del mes al día"
+              empty="No hay vencimientos este mes"
+            />
+          )}
           {month.documents && (
             <SplitBar title="Documentos del mes" a={month.documents.fromStudio} b={month.documents.fromClient} labelA="del estudio" labelB="tuyos" />
           )}
@@ -83,11 +91,22 @@ export default async function PortalHome() {
               )}
             </Card>
           )}
-          <Timeline items={timeline} />
+          <Suspense fallback={<ListSkeleton rows={4} />}>
+            <TimelineSection me={me} />
+          </Suspense>
         </div>
 
         <div className="grid content-start gap-4">
-          <LeadContact lead={lead} team={staff.filter((t) => t.assignment !== "responsable")} />
+          <LeadContact lead={lead} team={staff.filter((t) => t.assignment !== "responsable")}>
+            {lead && can(me.orgRole, "agenda.reservar") && (
+              <Link
+                href="/portal/agendar"
+                className="mt-4 inline-flex h-10 items-center rounded-md bg-navy px-4 text-[15px] font-medium text-paper transition-colors hover:bg-navy-deep"
+              >
+                Agendar una llamada
+              </Link>
+            )}
+          </LeadContact>
           {show.documents && (
             <Card>
               <h2 className="font-semibold">Último documento del estudio</h2>

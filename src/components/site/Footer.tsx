@@ -113,7 +113,13 @@ export function Footer() {
           <p>
             © {new Date().getFullYear()} {site.name}
           </p>
-          <p>
+          <p className="flex gap-4">
+            <Link href="/privacidad" className="hover:text-paper">
+              Privacidad
+            </Link>
+            <Link href="/portal" className="hover:text-paper">
+              Portal de clientes
+            </Link>
             <Link href="/admin" className="hover:text-paper">
               Acceso del estudio
             </Link>

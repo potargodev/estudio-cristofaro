@@ -65,7 +65,13 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
       <SentMessage
         title="Listo, recibimos tu diagnóstico"
         text="Un contador del estudio lo revisa y te contacta en menos de 24 horas hábiles con una propuesta para tu caso."
-      />
+      >
+        <p className="mt-4">
+          <a href="/agendar" className="inline-flex h-11 items-center rounded-md bg-navy px-5 text-[15px] font-medium text-paper hover:bg-navy-deep">
+            ¿Preferís hablar ya? Agendá una llamada
+          </a>
+        </p>
+      </SentMessage>
     );
   }
 

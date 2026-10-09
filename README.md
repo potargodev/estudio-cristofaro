@@ -113,7 +113,9 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 | `SMTP_USER` / `SMTP_PASS` | Casilla de `@estudiocristofaro.com` que envía los avisos y su contraseña |
 | `MAIL_FROM` | `Estudio Cristofaro <avisos@estudiocristofaro.com>` (la misma casilla de `SMTP_USER`) |
 | `STUDIO_NOTIFY_EMAIL` | Dónde llegan los avisos de consultas nuevas |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Credenciales OAuth de Google para el login de clientes (opcional: sin ellas no aparece el botón) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Credenciales OAuth de Google para el login de clientes y la agenda (opcional: sin ellas no aparece el botón y la agenda funciona sin Google) |
+| `ENCRYPTION_KEY` | Clave para cifrar los tokens de Google Calendar: `openssl rand -base64 32`. No cambiarla después |
+| `CRON_SECRET` | Opcional: para disparar los recordatorios de la agenda desde un cron externo |
 
 Si faltan las variables SMTP la web funciona igual, solo que no manda mails (las consultas se guardan en el backoffice). Usá el SMTP del proveedor donde está la casilla de `estudiocristofaro.com`: si se envía desde otro servidor, los mails caen en spam.
 
@@ -156,6 +158,24 @@ Crea el estudio, los planes, las preguntas frecuentes y el usuario admin. Se pue
 5. Copiá el ID y el secreto a `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` en Easypanel y hacé **Deploy**.
 
 Google solo confirma la identidad: si el email no está invitado, el acceso se rechaza igual.
+
+### Agenda con Google Meet
+
+- **Web**: `/agendar` (botones en el hero, el footer y al final del diagnóstico). La persona elige día y horario, deja sus datos y recibe la confirmación con el link de Meet, un archivo `.ics` y un link para reprogramar o cancelar sin iniciar sesión. Se crea o actualiza la consulta con origen "Agenda online".
+- **Portal**: "Agendar una llamada" (inicio y menú) con el responsable del estudio y un motivo.
+- **Backoffice**: `/admin/agenda` con la vista semanal (mis llamadas o todo el estudio) y *Mi disponibilidad*: horario semanal (hasta dos franjas por día), duración 15/30/45 min, margen entre llamadas, anticipación mínima, días bloqueados, si aparece en la web y un link fijo de videollamada para cuando no hay Google. Las próximas llamadas aparecen en el resumen y el historial en la ficha de la consulta y de la organización.
+- **Mails**: confirmación (con `.ics`), aviso al estudio, reprogramación, cancelación y recordatorios 24 h y 1 h antes. Los recordatorios los manda la app sola cada 5 minutos; si preferís un cron externo, poné `AGENDA_REMINDERS=off` y llamá `POST /api/agenda/recordatorios` con `Authorization: Bearer <CRON_SECRET>`.
+- **Sin Google** funciona igual: no se consulta la ocupación externa, la confirmación lleva el link fijo y el `.ics`.
+
+#### Conectar Google Calendar
+
+Es una conexión aparte del login (cada persona del estudio conecta SU calendario desde *Mi disponibilidad*):
+
+1. En el mismo proyecto de Google Cloud del login: **APIs y servicios → Biblioteca → Google Calendar API → Habilitar**.
+2. **Pantalla de consentimiento → Permisos (scopes)**: agregá `.../auth/calendar.events` y `.../auth/calendar.freebusy`. Son scopes sensibles: mientras la app no esté verificada por Google, cargá a las personas del estudio como **usuarios de prueba** (o pedí la verificación).
+3. En el ID de cliente OAuth, sumá a **URIs de redireccionamiento autorizados**: `https://app.estudiocristofaro.com/api/agenda/google/callback` y `https://estudiocristofaro.com/api/agenda/google/callback`.
+4. En Easypanel cargá `ENCRYPTION_KEY` (`openssl rand -base64 32`) y hacé **Deploy**. Los tokens se guardan cifrados con AES-256-GCM.
+5. En `/admin/agenda` → *Mi disponibilidad* → **Conectar Google Calendar**. Desde ahí, los horarios ocupados en Google no se ofrecen y cada llamada se crea con Google Meet e invitación al cliente; reprogramar o cancelar actualiza el evento.
 
 ### Resetear la contraseña de alguien del estudio
 

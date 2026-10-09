@@ -1,6 +1,6 @@
 "use client";
 
-import { Blocks, CalendarClock, Ellipsis, FileText, House, MessageSquare, Users } from "lucide-react";
+import { Blocks, CalendarClock, Ellipsis, FileText, House, MessageSquare, Users, Video } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { PortalIcon, PortalNavItem } from "@/lib/portal-nav";
@@ -13,6 +13,7 @@ const ICONS: Record<PortalIcon, typeof House> = {
   solicitudes: MessageSquare,
   modulo: Blocks,
   equipo: Users,
+  agenda: Video,
   mas: Ellipsis,
 };
 

@@ -7,7 +7,8 @@ import { convertLeadToOrganization } from "@/app/admin/organization-actions";
 import { AdminField, Notice } from "@/components/admin/AdminField";
 import { SubmitButton, FormSelect } from "@/components/admin/ui";
 import { getDb } from "@/db";
-import { leads, users } from "@/db/schema";
+import { bookings, leads, users } from "@/db/schema";
+import { CallsList } from "@/components/admin/CallsList";
 import { requireStaff } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { site } from "@/lib/site";
@@ -191,6 +192,11 @@ export default async function ConsultaPage({
           </div>
         </form>
       </div>
+
+      <section className="mt-10">
+        <h2 className="mb-3 text-lg font-semibold">Llamadas agendadas</h2>
+        <CallsList studioId={studioId} where={eq(bookings.lead_id, lead.id)} empty="No agendó llamadas." />
+      </section>
 
       <form action={deleteLead} className="mt-10 border-t border-line pt-6">
         <input type="hidden" name="id" value={lead.id} />

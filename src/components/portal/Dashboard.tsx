@@ -1,6 +1,7 @@
 import { CalendarClock, FileText, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import type { TimelineItem } from "@/lib/portal-data";
+import type { PortalUser } from "@/lib/auth";
+import { getTimeline, type TimelineItem } from "@/lib/portal-data";
 import { cn } from "@/lib/utils";
 import { Card, Empty } from "./ui";
 
@@ -114,4 +115,9 @@ export function MonthCard({ children, month, className }: { children: React.Reac
       <div className="mt-4 grid gap-6 sm:grid-cols-3 [&_.text-muted]:text-paper/70">{children}</div>
     </Card>
   );
+}
+
+/** Línea de tiempo que carga sus datos (va dentro de un <Suspense> con skeleton) */
+export async function TimelineSection({ me }: { me: PortalUser }) {
+  return <Timeline items={await getTimeline(me)} />;
 }

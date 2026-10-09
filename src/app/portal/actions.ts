@@ -11,6 +11,9 @@ import { audit } from "@/lib/audit";
 import { AUTH_ERRORS, getAuth, googleEnabled, type AuthErrorCode } from "@/lib/auth-server";
 import { isUuid } from "@/lib/ids";
 import { notifyStudio } from "@/lib/notify";
+import { createBooking } from "@/lib/agenda/bookings";
+import { orgHosts } from "@/lib/agenda/org-hosts";
+import { findSlot } from "@/lib/agenda/slots";
 import { can } from "@/lib/permissions";
 import { REQUEST_TYPES, type RequestType } from "@/lib/portal-types";
 import { checkUpload, fileFromForm, storeUpload } from "@/lib/uploads";
@@ -244,4 +247,30 @@ export async function replyRequestAsClient(fd: FormData) {
   revalidatePath("/portal", "layout");
   revalidatePath("/admin/solicitudes");
   redirect(`/portal/solicitudes/${req.id}?enviado=1`);
+}
+
+// ───────────── agenda ─────────────
+
+export async function portalBookCall(_prev: PortalLoginState, fd: FormData): Promise<PortalLoginState> {
+  const me = await requireMember("agenda.reservar");
+  const reason = s(fd, "reason")?.slice(0, 500) ?? null;
+  if (!reason) return { ok: false, message: "Contanos el motivo de la llamada." };
+  const start = new Date(s(fd, "start") ?? "");
+  const hosts = await orgHosts(me.studioId, me.organizationId);
+  const slot = hosts.length ? await findSlot(hosts.slice(0, 1), start) : null;
+  if (!slot) return { ok: false, message: "Ese horario ya no está libre. Elegí otro." };
+  const { token } = await createBooking({
+    studioId: me.studioId,
+    hostId: slot.hostId,
+    start: slot.start,
+    end: slot.end,
+    name: me.name,
+    email: me.email,
+    reason,
+    origin: "portal",
+    organizationId: me.organizationId,
+    createdBy: me,
+  });
+  revalidatePath("/portal", "layout");
+  redirect(`/agendar/confirmada?t=${token}`);
 }

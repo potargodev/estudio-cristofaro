@@ -45,7 +45,7 @@ export function Honeypot() {
   );
 }
 
-export function SentMessage({ title, text }: { title: string; text: string }) {
+export function SentMessage({ title, text, children }: { title: string; text: string; children?: React.ReactNode }) {
   const reduce = useReducedMotion();
   const ease = [0.22, 1, 0.36, 1] as const;
   return (
@@ -84,6 +84,7 @@ export function SentMessage({ title, text }: { title: string; text: string }) {
       <div>
         <p className="text-lg font-semibold text-navy-deep">{title}</p>
         <p className="mt-2 leading-relaxed text-ink/80">{text}</p>
+        {children}
       </div>
     </m.div>
   );

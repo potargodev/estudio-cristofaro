@@ -20,5 +20,5 @@ export function whatsappLink(text = "Hola, quiero consultar por servicios contab
   return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 }
 
-/** A dónde lleva "Agendar una llamada" (contacto hasta que esté la agenda online) */
-export const SCHEDULE_HREF = "/contacto";
+/** A dónde lleva "Agendar una llamada" (la agenda online, con Google Meet) */
+export const SCHEDULE_HREF = "/agendar";

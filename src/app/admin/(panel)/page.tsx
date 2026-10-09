@@ -3,6 +3,9 @@ import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { getDb } from "@/db";
 import { documents, leads, obligations, organizations, requests } from "@/db/schema";
+import { Suspense } from "react";
+import { CallsList } from "@/components/admin/CallsList";
+import { ListSkeleton } from "@/components/ui/skeleton-blocks";
 import { WeeklyBars } from "@/components/admin/WeeklyBars";
 import { REQUEST_STATUS, REQUEST_TYPES } from "@/lib/portal-types";
 import { requireStaff } from "@/lib/auth";
@@ -228,6 +231,18 @@ export default async function AdminHome() {
               ))}
             </ul>
           )}
+
+          <div className="mt-8 flex items-baseline justify-between gap-3">
+            <h2 className="text-lg font-semibold">Próximas llamadas</h2>
+            <Link href="/admin/agenda" className="text-sm text-rose-deep hover:underline">
+              Ver agenda
+            </Link>
+          </div>
+          <div className="mt-3">
+            <Suspense fallback={<ListSkeleton rows={2} />}>
+              <CallsList studioId={user.studioId} upcoming empty="No hay llamadas agendadas." />
+            </Suspense>
+          </div>
 
           <h2 className="mt-8 text-lg font-semibold">Últimas consultas</h2>
           <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
