@@ -113,6 +113,7 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 | `SMTP_USER` / `SMTP_PASS` | Casilla de `@estudiocristofaro.com` que envía los avisos y su contraseña |
 | `MAIL_FROM` | `Estudio Cristofaro <avisos@estudiocristofaro.com>` (la misma casilla de `SMTP_USER`) |
 | `STUDIO_NOTIFY_EMAIL` | Dónde llegan los avisos de consultas nuevas |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Credenciales OAuth de Google para el login de clientes (opcional: sin ellas no aparece el botón) |
 
 Si faltan las variables SMTP la web funciona igual, solo que no manda mails (las consultas se guardan en el backoffice). Usá el SMTP del proveedor donde está la casilla de `estudiocristofaro.com`: si se envía desde otro servidor, los mails caen en spam.
 
@@ -140,6 +141,22 @@ node dist/seed.mjs
 
 Crea el estudio, los planes, las preguntas frecuentes y el usuario admin. Se puede volver a correr sin duplicar nada. Después de entrar por primera vez a `/admin`, sacá `ADMIN_PASSWORD` de las variables de entorno. Los demás usuarios se crean desde **/admin/usuarios**.
 
+### Acceso: estudio con 2FA, clientes con Google o enlace por mail
+
+- **Estudio** (`/admin/login`): email y contraseña y, siempre, segundo factor con una app autenticadora (Google Authenticator, Microsoft Authenticator, 1Password…). La primera vez que alguien entra sin 2FA, la plataforma lo lleva a `/admin/seguridad`: confirma la contraseña, escanea el QR, guarda los 10 códigos de respaldo (cada uno sirve una vez) y confirma con el primer código. Las cuentas del estudio no pueden entrar con Google ni por enlace.
+- **Clientes** (`/portal/login`): sin contraseña ni registro. Entran con **Continuar con Google** o con un **enlace por mail** (vence en 15 minutos, sirve una vez). El email tiene que tener una invitación vigente o una membresía activa; si no, se rechaza con un mensaje claro y no se manda nada. Al entrar se aceptan sus invitaciones pendientes.
+- **Invitaciones**: las crea el estudio (pestaña *Miembros* de la organización) o el administrador de la organización (*Mi equipo* en el portal). Llegan por mail con un enlace a `/invitacion/<token>` que vence a los 7 días. Sin SMTP configurado, el enlace se muestra para copiarlo y mandarlo por otro medio. Los roles Dirección y RRHH que invita la organización esperan la confirmación del estudio.
+
+#### Acceso de clientes con Google
+
+1. En [Google Cloud Console](https://console.cloud.google.com/) creá un proyecto (o usá uno existente) → **APIs y servicios → Pantalla de consentimiento de OAuth**: tipo *Externo*, nombre "Estudio Cristofaro", mail de soporte y el dominio `estudiocristofaro.com` en dominios autorizados. Scopes: `email`, `profile`, `openid`. Publicala (*En producción*) para que entre cualquier cuenta de Google.
+2. **Credenciales → Crear credenciales → ID de cliente de OAuth → Aplicación web**.
+3. **Orígenes autorizados de JavaScript**: `https://app.estudiocristofaro.com` (staging) y `https://estudiocristofaro.com` (producción).
+4. **URIs de redireccionamiento autorizados**: `https://app.estudiocristofaro.com/api/auth/callback/google` y `https://estudiocristofaro.com/api/auth/callback/google`. Para desarrollo local, `http://localhost:3000/api/auth/callback/google`.
+5. Copiá el ID y el secreto a `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` en Easypanel y hacé **Deploy**.
+
+Google solo confirma la identidad: si el email no está invitado, el acceso se rechaza igual.
+
 ### Resetear la contraseña de alguien del estudio
 
 Si una persona del estudio (admin o contador) pierde su contraseña, desde el servicio `web` → **Console**:
@@ -152,7 +169,8 @@ node dist/reset-password.mjs persona@estudiocristofaro.com
 - Cierra todas las sesiones abiertas de esa persona.
 - En el próximo ingreso la obliga a elegir una contraseña nueva antes de usar el backoffice.
 - Solo funciona con usuarios del estudio; los clientes entran con Google o enlace por mail.
-- No desactiva el segundo factor (2FA) si la persona lo tiene configurado.
+- No desactiva el segundo factor (2FA): después de la contraseña temporal pide el código de la app (o un código de respaldo) y recién ahí la nueva contraseña.
+- Queda registrado en la auditoría.
 
 En desarrollo: `npm run reset-password -- persona@estudiocristofaro.com`.
 
