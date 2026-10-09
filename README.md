@@ -27,7 +27,18 @@ Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · No
 - Mails automáticos por consulta nueva (aviso al estudio + confirmación al interesado) por SMTP.
 - Multi-estudio: cada página y cada action filtra por el estudio del usuario logueado.
 
-**Preparado para la fase 2** (tablas creadas, sin pantallas todavía): `obligations` (vencimientos por cliente), `documents` (archivos), `client_users` (acceso de clientes al portal). Todo el modelo lleva `studio_id`, listo para multi-estudio.
+**Portal del cliente (`/portal`)**
+- Login propio en `/portal/login` (mismo Better Auth). Un usuario cliente solo ve datos de su cliente: cada query lo valida en el servidor. Un cliente nunca entra a `/admin` y el staff no usa `/portal`.
+- Inicio (próximos vencimientos, último documento, solicitudes abiertas), Vencimientos y pagos (con link de pago o VEP), Documentos (descarga y carga de comprobantes PDF, JPG, PNG o XLSX de hasta 10 MB, por período y categoría) y Solicitudes (consulta, pedido de factura, alta o baja de empleado; con mensajes y adjuntos).
+- En el backoffice: pestañas Vencimientos, Documentos, Solicitudes y Acceso al portal en la ficha del cliente (la contraseña inicial se muestra una sola vez), `/admin/solicitudes`, importación de vencimientos desde CSV o XLSX con vista previa y cruce por CUIT, y en el resumen las solicitudes abiertas y los documentos nuevos.
+- Avisos por mail (si hay SMTP): al cliente por documento nuevo, vencimiento cargado o respuesta; al estudio cuando el cliente sube algo o crea una solicitud.
+- Archivos en disco (`UPLOADS_DIR`) con nombres aleatorios; solo se bajan por `/api/archivos/[id]`, que verifica permisos.
+
+**Integración con Tango Gestión (v1: conexión y clientes)**
+- `/admin/integraciones` (solo admin): activar Tango, generar o regenerar la clave del conector (se muestra una sola vez, con el `config.json` listo para bajar), estado de la conexión, log de las últimas 20 sincronizaciones, empresas de Tango ↔ clientes y mapeo configurable de campos.
+- "Clientes en Tango": cruce por CUIT con los clientes de la plataforma, vincular o importar como cliente nuevo. La ficha del cliente vinculado muestra "Vinculado con Tango".
+- Conector local en [`connector/`](connector/README.md) (Node 22, sin dependencias) que lee la API Delta en la red del estudio y manda los datos firmados con HMAC a `POST /api/integrations/tango/ingest`. Incluye un simulador de la API Delta para desarrollo.
+- Diseño enchufable (`src/lib/integrations/tango`): la interfaz `TangoSource` tiene la implementación "connector" y lugar para una futura "file" (importar exportaciones de Tango).
 
 ## Desarrollo local
 
@@ -58,6 +69,7 @@ BETTER_AUTH_URL=http://localhost:3000
 SITE_URL=http://localhost:3000
 ADMIN_EMAIL=vos@estudiocristofaro.com
 ADMIN_PASSWORD=una-clave-de-8-o-mas
+UPLOADS_DIR=/ruta/absoluta/al/repo/.uploads
 ```
 
 ### Base de datos
@@ -95,6 +107,7 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 | `SITE_NOINDEX` | Vacía en producción; `true` en staging |
 | `BETTER_AUTH_TRUSTED_ORIGINS` | Opcional: otros orígenes permitidos para el login, separados por coma |
 | `STUDIO_SLUG` | `cristofaro` |
+| `UPLOADS_DIR` | `/data/uploads` (ya es el valor por defecto de la imagen; ahí va el volumen) |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Usuario admin que crea el seed (mínimo 8 caracteres) |
 | `SMTP_HOST` / `SMTP_PORT` | SMTP del proveedor de la casilla del dominio (ej. puerto `465`) |
 | `SMTP_USER` / `SMTP_PASS` | Casilla de `@estudiocristofaro.com` que envía los avisos y su contraseña |
@@ -103,13 +116,21 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 
 Si faltan las variables SMTP la web funciona igual, solo que no manda mails (las consultas se guardan en el backoffice). Usá el SMTP del proveedor donde está la casilla de `estudiocristofaro.com`: si se envía desde otro servidor, los mails caen en spam.
 
-### 3. Dominio y SSL
+### 3. Volumen para los archivos del portal
+
+Los documentos y comprobantes del portal se guardan en disco, en `/data/uploads` dentro del contenedor. Para que no se pierdan en cada deploy:
+
+1. Servicio `web` → **Mounts** → **Add Volume**: nombre `uploads`, ruta de montaje `/data/uploads`.
+2. Usá un **Volume** (volumen de Docker) y no un *Bind mount*: el volumen nuevo toma los permisos del usuario de la app. Si usás bind mount, la carpeta del host tiene que pertenecer al usuario `1001:1001` (`chown -R 1001:1001 <carpeta>`).
+3. Incluí ese volumen en los backups del VPS: los archivos no están en el Postgres.
+
+### 4. Dominio y SSL
 
 1. En el DNS del dominio: registro **A** de `estudiocristofaro.com` (y de `www`) apuntando a la IP del VPS.
 2. En el servicio `web` → **Domains**: agregá `estudiocristofaro.com` con puerto **3000** y HTTPS activado. Easypanel pide el certificado de Let's Encrypt solo y lo renueva.
 3. Agregá también `www.estudiocristofaro.com` con redirección al dominio principal.
 
-### 4. Datos iniciales (una sola vez)
+### 5. Datos iniciales (una sola vez)
 
 En el servicio `web` → **Console** (o `docker exec` en el VPS):
 
@@ -119,16 +140,22 @@ node dist/seed.mjs
 
 Crea el estudio, los planes, las preguntas frecuentes y el usuario admin. Se puede volver a correr sin duplicar nada. Después de entrar por primera vez a `/admin`, sacá `ADMIN_PASSWORD` de las variables de entorno. Los demás usuarios se crean desde **/admin/usuarios**.
 
-### 5. Healthcheck
+### 6. Healthcheck
 
 `GET /api/health` devuelve `200 {"ok":true,"db":"ok"}` si la app y la base responden, y `503` si la base no contesta. La imagen ya trae un `HEALTHCHECK` con ese endpoint; en Easypanel podés usar la misma ruta para el monitoreo.
 
-### 6. Backups del Postgres a S3
+### 7. Backups del Postgres a S3
 
 1. Creá un bucket en un almacenamiento compatible con S3 (AWS S3, Cloudflare R2, Backblaze B2, etc.) y unas credenciales con permiso de escritura solo sobre ese bucket.
 2. En Easypanel → **Settings → Backups / Storage**: agregá el destino S3 (endpoint, región, bucket, access key y secret key).
 3. En el servicio `db` → **Backups**: elegí ese destino, un horario (por ejemplo diario a las 3 a. m.) y cuántas copias conservar.
 4. Probá una restauración al menos una vez: el backup es un dump de `pg_dump` que se restaura con `pg_restore` (o `psql` si es SQL plano) sobre una base vacía.
+
+### 8. Conector de Tango
+
+El conector se instala en la PC de la contadora donde corre Tango, no en Easypanel. Paso a paso en [`connector/README.md`](connector/README.md): Node 22, `config.json` bajado de **Integraciones**, `node index.mjs test`, `node index.mjs sync` y la tarea programada con `instalar-tarea.ps1`.
+
+Para desarrollar sin Tango: `node connector/mock/server.mjs` levanta un simulador de la API Delta en `http://localhost:17000` (token `11111111-2222-3333-4444-555555555555`, empresas 1 y 2, 30 clientes).
 
 ### Actualizar
 
