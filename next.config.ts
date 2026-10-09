@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
   // dinámicas como /diagnostico: no los manda "en streaming".
   htmlLimitedBots: /.*/,
   // "radix-ui" reexporta todos los primitivos: importar solo lo que se usa en cada página
-  experimental: { optimizePackageImports: ["radix-ui"] },
+  experimental: {
+    optimizePackageImports: ["radix-ui"],
+    // Formularios con archivos (documentos, comprobantes, importación): hasta 10 MB + margen
+    serverActions: { bodySizeLimit: "12mb" },
+  },
   eslint: { ignoreDuringBuilds: true },
   async redirects() {
     // URLs del sitio viejo → nuevas rutas

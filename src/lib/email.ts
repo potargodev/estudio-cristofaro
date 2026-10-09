@@ -16,11 +16,11 @@ interface LeadMail {
   source: LeadSource;
 }
 
-function esc(s: string) {
+export function esc(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
 
-/** Transporte SMTP (correo de Hostinger). Null si falta alguna variable: no se envía nada. */
+/** Transporte SMTP de la casilla del dominio. Null si falta alguna variable: no se envía nada. */
 function getTransport() {
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_FROM } = process.env;
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !MAIL_FROM) return null;
@@ -83,4 +83,19 @@ export async function sendLeadEmails(lead: LeadMail) {
   // Un error de SMTP nunca rompe el envío del formulario: la consulta ya quedó guardada.
   const results = await Promise.allSettled(jobs);
   for (const r of results) if (r.status === "rejected") console.error("[mail] No se pudo enviar", r.reason);
+}
+
+/**
+ * Envía un mail simple. Si el SMTP no está configurado no hace nada, y si falla
+ * solo lo registra: nunca rompe la acción que lo dispara.
+ */
+export async function sendMail({ to, subject, html, replyTo }: { to: string | string[]; subject: string; html: string; replyTo?: string }) {
+  const transport = getTransport();
+  const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
+  if (!transport || recipients.length === 0) return;
+  try {
+    await transport.sendMail({ from: process.env.MAIL_FROM!, to: recipients, subject, html, replyTo });
+  } catch (error) {
+    console.error("[mail] No se pudo enviar", subject, error);
+  }
 }

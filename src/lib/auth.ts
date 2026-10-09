@@ -1,7 +1,10 @@
 import "server-only";
+import { and, asc, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { getDb } from "@/db";
+import { client_users, clients } from "@/db/schema";
 import { getAuth } from "./auth-server";
 import type { UserRole } from "./types";
 
@@ -30,6 +33,8 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
 export async function requireStaff(): Promise<StaffUser> {
   const user = await getCurrentUser();
   if (!user) redirect("/admin/login");
+  // Un cliente nunca entra al backoffice: va a su portal
+  if (user.role === "cliente") redirect("/portal");
   if (user.role !== "admin" && user.role !== "contador") redirect("/admin/sin-acceso");
   return user;
 }
@@ -39,4 +44,29 @@ export async function requireAdmin(): Promise<StaffUser> {
   const user = await requireStaff();
   if (user.role !== "admin") redirect("/admin");
   return user;
+}
+
+export interface PortalUser extends StaffUser {
+  clientId: string;
+  clientName: string;
+}
+
+/**
+ * Usuario cliente del portal y el cliente al que está vinculado (client_users).
+ * El staff va al backoffice. Toda query del portal tiene que filtrar por el
+ * clientId (y el studioId) que devuelve: nunca por un id que venga del navegador.
+ */
+export async function requireClient(): Promise<PortalUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/portal/login");
+  if (user.role !== "cliente") redirect("/admin");
+  const [link] = await getDb()
+    .select({ clientId: clients.id, clientName: clients.business_name })
+    .from(client_users)
+    .innerJoin(clients, eq(clients.id, client_users.client_id))
+    .where(and(eq(client_users.user_id, user.id), eq(clients.studio_id, user.studioId)))
+    .orderBy(asc(clients.business_name))
+    .limit(1);
+  if (!link) redirect("/portal/sin-acceso");
+  return { ...user, ...link };
 }

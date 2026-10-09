@@ -40,6 +40,9 @@ export const leadStatus = pgEnum("lead_status", ["nuevo", "contactado", "presupu
 export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro"]);
 export const taxRegime = pgEnum("tax_regime", ["monotributo", "responsable_inscripto", "sociedad", "exento", "otro"]);
 export const obligationStatus = pgEnum("obligation_status", ["pendiente", "en_proceso", "presentado", "pagado", "vencido"]);
+export const documentSource = pgEnum("document_source", ["estudio", "cliente"]);
+export const requestType = pgEnum("request_type", ["consulta", "factura", "empleado", "otro"]);
+export const requestStatus = pgEnum("request_status", ["abierta", "en_curso", "resuelta"]);
 
 // ───────────────────────── Estudios ─────────────────────────
 
@@ -244,7 +247,7 @@ export const plans = pgTable("plans", {
   created_at: createdAt(),
 });
 
-// ───────────────────────── Fase 2 (estructura lista, sin UI todavía) ─────────────────────────
+// ───────────────────────── Fase 2: portal del cliente ─────────────────────────
 
 // Usuarios cliente con acceso al portal
 export const client_users = pgTable(
@@ -275,26 +278,76 @@ export const obligations = pgTable(
     period: text("period").notNull(), // ej: 2026-09
     due_date: date("due_date").notNull(),
     status: obligationStatus("status").notNull().default("pendiente"),
+    amount: numeric("amount", { precision: 14, scale: 2 }),
+    payment_url: text("payment_url"), // link de pago o VEP (opcional)
     assigned_to: uuid("assigned_to").references(() => users.id, { onDelete: "set null" }),
     notes: text("notes"),
     created_at: createdAt(),
+    updated_at: updatedAt(),
   },
-  (t) => [index("obligations_due_idx").on(t.studio_id, t.due_date)],
+  (t) => [index("obligations_due_idx").on(t.studio_id, t.due_date), index("obligations_client_idx").on(t.client_id, t.due_date)],
 );
 
-// Documentos (archivos en el almacenamiento que se defina en la fase 2)
-export const documents = pgTable("documents", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  studio_id: uuid("studio_id")
-    .notNull()
-    .references(() => studios.id, { onDelete: "cascade" }),
-  client_id: uuid("client_id")
-    .notNull()
-    .references(() => clients.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  storage_path: text("storage_path").notNull(),
-  category: text("category"), // comprobantes, constancias, ddjj, recibos, otro
-  period: text("period"),
-  uploaded_by: uuid("uploaded_by").references(() => users.id, { onDelete: "set null" }),
-  created_at: createdAt(),
-});
+// Documentos: archivos en disco (UPLOADS_DIR) con nombre aleatorio; acá el nombre original.
+export const documents = pgTable(
+  "documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    client_id: uuid("client_id")
+      .notNull()
+      .references(() => clients.id, { onDelete: "cascade" }),
+    name: text("name").notNull(), // nombre original del archivo
+    storage_path: text("storage_path").notNull(), // ruta relativa dentro de UPLOADS_DIR
+    mime_type: text("mime_type"),
+    size_bytes: integer("size_bytes"),
+    category: text("category"), // comprobantes, constancias, ddjj, recibos, solicitud, otro
+    period: text("period"), // ej: 2026-09
+    source: documentSource("source").notNull().default("estudio"),
+    uploaded_by: uuid("uploaded_by").references(() => users.id, { onDelete: "set null" }),
+    // Documentos subidos por el cliente: null hasta que alguien del estudio los ve
+    reviewed_at: timestamp("reviewed_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("documents_client_idx").on(t.client_id, t.created_at)],
+);
+
+// Solicitudes del cliente (consulta, pedido de factura, alta o baja de empleado, otro)
+export const requests = pgTable(
+  "requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    client_id: uuid("client_id")
+      .notNull()
+      .references(() => clients.id, { onDelete: "cascade" }),
+    type: requestType("type").notNull().default("consulta"),
+    subject: text("subject").notNull(),
+    status: requestStatus("status").notNull().default("abierta"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("requests_studio_status_idx").on(t.studio_id, t.status), index("requests_client_idx").on(t.client_id)],
+);
+
+// Mensajes de cada solicitud (el primero es el del cliente) con adjunto opcional
+export const request_messages = pgTable(
+  "request_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    request_id: uuid("request_id")
+      .notNull()
+      .references(() => requests.id, { onDelete: "cascade" }),
+    author_id: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
+    from_client: boolean("from_client").notNull(),
+    body: text("body").notNull(),
+    document_id: uuid("document_id").references(() => documents.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("request_messages_request_idx").on(t.request_id, t.created_at)],
+);
