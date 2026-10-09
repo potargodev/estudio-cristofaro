@@ -22,6 +22,8 @@ RUN npm run build && npm run build:scripts
 # ───────── 3. Runtime ─────────
 FROM node:22-alpine AS runner
 WORKDIR /app
+# Puerto fijo: la app escucha siempre en 3000 (también lo fuerza el CMD, así una
+# variable PORT cargada en Easypanel no lo cambia). El HEALTHCHECK usa el mismo.
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
@@ -48,4 +50,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
 
 # Al arrancar: aplica las migraciones pendientes y después levanta el servidor.
 # Si la migración falla, el contenedor no arranca (mejor que servir con la base desfasada).
-CMD ["sh", "-c", "node dist/migrate.mjs && exec node server.js"]
+CMD ["sh", "-c", "node dist/migrate.mjs && PORT=3000 HOSTNAME=0.0.0.0 exec node server.js"]
