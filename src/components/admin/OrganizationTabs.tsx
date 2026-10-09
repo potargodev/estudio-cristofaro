@@ -1,23 +1,24 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { Paperclip } from "lucide-react";
 import Link from "next/link";
+import { assignStaff, removeStaff } from "@/app/admin/organization-actions";
 import {
   deleteDocument,
   deleteObligation,
   replyRequest,
   saveObligation,
-  setClientUserActive,
   uploadStudioDocument,
 } from "@/app/admin/portal-actions";
 import { AdminField } from "@/components/admin/AdminField";
-import { InviteClientForm, ResetPasswordButton } from "@/components/admin/PortalAccess";
 import { adminButton } from "@/components/admin/styles";
 import { FormSelect, SubmitButton } from "@/components/admin/ui";
 import { Badge, obligationTone, requestTone } from "@/components/portal/ui";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
-import { client_users, documents, obligations, request_messages, requests, users } from "@/db/schema";
+import { documents, legal_entities, obligations, request_messages, requests, tango_companies, tango_records, users } from "@/db/schema";
+import { getOrgStaff, getStudioStaff } from "@/lib/organizations";
+import { formatCuit } from "@/lib/types";
 import {
   DOCUMENT_CATEGORIES,
   OBLIGATION_STATUS,
@@ -33,27 +34,34 @@ import {
 import { ACCEPT_ATTR, ALLOWED_LABEL, formatBytes } from "@/lib/uploads-shared";
 import { cn } from "@/lib/utils";
 
-// Pestañas de la ficha del cliente en el backoffice. La página ya validó que el
-// cliente es del estudio; igual cada query filtra también por studio_id.
+// Pestañas de la ficha de la organización en el backoffice. La página ya validó
+// que la organización es del estudio; igual cada query filtra también por studio_id.
 
-export const CLIENT_TABS = [
-  { key: "datos", label: "Datos" },
+export const ORG_TABS = [
+  { key: "general", label: "General y razones sociales" },
+  { key: "plan", label: "Plan y módulos" },
+  { key: "miembros", label: "Miembros e invitaciones" },
+  { key: "equipo", label: "Equipo del estudio" },
   { key: "vencimientos", label: "Vencimientos" },
   { key: "documentos", label: "Documentos" },
   { key: "solicitudes", label: "Solicitudes" },
-  { key: "portal", label: "Acceso al portal" },
+  { key: "integraciones", label: "Integraciones" },
+  { key: "actividad", label: "Actividad" },
 ] as const;
 
-export type ClientTabKey = (typeof CLIENT_TABS)[number]["key"];
+export type OrgTabKey = (typeof ORG_TABS)[number]["key"];
 
-export function TabNav({ clientId, active, counts }: { clientId: string; active: ClientTabKey; counts: Partial<Record<ClientTabKey, number>> }) {
+/** Pestañas viejas de la ficha de cliente → nuevas */
+export const LEGACY_TABS: Record<string, OrgTabKey> = { datos: "general", portal: "miembros" };
+
+export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTabKey; counts: Partial<Record<OrgTabKey, number>> }) {
   return (
-    <nav aria-label="Secciones del cliente" className="-mx-4 mb-6 overflow-x-auto border-b border-line px-4 sm:mx-0 sm:px-0">
+    <nav aria-label="Secciones de la organización" className="-mx-4 mb-6 overflow-x-auto border-b border-line px-4 sm:mx-0 sm:px-0">
       <ul className="flex min-w-max gap-1">
-        {CLIENT_TABS.map((t) => (
+        {ORG_TABS.map((t) => (
           <li key={t.key}>
             <Link
-              href={`/admin/clientes/${clientId}?tab=${t.key}`}
+              href={`/admin/organizaciones/${orgId}?tab=${t.key}`}
               aria-current={active === t.key ? "page" : undefined}
               className={cn(
                 "relative inline-flex items-center gap-1.5 px-3 py-2.5 text-[15px] transition-colors",
@@ -74,9 +82,25 @@ export function TabNav({ clientId, active, counts }: { clientId: string; active:
 
 const STATUS_OPTIONS = Object.entries(OBLIGATION_STATUS).map(([value, label]) => ({ value, label }));
 
-function ObligationFields({ o, k }: { o?: typeof obligations.$inferSelect; k: string }) {
+export interface EntityOption {
+  value: string;
+  label: string;
+}
+
+/** Selector de razón social: solo aparece si la organización tiene más de una */
+function EntityField({ id, entities, defaultValue }: { id: string; entities: EntityOption[]; defaultValue?: string | null }) {
+  if (entities.length < 2) return null;
+  return (
+    <AdminField label="Razón social" htmlFor={id}>
+      <FormSelect id={id} name="legal_entity_id" defaultValue={defaultValue ?? ""} options={[{ value: "", label: "Toda la organización" }, ...entities]} />
+    </AdminField>
+  );
+}
+
+function ObligationFields({ o, k, entities }: { o?: typeof obligations.$inferSelect; k: string; entities: EntityOption[] }) {
   return (
     <div className="grid gap-3 sm:grid-cols-3">
+      <EntityField id={`le-${k}`} entities={entities} defaultValue={o?.legal_entity_id} />
       <AdminField label="Impuesto" htmlFor={`tax-${k}`}>
         <Input id={`tax-${k}`} name="tax" required defaultValue={o?.tax} placeholder="IVA, IIBB, F.931…" />
       </AdminField>
@@ -99,17 +123,17 @@ function ObligationFields({ o, k }: { o?: typeof obligations.$inferSelect; k: st
   );
 }
 
-export async function ObligationsTab({ clientId, studioId }: { clientId: string; studioId: string }) {
+export async function ObligationsTab({ orgId, studioId, entities }: { orgId: string; studioId: string; entities: EntityOption[] }) {
   const rows = await getDb()
     .select()
     .from(obligations)
-    .where(and(eq(obligations.client_id, clientId), eq(obligations.studio_id, studioId)))
+    .where(and(eq(obligations.organization_id, orgId), eq(obligations.studio_id, studioId)))
     .orderBy(desc(obligations.due_date));
   const today = todayISO();
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-muted">El cliente los ve en su portal. Al cargar uno nuevo le llega un aviso por mail.</p>
+        <p className="text-muted">Los miembros de la organización los ven en su portal. Al cargar uno nuevo les llega un aviso por mail.</p>
         <Link href="/admin/vencimientos/importar" className={adminButton.secondary}>
           Importar desde CSV o Excel
         </Link>
@@ -135,15 +159,15 @@ export async function ObligationsTab({ clientId, studioId }: { clientId: string;
             <div className="border-t border-line p-4">
               <form action={saveObligation} className="grid gap-3">
                 <input type="hidden" name="id" value={o.id} />
-                <input type="hidden" name="client_id" value={clientId} />
-                <ObligationFields o={o} k={o.id} />
+                <input type="hidden" name="organization_id" value={orgId} />
+                <ObligationFields o={o} k={o.id} entities={entities} />
                 <div>
                   <SubmitButton>Guardar</SubmitButton>
                 </div>
               </form>
               <form action={deleteObligation} className="mt-3">
                 <input type="hidden" name="id" value={o.id} />
-                <input type="hidden" name="client_id" value={clientId} />
+                <input type="hidden" name="organization_id" value={orgId} />
                 <SubmitButton variant="danger" pendingText="Eliminando…" confirm="¿Eliminar este vencimiento?">
                   Eliminar
                 </SubmitButton>
@@ -156,8 +180,8 @@ export async function ObligationsTab({ clientId, studioId }: { clientId: string;
       <section className="rounded-md border border-dashed border-line p-5">
         <h2 className="mb-3 font-semibold">Cargar vencimiento</h2>
         <form action={saveObligation} className="grid gap-3">
-          <input type="hidden" name="client_id" value={clientId} />
-          <ObligationFields k="nuevo" />
+          <input type="hidden" name="organization_id" value={orgId} />
+          <ObligationFields k="nuevo" entities={entities} />
           <div>
             <SubmitButton>Cargar vencimiento</SubmitButton>
           </div>
@@ -172,7 +196,7 @@ const CATEGORY_OPTIONS = Object.entries(DOCUMENT_CATEGORIES)
   .filter(([v]) => v !== "solicitud")
   .map(([value, label]) => ({ value, label }));
 
-function DocList({ docs, clientId, highlightNew }: { docs: DocumentRow[]; clientId: string; highlightNew?: Set<string> }) {
+function DocList({ docs, orgId, highlightNew }: { docs: DocumentRow[]; orgId: string; highlightNew?: Set<string> }) {
   if (docs.length === 0) return <p className="rounded-md border border-dashed border-line p-5 text-muted">Sin documentos.</p>;
   return (
     <ul className="divide-y divide-line rounded-md border border-line bg-surface">
@@ -193,7 +217,7 @@ function DocList({ docs, clientId, highlightNew }: { docs: DocumentRow[]; client
           </div>
           <form action={deleteDocument}>
             <input type="hidden" name="id" value={d.id} />
-            <input type="hidden" name="client_id" value={clientId} />
+            <input type="hidden" name="organization_id" value={orgId} />
             <SubmitButton variant="danger" pendingText="…" confirm={`¿Eliminar "${d.name}"?`} confirmLabel="Eliminar">
               Eliminar
             </SubmitButton>
@@ -204,12 +228,12 @@ function DocList({ docs, clientId, highlightNew }: { docs: DocumentRow[]; client
   );
 }
 
-export async function DocumentsTab({ clientId, studioId, error }: { clientId: string; studioId: string; error?: string }) {
+export async function DocumentsTab({ orgId, studioId, error, entities }: { orgId: string; studioId: string; error?: string; entities: EntityOption[] }) {
   const db = getDb();
   const docs = await db
     .select()
     .from(documents)
-    .where(and(eq(documents.client_id, clientId), eq(documents.studio_id, studioId)))
+    .where(and(eq(documents.organization_id, orgId), eq(documents.studio_id, studioId)))
     .orderBy(desc(documents.created_at));
   const fromClient = docs.filter((d) => d.source === "cliente");
   const unseen = new Set(fromClient.filter((d) => !d.reviewed_at).map((d) => d.id));
@@ -218,19 +242,19 @@ export async function DocumentsTab({ clientId, studioId, error }: { clientId: st
     await db
       .update(documents)
       .set({ reviewed_at: new Date() })
-      .where(and(eq(documents.client_id, clientId), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)));
+      .where(and(eq(documents.organization_id, orgId), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)));
   }
   return (
     <div className="space-y-8">
       <section className="rounded-md border border-line bg-surface p-5">
-        <h2 className="font-semibold">Subir documento para el cliente</h2>
+        <h2 className="font-semibold">Subir documento para la organización</h2>
         {error && (
           <p role="alert" className="mt-2 text-sm text-danger">
             {error === "archivo" ? "Elegí un archivo." : error}
           </p>
         )}
         <form action={uploadStudioDocument} className="mt-3 grid gap-3 sm:grid-cols-[1.5fr_1fr_1fr]">
-          <input type="hidden" name="client_id" value={clientId} />
+          <input type="hidden" name="organization_id" value={orgId} />
           <AdminField label="Archivo" htmlFor="doc-file" hint={`${ALLOWED_LABEL}.`}>
             <Input id="doc-file" name="file" type="file" accept={ACCEPT_ATTR} required className="h-auto py-1.5" />
           </AdminField>
@@ -240,18 +264,19 @@ export async function DocumentsTab({ clientId, studioId, error }: { clientId: st
           <AdminField label="Período" htmlFor="doc-period">
             <Input id="doc-period" name="period" type="month" />
           </AdminField>
+          <EntityField id="doc-le" entities={entities} />
           <div className="sm:col-span-3">
             <SubmitButton pendingText="Subiendo…">Subir y avisar al cliente</SubmitButton>
           </div>
         </form>
       </section>
       <section>
-        <h2 className="mb-3 font-semibold">Subidos por el cliente</h2>
-        <DocList docs={fromClient} clientId={clientId} highlightNew={unseen} />
+        <h2 className="mb-3 font-semibold">Subidos por la organización</h2>
+        <DocList docs={fromClient} orgId={orgId} highlightNew={unseen} />
       </section>
       <section>
         <h2 className="mb-3 font-semibold">Subidos por el estudio</h2>
-        <DocList docs={docs.filter((d) => d.source === "estudio")} clientId={clientId} />
+        <DocList docs={docs.filter((d) => d.source === "estudio")} orgId={orgId} />
       </section>
     </div>
   );
@@ -293,7 +318,7 @@ export async function RequestThread({
           <p className="text-sm text-muted">
             {clientName && (
               <>
-                <Link href={`/admin/clientes/${r.client_id}?tab=solicitudes#${r.id}`} className="text-rose-deep hover:underline">
+                <Link href={`/admin/organizaciones/${r.organization_id}?tab=solicitudes#${r.id}`} className="text-rose-deep hover:underline">
                   {clientName}
                 </Link>{" "}
                 ·{" "}
@@ -340,13 +365,13 @@ export async function RequestThread({
   );
 }
 
-export async function RequestsTab({ clientId, studioId }: { clientId: string; studioId: string }) {
+export async function RequestsTab({ orgId, studioId }: { orgId: string; studioId: string }) {
   const rows = await getDb()
     .select()
     .from(requests)
-    .where(and(eq(requests.client_id, clientId), eq(requests.studio_id, studioId)))
+    .where(and(eq(requests.organization_id, orgId), eq(requests.studio_id, studioId)))
     .orderBy(asc(requests.status), desc(requests.updated_at));
-  if (rows.length === 0) return <p className="rounded-md border border-dashed border-line p-5 text-muted">El cliente todavía no hizo solicitudes.</p>;
+  if (rows.length === 0) return <p className="rounded-md border border-dashed border-line p-5 text-muted">La organización todavía no hizo solicitudes.</p>;
   return (
     <div className="space-y-4">
       {rows.map((r) => (
@@ -356,63 +381,157 @@ export async function RequestsTab({ clientId, studioId }: { clientId: string; st
   );
 }
 
-export async function PortalTab({
-  clientId,
-  studioId,
-  defaultName,
-  defaultEmail,
-}: {
-  clientId: string;
-  studioId: string;
-  defaultName: string;
-  defaultEmail: string;
-}) {
-  const access = await getDb()
-    .select({ id: users.id, name: users.name, email: users.email, active: users.active, createdAt: users.createdAt })
-    .from(client_users)
-    .innerJoin(users, eq(users.id, client_users.user_id))
-    .where(and(eq(client_users.client_id, clientId), eq(users.studioId, studioId)))
-    .orderBy(asc(users.createdAt));
+// ───────────── equipo del estudio ─────────────
+
+export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: string }) {
+  const [team, staff] = await Promise.all([getOrgStaff(orgId), getStudioStaff(studioId)]);
+  const lead = team.find((t) => t.assignment === "responsable");
   return (
-    <div className="space-y-6">
-      <p className="max-w-2xl text-muted">
-        Con su usuario el cliente entra a <strong>/portal</strong> y ve sus vencimientos, documentos y solicitudes. Nunca ve datos de otros clientes.
-      </p>
-      {access.length > 0 && (
+    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <section>
+        <p className="mb-4 max-w-2xl text-muted">
+          El responsable principal es la cara visible del estudio para la organización: aparece en el inicio de su portal con sus datos de
+          contacto. Los colaboradores participan del día a día.
+        </p>
+        {!lead && (
+          <div className="mb-4">
+            <Badge tone="warn">Sin responsable principal</Badge>
+          </div>
+        )}
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
-          {access.map((u) => (
-            <li key={u.id} className="flex flex-wrap items-start justify-between gap-3 px-4 py-3">
+          {team.length === 0 && <li className="px-4 py-5 text-muted">Todavía no hay nadie del estudio asignado.</li>}
+          {team.map((t) => (
+            <li key={t.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
               <div>
                 <p className="font-medium">
-                  {u.name} {!u.active && <Badge tone="danger">Desactivado</Badge>}
+                  {t.name} {t.assignment === "responsable" && <Badge tone="ok">Responsable principal</Badge>}
                 </p>
-                <p className="text-sm text-muted">{u.email}</p>
+                <p className="text-sm text-muted">{t.email}</p>
               </div>
-              <div className="flex flex-wrap items-start gap-2">
-                {u.active && <ResetPasswordButton clientId={clientId} userId={u.id} />}
-                <form action={setClientUserActive}>
-                  <input type="hidden" name="client_id" value={clientId} />
-                  <input type="hidden" name="user_id" value={u.id} />
-                  <input type="hidden" name="active" value={u.active ? "0" : "1"} />
-                  {u.active ? (
-                    <SubmitButton variant="danger" pendingText="…" confirm={`¿Quitarle el acceso al portal a ${u.email}?`} confirmLabel="Quitar acceso">
-                      Quitar acceso
-                    </SubmitButton>
-                  ) : (
+              <div className="flex gap-2">
+                {t.assignment !== "responsable" && (
+                  <form action={assignStaff}>
+                    <input type="hidden" name="organization_id" value={orgId} />
+                    <input type="hidden" name="user_id" value={t.id} />
+                    <input type="hidden" name="assignment" value="responsable" />
                     <SubmitButton variant="secondary" pendingText="…">
-                      Reactivar
+                      Hacer responsable
                     </SubmitButton>
-                  )}
+                  </form>
+                )}
+                <form action={removeStaff}>
+                  <input type="hidden" name="organization_id" value={orgId} />
+                  <input type="hidden" name="user_id" value={t.id} />
+                  <SubmitButton variant="danger" pendingText="…" confirm={`¿Quitar a ${t.name} del equipo de esta organización?`} confirmLabel="Quitar">
+                    Quitar
+                  </SubmitButton>
                 </form>
               </div>
             </li>
           ))}
         </ul>
-      )}
-      <section className="rounded-md border border-dashed border-line p-5">
-        <h2 className="mb-3 font-semibold">{access.length ? "Invitar a otra persona" : "Invitar al cliente al portal"}</h2>
-        <InviteClientForm clientId={clientId} defaultName={defaultName} defaultEmail={defaultEmail} />
       </section>
+      <section className="rounded-md border border-dashed border-line p-5">
+        <h2 className="mb-3 font-semibold">Asignar a alguien del estudio</h2>
+        <form action={assignStaff} className="grid gap-3">
+          <input type="hidden" name="organization_id" value={orgId} />
+          <AdminField label="Persona" htmlFor="staff-user">
+            <FormSelect id="staff-user" name="user_id" options={staff.map((u) => ({ value: u.id, label: u.name }))} />
+          </AdminField>
+          <AdminField label="Rol en la organización" htmlFor="staff-assignment">
+            <FormSelect
+              id="staff-assignment"
+              name="assignment"
+              defaultValue={lead ? "colaborador" : "responsable"}
+              options={[
+                { value: "responsable", label: "Responsable principal" },
+                { value: "colaborador", label: "Colaborador" },
+              ]}
+            />
+          </AdminField>
+          <div>
+            <SubmitButton>Asignar</SubmitButton>
+          </div>
+        </form>
+      </section>
+    </div>
+  );
+}
+
+// ───────────── integraciones ─────────────
+
+const syncFmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
+export async function IntegrationsTab({ orgId, studioId }: { orgId: string; studioId: string }) {
+  const db = getDb();
+  const [companies, records] = await Promise.all([
+    db
+      .select()
+      .from(tango_companies)
+      .where(and(eq(tango_companies.organization_id, orgId), eq(tango_companies.studio_id, studioId))),
+    db
+      .select({ id: tango_records.id, company: tango_records.company_id, external: tango_records.external_id, synced: tango_records.synced_at, entity: legal_entities.business_name, cuit: legal_entities.cuit })
+      .from(tango_records)
+      .leftJoin(legal_entities, eq(legal_entities.id, tango_records.legal_entity_id))
+      .where(and(eq(tango_records.organization_id, orgId), eq(tango_records.studio_id, studioId)))
+      .orderBy(desc(tango_records.synced_at)),
+  ]);
+  if (companies.length === 0 && records.length === 0) {
+    return (
+      <div className="rounded-md border border-dashed border-line p-6 text-muted">
+        <p>Esta organización no está vinculada con Tango.</p>
+        <p className="mt-2">
+          Podés vincular sus razones sociales desde{" "}
+          <Link href="/admin/integraciones/tango/clientes" className="text-rose-deep hover:underline">
+            Clientes en Tango
+          </Link>{" "}
+          o asignarle una empresa de Tango en{" "}
+          <Link href="/admin/integraciones#empresas" className="text-rose-deep hover:underline">
+            Integraciones
+          </Link>
+          . Sin Tango, todo funciona igual con importación de archivos.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-6">
+      {companies.length > 0 && (
+        <section>
+          <h2 className="mb-3 font-semibold">Empresas de Tango asignadas</h2>
+          <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+            {companies.map((c) => (
+              <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                <span className="font-medium">
+                  Empresa {c.company_id}
+                  {c.name ? ` · ${c.name}` : ""}
+                </span>
+                <span className="text-sm text-muted">Última sincronización: {c.last_sync_at ? syncFmt.format(c.last_sync_at) : "pendiente"}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {records.length > 0 && (
+        <section>
+          <h2 className="mb-3 font-semibold">Clientes de Tango vinculados</h2>
+          <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+            {records.map((r) => (
+              <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                <span>
+                  <span className="font-medium">{r.entity ?? "Sin razón social"}</span>
+                  <span className="ml-2 text-sm text-muted">
+                    {formatCuit(r.cuit, "Sin CUIT")} · Tango: empresa {r.company}, id {r.external}
+                  </span>
+                </span>
+                <span className="text-sm text-muted">
+                  <Badge tone="ok">Fuente: Tango</Badge> sincronizado {syncFmt.format(r.synced)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

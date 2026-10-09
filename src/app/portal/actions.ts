@@ -2,19 +2,23 @@
 
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { documents, request_messages, requests } from "@/db/schema";
-import { requireClient } from "@/lib/auth";
+import { ORG_COOKIE, getCurrentUser, getMemberships, requireMember } from "@/lib/auth";
+import { audit } from "@/lib/audit";
 import { getAuth } from "@/lib/auth-server";
 import { isUuid } from "@/lib/ids";
 import { notifyStudio } from "@/lib/notify";
+import { can } from "@/lib/permissions";
 import { REQUEST_TYPES, type RequestType } from "@/lib/portal-types";
 import { checkUpload, fileFromForm, storeUpload } from "@/lib/uploads";
 
-// Acciones del portal. El cliente sale SIEMPRE de la sesión (requireClient):
-// nunca se usa un client_id que venga del formulario.
+// Acciones del portal. La organización sale SIEMPRE de la sesión
+// (requireMember, que valida la membresía activa): nunca se usa un
+// organization_id que venga del formulario. Cada acción exige su permiso según
+// la matriz de roles (src/lib/permissions.ts).
 
 function s(fd: FormData, key: string): string | null {
   const v = fd.get(key);
@@ -55,20 +59,39 @@ export async function portalSignOut() {
 
 const CLIENT_CATEGORIES = ["comprobantes", "recibos", "constancias", "otro"];
 
+/** Cambia la organización activa (solo a una donde el usuario es miembro activo) */
+export async function switchOrganization(fd: FormData) {
+  const user = await getCurrentUser();
+  if (!user) redirect("/portal/login");
+  const wanted = s(fd, "organization_id");
+  const list = await getMemberships(user.id, user.studioId);
+  if (wanted && list.some((m) => m.organizationId === wanted)) {
+    (await cookies()).set(ORG_COOKIE, wanted, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+  }
+  revalidatePath("/portal", "layout");
+  redirect("/portal");
+}
+
 export async function uploadClientDocument(fd: FormData) {
-  const me = await requireClient();
+  const me = await requireMember("documentos.subir");
   const file = fileFromForm(fd, "file");
   if (!file) redirect("/portal/documentos?error=archivo");
   const check = await checkUpload(file);
   if (!check.ok) redirect(`/portal/documentos?error=${encodeURIComponent(check.error)}`);
   const category = s(fd, "category");
   const period = s(fd, "period");
-  const stored = await storeUpload(file, me.studioId, me.clientId);
+  const stored = await storeUpload(file, me.studioId, me.organizationId);
   await getDb()
     .insert(documents)
     .values({
       studio_id: me.studioId,
-      client_id: me.clientId,
+      organization_id: me.organizationId,
       name: stored.name,
       storage_path: stored.storagePath,
       mime_type: stored.mimeType,
@@ -78,20 +101,28 @@ export async function uploadClientDocument(fd: FormData) {
       source: "cliente",
       uploaded_by: me.id,
     });
-  await notifyStudio({ kind: "documento", clientId: me.clientId, clientName: me.clientName, documentName: stored.name });
+  await audit({
+    studioId: me.studioId,
+    organizationId: me.organizationId,
+    actor: me,
+    action: "documento.subir",
+    entityType: "documento",
+    metadata: { nombre: stored.name, origen: "portal" },
+  });
+  await notifyStudio({ kind: "documento", organizationId: me.organizationId, organizationName: me.organizationName, documentName: stored.name });
   revalidatePath("/portal", "layout");
   revalidatePath("/admin");
   redirect("/portal/documentos?subido=1");
 }
 
 /** Guarda el adjunto de una solicitud como documento del cliente */
-async function saveAttachment(file: File, me: Awaited<ReturnType<typeof requireClient>>) {
-  const stored = await storeUpload(file, me.studioId, me.clientId);
+async function saveAttachment(file: File, me: Awaited<ReturnType<typeof requireMember>>) {
+  const stored = await storeUpload(file, me.studioId, me.organizationId);
   const [doc] = await getDb()
     .insert(documents)
     .values({
       studio_id: me.studioId,
-      client_id: me.clientId,
+      organization_id: me.organizationId,
       name: stored.name,
       storage_path: stored.storagePath,
       mime_type: stored.mimeType,
@@ -105,8 +136,12 @@ async function saveAttachment(file: File, me: Awaited<ReturnType<typeof requireC
 }
 
 export async function createRequest(fd: FormData) {
-  const me = await requireClient();
-  const type = s(fd, "type") as RequestType | null;
+  const me = await requireMember();
+  // Crear: cualquier tipo con solicitudes.crear; RRHH solo solicitudes de personal
+  const any = can(me.orgRole, "solicitudes.crear");
+  if (!any && !can(me.orgRole, "solicitudes.laborales")) redirect("/portal/sin-permiso");
+  const asked = s(fd, "type") as RequestType | null;
+  const type: RequestType | null = any ? asked : "empleado";
   const subject = s(fd, "subject")?.slice(0, 140) ?? null;
   const body = s(fd, "body")?.slice(0, 5000) ?? null;
   if (!subject || !body) redirect("/portal/solicitudes/nueva?error=campos");
@@ -120,7 +155,7 @@ export async function createRequest(fd: FormData) {
     .insert(requests)
     .values({
       studio_id: me.studioId,
-      client_id: me.clientId,
+      organization_id: me.organizationId,
       type: type && type in REQUEST_TYPES ? type : "consulta",
       subject,
       created_by: me.id,
@@ -128,7 +163,7 @@ export async function createRequest(fd: FormData) {
     .returning({ id: requests.id });
   const documentId = file ? await saveAttachment(file, me) : null;
   await db.insert(request_messages).values({ request_id: req.id, author_id: me.id, from_client: true, body, document_id: documentId });
-  await notifyStudio({ kind: "solicitud", clientId: me.clientId, clientName: me.clientName, subject, message: body });
+  await notifyStudio({ kind: "solicitud", organizationId: me.organizationId, organizationName: me.organizationName, subject, message: body });
   revalidatePath("/portal", "layout");
   revalidatePath("/admin");
   revalidatePath("/admin/solicitudes");
@@ -136,15 +171,24 @@ export async function createRequest(fd: FormData) {
 }
 
 export async function replyRequestAsClient(fd: FormData) {
-  const me = await requireClient();
+  const me = await requireMember();
+  const any = can(me.orgRole, "solicitudes.crear");
+  if (!any && !can(me.orgRole, "solicitudes.laborales")) redirect("/portal/sin-permiso");
   const requestId = s(fd, "request_id");
   if (!requestId || !isUuid(requestId)) redirect("/portal/solicitudes");
   const db = getDb();
-  // Solo solicitudes de SU cliente
+  // Solo solicitudes de SU organización (y, para RRHH, solo las laborales)
   const [req] = await db
     .select()
     .from(requests)
-    .where(and(eq(requests.id, requestId), eq(requests.client_id, me.clientId), eq(requests.studio_id, me.studioId)));
+    .where(
+      and(
+        eq(requests.id, requestId),
+        eq(requests.organization_id, me.organizationId),
+        eq(requests.studio_id, me.studioId),
+        any ? undefined : eq(requests.type, "empleado"),
+      ),
+    );
   if (!req) redirect("/portal/solicitudes");
   const body = s(fd, "body")?.slice(0, 5000) ?? null;
   const file = fileFromForm(fd, "file");
@@ -166,8 +210,8 @@ export async function replyRequestAsClient(fd: FormData) {
   else await db.update(requests).set({ updated_at: new Date() }).where(eq(requests.id, req.id));
   await notifyStudio({
     kind: "solicitud",
-    clientId: me.clientId,
-    clientName: me.clientName,
+    organizationId: me.organizationId,
+    organizationName: me.organizationName,
     subject: `Re: ${req.subject}`,
     message: body ?? "Envió un archivo.",
   });

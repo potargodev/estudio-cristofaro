@@ -1,26 +1,37 @@
 "use client";
 
-import { CalendarClock, FileText, House, MessageSquare } from "lucide-react";
+import { Blocks, CalendarClock, Ellipsis, FileText, House, MessageSquare, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { PortalIcon, PortalNavItem } from "@/lib/portal-nav";
 import { cn } from "@/lib/utils";
 
-const items = [
-  { href: "/portal", label: "Inicio", icon: House, exact: true },
-  { href: "/portal/vencimientos", label: "Vencimientos", icon: CalendarClock },
-  { href: "/portal/documentos", label: "Documentos", icon: FileText },
-  { href: "/portal/solicitudes", label: "Solicitudes", icon: MessageSquare },
-];
+const ICONS: Record<PortalIcon, typeof House> = {
+  inicio: House,
+  vencimientos: CalendarClock,
+  documentos: FileText,
+  solicitudes: MessageSquare,
+  modulo: Blocks,
+  equipo: Users,
+  mas: Ellipsis,
+};
 
-/** Navegación del portal: barra inferior en el celular y pestañas arriba en escritorio. */
-export function PortalNav({ openRequests }: { openRequests: number }) {
+/**
+ * Navegación del portal: pestañas arriba en escritorio y barra inferior en el
+ * celular (las secciones extra, como módulos y Mi equipo, van en "Más").
+ */
+export function PortalNav({ main, extra, openRequests }: { main: PortalNavItem[]; extra: PortalNavItem[]; openRequests: number }) {
   const pathname = usePathname();
   const isActive = (href: string, exact?: boolean) => (exact ? pathname === href : pathname.startsWith(href));
+  const desktop = [...main, ...extra];
+  const mobile: PortalNavItem[] = extra.length ? [...main, { href: "/portal/mas", label: "Más", icon: "mas" }] : main;
+  const moreActive = pathname.startsWith("/portal/mas") || extra.some((i) => isActive(i.href));
+  const badge = (item: PortalNavItem) => item.href === "/portal/solicitudes" && openRequests > 0;
   return (
     <>
       <nav aria-label="Portal" className="hidden border-t border-paper/10 md:block">
-        <ul className="mx-auto flex max-w-5xl gap-1 px-6">
-          {items.map((item) => {
+        <ul className="mx-auto flex max-w-5xl flex-wrap gap-1 px-6">
+          {desktop.map((item) => {
             const active = isActive(item.href, item.exact);
             return (
               <li key={item.href}>
@@ -29,13 +40,13 @@ export function PortalNav({ openRequests }: { openRequests: number }) {
                   aria-current={active ? "page" : undefined}
                   className={cn(
                     "relative inline-flex items-center gap-2 px-3 py-3 text-[15px] transition-colors",
-                    active ? "text-paper after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:bg-rose-light" : "text-paper/70 hover:text-paper",
+                    active
+                      ? "text-paper after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:bg-rose-light"
+                      : "text-paper/70 hover:text-paper",
                   )}
                 >
                   {item.label}
-                  {item.href === "/portal/solicitudes" && openRequests > 0 && (
-                    <span className="rounded-full bg-rose-light px-1.5 text-xs font-semibold text-navy-deep">{openRequests}</span>
-                  )}
+                  {badge(item) && <span className="rounded-full bg-rose-light px-1.5 text-xs font-semibold text-navy-deep">{openRequests}</span>}
                 </Link>
               </li>
             );
@@ -46,10 +57,15 @@ export function PortalNav({ openRequests }: { openRequests: number }) {
         aria-label="Portal"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
-        <ul className="grid grid-cols-4">
-          {items.map((item) => {
-            const active = isActive(item.href, item.exact);
-            const Icon = item.icon;
+        <ul
+          className="grid"
+          style={{
+            gridTemplateColumns: `repeat(${mobile.length}, minmax(0, 1fr))`,
+          }}
+        >
+          {mobile.map((item) => {
+            const active = item.icon === "mas" ? moreActive : isActive(item.href, item.exact);
+            const Icon = ICONS[item.icon];
             return (
               <li key={item.href}>
                 <Link
@@ -59,7 +75,7 @@ export function PortalNav({ openRequests }: { openRequests: number }) {
                 >
                   <span className="relative">
                     <Icon className={cn("size-5", active && "text-rose-deep")} aria-hidden />
-                    {item.href === "/portal/solicitudes" && openRequests > 0 && (
+                    {badge(item) && (
                       <span className="absolute -right-2 -top-1 rounded-full bg-rose-deep px-1 text-[10px] font-semibold leading-4 text-paper">
                         {openRequests}
                       </span>

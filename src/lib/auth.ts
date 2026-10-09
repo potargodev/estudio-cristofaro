@@ -1,11 +1,13 @@
 import "server-only";
-import { and, asc, eq } from "drizzle-orm";
-import { headers } from "next/headers";
+import { and, asc, eq, ne } from "drizzle-orm";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/db";
-import { client_users, clients } from "@/db/schema";
+import { memberships, organization_modules, organizations } from "@/db/schema";
+import { audit } from "./audit";
 import { getAuth } from "./auth-server";
+import { can, type OrgRole, type Permission } from "./permissions";
 import type { UserRole } from "./types";
 
 export interface StaffUser {
@@ -21,7 +23,12 @@ export interface StaffUser {
 export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
   const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) return null;
-  const u = session.user as typeof session.user & { role?: string; studioId?: string; active?: boolean; mustChangePassword?: boolean };
+  const u = session.user as typeof session.user & {
+    role?: string;
+    studioId?: string;
+    active?: boolean;
+    mustChangePassword?: boolean;
+  };
   if (!u.studioId || u.active === false) return null;
   return {
     id: u.id,
@@ -56,27 +63,82 @@ export async function requireAdmin(): Promise<StaffUser> {
   return user;
 }
 
-export interface PortalUser extends StaffUser {
-  clientId: string;
-  clientName: string;
+export interface MembershipSummary {
+  organizationId: string;
+  organizationName: string;
+  role: OrgRole;
 }
 
+export interface PortalUser extends StaffUser {
+  organizationId: string;
+  organizationName: string;
+  orgRole: OrgRole;
+  /** Todas las organizaciones a las que pertenece (para el selector) */
+  memberships: MembershipSummary[];
+  /** Claves de los módulos activos de la organización */
+  modules: string[];
+}
+
+export const ORG_COOKIE = "portal_org";
+
+/** Membresías activas del usuario en organizaciones vigentes de su estudio */
+export const getMemberships = cache(async (userId: string, studioId: string): Promise<MembershipSummary[]> => {
+  return getDb()
+    .select({
+      organizationId: organizations.id,
+      organizationName: organizations.name,
+      role: memberships.role,
+    })
+    .from(memberships)
+    .innerJoin(organizations, eq(organizations.id, memberships.organization_id))
+    .where(
+      and(
+        eq(memberships.user_id, userId),
+        eq(memberships.status, "activa"),
+        eq(memberships.studio_id, studioId),
+        eq(organizations.studio_id, studioId),
+        ne(organizations.status, "baja"),
+      ),
+    )
+    .orderBy(asc(organizations.name));
+});
+
 /**
- * Usuario cliente del portal y el cliente al que está vinculado (client_users).
- * El staff va al backoffice. Toda query del portal tiene que filtrar por el
- * clientId (y el studioId) que devuelve: nunca por un id que venga del navegador.
+ * Miembro del portal y la organización activa. La organización sale de la
+ * cookie de selección SOLO si el usuario tiene una membresía activa en ella;
+ * si no, se usa la primera. Toda query del portal filtra por el
+ * organizationId (y el studioId) que devuelve: nunca por un id del navegador.
+ * Con `permission`, además exige ese permiso según la matriz de roles.
  */
-export async function requireClient(): Promise<PortalUser> {
+export const requireMember = cache(async (permission?: Permission): Promise<PortalUser> => {
   const user = await getCurrentUser();
   if (!user) redirect("/portal/login");
   if (user.role !== "cliente") redirect("/admin");
-  const [link] = await getDb()
-    .select({ clientId: clients.id, clientName: clients.business_name })
-    .from(client_users)
-    .innerJoin(clients, eq(clients.id, client_users.client_id))
-    .where(and(eq(client_users.user_id, user.id), eq(clients.studio_id, user.studioId)))
-    .orderBy(asc(clients.business_name))
-    .limit(1);
-  if (!link) redirect("/portal/sin-acceso");
-  return { ...user, ...link };
-}
+  const list = await getMemberships(user.id, user.studioId);
+  if (list.length === 0) redirect("/portal/sin-acceso");
+  const wanted = (await cookies()).get(ORG_COOKIE)?.value;
+  const current = list.find((m) => m.organizationId === wanted) ?? list[0];
+  if (permission && !can(current.role, permission)) {
+    await audit({
+      studioId: user.studioId,
+      organizationId: current.organizationId,
+      actor: user,
+      action: "permiso.denegado",
+      result: "denegado",
+      metadata: { permiso: permission, rol: current.role },
+    });
+    redirect("/portal/sin-permiso");
+  }
+  const mods = await getDb()
+    .select({ key: organization_modules.module_key })
+    .from(organization_modules)
+    .where(and(eq(organization_modules.organization_id, current.organizationId), eq(organization_modules.active, true)));
+  return {
+    ...user,
+    organizationId: current.organizationId,
+    organizationName: current.organizationName,
+    orgRole: current.role,
+    memberships: list,
+    modules: mods.map((m) => m.key),
+  };
+});

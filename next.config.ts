@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
       { source: "/about.html", destination: "/equipo", permanent: true },
       { source: "/faq.html", destination: "/preguntas-frecuentes", permanent: true },
       { source: "/contact.html", destination: "/contacto", permanent: true },
+      // Los clientes pasaron a ser organizaciones (mismos ids)
+      { source: "/admin/clientes", destination: "/admin/organizaciones", permanent: true },
+      { source: "/admin/clientes/nuevo", destination: "/admin/organizaciones/nueva", permanent: true },
+      { source: "/admin/clientes/:id", destination: "/admin/organizaciones/:id", permanent: true },
     ];
   },
 };

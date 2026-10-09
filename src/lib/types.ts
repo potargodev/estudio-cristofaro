@@ -1,4 +1,4 @@
-import type { clients, leads, userRole } from "@/db/schema";
+import type { leads, legal_entities, organizations, userRole } from "@/db/schema";
 
 export type LeadStatus = "nuevo" | "contactado" | "presupuesto" | "ganado" | "perdido";
 export type LeadSource = "diagnostico" | "contacto" | "whatsapp" | "manual" | "otro";
@@ -6,7 +6,8 @@ export type TaxRegime = "monotributo" | "responsable_inscripto" | "sociedad" | "
 
 // Filas tal como las devuelve Drizzle (fechas como Date, numeric como string).
 export type Lead = typeof leads.$inferSelect;
-export type Client = typeof clients.$inferSelect;
+export type Organization = typeof organizations.$inferSelect;
+export type LegalEntity = typeof legal_entities.$inferSelect;
 export type UserRole = (typeof userRole.enumValues)[number];
 
 // Contenidos públicos: mismo formato para la base y para el respaldo de src/lib/content.ts.
@@ -78,3 +79,25 @@ export const CONTRIBUTOR_TYPES: Record<string, string> = {
   emprendedor: "Estoy por empezar",
   otro: "Otro / no sé",
 };
+
+export type OrganizationStatus = "onboarding" | "activa" | "pausada" | "baja";
+export type RiskLevel = "bajo" | "medio" | "alto";
+
+export const ORGANIZATION_STATUSES: Record<OrganizationStatus, string> = {
+  onboarding: "En incorporación",
+  activa: "Activa",
+  pausada: "Pausada",
+  baja: "De baja",
+};
+
+export const RISK_LEVELS: Record<RiskLevel, string> = {
+  bajo: "Bajo",
+  medio: "Medio",
+  alto: "Alto",
+};
+
+/** CUIT con guiones (20-12345678-9) o el texto tal cual */
+export function formatCuit(c: string | null | undefined, empty = "—") {
+  if (!c) return empty;
+  return c.length === 11 ? `${c.slice(0, 2)}-${c.slice(2, 10)}-${c.slice(10)}` : c;
+}

@@ -4,9 +4,12 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { clients, integrations, tango_companies, tango_records } from "@/db/schema";
+import { integrations, legal_entities, tango_companies, tango_records } from "@/db/schema";
+import { audit } from "@/lib/audit";
 import { requireAdmin } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
+import { studioOrganization } from "@/lib/organizations";
+import { insertOrganization } from "@/lib/organizations-write";
 import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { generateConnectorKey } from "@/lib/integrations/tango/keys";
 import { DEFAULT_MAPPING, describeClient, getMapping, type TangoMapping } from "@/lib/integrations/tango/mapping";
@@ -97,27 +100,37 @@ export async function saveTangoMapping(fd: FormData) {
   redirect(`${BASE}?guardado=1#mapeo`);
 }
 
-async function clientOfStudio(clientId: string | null, studioId: string) {
-  if (!clientId || !isUuid(clientId)) return null;
-  const [c] = await getDb()
-    .select({ id: clients.id })
-    .from(clients)
-    .where(and(eq(clients.id, clientId), eq(clients.studio_id, studioId)));
-  return c ?? null;
+/** Razón social del estudio con su organización, o null */
+async function legalEntityOfStudio(id: string | null, studioId: string) {
+  if (!id || !isUuid(id)) return null;
+  const [le] = await getDb()
+    .select({ id: legal_entities.id, organizationId: legal_entities.organization_id })
+    .from(legal_entities)
+    .where(and(eq(legal_entities.id, id), eq(legal_entities.studio_id, studioId)));
+  return le ?? null;
 }
 
-/** Empresa de Tango ↔ cliente de la plataforma (estudios que usan una empresa por cliente) */
-export async function mapCompanyToClient(fd: FormData) {
+/** Empresa de Tango ↔ organización de la plataforma (estudios que usan una empresa de Tango por cliente) */
+export async function mapCompanyToOrganization(fd: FormData) {
   const admin = await requireAdmin();
   const companyRowId = s(fd, "id");
   if (!companyRowId || !isUuid(companyRowId)) redirect(BASE);
-  const clientId = s(fd, "client_id");
-  const client = clientId ? await clientOfStudio(clientId, admin.studioId) : null;
-  if (clientId && !client) redirect(`${BASE}?error=cliente`);
+  const orgId = s(fd, "organization_id");
+  const org = orgId ? await studioOrganization(orgId, admin.studioId) : null;
+  if (orgId && !org) redirect(`${BASE}?error=cliente`);
   await getDb()
     .update(tango_companies)
-    .set({ client_id: client?.id ?? null })
+    .set({ organization_id: org?.id ?? null, legal_entity_id: null })
     .where(and(eq(tango_companies.id, companyRowId), eq(tango_companies.studio_id, admin.studioId)));
+  await audit({
+    studioId: admin.studioId,
+    organizationId: org?.id ?? null,
+    actor: admin,
+    action: "tango.vincular",
+    entityType: "tango_empresa",
+    entityId: companyRowId,
+    metadata: { desvincular: !org },
+  });
   revalidatePath(BASE);
   redirect(`${BASE}?guardado=1#empresas`);
 }
@@ -131,14 +144,27 @@ async function tangoClientRecord(recordId: string | null, studioId: string) {
   return r ?? null;
 }
 
+/** Cliente de Tango ↔ razón social (y su organización) */
 export async function linkTangoClient(fd: FormData) {
   const admin = await requireAdmin();
   const record = await tangoClientRecord(s(fd, "record_id"), admin.studioId);
-  const client = await clientOfStudio(s(fd, "client_id"), admin.studioId);
-  if (!record || !client) redirect(`${CLIENTS}?error=vincular`);
-  await getDb().update(tango_records).set({ client_id: client.id }).where(eq(tango_records.id, record.id));
+  const le = await legalEntityOfStudio(s(fd, "legal_entity_id"), admin.studioId);
+  if (!record || !le) redirect(`${CLIENTS}?error=vincular`);
+  await getDb()
+    .update(tango_records)
+    .set({ organization_id: le.organizationId, legal_entity_id: le.id })
+    .where(eq(tango_records.id, record.id));
+  await audit({
+    studioId: admin.studioId,
+    organizationId: le.organizationId,
+    actor: admin,
+    action: "tango.vincular",
+    entityType: "tango_cliente",
+    entityId: record.id,
+    metadata: { empresa: record.company_id, id_externo: record.external_id },
+  });
   revalidatePath(CLIENTS);
-  revalidatePath(`/admin/clientes/${client.id}`);
+  revalidatePath(`/admin/organizaciones/${le.organizationId}`);
   redirect(`${CLIENTS}?vinculado=1#${record.id}`);
 }
 
@@ -146,13 +172,22 @@ export async function unlinkTangoClient(fd: FormData) {
   const admin = await requireAdmin();
   const record = await tangoClientRecord(s(fd, "record_id"), admin.studioId);
   if (!record) redirect(CLIENTS);
-  await getDb().update(tango_records).set({ client_id: null }).where(eq(tango_records.id, record.id));
+  await getDb().update(tango_records).set({ organization_id: null, legal_entity_id: null }).where(eq(tango_records.id, record.id));
+  await audit({
+    studioId: admin.studioId,
+    organizationId: record.organization_id,
+    actor: admin,
+    action: "tango.vincular",
+    entityType: "tango_cliente",
+    entityId: record.id,
+    metadata: { desvincular: true },
+  });
   revalidatePath(CLIENTS);
-  if (record.client_id) revalidatePath(`/admin/clientes/${record.client_id}`);
+  if (record.organization_id) revalidatePath(`/admin/organizaciones/${record.organization_id}`);
   redirect(`${CLIENTS}#${record.id}`);
 }
 
-/** Crea un cliente nuevo con los datos de Tango y lo deja vinculado */
+/** Crea una organización nueva (con su razón social) con los datos de Tango y la deja vinculada */
 export async function importTangoClient(fd: FormData) {
   const admin = await requireAdmin();
   const record = await tangoClientRecord(s(fd, "record_id"), admin.studioId);
@@ -160,27 +195,34 @@ export async function importTangoClient(fd: FormData) {
   const integration = await getTango(admin.studioId);
   const data = describeClient(record.raw, getMapping(integration?.settings));
   const db = getDb();
-  let clientId: string | null = null;
+  const name = data.name ?? `Cliente de Tango ${record.external_id}`;
+  let created: { organizationId: string; legalEntityId: string } | null = null;
   try {
-    const [created] = await db
-      .insert(clients)
-      .values({
-        studio_id: admin.studioId,
-        business_name: data.name ?? `Cliente de Tango ${record.external_id}`,
-        cuit: data.cuit,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        notes: `Importado de Tango (empresa ${record.company_id}, id ${record.external_id}).`,
-      })
-      .returning({ id: clients.id });
-    clientId = created.id;
+    created = await insertOrganization(db, {
+      studioId: admin.studioId,
+      name,
+      legalEntity: { business_name: name, cuit: data.cuit, regime: "otro", tax_address: data.address },
+      contact: { email: data.email?.toLowerCase() ?? null, phone: data.phone },
+      notes: `Importado de Tango (empresa ${record.company_id}, id ${record.external_id}).`,
+    });
   } catch (error) {
     const code = (error as { cause?: { code?: string } }).cause?.code ?? (error as { code?: string }).code;
     redirect(`${CLIENTS}?error=${code === "23505" ? "cuit" : "importar"}#${record.id}`);
   }
-  await db.update(tango_records).set({ client_id: clientId }).where(eq(tango_records.id, record.id));
+  await db
+    .update(tango_records)
+    .set({ organization_id: created.organizationId, legal_entity_id: created.legalEntityId })
+    .where(eq(tango_records.id, record.id));
+  await audit({
+    studioId: admin.studioId,
+    organizationId: created.organizationId,
+    actor: admin,
+    action: "tango.importar",
+    entityType: "tango_cliente",
+    entityId: record.id,
+    metadata: { empresa: record.company_id, id_externo: record.external_id, cuit: data.cuit },
+  });
   revalidatePath(CLIENTS);
-  revalidatePath("/admin/clientes");
+  revalidatePath("/admin/organizaciones");
   redirect(`${CLIENTS}?importado=1#${record.id}`);
 }

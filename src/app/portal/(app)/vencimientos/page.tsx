@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Badge, Empty, PageTitle, obligationTone } from "@/components/portal/ui";
-import { requireClient } from "@/lib/auth";
+import { requireMember } from "@/lib/auth";
 import { getObligations } from "@/lib/portal-data";
 import { OBLIGATION_STATUS, dateLabel, moneyLabel, periodLabel, todayISO } from "@/lib/portal-types";
 
@@ -21,7 +21,7 @@ function PayLink({ url }: { url: string | null }) {
 }
 
 export default async function VencimientosPage() {
-  const me = await requireClient();
+  const me = await requireMember("vencimientos.ver");
   const rows = await getObligations(me);
   const today = todayISO();
   const pending = rows.filter((r) => r.status !== "pagado" && r.status !== "presentado").reverse();

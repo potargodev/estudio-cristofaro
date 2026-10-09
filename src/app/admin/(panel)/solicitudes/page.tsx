@@ -1,9 +1,9 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import type { Metadata } from "next";
 import { AdminPageHeader, Notice } from "@/components/admin/AdminField";
-import { RequestThread } from "@/components/admin/ClientTabs";
+import { RequestThread } from "@/components/admin/OrganizationTabs";
 import { getDb } from "@/db";
-import { clients, requests } from "@/db/schema";
+import { organizations, requests } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Solicitudes" };
@@ -12,10 +12,10 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
   const { guardado, error } = await searchParams;
   const { studioId } = await requireStaff();
   const rows = await getDb()
-    .select({ request: requests, clientName: clients.business_name })
+    .select({ request: requests, clientName: organizations.name })
     .from(requests)
-    .innerJoin(clients, eq(clients.id, requests.client_id))
-    .where(and(eq(requests.studio_id, studioId), inArray(requests.status, ["abierta", "en_curso"])))
+    .innerJoin(organizations, eq(organizations.id, requests.organization_id))
+    .where(and(eq(requests.studio_id, studioId), eq(organizations.studio_id, studioId), inArray(requests.status, ["abierta", "en_curso"])))
     .orderBy(asc(requests.status), desc(requests.updated_at));
 
   return (

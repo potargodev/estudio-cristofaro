@@ -2,7 +2,7 @@ import { and, asc, desc, eq, inArray, isNotNull, isNull, lte, notInArray } from 
 import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { getDb } from "@/db";
-import { clients, documents, leads, requests } from "@/db/schema";
+import { documents, leads, organizations, requests } from "@/db/schema";
 import { REQUEST_STATUS, REQUEST_TYPES } from "@/lib/portal-types";
 import { requireStaff } from "@/lib/auth";
 import { LEAD_SOURCES, LEAD_STATUSES, type Lead } from "@/lib/types";
@@ -48,21 +48,21 @@ export default async function AdminHome() {
       )
       .orderBy(asc(leads.next_action_at)),
     db
-      .select({ id: clients.id, monthly_fee: clients.monthly_fee, active: clients.active })
-      .from(clients)
-      .where(eq(clients.studio_id, user.studioId)),
+      .select({ id: organizations.id, monthly_fee: organizations.monthly_fee, status: organizations.status })
+      .from(organizations)
+      .where(eq(organizations.studio_id, user.studioId)),
     // Portal: solicitudes abiertas y documentos de clientes que nadie vio
     db
-      .select({ id: requests.id, subject: requests.subject, type: requests.type, status: requests.status, client_id: requests.client_id, client: clients.business_name })
+      .select({ id: requests.id, subject: requests.subject, type: requests.type, status: requests.status, client_id: requests.organization_id, client: organizations.name })
       .from(requests)
-      .innerJoin(clients, eq(clients.id, requests.client_id))
+      .innerJoin(organizations, eq(organizations.id, requests.organization_id))
       .where(and(eq(requests.studio_id, user.studioId), inArray(requests.status, ["abierta", "en_curso"])))
       .orderBy(desc(requests.updated_at))
       .limit(50),
     db
-      .select({ id: documents.id, name: documents.name, client_id: documents.client_id, client: clients.business_name, created_at: documents.created_at })
+      .select({ id: documents.id, name: documents.name, client_id: documents.organization_id, client: organizations.name, created_at: documents.created_at })
       .from(documents)
-      .innerJoin(clients, eq(clients.id, documents.client_id))
+      .innerJoin(organizations, eq(organizations.id, documents.organization_id))
       .where(and(eq(documents.studio_id, user.studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)))
       .orderBy(desc(documents.created_at))
       .limit(50),
@@ -71,7 +71,7 @@ export default async function AdminHome() {
   const thisMonth = all.filter((l) => l.created_at >= monthStart);
   const won = thisMonth.filter((l) => l.status === "ganado").length;
   const closed = thisMonth.filter((l) => l.status === "ganado" || l.status === "perdido").length;
-  const activeClients = clientRows.filter((c) => c.active);
+  const activeClients = clientRows.filter((c) => c.status === "activa" || c.status === "onboarding");
   const mrr = activeClients.reduce((sum, c) => sum + (Number(c.monthly_fee) || 0), 0);
   const bySource = Object.entries(
     thisMonth.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.source]: (acc[l.source] ?? 0) + 1 }), {}),
@@ -91,7 +91,7 @@ export default async function AdminHome() {
           { label: "Consultas este mes", value: String(thisMonth.length) },
           { label: "Sin contactar", value: String(all.filter((l) => l.status === "nuevo").length) },
           { label: "Conversión del mes", value: closed ? `${Math.round((won / closed) * 100)}%` : "—" },
-          { label: "Clientes activos", value: String(activeClients.length), sub: mrr ? `${money.format(mrr)} / mes` : undefined },
+          { label: "Organizaciones activas", value: String(activeClients.length), sub: mrr ? `${money.format(mrr)} / mes` : undefined },
         ].map((k) => (
           <div key={k.label} className="bg-surface p-5">
             <dt className="text-sm text-muted">{k.label}</dt>
@@ -115,7 +115,7 @@ export default async function AdminHome() {
             {openRequests.length === 0 && <li className="px-4 py-5 text-muted">No hay solicitudes abiertas.</li>}
             {openRequests.slice(0, 6).map((r) => (
               <li key={r.id}>
-                <Link href={`/admin/clientes/${r.client_id}?tab=solicitudes#${r.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+                <Link href={`/admin/organizaciones/${r.client_id}?tab=solicitudes#${r.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{r.subject}</span>
                     <span className="block text-sm text-muted">
@@ -130,13 +130,13 @@ export default async function AdminHome() {
         </section>
         <section>
           <h2 className="text-lg font-semibold">
-            Documentos nuevos de clientes <span className="text-muted">({newDocs.length})</span>
+            Documentos nuevos de organizaciones <span className="text-muted">({newDocs.length})</span>
           </h2>
           <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
             {newDocs.length === 0 && <li className="px-4 py-5 text-muted">No hay documentos sin revisar.</li>}
             {newDocs.slice(0, 6).map((d) => (
               <li key={d.id}>
-                <Link href={`/admin/clientes/${d.client_id}?tab=documentos`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+                <Link href={`/admin/organizaciones/${d.client_id}?tab=documentos`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{d.name}</span>
                     <span className="block text-sm text-muted">{d.client}</span>

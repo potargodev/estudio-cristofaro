@@ -1,0 +1,34 @@
+import { ChevronRight } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { PageTitle } from "@/components/portal/ui";
+import { requireMember } from "@/lib/auth";
+import { ORG_ROLE_LABELS } from "@/lib/permissions";
+import { buildPortalNav } from "@/lib/portal-nav";
+
+export const metadata: Metadata = { title: "Más" };
+
+/** Menú del celular con las secciones que no entran en la barra inferior */
+export default async function MasPage() {
+  const me = await requireMember();
+  const { extra } = buildPortalNav(me.orgRole, me.modules);
+  return (
+    <>
+      <PageTitle title="Más secciones" intro={`${me.organizationName} · tu rol: ${ORG_ROLE_LABELS[me.orgRole]}`} />
+      {extra.length === 0 ? (
+        <p className="text-muted">No hay más secciones habilitadas.</p>
+      ) : (
+        <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+          {extra.map((item) => (
+            <li key={item.href}>
+              <Link href={item.href} className="flex items-center justify-between gap-3 px-4 py-4 text-[15px] hover:bg-paper">
+                {item.label}
+                <ChevronRight className="size-4 text-muted" aria-hidden />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}

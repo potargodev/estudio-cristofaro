@@ -5,10 +5,10 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { clients, faqs, leads, plans, posts, sessions, users } from "@/db/schema";
+import { faqs, leads, plans, posts, sessions, users } from "@/db/schema";
 import { requireAdmin, requireStaff } from "@/lib/auth";
 import { getAuth } from "@/lib/auth-server";
-import type { LeadStatus, TaxRegime, UserRole } from "@/lib/types";
+import type { LeadStatus, UserRole } from "@/lib/types";
 import { createUserWithPassword } from "@/lib/users";
 
 // Cada action valida la sesión y el rol con requireStaff/requireAdmin y
@@ -55,7 +55,6 @@ function pgCode(error: unknown): string | undefined {
 }
 
 const LEAD_STATUSES: LeadStatus[] = ["nuevo", "contactado", "presupuesto", "ganado", "perdido"];
-const REGIMES: TaxRegime[] = ["monotributo", "responsable_inscripto", "sociedad", "exento", "otro"];
 const STAFF_ROLES: UserRole[] = ["admin", "contador"];
 
 function revalidateSite() {
@@ -187,118 +186,6 @@ export async function deleteLead(fd: FormData) {
   if (leadId) await getDb().delete(leads).where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)));
   revalidatePath("/admin/consultas");
   redirect("/admin/consultas");
-}
-
-export async function convertLeadToClient(fd: FormData) {
-  const { studioId } = await requireStaff();
-  const leadId = id(fd);
-  if (!leadId) return;
-  const db = getDb();
-  const [lead] = await db
-    .select()
-    .from(leads)
-    .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)));
-  if (!lead) redirect("/admin/consultas");
-  if (lead.client_id) redirect(`/admin/clientes/${lead.client_id}`);
-
-  const regimeByType: Record<string, TaxRegime> = {
-    monotributista: "monotributo",
-    responsable_inscripto: "responsable_inscripto",
-    sociedad: "sociedad",
-  };
-  let clientId: string | null = null;
-  try {
-    clientId = await db.transaction(async (tx) => {
-      const [client] = await tx
-        .insert(clients)
-        .values({
-          studio_id: studioId,
-          business_name: lead.company || lead.name,
-          contact_name: lead.name,
-          email: lead.email,
-          phone: lead.phone,
-          regime: regimeByType[lead.contributor_type ?? ""] ?? "otro",
-          notes: [lead.activity && `Actividad: ${lead.activity}`, lead.notes].filter(Boolean).join("\n\n") || null,
-          services: lead.needs ?? [],
-          lead_id: lead.id,
-        })
-        .returning({ id: clients.id });
-      await tx
-        .update(leads)
-        .set({ status: "ganado", client_id: client.id })
-        .where(and(eq(leads.id, lead.id), eq(leads.studio_id, studioId)));
-      return client.id;
-    });
-  } catch (error) {
-    console.error("[admin] convertLeadToClient", error);
-  }
-  if (!clientId) redirect(`/admin/consultas/${leadId}?error=convertir`);
-  revalidatePath("/admin/consultas");
-  revalidatePath("/admin/clientes");
-  redirect(`/admin/clientes/${clientId}?nuevo=1`);
-}
-
-// ───────────── clientes ─────────────
-
-function clientPayload(fd: FormData) {
-  const regime = s(fd, "regime") as TaxRegime | null;
-  const fee = s(fd, "monthly_fee");
-  const feeNumber = fee ? Number(fee.replace(/\./g, "").replace(",", ".")) || null : null;
-  return {
-    business_name: s(fd, "business_name") ?? "Sin nombre",
-    cuit: s(fd, "cuit")?.replace(/[^0-9]/g, "") || null,
-    regime: regime && REGIMES.includes(regime) ? regime : ("otro" as const),
-    category: s(fd, "category"),
-    services: lines(fd, "services"),
-    monthly_fee: feeNumber != null ? feeNumber.toFixed(2) : null,
-    contact_name: s(fd, "contact_name"),
-    email: s(fd, "email"),
-    phone: s(fd, "phone"),
-    address: s(fd, "address"),
-    notes: s(fd, "notes"),
-    active: fd.get("active") !== null,
-  };
-}
-
-export async function createClientRecord(fd: FormData) {
-  const { studioId } = await requireStaff();
-  if (!s(fd, "business_name")) redirect("/admin/clientes/nuevo?error=nombre");
-  let newId: string | null = null;
-  let errorCode: string | undefined;
-  try {
-    const [row] = await getDb()
-      .insert(clients)
-      .values({ studio_id: studioId, ...clientPayload(fd) })
-      .returning({ id: clients.id });
-    newId = row?.id ?? null;
-  } catch (error) {
-    errorCode = pgCode(error);
-    if (errorCode !== "23505") console.error("[admin] createClientRecord", error);
-  }
-  if (!newId) redirect(`/admin/clientes/nuevo?error=${errorCode === "23505" ? "cuit" : "guardar"}`);
-  revalidatePath("/admin/clientes");
-  redirect(`/admin/clientes/${newId}?nuevo=1`);
-}
-
-export async function updateClientRecord(fd: FormData) {
-  const { studioId } = await requireStaff();
-  const clientId = id(fd);
-  if (!clientId) return;
-  let result = "guardado=1";
-  try {
-    const rows = await getDb()
-      .update(clients)
-      .set(clientPayload(fd))
-      .where(and(eq(clients.id, clientId), eq(clients.studio_id, studioId)))
-      .returning({ id: clients.id });
-    if (rows.length === 0) result = "error=guardar";
-  } catch (error) {
-    const code = pgCode(error);
-    if (code !== "23505") console.error("[admin] updateClientRecord", error);
-    result = `error=${code === "23505" ? "cuit" : "guardar"}`;
-  }
-  revalidatePath("/admin/clientes");
-  redirect(`/admin/clientes/${clientId}?${result}`);
 }
 
 // ───────────── novedades ─────────────

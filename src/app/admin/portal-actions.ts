@@ -3,19 +3,20 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { hashPassword } from "better-auth/crypto";
 import { getDb } from "@/db";
-import { accounts, client_users, clients, documents, obligations, request_messages, requests, sessions, users } from "@/db/schema";
+import { documents, legal_entities, obligations, request_messages, requests } from "@/db/schema";
+import { audit } from "@/lib/audit";
 import { requireStaff } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
-import { notifyClient } from "@/lib/notify";
+import { notifyOrganization } from "@/lib/notify";
+import { studioOrganization } from "@/lib/organizations";
 import { ImportFileError, parseObligationsFile, toAmount, type ImportRow } from "@/lib/obligations-import";
 import { OBLIGATION_STATUS, REQUEST_STATUS, type ObligationStatus, type RequestStatus } from "@/lib/portal-types";
 import { checkUpload, deleteStored, fileFromForm, storeUpload } from "@/lib/uploads";
-import { createUserWithPassword, generatePassword } from "@/lib/users";
 
-// Acciones del backoffice sobre el portal del cliente. Todas validan la sesión
-// de staff y que el cliente (o el registro) sea del estudio del usuario.
+// Acciones del backoffice sobre los datos de cada organización (vencimientos,
+// documentos, solicitudes, importación). Todas validan la sesión de staff y que
+// la organización (o el registro) sea del estudio del usuario.
 
 function s(fd: FormData, key: string): string | null {
   const v = fd.get(key);
@@ -24,103 +25,22 @@ function s(fd: FormData, key: string): string | null {
   return t === "" ? null : t;
 }
 
-function pgCode(error: unknown): string | undefined {
-  const e = error as { code?: string; cause?: { code?: string } };
-  return e?.code ?? e?.cause?.code;
+/** Razón social de la organización, o null (si viene vacía o es de otra organización) */
+async function orgLegalEntity(id: string | null, organizationId: string) {
+  if (!id || !isUuid(id)) return null;
+  const [le] = await getDb()
+    .select({ id: legal_entities.id })
+    .from(legal_entities)
+    .where(and(eq(legal_entities.id, id), eq(legal_entities.organization_id, organizationId)));
+  return le?.id ?? null;
 }
 
-/** Cliente del estudio del usuario, o null */
-async function studioClient(clientId: string | null, studioId: string) {
-  if (!clientId || !isUuid(clientId)) return null;
-  const [client] = await getDb()
-    .select({ id: clients.id, name: clients.business_name })
-    .from(clients)
-    .where(and(eq(clients.id, clientId), eq(clients.studio_id, studioId)));
-  return client ?? null;
-}
+const fichaUrl = (orgId: string, tab: string, extra = "") => `/admin/organizaciones/${orgId}?tab=${tab}${extra ? `&${extra}` : ""}`;
 
-const fichaUrl = (clientId: string, tab: string, extra = "") => `/admin/clientes/${clientId}?tab=${tab}${extra ? `&${extra}` : ""}`;
-
-function revalidateClient(clientId: string) {
-  revalidatePath(`/admin/clientes/${clientId}`);
+function revalidateOrg(orgId: string) {
+  revalidatePath(`/admin/organizaciones/${orgId}`);
   revalidatePath("/admin");
   revalidatePath("/portal", "layout");
-}
-
-// ───────────── acceso al portal ─────────────
-
-export interface CredentialsState {
-  ok: boolean;
-  message?: string;
-  email?: string;
-  password?: string;
-}
-
-/** Crea el usuario cliente y devuelve la contraseña inicial (se muestra una sola vez). */
-export async function inviteClientUser(_prev: CredentialsState, fd: FormData): Promise<CredentialsState> {
-  const staff = await requireStaff();
-  const client = await studioClient(s(fd, "client_id"), staff.studioId);
-  if (!client) return { ok: false, message: "Cliente inexistente." };
-  const name = s(fd, "name") ?? client.name;
-  const email = s(fd, "email")?.toLowerCase() ?? null;
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, message: "Revisá el email." };
-
-  const password = generatePassword();
-  try {
-    await createUserWithPassword(getDb(), { studioId: staff.studioId, name, email, password, role: "cliente", clientId: client.id });
-  } catch (error) {
-    if (pgCode(error) === "23505") return { ok: false, message: "Ya existe un usuario con ese email." };
-    console.error("[portal] inviteClientUser", error);
-    return { ok: false, message: "No se pudo crear el acceso. Probá de nuevo." };
-  }
-  revalidatePath(`/admin/clientes/${client.id}`);
-  return { ok: true, email, password };
-}
-
-/** Usuario cliente vinculado a un cliente del estudio */
-async function linkedClientUser(userId: string | null, clientId: string | null, studioId: string) {
-  if (!userId || !isUuid(userId) || !clientId || !isUuid(clientId)) return null;
-  const [row] = await getDb()
-    .select({ id: users.id, email: users.email })
-    .from(client_users)
-    .innerJoin(users, eq(users.id, client_users.user_id))
-    .innerJoin(clients, eq(clients.id, client_users.client_id))
-    .where(
-      and(
-        eq(client_users.user_id, userId),
-        eq(client_users.client_id, clientId),
-        eq(clients.studio_id, studioId),
-        eq(users.studioId, studioId),
-        eq(users.role, "cliente"),
-      ),
-    );
-  return row ?? null;
-}
-
-/** Genera una contraseña nueva para el usuario cliente y cierra sus sesiones. */
-export async function resetClientPassword(_prev: CredentialsState, fd: FormData): Promise<CredentialsState> {
-  const staff = await requireStaff();
-  const user = await linkedClientUser(s(fd, "user_id"), s(fd, "client_id"), staff.studioId);
-  if (!user) return { ok: false, message: "Usuario inexistente." };
-  const password = generatePassword();
-  const hash = await hashPassword(password);
-  const db = getDb();
-  await db.update(accounts).set({ password: hash }).where(and(eq(accounts.userId, user.id), eq(accounts.providerId, "credential")));
-  await db.delete(sessions).where(eq(sessions.userId, user.id));
-  return { ok: true, email: user.email, password };
-}
-
-export async function setClientUserActive(fd: FormData) {
-  const staff = await requireStaff();
-  const clientId = s(fd, "client_id");
-  const user = await linkedClientUser(s(fd, "user_id"), clientId, staff.studioId);
-  if (!user || !clientId) redirect("/admin/clientes");
-  const active = s(fd, "active") === "1";
-  const db = getDb();
-  await db.update(users).set({ active }).where(eq(users.id, user.id));
-  if (!active) await db.delete(sessions).where(eq(sessions.userId, user.id));
-  revalidatePath(`/admin/clientes/${clientId}`);
-  redirect(fichaUrl(clientId, "portal", active ? "activado=1" : "desactivado=1"));
 }
 
 // ───────────── vencimientos ─────────────
@@ -148,59 +68,61 @@ function obligationPayload(fd: FormData) {
 
 export async function saveObligation(fd: FormData) {
   const staff = await requireStaff();
-  const client = await studioClient(s(fd, "client_id"), staff.studioId);
-  if (!client) redirect("/admin/clientes");
-  const payload = obligationPayload(fd);
-  if (!payload) redirect(fichaUrl(client.id, "vencimientos", "error=vencimiento"));
+  const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
+  if (!org) redirect("/admin/organizaciones");
+  const base = obligationPayload(fd);
+  if (!base) redirect(fichaUrl(org.id, "vencimientos", "error=vencimiento"));
+  const payload = { ...base, legal_entity_id: await orgLegalEntity(s(fd, "legal_entity_id"), org.id) };
   const id = s(fd, "id");
   const db = getDb();
   if (id && isUuid(id)) {
     await db
       .update(obligations)
       .set(payload)
-      .where(and(eq(obligations.id, id), eq(obligations.client_id, client.id), eq(obligations.studio_id, staff.studioId)));
+      .where(and(eq(obligations.id, id), eq(obligations.organization_id, org.id), eq(obligations.studio_id, staff.studioId)));
   } else {
-    await db.insert(obligations).values({ ...payload, studio_id: staff.studioId, client_id: client.id });
-    await notifyClient(staff.studioId, client.id, {
+    await db.insert(obligations).values({ ...payload, studio_id: staff.studioId, organization_id: org.id });
+    await notifyOrganization(staff.studioId, org.id, {
       kind: "vencimientos",
       items: [{ tax: payload.tax, period: payload.period, dueDate: payload.due_date }],
     });
   }
-  revalidateClient(client.id);
-  redirect(fichaUrl(client.id, "vencimientos", "guardado=1"));
+  revalidateOrg(org.id);
+  redirect(fichaUrl(org.id, "vencimientos", "guardado=1"));
 }
 
 export async function deleteObligation(fd: FormData) {
   const staff = await requireStaff();
-  const client = await studioClient(s(fd, "client_id"), staff.studioId);
-  if (!client) redirect("/admin/clientes");
+  const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
+  if (!org) redirect("/admin/organizaciones");
   const id = s(fd, "id");
   if (id && isUuid(id)) {
     await getDb()
       .delete(obligations)
-      .where(and(eq(obligations.id, id), eq(obligations.client_id, client.id), eq(obligations.studio_id, staff.studioId)));
+      .where(and(eq(obligations.id, id), eq(obligations.organization_id, org.id), eq(obligations.studio_id, staff.studioId)));
   }
-  revalidateClient(client.id);
-  redirect(fichaUrl(client.id, "vencimientos"));
+  revalidateOrg(org.id);
+  redirect(fichaUrl(org.id, "vencimientos"));
 }
 
 // ───────────── documentos ─────────────
 
 export async function uploadStudioDocument(fd: FormData) {
   const staff = await requireStaff();
-  const client = await studioClient(s(fd, "client_id"), staff.studioId);
-  if (!client) redirect("/admin/clientes");
+  const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
+  if (!org) redirect("/admin/organizaciones");
   const file = fileFromForm(fd, "file");
-  if (!file) redirect(fichaUrl(client.id, "documentos", "error=archivo"));
+  if (!file) redirect(fichaUrl(org.id, "documentos", "error=archivo"));
   const check = await checkUpload(file);
-  if (!check.ok) redirect(fichaUrl(client.id, "documentos", `error=${encodeURIComponent(check.error)}`));
+  if (!check.ok) redirect(fichaUrl(org.id, "documentos", `error=${encodeURIComponent(check.error)}`));
   const period = s(fd, "period");
-  const stored = await storeUpload(file, staff.studioId, client.id);
+  const stored = await storeUpload(file, staff.studioId, org.id);
   await getDb()
     .insert(documents)
     .values({
       studio_id: staff.studioId,
-      client_id: client.id,
+      organization_id: org.id,
+      legal_entity_id: await orgLegalEntity(s(fd, "legal_entity_id"), org.id),
       name: stored.name,
       storage_path: stored.storagePath,
       mime_type: stored.mimeType,
@@ -211,25 +133,44 @@ export async function uploadStudioDocument(fd: FormData) {
       uploaded_by: staff.id,
       reviewed_at: new Date(),
     });
-  await notifyClient(staff.studioId, client.id, { kind: "documento", documentName: stored.name });
-  revalidateClient(client.id);
-  redirect(fichaUrl(client.id, "documentos", "guardado=1"));
+  await audit({
+    studioId: staff.studioId,
+    organizationId: org.id,
+    actor: staff,
+    action: "documento.subir",
+    entityType: "documento",
+    metadata: { nombre: stored.name, origen: "estudio" },
+  });
+  await notifyOrganization(staff.studioId, org.id, { kind: "documento", documentName: stored.name });
+  revalidateOrg(org.id);
+  redirect(fichaUrl(org.id, "documentos", "guardado=1"));
 }
 
 export async function deleteDocument(fd: FormData) {
   const staff = await requireStaff();
-  const client = await studioClient(s(fd, "client_id"), staff.studioId);
-  if (!client) redirect("/admin/clientes");
+  const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
+  if (!org) redirect("/admin/organizaciones");
   const id = s(fd, "id");
   if (id && isUuid(id)) {
     const [doc] = await getDb()
       .delete(documents)
-      .where(and(eq(documents.id, id), eq(documents.client_id, client.id), eq(documents.studio_id, staff.studioId)))
-      .returning({ storage_path: documents.storage_path });
-    if (doc) await deleteStored(doc.storage_path).catch(() => {});
+      .where(and(eq(documents.id, id), eq(documents.organization_id, org.id), eq(documents.studio_id, staff.studioId)))
+      .returning({ storage_path: documents.storage_path, name: documents.name });
+    if (doc) {
+      await deleteStored(doc.storage_path).catch(() => {});
+      await audit({
+        studioId: staff.studioId,
+        organizationId: org.id,
+        actor: staff,
+        action: "documento.eliminar",
+        entityType: "documento",
+        entityId: id,
+        metadata: { nombre: doc.name },
+      });
+    }
   }
-  revalidateClient(client.id);
-  redirect(fichaUrl(client.id, "documentos"));
+  revalidateOrg(org.id);
+  redirect(fichaUrl(org.id, "documentos"));
 }
 
 // ───────────── solicitudes ─────────────
@@ -244,7 +185,7 @@ export async function replyRequest(fd: FormData) {
     .from(requests)
     .where(and(eq(requests.id, requestId), eq(requests.studio_id, staff.studioId)));
   if (!req) redirect("/admin/solicitudes");
-  const back = s(fd, "back") === "solicitudes" ? "/admin/solicitudes" : fichaUrl(req.client_id, "solicitudes");
+  const back = s(fd, "back") === "solicitudes" ? "/admin/solicitudes" : fichaUrl(req.organization_id, "solicitudes");
 
   const body = s(fd, "body");
   const status = s(fd, "status") as RequestStatus | null;
@@ -257,12 +198,13 @@ export async function replyRequest(fd: FormData) {
 
   let documentId: string | null = null;
   if (file) {
-    const stored = await storeUpload(file, staff.studioId, req.client_id);
+    const stored = await storeUpload(file, staff.studioId, req.organization_id);
     const [doc] = await db
       .insert(documents)
       .values({
         studio_id: staff.studioId,
-        client_id: req.client_id,
+        organization_id: req.organization_id,
+        legal_entity_id: req.legal_entity_id,
         name: stored.name,
         storage_path: stored.storagePath,
         mime_type: stored.mimeType,
@@ -287,9 +229,9 @@ export async function replyRequest(fd: FormData) {
   // Responder pasa la solicitud a "en curso" salvo que se elija otro estado
   const nextStatus = status && status in REQUEST_STATUS ? status : body && req.status === "abierta" ? "en_curso" : req.status;
   await db.update(requests).set({ status: nextStatus }).where(eq(requests.id, req.id));
-  if (body || documentId) await notifyClient(staff.studioId, req.client_id, { kind: "respuesta", subject: req.subject });
+  if (body || documentId) await notifyOrganization(staff.studioId, req.organization_id, { kind: "respuesta", subject: req.subject });
 
-  revalidateClient(req.client_id);
+  revalidateOrg(req.organization_id);
   revalidatePath("/admin/solicitudes");
   redirect(`${back}${back.includes("?") ? "&" : "?"}guardado=1#${req.id}`);
 }
@@ -297,7 +239,8 @@ export async function replyRequest(fd: FormData) {
 // ───────────── importación de vencimientos ─────────────
 
 export interface PreviewRow extends ImportRow {
-  clientId: string | null;
+  organizationId: string | null;
+  legalEntityId: string | null;
   clientName: string | null;
 }
 
@@ -309,21 +252,21 @@ export interface ImportState {
   imported?: number;
 }
 
-/** Cruce por CUIT con los clientes del estudio */
+/** Cruce por CUIT con las razones sociales del estudio */
 async function matchClients(studioId: string, rows: ImportRow[]): Promise<PreviewRow[]> {
   const cuits = [...new Set(rows.map((r) => r.cuit).filter((c) => c.length === 11))];
   const found = cuits.length
     ? await getDb()
-        .select({ id: clients.id, name: clients.business_name, cuit: clients.cuit })
-        .from(clients)
-        .where(and(eq(clients.studio_id, studioId), inArray(clients.cuit, cuits)))
+        .select({ id: legal_entities.id, org: legal_entities.organization_id, name: legal_entities.business_name, cuit: legal_entities.cuit })
+        .from(legal_entities)
+        .where(and(eq(legal_entities.studio_id, studioId), inArray(legal_entities.cuit, cuits)))
     : [];
   const byCuit = new Map(found.map((c) => [c.cuit, c]));
   return rows.map((r) => {
     const c = byCuit.get(r.cuit);
     const errors = [...r.errors];
-    if (!c && r.cuit.length === 11) errors.push("No hay un cliente con ese CUIT");
-    return { ...r, errors, clientId: c?.id ?? null, clientName: c?.name ?? null };
+    if (!c && r.cuit.length === 11) errors.push("No hay una razón social con ese CUIT");
+    return { ...r, errors, organizationId: c?.org ?? null, legalEntityId: c?.id ?? null, clientName: c?.name ?? null };
   });
 }
 
@@ -367,7 +310,7 @@ export async function confirmObligationsImport(_prev: ImportState, fd: FormData)
     errors: [],
   }));
   const rows = (await matchClients(staff.studioId, clean)).filter(
-    (r) => r.clientId && r.cuit.length === 11 && r.tax && r.period && r.due_date,
+    (r) => r.organizationId && r.cuit.length === 11 && r.tax && r.period && r.due_date,
   );
   if (rows.length === 0) return { ok: false, message: "No hay filas válidas para importar." };
 
@@ -376,7 +319,8 @@ export async function confirmObligationsImport(_prev: ImportState, fd: FormData)
     .values(
       rows.map((r) => ({
         studio_id: staff.studioId,
-        client_id: r.clientId!,
+        organization_id: r.organizationId!,
+        legal_entity_id: r.legalEntityId,
         tax: r.tax,
         period: r.period,
         due_date: r.due_date,
@@ -386,14 +330,22 @@ export async function confirmObligationsImport(_prev: ImportState, fd: FormData)
 
   // Un aviso por cliente con sus vencimientos nuevos
   const byClient = new Map<string, PreviewRow[]>();
-  for (const r of rows) byClient.set(r.clientId!, [...(byClient.get(r.clientId!) ?? []), r]);
-  for (const [clientId, items] of byClient) {
-    await notifyClient(staff.studioId, clientId, {
+  for (const r of rows) byClient.set(r.organizationId!, [...(byClient.get(r.organizationId!) ?? []), r]);
+  for (const [orgId, items] of byClient) {
+    await audit({
+      studioId: staff.studioId,
+      organizationId: orgId,
+      actor: staff,
+      action: "vencimientos.importar",
+      entityType: "vencimiento",
+      metadata: { filas: items.length },
+    });
+    await notifyOrganization(staff.studioId, orgId, {
       kind: "vencimientos",
       items: items.map((i) => ({ tax: i.tax, period: i.period, dueDate: i.due_date })),
     });
-    revalidatePath(`/admin/clientes/${clientId}`);
+    revalidatePath(`/admin/organizaciones/${orgId}`);
   }
   revalidatePath("/portal", "layout");
-  return { ok: true, imported: rows.length, message: `Se importaron ${rows.length} vencimientos de ${byClient.size} clientes.` };
+  return { ok: true, imported: rows.length, message: `Se importaron ${rows.length} vencimientos de ${byClient.size} organizaciones.` };
 }

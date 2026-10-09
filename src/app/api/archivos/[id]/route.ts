@@ -1,7 +1,9 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { client_users, documents } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { documents, request_messages, requests } from "@/db/schema";
+import { audit } from "@/lib/audit";
+import { getCurrentUser, getMemberships } from "@/lib/auth";
+import { can } from "@/lib/permissions";
 import { isUuid } from "@/lib/ids";
 import { readStored } from "@/lib/uploads";
 
@@ -12,8 +14,10 @@ const notFound = () => new Response("No encontrado", { status: 404 });
 /**
  * Única forma de bajar un archivo. Lo puede ver:
  * - alguien del estudio (admin o contador) del mismo estudio, o
- * - un usuario cliente vinculado (client_users) al cliente del documento.
+ * - un miembro activo de la organización del documento con permiso para ver
+ *   documentos, o (RRHH) el adjunto de una solicitud laboral de su organización.
  * Para cualquier otro caso responde 404 (no revela si el archivo existe).
+ * Toda descarga y todo intento rechazado quedan en la auditoría.
  */
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,13 +32,31 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     .where(and(eq(documents.id, id), eq(documents.studio_id, user.studioId)));
   if (!doc) return notFound();
 
+  let allowed = user.role === "admin" || user.role === "contador";
   if (user.role === "cliente") {
-    const [link] = await db
-      .select({ clientId: client_users.client_id })
-      .from(client_users)
-      .where(and(eq(client_users.user_id, user.id), eq(client_users.client_id, doc.client_id)));
-    if (!link) return notFound();
-  } else if (user.role !== "admin" && user.role !== "contador") {
+    const membership = (await getMemberships(user.id, user.studioId)).find((m) => m.organizationId === doc.organization_id);
+    if (membership && can(membership.role, "documentos.ver")) allowed = true;
+    else if (membership && can(membership.role, "solicitudes.laborales")) {
+      // Adjunto de una solicitud de personal de su organización
+      const [attached] = await db
+        .select({ id: request_messages.id })
+        .from(request_messages)
+        .innerJoin(requests, eq(requests.id, request_messages.request_id))
+        .where(and(eq(request_messages.document_id, doc.id), eq(requests.organization_id, doc.organization_id), eq(requests.type, "empleado")))
+        .limit(1);
+      allowed = Boolean(attached);
+    }
+  }
+  if (!allowed) {
+    await audit({
+      studioId: user.studioId,
+      organizationId: doc.organization_id,
+      actor: user,
+      action: "documento.descargar",
+      entityType: "documento",
+      entityId: doc.id,
+      result: "denegado",
+    });
     return notFound();
   }
 
@@ -46,6 +68,15 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     return notFound();
   }
 
+  await audit({
+    studioId: user.studioId,
+    organizationId: doc.organization_id,
+    actor: user,
+    action: "documento.descargar",
+    entityType: "documento",
+    entityId: doc.id,
+    metadata: { nombre: doc.name },
+  });
   const asciiName = doc.name.replace(/[^\x20-\x7e]/g, "_").replace(/["\\]/g, "_");
   return new Response(new Uint8Array(file.data), {
     headers: {

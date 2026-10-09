@@ -3,7 +3,9 @@ import Link from "next/link";
 import { SubmitButton } from "@/components/admin/ui";
 import { FileField } from "@/components/portal/FileField";
 import { Card, PageTitle } from "@/components/portal/ui";
-import { requireClient } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { requireMember } from "@/lib/auth";
+import { can, canCreateRequests } from "@/lib/permissions";
 import { REQUEST_TYPES } from "@/lib/portal-types";
 import { createRequest } from "../../../actions";
 
@@ -12,7 +14,10 @@ export const metadata: Metadata = { title: "Nueva solicitud" };
 const field = "mt-1.5 w-full rounded-md border border-line bg-surface px-3 text-[15px]";
 
 export default async function NuevaSolicitudPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  await requireClient();
+  const me = await requireMember();
+  if (!canCreateRequests(me.orgRole)) redirect("/portal/sin-permiso");
+  // RRHH solo crea solicitudes de personal
+  const types = Object.entries(REQUEST_TYPES).filter(([v]) => can(me.orgRole, "solicitudes.crear") || v === "empleado");
   const { error } = await searchParams;
   return (
     <>
@@ -33,8 +38,8 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
             <label htmlFor="type" className="block text-sm font-medium">
               Tipo
             </label>
-            <select id="type" name="type" defaultValue="consulta" className={`${field} h-11`}>
-              {Object.entries(REQUEST_TYPES).map(([v, l]) => (
+            <select id="type" name="type" defaultValue={types[0][0]} className={`${field} h-11`}>
+              {types.map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
                 </option>

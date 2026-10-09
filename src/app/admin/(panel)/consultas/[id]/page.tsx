@@ -2,7 +2,8 @@ import { and, asc, eq, inArray } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { convertLeadToClient, deleteLead, updateLead } from "@/app/admin/actions";
+import { deleteLead, updateLead } from "@/app/admin/actions";
+import { convertLeadToOrganization } from "@/app/admin/organization-actions";
 import { AdminField, Notice } from "@/components/admin/AdminField";
 import { SubmitButton, FormSelect } from "@/components/admin/ui";
 import { getDb } from "@/db";
@@ -83,15 +84,12 @@ export default async function ConsultaPage({
               Responder por mail
             </a>
           )}
-          {lead.client_id ? (
-            <Link
-              href={`/admin/clientes/${lead.client_id}`}
-              className={adminButton.primary}
-            >
-              Ver cliente
+          {lead.organization_id ? (
+            <Link href={`/admin/organizaciones/${lead.organization_id}`} className={adminButton.primary}>
+              Ver organización
             </Link>
           ) : (
-            <form action={convertLeadToClient}>
+            <form action={convertLeadToOrganization}>
               <input type="hidden" name="id" value={lead.id} />
               <SubmitButton pendingText="Creando…">Convertir en cliente</SubmitButton>
             </form>

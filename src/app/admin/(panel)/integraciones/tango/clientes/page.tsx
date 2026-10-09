@@ -7,15 +7,16 @@ import { FormSelect, SubmitButton } from "@/components/admin/ui";
 import { Badge } from "@/components/portal/ui";
 import { Input } from "@/components/ui/input";
 import { getDb } from "@/db";
-import { clients, integrations, tango_companies, tango_records } from "@/db/schema";
+import { integrations, legal_entities, organizations, tango_companies, tango_records } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth";
 import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { describeClient, getMapping } from "@/lib/integrations/tango/mapping";
+import { formatCuit } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Clientes en Tango" };
 
-const fmtCuit = (c: string | null) => (c && c.length === 11 ? `${c.slice(0, 2)}-${c.slice(2, 10)}-${c.slice(10)}` : (c ?? "Sin CUIT"));
+const fmtCuit = (c: string | null) => formatCuit(c, "Sin CUIT");
 const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 const FILTERS = [
@@ -25,9 +26,9 @@ const FILTERS = [
 ] as const;
 
 const ERRORS: Record<string, string> = {
-  cuit: "Ya hay un cliente con ese CUIT en la plataforma: vinculalo en lugar de importarlo.",
+  cuit: "Ya hay una razón social con ese CUIT en la plataforma: vinculala en lugar de importarla.",
   importar: "No se pudo importar el cliente.",
-  vincular: "No se pudo vincular. Elegí un cliente.",
+  vincular: "No se pudo vincular. Elegí una razón social.",
 };
 
 export default async function TangoClientesPage({
@@ -46,7 +47,12 @@ export default async function TangoClientesPage({
       .where(and(eq(tango_records.studio_id, admin.studioId), eq(tango_records.process, TANGO_PROCESS.clientes)))
       .orderBy(asc(tango_records.company_id), asc(tango_records.external_id))
       .limit(5000),
-    db.select({ id: clients.id, name: clients.business_name, cuit: clients.cuit }).from(clients).where(eq(clients.studio_id, admin.studioId)).orderBy(asc(clients.business_name)),
+    db
+      .select({ id: legal_entities.id, name: legal_entities.business_name, cuit: legal_entities.cuit, org: organizations.id, orgName: organizations.name })
+      .from(legal_entities)
+      .innerJoin(organizations, eq(organizations.id, legal_entities.organization_id))
+      .where(eq(legal_entities.studio_id, admin.studioId))
+      .orderBy(asc(legal_entities.business_name)),
     db.select().from(tango_companies).where(eq(tango_companies.studio_id, admin.studioId)),
   ]);
 
@@ -58,7 +64,7 @@ export default async function TangoClientesPage({
 
   const rows = records.map((r) => {
     const data = describeClient(r.raw, mapping);
-    const linked = r.client_id ? byId.get(r.client_id) : undefined;
+    const linked = r.legal_entity_id ? byId.get(r.legal_entity_id) : undefined;
     const match = !linked && data.cuit ? byCuit.get(data.cuit) : undefined;
     return { record: r, data, linked, match };
   });
@@ -80,8 +86,8 @@ export default async function TangoClientesPage({
         <AdminPageHeader title="Clientes en Tango" />
       </div>
       <p className="mb-5 text-muted">
-        {rows.length} clientes sincronizados · {linkedCount} vinculados · {rows.length - linkedCount} sin vincular. Se cruzan por CUIT con los clientes de la
-        plataforma.
+        {rows.length} clientes sincronizados · {linkedCount} vinculados · {rows.length - linkedCount} sin vincular. Se cruzan por CUIT con las razones sociales de
+        la plataforma.
       </p>
       {sp.vinculado && <Notice>Cliente vinculado con Tango.</Notice>}
       {sp.importado && <Notice>Cliente importado y vinculado.</Notice>}
@@ -132,7 +138,7 @@ export default async function TangoClientesPage({
                 {linked ? (
                   <span className="flex flex-wrap items-center gap-2">
                     <Badge tone="ok">Vinculado</Badge>
-                    <Link href={`/admin/clientes/${linked.id}`} className="text-rose-deep hover:underline">
+                    <Link href={`/admin/organizaciones/${linked.org}`} className="text-rose-deep hover:underline">
                       {linked.name}
                     </Link>
                   </span>
@@ -157,23 +163,23 @@ export default async function TangoClientesPage({
                 ) : match ? (
                   <form action={linkTangoClient}>
                     <input type="hidden" name="record_id" value={r.id} />
-                    <input type="hidden" name="client_id" value={match.id} />
+                    <input type="hidden" name="legal_entity_id" value={match.id} />
                     <SubmitButton pendingText="…">Vincular</SubmitButton>
                   </form>
                 ) : (
                   <>
                     <form action={importTangoClient}>
                       <input type="hidden" name="record_id" value={r.id} />
-                      <SubmitButton pendingText="Importando…">Importar como cliente</SubmitButton>
+                      <SubmitButton pendingText="Importando…">Importar como organización</SubmitButton>
                     </form>
                     {clientOptions.length > 0 && (
                       <form action={linkTangoClient} className="flex items-center gap-2">
                         <input type="hidden" name="record_id" value={r.id} />
                         <FormSelect
                           id={`link-${r.id}`}
-                          name="client_id"
+                          name="legal_entity_id"
                           options={[{ value: "", label: "Vincular a…" }, ...clientOptions]}
-                          aria-label={`Vincular ${data.name ?? r.external_id} a un cliente`}
+                          aria-label={`Vincular ${data.name ?? r.external_id} a una razón social`}
                           className="mt-0 w-48"
                         />
                         <SubmitButton variant="secondary" pendingText="…">

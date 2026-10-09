@@ -1,7 +1,7 @@
 import { and, asc, count, desc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { mapCompanyToClient, saveTangoMapping, setTangoStatus } from "@/app/admin/integration-actions";
+import { mapCompanyToOrganization, saveTangoMapping, setTangoStatus } from "@/app/admin/integration-actions";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { adminButton } from "@/components/admin/styles";
 import { TangoKeyPanel } from "@/components/admin/TangoKeyPanel";
@@ -9,7 +9,7 @@ import { FormSelect, SubmitButton } from "@/components/admin/ui";
 import { Badge } from "@/components/portal/ui";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
-import { clients, integration_syncs, integrations, tango_companies, tango_records } from "@/db/schema";
+import { integration_syncs, integrations, organizations, tango_companies, tango_records } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth";
 import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { MAPPING_LABELS, getMapping, type TangoMapping } from "@/lib/integrations/tango/mapping";
@@ -45,7 +45,11 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
           .select({ n: count() })
           .from(tango_records)
           .where(and(eq(tango_records.studio_id, admin.studioId), eq(tango_records.process, TANGO_PROCESS.clientes))),
-        db.select({ id: clients.id, name: clients.business_name }).from(clients).where(eq(clients.studio_id, admin.studioId)).orderBy(asc(clients.business_name)),
+        db
+          .select({ id: organizations.id, name: organizations.name })
+          .from(organizations)
+          .where(eq(organizations.studio_id, admin.studioId))
+          .orderBy(asc(organizations.name)),
       ])
     : [[], [], [{ n: 0 }], []];
 
@@ -125,7 +129,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
           <section id="empresas">
             <h2 className="text-lg font-semibold">Empresas de Tango</h2>
             <p className="mt-1 text-[15px] text-muted">
-              Si el estudio usa una empresa de Tango por cada cliente, asigná cada empresa a su cliente de la plataforma.
+              Si el estudio usa una empresa de Tango por cada cliente, asigná cada empresa a su organización en la plataforma.
             </p>
             {companies.length === 0 ? (
               <p className="mt-3 rounded-md border border-dashed border-line p-5 text-muted">Aparecen después de la primera prueba o sincronización del conector.</p>
@@ -140,14 +144,14 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
                       </p>
                       <p className="text-sm text-muted">Última sincronización: {when(c.last_sync_at)}</p>
                     </div>
-                    <form action={mapCompanyToClient} className="flex items-center gap-2">
+                    <form action={mapCompanyToOrganization} className="flex items-center gap-2">
                       <input type="hidden" name="id" value={c.id} />
                       <FormSelect
                         id={`company-${c.id}`}
-                        name="client_id"
-                        defaultValue={c.client_id ?? ""}
+                        name="organization_id"
+                        defaultValue={c.organization_id ?? ""}
                         options={clientOptions}
-                        aria-label={`Cliente de la empresa ${c.company_id}`}
+                        aria-label={`Organización de la empresa ${c.company_id}`}
                         className="mt-0 w-64"
                       />
                       <SubmitButton variant="secondary" pendingText="…">
