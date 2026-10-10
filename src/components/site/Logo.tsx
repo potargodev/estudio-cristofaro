@@ -12,7 +12,7 @@ export function Logo({ inverted = false }: { inverted?: boolean }) {
     >
       <span
         aria-hidden
-        className="block h-10 aspect-[325.56/72.03] bg-current sm:h-11"
+        className="block h-10 aspect-[325.56/72.03] bg-current sm:h-11 lg:h-[54px]"
         style={{
           mask: "url(/marca/logo-horizontal.svg) center / contain no-repeat",
           WebkitMask: "url(/marca/logo-horizontal.svg) center / contain no-repeat",

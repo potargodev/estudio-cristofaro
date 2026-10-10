@@ -129,7 +129,7 @@ export function SiteHeader() {
         <div
           className={cn(
             "mx-auto flex max-w-[1360px] items-center justify-between gap-6 px-5 transition-[height] duration-500 sm:px-8 lg:px-12",
-            scrolled ? "h-16" : "h-20",
+            scrolled ? "h-16 lg:h-20" : "h-20 lg:h-24",
           )}
         >
           <div className={cn("origin-left transition-transform duration-500", scrolled && "scale-[0.86]")}>
