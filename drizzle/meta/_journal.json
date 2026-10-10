@@ -127,6 +127,13 @@
       "when": 1791654664312,
       "tag": "0017_onboarding",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791657037006,
+      "tag": "0018_ayuda",
+      "breakpoints": true
     }
   ]
 }

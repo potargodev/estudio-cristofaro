@@ -82,6 +82,11 @@ const blocked = await chat(d.cookies.adminA, { text: "hola" });
 check("al llegar al límite mensual deja de responder", blocked.status === 402, blocked.raw?.slice(0, 60));
 await sql`update ai_settings set monthly_budget_usd = null where studio_id = ${d.studios.A}`;
 
+// 7b. Preguntas de uso: responde con el centro de ayuda y cita el artículo
+const ay = await chat(d.cookies.adminA, { text: "¿Cómo invito a un cliente al portal?" });
+check("pregunta de uso: usa buscar_ayuda", ay.tools.some((t) => t.toolName === "buscar_ayuda"));
+check("cita y enlaza el artículo", /\]\(https?:\/\/[^)]+\/ayuda\/[a-z-]+\/[a-z-]+\)/.test(ay.text), ay.text.slice(-120));
+
 // 8. Auditoría
 const [aud] = await sql`select count(*)::int n from audit_log where studio_id = ${d.studios.A} and action in ('herramienta.ejecutar','aprobacion.proponer','herramienta.denegada')`;
 check("cada ejecución queda en la auditoría", aud.n > 5, `${aud.n} eventos`);

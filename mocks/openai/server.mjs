@@ -37,6 +37,8 @@ function summarize(result) {
   const data = result.resultado ?? result;
   if (data && typeof data.listo === "string") return `${data.listo}.${Array.isArray(data.partes) ? `\n\n${data.partes.map((p) => `- ${p}`).join("\n")}` : ""}`;
   const rows = firstArray(result);
+  // Centro de ayuda: responde citando el artículo
+  if (rows && rows.length && rows[0]?.enlace && rows[0]?.titulo) return `${rows[0].resumen}\n\nFuente: [${rows[0].titulo}](${rows[0].enlace})`;
   if (rows && rows.length && typeof rows[0] === "object") {
     const cols = Object.keys(rows[0]).filter((k) => !/id$/.test(k) && typeof rows[0][k] !== "object").slice(0, 4);
     const fmt = (v) => (v == null ? "—" : String(v).replace(/\|/g, "/").slice(0, 40));
@@ -72,6 +74,7 @@ function decide(body) {
     const dividir_entre = gasto[3].split(/\s*(?:,|\by\b)\s*/).map((n) => n.trim()).filter(Boolean).map((n) => n.charAt(0).toUpperCase() + n.slice(1));
     return want("crear_gasto", { descripcion, monto, dividir_entre });
   }
+  if (/^¿?c[oó]mo |d[oó]nde (est[aá]|se)/.test(q.trim())) return want("buscar_ayuda", { consulta: q.replace(/[¿?]/g, "").trim() });
   if (/saldo|cu[aá]nto (?:le )?debo|me deben/.test(q)) return want("consultar_saldos", {});
   // Rubros: "aplicá la plantilla de gastronomía a esta organización" / "¿qué obligaciones típicas tiene la construcción?"
   const plantilla = q.match(/plantilla de ([a-záéíóúñ\s-]+?)(?: a | en |$)/);

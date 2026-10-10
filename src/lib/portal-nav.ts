@@ -5,7 +5,7 @@ import { can, canSeeRequests, type OrgRole } from "./permissions";
 // organización. Es solo presentación: cada página vuelve a validar el permiso
 // en el servidor.
 
-export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas" | "gastos" | "rendiciones";
+export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas" | "gastos" | "rendiciones" | "ayuda";
 
 export interface PortalNavItem {
   href: string;
@@ -57,5 +57,6 @@ export function buildPortalNav(role: OrgRole, activeModules: string[]) {
   }
   if (can(role, "agenda.reservar")) extra.push({ href: "/portal/agendar", label: "Agendar llamada", icon: "agenda" });
   if (can(role, "equipo.gestionar")) extra.push({ href: "/portal/equipo", label: "Mi equipo", icon: "equipo" });
+  extra.push({ href: "/ayuda", label: "Ayuda", icon: "ayuda" });
   return { main, extra };
 }

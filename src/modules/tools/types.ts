@@ -22,6 +22,7 @@ export const TOOL_MODULES = {
   conexiones: "Conexiones (Tango, Xubio, archivos)",
   gastos: "Grupos de gastos",
   industrias: "Ecosistemas por industria",
+  ayuda: "Centro de ayuda",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 

@@ -17,7 +17,8 @@ export type NavIcon =
   | "ia"
   | "faro"
   | "gastos"
-  | "modulos";
+  | "modulos"
+  | "ayuda";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -105,6 +106,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/modulos", label: "Módulos", icon: "modulos", personal: true },
     ],
   },
+  { title: "Ayuda", items: [{ href: "/ayuda", label: "Centro de ayuda", icon: "ayuda", personal: true }] },
   { title: "Faro", faroOnly: true, items: [{ href: "/faro-manager", label: "Faro Manager", icon: "faro" }] },
 ];
 

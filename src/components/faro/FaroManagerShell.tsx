@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageSquareText,
   ScrollText,
   Tags,
   UserPlus,
@@ -62,7 +63,8 @@ const GROUPS: { title: string; items: Item[] }[] = [
     title: "Plataforma",
     items: [
       { href: "/faro-manager/auditoria", label: "Auditoría", icon: ScrollText },
-      { href: "/ayuda", label: "Ayuda", icon: CircleHelp },
+      { href: "/faro-manager/ayuda", label: "Opiniones de la ayuda", icon: MessageSquareText },
+      { href: "/ayuda", label: "Centro de ayuda", icon: CircleHelp },
     ],
   },
 ];

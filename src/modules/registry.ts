@@ -136,7 +136,7 @@ export const FARO_MODULES: FaroModule[] = [
       { href: "/admin/mcp", label: "Accesos MCP" },
     ],
     events: ["aprobacion.propuesta", "aprobacion.resuelta"],
-    tools: [],
+    tools: ["buscar_ayuda", "leer_articulo_ayuda"],
   },
   {
     key: "shared_expenses",

@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/ayuda.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "ayuda": "node scripts/ayuda.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",

@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod/v4";
 import { agendaTools } from "./modulos/agenda";
+import { ayudaTools } from "./modulos/ayuda";
 import { conexionesTools } from "./modulos/conexiones";
 import { consultasTools } from "./modulos/consultas";
 import { documentosTools } from "./modulos/documentos";
@@ -25,6 +26,7 @@ export const TOOLS: ToolDefinition[] = [
   ...conexionesTools,
   ...gastosTools,
   ...industriasTools,
+  ...ayudaTools,
 ];
 
 const BY_NAME = new Map(TOOLS.map((t) => [t.name, t]));

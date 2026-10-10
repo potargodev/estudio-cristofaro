@@ -1646,3 +1646,21 @@ export const accounting_expenses = pgTable(
   },
   (t) => [unique("accounting_expenses_source_key").on(t.source, t.source_id), index("accounting_expenses_org_idx").on(t.organization_id, t.date)],
 );
+
+// ───────────────────────── Centro de ayuda ─────────────────────────
+
+/** "¿Te sirvió?" de cada artículo de /ayuda (sí/no y un comentario opcional) */
+export const help_feedback = pgTable(
+  "help_feedback",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** categoria/slug del artículo (docs/ayuda) */
+    article_id: text("article_id").notNull(),
+    helpful: boolean("helpful").notNull(),
+    comment: text("comment"),
+    user_id: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("help_feedback_article_idx").on(t.article_id, t.created_at)],
+);

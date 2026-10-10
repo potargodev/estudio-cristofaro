@@ -46,4 +46,5 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 ## Forma de trabajo
 - Commits chicos por etapa, push a main. `npm run build` sin errores antes de cada push.
 - Migraciones con drizzle-kit; nunca editar migraciones ya aplicadas.
+- Centro de ayuda: toda funcionalidad nueva o que cambia actualiza su artículo en `docs/ayuda/<categoria>/<slug>.md` (y la fecha `actualizado` del frontmatter) en el mismo commit. `npm run ayuda` valida el formato y compila el índice (corre solo antes de cada build).
 - Al terminar una tarea: listar qué quedó, qué se probó y qué falta configurar.

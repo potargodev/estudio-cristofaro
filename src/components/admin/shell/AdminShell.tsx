@@ -18,6 +18,7 @@ import {
   Plus,
   Bot,
   Blocks,
+  CircleHelp,
   Lock,
   ShieldCheck,
   Sparkles,
@@ -60,6 +61,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   faro: Compass,
   gastos: Wallet,
   modulos: Blocks,
+  ayuda: CircleHelp,
 };
 
 /** Barra inferior del celular, como en una app: las cuatro secciones de todos los días y "Más" (abre el menú completo) */
