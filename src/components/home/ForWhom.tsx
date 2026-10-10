@@ -22,7 +22,7 @@ export function ForWhom() {
               <li key={a.slug} className="border-b border-hair">
                 <Link href={`/${a.slug}`} className="group grid grid-cols-[3rem_1fr] gap-x-4 py-8 lg:grid-cols-[4rem_1fr_14rem] lg:items-baseline">
                   <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
-                  <span className="font-display text-[clamp(1.8rem,3vw,2.75rem)] leading-[1.02] text-paper transition-colors duration-500 group-hover:text-rose-light">
+                  <span className="font-sans text-[clamp(1.35rem,2.1vw,2rem)] font-semibold leading-[1.15] tracking-[-0.01em] text-paper transition-colors duration-500 group-hover:text-rose-light">
                     {a.name}
                   </span>
                   <span className="col-start-2 mt-3 text-[14px] leading-relaxed text-paper/60 lg:col-start-3 lg:mt-0">{a.summary}</span>
