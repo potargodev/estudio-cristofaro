@@ -12,7 +12,8 @@
     "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
     "reset-password": "tsx --env-file-if-exists=.env.local scripts/reset-password.ts",
     "build:scripts": "esbuild scripts/migrate.ts scripts/seed.ts scripts/reset-password.ts scripts/faro-equipo.ts --bundle --platform=node --format=esm --target=node22 --outdir=dist --out-extension:.js=.mjs --log-level=warning --banner:js=\"import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);\"",
-    "faro-equipo": "tsx --env-file-if-exists=.env.local scripts/faro-equipo.ts"
+    "faro-equipo": "tsx --env-file-if-exists=.env.local scripts/faro-equipo.ts",
+    "test": "tsx --test src/modules/gastos/core/*.test.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.78",
