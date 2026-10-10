@@ -10,6 +10,7 @@
 import { sql } from "drizzle-orm";
 import {
   type AnyPgColumn,
+  bigint,
   boolean,
   date,
   index,
@@ -52,7 +53,7 @@ export const integrationStatus = pgEnum("integration_status", ["activa", "pausad
 export const syncStatus = pgEnum("sync_status", ["en_curso", "ok", "error"]);
 export const organizationStatus = pgEnum("organization_status", ["onboarding", "activa", "pausada", "baja"]);
 export const riskLevel = pgEnum("risk_level", ["bajo", "medio", "alto"]);
-export const orgRole = pgEnum("org_role", ["administrador", "direccion", "administracion", "rrhh", "consulta"]);
+export const orgRole = pgEnum("org_role", ["administrador", "direccion", "administracion", "rrhh", "consulta", "empleado"]);
 export const membershipStatus = pgEnum("membership_status", ["activa", "suspendida", "revocada"]);
 export const invitationStatus = pgEnum("invitation_status", ["pendiente", "aceptada", "revocada", "vencida"]);
 export const staffAssignment = pgEnum("staff_assignment", ["responsable", "colaborador"]);
@@ -1116,4 +1117,292 @@ export const assisted_access = pgTable(
     created_at: createdAt(),
   },
   (t) => [index("assisted_access_user_idx").on(t.faro_user_id, t.expires_at)],
+);
+
+// ───────────────────────── Gastos compartidos (núcleo, docs/faro-producto.md §2.e) ─────────────────────────
+// Todos los montos en centavos enteros (bigint, modo number: hasta 9 billones de pesos).
+
+export const groupType = pgEnum("group_type", ["socios", "equipo", "oficina", "proyecto", "viaje", "personal"]);
+export const groupRole = pgEnum("group_role", ["admin", "miembro"]);
+export const splitMethodEnum = pgEnum("split_method", ["iguales", "porcentaje", "partes", "montos", "items"]);
+export const settlementMethod = pgEnum("settlement_method", ["efectivo", "transferencia", "mercado_pago"]);
+export const settlementStatus = pgEnum("settlement_status", ["informado", "confirmado", "rechazado"]);
+export const reimbursementStatus = pgEnum("reimbursement_status", ["pendiente", "aprobada", "rechazada", "reintegrada"]);
+
+const cents = (name: string) => bigint(name, { mode: "number" });
+
+/** Grupo de gastos. Pertenece al tenant de quien lo creó; el contexto contable es opcional. */
+export const expense_groups = pgTable(
+  "expense_groups",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    type: groupType("type").notNull().default("personal"),
+    base_currency: text("base_currency").notNull().default("ARS"),
+    /** Contexto contable: una organización (sus gastos) o el propio tenant (autónomo) */
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+    context_tenant: boolean("context_tenant").notNull().default(false),
+    color: text("color").notNull().default("#c8a465"),
+    image_path: text("image_path"),
+    simplify_debts: boolean("simplify_debts").notNull().default(true),
+    /** Recordatorios de saldos pendientes: off | semanal | quincenal | mensual */
+    reminder_frequency: text("reminder_frequency").notNull().default("semanal"),
+    last_reminder_at: timestamp("last_reminder_at", { withTimezone: true }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    archived_at: timestamp("archived_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("expense_groups_studio_idx").on(t.studio_id)],
+);
+
+/** Integrantes: usuarios de Faro o invitados sin cuenta (entran por link mágico solo a su grupo) */
+export const group_members = pgTable(
+  "group_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    group_id: uuid("group_id")
+      .notNull()
+      .references(() => expense_groups.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    name: text("name").notNull(),
+    email: text("email"),
+    role: groupRole("role").notNull().default("miembro"),
+    payment_alias: text("payment_alias"),
+    payment_cvu: text("payment_cvu"),
+    /** SHA-256 del link mágico del invitado (solo invitados) */
+    guest_token_hash: text("guest_token_hash").unique(),
+    reminders_opt_out: boolean("reminders_opt_out").notNull().default(false),
+    active: boolean("active").notNull().default(true),
+    invited_by: uuid("invited_by"),
+    created_at: createdAt(),
+  },
+  (t) => [
+    uniqueIndex("group_members_user_idx").on(t.group_id, t.user_id).where(sql`${t.user_id} is not null`),
+    index("group_members_user_lookup_idx").on(t.user_id),
+  ],
+);
+
+export interface ExpenseItem {
+  description: string;
+  amount: number;
+  members: string[];
+}
+
+export const expenses = pgTable(
+  "expenses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    group_id: uuid("group_id")
+      .notNull()
+      .references(() => expense_groups.id, { onDelete: "cascade" }),
+    description: text("description").notNull(),
+    amount: cents("amount").notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    /** Cotización usada para pasar a la moneda base (valor y fuente: oficial, mep o manual) */
+    fx_rate: numeric("fx_rate", { precision: 18, scale: 6 }),
+    fx_source: text("fx_source"),
+    fx_date: date("fx_date"),
+    date: date("date").notNull(),
+    category: text("category").notNull().default("otros"),
+    split_method: splitMethodEnum("split_method").notNull().default("iguales"),
+    /** Detalle del método (porcentajes, partes, montos o ítems) tal como se cargó */
+    split_spec: jsonb("split_spec").$type<Record<string, unknown>>().notNull().default({}),
+    receipt_path: text("receipt_path"),
+    receipt_name: text("receipt_name"),
+    receipt_mime: text("receipt_mime"),
+    notes: text("notes"),
+    is_company: boolean("is_company").notNull().default(false),
+    is_deductible: boolean("is_deductible").notNull().default(false),
+    /** Recurrencia: null | semanal | mensual | anual; el job crea la próxima en next_date */
+    recurrence: text("recurrence"),
+    recurrence_next: date("recurrence_next"),
+    recurrence_parent_id: uuid("recurrence_parent_id"),
+    created_by: uuid("created_by").references(() => group_members.id, { onDelete: "set null" }),
+    deleted_at: timestamp("deleted_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("expenses_group_idx").on(t.group_id, t.date), index("expenses_recurrence_idx").on(t.recurrence_next)],
+);
+
+/** Quién pagó (uno o varios) y cuánto, en centavos */
+export const expense_payers = pgTable(
+  "expense_payers",
+  {
+    expense_id: uuid("expense_id")
+      .notNull()
+      .references(() => expenses.id, { onDelete: "cascade" }),
+    member_id: uuid("member_id")
+      .notNull()
+      .references(() => group_members.id, { onDelete: "cascade" }),
+    amount: cents("amount").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.expense_id, t.member_id] })],
+);
+
+/** Cuánto le toca a cada persona (resultado del reparto), en centavos */
+export const expense_shares = pgTable(
+  "expense_shares",
+  {
+    expense_id: uuid("expense_id")
+      .notNull()
+      .references(() => expenses.id, { onDelete: "cascade" }),
+    member_id: uuid("member_id")
+      .notNull()
+      .references(() => group_members.id, { onDelete: "cascade" }),
+    amount: cents("amount").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.expense_id, t.member_id] })],
+);
+
+/** Pagos entre integrantes para saldar deudas */
+export const settlements = pgTable(
+  "settlements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    group_id: uuid("group_id")
+      .notNull()
+      .references(() => expense_groups.id, { onDelete: "cascade" }),
+    from_member: uuid("from_member")
+      .notNull()
+      .references(() => group_members.id, { onDelete: "cascade" }),
+    to_member: uuid("to_member")
+      .notNull()
+      .references(() => group_members.id, { onDelete: "cascade" }),
+    amount: cents("amount").notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    method: settlementMethod("method").notNull().default("transferencia"),
+    status: settlementStatus("status").notNull().default("informado"),
+    confirmed_by_from: boolean("confirmed_by_from").notNull().default(false),
+    confirmed_by_to: boolean("confirmed_by_to").notNull().default(false),
+    payment_link: text("payment_link"),
+    receipt_path: text("receipt_path"),
+    receipt_name: text("receipt_name"),
+    note: text("note"),
+    created_by: uuid("created_by").references(() => group_members.id, { onDelete: "set null" }),
+    confirmed_at: timestamp("confirmed_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("settlements_group_idx").on(t.group_id, t.created_at)],
+);
+
+/** Aportes y retiros de socios (grupos de tipo socios) */
+export const partner_movements = pgTable(
+  "partner_movements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    group_id: uuid("group_id")
+      .notNull()
+      .references(() => expense_groups.id, { onDelete: "cascade" }),
+    member_id: uuid("member_id")
+      .notNull()
+      .references(() => group_members.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(), // aporte | retiro
+    amount: cents("amount").notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    date: date("date").notNull(),
+    note: text("note"),
+    created_by: uuid("created_by").references(() => group_members.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("partner_movements_group_idx").on(t.group_id, t.date)],
+);
+
+/** Comentarios por gasto (o del grupo, sin gasto) */
+export const expense_comments = pgTable(
+  "expense_comments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    group_id: uuid("group_id")
+      .notNull()
+      .references(() => expense_groups.id, { onDelete: "cascade" }),
+    expense_id: uuid("expense_id").references(() => expenses.id, { onDelete: "cascade" }),
+    member_id: uuid("member_id").references(() => group_members.id, { onDelete: "set null" }),
+    body: text("body").notNull(),
+    created_at: createdAt(),
+  },
+  (t) => [index("expense_comments_idx").on(t.group_id, t.expense_id, t.created_at)],
+);
+
+/** Actividad cronológica del grupo */
+export const group_activity = pgTable(
+  "group_activity",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    group_id: uuid("group_id")
+      .notNull()
+      .references(() => expense_groups.id, { onDelete: "cascade" }),
+    member_id: uuid("member_id").references(() => group_members.id, { onDelete: "set null" }),
+    kind: text("kind").notNull(), // gasto | gasto_editado | gasto_borrado | pago | pago_confirmado | aporte | retiro | integrante | comentario | grupo
+    text: text("text").notNull(),
+    expense_id: uuid("expense_id"),
+    settlement_id: uuid("settlement_id"),
+    created_at: createdAt(),
+  },
+  (t) => [index("group_activity_idx").on(t.group_id, t.created_at)],
+);
+
+/** Rendición de gastos de un empleado de una organización */
+export const reimbursements = pgTable(
+  "reimbursements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    description: text("description").notNull(),
+    amount: cents("amount").notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    date: date("date").notNull(),
+    category: text("category").notNull().default("otros"),
+    receipt_path: text("receipt_path"),
+    receipt_name: text("receipt_name"),
+    receipt_mime: text("receipt_mime"),
+    status: reimbursementStatus("status").notNull().default("pendiente"),
+    decided_by: uuid("decided_by").references(() => users.id, { onDelete: "set null" }),
+    decided_at: timestamp("decided_at", { withTimezone: true }),
+    reason: text("reason"),
+    reimbursed_at: timestamp("reimbursed_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("reimbursements_org_idx").on(t.organization_id, t.status, t.created_at)],
+);
+
+/**
+ * Gastos contables de una organización o de un autónomo: los gastos
+ * compartidos marcados "de la empresa" o "deducible" y las rendiciones
+ * aprobadas, con su comprobante. Los ve el estudio que gestiona la organización.
+ */
+export const accounting_expenses = pgTable(
+  "accounting_expenses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    source: text("source").notNull(), // gasto_compartido | rendicion
+    source_id: uuid("source_id").notNull(),
+    description: text("description").notNull(),
+    amount: cents("amount").notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    date: date("date").notNull(),
+    category: text("category").notNull().default("otros"),
+    deductible: boolean("deductible").notNull().default(false),
+    receipt_path: text("receipt_path"),
+    receipt_name: text("receipt_name"),
+    receipt_mime: text("receipt_mime"),
+    created_at: createdAt(),
+  },
+  (t) => [unique("accounting_expenses_source_key").on(t.source, t.source_id), index("accounting_expenses_org_idx").on(t.organization_id, t.date)],
 );

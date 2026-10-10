@@ -78,6 +78,13 @@
       "when": 1791643424985,
       "tag": "0010_f1_nucleo_faro",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791646268150,
+      "tag": "0011_gastos_compartidos",
+      "breakpoints": true
     }
   ]
 }

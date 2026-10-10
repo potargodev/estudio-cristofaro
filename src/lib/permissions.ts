@@ -3,7 +3,7 @@
 // (para esconder lo que no corresponde). La interfaz nunca alcanza: toda action
 // vuelve a validar con `can()` en el servidor.
 
-export const ORG_ROLES = ["administrador", "direccion", "administracion", "rrhh", "consulta"] as const;
+export const ORG_ROLES = ["administrador", "direccion", "administracion", "rrhh", "consulta", "empleado"] as const;
 export type OrgRole = (typeof ORG_ROLES)[number];
 
 export const ORG_ROLE_LABELS: Record<OrgRole, string> = {
@@ -12,6 +12,7 @@ export const ORG_ROLE_LABELS: Record<OrgRole, string> = {
   administracion: "Administración",
   rrhh: "Recursos Humanos",
   consulta: "Consulta",
+  empleado: "Empleado",
 };
 
 export const ORG_ROLE_DESCRIPTIONS: Record<OrgRole, string> = {
@@ -20,6 +21,7 @@ export const ORG_ROLE_DESCRIPTIONS: Record<OrgRole, string> = {
   administracion: "Gestiona documentos, vencimientos, pagos y solicitudes.",
   rrhh: "Accede solo a empleados, sueldos y procesos laborales.",
   consulta: "Solo lectura de los módulos habilitados.",
+  empleado: "Solo gastos compartidos y sus rendiciones de gastos.",
 };
 
 /** Roles sensibles: si los invita un admin de la organización, los confirma el estudio. */
@@ -44,6 +46,7 @@ export const PERMISSIONS = [
   "societario.ver",
   "societario.gestionar",
   "agenda.reservar",
+  "gastos.rendir", // cargar gastos a rendir (los aprueba quien tiene finanzas.gestionar)
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
@@ -65,11 +68,14 @@ export const ROLE_PERMISSIONS: Record<OrgRole, readonly Permission[]> = {
     "societario.ver",
     "societario.gestionar",
     "agenda.reservar",
+    "gastos.rendir",
   ],
   // RRHH: solo empleados, sueldos y procesos laborales
   rrhh: ["inicio.ver", "solicitudes.laborales", "sueldos.ver", "sueldos.gestionar", "personal.ver", "personal.gestionar", "agenda.reservar"],
   // Consulta: solo lectura. Sueldos y reportes quedan afuera por ser información sensible (Dirección).
   consulta: READ_ONLY.filter((p) => p !== "sueldos.ver" && p !== "reportes.ver"),
+  // Empleado: solo gastos compartidos y sus propias rendiciones.
+  empleado: ["gastos.rendir"],
 };
 
 export function can(role: OrgRole | null | undefined, permission: Permission): boolean {
@@ -92,6 +98,7 @@ const RANK: Record<OrgRole, number> = {
   administracion: 2,
   rrhh: 2,
   consulta: 1,
+  empleado: 0,
 };
 
 /**
