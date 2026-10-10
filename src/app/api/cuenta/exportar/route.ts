@@ -3,6 +3,11 @@ import { getDb } from "@/db";
 import {
   accounting_expenses,
   agreement_payments,
+  bitacora_categories,
+  bitacora_entries,
+  chat_messages,
+  copilot_messages,
+  group_members,
   expense_groups,
   expenses,
   fleet_members,
@@ -47,7 +52,25 @@ export async function GET() {
   }
   const groups = await db.select().from(expense_groups).where(and(eq(expense_groups.studio_id, me.studioId), eq(expense_groups.created_by, me.id)));
   out.grupos_de_gastos = groups;
-  out.gastos_cargados = await db.select().from(expenses).where(eq(expenses.created_by, me.id));
+  // expenses.created_by es el integrante del grupo (no el usuario)
+  out.gastos_cargados = await db
+    .select({ gasto: expenses })
+    .from(expenses)
+    .innerJoin(group_members, eq(group_members.id, expenses.created_by))
+    .where(eq(group_members.user_id, me.id))
+    .then((r) => r.map((x) => x.gasto));
+  out.bitacora = {
+    categorias: await db.select().from(bitacora_categories).where(eq(bitacora_categories.user_id, me.id)),
+    movimientos: await db.select().from(bitacora_entries).where(eq(bitacora_entries.user_id, me.id)),
+  };
+  out.copiloto = await db
+    .select({ id: copilot_messages.id, rol: copilot_messages.role, tipo: copilot_messages.kind, texto: copilot_messages.text, transcripcion: copilot_messages.transcript, archivo: copilot_messages.attachment_name, modelo: copilot_messages.model, fecha: copilot_messages.created_at })
+    .from(copilot_messages)
+    .where(eq(copilot_messages.user_id, me.id));
+  out.mensajes_enviados = await db
+    .select({ conversacion: chat_messages.conversation_id, texto: chat_messages.body, archivo: chat_messages.attachment_name, editado: chat_messages.edited_at, borrado: chat_messages.deleted_at, fecha: chat_messages.created_at })
+    .from(chat_messages)
+    .where(eq(chat_messages.author_id, me.id));
   out.flotas = await db.select({ flota: fleet_members.fleet_id, perfil: fleet_members.profile, rol: fleet_members.role, estado: fleet_members.status }).from(fleet_members).where(eq(fleet_members.user_id, me.id));
   const agreements = await db.select().from(service_agreements).where(eq(service_agreements.user_id, me.id));
   out.acuerdos_de_servicio = agreements;

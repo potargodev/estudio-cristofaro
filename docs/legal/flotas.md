@@ -1,12 +1,12 @@
 ---
 titulo: Condiciones de las Flotas
-version: 2026-10-borrador
+version: 2026-10-borrador-2
 fecha: 2026-10-10
 ---
 
 ## 1. Qué es una Flota
 
-Una Flota es un **grupo informal** de 3 a 20 personas que usan Faro para pedir juntas una propuesta de servicios a estudios de la Red de estudios. **No es una sociedad, ni una asociación, ni una entidad legal** de ningún tipo. No implica actividad, patrimonio ni responsabilidad compartida.
+Una Flota es un **grupo informal** de 3 a 20 personas que usan Faro para pedir juntas una propuesta de servicios a estudios de la Red de estudios. **No es una sociedad, ni una asociación, ni una entidad legal** de ningún tipo: no tiene personería jurídica, ni CUIT, ni representación frente a terceros. No implica actividad, patrimonio ni responsabilidad compartida.
 
 ## 2. Nombre
 
@@ -23,6 +23,10 @@ El pedido muestra a los estudios la cantidad de integrantes por perfil y la zona
 ## 5. Acuerdo individual, sin deuda solidaria
 
 Cada integrante que acepta una propuesta firma **su propio Acuerdo de servicio** con el estudio. No hay contrato de la Flota ni pozo común. **Cada uno paga solo su abono** y no hay solidaridad entre integrantes: nadie paga ni debe por otro. Faro no cobra ni intermedia esos pagos; registra lo que informa el estudio.
+
+## 5 bis. Conversación de la Flota
+
+Cada Flota tiene una conversación en **Mensajes** con sus integrantes activos. Rigen las reglas de Mensajes de los términos (respeto, bloqueo y reporte). Quien sale de la Flota deja de ver la conversación.
 
 ## 6. Salida y baja
 

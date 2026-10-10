@@ -1,6 +1,6 @@
 ---
 titulo: Condiciones de la Red de estudios
-version: 2026-10-borrador
+version: 2026-10-borrador-2
 fecha: 2026-10-10
 ---
 

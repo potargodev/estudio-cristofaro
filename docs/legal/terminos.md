@@ -1,6 +1,6 @@
 ---
 titulo: Términos y condiciones de uso de Faro
-version: 2026-10-borrador
+version: 2026-10-borrador-2
 fecha: 2026-10-10
 ---
 
@@ -25,6 +25,12 @@ Cada estudio y cada profesional es el único responsable por su trabajo profesio
 
 Faro incluye un asistente de inteligencia artificial que **propone**. Nada fiscal, de pagos ni comunicaciones sensibles se ejecuta sin la aprobación expresa de una persona autorizada. Las respuestas de la IA pueden contener errores y **no constituyen asesoramiento profesional**: tienen que revisarlas quienes las usan. Las plantillas por rubro y los datos normativos marcados «a validar» son sugerencias que debe revisar un profesional.
 
+### Copiloto y Bitácora
+
+El **Copiloto** interpreta lo que le escribís, decís (audio) o mandás (fotos, capturas, PDF) y te **propone** registros en tarjetas para que los confirmes, edites o deshagas. Podés elegir que tus movimientos personales se registren solos, siempre con la opción de deshacerlos. Lo que afecta a otras personas (por ejemplo, un gasto en un grupo) siempre te pide confirmación. Revisá lo que registra: puede equivocarse. Tu **Bitácora** es privada: no la ve tu estudio, ni tu organización, ni otros integrantes de tus grupos.
+
+El uso de la IA de la plataforma tiene límites por plan (mensajes y audios por mes) que se informan en [/precios](/precios). Si se alcanza un límite o el proveedor no está disponible, podés seguir cargando a mano.
+
 ## 5. Faro no es asesor financiero ni de inversiones
 
 Faro no es agente ni asesor registrado ante la Comisión Nacional de Valores (CNV), no recomienda inversiones, no capta fondos ni intermedia en pagos. La información sobre cotizaciones, saldos o costos es orientativa.
@@ -40,6 +46,17 @@ Los planes, sus límites y precios de referencia se publican en [/precios](/prec
 ## 8. Uso aceptable
 
 No se puede usar Faro para actividades ilícitas, para cargar datos de terceros sin base legal, para intentar acceder a cuentas u organizaciones ajenas, ni para afectar el funcionamiento de la plataforma. Faro puede suspender cuentas que incumplan estos términos, con aviso salvo urgencia.
+
+## 8 bis. Mensajes entre usuarios y moderación
+
+- **Mensajes** permite escribir solo a personas con las que compartís un espacio en Faro (tu estudio, tu organización, un grupo de gastos o una Flota). Cada persona es responsable de lo que escribe y adjunta.
+- No se permite acosar, insultar, discriminar, amenazar, hacer spam o estafas, ni difundir datos personales o información confidencial de terceros sin su autorización.
+- Podés **bloquear** a una persona (no te podrá escribir y no verás sus mensajes) y **reportar** un mensaje. El equipo de Faro **no lee las conversaciones**: solo ve la copia del mensaje reportado para decidir si lo borra y, en casos graves o repetidos, suspender la cuenta.
+- Los mensajes borrados por su autor se muestran como «Mensaje borrado». Faro puede conservar un registro técnico mínimo (fecha, autor y conversación) por seguridad y por obligaciones legales.
+
+## 8 ter. Grupos de gastos y enlaces de invitación
+
+El enlace de un grupo de gastos permite que quien lo tenga se sume al grupo: compartilo solo con quien corresponde y renovalo si se difundió por error. Los saldos y deudas que muestra un grupo son un cálculo de lo que cargaron sus integrantes; los pagos entre ellos se hacen por fuera de Faro, que no cobra ni intermedia.
 
 ## 9. Disponibilidad y responsabilidad de Faro
 
