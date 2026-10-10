@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Search, SlidersHorizontal, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -62,6 +62,8 @@ export function DataTable({
   bulkActions = [],
   empty,
   initialSort,
+  initialFilters,
+  initialQuery = "",
   caption,
 }: {
   columns: DTColumn[];
@@ -73,15 +75,18 @@ export function DataTable({
   bulkActions?: DTBulkAction[];
   empty?: React.ReactNode;
   initialSort?: { key: string; dir: "asc" | "desc" };
+  initialFilters?: Record<string, string[]>;
+  initialQuery?: string;
   caption: string;
 }) {
   const router = useRouter();
-  const [q, setQ] = useState("");
-  const [active, setActive] = useState<Record<string, string[]>>({});
+  const [q, setQ] = useState(initialQuery);
+  const [active, setActive] = useState<Record<string, string[]>>(initialFilters ?? {});
   const [sort, setSort] = useState(initialSort ?? null);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [showFilters, setShowFilters] = useState(false);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -164,9 +169,20 @@ export function DataTable({
           <p className="tabular text-[13px] text-muted" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
           </p>
+          {filters.length > 0 && (
+            <button
+              type="button"
+              aria-expanded={showFilters}
+              onClick={() => setShowFilters((v) => !v)}
+              className="ml-auto inline-flex h-9 items-center gap-2 rounded-[2px] border border-line px-3 text-[13px] text-ink md:hidden"
+            >
+              <SlidersHorizontal className="size-4" strokeWidth={1.5} aria-hidden />
+              Filtros{activeChips.length > 0 && <span className="tabular rounded-[2px] bg-navy px-1.5 text-[12px] text-paper">{activeChips.length}</span>}
+            </button>
+          )}
         </div>
         {filters.length > 0 && (
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
+          <div className={cn("flex-wrap gap-x-5 gap-y-2 md:flex", showFilters ? "flex" : "hidden")}>
             {filters.map((f) => (
               <div key={f.key} role="group" aria-label={f.label} className="flex flex-wrap items-center gap-1.5">
                 <span className="mr-1 text-[13px] text-muted">{f.label}</span>

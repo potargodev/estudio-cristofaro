@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { Paperclip } from "lucide-react";
+import { Activity, Building2, CalendarClock, FileText, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users } from "lucide-react";
 import Link from "next/link";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
@@ -44,15 +44,15 @@ import { cn } from "@/lib/utils";
 // que la organización es del estudio; igual cada query filtra también por studio_id.
 
 export const ORG_TABS = [
-  { key: "general", label: "General y razones sociales" },
-  { key: "plan", label: "Plan y módulos" },
-  { key: "miembros", label: "Miembros e invitaciones" },
-  { key: "equipo", label: "Equipo del estudio" },
-  { key: "vencimientos", label: "Vencimientos" },
-  { key: "documentos", label: "Documentos" },
-  { key: "solicitudes", label: "Solicitudes" },
-  { key: "integraciones", label: "Integraciones" },
-  { key: "actividad", label: "Actividad" },
+  { key: "general", label: "General y razones sociales", icon: Building2 },
+  { key: "plan", label: "Plan y módulos", icon: Layers },
+  { key: "miembros", label: "Miembros e invitaciones", icon: Users },
+  { key: "equipo", label: "Equipo del estudio", icon: UserCog },
+  { key: "vencimientos", label: "Vencimientos", icon: CalendarClock },
+  { key: "documentos", label: "Documentos", icon: FileText },
+  { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare },
+  { key: "integraciones", label: "Integraciones", icon: PlugZap },
+  { key: "actividad", label: "Actividad", icon: Activity },
 ] as const;
 
 export type OrgTabKey = (typeof ORG_TABS)[number]["key"];
@@ -62,7 +62,7 @@ export const LEGACY_TABS: Record<string, OrgTabKey> = { datos: "general", portal
 
 export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTabKey; counts: Partial<Record<OrgTabKey, number>> }) {
   return (
-    <nav aria-label="Secciones de la organización" className="-mx-4 mb-6 overflow-x-auto border-b border-line px-4 sm:mx-0 sm:px-0">
+    <nav aria-label="Secciones de la organización" className="-mx-4 mb-8 overflow-x-auto border-b border-line px-4 sm:mx-0 sm:px-0">
       <ul className="flex min-w-max gap-1">
         {ORG_TABS.map((t) => (
           <li key={t.key}>
@@ -70,14 +70,13 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
               href={`/admin/organizaciones/${orgId}?tab=${t.key}`}
               aria-current={active === t.key ? "page" : undefined}
               className={cn(
-                "relative inline-flex items-center gap-1.5 px-3 py-2.5 text-[15px] transition-colors",
-                active === t.key
-                  ? "font-medium text-navy after:absolute after:inset-x-2 after:-bottom-px after:h-0.5 after:bg-rose"
-                  : "text-muted hover:text-ink",
+                "-mb-px inline-flex items-center gap-2 border-b-2 px-3 py-2.5 text-[14px] transition-colors",
+                active === t.key ? "border-gold-ink text-ink" : "border-transparent text-muted hover:text-ink",
               )}
             >
+              <t.icon className={cn("size-4", active === t.key && "text-gold-ink")} strokeWidth={1.5} aria-hidden />
               {t.label}
-              {!!counts[t.key] && <span className="rounded-[2px] bg-rose-soft px-1.5 text-xs font-semibold text-rose-deep">{counts[t.key]}</span>}
+              {!!counts[t.key] && <span className="tabular rounded-[2px] bg-navy-soft px-1.5 text-[12px] text-ink">{counts[t.key]}</span>}
             </Link>
           </li>
         ))}

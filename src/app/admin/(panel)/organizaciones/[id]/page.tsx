@@ -1,4 +1,5 @@
-import { and, asc, count, eq, inArray, isNull, max } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNull, max, ne, sql } from "drizzle-orm";
+import { CalendarClock, FileText, MessagesSquare, RefreshCw, UserRound, Users } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -29,13 +30,15 @@ import {
 import { Suspense } from "react";
 import { CallsList } from "@/components/admin/CallsList";
 import { ListSkeleton } from "@/components/ui/skeleton-blocks";
-import { Badge } from "@/components/portal/ui";
+import { Avatar } from "@/components/admin/kit/Avatar";
+import { StatCard } from "@/components/admin/kit/StatCard";
+import { StatusBadge, Tag } from "@/components/admin/kit/StatusBadge";
 import { TeamPanel } from "@/components/team/TeamPanel";
 import { getDb } from "@/db";
-import { bookings, documents, legal_entities, requests, tango_records } from "@/db/schema";
+import { bookings, documents, legal_entities, obligations, requests, tango_records } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { getOrgLimits, getOrgStaff, studioOrganization } from "@/lib/organizations";
-import { ORGANIZATION_STATUSES } from "@/lib/types";
+import { formatCuit } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Organización" };
 
@@ -61,7 +64,9 @@ export default async function OrganizacionPage({
   const asked = LEGACY_TABS[sp.tab ?? ""] ?? sp.tab;
   const tab: OrgTabKey = ORG_TABS.some((t) => t.key === asked) ? (asked as OrgTabKey) : "general";
 
-  const [entities, [newDocs], [openReqs], [tango], limits, team] = await Promise.all([
+  const today = new Date().toISOString().slice(0, 10);
+  const in14 = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+  const [entities, [newDocs], [openReqs], [tango], limits, team, [dues]] = await Promise.all([
     db
       .select()
       .from(legal_entities)
@@ -83,6 +88,21 @@ export default async function OrganizacionPage({
       .where(and(eq(tango_records.organization_id, org.id), eq(tango_records.studio_id, studioId))),
     getOrgLimits(org.id),
     getOrgStaff(org.id),
+    db
+      .select({
+        late: sql<number>`count(*) filter (where ${obligations.due_date} < ${today})`.mapWith(Number),
+        soon: sql<number>`count(*) filter (where ${obligations.due_date} >= ${today})`.mapWith(Number),
+      })
+      .from(obligations)
+      .where(
+        and(
+          eq(obligations.organization_id, org.id),
+          eq(obligations.studio_id, studioId),
+          ne(obligations.status, "presentado"),
+          ne(obligations.status, "pagado"),
+          sql`${obligations.due_date} <= ${in14}`,
+        ),
+      ),
   ]);
   const entityOptions = entities.map((e) => ({ value: e.id, label: e.business_name }));
   const lead = team.find((t) => t.assignment === "responsable");
@@ -107,27 +127,50 @@ export default async function OrganizacionPage({
     : null;
 
   return (
-    <div className="max-w-6xl">
-      <Link href="/admin/organizaciones" className="text-sm text-rose-deep underline-offset-4 hover:underline">
-        Organizaciones
-      </Link>
-      <div className="mb-4 mt-2 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{org.name}</h1>
-        <Badge tone={org.status === "activa" ? "ok" : org.status === "onboarding" ? "warn" : "neutral"}>{ORGANIZATION_STATUSES[org.status]}</Badge>
-        {limits.planName && <Badge tone="neutral">{limits.planName}</Badge>}
-        {tango.n > 0 && (
-          <span className="inline-flex items-center gap-1.5 rounded-[2px] bg-[#e3efe6] px-2.5 py-0.5 text-xs font-medium text-[#24583a]">
-            Vinculada con Tango
-            <span className="font-normal">
-              · última sincronización{" "}
-              {tango.lastSync
-                ? new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(
-                    new Date(tango.lastSync),
-                  )
-                : "pendiente"}
+    <div>
+      <header className="mb-6 flex flex-wrap items-start gap-4">
+        <Avatar name={org.name} size="lg" />
+        <div className="min-w-0 flex-1">
+          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[40px] sm:leading-none">{org.name}</h1>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted">
+            <StatusBadge status={org.status} />
+            {limits.planName ? <Tag>{limits.planName}</Tag> : <span>Sin plan</span>}
+            <span className="tabular">
+              {entities.length === 1 ? `CUIT ${formatCuit(entities[0].cuit, "sin cargar")}` : `${entities.length} razones sociales`}
             </span>
-          </span>
-        )}
+            <span className="inline-flex items-center gap-1.5">
+              <UserRound className="size-4" strokeWidth={1.5} aria-hidden />
+              {lead ? lead.name : "Sin responsable"}
+            </span>
+            {org.contact_name && <span>Contacto: {org.contact_name}</span>}
+            {tango.n > 0 && (
+              <span className="inline-flex items-center gap-1.5 text-[#24583a]">
+                <RefreshCw className="size-4" strokeWidth={1.5} aria-hidden />
+                Vinculada con Tango · última sincronización {tango.lastSync ? new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(tango.lastSync)) : "pendiente"}
+              </span>
+            )}
+          </div>
+        </div>
+      </header>
+      <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+        <StatCard
+          icon={CalendarClock}
+          label="Vencimientos próximos"
+          value={dues.soon + dues.late}
+          tone={dues.late ? "alert" : "default"}
+          hint={dues.late ? `${dues.late} vencidos sin presentar` : "Próximos 14 días"}
+          href={`/admin/organizaciones/${org.id}?tab=vencimientos`}
+        />
+        <StatCard icon={MessagesSquare} label="Solicitudes abiertas" value={openReqs.n} hint="Abiertas o en curso" href={`/admin/organizaciones/${org.id}?tab=solicitudes`} />
+        <StatCard icon={FileText} label="Documentos sin revisar" value={newDocs.n} hint="Subidos por el cliente" href={`/admin/organizaciones/${org.id}?tab=documentos`} />
+        <StatCard
+          icon={Users}
+          label="Usuarios"
+          value={limits.used.users}
+          suffix={limits.max ? ` / ${limits.max.users}` : undefined}
+          hint={limits.max ? `Del plan ${limits.planName}` : "Sin plan: sin límite"}
+          href={`/admin/organizaciones/${org.id}?tab=miembros`}
+        />
       </div>
       {notice && <Notice>{NOTICES[notice]}</Notice>}
       {errorText && (
@@ -146,27 +189,27 @@ export default async function OrganizacionPage({
               <LegalEntitiesSection orgId={org.id} entities={entities} limitText={limitText} />
             </div>
             <aside className="space-y-4">
-              <div className="rounded-md border border-line bg-surface p-5">
-                <h2 className="font-semibold">Responsable del estudio</h2>
+              <div className="border border-line bg-surface p-5">
+                <h2 className="text-[16px] font-medium">Responsable del estudio</h2>
                 <p className="mt-1 text-[15px] text-muted">{lead ? `${lead.name} · ${lead.email}` : "Sin asignar."}</p>
                 <Link
                   href={`/admin/organizaciones/${org.id}?tab=equipo`}
-                  className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline"
+                  className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-gold-ink"
                 >
                   Gestionar equipo
                 </Link>
               </div>
               <div>
-                <h2 className="mb-2 font-semibold">Llamadas</h2>
+                <h2 className="mb-2 text-[16px] font-medium">Llamadas</h2>
                 <Suspense fallback={<ListSkeleton rows={2} />}>
                   <CallsList studioId={studioId} where={eq(bookings.organization_id, org.id)} empty="Todavía no agendaron llamadas." />
                 </Suspense>
               </div>
               {org.lead_id && (
-                <div className="rounded-md border border-line bg-surface p-5">
-                  <h2 className="font-semibold">Origen</h2>
+                <div className="border border-line bg-surface p-5">
+                  <h2 className="text-[16px] font-medium">Origen</h2>
                   <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
-                  <Link href={`/admin/consultas/${org.lead_id}`} className="mt-2 inline-block text-rose-deep underline-offset-4 hover:underline">
+                  <Link href={`/admin/consultas/${org.lead_id}`} className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-gold-ink">
                     Ver consulta original
                   </Link>
                 </div>
