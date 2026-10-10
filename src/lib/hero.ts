@@ -35,7 +35,7 @@ export const HERO_STATEMENTS = [
 ];
 
 /** Segundos que se ve cada frase */
-export const HERO_INTERVAL = 6;
+export const HERO_INTERVAL = 4.5;
 
 /** Evento con el que el titular le avisa al fondo qué foto mostrar */
 export const HERO_SLIDE_EVENT = "hero:slide";

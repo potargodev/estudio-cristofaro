@@ -1,4 +1,4 @@
-import { Bell, CalendarClock, FileText, House, MessageSquare, MoreHorizontal } from "lucide-react";
+import { Bell, CalendarClock, Download, FileText, House, MessageSquare, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import { InstallPanel } from "@/components/app/InstallApp";
 import { Container } from "@/components/web/ui";
@@ -102,13 +102,18 @@ export function AppDownload() {
             <span className="size-1.5 bg-rose-light" aria-hidden />
             La app de Estudio Cristofaro
           </p>
-          <h2 id="app-titulo" className="display-md mt-8 max-w-[14ch]">
-            Tu empresa, en el bolsillo.
+          <h2 id="app-titulo" className="display-md mt-8 max-w-[16ch]">
+            La contabilidad de tu empresa, <span className="text-rose-light">desde cualquier lugar.</span>
           </h2>
           <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-paper/65">
-            Instalala y tené a mano tus vencimientos, documentos y consultas con tu contador, en el celular o en la computadora. Se abre como cualquier app, con su ícono.
+            Descargá nuestra app y seguí todo lo de tu empresa desde el celular o la compu: qué vence, qué ya está pagado, tus documentos y la charla
+            con tu contador. Gratis para todos los clientes.
           </p>
-          <InstallPanel className="mt-10" />
+          <p className="mt-10 flex items-center gap-2 text-[15px] font-medium text-paper">
+            <Download className="size-4 text-rose-light" aria-hidden />
+            Descargá la aplicación acá
+          </p>
+          <InstallPanel className="mt-4" />
         </div>
         <div className="lg:col-span-5 lg:col-start-8">
           <Phone />

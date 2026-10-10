@@ -81,7 +81,7 @@ export function HeroStatements({ statements, interval }: { statements: string[];
         ))}
       </div>
       {!reduce && statements.length > 1 && (
-        <div data-intro="fade" className="mt-8 flex items-center gap-4">
+        <div data-intro="fade" className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
           <button
             type="button"
             onClick={() => setPaused((p) => !p)}
@@ -98,9 +98,29 @@ export function HeroStatements({ statements, interval }: { statements: string[];
               </svg>
             )}
           </button>
+          <button
+            type="button"
+            onClick={() => go((index - 1 + statements.length) % statements.length)}
+            aria-label="Frase anterior"
+            className="grid size-8 place-items-center border border-hair-strong text-paper/80 transition-colors hover:border-paper/60 hover:text-paper"
+          >
+            <svg viewBox="0 0 12 12" className="size-3" aria-hidden>
+              <path d="M7.5 2 3.5 6l4 4" fill="none" stroke="currentColor" strokeWidth="1.4" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => go((index + 1) % statements.length)}
+            aria-label="Frase siguiente"
+            className="grid size-8 place-items-center border border-hair-strong text-paper/80 transition-colors hover:border-paper/60 hover:text-paper"
+          >
+            <svg viewBox="0 0 12 12" className="size-3" aria-hidden>
+              <path d="m4.5 2 4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.4" />
+            </svg>
+          </button>
           <ol className="flex items-center gap-2" aria-hidden>
             {statements.map((s, i) => (
-              <li key={s} className="relative h-px w-8 overflow-hidden bg-hair-strong sm:w-12">
+              <li key={s} className="relative h-px w-6 overflow-hidden bg-hair-strong sm:w-12">
                 {i === index && (
                   <span
                     key={`${index}-${paused}`}
