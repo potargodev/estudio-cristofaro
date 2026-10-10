@@ -50,6 +50,37 @@ Reglas:
 
 Cada módulo define: clave, nombre, descripción, plan mínimo, permisos por rol, ítems de navegación, eventos que emite (para Flujos), herramientas que expone (para el Asistente IA) y límites de uso.
 
+## 2.b IA, MCP y conexiones (en todos los planes)
+
+**IA configurable.** Todo estudio, en cualquier plan, puede configurar sus propias inteligencias artificiales:
+- Proveedores: Anthropic, OpenAI, Google, OpenRouter, Azure OpenAI y modelos locales compatibles con OpenAI (Ollama, LM Studio).
+- Claves propias cifradas, modelo por defecto y modelo por tarea (chat, extracción de documentos, redacción).
+- Límites de gasto y registro de uso.
+- Los planes cambian el alcance (qué puede hacer la IA), no la posibilidad de configurarla.
+
+**Faro como servidor MCP.** Cada estudio puede crear desde su panel un acceso MCP para operar Faro desde Claude, ChatGPT u otros clientes MCP:
+- Endpoint MCP remoto (Streamable HTTP) del estudio, con OAuth 2.1 o tokens de acceso con alcances (lectura / escritura por módulo y por organización), vencimiento y revocación.
+- Las herramientas salen del registro de módulos: cada módulo expone las suyas, con los permisos del rol que creó el acceso.
+- Toda llamada queda en la auditoría. Las acciones sensibles (fiscales, pagos, comunicaciones a clientes) no se ejecutan directo: crean una propuesta en la bandeja de aprobaciones.
+- El Asistente IA interno usa exactamente el mismo registro de herramientas.
+
+**Conexiones (hub de integraciones).** El estudio conecta sus herramientas contables y las opera desde Faro. Cada conector declara su vía:
+
+| Vía | Cuándo | Ejemplos |
+|---|---|---|
+| API oficial | La herramienta tiene API pública | Xubio (REST, OAuth2 con Client ID/Secret, planes empresa y emprendedor), Alegra (REST), Colppy, Contabilium, Finnegans, Odoo (JSON-RPC), Mercado Pago, Google (Drive, Calendar, Gmail) |
+| Conector local | La herramienta corre en la PC o servidor del estudio | Tango (API Delta, ya implementado) |
+| MCP externo | Existe un servidor MCP de la herramienta | Faro actúa como cliente MCP y suma esas herramientas al Asistente (por ejemplo, el MCP comunitario de Xubio, de solo lectura) |
+| Archivos | No hay API | Holistor, Bejerman y otros de escritorio: importación de exportaciones con plantillas de mapeo |
+| Web services oficiales | Organismos | ARCA (con certificado digital y delegación) |
+
+Reglas de las conexiones:
+- Se configuran a nivel estudio y se mapean por organización: cada cliente puede tener su propia cuenta en la herramienta.
+- Las credenciales van cifradas.
+- Todo dato que entra guarda fuente, fecha, ID externo, estado de validación y registro original.
+- Las escrituras hacia sistemas fiscales (crear comprobantes, presentar) siempre pasan por aprobación humana.
+- La disponibilidad real de cada API (planes del proveedor, recursos) se verifica al implementar cada conector.
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Señal** | **Rumbo** (recomendado) | **Horizonte** |
@@ -84,7 +115,7 @@ Los límites y los módulos de cada plan viven en configuración, no en el códi
 
 ## 6. Hoja de ruta
 1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Señal), landing de Faro y mención de Faro en la web de Cristofaro.
-2. **F2 · Asistente IA:** multi-proveedor, caja de contexto y herramientas con aprobación.
+2. **F2 · IA, MCP y Conexiones:** configuración de IA multi-proveedor, Asistente con caja de contexto, servidor MCP por estudio, bandeja de aprobaciones, hub de conexiones (Xubio, Alegra y Google primero; Tango migrado al hub).
 3. **F3 · Flujos:** canvas, motor de ejecución y plantillas.
 4. **F4 · Empleados:** legajo, recibos masivos con firma y comunicación interna.
 5. **F5 · Lectura inteligente** y conciliación bancaria.
