@@ -2,7 +2,7 @@
 
 import { Building2, Check, NotebookPen, UserRound } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { registerTenant, type RegisterState } from "@/app/faro/registro/actions";
 import type { TenantKind } from "@/lib/faro/plans";
 import { cn } from "@/lib/utils";
@@ -17,10 +17,11 @@ const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-nig
 const label = "text-[13px] text-paper/70";
 
 /** Autoregistro: primero "¿Qué sos?", después los datos. Sin tarjeta. */
-export function RegisterForm({ kinds = ["persona", "personal", "studio"], initial, interest }: { kinds?: TenantKind[]; initial?: TenantKind; interest?: string }) {
+export function RegisterForm({ kinds = ["persona", "personal", "studio"], initial, interest, google = false }: { kinds?: TenantKind[]; initial?: TenantKind; interest?: string; google?: boolean }) {
   const options = KINDS.filter((k) => kinds.includes(k.kind));
   const [kind, setKind] = useState<TenantKind | null>(options.length === 1 ? options[0].kind : (initial ?? null));
   const [state, action, pending] = useActionState<RegisterState, FormData>(registerTenant, { ok: false });
+  const method = useRef<HTMLInputElement>(null);
 
   return (
     <div>
@@ -51,6 +52,7 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
       {kind && (
         <form key={state.message ?? "form"} action={action} className={cn("grid gap-4", options.length > 1 && "mt-8 border-t border-hair pt-8")}>
           <input type="hidden" name="kind" value={kind} />
+          <input ref={method} type="hidden" name="method" defaultValue={kind === "studio" ? "password" : "enlace"} />
           {interest && <input type="hidden" name="interes" value={interest} />}
           <div aria-hidden className="absolute -left-[9999px]">
             <label>
@@ -75,20 +77,31 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
               <span className="mt-1 block text-[12px] text-paper/45">Con tu CUIT armamos tu calendario y, más adelante, la facturación con ARCA.</span>
             </label>
           )}
+          {kind === "personal" && (
+            <label className={label}>
+              Régimen
+              <select name="tax_regime" defaultValue={state.values?.tax_regime || "monotributo"} className={field}>
+                <option value="monotributo">Monotributo</option>
+                <option value="responsable_inscripto">Responsable inscripto</option>
+              </select>
+            </label>
+          )}
           <label className={label}>
             Email
             <input name="email" defaultValue={state.values?.email} type="email" required autoComplete="email" className={field} />
           </label>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className={label}>
-              Contraseña
-              <input name="password" type="password" required minLength={8} autoComplete="new-password" className={field} />
-            </label>
-            <label className={label}>
-              Repetila
-              <input name="password2" type="password" required minLength={8} autoComplete="new-password" className={field} />
-            </label>
-          </div>
+          {kind === "studio" && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className={label}>
+                Contraseña
+                <input name="password" type="password" required minLength={8} autoComplete="new-password" className={field} />
+              </label>
+              <label className={label}>
+                Repetila
+                <input name="password2" type="password" required minLength={8} autoComplete="new-password" className={field} />
+              </label>
+            </div>
+          )}
           <label className="flex items-start gap-2.5 text-[13px] text-paper/70">
             <input name="terms" type="checkbox" required defaultChecked={state.values?.terms === "on"} className="mt-0.5 size-4 accent-[#c9a596]" />
             <span>
@@ -104,13 +117,40 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
               {state.message}
             </p>
           )}
-          <button type="submit" disabled={pending} className="mt-2 h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
-            {pending ? "Creando tu cuenta…" : kind === "studio" ? "Probar 30 días gratis" : "Crear mi cuenta gratis"}
-          </button>
+          {kind === "studio" ? (
+            <button type="submit" disabled={pending} className="mt-2 h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
+              {pending ? "Creando tu cuenta…" : "Probar 30 días gratis"}
+            </button>
+          ) : state.ok && state.message ? (
+            <p role="status" className="border border-gold/40 bg-gold/10 px-3 py-3 text-[14px] text-paper">
+              {state.message}
+            </p>
+          ) : (
+            <div className="mt-2 grid gap-3 sm:grid-cols-2">
+              {google && (
+                <button
+                  type="submit"
+                  disabled={pending}
+                  onClick={() => method.current && (method.current.value = "google")}
+                  className="h-12 rounded-[2px] bg-paper px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-white disabled:opacity-60"
+                >
+                  Continuar con Google
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={pending}
+                onClick={() => method.current && (method.current.value = "enlace")}
+                className="h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60"
+              >
+                {pending ? "Un momento…" : "Enviame el enlace"}
+              </button>
+            </div>
+          )}
           <p className="text-[13px] text-paper/55">
             {kind === "studio"
               ? "Al entrar vas a activar el segundo factor: es obligatorio para los estudios porque manejan datos de clientes."
-              : "Sin tarjeta. Podés invitar a un estudio contable cuando quieras."}{" "}
+              : "Sin contraseña: entrás con Google o con un enlace a tu mail. Sin tarjeta."}{" "}
             ¿Ya tenés cuenta?{" "}
             <Link href="/ingresar" className="underline underline-offset-4">
               Ingresá

@@ -18,6 +18,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { BarChart, DonutChart } from "@/components/admin/kit/Charts";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
+import { FirstSteps } from "@/components/app/FirstSteps";
 import { EmptyState, Panel, PanelLink } from "@/components/admin/kit/Panel";
 import { ChartSkeleton, PanelSkeleton, StatRowSkeleton } from "@/components/admin/kit/Skeletons";
 import { StatCard } from "@/components/admin/kit/StatCard";
@@ -454,6 +455,7 @@ export default async function AdminHome() {
   return (
     <>
       <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que pasa hoy en el estudio y lo que necesita tu atención." />
+      <FirstSteps className="mb-6" />
       <div className="grid gap-6">
         <Suspense fallback={<StatRowSkeleton />}>
           <Stats studioId={user.studioId} commercial={user.role !== "colaborador"} />

@@ -1,4 +1,5 @@
 import { FileSignature, Megaphone, ReceiptText, Wallet } from "lucide-react";
+import { markStep } from "@/modules/onboarding/server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireEmployee } from "@/lib/auth";
@@ -8,6 +9,7 @@ export const metadata: Metadata = { title: "Mi espacio" };
 /** Portal mínimo del empleado: grupos de gastos y rendiciones; recibos y comunicaciones llegan en la F5 */
 export default async function EmpleadoHome() {
   const me = await requireEmployee();
+  await markStep("inicio_empleado").catch(() => undefined);
   const cards = [
     { href: "/grupos", icon: Wallet, title: "Grupos de gastos", text: "Dividí gastos con tu equipo, socios o amigos y saldá cuentas." },
     { href: "/portal/rendiciones", icon: ReceiptText, title: "Rendiciones", text: `Cargá lo que gastaste para ${me.organizationName} con su ticket y seguí el reintegro.` },

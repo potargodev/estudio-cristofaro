@@ -1,4 +1,9 @@
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
+import { getDb } from "@/db";
+import { studios } from "@/db/schema";
+import { GuideButton, GuideHost, HelpLink } from "@/components/app/Guide";
+import { guideBoot } from "@/modules/onboarding/server";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { PortalNav } from "@/components/portal/PortalNav";
@@ -23,6 +28,7 @@ export default async function PortalLayout({ children }: { children: React.React
   const me = await requireMember();
   const open = canSeeRequests(me.orgRole) ? await getRequests(me, true) : [];
   const nav = buildPortalNav(me.orgRole, me.modules);
+  const [studio] = await getDb().select({ name: studios.name }).from(studios).where(eq(studios.id, me.studioId));
 
   return (
     <div className="app-ui min-h-dvh bg-canvas md:grid md:grid-cols-[248px_1fr]">
@@ -48,10 +54,12 @@ export default async function PortalLayout({ children }: { children: React.React
               ) : (
                 <span className="block truncate font-display text-lg">{me.organizationName}</span>
               )}
-              <span className="block text-xs text-paper/60">Portal · Estudio Cristofaro</span>
+              <span className="block text-xs text-paper/60">Portal · {studio?.name ?? "tu estudio"}</span>
             </div>
           </div>
           <div className="flex items-center gap-1 md:hidden">
+          <GuideButton compact className="text-paper/80 hover:text-paper" />
+          <HelpLink compact className="text-paper/80 hover:text-paper" />
           <ThemeToggle className="text-paper/80 hover:text-paper" />
           <form action={portalSignOut}>
             <button type="submit" className="border border-paper/25 px-3 py-1.5 text-sm text-paper/90 transition-colors hover:border-paper/60">
@@ -72,8 +80,13 @@ export default async function PortalLayout({ children }: { children: React.React
         <p className="hidden px-5 pb-4 text-[11px] text-paper/40 md:block">Con tecnología de Faro</p>
       </aside>
       <main className="mx-auto w-full max-w-5xl px-4 pb-28 pt-6 sm:px-6 md:px-10 md:pb-14 md:pt-10">
+        <div className="mb-4 hidden justify-end gap-2 md:flex">
+          <GuideButton className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
+          <HelpLink className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
+        </div>
         <RouteReveal>{children}</RouteReveal>
       </main>
+      <GuideHost boot={await guideBoot()} />
       <Toaster position="top-center" />
     </div>
   );

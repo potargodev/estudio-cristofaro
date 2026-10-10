@@ -5,6 +5,7 @@ import { Avatar } from "@/components/admin/kit/Avatar";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { Panel } from "@/components/admin/kit/Panel";
 import { StatusBadge } from "@/components/admin/kit/StatusBadge";
+import { GuidePreference } from "@/components/app/GuidePreference";
 import { requireStaff } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
@@ -57,6 +58,7 @@ export default async function CuentaPage() {
           <p className="mb-5 text-[14px] text-muted">Instalala para entrar directo, con su ícono, desde el celular o la computadora.</p>
           <InstallPanel tone="light" />
         </Panel>
+        <GuidePreference />
       </div>
     </div>
   );

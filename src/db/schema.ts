@@ -1290,6 +1290,56 @@ export const organization_setup_items = pgTable(
   (t) => [uniqueIndex("organization_setup_items_key_idx").on(t.organization_id, t.industry_key, t.kind, t.key), index("organization_setup_items_org_idx").on(t.organization_id, t.kind)],
 );
 
+/**
+ * Autoregistro sin contraseña (persona o autónomo): lo que cargó en "¿Qué
+ * sos?" hasta que entra con Google o con el enlace a su mail. El tenant se crea
+ * recién al entrar, con el mismo email.
+ */
+export const signup_requests = pgTable(
+  "signup_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: text("email").notNull(),
+    kind: tenantKind("kind").notNull(),
+    name: text("name").notNull(),
+    cuit: text("cuit"),
+    data: jsonb("data").$type<Record<string, unknown>>().notNull().default({}),
+    /** Versión de los términos que aceptó */
+    terms_version: text("terms_version"),
+    expires_at: timestamp("expires_at", { withTimezone: true }).notNull(),
+    used_at: timestamp("used_at", { withTimezone: true }),
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("signup_requests_email_idx").on(t.email, t.created_at)],
+);
+
+/**
+ * Onboarding guiado (§2.l): progreso por usuario y por espacio (tenant u
+ * organización). Los pasos se marcan solos cuando la persona hace la acción
+ * real; los tours vistos y si la guía está apagada también viven acá.
+ */
+export const onboarding_progress = pgTable(
+  "onboarding_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** tenant | organization | fleet */
+    space_type: text("space_type").notNull(),
+    space_id: uuid("space_id").notNull(),
+    profile: text("profile").notNull(),
+    completed: jsonb("completed").$type<Record<string, string>>().notNull().default({}),
+    tours_seen: jsonb("tours_seen").$type<Record<string, string>>().notNull().default({}),
+    /** La persona apagó la guía en este espacio (se reactiva con el botón "Guía") */
+    disabled: boolean("disabled").notNull().default(false),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("onboarding_progress_key").on(t.user_id, t.space_type, t.space_id)],
+);
+
 /** Acceso asistido del equipo de Faro a un tenant: explícito, temporal y auditado */
 export const assisted_access = pgTable(
   "assisted_access",

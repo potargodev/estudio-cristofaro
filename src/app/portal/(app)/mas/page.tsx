@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
+import { GuidePreference } from "@/components/app/GuidePreference";
 import Link from "next/link";
 import { InstallPanel } from "@/components/app/InstallApp";
 import { PageTitle } from "@/components/portal/ui";
@@ -35,6 +36,9 @@ export default async function MasPage() {
         <p className="mt-1 text-[15px] text-muted">Tené tu portal a un toque, con su ícono, en el celular o la computadora.</p>
         <InstallPanel tone="light" className="mt-5" />
       </section>
+      <div className="mt-10">
+        <GuidePreference />
+      </div>
     </>
   );
 }

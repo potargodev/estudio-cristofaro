@@ -1,5 +1,7 @@
 import { and, count, eq, gte, inArray, lte, notInArray } from "drizzle-orm";
 import type { Metadata } from "next";
+import { GuideHost } from "@/components/app/Guide";
+import { guideBoot } from "@/modules/onboarding/server";
 import { AdminShell } from "@/components/admin/shell/AdminShell";
 import { sidebarBootScript } from "@/components/admin/shell/nav";
 import { Toaster } from "@/components/ui/sonner";
@@ -78,6 +80,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       >
         {children}
       </AdminShell>
+      <GuideHost boot={await guideBoot()} />
       <Toaster position="top-center" />
     </>
   );

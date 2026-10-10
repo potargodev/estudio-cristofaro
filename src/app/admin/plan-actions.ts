@@ -19,7 +19,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 export async function requestPlanUpgrade(fd: FormData) {
   const me = await requireTenantOwner();
   const back = String(fd.get("back") ?? "/admin/plan");
-  const safeBack = back.startsWith("/admin/") ? back : "/admin/plan";
+  const safeBack = back === "/personal/plan" || /^\/admin\/[a-z0-9/-]+$/.test(back) ? back : "/admin/plan";
   const e = (await getEntitlements(me.studioId))!;
   const to = (await getPlans()).find((p) => p.key === String(fd.get("plan") ?? "") && p.kind === e.tenant.kind);
   const moduleKey = String(fd.get("module") ?? "");

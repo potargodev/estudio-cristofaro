@@ -11,6 +11,7 @@ import { esc, sendMail } from "./email";
 import { mailLayout } from "./notify";
 import { getSiteUrl } from "./runtime-config";
 import { acceptInvitationsFor, hasAccessByEmail } from "./team";
+import { finalizePersonalTenant, pendingSignup, tenantFromSignup } from "./faro/tenants";
 
 // Acceso a la plataforma:
 // - Estudio (admin y contador): email y contraseña + segundo factor (TOTP)
@@ -65,6 +66,15 @@ export function googleEnabled() {
   return Boolean(g.real || g.mock);
 }
 
+/** URL para "Continuar con Google" (Google real o el simulador de pruebas). Null si no hay Google */
+export async function googleSignInUrl(callbackURL: string, errorCallbackURL: string, headers: Headers): Promise<string | null> {
+  const g = googleConfig();
+  if (!g.real && !g.mock) return null;
+  // El simulador (genericOAuth) también queda registrado como proveedor social "google"
+  const res = (await getAuth().api.signInSocial({ body: { provider: "google", callbackURL, errorCallbackURL }, headers })) as { url?: string };
+  return res?.url ?? null;
+}
+
 const isSocial = (path?: string) => !!path && (path.startsWith("/callback/") || path.startsWith("/oauth2/callback"));
 const isMagic = (path?: string) => path === "/magic-link/verify";
 
@@ -78,9 +88,11 @@ async function userByEmail(email: string) {
 
 async function sendMagicLinkMail(email: string, url: string) {
   const existing = await userByEmail(email);
-  if (existing && existing.role !== "cliente") throw deny("ESTUDIO_CON_CLAVE");
+  // El estudio entra con contraseña + 2FA; clientes, titulares (persona o autónomo) y altas nuevas, con enlace
+  if (existing && existing.role !== "cliente" && existing.role !== "titular") throw deny("ESTUDIO_CON_CLAVE");
   if (existing && !existing.active) throw deny("USUARIO_DESACTIVADO");
-  if (!(await hasAccessByEmail(email))) {
+  const signup = existing ? null : await pendingSignup(email);
+  if (existing?.role !== "titular" && !signup && !(await hasAccessByEmail(email))) {
     await audit({
       studioId: null,
       actorLabel: email,
@@ -92,12 +104,13 @@ async function sendMagicLinkMail(email: string, url: string) {
   }
   const sent = await sendMail({
     to: email,
-    subject: "Tu enlace para entrar al portal",
+    subject: signup ? "Activá tu cuenta de Faro" : "Tu enlace para entrar a Faro",
     html: mailLayout(
-      "Entrá a tu portal",
-      `<p>Tocá el botón para entrar al portal del Estudio Cristofaro como <strong>${esc(email)}</strong>. El enlace sirve una sola vez y vence en 15 minutos.</p>
+      signup ? "Activá tu cuenta de Faro" : "Entrá a Faro",
+      `<p>Tocá el botón para ${signup ? "activar tu cuenta" : "entrar"} como <strong>${esc(email)}</strong>. El enlace sirve una sola vez y vence en 15 minutos.</p>
 <p style="color:#5a6176;font-size:13px">Si no lo pediste, ignorá este mail.</p>`,
-      { href: url, label: "Entrar al portal" },
+      { href: url, label: signup ? "Activar mi cuenta" : "Entrar" },
+      signup || existing?.role === "titular" ? "Faro" : undefined,
     ),
   });
   if (!sent) throw deny("MAIL_NO_ENVIADO");
@@ -107,7 +120,7 @@ function createAuth() {
   const db = getDb();
   const google = googleConfig();
   return betterAuth({
-    appName: "Estudio Cristofaro",
+    appName: "Faro",
     // Sin BETTER_AUTH_URL se usa SITE_URL
     baseURL: process.env.BETTER_AUTH_URL?.trim() || getSiteUrl(),
     trustedOrigins: trustedOrigins(),
@@ -140,6 +153,13 @@ function createAuth() {
           // (Los del estudio se insertan directo en la base desde /admin/usuarios y el seed.)
           before: async (user) => {
             const access = await hasAccessByEmail(user.email);
+            // Autoregistro sin contraseña (persona o autónomo): el tenant se crea al entrar
+            const signup = access?.invitation ? null : await pendingSignup(user.email);
+            if (signup) {
+              const studioId = await tenantFromSignup(signup);
+              const name = user.name?.trim() || signup.name;
+              return { data: { ...user, email: user.email.toLowerCase(), name, role: "titular", studioId, emailVerified: true } };
+            }
             if (!access?.invitation) {
               await audit({
                 studioId: null,
@@ -153,6 +173,12 @@ function createAuth() {
             const name = user.name?.trim() || user.email.split("@")[0];
             return { data: { ...user, email: user.email.toLowerCase(), name, role: "cliente", studioId: access.studioId, emailVerified: true } };
           },
+          after: async (user) => {
+            const u = user as typeof user & { role?: string; studioId?: string };
+            if (u.role !== "titular" || !u.studioId) return;
+            await finalizePersonalTenant(u.studioId, u.id);
+            await audit({ studioId: u.studioId, actor: { id: u.id, email: u.email }, action: "faro.registro", entityType: "tenant", entityId: u.studioId, metadata: { via: "sin contraseña" } });
+          },
         },
       },
       account: {
@@ -161,7 +187,7 @@ function createAuth() {
           before: async (account) => {
             if (account.providerId === "credential") return;
             const [u] = await db.select({ role: users.role }).from(users).where(eq(users.id, account.userId));
-            if (u && u.role !== "cliente") throw deny("ESTUDIO_CON_CLAVE");
+            if (u && u.role !== "cliente" && u.role !== "titular") throw deny("ESTUDIO_CON_CLAVE");
           },
         },
       },
@@ -187,6 +213,8 @@ function createAuth() {
             if (user.role === "cliente") {
               if (path === "/sign-in/email") throw await reject("CLIENTE_SIN_CLAVE");
               if ((isSocial(path) || isMagic(path)) && !(await hasAccessByEmail(user.email))) throw await reject("SIN_ACCESO");
+            } else if (user.role === "titular") {
+              // Persona o autónomo: Google, enlace o contraseña
             } else if (isSocial(path) || isMagic(path)) {
               throw await reject("ESTUDIO_CON_CLAVE");
             }

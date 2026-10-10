@@ -9,7 +9,7 @@ const ITEMS = [
   { href: "/personal", label: "Inicio", icon: Home, exact: true },
   { href: "/grupos", label: "Grupos de gastos", icon: Wallet },
   { href: "/admin/asistente", label: "Asistente IA", icon: Bot },
-  { href: "/admin/cambiar-clave", label: "Mi cuenta", icon: KeyRound },
+  { href: "/personal/cuenta", label: "Mi cuenta", icon: KeyRound },
 ];
 
 export function PersonalNav({ variant }: { variant: "top" | "bottom" }) {
@@ -26,7 +26,7 @@ export function PersonalNav({ variant }: { variant: "top" | "bottom" }) {
       </nav>
     );
   return (
-    <nav aria-label="Secciones" className="fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper md:hidden">
+    <nav aria-label="Secciones" data-tour="nav" className="fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper md:hidden">
       <ul className="grid grid-cols-4">
         {ITEMS.map((i) => (
           <li key={i.href}>

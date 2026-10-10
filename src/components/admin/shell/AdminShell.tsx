@@ -34,6 +34,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RouteReveal } from "@/components/app/RouteReveal";
+import { GuideButton, HelpLink } from "@/components/app/Guide";
 import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { Avatar } from "../kit/Avatar";
@@ -150,7 +151,7 @@ function Nav({
     setTip({ label, count, top: r.top + r.height / 2 });
   };
   return (
-    <nav aria-label="Backoffice" className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2" onMouseLeave={() => setTip(null)}>
+    <nav aria-label="Backoffice" data-tour="nav" className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2" onMouseLeave={() => setTip(null)}>
       {collapsed && tip && (
         <span role="tooltip" className="pointer-events-none fixed left-[84px] z-50 -translate-y-1/2 whitespace-nowrap border border-paper/15 bg-night px-2.5 py-1.5 text-[13px] text-paper" style={{ top: tip.top }}>
           {tip.label}
@@ -412,9 +413,11 @@ export function AdminShell({
             <span className="hidden flex-1 text-left sm:inline">Buscar…</span>
             <kbd className="hidden border border-line px-1 text-[11px] sm:inline">⌘K</kbd>
           </button>
+          <GuideButton className="border border-line bg-surface text-ink hover:border-muted" />
+          <HelpLink compact className="border border-line bg-surface text-ink hover:border-muted" />
           <ThemeToggle className="border border-line bg-surface text-ink hover:border-muted" />
           {action && (
-            <Link href={action.href} className="inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-3 text-[13px] font-medium text-paper hover:bg-navy-deep sm:px-4">
+            <Link href={action.href} data-tour="accion" className="inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-3 text-[13px] font-medium text-paper hover:bg-navy-deep sm:px-4">
               <Plus className="size-4" aria-hidden />
               <span className="hidden sm:inline">{action.label}</span>
               <span className="sr-only sm:hidden">{action.label}</span>

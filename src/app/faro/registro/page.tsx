@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { RegisterForm } from "@/components/faro/landing/RegisterForm";
 import { Container } from "@/components/web/ui";
+import { googleEnabled } from "@/lib/auth-server";
 import { getPlan } from "@/lib/faro/plans";
 
 export const metadata: Metadata = { title: "Crear una cuenta" };
@@ -33,7 +34,7 @@ export default async function RegistroPage({ searchParams }: { searchParams: Pro
             {interest && <p className="mt-6 text-[14px] text-paper/60">Empezás en el plan gratis y te contactamos para pasar a {getPlan(interest)?.name}.</p>}
           </div>
           <div className="border border-hair-strong bg-navy-deep/70 p-6 sm:p-8 lg:col-span-6 lg:col-start-7">
-            <RegisterForm initial={sp.tipo === "personal" || sp.tipo === "studio" || sp.tipo === "persona" ? sp.tipo : undefined} interest={interest} />
+            <RegisterForm google={googleEnabled()} initial={sp.tipo === "personal" || sp.tipo === "studio" || sp.tipo === "persona" ? sp.tipo : undefined} interest={interest} />
           </div>
         </div>
       </Container>

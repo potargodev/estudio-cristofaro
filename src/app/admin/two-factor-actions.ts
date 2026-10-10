@@ -1,8 +1,11 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
+import { getDb } from "@/db";
+import { studios } from "@/db/schema";
 import { takeAfterLogin } from "@/lib/after-login";
 import { audit } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth";
@@ -94,5 +97,10 @@ export async function confirmTwoFactorSetup(prev: SetupState, fd: FormData): Pro
     return { ...prev, ok: true, message: "Código incorrecto. Revisá la hora del teléfono y probá con el código nuevo." };
   }
   await audit({ studioId: user.studioId, actor: user, action: "usuario.2fa_activar", entityType: "usuario", entityId: user.id });
+  // Dueño de un estudio nuevo: sigue con el asistente de bienvenida
+  if (user.role === "dueno") {
+    const [t] = await getDb().select({ onboarding: studios.onboarding, via: studios.created_via }).from(studios).where(eq(studios.id, user.studioId));
+    if (t && t.via === "registro" && !t.onboarding.wizard) redirect("/bienvenida");
+  }
   redirect("/admin?2fa=1");
 }

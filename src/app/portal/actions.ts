@@ -8,7 +8,7 @@ import { getDb } from "@/db";
 import { documents, request_messages, requests } from "@/db/schema";
 import { ORG_COOKIE, getCurrentUser, getMemberships, requireMember } from "@/lib/auth";
 import { audit } from "@/lib/audit";
-import { AUTH_ERRORS, getAuth, googleEnabled, type AuthErrorCode } from "@/lib/auth-server";
+import { AUTH_ERRORS, getAuth, googleEnabled, googleSignInUrl, type AuthErrorCode } from "@/lib/auth-server";
 import { isUuid } from "@/lib/ids";
 import { notifyStudio } from "@/lib/notify";
 import { createBooking } from "@/lib/agenda/bookings";
@@ -68,11 +68,7 @@ export async function requestMagicLink(_prev: PortalLoginState, fd: FormData): P
 export async function signInWithGoogle(fd: FormData) {
   if (!googleEnabled()) redirect("/portal/login");
   const next = safeNext(s(fd, "next"));
-  const res = await getAuth().api.signInSocial({
-    body: { provider: "google", callbackURL: next, errorCallbackURL: "/portal/login" },
-    headers: await headers(),
-  });
-  const url = (res as { url?: string }).url;
+  const url = await googleSignInUrl(next, "/portal/login", await headers());
   if (!url) redirect("/portal/login?error=google");
   redirect(url);
 }

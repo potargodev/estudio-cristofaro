@@ -315,6 +315,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
           <EmptyState icon={Building2} title="Todavía no hay organizaciones" text="Creá la primera o convertí una consulta ganada." action={{ href: "/admin/organizaciones/nueva", label: "Nueva organización" }} />
         </div>
       ) : (
+        <div data-tour="org-filtros">
         <DataTable
           caption="Organizaciones"
           columns={[
@@ -340,6 +341,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
           ]}
           empty={<EmptyState icon={Building2} title="No hay organizaciones con estos filtros" text="Probá con otros filtros o buscá por CUIT." />}
         />
+        </div>
       )}
     </>
   );

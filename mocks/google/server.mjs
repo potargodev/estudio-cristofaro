@@ -6,6 +6,10 @@
 // En Faro: GOOGLE_API_MOCK_URL=http://localhost:4030. El consentimiento
 // redirige directo con un código. POST /__upload?folder=<id>&name=<archivo>
 // (cuerpo binario) simula que un cliente sube un archivo a su carpeta.
+//
+// Login con Google (GOOGLE_OAUTH_MOCK_URL=http://localhost:4030): POST
+// /__login?email=<x>&name=<y> elige con qué cuenta "entra" el próximo
+// /authorize; /token y /userinfo devuelven esa identidad.
 
 import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
@@ -22,6 +26,8 @@ const read = async (req) => {
   for await (const c of req) chunks.push(c);
   return Buffer.concat(chunks);
 };
+let nextLogin = { email: "persona@gmail.com", name: "Persona de Prueba" };
+const logins = new Map(); // code / token → identidad
 const MIME = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
 createServer(async (req, res) => {
@@ -33,6 +39,33 @@ createServer(async (req, res) => {
     back.searchParams.set("state", url.searchParams.get("state") ?? "");
     res.writeHead(302, { Location: back.toString() });
     return res.end();
+  }
+  if (p === "/__login" && req.method === "POST") {
+    nextLogin = { email: url.searchParams.get("email") ?? nextLogin.email, name: url.searchParams.get("name") ?? nextLogin.name };
+    return json(res, 200, nextLogin);
+  }
+  if (p === "/authorize") {
+    const code = `login-${id()}`;
+    logins.set(code, nextLogin);
+    const back = new URL(url.searchParams.get("redirect_uri"));
+    back.searchParams.set("code", code);
+    back.searchParams.set("state", url.searchParams.get("state") ?? "");
+    res.writeHead(302, { Location: back.toString() });
+    return res.end();
+  }
+  if (p === "/token" && req.method === "POST") {
+    const form = new URLSearchParams((await read(req)).toString());
+    const who = logins.get(form.get("code") ?? "");
+    if (who) {
+      const token = `login-at-${id()}`;
+      logins.set(token, who);
+      return json(res, 200, { access_token: token, token_type: "Bearer", expires_in: 3600, scope: "openid email profile" });
+    }
+  }
+  if (p === "/userinfo") {
+    const who = logins.get((req.headers.authorization ?? "").replace(/^Bearer /, ""));
+    if (!who) return json(res, 401, { error: "invalid_token" });
+    return json(res, 200, { id: `mock-${who.email}`, sub: `mock-${who.email}`, email: who.email, email_verified: true, name: who.name });
   }
   if (p === "/token") return json(res, 200, { access_token: `mock-at-${id()}`, refresh_token: "mock-rt", expires_in: 3600, scope: "https://www.googleapis.com/auth/drive" });
   if (p === "/oauth2/v3/userinfo") return json(res, 200, { email: "estudio@gmail.com" });

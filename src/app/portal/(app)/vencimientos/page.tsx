@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { markStep } from "@/modules/onboarding/server";
 import { Badge, Empty, PageTitle, obligationTone } from "@/components/portal/ui";
 import { requireMember } from "@/lib/auth";
 import { getObligations } from "@/lib/portal-data";
@@ -22,6 +23,7 @@ function PayLink({ url }: { url: string | null }) {
 
 export default async function VencimientosPage() {
   const me = await requireMember("vencimientos.ver");
+  await markStep("vencimientos_vistos").catch(() => undefined);
   const rows = await getObligations(me);
   const today = todayISO();
   const pending = rows.filter((r) => r.status !== "pagado" && r.status !== "presentado").reverse();

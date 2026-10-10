@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { GuideButton, GuideHost, HelpLink } from "@/components/app/Guide";
+import { guideBoot } from "@/modules/onboarding/server";
 import Link from "next/link";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
 import { ThemeToggle } from "@/components/app/ThemeToggle";
@@ -23,6 +25,8 @@ export default async function PersonalLayout({ children }: { children: React.Rea
           </Link>
           <span className="flex-1" />
           <PersonalNav variant="top" />
+          <GuideButton compact className="text-paper/75 hover:text-paper" />
+          <HelpLink compact className="text-paper/75 hover:text-paper" />
           <ThemeToggle className="text-paper/75 hover:text-paper" />
           <form action={signOut}>
             <button type="submit" className="text-[13px] text-paper/75 underline-offset-4 hover:underline">
@@ -46,6 +50,7 @@ export default async function PersonalLayout({ children }: { children: React.Rea
       )}
       <main className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 sm:pt-8">{children}</main>
       <PersonalNav variant="bottom" />
+      <GuideHost boot={await guideBoot()} />
       <Toaster position="top-center" />
     </div>
   );

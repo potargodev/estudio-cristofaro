@@ -1,3 +1,4 @@
+import { FirstSteps } from "@/components/app/FirstSteps";
 import { ArrowRight, Download } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -40,6 +41,7 @@ export default async function PortalHome() {
     <>
       <h1 className="font-display text-3xl sm:text-4xl">Hola{first ? `, ${first}` : ""}</h1>
       <p className="mt-2 text-muted">Lo que viene, lo último que te mandamos y tus consultas abiertas.</p>
+      <FirstSteps className="mt-6" />
 
       {(month.obligations || month.documents || month.requests) && (
         <MonthCard month={monthName} className="mt-6">

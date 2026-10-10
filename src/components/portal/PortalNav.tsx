@@ -32,7 +32,7 @@ export function PortalNav({ main, extra, openRequests }: { main: PortalNavItem[]
   const badge = (item: PortalNavItem) => item.href === "/portal/solicitudes" && openRequests > 0;
   return (
     <>
-      <nav aria-label="Portal" className="hidden md:block">
+      <nav aria-label="Portal" data-tour="nav" className="hidden md:block">
         <ul className="border-t border-paper/10 px-3 py-4">
           {desktop.map((item) => {
             const active = isActive(item.href, item.exact);
@@ -58,6 +58,7 @@ export function PortalNav({ main, extra, openRequests }: { main: PortalNavItem[]
       </nav>
       <nav
         aria-label="Portal"
+        data-tour="nav"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
         <ul

@@ -1,6 +1,7 @@
 import { and, desc, eq, isNull, or } from "drizzle-orm";
 import { CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Wallet } from "lucide-react";
 import Link from "next/link";
+import { FirstSteps } from "@/components/app/FirstSteps";
 import { requestAccountant } from "./actions";
 import { Notice } from "@/components/admin/AdminField";
 import { SubmitButton } from "@/components/admin/ui";
@@ -48,7 +49,9 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
         <p className="mt-2 max-w-xl text-[15px] text-muted">Desde acá vas a llevar tus números sin ser contador. Arrancamos por los grupos de gastos; lo demás llega muy pronto.</p>
       </header>
 
-      <Link href="/grupos" className="group flex items-center gap-4 border border-line bg-surface p-5 transition-colors hover:border-muted">
+      <FirstSteps />
+
+      <Link href="/grupos" data-tour="grupos" className="group flex items-center gap-4 border border-line bg-surface p-5 transition-colors hover:border-muted">
         <span className="grid size-12 shrink-0 place-items-center bg-navy text-gold">
           <Wallet className="size-6" strokeWidth={1.5} aria-hidden />
         </span>

@@ -1,7 +1,7 @@
 import "server-only";
-import { and, asc, eq, ne } from "drizzle-orm";
+import { and, asc, desc, eq, gt, isNull, ne } from "drizzle-orm";
 import { getDb } from "@/db";
-import { legal_entities, organizations, service_plans, studios, users } from "@/db/schema";
+import { legal_entities, organizations, service_plans, signup_requests, studios, users } from "@/db/schema";
 import { SERVICE_PLANS } from "@/lib/service-plans";
 import { createUserWithPassword } from "@/lib/users";
 import { DEFAULT_PLAN, getPlan, type TenantKind } from "./plans";
@@ -142,4 +142,47 @@ export async function ownOrganization(studioId: string) {
     .orderBy(asc(organizations.created_at))
     .limit(1);
   return o ?? null;
+}
+
+// ── Autoregistro sin contraseña (persona o autónomo) ─────────────────────
+
+/** Cuenta propia: dueño, organización propia y su razón social (si hay CUIT) */
+export async function finalizePersonalTenant(studioId: string, userId: string) {
+  const db = getDb();
+  const [t] = await db.select().from(studios).where(eq(studios.id, studioId));
+  if (!t || t.kind === "studio") return;
+  await db.update(studios).set({ owner_user_id: userId }).where(and(eq(studios.id, studioId), isNull(studios.owner_user_id)));
+  if (await ownOrganization(studioId)) return;
+  const [org] = await db.insert(organizations).values({ studio_id: studioId, name: t.name, status: "activa" }).returning({ id: organizations.id });
+  if (t.cuit)
+    await db.insert(legal_entities).values({
+      studio_id: studioId,
+      organization_id: org.id,
+      cuit: t.cuit,
+      business_name: t.name,
+      regime: t.tax_regime === "responsable_inscripto" ? "responsable_inscripto" : "monotributo",
+    });
+}
+
+/** Pedido de alta vigente para un email (lo usa el hook de creación de usuario de Better Auth) */
+export async function pendingSignup(email: string) {
+  const [r] = await getDb()
+    .select()
+    .from(signup_requests)
+    .where(and(eq(signup_requests.email, email.trim().toLowerCase()), isNull(signup_requests.used_at), gt(signup_requests.expires_at, new Date())))
+    .orderBy(desc(signup_requests.created_at))
+    .limit(1);
+  return r ?? null;
+}
+
+/** Crea el tenant de un pedido de alta (el usuario lo crea Better Auth con este studioId) */
+export async function tenantFromSignup(r: typeof signup_requests.$inferSelect) {
+  const db = getDb();
+  const plan = getPlan(DEFAULT_PLAN[r.kind])!;
+  const [studio] = await db
+    .insert(studios)
+    .values({ slug: await uniqueSlug(r.name), name: r.name, kind: r.kind, plan_key: plan.key, cuit: r.cuit, created_via: "registro", legal_name: r.name, tax_regime: (r.data.taxRegime as string) ?? null })
+    .returning({ id: studios.id });
+  await db.update(signup_requests).set({ used_at: new Date(), studio_id: studio.id }).where(eq(signup_requests.id, r.id));
+  return studio.id;
 }

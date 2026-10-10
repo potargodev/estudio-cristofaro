@@ -28,7 +28,7 @@ export default async function GastosHome() {
           <p className="mt-2 text-muted">{actor.kind === "guest" ? `Hola, ${actor.name}. Este es el grupo al que te invitaron.` : "Quién pagó qué, cuánto debe cada uno y cómo saldarlo."}</p>
         </div>
         {actor.kind === "user" && (
-          <Link href="/grupos/nuevo" className="inline-flex h-11 items-center gap-2 bg-navy px-4 text-paper hover:bg-navy-deep">
+          <Link href="/grupos/nuevo" data-tour="grupo-nuevo" className="inline-flex h-11 items-center gap-2 bg-navy px-4 text-paper hover:bg-navy-deep">
             <Plus className="size-4" aria-hidden />
             Nuevo grupo
           </Link>

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { GuideButton, GuideHost, HelpLink } from "@/components/app/Guide";
+import { guideBoot } from "@/modules/onboarding/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
@@ -31,6 +33,8 @@ export default async function GastosLayout({ children }: { children: React.React
               {PANEL[home] ?? "Volver"}
             </Link>
           )}
+          {actor && <GuideButton compact className="text-paper/75 hover:text-paper" />}
+          <HelpLink compact className="text-paper/75 hover:text-paper" />
           <ThemeToggle className="text-paper/75 hover:text-paper" />
           {actor && (
             <form action={gastosSignOut}>
@@ -48,6 +52,7 @@ export default async function GastosLayout({ children }: { children: React.React
         )}
       </header>
       <main className="mx-auto w-full max-w-3xl px-4 pb-32 pt-6 sm:px-6 sm:pt-8">{children}</main>
+      {actor && <GuideHost boot={await guideBoot()} />}
       <Toaster position="top-center" />
     </div>
   );

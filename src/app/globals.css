@@ -1127,3 +1127,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .gastos-bar, .gastos-col { animation: none; }
 }
+
+/* Panel "Guía" (onboarding) */
+@keyframes guia-in {
+  from { transform: translateX(16px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}

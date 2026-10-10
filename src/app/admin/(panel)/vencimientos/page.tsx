@@ -1,4 +1,5 @@
 import { and, asc, eq, gte, lte } from "drizzle-orm";
+import { markStep } from "@/modules/onboarding/server";
 import { alias } from "drizzle-orm/pg-core";
 import { CalendarDays, ChevronLeft, ChevronRight, List } from "lucide-react";
 import type { Metadata } from "next";
@@ -106,6 +107,7 @@ function Calendar({ rows, month }: { rows: ObligationRow[]; month: string }) {
 export default async function VencimientosPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
   const { studioId } = await requireStaff();
+  await markStep("vencimientos_vistos").catch(() => undefined);
   const view = sp.vista === "calendario" ? "calendario" : "lista";
   const now = new Date();
   const month = /^\d{4}-\d{2}$/.test(sp.mes ?? "") ? sp.mes! : iso(now).slice(0, 7);

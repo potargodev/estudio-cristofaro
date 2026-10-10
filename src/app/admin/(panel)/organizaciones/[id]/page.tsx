@@ -1,4 +1,5 @@
 import { and, asc, count, eq, inArray, isNull, max, ne, sql } from "drizzle-orm";
+import { markStep } from "@/modules/onboarding/server";
 import { CalendarClock, FileText, MessagesSquare, RefreshCw, UserRound, Users } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -59,6 +60,7 @@ export default async function OrganizacionPage({
   const { id } = await params;
   const sp = await searchParams;
   const me = await requireStaff();
+  await markStep("organizacion_abierta").catch(() => undefined);
   const { studioId } = me;
   const org = await studioOrganization(id, studioId);
   if (!org) notFound();
