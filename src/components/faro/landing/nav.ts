@@ -5,5 +5,5 @@ export const FARO_NAV = [
   { href: "/faro#gastos", label: "Grupos de gastos" },
   { href: "/faro#modulos", label: "Módulos" },
   { href: "/faro#ia", label: "IA y conexiones" },
-  { href: "/faro#planes", label: "Planes" },
+  { href: "/precios", label: "Precios" },
 ];

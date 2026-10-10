@@ -13,13 +13,15 @@ const TABS: { kind: TenantKind; label: string; intro: string }[] = [
   { kind: "studio", label: "Para estudios", intro: "30 días de prueba gratis en todos los planes. Profesional y Avanzado suman automatización, módulos, equipo y la Red de estudios." },
 ];
 
-/** "USD 49 / mes" y "≈ $ 68.600 por mes" */
+/** "$ 68.600 / mes" (lo que ve la persona) y la referencia "USD 49 · anual …" */
 function Price({ p, usdArs }: { p: FaroPlan; usdArs: number }) {
   if (p.free || !p.priceUsd) return <span className="tabular mt-4 block text-[18px] text-paper">Gratis</span>;
   return (
     <span className="mt-4 block">
-      <span className="tabular block text-[18px] text-paper">{formatUsd(p.priceUsd)} / mes</span>
-      <span className="tabular block text-[13px] text-paper/55">≈ {formatArs(p.priceUsd * usdArs)} por mes · {p.trialDays} días gratis</span>
+      <span className="tabular block text-[18px] text-paper">{formatArs(p.priceUsd * usdArs)} / mes</span>
+      <span className="tabular block text-[13px] text-paper/55">
+        Referencia {formatUsd(p.priceUsd)} · anual {formatArs(p.priceUsd * (12 - ANNUAL_FREE_MONTHS) * usdArs)}{p.trialDays ? ` · ${p.trialDays} días gratis` : ""}
+      </span>
     </span>
   );
 }
