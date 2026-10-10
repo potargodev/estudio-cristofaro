@@ -29,7 +29,7 @@ const notices: Record<string, string> = {
   activado: "Usuario reactivado.",
 };
 
-const STAFF_ROLES = ["admin", "contador", "colaborador"] as const;
+const STAFF_ROLES = ["dueno", "contador", "colaborador"] as const;
 
 export default async function UsuariosPage({
   searchParams,

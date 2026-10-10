@@ -17,7 +17,7 @@ export const documentosTools = [
       "Documentos del portal (constancias, comprobantes, DDJJ, recibos…) de una organización o de todas, del más nuevo al más viejo. Con sin_revisar=true muestra solo los que subió el cliente y nadie del estudio vio.",
     module: "documentos",
     level: "lectura",
-    roles: ["admin", "contador", "colaborador"],
+    roles: ["dueno", "contador", "colaborador"],
     input: z.object({
       organizacion_id: uuid("ID de la organización").optional(),
       categoria: z.string().max(40).optional().describe("comprobantes, constancias, ddjj, recibos, vep, balances, solicitud, otro"),
@@ -66,7 +66,7 @@ export const documentosTools = [
       "Devuelve el contenido de texto de un documento (PDF con texto, XLSX, CSV o texto). Las imágenes y los escaneos todavía no se leen. La lectura queda en la auditoría.",
     module: "documentos",
     level: "lectura",
-    roles: ["admin", "contador", "colaborador"],
+    roles: ["dueno", "contador", "colaborador"],
     input: z.object({ documento_id: uuid("ID del documento") }),
     async organizationOf(input) {
       const [d] = await getDb().select({ org: documents.organization_id }).from(documents).where(eq(documents.id, input.documento_id));

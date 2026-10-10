@@ -54,7 +54,7 @@ const B = await studio("prueba-b", "Estudio Prueba B");
 const adminA = (await sql`select id from users where email = ${process.env.ADMIN_EMAIL}`)[0].id;
 await sql`update users set two_factor_enabled = true, must_change_password = false where id = ${adminA}`;
 const contadorA = await user(A, "contador@estudiocristofaro.com", "Carla Contadora", "contador");
-const adminB = await user(B, "admin@prueba-b.com", "Admin B", "admin");
+const adminB = await user(B, "admin@prueba-b.com", "Admin B", "dueno");
 const colaboradorA = await user(A, "colaborador@estudiocristofaro.com", "Coco Colaborador", "colaborador");
 const norte = await org(A, "Agencia Norte SRL", "30711111119");
 const sur = await org(A, "Consultora Sur SAS", "30722222229");
@@ -69,16 +69,26 @@ const duenaNorte = await user(A, "duena@agencianorte.com.ar", "Dana Dueña", "cl
 const empleadaNorte = await user(A, "empleada@agencianorte.com.ar", "Ema Empleada", "cliente");
 await member(duenaNorte, norte, "administrador");
 await member(empleadaNorte, norte, "empleado");
+await sql`insert into employees (studio_id, organization_id, first_name, last_name, email, user_id, position) values (${A}, ${norte}, 'Ema', 'Empleada', 'empleada@agencianorte.com.ar', ${empleadaNorte}, 'Ejecutiva de cuentas')
+  on conflict do nothing`;
+// Cuenta personal (Faro Personal) con su organización propia
+const [P] = await sql`insert into studios (slug, name, kind, plan_key, cuit) values ('prueba-personal', 'Pablo Personal', 'personal', 'destello', '20304050607')
+  on conflict (slug) do update set name = excluded.name returning id`;
+const personal = P.id;
+const titular = await user(personal, "titular@ejemplo.com", "Pablo Personal", "titular");
+await sql`update studios set owner_user_id = ${titular} where id = ${personal}`;
+const [ownOrg] = await sql`select id from organizations where studio_id = ${personal} limit 1`;
+if (!ownOrg) await sql`insert into organizations (studio_id, name, status) values (${personal}, 'Pablo Personal', 'activa')`;
 const reqOf = async (o) => (await sql`select id from requests where organization_id = ${o} limit 1`)[0].id;
 const docOf = async (o) => (await sql`select id from documents where organization_id = ${o} limit 1`)[0].id;
 
 const out = {
-  studios: { A, B },
-  users: { adminA, contadorA, adminB, colaboradorA, duenaNorte, empleadaNorte },
+  studios: { A, B, personal },
+  users: { adminA, contadorA, adminB, colaboradorA, duenaNorte, empleadaNorte, titular },
   orgs: { norte, sur, ajena },
   requests: { norte: await reqOf(norte), sur: await reqOf(sur), ajena: await reqOf(ajena) },
   documents: { norte: await docOf(norte), ajena: await docOf(ajena) },
-  cookies: { adminA: await session(adminA), contadorA: await session(contadorA), adminB: await session(adminB), colaboradorA: await session(colaboradorA), duenaNorte: await session(duenaNorte), empleadaNorte: await session(empleadaNorte) },
+  cookies: { adminA: await session(adminA), contadorA: await session(contadorA), adminB: await session(adminB), colaboradorA: await session(colaboradorA), duenaNorte: await session(duenaNorte), empleadaNorte: await session(empleadaNorte), titular: await session(titular) },
 };
 writeFileSync(new URL("./.salida.json", import.meta.url), JSON.stringify(out, null, 2));
 console.log(JSON.stringify(out, null, 2));

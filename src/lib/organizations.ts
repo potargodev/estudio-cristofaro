@@ -139,7 +139,7 @@ export async function getStudioStaff(studioId: string) {
   return getDb()
     .select({ id: users.id, name: users.name, email: users.email })
     .from(users)
-    .where(and(eq(users.studioId, studioId), inArray(users.role, ["admin", "contador", "colaborador"]), eq(users.active, true)))
+    .where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true)))
     .orderBy(users.name);
 }
 

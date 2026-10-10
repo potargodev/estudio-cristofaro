@@ -18,7 +18,7 @@ export interface ChangeState {
 export async function changeTemporaryPassword(_prev: ChangeState, fd: FormData): Promise<ChangeState> {
   const user = await getCurrentUser();
   if (!user) redirect("/admin/login");
-  if (!isStudioRole(user.role) && user.role !== "autonomo") redirect(homeFor(user.role));
+  if (!isStudioRole(user.role) && user.role !== "titular") redirect(homeFor(user.role));
   const current = String(fd.get("current") ?? "");
   const next = String(fd.get("password") ?? "");
   const confirm = String(fd.get("confirm") ?? "");

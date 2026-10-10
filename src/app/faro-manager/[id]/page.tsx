@@ -31,12 +31,12 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
   const db = getDb();
   const [t] = await db.select().from(studios).where(eq(studios.id, id));
   if (!t) notFound();
-  const owner = faro.faroRole === "owner";
+  const owner = faro.faroRole === "faro_owner";
   const [e, [orgs], staff, overrides, [ai], log, grants] = await Promise.all([
     getEntitlements(t.id),
     db.select({ n: count() }).from(organizations).where(and(eq(organizations.studio_id, t.id), inArray(organizations.status, ["onboarding", "activa", "pausada"]))),
     // Solo el equipo del tenant (nombre, rol y estado): nada de sus clientes
-    db.select({ name: users.name, email: users.email, role: users.role, active: users.active, twoFactor: users.twoFactorEnabled }).from(users).where(and(eq(users.studioId, t.id), inArray(users.role, ["admin", "contador", "colaborador", "autonomo"]))),
+    db.select({ name: users.name, email: users.email, role: users.role, active: users.active, twoFactor: users.twoFactorEnabled }).from(users).where(and(eq(users.studioId, t.id), inArray(users.role, ["dueno", "contador", "colaborador", "titular"]))),
     db.select().from(studio_module_overrides).where(eq(studio_module_overrides.studio_id, t.id)),
     db.select({ cost: sql<string>`coalesce(sum(${ai_usage.cost_usd}), 0)`, calls: sql<number>`count(*)::int` }).from(ai_usage).where(and(eq(ai_usage.studio_id, t.id), sql`${ai_usage.created_at} >= date_trunc('month', now())`)),
     db.select().from(audit_log).where(and(eq(audit_log.studio_id, t.id), like(audit_log.action, "faro.%"))).orderBy(desc(audit_log.created_at)).limit(20),
@@ -223,7 +223,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                 <span className="flex gap-2">
                   <Tag>{u.role}</Tag>
                   {!u.active && <Tag>Inactivo</Tag>}
-                  {u.role !== "autonomo" && !u.twoFactor && <Tag>Sin 2FA</Tag>}
+                  {u.role !== "titular" && !u.twoFactor && <Tag>Sin 2FA</Tag>}
                 </span>
               </li>
             ))}

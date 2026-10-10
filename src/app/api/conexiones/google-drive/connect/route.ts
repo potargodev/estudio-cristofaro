@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 /** Inicia la conexión de Google Drive del estudio (solo administradores) */
 export async function GET() {
   const user = await getCurrentUser();
-  if (!user || user.role !== "admin" || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
+  if (!user || user.role !== "dueno" || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
   if (!driveAvailable()) return NextResponse.redirect(new URL("/admin/conexiones/google-drive?error=Faltan%20las%20credenciales%20de%20Google%20o%20ENCRYPTION_KEY", getSiteUrl()));
   const state = randomBytes(24).toString("base64url");
   const res = NextResponse.redirect(driveAuthUrl(state));

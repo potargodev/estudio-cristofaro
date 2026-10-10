@@ -3,7 +3,8 @@
 //
 // Variables: DATABASE_URL, STUDIO_SLUG (default "cristofaro"), ADMIN_EMAIL, ADMIN_PASSWORD.
 
-import { and, eq } from "drizzle-orm";
+import { randomBytes } from "node:crypto";
+import { and, eq, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "../src/db/schema";
@@ -153,14 +154,25 @@ async function main() {
         console.log(`Usuario admin: ${email} ya existe, no se modificó.`);
       } else {
         if (password.length < 8) throw new Error("ADMIN_PASSWORD tiene que tener al menos 8 caracteres.");
-        await createUserWithPassword(db, { studioId: studio.id, name: "Administrador", email, password, role: "admin" });
+        await createUserWithPassword(db, { studioId: studio.id, name: "Administrador", email, password, role: "dueno" });
         console.log(`Usuario admin: ${email} creado.`);
       }
-      // El admin del estudio cliente cero es owner del equipo de Faro (si no se configuró otro)
-      if (!process.env.FARO_OWNER_EMAIL || process.env.FARO_OWNER_EMAIL.trim().toLowerCase() === email) {
-        await db.update(users).set({ faroRole: "owner" }).where(eq(users.email, email));
-        console.log(`Faro Manager: ${email} es owner.`);
-      }
+      // Dueño del tenant #1
+      const [owner] = await db.select({ id: users.id }).from(users).where(eq(users.email, email));
+      if (owner) await db.update(studios).set({ owner_user_id: owner.id }).where(and(eq(studios.id, studio.id), isNull(studios.owner_user_id)));
+    }
+
+    // Nivel plataforma: owner de Faro (FARO_OWNER_EMAIL), independiente de su rol en el tenant
+    const faroOwner = (process.env.FARO_OWNER_EMAIL?.trim() || "potargo.dev@gmail.com").toLowerCase();
+    const [fo] = await db.select({ id: users.id }).from(users).where(eq(users.email, faroOwner));
+    if (fo) {
+      await db.update(users).set({ faroRole: "faro_owner" }).where(eq(users.id, fo.id));
+      console.log(`Faro Manager: ${faroOwner} es faro_owner.`);
+    } else {
+      // Se crea con una contraseña al azar que nadie conoce: hay que generarle una temporal con reset-password
+      await createUserWithPassword(db, { studioId: studio.id, name: "Equipo Faro", email: faroOwner, password: randomBytes(24).toString("base64url"), role: "colaborador" });
+      await db.update(users).set({ faroRole: "faro_owner", mustChangePassword: true }).where(eq(users.email, faroOwner));
+      console.log(`Faro Manager: ${faroOwner} creado como faro_owner. Generale la contraseña con: node dist/reset-password.mjs ${faroOwner}`);
     }
   } finally {
     await client.end();

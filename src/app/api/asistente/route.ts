@@ -6,7 +6,7 @@ import { parseModelKey } from "@/lib/ai/catalog";
 import { assistantToolContext, assistantTools, loadMessages, ownConversation, resolveContext, saveMessages, systemPrompt } from "@/lib/ai/assistant";
 import { parseContextRefs, type ContextRef } from "@/lib/ai/context";
 import { budgetBlock, languageModel, recordUsage, resolveModel } from "@/lib/ai/models";
-import { staffForApi } from "@/lib/auth";
+import { tenantForApi } from "@/lib/auth";
 import { aiCanAct } from "@/lib/faro/entitlements";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ function sanitize(raw: unknown): UIMessage | null {
 }
 
 export async function POST(request: Request) {
-  const user = await staffForApi();
+  const user = await tenantForApi();
   if (!user) return fail(401, "Tu sesión venció. Volvé a entrar.");
   let body: { id?: unknown; message?: unknown; model?: unknown };
   try {

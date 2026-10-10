@@ -15,8 +15,12 @@ export interface PortalNavItem {
 }
 
 export function buildPortalNav(role: OrgRole, activeModules: string[]) {
-  // El empleado no tiene inicio: solo gastos compartidos y sus rendiciones
-  const main: PortalNavItem[] = can(role, "inicio.ver") ? [{ href: "/portal", label: "Inicio", icon: "inicio", exact: true }] : [];
+  // El empleado tiene su propio inicio (/portal/empleado): gastos compartidos y sus rendiciones
+  const main: PortalNavItem[] = can(role, "inicio.ver")
+    ? [{ href: "/portal", label: "Inicio", icon: "inicio", exact: true }]
+    : role === "empleado"
+      ? [{ href: "/portal/empleado", label: "Inicio", icon: "inicio", exact: true }]
+      : [];
   if (can(role, "vencimientos.ver"))
     main.push({
       href: "/portal/vencimientos",

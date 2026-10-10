@@ -11,7 +11,7 @@ import { approvalStates, loadMessages, ownConversation, resolveContext } from "@
 import { PROVIDERS, modelKey } from "@/lib/ai/catalog";
 import { parseContextParam } from "@/lib/ai/context";
 import { getProviders, resolveModel } from "@/lib/ai/models";
-import { requireStaff } from "@/lib/auth";
+import { requireTenant, TENANT_OWNERS } from "@/lib/auth";
 import { externalToolMeta } from "@/modules/connectors/mcp-externo/meta";
 import { maxLevel, TOOLS, toolAllowed, type StaffRole } from "@/modules/tools";
 import { iaTabs } from "../ia/tabs";
@@ -69,10 +69,10 @@ function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
 
 export default async function AsistentePage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  const user = await requireStaff();
+  const user = await requireTenant();
   const providers = (await getProviders(user.studioId)).filter((p) => p.active);
   const models = providers.flatMap((p) => (p.settings.models ?? []).map((m) => ({ value: modelKey(p.id, m), label: `${m} · ${p.name}` })));
-  if (!models.length) return <SetupGuide isAdmin={user.role === "admin"} />;
+  if (!models.length) return <SetupGuide isAdmin={TENANT_OWNERS.includes(user.role)} />;
 
   const db = getDb();
   const current = sp.c && !sp.nueva ? await ownConversation(user, sp.c) : null;

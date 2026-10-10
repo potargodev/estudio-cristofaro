@@ -25,7 +25,7 @@ export type FaroModuleKey =
   | "personal_invoicing";
 
 export type ModuleStatus = "disponible" | "beta" | "proximamente";
-export type StudioRoleKey = "admin" | "contador" | "colaborador" | "autonomo";
+export type StudioRoleKey = "dueno" | "contador" | "colaborador" | "titular";
 
 export interface FaroModule {
   key: FaroModuleKey;
@@ -42,7 +42,7 @@ export interface FaroModule {
   limit?: "smartDocsPerMonth" | "flows" | "invoicesPerMonth";
 }
 
-const ALL_STAFF: StudioRoleKey[] = ["admin", "contador", "colaborador"];
+const ALL_STAFF: StudioRoleKey[] = ["dueno", "contador", "colaborador"];
 
 export const FARO_MODULES: FaroModule[] = [
   {
@@ -51,7 +51,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Chat con contexto que opera sobre toda la plataforma, con la IA y la clave propia del estudio. Las acciones sensibles pasan por aprobación.",
     status: "disponible",
     minPlan: { studio: "senal", personal: "destello" },
-    roles: [...ALL_STAFF, "autonomo"],
+    roles: [...ALL_STAFF, "titular"],
     nav: [
       { href: "/admin/asistente", label: "Asistente" },
       { href: "/admin/aprobaciones", label: "Aprobaciones" },
@@ -65,7 +65,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Grupos, gastos divididos, saldos y deudas simplificadas, conectados con la contabilidad.",
     status: "disponible",
     minPlan: { studio: "senal", personal: "destello" },
-    roles: [...ALL_STAFF, "autonomo"],
+    roles: [...ALL_STAFF, "titular"],
     nav: [{ href: "/gastos", label: "Gastos compartidos" }],
     events: ["gasto.creado", "pago.registrado"],
     tools: ["crear_gasto", "consultar_saldos", "registrar_pago"],
@@ -76,7 +76,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Canvas visual con disparadores, condiciones y acciones, con plantillas listas para usar.",
     status: "proximamente",
     minPlan: { studio: "senal" },
-    roles: ["admin", "contador"],
+    roles: ["dueno", "contador"],
     nav: [],
     events: [],
     tools: [],
@@ -121,7 +121,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Extrae datos de facturas, tickets y extractos con detección de duplicados y confirmación humana.",
     status: "proximamente",
     minPlan: { studio: "senal", personal: "guia" },
-    roles: [...ALL_STAFF, "autonomo"],
+    roles: [...ALL_STAFF, "titular"],
     nav: [],
     events: ["documento.leido"],
     tools: [],
@@ -133,7 +133,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Cruza extractos con facturas: pagadas, pendientes, pagos sin factura y comisiones.",
     status: "proximamente",
     minPlan: { studio: "horizonte" },
-    roles: ["admin", "contador"],
+    roles: ["dueno", "contador"],
     nav: [],
     events: [],
     tools: [],
@@ -144,7 +144,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Abonos del estudio a sus clientes, facturación, recordatorios y cobro con Mercado Pago.",
     status: "proximamente",
     minPlan: { studio: "rumbo" },
-    roles: ["admin"],
+    roles: ["dueno"],
     nav: [],
     events: [],
     tools: [],
@@ -166,7 +166,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Padrón, facturación electrónica, vencimientos según CUIT y VEP por web services oficiales.",
     status: "proximamente",
     minPlan: { studio: "rumbo", personal: "destello" },
-    roles: [...ALL_STAFF, "autonomo"],
+    roles: [...ALL_STAFF, "titular"],
     nav: [],
     events: [],
     tools: [],
@@ -177,7 +177,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Conector instalado en la PC de Tango que sincroniza por la API Delta.",
     status: "disponible",
     minPlan: { studio: "rumbo" },
-    roles: ["admin"],
+    roles: ["dueno"],
     nav: [{ href: "/admin/conexiones/tango", label: "Tango" }],
     events: ["tango.sincronizado"],
     tools: ["listar_registros_externos"],
@@ -188,7 +188,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Importación de exportaciones de Tango y otros sistemas con plantillas de mapeo.",
     status: "disponible",
     minPlan: { studio: "senal" },
-    roles: ["admin"],
+    roles: ["dueno"],
     nav: [{ href: "/admin/conexiones/archivos", label: "Archivos" }],
     events: [],
     tools: ["listar_registros_externos"],
@@ -210,7 +210,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Tableros financieros y de gestión por organización y del estudio.",
     status: "proximamente",
     minPlan: { studio: "horizonte" },
-    roles: ["admin", "contador"],
+    roles: ["dueno", "contador"],
     nav: [],
     events: [],
     tools: [],
@@ -232,7 +232,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Logo, colores y dominio propio del estudio en el portal de sus clientes.",
     status: "proximamente",
     minPlan: { studio: "horizonte" },
-    roles: ["admin"],
+    roles: ["dueno"],
     nav: [],
     events: [],
     tools: [],
@@ -243,7 +243,7 @@ export const FARO_MODULES: FaroModule[] = [
     description: "Facturas A, B, C y E por WSFE con PDF propio, semáforo de monotributo y calendario personal.",
     status: "proximamente",
     minPlan: { personal: "destello" },
-    roles: ["autonomo"],
+    roles: ["titular"],
     nav: [],
     events: [],
     tools: [],

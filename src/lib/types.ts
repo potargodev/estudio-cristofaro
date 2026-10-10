@@ -42,11 +42,11 @@ export interface Plan {
 }
 
 export const ROLES: Record<UserRole, string> = {
-  admin: "Dueño",
+  dueno: "Dueño",
   contador: "Contador",
   colaborador: "Colaborador",
   cliente: "Cliente",
-  autonomo: "Autónomo",
+  titular: "Titular",
 };
 
 export const LEAD_STATUSES: { value: LeadStatus; label: string }[] = [

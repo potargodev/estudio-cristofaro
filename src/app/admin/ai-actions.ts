@@ -9,7 +9,7 @@ import { ai_providers, ai_settings, type AiTask, type ModelRef } from "@/db/sche
 import { AI_PROVIDER_KINDS, AI_TASKS, PROVIDERS, parseModelKey, type AiProviderKind } from "@/lib/ai/catalog";
 import { getProvider, languageModel, recordUsage } from "@/lib/ai/models";
 import { audit } from "@/lib/audit";
-import { requireAdmin } from "@/lib/auth";
+import { requireTenantOwner } from "@/lib/auth";
 import { encrypt, encryptionEnabled } from "@/lib/crypto";
 
 // Configuración de IA del estudio: solo administradores, siempre dentro de su estudio.
@@ -26,7 +26,7 @@ function s(fd: FormData, key: string): string | null {
 const back = (q: string): never => redirect(`${BASE}?${q}`);
 
 export async function saveProvider(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireTenantOwner();
   if (!encryptionEnabled()) back("error=cifrado");
   const id = s(fd, "id");
   const current = id ? await getProvider(admin.studioId, id) : null;
@@ -80,7 +80,7 @@ export async function saveProvider(fd: FormData) {
 }
 
 export async function deleteProvider(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireTenantOwner();
   const p = await getProvider(admin.studioId, s(fd, "id") ?? "");
   if (!p) back("error=proveedor");
   await getDb().delete(ai_providers).where(and(eq(ai_providers.id, p!.id), eq(ai_providers.studio_id, admin.studioId)));
@@ -90,7 +90,7 @@ export async function deleteProvider(fd: FormData) {
 }
 
 export async function toggleProvider(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireTenantOwner();
   const p = await getProvider(admin.studioId, s(fd, "id") ?? "");
   if (!p) back("error=proveedor");
   await getDb().update(ai_providers).set({ active: !p!.active }).where(eq(ai_providers.id, p!.id));
@@ -101,7 +101,7 @@ export async function toggleProvider(fd: FormData) {
 
 /** Prueba de conexión: una llamada mínima al primer modelo cargado (o el indicado) */
 export async function testProvider(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireTenantOwner();
   const p = await getProvider(admin.studioId, s(fd, "id") ?? "");
   if (!p) back("error=proveedor");
   const model = s(fd, "model") ?? p!.settings.models?.[0];
@@ -138,7 +138,7 @@ export async function testProvider(fd: FormData) {
 }
 
 export async function saveAiSettings(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireTenantOwner();
   const providers = await getDb().select({ id: ai_providers.id }).from(ai_providers).where(eq(ai_providers.studio_id, admin.studioId));
   const ids = new Set(providers.map((p) => p.id));
   // Solo modelos de proveedores del propio estudio

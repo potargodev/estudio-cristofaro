@@ -47,7 +47,7 @@ export default async function ConsultaPage({
     db
       .select({ id: users.id, name: users.name, active: users.active })
       .from(users)
-      .where(and(eq(users.studioId, studioId), inArray(users.role, ["admin", "contador", "colaborador"])))
+      .where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"])))
       .orderBy(asc(users.name)),
   ]);
   if (!lead) notFound();

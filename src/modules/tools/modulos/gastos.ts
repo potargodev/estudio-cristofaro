@@ -11,7 +11,7 @@ import { uuid } from "./helpers";
 // pregunta (solo sus grupos). Crear y consultar no piden aprobación; un pago
 // por Mercado Pago es sensible y va a Aprobaciones.
 
-const ROLES = ["admin", "contador", "colaborador", "autonomo"] as const;
+const ROLES = ["dueno", "contador", "colaborador", "titular"] as const;
 
 const actorOf = (ctx: HandlerContext): GastosActor => ({ kind: "user", studioId: ctx.studioId, userId: ctx.actor.id, name: ctx.actor.name, email: ctx.actor.email, role: ctx.actor.role });
 

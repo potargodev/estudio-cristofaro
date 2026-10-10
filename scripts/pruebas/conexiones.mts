@@ -26,7 +26,7 @@ import { check, data, failures } from "./lib.mjs";
 const d = data();
 const db = getDb();
 const XUBIO = process.env.XUBIO_API_URL!;
-const ctxOf = (studioId: string, userId: string, email: string, role: "admin" | "contador" = "admin"): ToolContext => ({
+const ctxOf = (studioId: string, userId: string, email: string, role: "dueno" | "contador" = "dueno"): ToolContext => ({
   studioId,
   actor: { id: userId, email, name: email, role },
   origin: "asistente",

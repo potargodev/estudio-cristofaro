@@ -11,7 +11,7 @@ import { CodeLine, CreateAccess } from "@/components/admin/mcp/CreateAccess";
 import { SubmitButton } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { mcp_accesses, mcp_calls, oauth_clients, organizations, users } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireTenant, TENANT_OWNERS } from "@/lib/auth";
 import { mcpUrls } from "@/lib/mcp/oauth-meta";
 import { TOOL_MODULES } from "@/modules/tools/types";
 
@@ -35,9 +35,9 @@ const RESULT: Record<string, { key: string; label: string }> = {
 
 export default async function McpPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  const user = await requireStaff();
+  const user = await requireTenant();
   const db = getDb();
-  const isAdmin = user.role === "admin";
+  const isAdmin = TENANT_OWNERS.includes(user.role);
   const urls = mcpUrls();
   const [accesses, orgs] = await Promise.all([
     db

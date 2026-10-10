@@ -66,13 +66,22 @@ const BOTTOM: { href: string; label: string; icon: NavIcon; badge?: BadgeKey; ex
   { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
 ];
 
-function BottomBar({ badges, onMore, moreOpen }: { badges: Record<BadgeKey, number>; onMore: () => void; moreOpen: boolean }) {
+/** Cuenta personal: su panel, el Asistente, gastos compartidos y "Más" */
+const BOTTOM_PERSONAL: typeof BOTTOM = [
+  { href: "/personal", label: "Inicio", icon: "resumen", exact: true },
+  { href: "/admin/asistente", label: "Asistente", icon: "asistente" },
+  { href: "/gastos", label: "Gastos", icon: "gastos" },
+  { href: "/admin/mcp", label: "MCP", icon: "mcp" },
+];
+
+function BottomBar({ badges, onMore, moreOpen, personal }: { badges: Record<BadgeKey, number>; onMore: () => void; moreOpen: boolean; personal?: boolean }) {
   const pathname = usePathname();
-  const inBar = BOTTOM.some((i) => (i.exact ? pathname === i.href : pathname.startsWith(i.href)));
+  const BOTTOM_ITEMS = personal ? BOTTOM_PERSONAL : BOTTOM;
+  const inBar = BOTTOM_ITEMS.some((i) => (i.exact ? pathname === i.href : pathname.startsWith(i.href)));
   return (
     <nav aria-label="Secciones principales" className="keep-dark fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper lg:hidden">
       <ul className="grid grid-cols-5">
-        {BOTTOM.map((i) => {
+        {BOTTOM_ITEMS.map((i) => {
           const Icon = ICONS[i.icon];
           const active = i.exact ? pathname === i.href : pathname.startsWith(i.href);
           const count = i.badge ? badges[i.badge] : 0;
@@ -109,7 +118,7 @@ function BottomBar({ badges, onMore, moreOpen }: { badges: Record<BadgeKey, numb
   );
 }
 
-const ROLE_LABEL: Record<string, string> = { admin: "Dueño", contador: "Contador", colaborador: "Colaborador" };
+const ROLE_LABEL: Record<string, string> = { dueno: "Dueño", titular: "Titular", contador: "Contador", colaborador: "Colaborador" };
 
 export interface ShellUser {
   id: string;
@@ -300,13 +309,13 @@ export function AdminShell({
   }, [toggle]);
   useEffect(() => setDrawer(false), [pathname]);
 
-  const action = primaryAction(pathname, access.isOperator);
+  const action = access.isPersonal ? null : primaryAction(pathname, access.isOperator);
   const searchParams = useSearchParams();
   const askHref = askFaroHref(pathname, searchParams);
   const trail = crumbs(pathname);
 
   const brand = (small: boolean) => (
-    <Link href="/admin" className="flex min-w-0 items-center gap-3" aria-label={`Faro · ${studioName} · Resumen`}>
+    <Link href={access.isPersonal ? "/personal" : "/admin"} className="flex min-w-0 items-center gap-3" aria-label={`Faro · ${studioName} · Inicio`}>
       {small ? <Sello className="size-10 shrink-0 text-gold" title="Faro" /> : <FaroLogo />}
     </Link>
   );
@@ -425,7 +434,7 @@ export function AdminShell({
           <RouteReveal>{children}</RouteReveal>
         </main>
       </div>
-      <BottomBar badges={badges} onMore={() => setDrawer(true)} moreOpen={drawer} />
+      <BottomBar badges={badges} onMore={() => setDrawer(true)} moreOpen={drawer} personal={access.isPersonal} />
       <CommandPalette open={search} onClose={() => setSearch(false)} access={access} />
     </div>
   );

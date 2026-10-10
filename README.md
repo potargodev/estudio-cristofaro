@@ -136,6 +136,7 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Credenciales OAuth de Google para el login de clientes y la agenda (opcional: sin ellas no aparece el botón y la agenda funciona sin Google) |
 | `ENCRYPTION_KEY` | Clave para cifrar los tokens de Google Calendar: `openssl rand -base64 32`. No cambiarla después |
 | `CRON_SECRET` | Opcional: para disparar los recordatorios de la agenda (`/api/agenda/recordatorios`) y las tareas de gastos compartidos (`/api/gastos/cron`) desde un cron externo |
+| `FARO_OWNER_EMAIL` | Owner de la plataforma (`faro_owner`, entra al Faro Manager). El seed lo marca (y si no existe lo crea: después `node dist/reset-password.mjs <email>`). Por defecto `potargo.dev@gmail.com` |
 | `FARO_HOSTS` / `FARO_CONTACT_EMAIL` | Opcional: dominios que muestran la landing de Faro en `/` y su email de contacto |
 | `FX_API_URL` | Opcional: API de cotizaciones para gastos en otra moneda (formato DolarApi; por defecto `https://dolarapi.com`). Sin respuesta, la cotización se carga a mano |
 | `GASTOS_JOBS` | Opcional: `off` apaga los gastos recurrentes y recordatorios internos (corren cada hora) |
@@ -234,7 +235,15 @@ El conector se instala en la PC de la contadora donde corre Tango, no en Easypan
 
 Para desarrollar sin Tango: `node connector/mock/server.mjs` levanta un simulador de la API Delta en `http://localhost:17000` (token `11111111-2222-3333-4444-555555555555`, empresas 1 y 2, 30 clientes).
 
-### 9. Gastos compartidos
+### 9. Niveles de Faro
+
+- **Plataforma**: `users.faro_role` = `faro_owner` | `faro_support` (Faro Manager), independiente del rol en el tenant. Cambiarlo: `node dist/faro-equipo.mjs <email> faro_owner|faro_support|quitar`.
+- **Tenant** (`studios`): tipo `studio` (roles dueño, contador, colaborador) o `personal` (un único rol, titular, con su organización propia creada sola).
+- **Organización**: roles del portal (administrador, dirección, administración, RRHH, consulta) y **empleado** (`/portal/empleado`, ficha en `employees`).
+- Guardas del servidor: `requireFaro()`, `requireTenant(tipo, roles)`, `requireOrganization(permiso)` y `requireEmployee()` (en `src/lib/auth.ts`). La IA, el Asistente, Aprobaciones y MCP usan `requireTenant`, así que también los usa el titular de una cuenta personal.
+- Pruebas: `node --env-file=.env.local scripts/pruebas/niveles.mjs`.
+
+### 10. Gastos compartidos
 
 - Rutas: `/gastos` (todos los paneles: estudio, autónomo, portal, empleados) e invitados sin cuenta por `/gastos/invitado/<token>` (el enlace solo abre su grupo).
 - Rendiciones de empleados en `/portal/rendiciones` (rol de organización **Empleado**); lo aprobado aparece en **Gastos de la empresa** del portal y en la pestaña **Gastos** de la ficha de la organización.

@@ -3,7 +3,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { and, eq, gt, isNull, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { mcp_accesses, mcp_tokens, studios, users } from "@/db/schema";
-import { isStudioRole } from "@/lib/roles";
+import { isTenantRole } from "@/lib/roles";
 
 // Tokens de los accesos MCP. Se muestran una sola vez; en la base queda el SHA-256.
 // - bearer: token fijo creado en /admin/mcp (vence con el acceso)
@@ -54,6 +54,6 @@ export async function accessForToken(token: string) {
     );
   if (!row) return null;
   const u = row.user;
-  if (!u.active || u.studioId !== row.access.studio_id || !isStudioRole(u.role) || row.tenantStatus === "suspendido") return null;
+  if (!u.active || u.studioId !== row.access.studio_id || !isTenantRole(u.role) || row.tenantStatus === "suspendido") return null;
   return row;
 }

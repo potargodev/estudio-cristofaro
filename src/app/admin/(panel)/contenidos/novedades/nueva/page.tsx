@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireOperator } from "@/lib/auth";
 import Link from "next/link";
 import { AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { PostForm } from "@/components/admin/PostForm";
@@ -6,6 +7,7 @@ import { PostForm } from "@/components/admin/PostForm";
 export const metadata: Metadata = { title: "Nueva novedad" };
 
 export default async function NuevaNovedadPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  await requireOperator();
   const { error } = await searchParams;
   return (
     <div className="max-w-3xl">

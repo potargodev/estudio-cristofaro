@@ -25,7 +25,7 @@ export const agendaTools = [
     description: "Llamadas agendadas del estudio (confirmadas) en los próximos días, con quién, cuándo y el link de Meet.",
     module: "agenda",
     level: "lectura",
-    roles: ["admin", "contador", "colaborador"],
+    roles: ["dueno", "contador", "colaborador"],
     input: z.object({
       dias: z.number().int().min(1).max(60).default(7).describe("Cuántos días hacia adelante"),
       solo_mias: z.boolean().default(false).describe("Solo las llamadas de quien pregunta"),
@@ -70,7 +70,7 @@ export const agendaTools = [
       "Horarios libres para una llamada, según la disponibilidad y el Google Calendar del equipo. Con organizacion_id usa a su responsable y colaboradores. Devuelve opciones para proponerle al cliente (no reserva nada).",
     module: "agenda",
     level: "lectura",
-    roles: ["admin", "contador", "colaborador"],
+    roles: ["dueno", "contador", "colaborador"],
     input: z.object({
       organizacion_id: uuid("ID de la organización").optional(),
       dias: z.number().int().min(1).max(21).default(7),

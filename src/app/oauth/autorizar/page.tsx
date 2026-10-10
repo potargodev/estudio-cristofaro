@@ -7,7 +7,7 @@ import { ScopeFields } from "@/components/admin/mcp/ScopeFields";
 import { getDb } from "@/db";
 import { oauth_clients, organizations } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { isStudioRole } from "@/lib/roles";
+import { isTenantRole } from "@/lib/roles";
 import { mcpUrls } from "@/lib/mcp/oauth-meta";
 import { TOOL_MODULES } from "@/modules/tools/types";
 
@@ -40,7 +40,7 @@ export default async function AutorizarPage({ searchParams }: { searchParams: Pr
   if (sp.resource && sp.resource.replace(/\/$/, "") !== mcpUrls().resource) return <Problem text="El recurso pedido no es el servidor MCP de Faro." />;
 
   const user = await getCurrentUser();
-  if (!user || !isStudioRole(user.role) || !user.twoFactorEnabled || user.mustChangePassword || (user.tenantSuspended && !user.assisted)) {
+  if (!user || !isTenantRole(user.role) || (user.role !== "titular" && !user.twoFactorEnabled) || user.mustChangePassword || (user.tenantSuspended && !user.assisted)) {
     const here = `/oauth/autorizar?${new URLSearchParams(Object.entries(sp).filter((e): e is [string, string] => typeof e[1] === "string")).toString()}`;
     redirect(`/api/oauth/continuar?next=${encodeURIComponent(here)}`);
   }

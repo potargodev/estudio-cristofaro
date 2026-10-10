@@ -70,7 +70,7 @@ export async function staffLimitError(studioId: string) {
   const [{ n }] = await getDb()
     .select({ n: count() })
     .from(users)
-    .where(and(eq(users.studioId, studioId), inArray(users.role, ["admin", "contador", "colaborador"]), eq(users.active, true)));
+    .where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true)));
   if (n < max) return null;
   return `El plan ${e!.plan.name} permite hasta ${plural(max, "persona", "personas")} en el estudio. Pasate a un plan superior para sumar más.`;
 }

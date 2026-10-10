@@ -67,7 +67,7 @@ async function studioStaff(userId: string | null, studioId: string) {
   const [u] = await getDb()
     .select({ id: users.id })
     .from(users)
-    .where(and(eq(users.id, userId), eq(users.studioId, studioId), inArray(users.role, ["admin", "contador", "colaborador"]), eq(users.active, true)));
+    .where(and(eq(users.id, userId), eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true)));
   return u?.id ?? null;
 }
 

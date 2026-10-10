@@ -7,6 +7,7 @@ import { isUuid } from "@/lib/ids";
 import { can } from "@/lib/permissions";
 import { isStudioRole } from "@/lib/roles";
 import { readStored } from "@/lib/uploads";
+import { ownOrganization } from "@/lib/faro/tenants";
 import { auditActor, memberOf } from "@/modules/gastos/server/actor";
 import { getGastosActor } from "@/modules/gastos/server/session";
 
@@ -67,7 +68,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tip
           if (tipo === "rendicion") allowed = (row as typeof reimbursements.$inferSelect).user_id === user.id || can(mem.role, "finanzas.gestionar");
           else allowed = can(mem.role, "finanzas.ver");
         }
-      } else if (user.role === "autonomo" && tipo === "contable") allowed = row.organization_id === null;
+      } else if (user.role === "titular" && tipo === "contable") allowed = row.organization_id === null || row.organization_id === (await ownOrganization(user.studioId))?.id;
     }
   } else return notFound();
 

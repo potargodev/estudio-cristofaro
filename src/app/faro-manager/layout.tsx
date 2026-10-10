@@ -23,7 +23,7 @@ export default async function FaroManagerLayout({ children }: { children: React.
             <Link href="/faro-manager" className="px-3 py-2 text-paper/80 hover:text-paper">
               Tenants
             </Link>
-            {faro.faroRole === "owner" && (
+            {faro.faroRole === "faro_owner" && (
               <Link href="/faro-manager/nuevo" className="px-3 py-2 text-paper/80 hover:text-paper">
                 Alta manual
               </Link>
@@ -34,7 +34,7 @@ export default async function FaroManagerLayout({ children }: { children: React.
           </nav>
           <span className="flex-1" />
           <span className="hidden text-[13px] text-paper/60 md:inline">
-            {faro.name} · {faro.faroRole === "owner" ? "Owner" : "Soporte"}
+            {faro.name} · {faro.faroRole === "faro_owner" ? "Owner de Faro" : "Soporte de Faro"}
           </span>
           <Link href="/admin" className="text-[13px] text-paper/80 underline-offset-4 hover:underline">
             Mi estudio
@@ -50,7 +50,7 @@ export default async function FaroManagerLayout({ children }: { children: React.
           <Link href="/faro-manager" className="px-3 py-2 text-paper/80">
             Tenants
           </Link>
-          {faro.faroRole === "owner" && (
+          {faro.faroRole === "faro_owner" && (
             <Link href="/faro-manager/nuevo" className="px-3 py-2 text-paper/80">
               Alta manual
             </Link>

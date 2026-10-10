@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
-import { assisted_access, memberships, organization_modules, organizations, studios } from "@/db/schema";
+import { assisted_access, employees, memberships, organization_modules, organizations, studios } from "@/db/schema";
 import { audit } from "./audit";
 import { getAuth } from "./auth-server";
 import { can, type OrgRole, type Permission } from "./permissions";
@@ -20,13 +20,17 @@ export interface StaffUser {
   studioId: string;
   mustChangePassword: boolean;
   twoFactorEnabled: boolean;
-  /** Equipo de Faro: owner | soporte */
-  faroRole: "owner" | "soporte" | null;
+  /** Nivel plataforma (Faro Manager), independiente del rol de tenant */
+  faroRole: "faro_owner" | "faro_support" | null;
   /** Acceso asistido vigente: el usuario de Faro opera dentro de otro tenant */
   assisted: { id: string; studioName: string; expiresAt: Date; homeStudioId: string } | null;
   /** Tenant suspendido por el Faro Manager */
   tenantSuspended: boolean;
+  /** Tipo de tenant: estudio o cuenta personal (autónomo) */
+  tenantKind: "studio" | "personal";
 }
+
+export type TenantKind = StaffUser["tenantKind"];
 
 export const ASSISTED_COOKIE = "faro_asistido";
 
@@ -42,8 +46,8 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
   };
   if (!u.studioId || u.active === false) return null;
   const db = getDb();
-  const [row] = await db.select({ faroRole: users.faroRole, status: studios.status }).from(users).innerJoin(studios, eq(studios.id, users.studioId)).where(eq(users.id, u.id));
-  const faroRole = row?.faroRole === "owner" || row?.faroRole === "soporte" ? row.faroRole : null;
+  const [row] = await db.select({ faroRole: users.faroRole, status: studios.status, kind: studios.kind }).from(users).innerJoin(studios, eq(studios.id, users.studioId)).where(eq(users.id, u.id));
+  const faroRole = row?.faroRole === "faro_owner" || row?.faroRole === "faro_support" ? row.faroRole : null;
   const base: StaffUser = {
     id: u.id,
     name: u.name,
@@ -55,77 +59,80 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
     faroRole,
     assisted: null,
     tenantSuspended: row?.status === "suspendido",
+    tenantKind: row?.kind ?? "studio",
   };
   // Acceso asistido: solo el equipo de Faro, con 2FA, con un permiso vigente y propio
   const grantId = (await cookies()).get(ASSISTED_COOKIE)?.value;
   if (faroRole && base.twoFactorEnabled && grantId && /^[0-9a-f-]{36}$/i.test(grantId)) {
     const [g] = await db
-      .select({ id: assisted_access.id, studioId: assisted_access.studio_id, expiresAt: assisted_access.expires_at, ended: assisted_access.ended_at, name: studios.name, status: studios.status })
+      .select({ id: assisted_access.id, studioId: assisted_access.studio_id, expiresAt: assisted_access.expires_at, ended: assisted_access.ended_at, name: studios.name, status: studios.status, kind: studios.kind })
       .from(assisted_access)
       .innerJoin(studios, eq(studios.id, assisted_access.studio_id))
       .where(and(eq(assisted_access.id, grantId), eq(assisted_access.faro_user_id, u.id)));
     if (g && !g.ended && g.expiresAt > new Date()) {
-      return { ...base, studioId: g.studioId, role: "admin", tenantSuspended: g.status === "suspendido", assisted: { id: g.id, studioName: g.name, expiresAt: g.expiresAt, homeStudioId: u.studioId } };
+      return { ...base, studioId: g.studioId, role: g.kind === "personal" ? "titular" : "dueno", tenantKind: g.kind, tenantSuspended: g.status === "suspendido", assisted: { id: g.id, studioName: g.name, expiresAt: g.expiresAt, homeStudioId: u.studioId } };
     }
   }
   return base;
 });
 
-/**
- * Usuario del estudio (admin o contador). Si no hay sesión lo manda al login;
- * si es un cliente, a /admin/sin-acceso. Toda query del backoffice tiene que
- * filtrar por el studioId que devuelve.
- */
-export async function requireStaff(): Promise<StaffUser> {
-  const user = await getCurrentUser();
-  if (!user) redirect("/admin/login");
-  // Un cliente o un autónomo nunca entran al backoffice del estudio: van a su panel
-  if (user.role === "cliente" || user.role === "autonomo") redirect(homeFor(user.role));
-  if (!isStudioRole(user.role)) redirect("/admin/sin-acceso");
-  // Contraseña temporal (reset-password): nada del backoffice hasta cambiarla
-  if (user.mustChangePassword) redirect("/admin/cambiar-clave");
-  // Segundo factor obligatorio para el estudio: hasta configurarlo, solo esa pantalla
-  if (!user.twoFactorEnabled) redirect("/admin/seguridad");
-  // Tenant suspendido por Faro: nada del backoffice (salvo el acceso asistido)
-  if (user.tenantSuspended && !user.assisted) redirect("/admin/suspendido");
-  return user;
-}
+const TENANT_HOME = { studio: "/admin", personal: "/personal" } as const;
 
-/** Dueño o contador: lo que el colaborador no hace (consultas comerciales, alta y edición de organizaciones) */
-export async function requireOperator(): Promise<StaffUser> {
-  const user = await requireStaff();
-  if (user.role === "colaborador") {
-    await audit({ studioId: user.studioId, actor: user, action: "permiso.denegado", result: "denegado", metadata: { rol: "colaborador" } });
-    redirect("/admin/sin-permiso");
+/**
+ * Guarda de nivel tenant. Sesión vigente de un usuario de tenant (estudio o
+ * cuenta personal), con su seguridad completa: contraseña definitiva y, en el
+ * estudio, segundo factor. Con `kind` exige ese tipo de tenant; con `roles`,
+ * uno de esos roles (si no, sin-permiso y queda auditado). Toda query de
+ * tenant filtra por el studioId que devuelve.
+ */
+export async function requireTenant(kind?: TenantKind | null, roles?: readonly UserRole[]): Promise<StaffUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect(kind === "personal" ? "/ingresar" : "/admin/login");
+  // Un miembro de una organización (o un empleado) nunca entra a un tenant: va a su portal
+  if (user.role === "cliente") redirect(homeFor(user.role));
+  const personal = user.role === "titular";
+  if (!personal && !isStudioRole(user.role)) redirect("/admin/sin-acceso");
+  if (kind && user.tenantKind !== kind) redirect(TENANT_HOME[user.tenantKind]);
+  // Contraseña temporal (reset-password): nada hasta cambiarla
+  if (user.mustChangePassword) redirect("/admin/cambiar-clave");
+  // Segundo factor obligatorio para el estudio (la cuenta personal entra con Google, enlace o contraseña)
+  if (!personal && !user.twoFactorEnabled) redirect("/admin/seguridad");
+  if (user.tenantSuspended && !user.assisted) redirect(personal ? "/personal/suspendido" : "/admin/suspendido");
+  if (roles && !roles.includes(user.role)) {
+    await audit({ studioId: user.studioId, actor: user, action: "permiso.denegado", result: "denegado", metadata: { rol: user.role, requiere: roles } });
+    redirect(personal ? "/personal" : "/admin/sin-permiso");
   }
   return user;
 }
 
-/** Autónomo de Faro Personal en su panel */
-export async function requirePersonal(): Promise<StaffUser> {
-  const user = await getCurrentUser();
-  if (!user) redirect("/ingresar");
-  if (user.role !== "autonomo") redirect(homeFor(user.role));
-  if (user.tenantSuspended) redirect("/personal/suspendido");
-  return user;
-}
+/** Dueño del tenant: dueño del estudio o titular de la cuenta personal (IA, MCP, plan) */
+export const TENANT_OWNERS: readonly UserRole[] = ["dueno", "titular"];
+export const requireTenantOwner = () => requireTenant(null, TENANT_OWNERS);
 
-/** Equipo de Faro (Faro Manager): owner o soporte, con 2FA */
+/** Usuario del estudio (dueño, contador o colaborador) */
+export const requireStaff = () => requireTenant("studio");
+
+/** Dueño o contador: lo que el colaborador no hace (consultas comerciales, alta y edición de organizaciones) */
+export const requireOperator = () => requireTenant("studio", ["dueno", "contador"]);
+
+/** Titular de una cuenta personal (Faro Personal) */
+export const requirePersonal = () => requireTenant("personal");
+
+/** Nivel plataforma (Faro Manager): faro_owner o faro_support, con 2FA */
 export async function requireFaro(owner = false): Promise<StaffUser> {
   const user = await getCurrentUser();
   if (!user) redirect("/admin/login");
-  if (!user.faroRole) redirect(homeFor(user.role));
+  if (!user.faroRole) {
+    await audit({ studioId: user.studioId, actor: user, action: "permiso.denegado", result: "denegado", metadata: { nivel: "faro" } });
+    redirect(homeFor(user.role));
+  }
   if (!user.twoFactorEnabled) redirect("/admin/seguridad");
-  if (owner && user.faroRole !== "owner") redirect("/faro-manager");
+  if (owner && user.faroRole !== "faro_owner") redirect("/faro-manager");
   return user;
 }
 
-/** Solo administradores del estudio. */
-export async function requireAdmin(): Promise<StaffUser> {
-  const user = await requireStaff();
-  if (user.role !== "admin") redirect("/admin");
-  return user;
-}
+/** Solo el dueño del estudio. */
+export const requireAdmin = () => requireTenant("studio", ["dueno"]);
 
 export interface MembershipSummary {
   organizationId: string;
@@ -212,6 +219,41 @@ export const requireMember = cache(async (permission?: Permission): Promise<Port
  * Usuario del estudio para rutas de API (sin redirects): sesión vigente, rol
  * admin o contador, contraseña definitiva y segundo factor activo. Si no, null.
  */
+/** Guarda de nivel organización (portal): miembro activo, con el permiso pedido según su rol */
+export const requireOrganization = (permission?: Permission) => requireMember(permission);
+
+export interface EmployeeUser extends PortalUser {
+  employee: { id: string; firstName: string; lastName: string; position: string | null };
+}
+
+/**
+ * Guarda de nivel empleado: miembro con rol "empleado" en la organización
+ * activa y su ficha en employees. Solo ve lo suyo (gastos compartidos,
+ * rendiciones; después recibos y comunicaciones).
+ */
+export async function requireEmployee(): Promise<EmployeeUser> {
+  const me = await requireMember();
+  if (me.orgRole !== "empleado") redirect("/portal");
+  const [e] = await getDb()
+    .select({ id: employees.id, firstName: employees.first_name, lastName: employees.last_name, position: employees.position })
+    .from(employees)
+    .where(and(eq(employees.organization_id, me.organizationId), eq(employees.studio_id, me.studioId), eq(employees.user_id, me.id), eq(employees.active, true)));
+  if (!e) {
+    await audit({ studioId: me.studioId, organizationId: me.organizationId, actor: me, action: "permiso.denegado", result: "denegado", metadata: { nivel: "empleado" } });
+    redirect("/portal/sin-acceso");
+  }
+  return { ...me, employee: e };
+}
+
+/** Usuario de tenant para rutas de API (sin redirects): estudio con 2FA o titular de cuenta personal */
+export async function tenantForApi(): Promise<StaffUser | null> {
+  const user = await getCurrentUser();
+  if (!user || (!isStudioRole(user.role) && user.role !== "titular")) return null;
+  if (user.mustChangePassword || (user.role !== "titular" && !user.twoFactorEnabled)) return null;
+  if (user.tenantSuspended && !user.assisted) return null;
+  return user;
+}
+
 export async function staffForApi(): Promise<StaffUser | null> {
   const user = await getCurrentUser();
   if (!user || !isStudioRole(user.role)) return null;

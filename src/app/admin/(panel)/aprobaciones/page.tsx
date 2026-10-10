@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
 import { approvals, documents, leads, mcp_accesses, organizations, requests, users } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireTenant } from "@/lib/auth";
 import { getTool } from "@/modules/tools";
 
 export const metadata: Metadata = { title: "Aprobaciones" };
@@ -84,7 +84,7 @@ function DraftField({ id, k, v }: { id: string; k: string; v: unknown }) {
 
 export default async function AprobacionesPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  const user = await requireStaff();
+  const user = await requireTenant();
   const tab = sp.ver === "historial" ? "historial" : "pendientes";
   const rows = await getDb()
     .select({ a: approvals, org: organizations.name, requester: users.name, access: mcp_accesses.name })

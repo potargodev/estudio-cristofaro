@@ -15,7 +15,7 @@ export const estudioTools = [
     module: "estudio",
     level: "lectura",
     // Incluye honorarios: solo administradores
-    roles: ["admin"],
+    roles: ["dueno"],
     input: z.object({}),
     async handler(_input, ctx) {
       const db = getDb();

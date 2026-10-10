@@ -1,8 +1,8 @@
 import "server-only";
 import { createHash, randomBytes } from "node:crypto";
-import { and, count, eq, inArray, lt, ne } from "drizzle-orm";
+import { and, count, eq, inArray, isNull, lt, ne, or } from "drizzle-orm";
 import { getDb } from "@/db";
-import { invitations, memberships, organizations, users } from "@/db/schema";
+import { employees, invitations, memberships, organizations, users } from "@/db/schema";
 import { audit } from "./audit";
 import type { StaffUser } from "./auth";
 import { esc, sendMail } from "./email";
@@ -275,7 +275,7 @@ export async function approveInvitation(staff: StaffUser, organizationId: string
 async function findMembership(id: string | null, organizationId: string, studioId: string) {
   if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return null;
   const [m] = await getDb()
-    .select({ id: memberships.id, role: memberships.role, status: memberships.status, userId: memberships.user_id, email: users.email })
+    .select({ id: memberships.id, role: memberships.role, status: memberships.status, userId: memberships.user_id, email: users.email, name: users.name })
     .from(memberships)
     .innerJoin(users, eq(users.id, memberships.user_id))
     .where(and(eq(memberships.id, id), eq(memberships.organization_id, organizationId), eq(memberships.studio_id, studioId)));
@@ -300,6 +300,7 @@ export async function changeMemberRole(
     return fail("Tiene que quedar al menos un administrador. Designá otro antes de cambiar este rol.");
   }
   await getDb().update(memberships).set({ role: newRole }).where(eq(memberships.id, m.id));
+  if (newRole === "empleado" && m.userId) await ensureEmployee({ id: m.userId, email: m.email, name: m.name }, actor.user.studioId, organizationId);
   await audit({
     studioId: actor.user.studioId,
     organizationId,
@@ -394,6 +395,23 @@ export async function hasAccessByEmail(email: string) {
  * al iniciar sesión y desde /invitacion/[token]. Respeta el límite de usuarios
  * (la invitación ya ocupaba su lugar).
  */
+/**
+ * Nivel empleado: quien entra con rol "empleado" tiene su ficha en employees
+ * (si RRHH ya la cargó con su email, se vincula; si no, se crea con lo básico).
+ */
+export async function ensureEmployee(user: { id: string; email: string; name?: string | null }, studioId: string, organizationId: string) {
+  const db = getDb();
+  const email = user.email.toLowerCase();
+  const linked = await db
+    .update(employees)
+    .set({ user_id: user.id, active: true })
+    .where(and(eq(employees.organization_id, organizationId), eq(employees.studio_id, studioId), or(eq(employees.user_id, user.id), and(eq(employees.email, email), isNull(employees.user_id)))))
+    .returning({ id: employees.id });
+  if (linked.length) return;
+  const [first, ...rest] = (user.name?.trim() || email.split("@")[0]).split(/\s+/);
+  await db.insert(employees).values({ studio_id: studioId, organization_id: organizationId, first_name: first, last_name: rest.join(" "), email, user_id: user.id }).onConflictDoNothing();
+}
+
 export async function acceptInvitationsFor(user: { id: string; email: string; studioId: string }) {
   const db = getDb();
   const pending = await db
@@ -419,6 +437,7 @@ export async function acceptInvitationsFor(user: { id: string; email: string; st
         });
       await tx.update(invitations).set({ status: "aceptada", accepted_at: new Date(), accepted_by: user.id }).where(eq(invitations.id, inv.id));
     });
+    if (inv.role === "empleado") await ensureEmployee(user, inv.studio_id, inv.organization_id);
     await audit({
       studioId: inv.studio_id,
       organizationId: inv.organization_id,

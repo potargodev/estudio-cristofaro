@@ -14,7 +14,7 @@ import { ai_usage } from "@/db/schema";
 import { AI_PROVIDER_KINDS, AI_TASKS, PROVIDERS, modelKey, type AiProviderKind, type AiTaskKey } from "@/lib/ai/catalog";
 import { getAiSettings, getProviders, monthSpend } from "@/lib/ai/models";
 import { priceFor } from "@/lib/ai/pricing";
-import { requireAdmin } from "@/lib/auth";
+import { requireTenantOwner } from "@/lib/auth";
 import { encryptionEnabled } from "@/lib/crypto";
 import { iaTabs } from "../tabs";
 
@@ -34,7 +34,7 @@ const usd = (n: number) => `US$ ${n.toLocaleString("es-AR", { minimumFractionDig
 
 export default async function IaConfigPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  const admin = await requireAdmin();
+  const admin = await requireTenantOwner();
   const db = getDb();
   const [providers, settings, spend, byModel] = await Promise.all([
     getProviders(admin.studioId),

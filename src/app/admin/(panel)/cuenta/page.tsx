@@ -9,7 +9,7 @@ import { requireStaff } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
 
-const ROLE: Record<string, string> = { admin: "Administrador", contador: "Contador" };
+const ROLE: Record<string, string> = { dueno: "Dueño", contador: "Contador", colaborador: "Colaborador", titular: "Titular" };
 
 export default async function CuentaPage() {
   const user = await requireStaff();

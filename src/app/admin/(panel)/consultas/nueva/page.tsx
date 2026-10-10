@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireOperator } from "@/lib/auth";
 import Link from "next/link";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { SubmitButton, FormSelect } from "@/components/admin/ui";
@@ -11,6 +12,7 @@ import { adminButton } from "@/components/admin/styles";
 export const metadata: Metadata = { title: "Cargar consulta" };
 
 export default async function NuevaConsultaPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  await requireOperator();
   const { error } = await searchParams;
   return (
     <div className="max-w-2xl">

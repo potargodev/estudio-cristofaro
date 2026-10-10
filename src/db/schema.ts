@@ -38,9 +38,11 @@ const updatedAt = () =>
 // ───────────────────────── Enums ─────────────────────────
 
 // admin = dueño del estudio; colaborador = equipo operativo; autonomo = Faro Personal
-export const userRole = pgEnum("user_role", ["admin", "contador", "cliente", "colaborador", "autonomo"]);
+// Roles de tenant: estudio (dueno, contador, colaborador) y personal (titular).
+// cliente = miembro de una organización (su rol vive en memberships).
+export const userRole = pgEnum("user_role", ["dueno", "contador", "cliente", "colaborador", "titular"]);
 export const tenantKind = pgEnum("tenant_kind", ["studio", "personal"]);
-export const tenantStatus = pgEnum("tenant_status", ["activo", "suspendido"]);
+export const tenantStatus = pgEnum("tenant_status", ["activo", "prueba", "suspendido"]);
 export const leadStatus = pgEnum("lead_status", ["nuevo", "contactado", "presupuesto", "ganado", "perdido"]);
 export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro", "agenda"]);
 export const taxRegime = pgEnum("tax_regime", ["monotributo", "responsable_inscripto", "sociedad", "exento", "otro"]);
@@ -77,6 +79,22 @@ export const studios = pgTable("studios", {
   /** manual (Faro Manager) | registro (autoregistro) | seed */
   created_via: text("created_via").notNull().default("manual"),
   suspended_reason: text("suspended_reason"),
+  /** Dueño del tenant (dueño del estudio o titular de la cuenta personal) */
+  owner_user_id: uuid("owner_user_id"),
+  /** Límites propios que pisan los del plan (los pone el Faro Manager) */
+  limits: jsonb("limits").$type<Record<string, number | null>>().notNull().default({}),
+  /** Rubros que atiende el estudio o rubro del autónomo (claves de /data/industries) */
+  industries: text("industries").array().notNull().default(sql`'{}'::text[]`),
+  /** Datos fiscales del tenant */
+  legal_name: text("legal_name"),
+  tax_regime: text("tax_regime"),
+  fiscal_address: text("fiscal_address"),
+  /** Fin del período de prueba (estado "prueba") */
+  trial_ends_at: timestamp("trial_ends_at", { withTimezone: true }),
+  /** Notas internas del Faro Manager */
+  notes: text("notes"),
+  /** Pasos del onboarding completados */
+  onboarding: jsonb("onboarding").$type<Record<string, boolean>>().notNull().default({}),
   created_at: createdAt(),
 });
 
@@ -102,7 +120,7 @@ export const users = pgTable(
     mustChangePassword: boolean("must_change_password").notNull().default(false),
     // Segundo factor (plugin twoFactor de Better Auth): obligatorio para el estudio
     twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
-    // Equipo de Faro (Faro Manager): owner | soporte. Null para el resto.
+    // Nivel plataforma (Faro Manager): faro_owner | faro_support, independiente del rol de tenant. Null para el resto.
     faroRole: text("faro_role"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
@@ -364,6 +382,38 @@ export const memberships = pgTable(
     updated_at: updatedAt(),
   },
   (t) => [unique("memberships_org_user_key").on(t.organization_id, t.user_id), index("memberships_user_idx").on(t.user_id)],
+);
+
+/**
+ * Nivel empleado: personas que trabajan en una organización. El legajo
+ * completo llega con el módulo employees (F5); acá viven los datos básicos y,
+ * si tiene cuenta, el usuario con el que entra a /portal/empleado.
+ */
+export const employees = pgTable(
+  "employees",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    first_name: text("first_name").notNull(),
+    last_name: text("last_name").notNull().default(""),
+    email: text("email"),
+    cuil: text("cuil"),
+    position: text("position"),
+    start_date: date("start_date"),
+    active: boolean("active").notNull().default(true),
+    user_id: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [
+    index("employees_org_idx").on(t.organization_id),
+    uniqueIndex("employees_org_user_idx").on(t.organization_id, t.user_id).where(sql`${t.user_id} is not null`),
+    uniqueIndex("employees_org_email_idx").on(t.organization_id, t.email).where(sql`${t.email} is not null`),
+  ],
 );
 
 // Invitaciones: el token viaja solo en el mail; acá se guarda su SHA-256.

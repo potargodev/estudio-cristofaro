@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireStaff } from "@/lib/auth";
+import { requireTenant } from "@/lib/auth";
 import { decideApproval, type StaffRole } from "@/modules/tools";
 
 // Bandeja de aprobaciones: aprobar (ejecuta y audita), editar y aprobar o
@@ -40,7 +40,7 @@ function editedInput(fd: FormData): { ok: true; input: Record<string, unknown> }
 }
 
 export async function decideApprovalAction(fd: FormData) {
-  const user = await requireStaff();
+  const user = await requireTenant();
   const id = String(fd.get("id") ?? "");
   const mode = String(fd.get("mode") ?? "");
   const actor = { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole, studioId: user.studioId };

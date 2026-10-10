@@ -28,6 +28,10 @@ export interface NavItem {
   adminOnly?: boolean;
   /** Oculto para el colaborador */
   operatorOnly?: boolean;
+  /** También para la cuenta personal (titular): IA, MCP, gastos y plan */
+  personal?: boolean;
+  /** Solo para la cuenta personal */
+  personalOnly?: boolean;
 }
 
 interface NavGroup {
@@ -47,6 +51,8 @@ export interface NavAccess {
   isOperator: boolean;
   hasSite: boolean;
   isFaro: boolean;
+  /** Tenant personal (Faro Personal): solo lo marcado como personal */
+  isPersonal?: boolean;
 }
 
 export const NAV_GROUPS: NavGroup[] = [
@@ -54,7 +60,8 @@ export const NAV_GROUPS: NavGroup[] = [
     title: "General",
     items: [
       { href: "/admin", label: "Resumen", icon: "resumen", exact: true },
-      { href: "/gastos", label: "Gastos compartidos", icon: "gastos" },
+      { href: "/personal", label: "Mi panel", icon: "resumen", exact: true, personal: true, personalOnly: true },
+      { href: "/gastos", label: "Gastos compartidos", icon: "gastos", personal: true },
     ],
   },
   {
@@ -76,9 +83,9 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     title: "Faro IA",
     items: [
-      { href: "/admin/asistente", label: "Asistente", icon: "asistente" },
-      { href: "/admin/aprobaciones", label: "Aprobaciones", icon: "aprobaciones", badge: "approvals" },
-      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp" },
+      { href: "/admin/asistente", label: "Asistente", icon: "asistente", personal: true },
+      { href: "/admin/aprobaciones", label: "Aprobaciones", icon: "aprobaciones", badge: "approvals", personal: true },
+      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp", personal: true },
     ],
   },
   { title: "Sitio web", siteOnly: true, operatorOnly: true, items: [{ href: "/admin/contenidos", label: "Contenidos", icon: "contenidos" }] },
@@ -88,8 +95,8 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/usuarios", label: "Usuarios", icon: "usuarios", adminOnly: true },
       { href: "/admin/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true },
-      { href: "/admin/ia/configuracion", label: "IA", icon: "ia", adminOnly: true },
-      { href: "/admin/plan", label: "Plan y módulos", icon: "faro", adminOnly: true },
+      { href: "/admin/ia/configuracion", label: "IA", icon: "ia", adminOnly: true, personal: true },
+      { href: "/admin/plan", label: "Plan y módulos", icon: "faro", adminOnly: true, personal: true },
     ],
   },
   { title: "Faro", faroOnly: true, items: [{ href: "/faro-manager", label: "Faro Manager", icon: "faro" }] },
@@ -97,7 +104,12 @@ export const NAV_GROUPS: NavGroup[] = [
 
 export function visibleGroups(a: NavAccess) {
   return NAV_GROUPS.filter((g) => (!g.adminOnly || a.isAdmin) && (!g.operatorOnly || a.isOperator) && (!g.siteOnly || a.hasSite) && (!g.faroOnly || a.isFaro))
-    .map((g) => ({ ...g, items: g.items.filter((i) => (!i.adminOnly || a.isAdmin) && (!i.operatorOnly || a.isOperator)) }))
+    .map((g) => ({
+      ...g,
+      items: g.items.filter(
+        (i) => (!i.adminOnly || a.isAdmin) && (!i.operatorOnly || a.isOperator) && (a.isPersonal ? i.personal || g.faroOnly : !i.personalOnly),
+      ),
+    }))
     .filter((g) => g.items.length);
 }
 

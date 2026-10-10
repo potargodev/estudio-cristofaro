@@ -34,7 +34,7 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    if (user.role !== "admin" && user.role !== "contador") {
+    if (user.role !== "dueno" && user.role !== "contador") {
       console.error("Este script es solo para usuarios del estudio (admin o contador). Los clientes entran con Google o enlace mágico.");
       process.exitCode = 1;
       return;

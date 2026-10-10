@@ -85,6 +85,13 @@
       "when": 1791646268150,
       "tag": "0011_gastos_compartidos",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791650032231,
+      "tag": "0012_niveles_y_tenants",
+      "breakpoints": true
     }
   ]
 }

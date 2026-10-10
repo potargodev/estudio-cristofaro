@@ -6,7 +6,7 @@ import { Panel } from "@/components/admin/kit/Panel";
 import { StatusBadge, Tag } from "@/components/admin/kit/StatusBadge";
 import { getDb } from "@/db";
 import { organizations, users } from "@/db/schema";
-import { requireAdmin } from "@/lib/auth";
+import { requireTenantOwner } from "@/lib/auth";
 import { getEntitlements } from "@/lib/faro/entitlements";
 import { FARO_MODULES } from "@/lib/faro/modules";
 import { AI_LEVEL_LABEL, plansFor, priceLabel } from "@/lib/faro/plans";
@@ -34,12 +34,12 @@ function Usage({ label, used, max }: { label: string; used: number; max: number 
 }
 
 export default async function PlanPage() {
-  const admin = await requireAdmin();
+  const admin = await requireTenantOwner();
   const e = (await getEntitlements(admin.studioId))!;
   const db = getDb();
   const [[orgs], [staff]] = await Promise.all([
     db.select({ n: count() }).from(organizations).where(and(eq(organizations.studio_id, admin.studioId), inArray(organizations.status, ["onboarding", "activa", "pausada"]))),
-    db.select({ n: count() }).from(users).where(and(eq(users.studioId, admin.studioId), inArray(users.role, ["admin", "contador", "colaborador"]), eq(users.active, true))),
+    db.select({ n: count() }).from(users).where(and(eq(users.studioId, admin.studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true))),
   ]);
   const plans = plansFor(e.tenant.kind);
   const overrideOf = new Map(e.overrides.map((o) => [o.module, o]));

@@ -137,7 +137,7 @@ export async function startAssistedAccess(fd: FormData) {
     .values({ faro_user_id: faro.id, studio_id: t!.id, reason: reason!, expires_at: new Date(Date.now() + minutes * 60000) })
     .returning();
   await audit({ studioId: t!.id, actor: faro, action: "faro.asistido_iniciar", entityType: "acceso_asistido", entityId: g.id, metadata: { motivo: reason, minutos: minutes } });
-  const owners = await db.select({ email: users.email }).from(users).where(and(eq(users.studioId, t!.id), eq(users.role, "admin"), eq(users.active, true)));
+  const owners = await db.select({ email: users.email }).from(users).where(and(eq(users.studioId, t!.id), eq(users.role, "dueno"), eq(users.active, true)));
   for (const o of owners) {
     await sendMail({
       to: o.email,

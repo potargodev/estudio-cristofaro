@@ -42,7 +42,7 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
   const db = getDb();
   const month = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1));
   const orgCount = sql<number>`(select count(*)::int from ${organizations} o where o.studio_id = "studios"."id" and o.status <> 'baja')`;
-  const staffCount = sql<number>`(select count(*)::int from ${users} u where u.studio_id = "studios"."id" and u.active and u.role in ('admin','contador','colaborador','autonomo'))`;
+  const staffCount = sql<number>`(select count(*)::int from ${users} u where u.studio_id = "studios"."id" and u.active and u.role in ('dueno','contador','colaborador','titular'))`;
   const aiMonth = sql<string>`(select coalesce(sum(a.cost_usd), 0) from ${ai_usage} a where a.studio_id = "studios"."id" and a.created_at >= ${month.toISOString()})`;
   const [rows, byKind] = await Promise.all([
     db

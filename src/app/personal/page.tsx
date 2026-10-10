@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, or } from "drizzle-orm";
 import { CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Wallet } from "lucide-react";
 import Link from "next/link";
 import { requestAccountant } from "./actions";
@@ -10,6 +10,7 @@ import { accounting_expenses, studios } from "@/db/schema";
 import { categoryName, formatMoney } from "@/modules/gastos/constants";
 import { requirePersonal } from "@/lib/auth";
 import { getPlan } from "@/lib/faro/plans";
+import { ownOrganization } from "@/lib/faro/tenants";
 
 export const metadata = { title: "Inicio" };
 
@@ -26,11 +27,12 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const me = await requirePersonal();
   const [t] = await getDb().select().from(studios).where(eq(studios.id, me.studioId));
+  const own = await ownOrganization(me.studioId);
   // Gastos de la actividad: lo que marcó "de la empresa" o "deducible" en grupos conectados a su contabilidad
   const activity = await getDb()
     .select()
     .from(accounting_expenses)
-    .where(and(eq(accounting_expenses.studio_id, me.studioId), isNull(accounting_expenses.organization_id)))
+    .where(and(eq(accounting_expenses.studio_id, me.studioId), own ? or(isNull(accounting_expenses.organization_id), eq(accounting_expenses.organization_id, own.id)) : isNull(accounting_expenses.organization_id)))
     .orderBy(desc(accounting_expenses.date))
     .limit(8);
   const first = me.name.split(" ")[0];

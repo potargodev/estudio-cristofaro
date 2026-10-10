@@ -19,6 +19,7 @@ import {
 import { audit } from "@/lib/audit";
 import { esc, sendMail } from "@/lib/email";
 import { hasModule } from "@/lib/faro/entitlements";
+import { ownOrganization } from "@/lib/faro/tenants";
 import { mailLayout } from "@/lib/notify";
 import { can } from "@/lib/permissions";
 import { isStudioRole } from "@/lib/roles";
@@ -92,7 +93,7 @@ export async function contextOptions(actor: GastosActor): Promise<{ organization
     // Solo quien gestiona las finanzas de la organización conecta un grupo a su contabilidad
     return { organizations: rows.filter((r) => can(r.role, "finanzas.gestionar")).map(({ id, name }) => ({ id, name })), tenant: false };
   }
-  return { organizations: [], tenant: actor.role === "autonomo" };
+  return { organizations: [], tenant: actor.role === "titular" };
 }
 
 export interface NewGroup {
@@ -418,11 +419,13 @@ export async function syncAccounting(group: GroupRow, e: typeof expenses.$inferS
   // El importe contable va en pesos si hay cotización; si no, en la moneda del gasto
   const amount = e.fx_rate && group.base_currency === "ARS" ? Math.round(e.amount * Number(e.fx_rate)) : e.amount;
   const currency = e.fx_rate && group.base_currency === "ARS" ? "ARS" : e.currency;
+  // Cuenta personal: va a su organización propia
+  const organizationId = group.organization_id ?? (group.context_tenant ? ((await ownOrganization(group.studio_id))?.id ?? null) : null);
   await getDb()
     .insert(accounting_expenses)
     .values({
       studio_id: group.studio_id,
-      organization_id: group.organization_id,
+      organization_id: organizationId,
       source: "gasto_compartido",
       source_id: e.id,
       description: `${e.description} · ${group.name}`,

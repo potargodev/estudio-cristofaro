@@ -5,13 +5,13 @@ import { sidebarBootScript } from "@/components/admin/shell/nav";
 import { Toaster } from "@/components/ui/sonner";
 import { getDb, isDbConfigured } from "@/db";
 import { approvals, leads, obligations, requests, studios } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireTenant, TENANT_OWNERS } from "@/lib/auth";
 import { SITE_STUDIO_SLUG } from "@/lib/faro/tenants";
 import { endAssistedAccess } from "@/app/faro-manager/actions";
 import { signOut } from "../actions";
 
 export const metadata: Metadata = {
-  title: { default: "Backoffice", template: "%s · Backoffice" },
+  title: { default: "Faro", template: "%s · Faro" },
   robots: { index: false, follow: false },
 };
 
@@ -30,7 +30,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     );
   }
 
-  const user = await requireStaff();
+  const user = await requireTenant();
   const db = getDb();
   const today = new Date().toISOString().slice(0, 10);
   const inAWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
@@ -67,7 +67,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       <script dangerouslySetInnerHTML={{ __html: sidebarBootScript(user.id) }} />
       <AdminShell
         user={{ id: user.id, name: user.name, email: user.email, role: user.role }}
-        access={{ isAdmin: user.role === "admin", isOperator: user.role !== "colaborador", hasSite: studio?.slug === SITE_STUDIO_SLUG(), isFaro: Boolean(user.faroRole) }}
+        access={{ isAdmin: TENANT_OWNERS.includes(user.role), isOperator: user.role !== "colaborador", isPersonal: user.tenantKind === "personal", hasSite: studio?.slug === SITE_STUDIO_SLUG(), isFaro: Boolean(user.faroRole) }}
         studioName={studio?.name ?? "Estudio"}
         assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}
         endAssisted={endAssistedAccess}

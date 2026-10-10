@@ -29,7 +29,7 @@ export const consultasTools = [
     description: "Consultas comerciales (potenciales clientes que llegaron por la web, el diagnóstico o la agenda), filtrables por etapa o texto.",
     module: "consultas",
     level: "lectura",
-    roles: ["admin", "contador"],
+    roles: ["dueno", "contador"],
     input: z.object({
       etapas: z.array(z.enum(ETAPAS)).optional().describe("Por defecto: nuevo, contactado y presupuesto"),
       texto: z.string().max(120).optional().describe("Nombre, empresa o email"),
@@ -73,7 +73,7 @@ export const consultasTools = [
     description: "Cambia la etapa de una consulta comercial (contactado, presupuesto, ganado, perdido) y opcionalmente la próxima acción.",
     module: "consultas",
     level: "escritura",
-    roles: ["admin", "contador"],
+    roles: ["dueno", "contador"],
     input: moverInput,
     describe: (i) => `Pasar la consulta a "${i.etapa}"${i.proxima_accion ? ` · próxima acción: ${i.proxima_accion}` : ""}`,
     async handler(input, ctx) {

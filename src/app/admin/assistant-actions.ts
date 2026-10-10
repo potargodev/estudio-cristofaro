@@ -8,7 +8,7 @@ import { ai_conversations, documents, organizations, requests } from "@/db/schem
 import { ownConversation } from "@/lib/ai/assistant";
 import type { ContextItem, ContextKind } from "@/lib/ai/context";
 import { audit } from "@/lib/audit";
-import { requireStaff } from "@/lib/auth";
+import { requireTenant } from "@/lib/auth";
 import { likeTerm } from "@/lib/search";
 import { decideApproval, type StaffRole } from "@/modules/tools";
 
@@ -16,7 +16,7 @@ import { decideApproval, type StaffRole } from "@/modules/tools";
 
 /** Confirmar o cancelar una acción de escritura que pidió el Asistente (solo quien la pidió) */
 export async function decideInlineAction(approvalId: string, approve: boolean): Promise<{ ok: boolean; status?: string; message?: string }> {
-  const user = await requireStaff();
+  const user = await requireTenant();
   const r = await decideApproval(
     approvalId,
     { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole, studioId: user.studioId },
@@ -28,7 +28,7 @@ export async function decideInlineAction(approvalId: string, approve: boolean): 
 
 /** Búsqueda para adjuntar contexto (organización, documento o solicitud) */
 export async function searchContextAction(kind: ContextKind, q: string): Promise<ContextItem[]> {
-  const user = await requireStaff();
+  const user = await requireTenant();
   const db = getDb();
   const term = q.trim().slice(0, 80);
   if (kind === "organizacion") {
@@ -61,7 +61,7 @@ export async function searchContextAction(kind: ContextKind, q: string): Promise
 }
 
 export async function deleteConversation(fd: FormData) {
-  const user = await requireStaff();
+  const user = await requireTenant();
   const c = await ownConversation(user, String(fd.get("id") ?? ""));
   if (c) {
     await getDb().delete(ai_conversations).where(and(eq(ai_conversations.id, c.id), eq(ai_conversations.user_id, user.id)));

@@ -59,7 +59,7 @@ function pgCode(error: unknown): string | undefined {
 }
 
 const LEAD_STATUSES: LeadStatus[] = ["nuevo", "contactado", "presupuesto", "ganado", "perdido"];
-const STAFF_ROLES: UserRole[] = ["admin", "contador", "colaborador"];
+const STAFF_ROLES: UserRole[] = ["dueno", "contador", "colaborador"];
 
 function revalidateSite() {
   revalidatePath("/", "layout");

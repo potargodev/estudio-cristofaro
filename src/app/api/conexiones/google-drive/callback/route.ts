@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const back = (q: string) => NextResponse.redirect(new URL(`/admin/conexiones/google-drive?${q}`, getSiteUrl()));
   const user = await getCurrentUser();
-  if (!user || user.role !== "admin" || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
+  if (!user || user.role !== "dueno" || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
   const sp = request.nextUrl.searchParams;
   const state = request.cookies.get("drive_oauth_state")?.value;
   const done = (r: NextResponse) => {

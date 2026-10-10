@@ -1,7 +1,7 @@
 import "server-only";
-import { eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { service_plans, studios, users } from "@/db/schema";
+import { legal_entities, organizations, service_plans, studios, users } from "@/db/schema";
 import { SERVICE_PLANS } from "@/lib/service-plans";
 import { createUserWithPassword } from "@/lib/users";
 import { DEFAULT_PLAN, getPlan, type TenantKind } from "./plans";
@@ -51,6 +51,10 @@ export interface NewTenant {
   name: string;
   planKey?: string;
   cuit?: string | null;
+  /** Régimen del autónomo (monotributo | responsable_inscripto) */
+  taxRegime?: string | null;
+  /** Rubros (claves de /data/industries) */
+  industries?: string[];
   owner: { name: string; email: string; password: string; mustChangePassword?: boolean };
   via: "manual" | "registro";
 }
@@ -79,7 +83,17 @@ export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
   }
   const [studio] = await db
     .insert(studios)
-    .values({ slug: await uniqueSlug(name), name, kind: t.kind, plan_key: plan.key, cuit, created_via: t.via })
+    .values({
+      slug: await uniqueSlug(name),
+      name,
+      kind: t.kind,
+      plan_key: plan.key,
+      cuit,
+      created_via: t.via,
+      legal_name: name,
+      tax_regime: t.taxRegime ?? null,
+      industries: (t.industries ?? []).slice(0, 12),
+    })
     .returning({ id: studios.id });
   try {
     const user = await createUserWithPassword(db, {
@@ -87,9 +101,22 @@ export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
       name: t.owner.name.trim().slice(0, 120) || email.split("@")[0],
       email,
       password: t.owner.password,
-      role: t.kind === "personal" ? "autonomo" : "admin",
+      role: t.kind === "personal" ? "titular" : "dueno",
     });
     if (t.owner.mustChangePassword) await db.update(users).set({ mustChangePassword: true }).where(eq(users.id, user.id));
+    await db.update(studios).set({ owner_user_id: user.id }).where(eq(studios.id, studio.id));
+    // Cuenta personal: una sola organización, la propia (contexto de sus gastos y, después, su facturación)
+    if (t.kind === "personal") {
+      const [org] = await db.insert(organizations).values({ studio_id: studio.id, name, status: "activa" }).returning({ id: organizations.id });
+      if (cuit)
+        await db.insert(legal_entities).values({
+          studio_id: studio.id,
+          organization_id: org.id,
+          cuit,
+          business_name: name,
+          regime: t.taxRegime === "responsable_inscripto" ? "responsable_inscripto" : "monotributo",
+        });
+    }
     // Un estudio arranca con los planes de servicio del brief para sus organizaciones
     if (t.kind === "studio") await db.insert(service_plans).values(SERVICE_PLANS.map((p) => ({ ...p, features: [...p.features], studio_id: studio.id })));
     return { ok: true, studioId: studio.id, userId: user.id };
@@ -100,4 +127,16 @@ export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
     console.error("[faro] createTenant", error);
     return { ok: false, message: "No se pudo crear la cuenta. Probá de nuevo." };
   }
+}
+
+/** Organización propia de una cuenta personal (la única que tiene) */
+export async function ownOrganization(studioId: string) {
+  const [o] = await getDb()
+    .select({ id: organizations.id, name: organizations.name })
+    .from(organizations)
+    .innerJoin(studios, eq(studios.id, organizations.studio_id))
+    .where(and(eq(organizations.studio_id, studioId), eq(studios.kind, "personal")))
+    .orderBy(asc(organizations.created_at))
+    .limit(1);
+  return o ?? null;
 }
