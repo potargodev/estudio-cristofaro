@@ -130,6 +130,33 @@ Inspirado en Splitwise, pero conectado con la contabilidad: lo que se reparte ta
   - **Asistente IA:** "cargá que pagué $48.000 de la cena con Juan y Ana, dividido igual".
   - **Exportación** a planilla y resumen del grupo.
 
+## 2.f Ecosistemas por industria (plantillas preconfiguradas)
+
+Cuando un estudio, un contador o un autónomo se da de alta, y cada vez que se crea una organización, se elige uno o varios rubros. Faro precarga la configuración típica de esa industria antes de conectar nada. Todo queda editable, y el profesional decide qué aplica.
+
+**Qué trae cada plantilla de rubro:**
+- **Actividades sugeridas:** códigos de actividad de ARCA (CLAE/NAES) más comunes.
+- **Perfil impositivo típico:** IVA (general, exento o alícuotas habituales), Ingresos Brutos (local o Convenio Multilateral), regímenes de retención y percepción frecuentes, y regímenes especiales o beneficios a revisar.
+- **Laboral:** convenio colectivo habitual, categorías y conceptos típicos de liquidación.
+- **Calendario de obligaciones** propio del rubro (además del general por CUIT).
+- **Checklist de alta del cliente:** documentación a pedir.
+- **Plan de cuentas modelo** con las cuentas específicas del rubro.
+- **Categorías de ingresos y gastos** para la lectura inteligente y los gastos compartidos.
+- **Tareas recurrentes** del estudio para ese cliente.
+- **Flujos sugeridos** (plantillas de Flujos activables).
+- **Indicadores clave** del rubro para el tablero.
+- **Alertas y riesgos frecuentes** (por ejemplo, liquidación de divisas en exportación de servicios).
+
+**Rubros iniciales:** servicios profesionales; agencias de marketing y comunicación; software y exportación de servicios; arquitectura, ingeniería y diseño; consultoras; comercio minorista; gastronomía; construcción; salud y profesionales médicos; transporte y logística; e-commerce; autónomos de oficios.
+
+**Reglas:**
+- Las plantillas son datos versionados: archivos en el repo, editables desde Faro Manager. No van en el código de las pantallas.
+- Cada plantilla tiene un estado (borrador / validada por un profesional) y quién la validó. Las que estén en borrador se muestran como "sugerencia a revisar".
+- Al aplicar una plantilla se guarda qué versión se aplicó. Si la plantilla se actualiza, el estudio ve las diferencias y elige qué incorporar; nunca se pisan sus cambios.
+- El contenido técnico (alícuotas, convenios, regímenes) lo valida un contador antes de marcarlo como validado. Estudio Cristofaro es el primer validador.
+- La IA puede proponer ajustes a una plantilla para un cliente puntual, siempre con aprobación.
+- Los estudios en Horizonte pueden crear y compartir sus propias plantillas dentro del estudio.
+
 ## 2.d Tipos de usuario y beneficios (para la landing de Faro)
 
 | Tipo | Beneficio principal |
