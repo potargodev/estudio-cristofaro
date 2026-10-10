@@ -111,7 +111,7 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 
 **Planes de Faro Personal:**
 
-| | **Destello** (gratis) | **Guía** |
+| | **Gratis** | **Pro** |
 |---|---|---|
 | Facturación | 10 comprobantes/mes | Ilimitada, con logo y link de pago |
 | Situación con ARCA y semáforo de monotributo | ✓ | ✓ |
@@ -167,7 +167,7 @@ Cuando un estudio, un contador o un autónomo se da de alta, y cada vez que se c
 - Al aplicar una plantilla se guarda qué versión se aplicó. Si la plantilla se actualiza, el estudio ve las diferencias y elige qué incorporar; nunca se pisan sus cambios.
 - El contenido técnico (alícuotas, convenios, regímenes) lo valida un contador antes de marcarlo como validado. Estudio Cristofaro es el primer validador.
 - La IA puede proponer ajustes a una plantilla para un cliente puntual, siempre con aprobación.
-- Los estudios en Horizonte pueden crear y compartir sus propias plantillas dentro del estudio.
+- Los estudios en el plan Avanzado pueden crear y compartir sus propias plantillas dentro del estudio.
 
 ## 2.g Bitácora (finanzas personales)
 
@@ -219,7 +219,7 @@ Cuando un autónomo, una persona con Bitácora o una empresa busca un contador, 
   - El orden se basa solo en criterios objetivos (cercanía, coincidencia de rubro, disponibilidad, tiempo de respuesta y reseñas).
   - Estudio Cristofaro aparece como uno más, sin prioridad.
   - Si en el futuro hay ubicaciones pagas, se muestran rotuladas como "Destacado".
-- **Para los estudios:** aparecer en la Red es opcional (opt-in desde su panel) y está incluido en Rumbo y Horizonte. Verificación de matrícula antes de publicarse.
+- **Para los estudios:** aparecer en la Red es opcional (opt-in desde su panel) y está incluido en Profesional y Avanzado. Verificación de matrícula antes de publicarse.
 - **Reseñas:** solo de clientes reales del estudio en Faro, con moderación y derecho a respuesta.
 
 ## 2.j Flotas (compra colectiva de servicios contables)
@@ -255,7 +255,7 @@ Una **Flota** es un grupo informal de 3 a 20 personas que se juntan para consegu
 - **Nombres:** libres, pero sin palabras que sugieran un tipo legal ("S.A.", "Sociedad Anónima", "SRL", "SAS", "Sociedad", "Cooperativa", "Asociación civil", "Fundación" y similares). Si alguien las usa, la app las rechaza con una explicación amable. El nombre siempre se muestra con la etiqueta "Flota · grupo informal".
 - **Privacidad:** los miembros solo ven el nombre, el perfil y el estado de cada uno respecto de la propuesta. Nunca sus finanzas.
 - **Para el estudio:** un bloque de clientes con perfiles similares, ideal para estandarizar trabajo. Los estudios fijan libremente sus precios.
-- **Para Faro:** activa la Red de estudios y trae clientes nuevos a los estudios en Rumbo y Horizonte.
+- **Para Faro:** activa la Red de estudios y trae clientes nuevos a los estudios en Profesional y Avanzado.
 
 ## 2.h Mapa de roles y jerarquías
 
@@ -282,9 +282,32 @@ Una misma persona puede tener varias "puertas" a la vez (por ejemplo, contador e
 | Empresas (clientes de un estudio) | Ver todo a la vista: vencimientos, pagos, documentos y un responsable que responde. |
 | Empleados | Recibos y comunicaciones en el celular, con firma en un toque. |
 
+## 2.k Nombres de planes (simples, sin metáforas)
+
+| Para | Planes |
+|---|---|
+| Personas (Bitácora) | Gratis · Plus |
+| Autónomos (Faro Personal) | Gratis · Pro |
+| Estudios y contadores | Inicial (gratis) · Profesional · Avanzado |
+
+Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de estudios, Flotas, Grupos de gastos). Todo lo demás se nombra por lo que es.
+
+## 2.l Onboarding guiado y Centro de ayuda
+
+**Onboarding por perfil:** persona (Bitácora), autónomo, estudio o contador, miembro de una organización, empleado y capitán o tripulante de una Flota.
+- Una checklist de primeros pasos con progreso, tours contextuales que señalan los elementos de la pantalla, estados vacíos que invitan a dar el siguiente paso y un "¿qué hago ahora?" con el Asistente IA.
+- Se puede desactivar cuando se quiera. Queda siempre un botón visible arriba en el menú ("Guía") para volver a activarla o retomar un paso, y el progreso se guarda por usuario y por espacio.
+
+**Centro de ayuda (base de conocimientos):**
+- Visible siempre (ícono de ayuda en el menú y en cada pantalla, con el artículo relacionado).
+- Explica el qué y el para qué de todo: cada módulo, cada rol, cada plan, los flujos más comunes paso a paso y preguntas frecuentes.
+- Artículos en Markdown versionados en el repo (docs/ayuda), con buscador, capturas o videos cortos, y "¿te sirvió?".
+- El Asistente IA responde usando estos artículos y cita el artículo de donde sacó la respuesta.
+- Los artículos se actualizan en el mismo commit que cambia una función.
+
 ## 3. Planes de Faro (para estudios)
 
-| | **Señal** | **Rumbo** (recomendado) | **Horizonte** |
+| | **Inicial** (gratis) | **Profesional** (recomendado) | **Avanzado** |
 |---|---|---|---|
 | Para quién | Contador independiente que arranca | Estudio chico en crecimiento | Estudio mediano que quiere automatizar |
 | Precio | Gratis | $[precio] / mes | $[precio] / mes |
@@ -315,9 +338,9 @@ Los límites y los módulos de cada plan viven en configuración, no en el códi
 - Mientras tanto, en staging: landing de Faro en `/faro` y app en `app.estudiocristofaro.com`. Ruteo por host preparado para separar dominios sin tocar código.
 
 ## 6. Hoja de ruta
-1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Señal), landing de Faro y mención de Faro en la web de Cristofaro.
+1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Inicial), landing de Faro y mención de Faro en la web de Cristofaro.
 2. **F2 · IA, MCP y Conexiones:** configuración de IA multi-proveedor, Asistente con caja de contexto, servidor MCP por estudio, bandeja de aprobaciones, hub de conexiones (Xubio, Alegra y Google primero; Tango migrado al hub).
-3. **F3 · ARCA + Faro Personal:** web services de ARCA (homologación primero), facturación con PDF personalizado, situación y semáforo de monotributo, calendario personal y planes Destello y Guía.
+3. **F3 · ARCA + Faro Personal:** web services de ARCA (homologación primero), facturación con PDF personalizado, situación y semáforo de monotributo, calendario personal y planes Gratis y Pro.
 4. **F4 · Flujos:** canvas, motor de ejecución y plantillas.
 5. **F5 · Empleados:** legajo, recibos masivos con firma y comunicación interna.
 6. **F6 · Lectura inteligente** y conciliación bancaria.
