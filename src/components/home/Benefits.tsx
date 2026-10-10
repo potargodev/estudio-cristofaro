@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Container, SectionIndex } from "@/components/web/ui";
+import { Container } from "@/components/web/ui";
 import { isDesktop, loadScrollTrigger, reducedMotion } from "@/lib/motion/gsap";
 
 const BENEFITS = [
@@ -43,7 +43,7 @@ export function Benefits() {
             onUpdate: (s) => {
               if (bar.current) bar.current.style.transform = `scaleX(${s.progress})`;
               const i = Math.min(BENEFITS.length - 1, Math.floor(s.progress * BENEFITS.length));
-              el.querySelectorAll("[data-idx]").forEach((n, k) => n.classList.toggle("text-rose-light", k === i));
+              el.querySelectorAll("[data-idx]").forEach((n, k) => (n.classList.toggle("font-semibold", k === i), n.classList.toggle("underline", k === i)));
             },
           },
         });
@@ -53,43 +53,47 @@ export function Benefits() {
   }, []);
 
   return (
-    <section ref={root} aria-labelledby="beneficios-titulo" className="border-t border-hair bg-night">
+    <section ref={root} aria-labelledby="beneficios-titulo" className="bg-gold text-[#1c2235]">
       <div data-hpin className="overflow-hidden py-16 lg:flex lg:h-[100svh] lg:flex-col lg:justify-center lg:py-0">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <SectionIndex n="05">Beneficios</SectionIndex>
-              <h2 id="beneficios-titulo" className="display-sm mt-6 max-w-[16ch] text-paper">
+              <p className="flex items-center gap-3 text-[13px] text-[#1c2235]">
+                <span className="tabular">05</span>
+                <span aria-hidden className="h-px w-8 bg-[#1c2235]/40" />
+                <span>Beneficios</span>
+              </p>
+              <h2 id="beneficios-titulo" className="display-sm mt-6 max-w-[16ch] text-[#1c2235]">
                 Lo que cambia en tu día a día.
               </h2>
             </div>
-            <ol aria-hidden className="hidden items-center gap-4 text-[12px] text-paper/55 lg:flex">
+            <ol aria-hidden className="hidden items-center gap-4 text-[12px] text-[#1c2235] lg:flex">
               {BENEFITS.map((_, i) => (
-                <li key={i} data-idx className={`tabular transition-colors duration-300 ${i === 0 ? "text-rose-light" : ""}`}>
+                <li key={i} data-idx className={`tabular underline-offset-4 ${i === 0 ? "font-semibold underline" : ""}`}>
                   0{i + 1}
                 </li>
               ))}
-              <li className="relative ml-2 h-px w-24 bg-hair-strong">
-                <span ref={bar} className="absolute inset-0 origin-left bg-rose-light" style={{ transform: "scaleX(0)" }} />
+              <li className="relative ml-2 h-px w-24 bg-[#1c2235]/25">
+                <span ref={bar} className="absolute inset-0 origin-left bg-[#1c2235]" style={{ transform: "scaleX(0)" }} />
               </li>
             </ol>
           </div>
         </Container>
         <div className="mt-10 lg:mt-16">
-          <ol data-track className="flex flex-col border-t border-hair lg:w-max lg:flex-row lg:border-t-0 lg:pl-[max(3rem,calc((100vw-1360px)/2+3rem))]">
+          <ol data-track className="flex flex-col gap-4 px-5 sm:px-8 lg:w-max lg:flex-row lg:gap-6 lg:px-0 lg:pl-[max(3rem,calc((100vw-1360px)/2+3rem))]">
             {BENEFITS.map((b, i) => (
               <li
                 key={b.t}
-                className="flex flex-col justify-between gap-5 border-b border-hair px-5 py-8 sm:px-8 lg:h-[52vh] lg:w-[34rem] lg:border-b-0 lg:border-l lg:px-10 lg:py-2 xl:w-[38rem]"
+                className="flex flex-col justify-between gap-5 lg:h-[52vh] lg:w-[30rem] xl:w-[34rem]"
               >
-                <span className="tabular font-display text-[2.75rem] leading-none text-rose-light lg:text-[clamp(4rem,8vw,7.5rem)]">0{i + 1}</span>
-                <div>
-                  <h3 className="font-display text-[1.6rem] leading-[1.1] text-paper lg:text-[clamp(1.8rem,2.6vw,2.6rem)] lg:leading-[1.05]">{b.t}</h3>
-                  <p className="mt-4 max-w-[30ch] text-[15px] leading-relaxed text-paper/60">{b.d}</p>
+                <span className="tabular font-display text-[2.75rem] leading-none text-[#1c2235] lg:text-[clamp(4rem,8vw,7.5rem)]">0{i + 1}</span>
+                <div className="bg-[#1c2235] p-6 lg:min-h-[15rem] lg:p-8">
+                  <h3 className="font-display text-[1.6rem] leading-[1.1] text-gold lg:text-[clamp(1.8rem,2.4vw,2.4rem)] lg:leading-[1.05]">{b.t}</h3>
+                  <p className="mt-4 max-w-[32ch] text-[15px] leading-relaxed text-white">{b.d}</p>
                 </div>
               </li>
             ))}
-            <li aria-hidden className="hidden lg:block lg:w-[20vw] lg:border-l lg:border-hair" />
+            <li aria-hidden className="hidden lg:block lg:w-[20vw]" />
           </ol>
         </div>
       </div>
