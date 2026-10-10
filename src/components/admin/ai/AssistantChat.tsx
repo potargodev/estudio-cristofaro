@@ -70,7 +70,7 @@ function readAsDataUrl(file: File) {
 
 function Markdown({ text }: { text: string }) {
   return (
-    <div className="faro-md text-[15px] leading-relaxed text-ink">
+    <div className="faro-md text-[15px] leading-relaxed text-ink [overflow-wrap:anywhere]">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -182,7 +182,7 @@ function ToolCard({
       )}
       {needsConfirm && output?.aprobacion_id && (
         <div className="flex flex-wrap items-center gap-2 border-t border-line bg-[#fbf5e6] px-3 py-2 text-[13px]">
-          <p className="min-w-0 flex-1 text-ink">{output.resumen}</p>
+          <p className="min-w-0 flex-1 text-ink [overflow-wrap:anywhere]">{output.resumen}</p>
           {!status || status === "pendiente" ? (
             <>
               <button
@@ -211,7 +211,7 @@ function ToolCard({
       {sentToApproval && (
         <div className="flex flex-wrap items-center gap-2 border-t border-line bg-[#f6efeb] px-3 py-2 text-[13px]">
           <ShieldCheck className="size-4 text-[#6d4a3c]" strokeWidth={1.5} aria-hidden />
-          <p className="min-w-0 flex-1 text-ink">
+          <p className="min-w-0 flex-1 text-ink [overflow-wrap:anywhere]">
             <strong className="font-medium">Enviado a aprobación.</strong> {output?.resumen}
           </p>
           <Link href="/admin/aprobaciones" className="font-medium underline underline-offset-4">
@@ -489,7 +489,7 @@ export function AssistantChat({
           </select>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-3 py-5 sm:px-6" aria-live="polite">
+        <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-3 py-5 sm:px-6" aria-live="polite">
           {messages.length === 0 && (
             <div className="mx-auto max-w-2xl pt-6 text-center sm:pt-12">
               <p className="font-display text-[32px] leading-tight text-ink sm:text-[40px]">¿En qué te ayudo?</p>
@@ -503,7 +503,7 @@ export function AssistantChat({
               </div>
             </div>
           )}
-          <div className="mx-auto grid max-w-3xl gap-5">
+          <div className="mx-auto grid w-full max-w-3xl gap-5 [&>*]:min-w-0">
             {messages.map((m) => {
               const meta = (m.metadata ?? {}) as Meta;
               if (m.role === "user") {
@@ -520,7 +520,7 @@ export function AssistantChat({
                     <div className="bg-navy px-4 py-2.5 text-[15px] leading-relaxed text-paper">
                       {m.parts.map((p, i) =>
                         p.type === "text" ? (
-                          <p key={i} className="whitespace-pre-wrap break-words">
+                          <p key={i} className="whitespace-pre-wrap [overflow-wrap:anywhere]">
                             {p.text}
                           </p>
                         ) : p.type === "file" ? (

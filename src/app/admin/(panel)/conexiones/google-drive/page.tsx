@@ -62,7 +62,7 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
           )}
         </Panel>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-6 [&>*]:min-w-0">
           <section className="border border-line bg-surface">
             <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
               <div>

@@ -64,14 +64,14 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
       {sp.revocado && <Notice>Acceso revocado: sus tokens dejan de funcionar al instante.</Notice>}
       {sp.error && <Notice tone="error">Ese acceso no existe o no podés revocarlo.</Notice>}
 
-      <div className="grid gap-6">
+      <div className="grid gap-6 [&>*]:min-w-0">
         <Panel title="Cómo conectar Faro" icon={BookOpen}>
-          <div className="grid gap-5 text-[14px] leading-relaxed">
+          <div className="grid gap-5 text-[14px] leading-relaxed [&>*]:min-w-0">
             <div>
               <p className="text-[13px] text-muted">URL del servidor MCP (Streamable HTTP)</p>
               <CodeLine text={urls.resource} />
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3 [&>*]:min-w-0">
               <div className="border border-line bg-paper p-4">
                 <p className="font-medium text-ink">Claude (claude.ai o la app)</p>
                 <ol className="mt-2 list-decimal space-y-1 pl-4 text-ink/85">

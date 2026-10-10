@@ -98,7 +98,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
         actions={<ConnectorLogo def={def} size="lg" />}
       />
       <Flash sp={sp} />
-      <div className="grid gap-6">
+      <div className="grid gap-6 [&>*]:min-w-0">
         {details.map(({ c, creds, logs, counts, latest, pending }) => (
           <section key={c.id} id={`c-${c.id}`} className="scroll-mt-24 border border-line bg-surface">
             <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
@@ -133,7 +133,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                 </form>
               </div>
             </header>
-            <div className="grid gap-5 px-5 py-4">
+            <div className="grid gap-5 px-5 py-4 [&>*]:min-w-0">
               <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {Object.entries(RES).map(([k, label]) => {
                   const row = counts.find((x) => x.resource === k);
@@ -182,10 +182,10 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                         <span>
                           {r.name} <span className="text-muted">· CUIT {r.cuit ?? "—"}</span>
                         </span>
-                        <form action={linkExternalRecord} className="flex items-center gap-2">
+                        <form action={linkExternalRecord} className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                           <input type="hidden" name="record_id" value={r.id} />
                           <input type="hidden" name="back" value={`/admin/conexiones/xubio#c-${c.id}`} />
-                          <div className="w-64">
+                          <div className="w-full min-w-0 sm:w-64">
                             <FormSelect id={`le-${r.id}`} name="legal_entity_id" options={[{ value: "", label: "Elegí la razón social" }, ...entityOptions]} aria-label="Razón social" className="mt-0" />
                           </div>
                           <SubmitButton variant="secondary" pendingText="…">

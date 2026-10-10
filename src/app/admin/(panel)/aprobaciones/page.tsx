@@ -11,7 +11,7 @@ import { SubmitButton } from "@/components/admin/ui";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
-import { approvals, mcp_accesses, organizations, users } from "@/db/schema";
+import { approvals, documents, leads, mcp_accesses, organizations, requests, users } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { getTool } from "@/modules/tools";
 
@@ -28,6 +28,11 @@ const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", h
 const LABELS: Record<string, string> = {
   organizacion_id: "Organización",
   solicitud_id: "Solicitud",
+  documento_id: "Documento",
+  consulta_id: "Consulta",
+  asunto: "Asunto",
+  detalle: "Detalle",
+  tipo: "Tipo",
   mensaje: "Mensaje para el cliente",
   estado: "Estado",
   impuesto: "Impuesto",
@@ -100,6 +105,17 @@ export default async function AprobacionesPage({ searchParams }: { searchParams:
     (await getDb().select({ id: users.id, name: users.name }).from(users).where(eq(users.studioId, user.studioId))).map((u) => [u.id, u.name]),
   );
   const pendingCount = tab === "pendientes" ? rows.length : undefined;
+  // Nombres legibles de los IDs del borrador (siempre dentro del estudio)
+  const idsOf = (key: string) => [...new Set(rows.map((r) => (r.a.input as Record<string, unknown>)[key]).filter((v): v is string => typeof v === "string" && /^[0-9a-f-]{36}$/i.test(v)))];
+  const db = getDb();
+  const [reqNames, orgNames, docNames, leadNames] = await Promise.all([
+    idsOf("solicitud_id").length ? db.select({ id: requests.id, name: requests.subject }).from(requests).where(and(eq(requests.studio_id, user.studioId), inArray(requests.id, idsOf("solicitud_id")))) : [],
+    idsOf("organizacion_id").length ? db.select({ id: organizations.id, name: organizations.name }).from(organizations).where(and(eq(organizations.studio_id, user.studioId), inArray(organizations.id, idsOf("organizacion_id")))) : [],
+    idsOf("documento_id").length ? db.select({ id: documents.id, name: documents.name }).from(documents).where(and(eq(documents.studio_id, user.studioId), inArray(documents.id, idsOf("documento_id")))) : [],
+    idsOf("consulta_id").length ? db.select({ id: leads.id, name: leads.name }).from(leads).where(and(eq(leads.studio_id, user.studioId), inArray(leads.id, idsOf("consulta_id")))) : [],
+  ]);
+  const names = new Map([...reqNames, ...orgNames, ...docNames, ...leadNames].map((r) => [r.id, r.name]));
+  const display = (k: string, v: unknown) => (k.endsWith("_id") && typeof v === "string" && names.has(v) ? names.get(v)! : show(v));
 
   return (
     <div className="max-w-4xl">
@@ -160,7 +176,7 @@ export default async function AprobacionesPage({ searchParams }: { searchParams:
                     {Object.entries(input).map(([k, v]) => (
                       <div key={k} className={typeof v === "string" && v.length > 60 ? "sm:col-span-2" : ""}>
                         <dt className="text-[12px] text-muted">{LABELS[k] ?? k}</dt>
-                        <dd className="whitespace-pre-wrap break-words text-ink">{show(v)}</dd>
+                        <dd className="whitespace-pre-wrap break-words text-ink">{display(k, v)}</dd>
                       </div>
                     ))}
                   </dl>

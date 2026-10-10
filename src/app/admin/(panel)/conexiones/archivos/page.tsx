@@ -47,7 +47,7 @@ export default async function ArchivosPage({ searchParams }: { searchParams: Pro
         actions={<ConnectorLogo def={def} size="lg" />}
       />
       <Flash sp={sp} />
-      <div className="grid gap-6">
+      <div className="grid gap-6 [&>*]:min-w-0">
         <Panel title="Nueva importación" icon={FileUp}>
           <FileImport orgs={orgs} />
         </Panel>
@@ -66,7 +66,7 @@ export default async function ArchivosPage({ searchParams }: { searchParams: Pro
                 </SubmitButton>
               </form>
             </header>
-            <div className="grid gap-4 px-5 py-4">
+            <div className="grid gap-4 px-5 py-4 [&>*]:min-w-0">
               <p className="text-[14px] text-ink">
                 {counts.map((r) => `${RESOURCE_LABEL[r.resource as keyof typeof RESOURCE_LABEL] ?? r.resource}: ${r.n} (${r.cruzados} con organización)`).join(" · ") || "Sin registros"}
               </p>

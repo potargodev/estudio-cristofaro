@@ -23,7 +23,7 @@ export function FileImport({ orgs }: { orgs: { id: string; name: string }[] }) {
   }
 
   return (
-    <form ref={form} onSubmit={(e) => (e.preventDefault(), run("preview"))} className="grid gap-4">
+    <form ref={form} onSubmit={(e) => (e.preventDefault(), run("preview"))} className="grid gap-4 [&>*]:min-w-0">
       <div className="grid gap-4 sm:grid-cols-2">
         <AdminField label="Plantilla" htmlFor="tpl">
           <select id="tpl" name="template" value={tpl} onChange={(e) => setTpl(e.target.value)} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-[15px]">

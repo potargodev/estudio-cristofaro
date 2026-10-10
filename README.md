@@ -36,6 +36,30 @@ Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · No
 - Conector local en [`connector/`](connector/README.md) (Node 22, sin dependencias) que lee la API Delta en la red del estudio y manda los datos firmados con HMAC a `POST /api/integrations/tango/ingest`. Incluye un simulador de la API Delta para desarrollo.
 - Diseño enchufable (`src/lib/integrations/tango`): la interfaz `TangoSource` tiene la implementación "connector" y lugar para una futura "file" (importar exportaciones de Tango).
 
+**Faro IA, MCP y Conexiones (F2)**
+- **Registro de herramientas** (`src/modules/tools`): cada módulo declara sus herramientas (nombre, descripción, esquema zod → JSON Schema, nivel lectura/escritura/sensible, roles y handler). `executeTool()` valida estudio, organización, rol y alcance en el servidor y audita cada ejecución. Las sensibles (comunicar a clientes, pagos, datos fiscales) nunca se ejecutan: crean una propuesta en Aprobaciones.
+- **IA** (`/admin/ia/configuracion`, todos los planes): proveedores Anthropic, OpenAI, Google, OpenRouter, Azure OpenAI y compatibles con OpenAI (Ollama, LM Studio) con el AI SDK; clave cifrada, prueba de conexión, modelo por defecto y por tarea, límite de gasto mensual y uso (tokens y costo estimado).
+- **Asistente** (`/admin/asistente`): chat con streaming, historial, markdown y tablas, contexto (organización, documento, solicitud o archivo), @menciones y selector de modelo. Las herramientas se ven como tarjetas plegables; las de escritura se confirman en la tarjeta y las sensibles muestran "Enviado a aprobación". Botón **Preguntar a Faro** en la barra superior con el contexto de la pantalla.
+- **Aprobaciones** (`/admin/aprobaciones`): aprobar (ejecuta y audita), editar y aprobar o rechazar con motivo. Badge en el menú.
+- **Faro como servidor MCP** (`/api/mcp`, Streamable HTTP): accesos con token o con OAuth 2.1 (registro dinámico, PKCE, refresh con rotación), con alcance por módulos, lectura/escritura, organizaciones y vencimiento. `/admin/mcp` crea, revoca, muestra el log de llamadas y las instrucciones para Claude, ChatGPT y Claude Code.
+- **Conexiones** (`/admin/conexiones`): Tango (conector local), Xubio (API oficial con OAuth2), Google Drive (carpeta por organización), MCP externo (sus herramientas en el Asistente, en solo lectura por defecto) y Archivos (Holistor, Bejerman y otros con plantillas de mapeo). Alegra, Colppy, Contabilium, Finnegans, Odoo, Mercado Pago y ARCA figuran como próximamente.
+- `/estudio/*` redirige al panel (`/admin/*`).
+
+### Pruebas de la F2 (solo desarrollo)
+
+Mocks en `mocks/` (proveedor de IA compatible con OpenAI, Xubio y Google) y pruebas en `scripts/pruebas/`:
+
+```bash
+node mocks/openai/server.mjs & node mocks/xubio/server.mjs & node mocks/google/server.mjs & (cd connector && node mock/server.mjs) &
+# .env.local con XUBIO_API_URL=http://localhost:4020/API/1.1 y GOOGLE_API_MOCK_URL=http://localhost:4030
+npm run build && npx next start -p 3000 &
+node --env-file=.env.local scripts/pruebas/datos.mjs        # dos estudios, usuarios con sesión y datos
+node --env-file=.env.local scripts/pruebas/proveedor.mjs    # proveedor de IA de prueba
+node --env-file=.env.local scripts/pruebas/asistente.mjs
+node --env-file=.env.local scripts/pruebas/mcp.mjs
+npx tsx --conditions=react-server --env-file=.env.local scripts/pruebas/conexiones.mts
+```
+
 ## Desarrollo local
 
 Necesitás Node 22 y Docker.

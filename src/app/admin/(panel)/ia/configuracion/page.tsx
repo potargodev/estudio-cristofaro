@@ -71,7 +71,7 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
       {sp.error && <Notice tone="error">{ERRORS[sp.error] ?? "No se pudo guardar. Revisá los datos."}</Notice>}
       {!encryptionEnabled() && <Notice tone="error">{ERRORS.cifrado}</Notice>}
 
-      <div className="mt-6 grid gap-6">
+      <div className="mt-6 grid gap-6 [&>*]:min-w-0">
         <Panel title="Proveedores" icon={KeyRound}>
           {providers.length === 0 ? (
             <EmptyState icon={Cpu} title="Todavía no hay proveedores" text="Agregá uno abajo: Anthropic, OpenAI, Google, OpenRouter, Azure OpenAI o un servidor compatible con OpenAI (Ollama, LM Studio)." />

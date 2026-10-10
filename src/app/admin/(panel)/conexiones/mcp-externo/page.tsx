@@ -56,7 +56,7 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
         actions={<ConnectorLogo def={def} size="lg" />}
       />
       <Flash sp={sp} />
-      <div className="grid gap-6">
+      <div className="grid gap-6 [&>*]:min-w-0">
         {list.map((c, i) => {
           const st = settingsOf(c);
           const creds = readCredentials<{ url: string; auth_header?: string }>(c);
@@ -123,7 +123,7 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
                   <SubmitButton>Guardar permisos</SubmitButton>
                 </div>
               </form>
-              <div className="grid gap-3 border-t border-line px-5 py-4">
+              <div className="grid gap-3 border-t border-line px-5 py-4 [&>*]:min-w-0">
                 <details>
                   <summary className="cursor-pointer text-[14px] font-medium text-ink">Log</summary>
                   <div className="mt-3">
