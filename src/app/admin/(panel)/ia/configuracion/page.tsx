@@ -126,7 +126,7 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
                   </div>
                   <details className="mt-3">
                     <summary className="cursor-pointer text-[14px] text-ink underline-offset-4 hover:underline">Editar</summary>
-                    <div className="mt-3 border border-line bg-paper p-4">
+                    <div className="mt-3 border border-line bg-canvas p-4">
                       <ProviderForm
                         action={saveProvider}
                         current={{

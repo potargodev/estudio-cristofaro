@@ -116,7 +116,7 @@ export default async function PortalHome() {
               {lastDoc ? (
                 <a
                   href={`/api/archivos/${lastDoc.id}`}
-                  className="mt-3 flex items-center justify-between gap-3 rounded-md border border-line px-3 py-3 transition-colors hover:border-navy/40 hover:bg-paper"
+                  className="mt-3 flex items-center justify-between gap-3 rounded-md border border-line px-3 py-3 transition-colors hover:border-navy/40 hover:bg-canvas"
                 >
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{lastDoc.name}</span>

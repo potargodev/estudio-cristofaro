@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 const money = (n: number) => `$ ${n.toLocaleString("es-AR")}`;
 const PEOPLE = [
-  { name: "Ana", c: "#c8a465" },
+  { name: "Ana", c: "#c9a596" },
   { name: "Juan", c: "#c9a596" },
   { name: "Lucía", c: "#9ba3ba" },
 ];

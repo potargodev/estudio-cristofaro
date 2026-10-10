@@ -4,7 +4,7 @@ import { categoryName, formatMoney } from "@/modules/gastos/constants";
 // (columnas). Los valores van en la moneda base; cada barra tiene su texto.
 
 const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-const COLORS = ["#1c2235", "#a57c6d", "#c8a465", "#6b7a99", "#3f7f57", "#7d5848", "#9b6fa6"];
+const COLORS = ["#1c2235", "#a57c6d", "#c9a596", "#6b7a99", "#3f7f57", "#7d5848", "#9b6fa6"];
 
 export function CategoryChart({ data, currency }: { data: Record<string, number>; currency: string }) {
   const rows = Object.entries(data).sort((a, b) => b[1] - a[1]);

@@ -11,7 +11,7 @@ export function ChangePasswordForm({ email }: { email: string }) {
   const field = "mt-1 h-11 bg-surface text-base";
   return (
     <div className="grid min-h-dvh place-items-center bg-navy-deep px-4">
-      <form action={action} className="w-full max-w-sm border-t border-rose-light bg-paper p-7">
+      <form action={action} className="w-full max-w-sm border-t border-rose-light bg-canvas p-7">
         <div className="mb-5 flex items-center gap-2.5">
           <span className="grid size-10 place-items-center bg-navy text-rose-light">
             <Monogram className="size-7" />

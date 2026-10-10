@@ -102,7 +102,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       {pendingForMe.length > 0 && (
         <section aria-label="Pagos para confirmar" className="mt-4 grid gap-2">
           {pendingForMe.map((s) => (
-            <div key={s.id} className="flex flex-wrap items-center gap-3 border border-gold/60 bg-[#fbf7ee] p-4">
+            <div key={s.id} className="flex flex-wrap items-center gap-3 border border-gold/60 bg-rose-soft p-4">
               <p className="min-w-0 flex-1 text-[14px]">
                 {s.created_by === me.id ? "Esperando que confirmen" : `${name(s.created_by)} informó`}: <strong>{name(s.from_member)}</strong> le pagó <strong className="tabular-nums">{formatMoney(s.amount, s.currency)}</strong> a <strong>{name(s.to_member)}</strong> ({SETTLEMENT_METHODS[s.method]}).
               </p>

@@ -10,7 +10,7 @@ const tones = {
 } as const;
 
 export function Badge({ tone = "neutral", children }: { tone?: keyof typeof tones; children: React.ReactNode }) {
-  return <span className={cn("inline-flex items-center rounded-[2px] px-2.5 py-0.5 text-xs font-medium", tones[tone])}>{children}</span>;
+  return <span className={cn("inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium", tones[tone])}>{children}</span>;
 }
 
 export function obligationTone(status: string, dueDate: string, today: string): keyof typeof tones {
@@ -31,8 +31,8 @@ export function PageTitle({ title, intro, children }: { title: string; intro?: s
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
       <div>
-        <h1 className="font-display text-[clamp(2rem,3.4vw,2.9rem)] leading-none">{title}</h1>
-        {intro && <p className="mt-2 max-w-xl text-muted">{intro}</p>}
+        <h1 className="font-display text-[clamp(2.2rem,3.8vw,3.2rem)] leading-none text-ink">{title}</h1>
+        {intro && <p className="mt-2.5 max-w-xl text-[16px] text-muted">{intro}</p>}
       </div>
       {children}
     </div>

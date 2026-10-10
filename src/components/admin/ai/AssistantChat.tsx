@@ -79,7 +79,7 @@ function Markdown({ text }: { text: string }) {
               <table className="w-full min-w-max border-collapse text-left text-[14px]">{children}</table>
             </div>
           ),
-          th: ({ children }) => <th className="border-b border-line bg-paper px-3 py-2 font-medium">{children}</th>,
+          th: ({ children }) => <th className="border-b border-line bg-canvas px-3 py-2 font-medium">{children}</th>,
           td: ({ children }) => <td className="tabular border-b border-line px-3 py-2 align-top">{children}</td>,
           a: ({ href, children }) => (
             <a href={href} className="underline underline-offset-4 hover:text-rose-deep" target={href?.startsWith("/") ? undefined : "_blank"} rel="noreferrer">
@@ -108,7 +108,7 @@ type ToolPart = Extract<UIMessage["parts"][number], { toolCallId: string }>;
 
 function Json({ value }: { value: unknown }) {
   const text = JSON.stringify(value, null, 2) ?? "";
-  return <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words bg-paper p-2 font-mono text-[12px] leading-snug text-ink/80">{text.length > 6000 ? `${text.slice(0, 6000)}…` : text}</pre>;
+  return <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words bg-canvas p-2 font-mono text-[12px] leading-snug text-ink/80">{text.length > 6000 ? `${text.slice(0, 6000)}…` : text}</pre>;
 }
 
 function ToolCard({
@@ -266,12 +266,12 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={`Buscar ${CONTEXT_LABEL[kind].toLowerCase()}…`}
-          className="h-9 w-full border border-line bg-paper px-2 text-[14px] outline-none focus:border-muted"
+          className="h-9 w-full border border-line bg-canvas px-2 text-[14px] outline-none focus:border-muted"
         />
         <ul className="mt-2 max-h-60 overflow-y-auto">
           {items.map((it) => (
             <li key={it.id}>
-              <button type="button" onClick={() => onPick(it)} className="flex w-full flex-col items-start px-2 py-1.5 text-left hover:bg-paper">
+              <button type="button" onClick={() => onPick(it)} className="flex w-full flex-col items-start px-2 py-1.5 text-left hover:bg-canvas">
                 <span className="text-[14px] text-ink">{it.label}</span>
                 {it.hint && <span className="text-[12px] text-muted">{it.hint}</span>}
               </button>
@@ -425,7 +425,7 @@ export function AssistantChat({
       {/* Historial */}
       <aside
         className={cn(
-          "absolute inset-y-0 left-0 z-30 w-72 shrink-0 flex-col border-r border-line bg-paper lg:static lg:flex",
+          "absolute inset-y-0 left-0 z-30 w-72 shrink-0 flex-col border-r border-line bg-canvas lg:static lg:flex",
           history ? "flex shadow-xl" : "hidden",
         )}
         aria-label="Conversaciones"
@@ -496,7 +496,7 @@ export function AssistantChat({
               <p className="mt-2 text-[15px] text-muted">Consulto organizaciones, vencimientos, documentos, solicitudes, agenda y conexiones. Lo sensible pasa siempre por tu aprobación.</p>
               <div className="mt-6 grid gap-2 sm:grid-cols-2">
                 {SUGGESTIONS.map((s) => (
-                  <button key={s} type="button" onClick={() => submit(s)} disabled={noModels} className="border border-line bg-paper px-3 py-3 text-left text-[14px] text-ink hover:border-muted disabled:opacity-50">
+                  <button key={s} type="button" onClick={() => submit(s)} disabled={noModels} className="border border-line bg-canvas px-3 py-3 text-left text-[14px] text-ink hover:border-muted disabled:opacity-50">
                     {s}
                   </button>
                 ))}
@@ -604,7 +604,7 @@ export function AssistantChat({
                         e.preventDefault();
                         pickMention(o);
                       }}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-[14px] hover:bg-paper"
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-[14px] hover:bg-canvas"
                     >
                       <Building2 className="size-4 text-muted" strokeWidth={1.5} aria-hidden />
                       {o.name}
@@ -613,7 +613,7 @@ export function AssistantChat({
                 ))}
               </ul>
             )}
-            <div className="border border-line bg-paper focus-within:border-muted">
+            <div className="border border-line bg-canvas focus-within:border-muted">
               {(chips.length > 0 || files.length > 0) && (
                 <div className="flex flex-wrap gap-1.5 px-2 pt-2">
                   {chips.map((c) => {

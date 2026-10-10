@@ -132,7 +132,7 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
                 </details>
                 <details>
                   <summary className="cursor-pointer text-[14px] font-medium text-ink">Editar conexión</summary>
-                  <div className="mt-3 border border-line bg-paper p-4">
+                  <div className="mt-3 border border-line bg-canvas p-4">
                     <ServerForm current={{ id: c.id, name: c.name, prefix: st.prefix ?? "", url: creds.url ?? "", header: creds.auth_header ?? "Authorization" }} />
                   </div>
                   <form action={deleteConnection} className="mt-3">

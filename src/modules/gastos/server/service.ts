@@ -198,6 +198,7 @@ export async function inviteMember(actor: GastosActor, groupId: string, input: {
         `Te sumaron a ${group.name}`,
         `<p>${esc(me.name)} te sumó al grupo de gastos compartidos <strong>${esc(group.name)}</strong>. Ahí ves quién pagó qué y cuánto debe cada uno.</p>${token ? "<p>No necesitás crear una cuenta: el enlace es personal y solo abre este grupo.</p>" : ""}`,
         { href: link, label: "Ver el grupo" },
+        "Faro",
       ),
     });
   await log(group.id, me.id, "integrante", `${me.name} sumó a ${name}${token ? " como invitado" : ""}`);

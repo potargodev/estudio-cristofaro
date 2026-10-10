@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
 import { Archivo, Gilda_Display } from "next/font/google";
 import { PwaRegister } from "@/components/app/PwaRegister";
+import { themeScript } from "@/components/app/theme";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { getSiteUrl, isNoIndex } from "@/lib/runtime-config";
 import { site } from "@/lib/site";
@@ -61,7 +62,11 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   await connection();
   return (
-    <html lang="es-AR" className={`${archivo.variable} ${serif.variable}`}>
+    <html lang="es-AR" className={`${archivo.variable} ${serif.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Modo claro u oscuro de la app antes de pintar (la web pública es siempre oscura) */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-dvh antialiased">
         <MotionProvider>{children}</MotionProvider>
         <PwaRegister />

@@ -189,7 +189,7 @@ export default async function AprobacionesPage({ searchParams }: { searchParams:
                   )}
                 </div>
                 {a.status === "pendiente" && (
-                  <div className="grid gap-3 border-t border-line bg-paper px-5 py-4">
+                  <div className="grid gap-3 border-t border-line bg-canvas px-5 py-4">
                     <div className="flex flex-wrap gap-2">
                       <form action={decideApprovalAction}>
                         <input type="hidden" name="id" value={a.id} />

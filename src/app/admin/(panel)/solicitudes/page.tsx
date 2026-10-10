@@ -119,7 +119,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
     return `/admin/solicitudes${s ? `?${s}` : ""}`;
   };
   const chip = (on: boolean) =>
-    cn("inline-flex h-7 items-center rounded-[2px] border px-2.5 text-[13px] transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted");
+    cn("inline-flex h-7 items-center rounded-md border px-2.5 text-[13px] transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted");
 
   return (
     <>
@@ -194,7 +194,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
                     <Link
                       href={href({ id: i.request.id })}
                       aria-current={on ? "true" : undefined}
-                      className={cn("relative block px-4 py-3 transition-colors hover:bg-paper", on && "bg-navy-soft/70")}
+                      className={cn("relative block px-4 py-3 transition-colors hover:bg-canvas", on && "bg-navy-soft/70")}
                     >
                       <span className="flex items-start justify-between gap-3">
                         <span className="min-w-0">

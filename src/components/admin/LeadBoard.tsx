@@ -61,12 +61,12 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                 if (id) move(id, col.value);
               }}
               className={`relative flex min-h-[60vh] flex-col border p-2 pt-3 transition-colors duration-200 before:absolute before:inset-x-0 before:top-0 before:h-0.5 ${COLUMN_ACCENT[col.value]} ${
-                over === col.value ? "border-navy bg-navy-soft" : "border-line bg-paper"
+                over === col.value ? "border-navy bg-navy-soft" : "border-line bg-canvas"
               }`}
             >
               <h2 className="flex items-center justify-between px-2 py-1.5 text-[14px] font-medium text-ink">
                 {col.label}
-                <span className="tabular rounded-[2px] border border-line bg-surface px-1.5 text-[12px] text-muted">{items.length}</span>
+                <span className="tabular rounded-md border border-line bg-surface px-1.5 text-[12px] text-muted">{items.length}</span>
               </h2>
               <ul className="mt-1 space-y-2">
                 {items.map((l) => {
@@ -118,7 +118,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                         </span>
                       </div>
                       <Select value={l.status} onValueChange={(v) => move(l.id, v as LeadStatus)}>
-                        <SelectTrigger size="sm" aria-label={`Estado de ${l.name}`} className="mt-2.5 h-7 w-full rounded-[2px] bg-paper text-[12px]">
+                        <SelectTrigger size="sm" aria-label={`Estado de ${l.name}`} className="mt-2.5 h-7 w-full rounded-md bg-canvas text-[12px]">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

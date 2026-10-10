@@ -79,7 +79,7 @@ export function PortalNav({ main, extra, openRequests }: { main: PortalNavItem[]
                   <span className="relative">
                     <Icon className={cn("size-5", active && "text-rose-deep")} aria-hidden />
                     {badge(item) && (
-                      <span className="absolute -right-2 -top-1 rounded-[2px] bg-rose-deep px-1 text-[10px] font-semibold leading-4 text-paper">
+                      <span className="absolute -right-2 -top-1 rounded-md bg-rose-deep px-1 text-[10px] font-semibold leading-4 text-paper">
                         {openRequests}
                       </span>
                     )}

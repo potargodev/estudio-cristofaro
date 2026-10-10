@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
+import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { Toaster } from "@/components/ui/sonner";
 import { homeOf } from "@/modules/gastos/server/actor";
 import { getGastosActor } from "@/modules/gastos/server/session";
@@ -17,7 +18,7 @@ export default async function GastosLayout({ children }: { children: React.React
   const actor = await getGastosActor();
   const home = actor ? homeOf(actor) : null;
   return (
-    <div className="admin-shell min-h-dvh bg-paper text-ink">
+    <div className="admin-shell app-ui min-h-dvh bg-canvas text-ink">
       <header className="sticky top-0 z-30 bg-night text-paper">
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-3 px-4 sm:px-6">
           <Link href={actor ? "/gastos" : "/gastos/entrar"} aria-label="Gastos compartidos, inicio">
@@ -30,6 +31,7 @@ export default async function GastosLayout({ children }: { children: React.React
               {PANEL[home] ?? "Volver"}
             </Link>
           )}
+          <ThemeToggle className="text-paper/75 hover:text-paper" />
           {actor && (
             <form action={gastosSignOut}>
               <button type="submit" className="text-[13px] text-paper/75 underline-offset-4 hover:underline">

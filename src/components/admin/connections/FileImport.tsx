@@ -48,7 +48,7 @@ export function FileImport({ orgs }: { orgs: { id: string; name: string }[] }) {
           <Input id="imp-file" name="file" type="file" accept=".csv,.txt,.xlsx" required className="mt-1" />
         </AdminField>
       </div>
-      <details className="border border-line bg-paper p-3">
+      <details className="border border-line bg-canvas p-3">
         <summary className="cursor-pointer text-[14px] font-medium text-ink">Mapeo de columnas ({RESOURCE_LABEL[template.resource]})</summary>
         <p className="mt-2 text-[13px] text-muted">Faro busca cada dato por estos nombres de columna. Si tu exportación usa otros, escribilos separados por coma.</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">

@@ -63,7 +63,7 @@ export default async function VencimientosPage() {
               {/* Escritorio: tabla */}
               <div className="hidden overflow-hidden rounded-md border border-line bg-surface md:block">
                 <table className="w-full text-left text-[15px]">
-                  <thead className="border-b border-line bg-paper text-sm text-muted">
+                  <thead className="border-b border-line bg-canvas text-sm text-muted">
                     <tr>
                       <th className="px-4 py-2.5 font-medium">Impuesto</th>
                       <th className="px-4 py-2.5 font-medium">Período</th>

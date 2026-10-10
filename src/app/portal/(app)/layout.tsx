@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { PortalNav } from "@/components/portal/PortalNav";
 import { Monogram } from "@/components/site/Logo";
 import { Toaster } from "@/components/ui/sonner";
@@ -24,7 +25,7 @@ export default async function PortalLayout({ children }: { children: React.React
   const nav = buildPortalNav(me.orgRole, me.modules);
 
   return (
-    <div className="min-h-dvh bg-paper md:grid md:grid-cols-[248px_1fr]">
+    <div className="app-ui min-h-dvh bg-canvas md:grid md:grid-cols-[248px_1fr]">
       <aside className="bg-night text-paper md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:border-r md:border-paper/10">
         <div className="flex items-center justify-between gap-4 px-4 py-3 md:block md:px-5 md:pb-6 md:pt-7">
           <div className="flex min-w-0 items-center gap-3">
@@ -50,18 +51,25 @@ export default async function PortalLayout({ children }: { children: React.React
               <span className="block text-xs text-paper/60">Portal · Estudio Cristofaro</span>
             </div>
           </div>
-          <form action={portalSignOut} className="md:hidden">
+          <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle className="text-paper/80 hover:text-paper" />
+          <form action={portalSignOut}>
             <button type="submit" className="border border-paper/25 px-3 py-1.5 text-sm text-paper/90 transition-colors hover:border-paper/60">
               Salir
             </button>
           </form>
+          </div>
         </div>
         <PortalNav main={nav.main} extra={nav.extra} openRequests={open.length} />
-        <form action={portalSignOut} className="mt-auto hidden border-t border-paper/10 px-5 py-5 md:block">
+        <div className="mt-auto hidden items-center justify-between border-t border-paper/10 px-5 py-4 md:flex">
+        <form action={portalSignOut}>
           <button type="submit" className="text-sm text-paper/70 transition-colors hover:text-paper">
             Cerrar sesión
           </button>
         </form>
+        <ThemeToggle withLabel className="-mr-2.5 text-paper/70 hover:text-paper" />
+        </div>
+        <p className="hidden px-5 pb-4 text-[11px] text-paper/40 md:block">Con tecnología de Faro</p>
       </aside>
       <main className="mx-auto w-full max-w-5xl px-4 pb-28 pt-6 sm:px-6 md:px-10 md:pb-14 md:pt-10">
         <RouteReveal>{children}</RouteReveal>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
 import { SubmitButton } from "@/components/admin/ui";
+import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { Toaster } from "@/components/ui/sonner";
 import { requireFaro } from "@/lib/auth";
 import { signOut } from "../admin/actions";
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function FaroManagerLayout({ children }: { children: React.ReactNode }) {
   const faro = await requireFaro();
   return (
-    <div className="admin-shell min-h-dvh bg-paper text-ink">
+    <div className="admin-shell app-ui min-h-dvh bg-canvas text-ink">
       <header className="sticky top-0 z-30 bg-night text-paper">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:px-8">
           <Link href="/faro-manager" aria-label="Faro Manager">
@@ -38,6 +39,7 @@ export default async function FaroManagerLayout({ children }: { children: React.
           <Link href="/admin" className="text-[13px] text-paper/80 underline-offset-4 hover:underline">
             Mi estudio
           </Link>
+          <ThemeToggle className="text-paper/75 hover:text-paper" />
           <form action={signOut}>
             <SubmitButton variant="secondary" pendingText="…">
               Salir

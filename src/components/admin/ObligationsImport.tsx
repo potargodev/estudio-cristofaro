@@ -59,7 +59,7 @@ export function ObligationsImport() {
           </div>
           <div className="overflow-x-auto border border-line bg-surface">
             <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="border-b border-line bg-paper text-muted">
+              <thead className="border-b border-line bg-canvas text-muted">
                 <tr>
                   <th className="px-3 py-2 font-medium">Fila</th>
                   <th className="px-3 py-2 font-medium">CUIT</th>

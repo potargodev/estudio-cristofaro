@@ -32,6 +32,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RouteReveal } from "@/components/app/RouteReveal";
+import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { Avatar } from "../kit/Avatar";
 import { FaroLogo } from "../kit/FaroLogo";
@@ -69,7 +70,7 @@ function BottomBar({ badges, onMore, moreOpen }: { badges: Record<BadgeKey, numb
   const pathname = usePathname();
   const inBar = BOTTOM.some((i) => (i.exact ? pathname === i.href : pathname.startsWith(i.href)));
   return (
-    <nav aria-label="Secciones principales" className="fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper lg:hidden">
+    <nav aria-label="Secciones principales" className="keep-dark fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper lg:hidden">
       <ul className="grid grid-cols-5">
         {BOTTOM.map((i) => {
           const Icon = ICONS[i.icon];
@@ -191,7 +192,7 @@ function Nav({
   );
 }
 
-function UserMenu({ user, collapsed, signOut }: { user: ShellUser; collapsed: boolean; signOut: () => void | Promise<void> }) {
+function UserMenu({ user, studioName, collapsed, signOut }: { user: ShellUser; studioName: string; collapsed: boolean; signOut: () => void | Promise<void> }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -218,7 +219,9 @@ function UserMenu({ user, collapsed, signOut }: { user: ShellUser; collapsed: bo
         <Avatar name={user.name || user.email} size="sm" tone="dark" className="size-8" />
         <span className={cn("min-w-0 flex-1 transition-opacity duration-200", collapsed && "sr-only")}>
           <span className="block truncate text-[14px] text-paper">{user.name || user.email}</span>
-          <span className="block text-[12px] text-slate-light">{ROLE_LABEL[user.role] ?? user.role}</span>
+          <span className="block truncate text-[12px] text-slate-light">
+            {ROLE_LABEL[user.role] ?? user.role} · {studioName}
+          </span>
         </span>
       </button>
       {open && (
@@ -304,38 +307,39 @@ export function AdminShell({
 
   const brand = (small: boolean) => (
     <Link href="/admin" className="flex min-w-0 items-center gap-3" aria-label={`Faro · ${studioName} · Resumen`}>
-      {small ? <Sello className="size-10 shrink-0 text-gold" title="Faro" /> : <FaroLogo sub={studioName} />}
+      {small ? <Sello className="size-10 shrink-0 text-gold" title="Faro" /> : <FaroLogo />}
     </Link>
+  );
+  const collapseButton = (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={collapsed ? "Expandir la barra lateral ( [ )" : "Contraer la barra lateral ( [ )"}
+      aria-pressed={collapsed}
+      title={collapsed ? "Expandir ( [ )" : "Contraer ( [ )"}
+      className="grid size-8 shrink-0 place-items-center text-paper/60 hover:bg-paper/[0.06] hover:text-paper"
+    >
+      {collapsed ? <ChevronsRight className="size-[18px]" strokeWidth={1.6} aria-hidden /> : <ChevronsLeft className="size-[18px]" strokeWidth={1.6} aria-hidden />}
+    </button>
   );
 
   return (
-    <div className="admin-shell min-h-dvh bg-paper text-ink">
-      {/* Sidebar de escritorio */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col bg-night text-paper transition-[width] duration-200 ease-out lg:flex">
-        <div className={cn("flex h-20 items-center border-b border-paper/10", collapsed ? "justify-center px-0" : "px-5")}>{brand(collapsed)}</div>
-        <Nav collapsed={collapsed} access={access} badges={badges} />
-        <div className="px-3 pb-2">
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label={collapsed ? "Expandir la barra lateral ( [ )" : "Contraer la barra lateral ( [ )"}
-            aria-pressed={collapsed}
-            className="flex h-9 w-full items-center gap-3 px-3 text-[13px] text-paper/65 hover:bg-paper/[0.04] hover:text-paper"
-          >
-            {collapsed ? <ChevronsRight className="size-[18px]" strokeWidth={1.5} aria-hidden /> : <ChevronsLeft className="size-[18px]" strokeWidth={1.5} aria-hidden />}
-            <span className={cn(collapsed && "sr-only")}>
-              Contraer <kbd className="ml-1 border border-paper/20 px-1 text-[11px]">[</kbd>
-            </span>
-          </button>
+    <div className="admin-shell app-ui min-h-dvh bg-canvas text-ink">
+      {/* Sidebar de escritorio (siempre oscura, también en modo claro) */}
+      <aside className="keep-dark fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col bg-night text-paper transition-[width] duration-200 ease-out lg:flex">
+        <div className={cn("flex border-b border-paper/10", collapsed ? "h-28 flex-col items-center justify-center gap-2 px-0" : "h-20 items-center justify-between gap-2 pl-5 pr-3")}>
+          {brand(collapsed)}
+          {collapseButton}
         </div>
-        <UserMenu user={user} collapsed={collapsed} signOut={signOut} />
+        <Nav collapsed={collapsed} access={access} badges={badges} />
+        <UserMenu user={user} studioName={studioName} collapsed={collapsed} signOut={signOut} />
       </aside>
 
       {/* Drawer del celular */}
       {drawer && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button type="button" aria-label="Cerrar menú" className="absolute inset-0 bg-night/60" onClick={() => setDrawer(false)} />
-          <aside role="dialog" aria-modal="true" aria-label="Menú del backoffice" className="absolute inset-y-0 left-0 flex w-[280px] max-w-[85vw] flex-col bg-night text-paper">
+          <aside role="dialog" aria-modal="true" aria-label="Menú del backoffice" className="keep-dark absolute inset-y-0 left-0 flex w-[280px] max-w-[85vw] flex-col bg-night text-paper">
             <div className="flex h-16 items-center justify-between border-b border-paper/10 px-5">
               {brand(false)}
               <button type="button" onClick={() => setDrawer(false)} aria-label="Cerrar menú" className="grid size-9 place-items-center text-paper/80" autoFocus>
@@ -343,14 +347,14 @@ export function AdminShell({
               </button>
             </div>
             <Nav collapsed={false} access={access} badges={badges} onNavigate={() => setDrawer(false)} />
-            <UserMenu user={user} collapsed={false} signOut={signOut} />
+            <UserMenu user={user} studioName={studioName} collapsed={false} signOut={signOut} />
           </aside>
         </div>
       )}
 
       <div className="transition-[padding] duration-200 ease-out lg:pl-[var(--sb)]">
         {/* Barra superior */}
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-paper/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8">
           <button type="button" onClick={() => setDrawer(true)} aria-label="Abrir menú" className="grid size-9 place-items-center border border-line lg:hidden">
             <Menu className="size-5" aria-hidden />
           </button>
@@ -393,8 +397,9 @@ export function AdminShell({
             <span className="hidden flex-1 text-left sm:inline">Buscar…</span>
             <kbd className="hidden border border-line px-1 text-[11px] sm:inline">⌘K</kbd>
           </button>
+          <ThemeToggle className="border border-line bg-surface text-ink hover:border-muted" />
           {action && (
-            <Link href={action.href} className="inline-flex h-9 items-center gap-1.5 rounded-[2px] bg-navy px-3 text-[13px] font-medium text-paper hover:bg-navy-deep sm:px-4">
+            <Link href={action.href} className="inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-3 text-[13px] font-medium text-paper hover:bg-navy-deep sm:px-4">
               <Plus className="size-4" aria-hidden />
               <span className="hidden sm:inline">{action.label}</span>
               <span className="sr-only sm:hidden">{action.label}</span>

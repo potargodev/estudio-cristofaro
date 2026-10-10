@@ -87,7 +87,7 @@ export function StatusBadge({ status, label, className }: { status: StatusKey | 
   const s = STATUS[status as StatusKey] ?? { label: status, icon: CircleDot, tone: "neutral" as Tone };
   const Icon = s.icon;
   return (
-    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-[2px] border px-1.5 py-0.5 text-[12px] font-medium leading-none", TONES[s.tone], className)}>
+    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[12px] font-medium leading-none", TONES[s.tone], className)}>
       <Icon className="size-3.5" strokeWidth={1.75} aria-hidden />
       {label ?? s.label}
     </span>
@@ -97,7 +97,7 @@ export function StatusBadge({ status, label, className }: { status: StatusKey | 
 /** Chip neutro para datos que no son estados (plan, tipo, origen) */
 export function Tag({ children, icon: Icon, className }: { children: React.ReactNode; icon?: LucideIcon; className?: string }) {
   return (
-    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-[2px] border border-line bg-surface px-1.5 py-0.5 text-[12px] leading-none text-ink/80", className)}>
+    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-md border border-line bg-surface px-1.5 py-0.5 text-[12px] leading-none text-ink/80", className)}>
       {Icon && <Icon className="size-3.5 text-muted" strokeWidth={1.5} aria-hidden />}
       {children}
     </span>

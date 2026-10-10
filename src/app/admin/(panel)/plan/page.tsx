@@ -18,7 +18,7 @@ const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", y
 function Usage({ label, used, max }: { label: string; used: number; max: number | null }) {
   const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
   return (
-    <div className="border border-line bg-paper px-4 py-3">
+    <div className="border border-line bg-canvas px-4 py-3">
       <p className="text-[13px] text-muted">{label}</p>
       <p className="font-display text-[30px] leading-tight text-ink">
         {used}

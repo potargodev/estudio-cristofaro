@@ -18,7 +18,7 @@ export function EmptyState({
 }) {
   return (
     <div className={cn("flex flex-col items-center px-6 py-10 text-center", className)}>
-      <span className="grid size-12 place-items-center border border-line bg-paper text-rose-deep">
+      <span className="grid size-12 place-items-center rounded-lg bg-navy text-gold">
         <Icon className="size-5" strokeWidth={1.5} aria-hidden />
       </span>
       <p className="mt-4 text-[15px] font-medium text-ink">{title}</p>
@@ -51,8 +51,12 @@ export function Panel({
   return (
     <section className={cn("min-w-0 border border-line bg-surface", className)}>
       <header className="flex min-h-[52px] items-center justify-between gap-3 border-b border-line px-5 py-3">
-        <h2 className="flex items-center gap-2 text-[16px] font-medium text-ink">
-          {Icon && <Icon className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden />}
+        <h2 className="flex items-center gap-2.5 text-[17px] font-semibold text-ink">
+          {Icon && (
+            <span className="grid size-7 place-items-center rounded-md bg-navy text-gold">
+              <Icon className="size-4" strokeWidth={1.6} aria-hidden />
+            </span>
+          )}
           {title}
         </h2>
         {action && <div className="flex items-center gap-2 text-[13px]">{action}</div>}

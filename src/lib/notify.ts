@@ -10,12 +10,13 @@ import { site } from "./site";
 // Avisos por mail del portal. Si el SMTP no está configurado no se envía nada
 // (sendMail no hace nada) y la acción sigue igual.
 
-export function mailLayout(title: string, body: string, cta?: { href: string; label: string }) {
+/** Mail con la marca del estudio (o "Faro" para avisos de la plataforma) y "Con tecnología de Faro" */
+export function mailLayout(title: string, body: string, cta?: { href: string; label: string }, brand: string = site.name) {
   return `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55;color:#1b1e26;max-width:560px">
 <p style="font-size:18px;margin:0 0 12px">${esc(title)}</p>
 ${body}
 ${cta ? `<p style="margin:20px 0"><a href="${cta.href}" style="background:#1c2235;color:#f7f5f3;padding:10px 16px;border-radius:6px;text-decoration:none">${esc(cta.label)}</a></p>` : ""}
-<p style="color:#5a6176;font-size:13px;margin-top:24px">${esc(site.name)}</p>
+<p style="color:#5a6176;font-size:13px;margin-top:24px">${esc(brand)}${brand === "Faro" ? "" : '<br><span style="font-size:12px;color:#9ba3ba">Con tecnología de Faro</span>'}</p>
 </div>`;
 }
 

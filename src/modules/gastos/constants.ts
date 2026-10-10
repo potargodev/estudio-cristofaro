@@ -55,7 +55,7 @@ export const REIMBURSEMENT_STATUS = {
   reintegrada: "Reintegrada",
 } as const;
 
-export const GROUP_COLORS = ["#c8a465", "#a57c6d", "#5b7aa6", "#6f9a7e", "#9b6fa6", "#c26b5a"] as const;
+export const GROUP_COLORS = ["#c9a596", "#a57c6d", "#5b7aa6", "#6f9a7e", "#9b6fa6", "#c26b5a"] as const;
 
 const formatters = new Map<string, Intl.NumberFormat>();
 /** Centavos → "$ 48.000,00" (o "US$ 120,00") */

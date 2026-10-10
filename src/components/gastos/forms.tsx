@@ -49,7 +49,7 @@ function Message({ state }: { state: FormState }) {
 
 function LinkBox({ link }: { link: string }) {
   return (
-    <div className="grid gap-2 border border-gold/50 bg-[#fbf7ee] p-3">
+    <div className="grid gap-2 border border-gold/50 bg-rose-soft p-3">
       <code className="break-all text-[13px]" data-testid="guest-link">
         {link}
       </code>

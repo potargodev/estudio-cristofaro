@@ -26,7 +26,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
 
   if (state.ok && state.link)
     return (
-      <div className="grid gap-4 border border-gold/60 bg-[#fbf7ee] p-5">
+      <div className="grid gap-4 border border-gold/60 bg-rose-soft p-5">
         <p className="text-[15px]">{state.message}</p>
         <a href={state.link} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center justify-center gap-2 bg-[#009ee3] px-5 text-white hover:opacity-90" data-testid="mp-link">
           Pagar con Mercado Pago
@@ -65,7 +65,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
         </label>
       </div>
       <div className="flex items-center gap-2 border border-line bg-surface p-3">
-        <select name="currency" defaultValue={initial.currency} aria-label="Moneda" className="h-14 border border-line bg-paper px-2">
+        <select name="currency" defaultValue={initial.currency} aria-label="Moneda" className="h-14 border border-line bg-canvas px-2">
           {CURRENCIES.map((c) => (
             <option key={c}>{c}</option>
           ))}
@@ -84,7 +84,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
         </div>
       </fieldset>
       {method === "transferencia" && creditor && (
-        <div className="grid gap-2 border-l-2 border-gold bg-[#fbf7ee] px-4 py-3 text-[14px]">
+        <div className="grid gap-2 border-l-2 border-gold bg-rose-soft px-4 py-3 text-[14px]">
           {creditor.alias || creditor.cvu ? (
             <>
               <p>Datos de {creditor.name} para transferir:</p>

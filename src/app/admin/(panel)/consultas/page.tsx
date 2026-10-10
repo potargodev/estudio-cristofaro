@@ -137,7 +137,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
                 type="search"
                 defaultValue={q}
                 placeholder="Nombre, email, empresa…"
-                className="h-9 w-64 rounded-[2px] border border-line bg-surface pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
+                className="h-9 w-64 rounded-md border border-line bg-surface pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
               />
             </form>
           ) : undefined

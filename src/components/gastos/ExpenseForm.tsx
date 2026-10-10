@@ -139,7 +139,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           Importe
         </label>
         <div className="mt-1 flex items-center gap-2">
-          <select aria-label="Moneda" value={currency} onChange={(e) => setCurrency(e.target.value)} className="h-14 border border-line bg-paper px-2 text-[16px]">
+          <select aria-label="Moneda" value={currency} onChange={(e) => setCurrency(e.target.value)} className="h-14 border border-line bg-canvas px-2 text-[16px]">
             {CURRENCIES.map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -176,7 +176,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
                 }}
                 placeholder={fxLoading ? "Buscando…" : "Cotización"}
                 aria-label="Cotización"
-                className="h-10 w-32 border border-line bg-paper px-2 tabular-nums"
+                className="h-10 w-32 border border-line bg-canvas px-2 tabular-nums"
               />
               {baseCurrency}
             </label>
@@ -278,7 +278,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
               <div key={i} className="grid gap-2 border border-line bg-surface p-3">
                 <div className="flex gap-2">
                   <input aria-label={`Ítem ${i + 1}`} placeholder="Ítem" value={it.description} onChange={(e) => setItems((x) => x.map((y, j) => (j === i ? { ...y, description: e.target.value } : y)))} className={input} />
-                  <input aria-label={`Importe ítem ${i + 1}`} inputMode="decimal" placeholder="0" value={it.amount} onChange={(e) => setItems((x) => x.map((y, j) => (j === i ? { ...y, amount: e.target.value } : y)))} className="h-11 w-28 border border-line bg-paper px-2 text-right tabular-nums" />
+                  <input aria-label={`Importe ítem ${i + 1}`} inputMode="decimal" placeholder="0" value={it.amount} onChange={(e) => setItems((x) => x.map((y, j) => (j === i ? { ...y, amount: e.target.value } : y)))} className="h-11 w-28 border border-line bg-canvas px-2 text-right tabular-nums" />
                   <button type="button" aria-label="Quitar ítem" onClick={() => setItems((x) => x.filter((_, j) => j !== i))} className="px-2 text-muted hover:text-danger">
                     <Trash2 className="size-4" />
                   </button>
@@ -305,7 +305,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
         )}
 
         {/* Vista previa en vivo */}
-        <div className="mt-4 border-l-2 border-gold bg-[#fbf7ee] px-4 py-3" aria-live="polite" data-testid="split-preview">
+        <div className="mt-4 border-l-2 border-gold bg-rose-soft px-4 py-3" aria-live="polite" data-testid="split-preview">
           {preview.shares ? (
             <ul className="grid gap-1 text-[14px]">
               {members
@@ -379,7 +379,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           {state.message}
         </p>
       )}
-      <div className="sticky bottom-0 -mx-4 border-t border-line bg-paper/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
+      <div className="sticky bottom-0 -mx-4 border-t border-line bg-canvas/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
         <button type="submit" disabled={pending || !amount || !!preview.error || !!payerError} className="h-14 w-full bg-navy text-[17px] text-paper hover:bg-navy-deep disabled:opacity-50 sm:w-auto sm:px-10">
           {pending ? "Guardando…" : amount ? `Guardar ${formatMoney(amount, currency)}` : "Guardar gasto"}
         </button>

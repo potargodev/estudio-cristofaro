@@ -104,7 +104,7 @@ export default async function TangoClientesPage({
               key={f.key}
               href={`?estado=${f.key}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
               className={cn(
-                "rounded-[2px] border px-3 py-1 text-sm",
+                "rounded-md border px-3 py-1 text-sm",
                 estado === f.key ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-navy/40",
               )}
             >

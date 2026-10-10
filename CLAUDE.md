@@ -1,9 +1,12 @@
-# Estudio Cristofaro · reglas del proyecto
+# Faro · reglas del proyecto
+
+El producto es **Faro**, la plataforma de gestión para estudios contables y autónomos. **Estudio Cristofaro es el tenant #1** (tipo estudio, cliente cero) y su web pública (estudiocristofaro.com) dice que trabaja con Faro.
 
 ## Fuente de verdad del producto
-- `docs/brief-producto.md`: brief funcional completo (organizaciones, roles, planes, módulos, IA, Tango, prioridades y criterios de aceptación).
+- `docs/faro-producto.md`: fuente de verdad de la PLATAFORMA (niveles, tenants, planes, módulos, IA/MCP/conexiones, Faro Personal, gastos compartidos, plantillas por industria, marca y hoja de ruta). Manda sobre el brief en todo eso.
+- `docs/brief-producto.md`: brief funcional de lo que un estudio ofrece a sus organizaciones (roles de organización, portal, vencimientos, documentos, solicitudes).
 - `docs/resumen-ejecutivo.md`: versión corta.
-Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si una tarea contradice el brief, avisá antes de implementarla.
+Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si una tarea los contradice, avisá antes de implementarla.
 
 ## Stack y deploy
 - Next.js 15 (App Router) · Tailwind 4 · shadcn/ui · motion · Postgres + Drizzle · Better Auth · Nodemailer (SMTP).
@@ -35,7 +38,9 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 
 ## Estilo
 - Textos de interfaz en español rioplatense (voseo), lenguaje simple para clientes y preciso para el estudio.
-- Identidad de marca: azul noche #1c2235, rosé #a57c6d, pizarra; títulos y números grandes en Gilda Display (reemplazó a Forum en el rediseño, elegida por el cliente) y textos en Archivo.
+- Identidad de marca: azul noche #1c2235, rosé #a57c6d (el "dorado" de la marca es este rosé / oro rosa, no un amarillo; los tokens `gold` apuntan a él), pizarra; títulos y números grandes en Gilda Display (reemplazó a Forum en el rediseño, elegida por el cliente) y textos en Archivo.
+- Logo de Faro: sello de Estudio Cristofaro + "FARO" en mayúsculas, Archivo black con tracking amplio (`FaroLogo`). El portal de una organización muestra la marca del estudio y "Con tecnología de Faro".
+- App (backoffice, portal, panel personal, gastos, Faro Manager): clase `app-ui`, modo claro y oscuro (`data-theme` en `<html>`), barra lateral siempre oscura (`keep-dark` o `bg-night`), esquinas sutiles (`rounded-md` = 6 px en la app, 0 en la web) y fondo de página `bg-canvas` (no `bg-paper`, que es el claro fijo para texto sobre oscuro). La web pública sigue en la dirección "Precisión" (recta y oscura).
 - Mobile first. Respetar prefers-reduced-motion.
 
 ## Forma de trabajo

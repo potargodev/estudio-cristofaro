@@ -78,7 +78,7 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
             >
               <t.icon className={cn("size-4", active === t.key && "text-rose-deep")} strokeWidth={1.5} aria-hidden />
               {t.label}
-              {!!counts[t.key] && <span className="tabular rounded-[2px] bg-navy-soft px-1.5 text-[12px] text-ink">{counts[t.key]}</span>}
+              {!!counts[t.key] && <span className="tabular rounded-md bg-navy-soft px-1.5 text-[12px] text-ink">{counts[t.key]}</span>}
             </Link>
           </li>
         ))}
@@ -362,7 +362,7 @@ export async function RequestThread({
       </header>
       <ol className="space-y-3 px-5 py-5">
         {messages.map((m) => (
-          <li key={m.id} className={cn("max-w-[85%] border px-4 py-3", m.from_client ? "border-line bg-paper" : "ml-auto border-navy/15 bg-navy-soft")}>
+          <li key={m.id} className={cn("max-w-[85%] border px-4 py-3", m.from_client ? "border-line bg-canvas" : "ml-auto border-navy/15 bg-navy-soft")}>
             <p className="text-[12px] text-muted">
               {m.from_client ? (m.author ?? "Cliente") : `${m.author ?? "Estudio"} (estudio)`} · <span className="tabular">{msgDate.format(m.created_at)}</span>
             </p>
@@ -377,7 +377,7 @@ export async function RequestThread({
         ))}
         {messages.length === 0 && <li className="text-[14px] text-muted">Sin mensajes.</li>}
       </ol>
-      <form action={replyRequest} className="grid gap-3 border-t border-line bg-paper/50 px-5 py-4 sm:grid-cols-[1fr_200px]">
+      <form action={replyRequest} className="grid gap-3 border-t border-line bg-canvas/50 px-5 py-4 sm:grid-cols-[1fr_200px]">
         <input type="hidden" name="request_id" value={r.id} />
         <input type="hidden" name="back" value={back} />
         <AdminField label="Respuesta" htmlFor={`reply-${r.id}`} className="sm:col-span-2">

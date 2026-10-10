@@ -61,7 +61,7 @@ export default async function UsuariosPage({
 
       <div className="overflow-x-auto border border-line bg-surface">
         <table className="w-full min-w-[680px] text-left text-[14px]">
-          <thead className="border-b border-line bg-paper text-[13px] text-muted">
+          <thead className="border-b border-line bg-canvas text-[13px] text-muted">
             <tr>
               <th className="px-4 py-2.5 font-normal">Nombre</th>
               <th className="px-4 py-2.5 font-normal">Rol</th>

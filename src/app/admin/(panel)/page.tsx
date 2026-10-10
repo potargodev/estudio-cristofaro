@@ -277,7 +277,7 @@ async function Attention({ studioId }: { studioId: string }) {
               <span className="ml-[2.125rem] sm:ml-0">{it.status}</span>
               <Link
                 href={it.action.href}
-                className="ml-auto inline-flex h-8 items-center rounded-[2px] border border-line px-3 text-[13px] font-medium text-ink transition-colors hover:border-navy sm:ml-0"
+                className="ml-auto inline-flex h-8 items-center rounded-md border border-line px-3 text-[13px] font-medium text-ink transition-colors hover:border-navy sm:ml-0"
               >
                 {it.action.label}
               </Link>
@@ -394,7 +394,7 @@ async function Today({ studioId }: { studioId: string }) {
                 </span>
               </span>
               {b.meet_url && (
-                <a href={b.meet_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1.5 rounded-[2px] bg-navy px-3 text-[13px] text-paper hover:bg-navy-deep">
+                <a href={b.meet_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1.5 rounded-md bg-navy px-3 text-[13px] text-paper hover:bg-navy-deep">
                   <Video className="size-4" aria-hidden /> Meet
                 </a>
               )}

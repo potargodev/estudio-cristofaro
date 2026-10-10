@@ -25,7 +25,7 @@ export default async function PortalLoginPage({ searchParams }: { searchParams: 
   // El staff no usa el portal
   if (user) redirect(homeFor(user.role));
   return (
-    <AuthShell title="Portal de clientes" subtitle="Estudio Cristofaro" footer={<p>Sin contraseñas: entrás con Google o con un enlace a tu mail.</p>}>
+    <AuthShell brand="studio" title="Portal de clientes" subtitle="Estudio Cristofaro" footer={<p>Sin contraseñas: entrás con Google o con un enlace a tu mail.</p>}>
       <PortalAccess google={googleEnabled()} error={errorText(error)} />
     </AuthShell>
   );

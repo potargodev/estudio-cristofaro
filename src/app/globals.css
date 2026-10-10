@@ -9,6 +9,8 @@
    Azul noche como color principal, rosé como acento y una escala de pizarras. */
 @theme {
   --color-paper: #f7f5f3;
+  /* Fondo de página de la app (se oscurece en modo oscuro; paper queda claro) */
+  --color-canvas: #f7f5f3;
   --color-surface: #ffffff;
   --color-ink: #1b1e26;
   --color-muted: #5a6176;
@@ -24,11 +26,12 @@
   --color-rose-deep: #7d5848;
   --color-rose-light: #c9a596;
   --color-rose-soft: #f1e7e2;
-  /* Dorado: solo para números y datos destacados sobre azul noche (nunca superficies).
-     #c8a465 sobre #0f1320 = 7,9:1; sobre #141826 = 7,5:1; sobre #1c2235 = 6,7:1 (AA). */
-  --color-gold: #c8a465;
-  /* Dorado para fondos claros (backoffice): #8a6a2a sobre blanco = 5:1 (AA) */
-  --color-gold-ink: #8a6a2a;
+  /* "Dorado" de la marca = el rosé (oro rosa / marrón clarito), la "luz" de Faro.
+     Los tokens gold se mantienen por nombre pero son la paleta original:
+     #c9a596 sobre #0f1320 = 8,6:1 (AA) para números y acentos sobre azul noche;
+     #7d5848 sobre blanco = 6,4:1 (AA) para fondos claros. */
+  --color-gold: #c9a596;
+  --color-gold-ink: #7d5848;
 
   --color-danger: #a33a2a;
 
@@ -708,6 +711,138 @@ body {
   --sb: 72px;
 }
 
+/* ───────────── App: backoffice, portal, panel personal, gastos y Faro Manager ─────────────
+   Modo claro y oscuro (data-theme en <html>, lo pone un script antes de pintar).
+   La barra lateral y las barras azul noche (.bg-night o .keep-dark) son siempre
+   oscuras: adentro se restauran los tokens del modo claro con los que se diseñaron.
+   Esquinas apenas redondeadas y más contraste que en la web pública. */
+.app-ui {
+  --color-ink: #141826;
+  --color-muted: #4b5266;
+  --color-foreground: #141826;
+  --color-card-foreground: #141826;
+  --color-popover-foreground: #141826;
+  --color-muted-foreground: #4b5266;
+  --radius: 6px;
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
+.app-ui .keep-dark,
+.app-ui .bg-night {
+  color: var(--color-paper);
+}
+:root[data-theme="dark"]:has(.app-ui) {
+  background: #0d111b;
+}
+:root[data-theme="dark"] .app-ui {
+  color-scheme: dark;
+  --color-canvas: #0d111b;
+  --color-surface: #151a27;
+  --color-ink: #eeece8;
+  --color-muted: #a8aebf;
+  --color-line: #283044;
+  --color-navy: #34406a;
+  --color-navy-deep: #2a3456;
+  --color-navy-soft: #1d2336;
+  --color-slate: #b6bccb;
+  --color-slate-light: #8a92a8;
+  --color-rose-deep: #d6b6a9;
+  --color-rose-soft: rgb(201 165 150 / 0.14);
+  --color-gold-ink: #d6b6a9;
+  --color-danger: #f0a493;
+  --color-background: #0d111b;
+  --color-foreground: #eeece8;
+  --color-card: #151a27;
+  --color-card-foreground: #eeece8;
+  --color-popover: #151a27;
+  --color-popover-foreground: #eeece8;
+  --color-primary: #34406a;
+  --color-primary-foreground: #f7f5f3;
+  --color-secondary: #1d2336;
+  --color-secondary-foreground: #eeece8;
+  --color-accent: #1d2336;
+  --color-accent-foreground: #eeece8;
+  --color-muted-foreground: #a8aebf;
+  --color-destructive: #f0a493;
+  --color-border: #283044;
+  --color-input: #2f374d;
+  --color-ring: #c9a596;
+}
+/* Texto e íconos en azul noche: en oscuro pasan a un azul claro legible */
+:root[data-theme="dark"] .app-ui :not(.keep-dark, .keep-dark *, .bg-night, .bg-night *).text-navy {
+  color: #cdd3e8;
+}
+:root[data-theme="dark"] .app-ui :not(.keep-dark, .keep-dark *, .bg-night, .bg-night *)[class*="border-navy"] {
+  border-color: rgb(205 211 232 / 0.32);
+}
+/* Superficies siempre oscuras: tokens del modo claro */
+:root[data-theme="dark"] .app-ui :is(.keep-dark, .bg-night) {
+  color-scheme: dark;
+  --color-canvas: #f7f5f3;
+  --color-surface: #ffffff;
+  --color-ink: #141826;
+  --color-muted: #4b5266;
+  --color-line: #dddbdf;
+  --color-navy: #1c2235;
+  --color-navy-deep: #141826;
+  --color-navy-soft: #eceef3;
+  --color-slate: #464d61;
+  --color-slate-light: #9ba3ba;
+  --color-rose-deep: #7d5848;
+  --color-rose-soft: #f1e7e2;
+  --color-gold-ink: #7d5848;
+  --color-danger: #a33a2a;
+}
+/* Estados de color fijo (pastillas claras) en oscuro: fondos translúcidos */
+:root[data-theme="dark"] .app-ui :not(.keep-dark *) {
+  &[class*="bg-[#ecf6ef]"], &[class*="bg-[#e3efe6]"] { background-color: rgb(63 127 87 / 0.18); }
+  &[class*="bg-[#fbecea]"] { background-color: rgb(163 58 42 / 0.2); }
+  &[class*="bg-[#fbf5e6]"], &[class*="bg-[#f6efeb]"] { background-color: rgb(201 165 150 / 0.14); }
+  &[class*="bg-[#f3f4f7]"], &[class*="bg-[#eef2fb]"], &[class*="bg-[#eef2f7]"], &[class*="bg-[#eceef3]"], &[class*="bg-[#e2e5ed]"] { background-color: rgb(205 211 232 / 0.1); }
+  &[class*="bg-[#efe3dd]"] { background-color: rgb(201 165 150 / 0.14); }
+  &[class*="bg-[#e1f0e6]"] { background-color: rgb(63 127 87 / 0.18); }
+  &[class*="text-[#24583a]"], &[class*="text-[#1f5f36]"], &[class*="text-[#1f7a43]"], &[class*="text-[#1d4a2f]"] { color: #8fd1a6; }
+  &[class*="text-[#8f2a1c]"], &[class*="text-[#b42318]"] { color: #f0a493; }
+  &[class*="text-[#7a5410]"], &[class*="text-[#7a5a12]"], &[class*="text-[#6d4a3c]"] { color: #e2c3b6; }
+  &[class*="text-[#2b4486]"], &[class*="text-[#29425f]"], &[class*="text-[#3d4456]"] { color: #cdd3e8; }
+  &[class*="border-[#e3cf9f]"], &[class*="border-[#e7b4aa]"], &[class*="border-[#e2cdc4]"], &[class*="border-[#a9d1b5]"], &[class*="border-[#cfd3dc]"], &[class*="border-[#bcc8e6]"], &[class*="border-[#b9c6d6]"] { border-color: rgb(205 211 232 / 0.18); }
+}
+
+/* Esquinas apenas redondeadas en cajas, botones, campos y menús (debajo de las utilidades: rounded-full manda) */
+@layer components {
+  .app-ui :where([class~="border"], [class~="border-2"], input:not([type="checkbox"], [type="radio"], [type="range"]), select, textarea, kbd, [role="menu"], [role="dialog"], [role="tooltip"], [role="listbox"]),
+  .app-ui :where(a, button, summary, label)[class*="bg-"] {
+    border-radius: var(--radius-md);
+  }
+  .app-ui :where(section, article, aside:not(.bg-night), details)[class~="border"] {
+    border-radius: var(--radius-lg);
+  }
+}
+
+/* Jerarquía tipográfica: títulos en Gilda Display con un trazo apenas más firme
+   (la fuente tiene un solo peso) y subtítulos más pesados y en tinta plena. */
+.app-ui :is(h1, h2, h3).font-display,
+.app-ui .font-display:is(.text-2xl, .text-3xl, .text-4xl, [class*="text-[2"], [class*="text-[3"], [class*="text-[4"], [class*="text-[clamp"]) {
+  -webkit-text-stroke: 0.35px currentColor;
+  letter-spacing: -0.005em;
+}
+.app-ui :is(h2, h3):not(.font-display, .bg-night *, .keep-dark *) {
+  font-weight: 650;
+  color: var(--color-ink);
+}
+.app-ui :is(h2, h3, p)[class*="uppercase"][class*="tracking"]:not(.bg-night *, .keep-dark *) {
+  font-weight: 650;
+  color: var(--color-ink);
+  opacity: 0.78;
+}
+
 /* ───────────── Intro del sitio (Splash) ─────────────
    .splash-on mientras se ve, .splash-exit al abrirse, .no-splash al terminar
    (o si ya se vio en la sesión / reduced-motion). Fondo azul pleno. */
@@ -943,16 +1078,16 @@ body {
 }
 
 /* ───────────── Landing de Faro ───────────── */
-/* El haz del faro: un cono dorado que barre el fondo del hero, muy suave */
+/* El haz del faro: un cono rosé que barre el fondo del hero, muy suave */
 .faro-beam {
   position: absolute;
   inset: -40%;
-  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgb(200 164 101 / 0.16) 10deg, rgb(200 164 101 / 0.05) 26deg, transparent 40deg, transparent 360deg);
+  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgb(201 165 150 / 0.16) 10deg, rgb(201 165 150 / 0.05) 26deg, transparent 40deg, transparent 360deg);
   animation: faro-sweep 16s linear infinite;
   pointer-events: none;
 }
 .faro-glow {
-  background: radial-gradient(closest-side, rgb(200 164 101 / 0.35), rgb(200 164 101 / 0.08) 45%, transparent 70%);
+  background: radial-gradient(closest-side, rgb(201 165 150 / 0.35), rgb(201 165 150 / 0.08) 45%, transparent 70%);
   animation: faro-pulse 4s ease-in-out infinite;
 }
 @keyframes faro-sweep {

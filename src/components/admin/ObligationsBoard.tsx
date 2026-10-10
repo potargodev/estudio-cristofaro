@@ -42,7 +42,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={cn("h-7 rounded-[2px] border px-2.5 text-[13px] transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
+      className={cn("h-7 rounded-md border px-2.5 text-[13px] transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
     >
       {children}
     </button>
@@ -118,12 +118,12 @@ export function ObligationsBoard({
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Buscar organización, impuesto o período…"
-              className="h-9 w-full rounded-[2px] border border-line bg-paper pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
+              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
             />
           </label>
           <label className="flex items-center gap-2 text-[13px] text-muted">
             Organización
-            <select value={org} onChange={(e) => setOrg(e.target.value)} className="h-9 max-w-56 rounded-[2px] border border-line bg-surface px-2 text-[14px] text-ink">
+            <select value={org} onChange={(e) => setOrg(e.target.value)} className="h-9 max-w-56 rounded-md border border-line bg-surface px-2 text-[14px] text-ink">
               <option value="">Todas</option>
               {orgs.map(([id, name]) => (
                 <option key={id} value={id}>
@@ -183,7 +183,7 @@ export function ObligationsBoard({
               ))}
               <input type="hidden" name="status" value={status} />
               <input type="hidden" name="back" value={back} />
-              <button type="submit" className="h-8 rounded-[2px] bg-rose-light px-3 text-[13px] font-medium text-night hover:bg-paper">
+              <button type="submit" className="h-8 rounded-md bg-rose-light px-3 text-[13px] font-medium text-night hover:bg-paper">
                 {label}
               </button>
             </form>
@@ -202,7 +202,7 @@ export function ObligationsBoard({
           const late = list.filter((r) => r.status === "vencido").length;
           return (
             <section key={week} aria-label={`Semana del ${weekFmt.format(new Date(`${week}T00:00:00Z`))}`}>
-              <header className="flex items-center gap-3 border-b border-line bg-paper px-4 py-2 text-[13px]">
+              <header className="flex items-center gap-3 border-b border-line bg-canvas px-4 py-2 text-[13px]">
                 <input type="checkbox" checked={allOn} onChange={() => toggleGroup(list)} aria-label="Elegir toda la semana" className="size-4 accent-[var(--color-navy)]" />
                 <span className="font-medium text-ink">
                   {week === thisWeek ? "Esta semana" : `Semana del ${weekFmt.format(new Date(`${week}T00:00:00Z`))}`}

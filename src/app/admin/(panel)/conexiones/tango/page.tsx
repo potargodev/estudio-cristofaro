@@ -173,7 +173,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
             ) : (
               <div className="mt-3 overflow-x-auto border border-line bg-surface">
                 <table className="w-full min-w-[640px] text-left text-sm">
-                  <thead className="border-b border-line bg-paper text-muted">
+                  <thead className="border-b border-line bg-canvas text-muted">
                     <tr>
                       <th className="px-3 py-2 font-medium">Inicio</th>
                       <th className="px-3 py-2 font-medium">Tipo</th>

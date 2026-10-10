@@ -263,14 +263,14 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <Link
               href={`/admin/agenda?${new URLSearchParams({ tab: "semana", semana: monday }).toString()}`}
               aria-current={mine ? "true" : undefined}
-              className={cn("inline-flex h-7 items-center rounded-[2px] border px-2.5", mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
+              className={cn("inline-flex h-7 items-center rounded-md border px-2.5", mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
             >
               Mis llamadas
             </Link>
             <Link
               href={`/admin/agenda?${new URLSearchParams({ tab: "semana", semana: monday, quien: "todos" }).toString()}`}
               aria-current={!mine ? "true" : undefined}
-              className={cn("inline-flex h-7 items-center rounded-[2px] border px-2.5", !mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
+              className={cn("inline-flex h-7 items-center rounded-md border px-2.5", !mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
             >
               Todo el estudio
             </Link>
@@ -307,7 +307,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                             aria-current={on ? "true" : undefined}
                             className={cn(
                               "block border-l-2 px-2 py-1.5 text-[13px] transition-colors",
-                              b.status === "cancelada" ? "border-line bg-paper text-muted line-through" : t.card,
+                              b.status === "cancelada" ? "border-line bg-canvas text-muted line-through" : t.card,
                               on && "outline outline-1 outline-navy",
                             )}
                           >

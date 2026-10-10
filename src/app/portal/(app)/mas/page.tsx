@@ -22,7 +22,7 @@ export default async function MasPage() {
         <ul className="divide-y divide-line border border-line bg-surface">
           {extra.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} className="flex items-center justify-between gap-3 px-4 py-4 text-[15px] hover:bg-paper">
+              <Link href={item.href} className="flex items-center justify-between gap-3 px-4 py-4 text-[15px] hover:bg-canvas">
                 {item.label}
                 <ChevronRight className="size-4 text-muted" aria-hidden />
               </Link>

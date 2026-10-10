@@ -66,7 +66,7 @@ function Calendar({ rows, month }: { rows: ObligationRow[]; month: string }) {
     s === "vencido" ? "border-l-[#b42318] bg-[#fbecea]" : s === "pagado" || s === "presentado" ? "border-l-[#3f7f57] bg-[#ecf6ef]" : "border-l-navy bg-navy-soft";
   return (
     <div className="border border-line bg-surface">
-      <div className="hidden grid-cols-7 border-b border-line bg-paper text-[12px] text-muted md:grid">
+      <div className="hidden grid-cols-7 border-b border-line bg-canvas text-[12px] text-muted md:grid">
         {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d) => (
           <span key={d} className="px-2 py-2">
             {d}
@@ -77,9 +77,9 @@ function Calendar({ rows, month }: { rows: ObligationRow[]; month: string }) {
         {cells.map((d) => {
           const items = byDay.get(d) ?? [];
           const inMonth = d.startsWith(month);
-          if (!inMonth && items.length === 0) return <li key={d} aria-hidden className="hidden min-h-28 border-b border-r border-line bg-paper/60 md:block" />;
+          if (!inMonth && items.length === 0) return <li key={d} aria-hidden className="hidden min-h-28 border-b border-r border-line bg-canvas/60 md:block" />;
           return (
-            <li key={d} className={cn("min-h-28 border-b border-line p-2 md:border-r", !inMonth && "bg-paper/60", items.length === 0 && "hidden md:block")}>
+            <li key={d} className={cn("min-h-28 border-b border-line p-2 md:border-r", !inMonth && "bg-canvas/60", items.length === 0 && "hidden md:block")}>
               <p className={cn("tabular mb-1.5 text-[12px]", d === today ? "font-semibold text-rose-deep" : "text-muted")}>
                 <span className="md:hidden">{new Intl.DateTimeFormat("es-AR", { weekday: "long", timeZone: "UTC" }).format(new Date(`${d}T00:00:00Z`))} </span>
                 {Number(d.slice(8))}

@@ -89,7 +89,7 @@ export function RegisterForm({ kinds = ["studio", "personal"], initial, interest
             </label>
           </div>
           <label className="flex items-start gap-2.5 text-[13px] text-paper/70">
-            <input name="terms" type="checkbox" required defaultChecked={state.values?.terms === "on"} className="mt-0.5 size-4 accent-[#c8a465]" />
+            <input name="terms" type="checkbox" required defaultChecked={state.values?.terms === "on"} className="mt-0.5 size-4 accent-[#c9a596]" />
             <span>
               Acepto los términos y la{" "}
               <Link href="/privacidad" className="underline underline-offset-4">

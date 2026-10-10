@@ -32,7 +32,7 @@ export default async function IngresarPage({ searchParams }: { searchParams: Pro
       <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(3rem+env(safe-area-inset-top))]">
         <Sello className="size-20 text-rose-light" />
         <h1 className="mt-8 font-display text-[34px] leading-[1.05]">Hola de nuevo.</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-paper/65">Ingresá a tu cuenta de Estudio Cristofaro.</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-paper/65">Ingresá a tu cuenta de Faro.</p>
         <div className="mt-8">
           <AccessChooser google={googleEnabled()} error={errorText(error)} />
         </div>

@@ -138,7 +138,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                 {Object.entries(RES).map(([k, label]) => {
                   const row = counts.find((x) => x.resource === k);
                   return (
-                    <div key={k} className="border border-line bg-paper px-3 py-2">
+                    <div key={k} className="border border-line bg-canvas px-3 py-2">
                       <dt className="text-[12px] text-muted">{label}</dt>
                       <dd className="font-display text-[26px] leading-tight text-ink">{row?.n ?? 0}</dd>
                       {row && <dd className="text-[12px] text-muted">{row.cruzados} con organización</dd>}
@@ -208,7 +208,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
               </details>
               <details>
                 <summary className="cursor-pointer text-[14px] font-medium text-ink">Editar credenciales</summary>
-                <div className="mt-3 border border-line bg-paper p-4">
+                <div className="mt-3 border border-line bg-canvas p-4">
                   <XubioForm orgs={orgs} current={{ id: c.id, name: c.name, organization_id: c.organization_id, client_id: creds.client_id }} />
                 </div>
                 <form action={deleteConnection} className="mt-3">

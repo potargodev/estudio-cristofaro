@@ -41,13 +41,13 @@ export function StatCard({
   return (
     <div className={cn("flex flex-col border bg-surface p-5", tone === "alert" ? "border-[#e7b4aa]" : "border-line")}>
       <div className="flex items-start justify-between gap-3">
-        <span className={cn("grid size-9 place-items-center border", tone === "alert" ? "border-[#e7b4aa] text-[#8f2a1c]" : "border-line text-rose-deep")}>
+        <span className={cn("grid size-10 place-items-center rounded-md", tone === "alert" ? "border border-[#e7b4aa] text-[#8f2a1c]" : "bg-navy text-gold shadow-brand-sm")}>
           <Icon className="size-[18px]" strokeWidth={1.5} aria-hidden />
         </span>
         {spark && <Sparkline data={spark} className="h-7 w-24" />}
       </div>
-      <p className="mt-4 text-[14px] text-muted">{label}</p>
-      <p className="tabular mt-1 font-display text-[40px] leading-none text-ink">
+      <p className="mt-4 text-[14px] font-medium text-muted">{label}</p>
+      <p className="tabular mt-1 font-display text-[44px] leading-none text-ink">
         {display ?? (value === null ? "—" : <Counter value={value} prefix={prefix} suffix={suffix} duration={800} />)}
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">

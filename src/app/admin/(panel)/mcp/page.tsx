@@ -72,7 +72,7 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
               <CodeLine text={urls.resource} />
             </div>
             <div className="grid gap-4 md:grid-cols-3 [&>*]:min-w-0">
-              <div className="border border-line bg-paper p-4">
+              <div className="border border-line bg-canvas p-4">
                 <p className="font-medium text-ink">Claude (claude.ai o la app)</p>
                 <ol className="mt-2 list-decimal space-y-1 pl-4 text-ink/85">
                   <li>Configuración → Conectores → Agregar conector personalizado.</li>
@@ -80,7 +80,7 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                   <li>Conectar: se abre Faro, entrás con tu usuario y elegís los alcances (OAuth). No hace falta token.</li>
                 </ol>
               </div>
-              <div className="border border-line bg-paper p-4">
+              <div className="border border-line bg-canvas p-4">
                 <p className="font-medium text-ink">ChatGPT</p>
                 <ol className="mt-2 list-decimal space-y-1 pl-4 text-ink/85">
                   <li>Configuración → Apps y conectores → Modo desarrollador → Crear.</li>
@@ -88,7 +88,7 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                   <li>Al conectar, autorizás en Faro con tu usuario y elegís los alcances.</li>
                 </ol>
               </div>
-              <div className="border border-line bg-paper p-4">
+              <div className="border border-line bg-canvas p-4">
                 <p className="font-medium text-ink">Claude Code</p>
                 <p className="mt-2 text-ink/85">Con OAuth (abre el navegador al usar /mcp):</p>
                 <CodeLine text={`claude mcp add --transport http faro ${urls.resource}`} />

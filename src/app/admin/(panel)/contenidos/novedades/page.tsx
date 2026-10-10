@@ -30,7 +30,7 @@ export default async function NovedadesAdminPage() {
       <ul className="divide-y divide-line border border-line bg-surface">
         {posts.map((p) => (
           <li key={p.id}>
-            <Link href={`/admin/contenidos/novedades/${p.id}`} className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+            <Link href={`/admin/contenidos/novedades/${p.id}`} className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-3 hover:bg-canvas">
               <span className="min-w-0 truncate text-[14px] font-medium text-ink">{p.title}</span>
               <StatusBadge status={p.published ? "activa" : "pausada"} label={p.published ? "Publicada" : "Borrador"} />
             </Link>

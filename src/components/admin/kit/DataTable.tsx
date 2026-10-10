@@ -163,7 +163,7 @@ export function DataTable({
                 setPage(0);
               }}
               placeholder={searchPlaceholder}
-              className="h-9 w-full rounded-[2px] border border-line bg-paper pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
+              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
             />
           </label>
           <p className="tabular text-[13px] text-muted" aria-live="polite">
@@ -174,10 +174,10 @@ export function DataTable({
               type="button"
               aria-expanded={showFilters}
               onClick={() => setShowFilters((v) => !v)}
-              className="ml-auto inline-flex h-9 items-center gap-2 rounded-[2px] border border-line px-3 text-[13px] text-ink md:hidden"
+              className="ml-auto inline-flex h-9 items-center gap-2 rounded-md border border-line px-3 text-[13px] text-ink md:hidden"
             >
               <SlidersHorizontal className="size-4" strokeWidth={1.5} aria-hidden />
-              Filtros{activeChips.length > 0 && <span className="tabular rounded-[2px] bg-navy px-1.5 text-[12px] text-paper">{activeChips.length}</span>}
+              Filtros{activeChips.length > 0 && <span className="tabular rounded-md bg-navy px-1.5 text-[12px] text-paper">{activeChips.length}</span>}
             </button>
           )}
         </div>
@@ -195,7 +195,7 @@ export function DataTable({
                       aria-pressed={on}
                       onClick={() => toggleFilter(f.key, o.value)}
                       className={cn(
-                        "h-7 rounded-[2px] border px-2.5 text-[13px] transition-colors",
+                        "h-7 rounded-md border px-2.5 text-[13px] transition-colors",
                         on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted",
                       )}
                     >
@@ -229,7 +229,7 @@ export function DataTable({
               <button
                 type="submit"
                 className={cn(
-                  "h-8 rounded-[2px] px-3 text-[13px] font-medium",
+                  "h-8 rounded-md px-3 text-[13px] font-medium",
                   b.tone === "secondary" ? "border border-paper/40 text-paper hover:border-paper" : "bg-rose-light text-night hover:bg-paper",
                 )}
               >
@@ -251,7 +251,7 @@ export function DataTable({
           <div className="hidden md:block">
             <table className="w-full border-collapse text-[14px]">
               <caption className="sr-only">{caption}</caption>
-              <thead className="sticky top-14 z-10 bg-paper">
+              <thead className="sticky top-14 z-10 bg-canvas">
                 <tr className="border-b border-line text-[13px] text-muted">
                   {selectable && (
                     <th scope="col" className="w-10 px-3">
@@ -294,7 +294,7 @@ export function DataTable({
                       if (!r.href || (e.target as HTMLElement).closest("a,button,input,label,select,form")) return;
                       router.push(r.href);
                     }}
-                    className={cn("h-[52px] border-b border-line last:border-0 hover:bg-paper", r.href && "cursor-pointer", selected.has(r.id) && "bg-navy-soft/60")}
+                    className={cn("h-[52px] border-b border-line last:border-0 hover:bg-canvas", r.href && "cursor-pointer", selected.has(r.id) && "bg-navy-soft/60")}
                   >
                     {selectable && (
                       <td className="px-3">
@@ -343,7 +343,7 @@ export function DataTable({
                   setPageSize(Number(e.target.value));
                   setPage(0);
                 }}
-                className="h-8 rounded-[2px] border border-line bg-surface px-2 text-ink"
+                className="h-8 rounded-md border border-line bg-surface px-2 text-ink"
               >
                 {PAGE_SIZES.map((s) => (
                   <option key={s}>{s}</option>

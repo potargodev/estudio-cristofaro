@@ -7,8 +7,8 @@ export function LoginForm() {
   return (
     <LoginCard
       action={signIn}
-      title="Backoffice"
-      subtitle="Estudio Cristofaro"
+      title="Ingresar al estudio"
+      subtitle="Con tu contraseña y el segundo factor"
       footer={
         <a href="/portal/login" className="hover:text-paper">
           ¿Sos cliente? Entrá a tu portal

@@ -108,6 +108,7 @@ export async function sendGroupReminders(now = new Date()) {
           `Tenés un saldo pendiente en ${g.name}`,
           `<p>Hola ${esc(m.name)}, en el grupo <strong>${esc(g.name)}</strong> debés ${esc(total)}. Desde el grupo ves a quién pagarle y podés registrar el pago.</p>${m.user_id ? "" : "<p>Entrá con el enlace personal que te pasaron.</p>"}<p style="color:#5a6176;font-size:13px">Si no querés más recordatorios de este grupo, desactivalos en Integrantes → Tus datos.</p>`,
           m.user_id ? { href: `${getSiteUrl()}/gastos/g/${g.id}`, label: "Ver el grupo" } : undefined,
+          "Faro",
         ),
       });
       if (ok) sent++;

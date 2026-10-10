@@ -36,7 +36,7 @@ export default async function SolicitudesPage() {
             <li key={r.id}>
               <Link
                 href={`/portal/solicitudes/${r.id}`}
-                className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-paper"
+                className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-canvas"
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{r.subject}</span>
