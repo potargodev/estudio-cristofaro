@@ -690,3 +690,12 @@ body {
     transform: scaleX(1);
   }
 }
+
+/* Backoffice: ancho de la barra lateral (248 expandida, 72 colapsada). El estado
+   lo pone un script antes de pintar (data-sidebar en <html>), sin saltos. */
+.admin-shell {
+  --sb: 248px;
+}
+:root[data-sidebar="collapsed"] .admin-shell {
+  --sb: 72px;
+}

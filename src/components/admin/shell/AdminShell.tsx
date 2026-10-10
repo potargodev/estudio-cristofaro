@@ -1,0 +1,332 @@
+"use client";
+
+import {
+  Building2,
+  CalendarClock,
+  CalendarDays,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Globe,
+  Inbox,
+  KeyRound,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Plug,
+  Plus,
+  Search,
+  UserRound,
+  Users,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { RouteReveal } from "@/components/app/RouteReveal";
+import { cn } from "@/lib/utils";
+import { Avatar } from "../kit/Avatar";
+import { Sello } from "../kit/Sello";
+import { CommandPalette } from "./CommandPalette";
+import { BADGE_LABEL, crumbs, NAV_GROUPS, primaryAction, sidebarStorageKey as storageKey, type BadgeKey, type NavIcon } from "./nav";
+
+const ICONS: Record<NavIcon, LucideIcon> = {
+  resumen: LayoutDashboard,
+  organizaciones: Building2,
+  vencimientos: CalendarClock,
+  solicitudes: Inbox,
+  consultas: UserRound,
+  agenda: CalendarDays,
+  contenidos: Globe,
+  usuarios: Users,
+  integraciones: Plug,
+};
+
+const ROLE_LABEL: Record<string, string> = { admin: "Administrador", contador: "Contador" };
+
+export interface ShellUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+function Nav({
+  collapsed,
+  isAdmin,
+  badges,
+  onNavigate,
+}: {
+  collapsed: boolean;
+  isAdmin: boolean;
+  badges: Record<BadgeKey, number>;
+  onNavigate?: () => void;
+}) {
+  const pathname = usePathname();
+  // Tooltip del modo colapsado: fixed (el nav recorta lo que sobresale)
+  const [tip, setTip] = useState<{ label: string; count: number; top: number } | null>(null);
+  const showTip = (e: React.SyntheticEvent<HTMLElement>, label: string, count: number) => {
+    if (!collapsed) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    setTip({ label, count, top: r.top + r.height / 2 });
+  };
+  return (
+    <nav aria-label="Backoffice" className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2" onMouseLeave={() => setTip(null)}>
+      {collapsed && tip && (
+        <span role="tooltip" className="pointer-events-none fixed left-[84px] z-50 -translate-y-1/2 whitespace-nowrap border border-paper/15 bg-night px-2.5 py-1.5 text-[13px] text-paper" style={{ top: tip.top }}>
+          {tip.label}
+          {tip.count > 0 && <span className="tabular ml-2 text-gold">{tip.count}</span>}
+        </span>
+      )}
+      {NAV_GROUPS.filter((g) => !g.adminOnly || isAdmin).map((g) => (
+        <div key={g.title} className="mb-4">
+          <p className={cn("mb-1 h-5 px-3 text-[12px] text-slate-light transition-opacity duration-200", collapsed && "opacity-0")} aria-hidden={collapsed}>
+            {g.title}
+          </p>
+          <ul>
+            {g.items
+              .filter((i) => !i.adminOnly || isAdmin)
+              .map((i) => {
+                const active = i.exact ? pathname === i.href : pathname.startsWith(i.href);
+                const Icon = ICONS[i.icon];
+                const count = i.badge ? badges[i.badge] : 0;
+                return (
+                  <li key={i.href} className="relative">
+                    <Link
+                      href={i.href}
+                      onClick={onNavigate}
+                      onMouseEnter={(e) => showTip(e, i.label, count)}
+                      onFocus={(e) => showTip(e, i.label, count)}
+                      onBlur={() => setTip(null)}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "relative flex h-10 items-center gap-3 px-3 text-[14px] transition-colors",
+                        active ? "bg-paper/[0.07] text-paper" : "text-paper/70 hover:bg-paper/[0.04] hover:text-paper",
+                      )}
+                    >
+                      {active && <span aria-hidden className="absolute inset-y-1.5 left-0 w-0.5 bg-gold" />}
+                      <span className="relative shrink-0">
+                        <Icon className={cn("size-[18px]", active ? "text-gold" : "")} strokeWidth={1.5} aria-hidden />
+                        {collapsed && count > 0 && <span aria-hidden className="absolute -right-1 -top-1 size-2 bg-gold" />}
+                      </span>
+                      <span className={cn("flex-1 truncate transition-opacity duration-200", collapsed && "sr-only")}>{i.label}</span>
+                      {count > 0 && (
+                        <span className={cn("tabular min-w-5 bg-gold px-1.5 text-center text-[12px] font-medium leading-5 text-night", collapsed && "sr-only")}>
+                          {count}
+                          <span className="sr-only"> {BADGE_LABEL[i.badge!]}</span>
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+function UserMenu({ user, collapsed, signOut }: { user: ShellUser; collapsed: boolean; signOut: () => void | Promise<void> }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === "Escape" : !ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [open]);
+  return (
+    <div ref={ref} className="relative border-t border-paper/10 p-3">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-3 p-1.5 text-left hover:bg-paper/[0.05]"
+      >
+        <Avatar name={user.name || user.email} size="sm" tone="dark" className="size-8" />
+        <span className={cn("min-w-0 flex-1 transition-opacity duration-200", collapsed && "sr-only")}>
+          <span className="block truncate text-[14px] text-paper">{user.name || user.email}</span>
+          <span className="block text-[12px] text-slate-light">{ROLE_LABEL[user.role] ?? user.role}</span>
+        </span>
+      </button>
+      {open && (
+        <div role="menu" className="absolute bottom-full left-3 z-50 mb-2 w-56 border border-paper/15 bg-night py-1 text-[14px] shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)]">
+          <Link role="menuitem" href="/admin/cuenta" onClick={() => setOpen(false)} className="flex items-center gap-2.5 px-3 py-2.5 text-paper/85 hover:bg-paper/[0.06] hover:text-paper">
+            <KeyRound className="size-4" strokeWidth={1.5} aria-hidden /> Mi cuenta y 2FA
+          </Link>
+          <form action={signOut}>
+            <button role="menuitem" type="submit" className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-paper/85 hover:bg-paper/[0.06] hover:text-paper">
+              <LogOut className="size-4" strokeWidth={1.5} aria-hidden /> Cerrar sesión
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Estructura del backoffice: barra lateral replegable (248 / 72 px, atajo "[",
+ * estado guardado por usuario), drawer en el celular, barra superior con
+ * breadcrumb, buscador (Cmd/Ctrl+K) y acción principal de la sección.
+ */
+export function AdminShell({
+  user,
+  isAdmin,
+  badges,
+  signOut,
+  children,
+}: {
+  user: ShellUser;
+  isAdmin: boolean;
+  badges: Record<BadgeKey, number>;
+  signOut: () => void | Promise<void>;
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
+  const [drawer, setDrawer] = useState(false);
+  const [search, setSearch] = useState(false);
+
+  useEffect(() => setCollapsed(document.documentElement.dataset.sidebar === "collapsed"), []);
+  const toggle = useCallback(() => {
+    setCollapsed((c) => {
+      const next = !c;
+      if (next) document.documentElement.dataset.sidebar = "collapsed";
+      else delete document.documentElement.dataset.sidebar;
+      try {
+        localStorage.setItem(storageKey(user.id), next ? "collapsed" : "expanded");
+      } catch {}
+      return next;
+    });
+  }, [user.id]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement;
+      const typing = t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName);
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearch((s) => !s);
+      } else if (e.key === "[" && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        toggle();
+      } else if (e.key === "Escape") setDrawer(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [toggle]);
+  useEffect(() => setDrawer(false), [pathname]);
+
+  const action = primaryAction(pathname);
+  const trail = crumbs(pathname);
+
+  const brand = (small: boolean) => (
+    <Link href="/admin" className="flex items-center gap-3" aria-label="Estudio Cristofaro · Resumen">
+      <Sello className={cn("shrink-0 text-gold transition-[width,height] duration-200", small ? "size-8" : "size-10")} />
+      <span className={cn("leading-tight transition-opacity duration-200", small && "sr-only")}>
+        <span className="block font-display text-[17px] text-paper">Estudio Cristofaro</span>
+        <span className="block text-[12px] text-slate-light">Backoffice</span>
+      </span>
+    </Link>
+  );
+
+  return (
+    <div className="admin-shell min-h-dvh bg-paper text-ink">
+      {/* Sidebar de escritorio */}
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col bg-night text-paper transition-[width] duration-200 ease-out lg:flex">
+        <div className={cn("flex h-16 items-center border-b border-paper/10", collapsed ? "justify-center px-0" : "px-5")}>{brand(collapsed)}</div>
+        <Nav collapsed={collapsed} isAdmin={isAdmin} badges={badges} />
+        <div className="px-3 pb-2">
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={collapsed ? "Expandir la barra lateral ( [ )" : "Contraer la barra lateral ( [ )"}
+            aria-pressed={collapsed}
+            className="flex h-9 w-full items-center gap-3 px-3 text-[13px] text-paper/65 hover:bg-paper/[0.04] hover:text-paper"
+          >
+            {collapsed ? <ChevronsRight className="size-[18px]" strokeWidth={1.5} aria-hidden /> : <ChevronsLeft className="size-[18px]" strokeWidth={1.5} aria-hidden />}
+            <span className={cn(collapsed && "sr-only")}>
+              Contraer <kbd className="ml-1 border border-paper/20 px-1 text-[11px]">[</kbd>
+            </span>
+          </button>
+        </div>
+        <UserMenu user={user} collapsed={collapsed} signOut={signOut} />
+      </aside>
+
+      {/* Drawer del celular */}
+      {drawer && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <button type="button" aria-label="Cerrar menú" className="absolute inset-0 bg-night/60" onClick={() => setDrawer(false)} />
+          <aside role="dialog" aria-modal="true" aria-label="Menú del backoffice" className="absolute inset-y-0 left-0 flex w-[280px] max-w-[85vw] flex-col bg-night text-paper">
+            <div className="flex h-16 items-center justify-between border-b border-paper/10 px-5">
+              {brand(false)}
+              <button type="button" onClick={() => setDrawer(false)} aria-label="Cerrar menú" className="grid size-9 place-items-center text-paper/80" autoFocus>
+                <X className="size-5" aria-hidden />
+              </button>
+            </div>
+            <Nav collapsed={false} isAdmin={isAdmin} badges={badges} onNavigate={() => setDrawer(false)} />
+            <UserMenu user={user} collapsed={false} signOut={signOut} />
+          </aside>
+        </div>
+      )}
+
+      <div className="transition-[padding] duration-200 ease-out lg:pl-[var(--sb)]">
+        {/* Barra superior */}
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-paper/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+          <button type="button" onClick={() => setDrawer(true)} aria-label="Abrir menú" className="grid size-9 place-items-center border border-line lg:hidden">
+            <Menu className="size-5" aria-hidden />
+          </button>
+          <nav aria-label="Ubicación" className="min-w-0 flex-1">
+            <ol className="flex min-w-0 items-center gap-1.5 text-[13px] text-muted">
+              {trail.map((c, i) => (
+                <li key={i} className={cn("flex min-w-0 items-center gap-1.5", i < trail.length - 2 && "hidden sm:flex")}>
+                  {i > 0 && <ChevronRight className="size-3.5 shrink-0" aria-hidden />}
+                  {c.href && i < trail.length - 1 ? (
+                    <Link href={c.href} className="truncate hover:text-ink">
+                      {c.label}
+                    </Link>
+                  ) : (
+                    <span className={cn("truncate", i === trail.length - 1 && "text-ink")} aria-current={i === trail.length - 1 ? "page" : undefined}>
+                      {c.label}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <button
+            type="button"
+            onClick={() => setSearch(true)}
+            className="flex h-9 items-center gap-2 border border-line bg-surface px-3 text-[13px] text-muted hover:border-muted sm:w-64"
+            aria-label="Buscar (Ctrl o Cmd + K)"
+          >
+            <Search className="size-4" aria-hidden />
+            <span className="hidden flex-1 text-left sm:inline">Buscar…</span>
+            <kbd className="hidden border border-line px-1 text-[11px] sm:inline">⌘K</kbd>
+          </button>
+          {action && (
+            <Link href={action.href} className="inline-flex h-9 items-center gap-1.5 rounded-[2px] bg-navy px-3 text-[13px] font-medium text-paper hover:bg-navy-deep sm:px-4">
+              <Plus className="size-4" aria-hidden />
+              <span className="hidden sm:inline">{action.label}</span>
+              <span className="sr-only sm:hidden">{action.label}</span>
+            </Link>
+          )}
+        </header>
+        <main id="contenido" className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <RouteReveal>{children}</RouteReveal>
+        </main>
+      </div>
+      <CommandPalette open={search} onClose={() => setSearch(false)} isAdmin={isAdmin} />
+    </div>
+  );
+}
