@@ -8,6 +8,7 @@ import { getDb } from "@/db";
 import { faqs, leads, posts, service_plans, sessions, users } from "@/db/schema";
 import { requireAdmin, requireOperator, requireStaff } from "@/lib/auth";
 import { takeAfterLogin } from "@/lib/after-login";
+import { homeFor } from "@/lib/roles";
 import { audit, requestIp } from "@/lib/audit";
 import { staffLimitError } from "@/lib/faro/entitlements";
 import { AUTH_ERRORS, getAuth, type AuthErrorCode } from "@/lib/auth-server";
@@ -98,7 +99,9 @@ export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionSt
     if (e.status !== "UNAUTHORIZED" && e.status !== "BAD_REQUEST") console.error("[auth] Error al iniciar sesión", error);
     return { ok: false, message: "Email o contraseña incorrectos." };
   }
-  redirect(twoFactor ? "/admin/login/verificar" : await takeAfterLogin());
+  if (twoFactor) redirect("/admin/login/verificar");
+  const [u] = await getDb().select({ role: users.role }).from(users).where(eq(users.email, email));
+  redirect(await takeAfterLogin(homeFor(u?.role)));
 }
 
 export async function signOut() {

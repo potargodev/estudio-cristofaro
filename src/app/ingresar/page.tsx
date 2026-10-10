@@ -37,6 +37,13 @@ export default async function IngresarPage({ searchParams }: { searchParams: Pro
           <AccessChooser google={googleEnabled()} error={errorText(error)} />
         </div>
         <p className="mt-10 text-[13px] leading-relaxed text-paper/50">
+          ¿Sos autónomo o tenés un estudio?{" "}
+          <Link href="/faro/registro" className="text-paper underline underline-offset-4 hover:text-rose-light">
+            Creá tu cuenta de Faro
+          </Link>
+          .
+        </p>
+        <p className="mt-3 text-[13px] leading-relaxed text-paper/50">
           ¿Todavía no sos cliente?{" "}
           <Link href="/agendar" className="text-paper underline underline-offset-4 hover:text-rose-light">
             Agendá una llamada

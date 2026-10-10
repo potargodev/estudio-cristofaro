@@ -40,7 +40,7 @@ export function FaroPlans({ kinds = ["studio", "personal"] }: { kinds?: TenantKi
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="06">Planes</SectionIndex>
+            <SectionIndex n="07">Planes</SectionIndex>
             <SplitHeading id="planes-titulo" className="display-md mt-8 text-paper">
               Empezá gratis. Crecé cuando quieras.
             </SplitHeading>

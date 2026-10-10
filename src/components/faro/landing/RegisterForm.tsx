@@ -48,7 +48,7 @@ export function RegisterForm({ kinds = ["studio", "personal"], initial, interest
         </fieldset>
       )}
       {kind && (
-        <form action={action} className={cn("grid gap-4", options.length > 1 && "mt-8 border-t border-hair pt-8")}>
+        <form key={state.message ?? "form"} action={action} className={cn("grid gap-4", options.length > 1 && "mt-8 border-t border-hair pt-8")}>
           <input type="hidden" name="kind" value={kind} />
           {interest && <input type="hidden" name="interes" value={interest} />}
           <div aria-hidden className="absolute -left-[9999px]">
@@ -60,23 +60,23 @@ export function RegisterForm({ kinds = ["studio", "personal"], initial, interest
           {kind === "studio" && (
             <label className={label}>
               Nombre del estudio
-              <input name="studio_name" required maxLength={120} placeholder="Ej.: Estudio Pérez & Asociados" className={field} />
+              <input name="studio_name" defaultValue={state.values?.studio_name} required maxLength={120} placeholder="Ej.: Estudio Pérez & Asociados" className={field} />
             </label>
           )}
           <label className={label}>
             Tu nombre y apellido
-            <input name="name" required maxLength={120} autoComplete="name" className={field} />
+            <input name="name" defaultValue={state.values?.name} required maxLength={120} autoComplete="name" className={field} />
           </label>
           {kind === "personal" && (
             <label className={label}>
               Tu CUIT
-              <input name="cuit" required inputMode="numeric" placeholder="20-12345678-9" className={field} />
+              <input name="cuit" defaultValue={state.values?.cuit} required inputMode="numeric" placeholder="20-12345678-9" className={field} />
               <span className="mt-1 block text-[12px] text-paper/45">Con tu CUIT armamos tu calendario y, más adelante, la facturación con ARCA.</span>
             </label>
           )}
           <label className={label}>
             Email
-            <input name="email" type="email" required autoComplete="email" className={field} />
+            <input name="email" defaultValue={state.values?.email} type="email" required autoComplete="email" className={field} />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className={label}>
@@ -89,7 +89,7 @@ export function RegisterForm({ kinds = ["studio", "personal"], initial, interest
             </label>
           </div>
           <label className="flex items-start gap-2.5 text-[13px] text-paper/70">
-            <input name="terms" type="checkbox" required className="mt-0.5 size-4 accent-[#c8a465]" />
+            <input name="terms" type="checkbox" required defaultChecked={state.values?.terms === "on"} className="mt-0.5 size-4 accent-[#c8a465]" />
             <span>
               Acepto los términos y la{" "}
               <Link href="/privacidad" className="underline underline-offset-4">

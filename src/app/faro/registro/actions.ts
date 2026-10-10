@@ -16,6 +16,8 @@ export interface RegisterState {
   ok: boolean;
   message?: string;
   field?: string;
+  /** Lo que cargó la persona (sin contraseñas), para no perderlo si hay un error */
+  values?: Record<string, string>;
 }
 
 const v = (fd: FormData, k: string) => {
@@ -24,6 +26,12 @@ const v = (fd: FormData, k: string) => {
 };
 
 export async function registerTenant(_prev: RegisterState, fd: FormData): Promise<RegisterState> {
+  const values = Object.fromEntries(["studio_name", "name", "cuit", "email", "terms"].map((k) => [k, v(fd, k)]));
+  const r = await register(fd);
+  return r.ok ? r : { ...r, values };
+}
+
+async function register(fd: FormData): Promise<RegisterState> {
   // Honeypot: los bots completan el campo oculto
   if (v(fd, "empresa_web")) return { ok: true };
   const h = await headers();
