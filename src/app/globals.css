@@ -915,18 +915,29 @@ body {
 .splash-on body {
   overflow: hidden;
 }
-.splash-leaf {
+/* Velo azul con un agujero circular que crece desde el centro del sello */
+@property --splash-r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+.splash-veil {
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 50.5%;
+  inset: 0;
   background: var(--color-navy);
+  -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 42%), transparent var(--splash-r), #000 calc(var(--splash-r) + 1px));
+  mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 42%), transparent var(--splash-r), #000 calc(var(--splash-r) + 1px));
 }
-.splash-leaf-top {
-  top: 0;
-}
-.splash-leaf-bottom {
-  bottom: 0;
+.splash-ring {
+  position: absolute;
+  left: var(--cx, 50%);
+  top: var(--cy, 42%);
+  width: calc(var(--splash-r) * 2);
+  height: calc(var(--splash-r) * 2);
+  translate: -50% -50%;
+  border-radius: 9999px;
+  border: 1px solid var(--color-rose-light);
+  opacity: 0;
 }
 .splash-content {
   position: relative;
@@ -995,31 +1006,46 @@ body {
   animation: splash-sub 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
 }
 
-/* Salida: el contenido se desvanece, el sello se aleja girando, una costura
-   rosé corta la pantalla y las dos hojas se abren */
+/* Salida: el contenido se desvanece, el sello se aleja y la pantalla se abre
+   con un círculo que crece desde él (con un borde rosé fino). Sin @property,
+   el velo se funde al final. */
 .splash-exit .splash-content {
   animation: splash-out 0.6s cubic-bezier(0.7, 0, 0.84, 0) both;
 }
 .splash-exit .splash-seal {
   animation: splash-seal-out 0.7s cubic-bezier(0.7, 0, 0.84, 0) both;
 }
-.splash-exit .splash-leaf-top {
-  animation: splash-leaf-top 0.9s cubic-bezier(0.87, 0, 0.13, 1) 0.3s both;
+.splash-exit .splash-veil {
+  animation: splash-open 1.15s cubic-bezier(0.83, 0, 0.17, 1) 0.25s both;
 }
-.splash-exit .splash-leaf-bottom {
-  animation: splash-leaf-bottom 0.9s cubic-bezier(0.87, 0, 0.13, 1) 0.3s both;
+.splash-exit .splash-ring {
+  animation:
+    splash-open 1.15s cubic-bezier(0.83, 0, 0.17, 1) 0.25s both,
+    splash-ring 1.15s linear 0.25s both;
 }
-.splash-seam {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  background: var(--color-rose-light);
-  transform: scaleX(0);
+@keyframes splash-open {
+  0% {
+    --splash-r: 0px;
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    --splash-r: 150vmax;
+    opacity: 0;
+  }
 }
-.splash-exit .splash-seam {
-  animation: splash-seam 1s cubic-bezier(0.65, 0, 0.35, 1) both;
+@keyframes splash-ring {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 /* La intro del hero espera a que se abra el telón */
 .splash-on .mask-intro .mw-in,
@@ -1107,31 +1133,6 @@ body {
     opacity: 0;
   }
 }
-@keyframes splash-seam {
-  30% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-  55% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-  to {
-    transform: scaleX(1);
-    opacity: 0;
-  }
-}
-@keyframes splash-leaf-top {
-  to {
-    transform: translateY(-101%);
-  }
-}
-@keyframes splash-leaf-bottom {
-  to {
-    transform: translateY(101%);
-  }
-}
-
 /* ───────────── Landing de Faro ───────────── */
 /* El haz del faro: un cono rosé que barre el fondo del hero, muy suave */
 .faro-beam {
