@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EntryForm } from "@/components/bitacora/EntryForm";
+import { CopilotOrigin } from "@/components/copiloto/CopilotOrigin";
 import { BitacoraError, getEntry, listCategories } from "@/modules/bitacora/server";
 import { requireUser } from "@/modules/bitacora/session";
+import { originOf } from "@/modules/copilot/server";
 import { deleteEntryAction, updateEntryAction } from "../actions";
 
 export const metadata: Metadata = { title: "Movimiento" };
@@ -20,7 +22,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
     throw err;
   }
   if (e.deleted_at) notFound();
-  const cats = await listCategories(me.id);
+  const [cats, origin] = await Promise.all([listCategories(me.id), e.source === "copiloto" ? originOf(me.id, "movimiento", e.id) : null]);
   const mes = sp.mes ?? e.date.slice(0, 7);
   return (
     <div className="grid max-w-2xl gap-5">
@@ -41,6 +43,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           d={{ id: e.id, kind: e.kind, amount: (e.amount / 100).toLocaleString("es-AR", { maximumFractionDigits: 2 }), currency: e.currency, date: e.date, categoryId: e.category_id, description: e.description, paymentMethod: e.payment_method, note: e.note }}
         />
       </div>
+      {origin && <CopilotOrigin o={origin} />}
       <form action={deleteEntryAction}>
         <input type="hidden" name="id" value={e.id} />
         <input type="hidden" name="mes" value={mes} />

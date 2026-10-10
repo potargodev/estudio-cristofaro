@@ -33,7 +33,7 @@ function Legend({ series }: { series: Series[] }) {
 
 function DataTable({ caption, rows, series }: { caption: string; rows: Row[]; series: Series[] }) {
   return (
-    <table className="sr-only">
+    <div className="sr-only"><table>
       <caption>{caption}</caption>
       <thead>
         <tr>
@@ -55,7 +55,7 @@ function DataTable({ caption, rows, series }: { caption: string; rows: Row[]; se
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   );
 }
 

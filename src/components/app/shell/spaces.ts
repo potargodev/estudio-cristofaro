@@ -45,7 +45,7 @@ export type ShellIcon =
   | "auditoria"
   | "opiniones";
 
-export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "planRequests" | "verifications" | "portalRequests";
+export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "planRequests" | "verifications" | "portalRequests";
 
 export interface ShellItem {
   href: string;
@@ -68,6 +68,7 @@ export const BADGE_TEXT: Record<ShellBadge, string> = {
   obligations: "vencimientos esta semana",
   approvals: "propuestas para aprobar",
   unread: "mensajes sin leer",
+  copilot: "respuestas nuevas del Copiloto",
   planRequests: "pedidos de plan",
   verifications: "matrículas y reseñas por revisar",
   portalRequests: "solicitudes abiertas",
@@ -77,7 +78,7 @@ export const BADGE_TEXT: Record<ShellBadge, string> = {
 export const PERSONAL_GROUP: ShellGroup = {
   title: "Para vos",
   items: [
-    { href: "/copiloto", label: "Copiloto", icon: "copiloto" },
+    { href: "/copiloto", label: "Copiloto", icon: "copiloto", badge: "copilot" },
     { href: "/bitacora", label: "Bitácora", icon: "bitacora" },
     { href: "/grupos", label: "Grupos de gastos", icon: "gastos" },
     { href: "/mensajes", label: "Mensajes", icon: "mensajes", badge: "unread" },
@@ -129,7 +130,7 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
       {
         title: "Inicio",
         items: [
-          { href: "/copiloto", label: "Copiloto", icon: "copiloto" },
+          { href: "/copiloto", label: "Copiloto", icon: "copiloto", badge: "copilot" },
           { href: "/personal", label: "Mi panel", icon: "resumen", exact: true },
         ],
       },

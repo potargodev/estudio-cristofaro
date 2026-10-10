@@ -176,6 +176,13 @@
       "when": 1791662059980,
       "tag": "0024_bitacora",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791662924513,
+      "tag": "0025_copiloto",
+      "breakpoints": true
     }
   ]
 }

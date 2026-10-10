@@ -28,7 +28,7 @@ export function WeeklyBars({
           </div>
         ))}
       </div>
-      <table className="sr-only">
+      <div className="sr-only"><table>
         <caption>{title}</caption>
         <tbody>
           {data.map((d) => (
@@ -38,7 +38,7 @@ export function WeeklyBars({
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </figure>
   );
 }

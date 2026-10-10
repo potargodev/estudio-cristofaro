@@ -69,7 +69,7 @@ async function register(fd: FormData): Promise<RegisterState> {
     console.error("[registro] login automático", error);
     redirect(kind === "studio" ? "/admin/login" : "/ingresar");
   }
-  redirect(kind === "studio" ? "/admin/seguridad?bienvenida=1" : "/personal?bienvenida=1");
+  redirect(kind === "studio" ? "/admin/seguridad?bienvenida=1" : "/bienvenida");
 }
 
 /**

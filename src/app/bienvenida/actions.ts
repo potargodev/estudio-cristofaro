@@ -64,7 +64,7 @@ export async function saveWelcomeIndustries(fd: FormData) {
     .getAll("industries")
     .filter(isIndustryKey)
     .slice(0, t!.kind === "studio" ? 12 : 1);
-  const goal = ["grupos", "red", "flotas"].includes(s(fd, "goal")) ? s(fd, "goal") : null;
+  const goal = ["copiloto", "grupos", "red", "flotas"].includes(s(fd, "goal")) ? s(fd, "goal") : null;
   await db
     .update(studios)
     .set({ industries: t!.kind === "persona" ? [] : industries, onboarding: { ...t!.onboarding, wizard: true, ...(goal ? { [`objetivo_${goal}`]: true } : {}) } })

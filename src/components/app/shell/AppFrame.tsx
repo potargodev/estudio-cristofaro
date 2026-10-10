@@ -14,6 +14,7 @@ import { SITE_STUDIO_SLUG } from "@/lib/faro/tenants";
 import { ORG_ROLE_LABELS } from "@/lib/permissions";
 import { buildPortalNav } from "@/lib/portal-nav";
 import { getPrefs } from "@/lib/prefs";
+import { unseenCount } from "@/modules/copilot/server";
 import { unreadCount } from "@/modules/messages/unread";
 import { guideBoot } from "@/modules/onboarding/server";
 import { moderationCounts } from "@/modules/red/server";
@@ -91,7 +92,7 @@ export async function AppFrame({ space: forced, children }: { space?: Space; chi
     spaceName = "Faro Manager";
     roleLabel = user.faroRole === "faro_owner" ? "Owner" : "Soporte";
   }
-  badges.unread = await unreadCount(user.id).catch(() => 0);
+  [badges.unread, badges.copilot] = await Promise.all([unreadCount(user.id).catch(() => 0), unseenCount(user.id).catch(() => 0)]);
 
   // Espacios a los que puede entrar
   const spaces: ShellSpace[] = [];

@@ -2015,3 +2015,126 @@ export const bitacora_entries = pgTable(
   },
   (t) => [index("bitacora_entries_user_date_idx").on(t.user_id, t.date)],
 );
+
+// ───────────────────────── Copiloto (docs/faro-producto.md §2.m) ─────────────────────────
+
+export const copilotRole = pgEnum("copilot_role", ["usuario", "copiloto"]);
+/** ok | procesando | pendiente (cola: esperando cuota) | error */
+export const copilotStatus = pgEnum("copilot_status", ["ok", "procesando", "pendiente", "error"]);
+
+/** Historial del chat por usuario. Cada mensaje del usuario guarda su original (y su archivo, en UPLOADS_DIR) */
+export const copilot_messages = pgTable(
+  "copilot_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: copilotRole("role").notNull(),
+    /** texto | audio | imagen | pdf */
+    kind: text("kind").notNull().default("texto"),
+    text: text("text"),
+    /** Transcripción del audio (o lo que se leyó de la imagen) */
+    transcript: text("transcript"),
+    attachment_path: text("attachment_path"),
+    attachment_name: text("attachment_name"),
+    attachment_mime: text("attachment_mime"),
+    /** En respuestas: a qué mensaje del usuario responde */
+    reply_to: uuid("reply_to"),
+    status: copilotStatus("status").notNull().default("ok"),
+    error: text("error"),
+    attempts: integer("attempts").notNull().default(0),
+    model: text("model"),
+    tokens_in: integer("tokens_in").notNull().default(0),
+    tokens_out: integer("tokens_out").notNull().default(0),
+    cost_usd: numeric("cost_usd", { precision: 12, scale: 6 }).notNull().default("0"),
+    /** El usuario no alcanzó a ver la respuesta (llegó desde la cola) */
+    unseen: boolean("unseen").notNull().default(false),
+    created_at: createdAt(),
+    processed_at: timestamp("processed_at", { withTimezone: true }),
+  },
+  (t) => [index("copilot_messages_user_idx").on(t.user_id, t.created_at), index("copilot_messages_status_idx").on(t.status, t.created_at)],
+);
+
+export const proposalStatus = pgEnum("proposal_status", ["propuesta", "confirmada", "deshecha", "descartada"]);
+
+/** Cada interpretación del Copiloto: una tarjeta con Confirmar, Editar y Deshacer */
+export const copilot_proposals = pgTable(
+  "copilot_proposals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** Respuesta del Copiloto que la muestra */
+    message_id: uuid("message_id")
+      .notNull()
+      .references(() => copilot_messages.id, { onDelete: "cascade" }),
+    /** Mensaje original del usuario (el origen del registro) */
+    source_message_id: uuid("source_message_id").references(() => copilot_messages.id, { onDelete: "set null" }),
+    /** crear_movimiento | crear_gasto_en_grupo | crear_grupo | recordar */
+    tool: text("tool").notNull(),
+    input: jsonb("input").$type<Record<string, unknown>>().notNull(),
+    /** Resumen legible y datos resueltos (grupo, integrantes, reparto) */
+    preview: jsonb("preview").$type<Record<string, unknown>>().notNull().default({}),
+    status: proposalStatus("status").notNull().default("propuesta"),
+    /** Se registró solo (preferencia "registrar solo") */
+    auto: boolean("auto").notNull().default(false),
+    /** Lo creado: movimiento, gasto, grupo o recordatorio */
+    result_type: text("result_type"),
+    result_id: uuid("result_id"),
+    error: text("error"),
+    created_at: createdAt(),
+    decided_at: timestamp("decided_at", { withTimezone: true }),
+  },
+  (t) => [index("copilot_proposals_user_idx").on(t.user_id, t.created_at)],
+);
+
+export const copilot_reminders = pgTable(
+  "copilot_reminders",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    text: text("text").notNull(),
+    due_at: timestamp("due_at", { withTimezone: true }).notNull(),
+    sent_at: timestamp("sent_at", { withTimezone: true }),
+    done_at: timestamp("done_at", { withTimezone: true }),
+    source_message_id: uuid("source_message_id").references(() => copilot_messages.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("copilot_reminders_due_idx").on(t.due_at)],
+);
+
+/**
+ * IA de la plataforma (la que usa el Copiloto de personas y autónomos): una
+ * sola fila. La clave se guarda cifrada con ENCRYPTION_KEY y nunca se muestra.
+ */
+export const platform_ai = pgTable("platform_ai", {
+  id: text("id").primaryKey().default("default"),
+  /** google | openai | openai_compatible */
+  provider: text("provider").notNull().default("google"),
+  api_key_enc: text("api_key_enc"),
+  key_hint: text("key_hint"),
+  base_url: text("base_url"),
+  model_primary: text("model_primary").notNull().default("gemini-3.1-flash-lite"),
+  model_fallback: text("model_fallback"),
+  /** Transcripción de audio: nativo (Gemini entiende el audio) | openai (Whisper o similar) */
+  transcription: text("transcription").notNull().default("nativo"),
+  transcription_key_enc: text("transcription_key_enc"),
+  transcription_model: text("transcription_model").notNull().default("whisper-1"),
+  /** Precio por millón de tokens (USD) para estimar el costo */
+  price_in_per_m: numeric("price_in_per_m", { precision: 10, scale: 4 }).notNull().default("0.10"),
+  price_out_per_m: numeric("price_out_per_m", { precision: 10, scale: 4 }).notNull().default("0.40"),
+  /** La clave es del plan gratis del proveedor (no apta para datos reales) */
+  free_tier: boolean("free_tier").notNull().default(false),
+  /** Límites por plan: { persona_gratis: { messages, audios }, … } */
+  limits: jsonb("limits").$type<Record<string, { messages?: number | null; audios?: number | null }>>().notNull().default({}),
+  daily_cap_usd: numeric("daily_cap_usd", { precision: 10, scale: 2 }),
+  monthly_cap_usd: numeric("monthly_cap_usd", { precision: 10, scale: 2 }),
+  /** Último aviso al Faro Manager por tope alcanzado */
+  cap_alerted_at: timestamp("cap_alerted_at", { withTimezone: true }),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});

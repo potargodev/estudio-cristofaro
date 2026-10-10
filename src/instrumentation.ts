@@ -3,10 +3,12 @@
 //   por ejemplo si se usa un cron externo contra /api/agenda/recordatorios).
 // - Grupos de gastos (recurrentes y recordatorios) cada hora (GASTOS_JOBS=off
 //   los apaga; cron externo: /api/gastos/cron).
+// - Copiloto (cola de mensajes pendientes y recordatorios) cada minuto
+//   (COPILOT_JOBS=off los apaga; cron externo: /api/copiloto/cron).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
-  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout };
+  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout };
 
   if (process.env.AGENDA_REMINDERS !== "off" && !g.__agendaTimer) {
     const { sendReminders } = await import("./lib/agenda/bookings");
@@ -32,5 +34,18 @@ export async function register() {
     g.__gastosTimer = setInterval(run, Number(process.env.GASTOS_JOBS_MS) || 60 * 60_000);
     g.__gastosTimer.unref?.();
     setTimeout(run, 30_000).unref?.();
+  }
+
+  if (process.env.COPILOT_JOBS !== "off" && !g.__copilotTimer) {
+    const { runCopilotJobs } = await import("./modules/copilot/jobs");
+    const run = () =>
+      runCopilotJobs()
+        .then((r) => {
+          if (r.procesados || r.recordatorios) console.info(`[copiloto] ${r.procesados} mensajes de la cola, ${r.recordatorios} recordatorios`);
+        })
+        .catch((error) => console.error("[copiloto] Tareas", (error as Error).message));
+    g.__copilotTimer = setInterval(run, Number(process.env.COPILOT_JOBS_MS) || 60_000);
+    g.__copilotTimer.unref?.();
+    setTimeout(run, 40_000).unref?.();
   }
 }

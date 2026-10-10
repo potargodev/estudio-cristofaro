@@ -4,7 +4,7 @@ resumen: Cargá gastos e ingresos (a mano o con el Copiloto), mirá cuánto entr
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: bitacora
 actualizado: 2026-10-10
-relacionados: [grupos-de-gastos/cargar-gastos, grupos-de-gastos/crear-un-grupo]
+relacionados: [copiloto/copiloto, grupos-de-gastos/cargar-gastos, grupos-de-gastos/crear-un-grupo]
 ---
 
 **Bitácora** es tu registro personal de plata. Es **privada**: no la ve nadie más, ni tu estudio, ni tu organización, ni otros integrantes de tus grupos.

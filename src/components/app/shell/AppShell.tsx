@@ -523,7 +523,7 @@ export function AppShell(p: ShellProps) {
                       </span>
                     )}
                   </span>
-                  <span className="max-w-full truncate px-1">{i.label}</span>
+                  <span className="max-w-full truncate px-1">{i.label.replace(/ de gastos$/, "")}</span>
                 </Link>
               </li>
             );

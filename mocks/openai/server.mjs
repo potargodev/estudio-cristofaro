@@ -13,6 +13,7 @@ import { createServer } from "node:http";
 
 const PORT = Number(process.env.PORT ?? 4010);
 const log = [];
+let failNext = 0; // POST /__fail {"n": 3} → las próximas n respuestas son 429
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
 
 const text = (m) => (typeof m?.content === "string" ? m.content : Array.isArray(m?.content) ? m.content.map((p) => p.text ?? "").join(" ") : "");
@@ -51,7 +52,38 @@ function summarize(result) {
   return `Esto es lo que encontré:\n\n\`\`\`json\n${JSON.stringify(result, null, 2).slice(0, 1500)}\n\`\`\``;
 }
 
-/** Decide la próxima respuesta: { text } o { tool, args } */
+const num = (v) => {
+  const t = String(v).toLowerCase().replace(/\$/g, "");
+  const k = t.endsWith("k") ? 1000 : 1;
+  return Number(t.replace(/k$/, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", ".")) * k;
+};
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const people = (s) => s.split(/\s*(?:,|\by\b)\s*/).map((n) => n.trim()).filter(Boolean).map(cap);
+
+/** Copiloto (§2.m): varias tool calls por mensaje, imágenes y consultas */
+function copilot(body, last, q) {
+  const parts = Array.isArray(last?.content) ? last.content : [];
+  if (parts.some((p) => p.type === "image_url" || p.type === "file")) return { tools: [{ tool: "crear_movimiento", args: { tipo: "gasto", monto: 18450, descripcion: "Coto", categoria: "Supermercado", medio_pago: "debito" } }] };
+  const grupo = q.match(/cre[aá] (?:un )?grupo (.+?) con (.+?)(?:\.|$)/);
+  if (grupo) return { tools: [{ tool: "crear_grupo", args: { nombre: cap(grupo[1].trim()), tipo: "viaje", integrantes: people(grupo[2]) } }] };
+  const gasto = q.match(/pagu[eé]\s*\$?\s*([\d.,]+k?)\s*(?:de (?:la |el |los |las )?(.+?))?\s+con\s+(.+?)(?:\s+en (?:el grupo )?(.+?))?(?:,|\.|$)/);
+  if (gasto) return { tools: [{ tool: "crear_gasto_en_grupo", args: { descripcion: cap(gasto[2] ?? "Gasto"), monto: num(gasto[1]), dividir_entre: people(gasto[3]), ...(gasto[4] ? { grupo: gasto[4] } : {}) } }] };
+  if (/cu[aá]nto gast[eé]/.test(q)) return { tools: [{ tool: "consultar_bitacora", args: /delivery|comida/.test(q) ? { categoria: "Comida y delivery" } : {} }] };
+  const debo = q.match(/(?:debo|deben|saldo)(?: (?:a|con) ([a-záéíóúñ]+))?/);
+  if (debo) return { tools: [{ tool: "consultar_saldos", args: debo[1] ? { persona: cap(debo[1]) } : {} }] };
+  const rec = q.match(/recordame (.+?) el (\d{4}-\d{2}-\d{2})(?: a las (\d{1,2}))?/);
+  if (rec) return { tools: [{ tool: "recordar", args: { texto: rec[1], cuando: `${rec[2]}T${String(rec[3] ?? 9).padStart(2, "0")}:00` } }] };
+  const ayer = /\bayer\b/.test(q);
+  const d = new Date(Date.now() - 3 * 3600_000 - (ayer ? 86400_000 : 0)).toISOString().slice(0, 10);
+  const items = [...q.matchAll(/(\d[\d.,]*k?)\s+(?:de |en (?:el |la )?)?([a-záéíóúñ ]+?)(?=\s+y\s+|,|\.|$)/g)].map((m) => ({
+    tool: "crear_movimiento",
+    args: { tipo: /cobr|sueldo/.test(m[2]) ? "ingreso" : "gasto", monto: num(m[1]), fecha: d, descripcion: cap(m[2].trim()), ...(/nafta|sube|uber/.test(m[2]) ? { categoria: "Transporte" } : /chino|super/.test(m[2]) ? { categoria: "Supermercado" } : {}) },
+  }));
+  if (items.length) return { tools: items };
+  return { text: "Contame un gasto, por ejemplo «5000 de nafta»." };
+}
+
+/** Decide la próxima respuesta: { text } o { tool, args } (o { tools } con varias) */
 function decide(body) {
   const msgs = body.messages ?? [];
   const system = msgs.filter((m) => m.role === "system").map(text).join("\n");
@@ -63,6 +95,7 @@ function decide(body) {
     return { text: summarize(parsed) };
   }
   const q = text(last).toLowerCase();
+  if (tools.has("crear_movimiento")) return copilot(body, last, q);
   const want = (tool, args) => (tools.has(tool) ? { tool, args } : { text: `No tengo disponible la herramienta \`${tool}\` con tus permisos.` });
   if (/confirm[eé]|cancel[eé]/.test(q)) return { text: "Perfecto, ya quedó registrado." };
   const uuid = q.match(UUID)?.[0];
@@ -119,6 +152,26 @@ createServer(async (req, res) => {
     res.setHeader("Content-Type", "application/json");
     return res.end(JSON.stringify({ data: [{ id: "faro-mock", object: "model" }] }));
   }
+  if (req.method === "POST" && req.url === "/__fail") {
+    let raw = "";
+    for await (const c of req) raw += c;
+    failNext = Number(JSON.parse(raw || "{}").n ?? 0);
+    return res.end(JSON.stringify({ failNext }));
+  }
+  if ((req.url?.endsWith("/chat/completions") || req.url?.endsWith("/audio/transcriptions")) && failNext > 0) {
+    failNext--;
+    for await (const _ of req);
+    res.statusCode = 429;
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({ error: { message: "Rate limit reached (prueba)", type: "rate_limit_exceeded", code: "rate_limit_exceeded" } }));
+  }
+  // Transcripción de audio (Whisper): texto fijo
+  if (req.method === "POST" && req.url?.endsWith("/audio/transcriptions")) {
+    for await (const _ of req);
+    log.push({ at: new Date().toISOString(), transcription: true });
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({ text: "ayer 5000 de nafta y 3200 en el chino" }));
+  }
   if (req.method !== "POST" || !req.url?.endsWith("/chat/completions")) {
     res.statusCode = 404;
     return res.end("{}");
@@ -137,11 +190,13 @@ createServer(async (req, res) => {
   const base = { id, object: "chat.completion.chunk", created: Math.floor(Date.now() / 1000), model: body.model };
   if (!body.stream) {
     res.setHeader("Content-Type", "application/json");
-    const message = d.tool
-      ? { role: "assistant", content: null, tool_calls: [{ id: `call_${Date.now()}`, type: "function", function: { name: d.tool, arguments: JSON.stringify(d.args) } }] }
+    if (d.tool) d.tools = [{ tool: d.tool, args: d.args }];
+    const message = d.tools
+      ? { role: "assistant", content: null, tool_calls: d.tools.map((t, i) => ({ id: `call_${Date.now()}_${i}`, type: "function", function: { name: t.tool, arguments: JSON.stringify(t.args) } })) }
       : { role: "assistant", content: d.text.startsWith("Hola") ? "OK" : d.text };
-    return res.end(JSON.stringify({ ...base, object: "chat.completion", choices: [{ index: 0, message, finish_reason: d.tool ? "tool_calls" : "stop" }], usage }));
+    return res.end(JSON.stringify({ ...base, object: "chat.completion", choices: [{ index: 0, message, finish_reason: d.tools ? "tool_calls" : "stop" }], usage }));
   }
+  if (d.tools && !d.tool) Object.assign(d, { tool: d.tools[0].tool, args: d.tools[0].args });
   res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" });
   const send = (o) => res.write(`data: ${JSON.stringify(o)}\n\n`);
   send({ ...base, choices: [{ index: 0, delta: { role: "assistant", content: "" }, finish_reason: null }] });
