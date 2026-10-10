@@ -336,16 +336,11 @@ Lo primero que ve cualquier usuario al entrar es **su Copiloto**: un chat estilo
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |
 |---|---|---|---|
 | Para quién | Contador independiente que arranca | Estudio chico en crecimiento | Estudio mediano que quiere automatizar |
-<<<<<<< Updated upstream
 | Precio de referencia | USD 49 / mes | USD 119 / mes | USD 249 / mes |
 | Organizaciones incluidas | Hasta 10 | Hasta 40 | Hasta 120 |
 | Organización extra | USD 2 / mes | USD 2 / mes | USD 2 / mes |
 | Prueba gratis | 30 días | 30 días | 30 días |
 | Red de estudios (aparecer en el directorio) | — | ✓ | ✓ |
-=======
-| Precio (referencia, editable en Faro Manager) | Gratis | USD 119 / mes | USD 249 / mes |
-| Organizaciones | Hasta 5 | Hasta 60 | Ilimitadas |
->>>>>>> Stashed changes
 | Usuarios del estudio | 1 | Hasta 5 | Hasta 25 |
 | Núcleo | ✓ | ✓ | ✓ |
 | Asistente IA | Con clave propia, consultas | Con clave propia, consultas y acciones | Acciones avanzadas y agentes |
