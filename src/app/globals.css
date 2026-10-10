@@ -210,25 +210,52 @@ html:has(.site) {
   opacity: 0.35;
 }
 
-/* Intro de la home (una vez por sesión) y titulares con máscara: el estado
-   inicial lo pone un script en línea solo si hay movimiento permitido */
-.intro [data-intro-heading],
+/* Titulares con máscara en CSS (MaskText): cada palabra sube desde abajo.
+   .mask-text anima siempre al montar; .mask-intro solo durante la intro de la
+   home (clase .intro en <html>, una vez por sesión, la pone un script en línea). */
+.mask-text .mw,
+.intro .mask-intro .mw {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.mask-text .mw-in,
+.intro .mask-intro .mw-in {
+  display: inline-block;
+  animation: mw-in 1.1s var(--ease-expo) both;
+  animation-delay: calc(var(--i, 0) * 45ms + var(--mask-delay, 0ms));
+}
+@keyframes mw-in {
+  from {
+    transform: translateY(110%);
+  }
+}
+/* Intro: después del titular se dibuja la hairline y entran el menú y los CTA */
+.intro [data-intro="line"] {
+  transform-origin: left;
+  animation: intro-line 1s cubic-bezier(0.87, 0, 0.13, 1) 0.5s both;
+}
+.intro [data-intro="fade"] {
+  animation: intro-fade 0.9s var(--ease-expo) 1.05s both;
+}
+@keyframes intro-line {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
 .js-motion [data-split="hero"]:not([data-split-done]) {
   visibility: hidden;
 }
-.intro [data-intro="fade"] {
-  opacity: 0;
-}
-.intro [data-intro="line"] {
-  transform: scaleX(0);
-}
-.motion-timeout [data-intro-heading],
 .motion-timeout [data-split="hero"] {
   visibility: visible !important;
-}
-.motion-timeout [data-intro] {
-  opacity: 1 !important;
-  transform: none !important;
 }
 
 /* Transición entre páginas (View Transitions): cortina azul noche */

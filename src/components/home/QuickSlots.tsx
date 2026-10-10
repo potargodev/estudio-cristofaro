@@ -34,7 +34,7 @@ export function QuickSlots({ days }: { days: PickerDay[] }) {
               onClick={() => setDay(d.date)}
               className={cn(
                 "relative border-r border-hair px-2 py-4 text-left transition-colors duration-300 last:border-r-0 sm:px-4",
-                d.date === day ? "bg-paper/[0.04] text-paper" : "text-paper/50 hover:text-paper",
+                d.date === day ? "bg-paper/[0.04] text-paper" : "text-paper/55 hover:text-paper",
               )}
             >
               <span className="sr-only">{d.label}</span>
@@ -45,7 +45,7 @@ export function QuickSlots({ days }: { days: PickerDay[] }) {
           );
         })}
       </div>
-      <p id="quick-slots" className="px-5 pt-5 text-[12px] text-paper/50">
+      <p id="quick-slots" className="px-5 pt-5 text-[12px] text-paper/55">
         Horarios (hora de Buenos Aires)
       </p>
       <ul aria-labelledby="quick-slots" className="grid grid-cols-3 gap-px p-5 sm:grid-cols-4">
@@ -60,7 +60,7 @@ export function QuickSlots({ days }: { days: PickerDay[] }) {
           </li>
         ))}
       </ul>
-      <p className="border-t border-hair px-5 py-4 text-[13px] text-paper/50">
+      <p className="border-t border-hair px-5 py-4 text-[13px] text-paper/55">
         <TextLink href={SCHEDULE_HREF}>Ver más días</TextLink>
       </p>
     </div>

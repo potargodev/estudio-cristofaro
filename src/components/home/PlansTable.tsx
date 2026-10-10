@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, CtaLink, SectionIndex, TextLink } from "@/components/web/ui";
 import { HOME_PLANS, MODULES, PLAN_ROWS, priceLabel } from "@/lib/plans-web";
-import { loadGsap, reducedMotion } from "@/lib/motion/gsap";
+import { loadGsap, onceVisible, reducedMotion } from "@/lib/motion/gsap";
 import { SCHEDULE_HREF } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -27,17 +27,29 @@ export function PlansTable({
   const root = useRef<HTMLElement>(null);
   const [col, setCol] = useState<number | null>(null);
   useEffect(() => {
-    if (reducedMotion()) return;
+    const table = root.current?.querySelector("[data-table]");
+    // La tabla solo existe en escritorio; en el celular no hay revelado
+    if (reducedMotion() || !table || getComputedStyle(table).display === "none") return;
     let ctx: { revert: () => void } | undefined;
-    loadGsap().then(({ gsap }) => {
-      if (!root.current) return;
-      ctx = gsap.context(() => {
-        gsap.from("[data-row]", { opacity: 0, y: 14, duration: 0.8, stagger: 0.06, scrollTrigger: { trigger: "[data-table]", start: "top 80%", once: true } });
-      }, root);
-    });
-    return () => ctx?.revert();
+    const stop = onceVisible(
+      table,
+      () =>
+        loadGsap().then(({ gsap }) => {
+          if (!root.current) return;
+          ctx = gsap.context(() => {
+            gsap.from("[data-row]", { opacity: 0, y: 14, duration: 0.8, stagger: 0.06 });
+          }, root);
+        }),
+      "0px",
+    );
+    return () => {
+      stop();
+      ctx?.revert();
+    };
   }, []);
 
+  // En /planes no hay h2 sobre la tabla: los planes van como h2
+  const PlanName = full ? "h2" : "h3";
   const cell = (c: number) => cn("px-5 py-4 align-top transition-colors duration-300", col === c && "bg-paper/[0.035]", c === 2 && "border-x border-rose-light");
 
   return (
@@ -81,11 +93,11 @@ export function PlansTable({
             <tbody>
               {ROWS.map(([label, ...vals]) => (
                 <tr data-row key={label} className="border-t border-hair">
-                  <th scope="row" className="py-4 pr-6 align-top text-[13px] font-normal text-paper/50">
+                  <th scope="row" className="py-4 pr-6 align-top text-[13px] font-normal text-paper/55">
                     {label}
                   </th>
                   {vals.map((v, i) => (
-                    <td key={i} onMouseEnter={() => setCol(i + 1)} className={cn(cell(i + 1), v === "—" && "text-paper/30")}>
+                    <td key={i} onMouseEnter={() => setCol(i + 1)} className={cn(cell(i + 1), v === "—" && "text-paper/55")}>
                       {v === "—" ? <span aria-label="No incluido">—</span> : v}
                     </td>
                   ))}
@@ -116,7 +128,7 @@ export function PlansTable({
           {HOME_PLANS.map((p) => (
             <li key={p.key} className={cn("bg-night p-6", "featured" in p && "outline outline-1 -outline-offset-1 outline-rose-light")}>
               {"featured" in p && <p className="mb-2 text-[12px] text-rose-light">El más elegido</p>}
-              <h3 className="font-display text-[2rem] leading-none text-paper">{p.name}</h3>
+              <PlanName className="font-display text-[2rem] leading-none text-paper">{p.name}</PlanName>
               <p className="tabular mt-2 text-[14px] text-paper/55">{priceLabel(p.key, prices)}</p>
               <ul className="mt-5 border-t border-hair text-[14px] text-paper/80">
                 {(full
@@ -136,7 +148,7 @@ export function PlansTable({
         </ul>
 
         <div className="mt-16 grid gap-6 border-t border-hair pt-8 lg:grid-cols-12">
-          <p className="text-[13px] text-paper/50 lg:col-span-3">Módulos para sumar</p>
+          <p className="text-[13px] text-paper/55 lg:col-span-3">Módulos para sumar</p>
           <ul className="flex flex-wrap gap-x-8 gap-y-3 text-[15px] text-paper/80 lg:col-span-9">
             {MODULES.map((m) => (
               <li key={m}>{m}</li>

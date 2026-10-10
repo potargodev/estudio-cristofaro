@@ -7,12 +7,13 @@ import "lenis/dist/lenis.css";
 
 type W = { __lenis?: Lenis; __scrollTrigger?: { update: () => void } };
 
-// Scroll suave con Lenis (solo en la web pública y nunca con reduced-motion).
-// Si GSAP ya está cargado, ScrollTrigger se actualiza con cada scroll de Lenis.
+// Scroll suave con Lenis: solo en la web pública, con mouse (en pantallas táctiles
+// queda el scroll nativo, que es más liviano) y nunca con reduced-motion.
+// Si ScrollTrigger ya está cargado, se actualiza con cada scroll de Lenis.
 export function SmoothScroll() {
   const pathname = usePathname();
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !window.matchMedia("(pointer: fine)").matches) return;
     const lenis = new Lenis({ autoRaf: true, duration: 1.1, anchors: { offset: -72 } });
     const w = window as unknown as W;
     w.__lenis = lenis;

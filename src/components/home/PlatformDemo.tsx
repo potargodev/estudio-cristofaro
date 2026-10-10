@@ -45,7 +45,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
               ["Ayer 11:05", "Cargamos el VEP de IVA septiembre."],
             ].map(([t, a]) => (
               <li key={t} className="grid grid-cols-[6.5rem_1fr] gap-3 border-b border-hair py-2 last:border-0">
-                <span className="tabular text-paper/45">{t}</span>
+                <span className="tabular text-paper/55">{t}</span>
                 {a}
               </li>
             ))}
@@ -56,7 +56,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
   if (tab === "vencimientos")
     return (
       <div className="bg-night p-5 text-paper/85">
-        <Row className="text-[12px] text-paper/45" cells={["Obligación", "Vence", "Importe"]} />
+        <Row className="text-[12px] text-paper/55" cells={["Obligación", "Vence", "Importe"]} />
         <Row cells={["IVA septiembre", "20/10", money(DEMO.ivaAmount)]} />
         <Row cells={["Ganancias anticipo 5", "13/10", "$214.900"]} />
         <Row cells={["Ingresos Brutos CABA", "16/10", "$98.420"]} />
@@ -78,14 +78,14 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
           <p className="text-[12px] text-paper/55">Del estudio</p>
           {["Balance 2025.pdf", "Recibos septiembre.pdf"].map((f) => (
             <p key={f} className="flex items-center gap-2 border-b border-hair py-2">
-              <FileText className="size-3.5 text-paper/45" aria-hidden />
+              <FileText className="size-3.5 text-paper/55" aria-hidden />
               {f}
             </p>
           ))}
           <p className="mt-4 text-[12px] text-paper/55">Tuyos</p>
           <p className="flex items-center justify-between gap-2 border-b border-hair py-2">
             <span className="flex items-center gap-2">
-              <FileText className="size-3.5 text-paper/45" aria-hidden />
+              <FileText className="size-3.5 text-paper/55" aria-hidden />
               Factura proveedor 0003-118
             </span>
             <span className="border border-rose-light px-1.5 py-0.5 text-[11px] text-rose-light">para confirmar</span>
@@ -100,7 +100,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
         <p className="text-[12px] text-rose-light">Solicitud creada: Alta de empleada</p>
         <p className="mt-1">Nos faltan su CUIL y el sueldo acordado.</p>
       </div>
-      <div className="mt-2 flex items-center justify-between border-t border-hair pt-3 text-[12px] text-paper/45">
+      <div className="mt-2 flex items-center justify-between border-t border-hair pt-3 text-[12px] text-paper/55">
         <span>Responde: Lucía G.</span>
         <span className="tabular">Seguimiento 1 de 3</span>
       </div>
@@ -183,7 +183,7 @@ export function PlatformDemo() {
               onClick={() => select(t.key)}
               className={cn(
                 "relative shrink-0 px-1 pb-4 pr-8 text-left text-[15px] transition-colors duration-300",
-                t.key === tab ? "text-paper" : "text-paper/45 hover:text-paper/80",
+                t.key === tab ? "text-paper" : "text-paper/55 hover:text-paper/80",
               )}
             >
               <span className="tabular mr-2 text-[12px] text-rose-light">0{i + 1}</span>
@@ -214,7 +214,7 @@ export function PlatformDemo() {
             </ul>
           </div>
           <div className="relative border border-hair-strong lg:col-span-8" aria-hidden>
-            <div className="flex items-center justify-between border-b border-hair px-5 py-3 text-[12px] text-paper/45">
+            <div className="flex items-center justify-between border-b border-hair px-5 py-3 text-[12px] text-paper/55">
               <span>{DEMO.client}</span>
               <span>{current.label}</span>
             </div>

@@ -1,4 +1,4 @@
-import { SplitHeading } from "@/components/web/SplitHeading";
+import { MaskText } from "@/components/web/MaskText";
 import { Container } from "@/components/web/ui";
 
 /**
@@ -27,9 +27,7 @@ export function PageHeader({
             {eyebrow}
           </p>
         )}
-        <SplitHeading as="h1" hero className="display-md mt-8 max-w-[18ch] text-paper">
-          {title}
-        </SplitHeading>
+        <MaskText className="display-md mt-8 max-w-[18ch] text-paper">{title}</MaskText>
         {intro && <p className="mt-8 max-w-2xl text-[17px] leading-relaxed text-paper/70">{intro}</p>}
         {children}
       </Container>

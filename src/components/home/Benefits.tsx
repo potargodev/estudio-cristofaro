@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Container, SectionIndex } from "@/components/web/ui";
-import { isDesktop, loadGsap, reducedMotion } from "@/lib/motion/gsap";
+import { isDesktop, loadScrollTrigger, reducedMotion } from "@/lib/motion/gsap";
 
 const BENEFITS = [
   { t: "Alertas antes de cada vencimiento", d: "Te avisamos por mail y WhatsApp con el importe y el VEP listos. Nada te toma por sorpresa." },
@@ -24,7 +24,7 @@ export function Benefits() {
   useEffect(() => {
     if (reducedMotion() || !isDesktop()) return;
     let ctx: { revert: () => void } | undefined;
-    loadGsap().then(({ gsap }) => {
+    loadScrollTrigger().then(({ gsap }) => {
       const el = root.current;
       if (!el) return;
       ctx = gsap.context(() => {
@@ -63,7 +63,7 @@ export function Benefits() {
                 Lo que cambia en tu día a día.
               </h2>
             </div>
-            <ol aria-hidden className="hidden items-center gap-4 text-[12px] text-paper/40 lg:flex">
+            <ol aria-hidden className="hidden items-center gap-4 text-[12px] text-paper/55 lg:flex">
               {BENEFITS.map((_, i) => (
                 <li key={i} data-idx className={`tabular transition-colors duration-300 ${i === 0 ? "text-rose-light" : ""}`}>
                   0{i + 1}
@@ -82,7 +82,7 @@ export function Benefits() {
                 key={b.t}
                 className="flex flex-col justify-between gap-10 border-b border-hair px-5 py-10 sm:px-8 lg:h-[52vh] lg:w-[34rem] lg:border-b-0 lg:border-l lg:px-10 lg:py-2 xl:w-[38rem]"
               >
-                <span className="tabular font-display text-[clamp(4rem,8vw,7.5rem)] leading-none text-paper/15">0{i + 1}</span>
+                <span aria-hidden data-n={`0${i + 1}`} className="tabular font-display text-[clamp(4rem,8vw,7.5rem)] leading-none text-paper/15 before:content-[attr(data-n)]" />
                 <div>
                   <h3 className="font-display text-[clamp(1.8rem,2.6vw,2.6rem)] leading-[1.05] text-paper">{b.t}</h3>
                   <p className="mt-4 max-w-[30ch] text-[15px] leading-relaxed text-paper/60">{b.d}</p>

@@ -51,7 +51,7 @@ export default function PrivacidadPage() {
               </li>
             ))}
           </ol>
-          <p className="mt-8 text-[13px] text-paper/45">Última actualización: octubre de 2026.</p>
+          <p className="mt-8 text-[13px] text-paper/55">Última actualización: octubre de 2026.</p>
         </Container>
       </section>
     </>

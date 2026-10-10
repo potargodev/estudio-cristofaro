@@ -24,7 +24,7 @@ export default async function NovedadesPage() {
               {posts.map((p) => (
                 <li key={p.id} className="border-b border-hair">
                   <Link href={`/novedades/${p.slug}`} className="group grid gap-3 py-10 lg:grid-cols-12 lg:items-baseline">
-                    <span className="tabular text-[13px] text-paper/50 lg:col-span-2">{formatDate(p.published_at)}</span>
+                    <span className="tabular text-[13px] text-paper/55 lg:col-span-2">{formatDate(p.published_at)}</span>
                     <span className="font-display text-[clamp(1.7rem,2.8vw,2.6rem)] leading-[1.08] text-paper transition-colors duration-500 group-hover:text-rose-light lg:col-span-6">
                       {p.title}
                     </span>

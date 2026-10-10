@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SplitHeading } from "@/components/web/SplitHeading";
+import { MaskText } from "@/components/web/MaskText";
 import { formatDate, getPost } from "@/lib/data";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -33,9 +33,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             <span aria-hidden>·</span>
             <span className="tabular">{formatDate(post.published_at)}</span>
           </p>
-          <SplitHeading as="h1" hero className="display-sm mt-8 text-paper">
-            {post.title}
-          </SplitHeading>
+          <MaskText className="display-sm mt-8 text-paper">{post.title}</MaskText>
           {post.excerpt && <p className="mt-8 border-t border-hair pt-6 text-xl leading-relaxed text-paper/70">{post.excerpt}</p>}
           <div className="prose-body mt-10 text-[17px] text-paper/85">
             {post.body

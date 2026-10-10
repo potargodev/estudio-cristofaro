@@ -2,15 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { cancelMotionTimeout } from "@/components/web/MotionBoot";
 import type { HeroSlide } from "@/lib/hero";
-import { loadGsap, reducedMotion, padMasks } from "@/lib/motion/gsap";
+import { reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
 
 /**
  * Fondo del hero: foto a sangre completa atenuada con un velo azul noche y
  * parallax leve (si hubiera varias, cambian con un wipe de clip-path cada
- * `interval` s). También corre la intro (una vez por sesión).
+ * `interval` s).
  */
 export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]; interval: number; children: React.ReactNode }) {
   const [index, setIndex] = useState(0);
@@ -18,39 +17,9 @@ export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]
   const [rest, setRest] = useState(false);
   const [reduce, setReduce] = useState(false);
   const media = useRef<HTMLDivElement>(null);
-  const root = useRef<HTMLDivElement>(null);
 
-  // Intro: titular línea por línea con máscara, hairline y después el resto
-  useEffect(() => {
-    const html = document.documentElement;
-    const r = reducedMotion();
-    setReduce(r);
-    if (!html.classList.contains("intro") || r) return;
-    let ctx: { revert: () => void } | undefined;
-    loadGsap().then(({ gsap, SplitText }) => {
-      const h1 = root.current?.querySelector("[data-intro-heading]") as HTMLElement | null;
-      if (!h1) return;
-      cancelMotionTimeout();
-      ctx = gsap.context(() => {
-        const split = SplitText.create(h1, { type: "lines", mask: "lines" });
-        padMasks(split.masks);
-        gsap.set(h1, { visibility: "visible" });
-        const tl = gsap.timeline({
-          onComplete: () => {
-            split.revert();
-            html.classList.remove("intro");
-            try {
-              sessionStorage.setItem("intro-visto", "1");
-            } catch {}
-          },
-        });
-        tl.from(split.lines, { yPercent: 110, duration: 1.2, stagger: 0.08, ease: "expo.out" })
-          .fromTo("[data-intro='line']", { scaleX: 0 }, { scaleX: 1, duration: 1, ease: "expo.inOut" }, 0.5)
-          .fromTo("[data-intro='fade']", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.06, ease: "expo.out" }, 1.1);
-      });
-    });
-    return () => ctx?.revert();
-  }, []);
+  // La intro (titular con máscara, hairline, menú y CTA) es CSS: ver .intro en globals.css
+  useEffect(() => setReduce(reducedMotion()), []);
 
   useEffect(() => {
     const t = window.setTimeout(() => setRest(true), 1600);
@@ -85,7 +54,7 @@ export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]
   }, [reduce]);
 
   return (
-    <div ref={root}>
+    <div>
       <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
         <div ref={media} className="absolute inset-0 will-change-transform" style={{ transform: "scale(1.06)" }}>
           {slides.map((s, i) => {

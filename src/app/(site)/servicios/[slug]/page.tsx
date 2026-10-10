@@ -76,7 +76,7 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
             {others.map((s) => (
               <li key={s.slug} className="border-b border-hair sm:border-b-0 sm:border-r sm:px-8 sm:first:pl-0 sm:last:border-r-0">
                 <Link href={`/servicios/${s.slug}`} className="group block py-10">
-                  <span className="text-[13px] text-paper/50">Otro servicio</span>
+                  <span className="text-[13px] text-paper/55">Otro servicio</span>
                   <span className="mt-3 block font-display text-[2rem] leading-none text-paper transition-colors group-hover:text-rose-light">{s.name}</span>
                 </Link>
               </li>

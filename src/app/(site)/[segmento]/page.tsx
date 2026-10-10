@@ -98,7 +98,7 @@ export default async function AudiencePage({ params }: { params: Promise<{ segme
             {others.map((o) => (
               <li key={o.slug} className="border-b border-hair sm:border-b-0 sm:border-r sm:px-8 sm:first:pl-0 sm:last:border-r-0">
                 <Link href={`/${o.slug}`} className="group block py-10">
-                  <span className="text-[13px] text-paper/50">También trabajamos con</span>
+                  <span className="text-[13px] text-paper/55">También trabajamos con</span>
                   <span className="mt-3 block font-display text-[1.8rem] leading-tight text-paper transition-colors group-hover:text-rose-light">{o.name}</span>
                 </Link>
               </li>

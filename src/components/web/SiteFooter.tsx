@@ -67,7 +67,7 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-3 border-t border-hair py-6 text-[13px] text-paper/50 sm:flex-row sm:justify-between">
+        <div className="flex flex-col gap-3 border-t border-hair py-6 text-[13px] text-paper/55 sm:flex-row sm:justify-between">
           <p>© {new Date().getFullYear()} {site.name}</p>
           <p className="flex gap-6">
             <Link href="/privacidad" className="u-draw hover:text-paper">

@@ -2,7 +2,7 @@
 
 import { FileText, Mail } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { isDesktop, loadGsap, reducedMotion } from "@/lib/motion/gsap";
+import { isDesktop, loadScrollTrigger, reducedMotion } from "@/lib/motion/gsap";
 import { Container, SectionIndex } from "@/components/web/ui";
 
 const BEFORE = [
@@ -50,7 +50,7 @@ export function ChaosToOrder() {
   useEffect(() => {
     if (reducedMotion() || !isDesktop()) return;
     let ctx: { revert: () => void } | undefined;
-    loadGsap().then(({ gsap }) => {
+    loadScrollTrigger().then(({ gsap }) => {
       if (!root.current) return;
       ctx = gsap.context(() => {
         const pieces = gsap.utils.toArray<HTMLElement>("[data-piece]");

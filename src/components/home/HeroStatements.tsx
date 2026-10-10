@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { loadGsap, padMasks, reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
+import { MaskText } from "@/components/web/MaskText";
 
 /**
  * Titular rotativo del hero: cada `interval` s la frase sale hacia arriba línea
@@ -58,9 +59,15 @@ export function HeroStatements({ statements, interval }: { statements: string[];
       <h1 className="sr-only">{statements[0]}</h1>
       <div ref={stack} aria-hidden className="display grid max-w-[13ch] text-paper">
         {statements.map((s, i) => (
-          <p key={s} data-intro-heading={i === 0 ? "" : undefined} className="[grid-area:1/1]" style={i === index ? undefined : { visibility: "hidden" }}>
-            {s}
-          </p>
+          i === 0 ? (
+            <MaskText key={s} as="p" intro className="[grid-area:1/1]" style={i === index ? undefined : { visibility: "hidden" }}>
+              {s}
+            </MaskText>
+          ) : (
+            <p key={s} className="[grid-area:1/1]" style={i === index ? undefined : { visibility: "hidden" }}>
+              {s}
+            </p>
+          )
         ))}
       </div>
       {!reduce && statements.length > 1 && (
@@ -95,7 +102,7 @@ export function HeroStatements({ statements, interval }: { statements: string[];
               </li>
             ))}
           </ol>
-          <span className="tabular text-[12px] text-paper/50">
+          <span className="tabular text-[12px] text-paper/55">
             0{index + 1} / 0{statements.length}
           </span>
         </div>

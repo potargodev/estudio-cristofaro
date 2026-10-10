@@ -29,7 +29,7 @@ function Table({ caption, rows }: { caption: string; rows: typeof MONTHLY }) {
     <table className="w-full border-collapse text-left">
       <caption className="pb-6 text-left font-display text-[clamp(1.8rem,3vw,2.6rem)] text-paper">{caption}</caption>
       <thead>
-        <tr className="border-y border-hair text-[13px] text-paper/50">
+        <tr className="border-y border-hair text-[13px] text-paper/55">
           <th scope="col" className="py-3 pr-6 font-normal">
             Obligación
           </th>
@@ -46,7 +46,7 @@ function Table({ caption, rows }: { caption: string; rows: typeof MONTHLY }) {
           <tr key={r.name} className="border-b border-hair align-top text-[15px]">
             <th scope="row" className="py-5 pr-6 font-normal text-paper">
               {r.name}
-              <span className="mt-1 block text-[13px] text-paper/50 sm:hidden">{r.when}</span>
+              <span className="mt-1 block text-[13px] text-paper/55 sm:hidden">{r.when}</span>
             </th>
             <td className="hidden py-5 pr-6 text-paper/70 sm:table-cell">{r.when}</td>
             <td className="py-5 text-paper/65">{r.detail}</td>

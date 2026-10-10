@@ -30,7 +30,7 @@ export function PlatformMini({ tab }: { tab: PlatformTabKey }) {
       )}
       {tab === "documentos" && (
         <div className="flex h-full flex-col gap-2">
-          <div className="grid flex-1 place-items-center border border-dashed border-hair-strong text-[10px] text-paper/50">Soltá tus comprobantes</div>
+          <div className="grid flex-1 place-items-center border border-dashed border-hair-strong text-[10px] text-paper/55">Soltá tus comprobantes</div>
           <p className="text-[10px] text-rose-light">factura-proveedor.pdf · para confirmar</p>
         </div>
       )}

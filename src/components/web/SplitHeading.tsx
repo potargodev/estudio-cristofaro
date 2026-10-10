@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { loadGsap, padMasks, reducedMotion } from "@/lib/motion/gsap";
+import { loadGsap, onceVisible, padMasks, reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
 import { cancelMotionTimeout } from "./MotionBoot";
 
@@ -38,29 +38,32 @@ export function SplitHeading({
     let split: { revert: () => void } | null = null;
     let tween: { kill: () => void } | null = null;
     let cancelled = false;
-    loadGsap().then(({ gsap, SplitText, ScrollTrigger }) => {
-      if (cancelled) return;
-      const s = SplitText.create(el, { type: "lines", mask: "lines", linesClass: "split-line" });
-      padMasks(s.masks);
-      split = s;
-      el.dataset.splitDone = "1";
-      if (hero) cancelMotionTimeout();
-      tween = gsap.from(s.lines, {
-        yPercent: 110,
-        duration: 1.2,
-        stagger: 0.08,
-        ease: "expo.out",
-        delay,
-        ...(hero ? {} : { scrollTrigger: { trigger: el, start: "top 88%", once: true } }),
-        onComplete: () => {
-          s.revert();
-          split = null;
-        },
+    const run = () =>
+      loadGsap().then(({ gsap, SplitText }) => {
+        if (cancelled) return;
+        const s = SplitText.create(el, { type: "lines", mask: "lines", linesClass: "split-line" });
+        padMasks(s.masks);
+        split = s;
+        el.dataset.splitDone = "1";
+        if (hero) cancelMotionTimeout();
+        tween = gsap.from(s.lines, {
+          yPercent: 110,
+          duration: 1.2,
+          stagger: 0.08,
+          ease: "expo.out",
+          delay,
+          onComplete: () => {
+            s.revert();
+            split = null;
+          },
+        });
       });
-      if (!hero) ScrollTrigger.refresh();
-    });
+    // Arriba de todo anima al montar; el resto, justo antes de entrar en pantalla
+    const stop = hero ? undefined : onceVisible(el, run, "0px 0px 8% 0px");
+    if (hero) run();
     return () => {
       cancelled = true;
+      stop?.();
       tween?.kill();
       split?.revert();
     };
