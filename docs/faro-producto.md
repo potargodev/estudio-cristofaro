@@ -95,7 +95,7 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 - **Calendario personal:** vencimientos según CUIT y régimen (monotributo, IIBB, autónomos, IVA y Ganancias si es RI), con alertas por mail y WhatsApp y el importe cuando se puede calcular.
 - **Ingresos y gastos:** registro simple, comprobantes de compra (con lectura inteligente) y un resumen mensual "cuánto entró, cuánto salió, cuánto es para impuestos".
 - **Asistente IA en modo simple:** explica cada obligación sin jerga y responde "¿qué tengo que hacer este mes?". Nunca presenta nada solo.
-- **"Necesito un contador":** botón para pedir ayuda a un estudio de Faro (Estudio Cristofaro primero), lo que genera leads para los estudios.
+- **"Necesito un contador":** abre la Red de estudios Faro (§2.i) para elegir un estudio cercano y del rubro. Genera clientes para los estudios.
 
 **Requisito técnico de ARCA:** para facturar en nombre de cada usuario, el usuario delega el servicio web de facturación electrónica a la CUIT de Faro en el Administrador de Relaciones de ARCA (así trabajan los facturadores en la nube). Esto requiere que la empresa que opera Faro tenga CUIT, certificado digital de producción y una homologación previa. Mientras tanto, se trabaja en el ambiente de homologación.
 
@@ -181,7 +181,7 @@ Módulo de finanzas personales de Faro, disponible para cualquier persona: usuar
 - **Metas** (viaje, fondo de emergencia, un objetivo puntual) con ahorro sugerido por semana.
 - **Resumen semanal de un minuto:** el domingo, por la app o WhatsApp, en texto o audio.
 - **Coach de finanzas:** el agente de Bitácora explica, aconseja hábitos y compara alternativas generales para el ahorro (plazo fijo, fondos money market, dólar MEP) con fines educativos.
-  - El asesoramiento de inversión personalizado es una actividad regulada (CNV, idóneos registrados). Bitácora da educación e información general y, si la persona quiere asesoramiento, la deriva a un asesor matriculado. Puede ser un servicio de Estudio Cristofaro o de socios.
+  - El asesoramiento de inversión personalizado es una actividad regulada (CNV, idóneos registrados). Bitácora da educación e información general y, si la persona quiere asesoramiento, la deriva a un asesor matriculado. Los asesores se encuentran en la Red de estudios Faro (§2.i), con el filtro de asesoramiento financiero.
 
 **Conexión con el resto de Faro:**
 - **Gastos compartidos:** los gastos de grupos ya cuentan en Bitácora.
@@ -195,6 +195,20 @@ Módulo de finanzas personales de Faro, disponible para cualquier persona: usuar
 **Modelo:**
 - Bitácora gratis (captura por audio limitada al mes) y Bitácora Plus (captura ilimitada, WhatsApp, conexiones de mail y Mercado Pago, coach y metas).
 - Las organizaciones y los estudios pueden regalar Bitácora Plus a sus empleados como beneficio.
+
+## 2.i Red de estudios Faro (directorio)
+
+Cuando un autónomo, una persona con Bitácora o una empresa busca un contador, Faro le muestra un directorio neutral de los estudios y contadores que usan Faro y aceptan clientes nuevos.
+
+- **Ficha del estudio:** nombre, foto o logo, zona y modalidad (presencial, remoto o ambas), rubros en los que se especializa (de las plantillas de §2.f), servicios, matrícula verificada, idiomas, rango de honorarios orientativo, tiempo de respuesta real medido en Faro y reseñas de clientes verificados.
+- **Búsqueda:** por cercanía (ubicación o barrio), rubro, servicio, modalidad y disponibilidad. Vista de lista y de mapa.
+- **Contacto:** "Pedir propuesta" o "Agendar una llamada" con la agenda del estudio. Al aceptar, la persona comparte sus datos con consentimiento explícito y revocable, y pasa a ser organización del estudio sin migrar nada.
+- **Neutralidad:**
+  - El orden se basa solo en criterios objetivos (cercanía, coincidencia de rubro, disponibilidad, tiempo de respuesta y reseñas).
+  - Estudio Cristofaro aparece como uno más, sin prioridad.
+  - Si en el futuro hay ubicaciones pagas, se muestran rotuladas como "Destacado".
+- **Para los estudios:** aparecer en la Red es opcional (opt-in desde su panel) y está incluido en Rumbo y Horizonte. Verificación de matrícula antes de publicarse.
+- **Reseñas:** solo de clientes reales del estudio en Faro, con moderación y derecho a respuesta.
 
 ## 2.h Mapa de roles y jerarquías
 
