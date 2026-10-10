@@ -941,3 +941,45 @@ body {
     transform: translateY(101%);
   }
 }
+
+/* ───────────── Landing de Faro ───────────── */
+/* El haz del faro: un cono dorado que barre el fondo del hero, muy suave */
+.faro-beam {
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgb(200 164 101 / 0.16) 10deg, rgb(200 164 101 / 0.05) 26deg, transparent 40deg, transparent 360deg);
+  animation: faro-sweep 16s linear infinite;
+  pointer-events: none;
+}
+.faro-glow {
+  background: radial-gradient(closest-side, rgb(200 164 101 / 0.35), rgb(200 164 101 / 0.08) 45%, transparent 70%);
+  animation: faro-pulse 4s ease-in-out infinite;
+}
+@keyframes faro-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes faro-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+/* Mini demos de la landing: elementos que entran en bucle */
+.faro-demo-in {
+  animation: faro-demo-in 0.7s var(--ease-expo) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+@keyframes faro-demo-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faro-beam,
+  .faro-glow,
+  .faro-demo-in {
+    animation: none;
+  }
+}

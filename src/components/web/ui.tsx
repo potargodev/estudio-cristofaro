@@ -20,12 +20,26 @@ export function SectionIndex({ n, children, className, light = false }: { n: str
 }
 
 /** Botón principal: rosé, recto, magnético */
-export function CtaLink({ href, children, className, magnetic = true }: { href: string; children: React.ReactNode; className?: string; magnetic?: boolean }) {
+export function CtaLink({
+  href,
+  children,
+  className,
+  magnetic = true,
+  tone = "rose",
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  magnetic?: boolean;
+  /** Faro usa el dorado ("la luz") como acento */
+  tone?: "rose" | "gold";
+}) {
   const link = (
     <Link
       href={href}
       className={cn(
-        "inline-flex h-12 items-center rounded-[2px] bg-rose-light px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper focus-visible:outline-offset-4",
+        "inline-flex h-12 items-center rounded-[2px] px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper focus-visible:outline-offset-4",
+        tone === "gold" ? "bg-gold" : "bg-rose-light",
         className,
       )}
     >
