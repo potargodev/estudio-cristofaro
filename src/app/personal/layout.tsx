@@ -5,12 +5,15 @@ import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { PersonalNav } from "@/components/faro/PersonalNav";
 import { Toaster } from "@/components/ui/sonner";
 import { signOut } from "../admin/actions";
+import { endAssistedAccess } from "../faro-manager/actions";
+import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = { title: { default: "Faro", template: "%s · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
-/** Panel del autónomo (Faro Personal): pensado para el celular, con barra inferior */
-export default function PersonalLayout({ children }: { children: React.ReactNode }) {
+/** Panel del autónomo o de la persona: pensado para el celular, con barra inferior */
+export default async function PersonalLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
   return (
     <div className="admin-shell app-ui min-h-dvh bg-canvas pb-[calc(72px+env(safe-area-inset-bottom))] text-ink md:pb-0">
       <header className="sticky top-0 z-30 bg-night text-paper">
@@ -28,6 +31,19 @@ export default function PersonalLayout({ children }: { children: React.ReactNode
           </form>
         </div>
       </header>
+      {user?.assisted && (
+        <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2 text-[13px] text-[#7a5410] sm:px-6">
+          <span>
+            <strong className="font-medium">Acceso asistido de Faro</strong> a {user.assisted.studioName} hasta{" "}
+            {user.assisted.expiresAt.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })}. Todo queda en la auditoría.
+          </span>
+          <form action={endAssistedAccess}>
+            <button type="submit" className="font-medium underline underline-offset-4">
+              Terminar el acceso
+            </button>
+          </form>
+        </div>
+      )}
       <main className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 sm:pt-8">{children}</main>
       <PersonalNav variant="bottom" />
       <Toaster position="top-center" />

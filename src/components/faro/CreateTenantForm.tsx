@@ -33,6 +33,7 @@ export function CreateTenantForm() {
             [
               ["studio", "Estudio contable o contador"],
               ["personal", "Autónomo (Faro Personal)"],
+              ["persona", "Persona (Bitácora)"],
             ] as const
           ).map(([k, label]) => (
             <label key={k} className="flex items-center gap-2">

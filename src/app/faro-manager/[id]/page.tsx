@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setModuleOverride, setTenantPlan, setTenantStatus, startAssistedAccess } from "@/app/faro-manager/actions";
+import { setTenantLimitsAction, setTenantNotesAction } from "@/app/faro-manager/catalog-actions";
+import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { Notice } from "@/components/admin/AdminField";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { Panel } from "@/components/admin/kit/Panel";
@@ -46,13 +48,13 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
   const ov = new Map(overrides.map((o) => [o.module_key, o]));
   return (
     <div className="max-w-5xl">
-      <Link href="/faro-manager" className="text-[13px] text-muted underline-offset-4 hover:underline">
+      <Link href="/faro-manager/tenants" className="text-[13px] text-muted underline-offset-4 hover:underline">
         ← Tenants
       </Link>
       <PageHeader
         title={t.name}
-        description={`${KIND_LABEL[t.kind]} · plan ${getPlan(t.plan_key)?.name ?? t.plan_key} · alta ${fmt.format(t.created_at)} (${t.created_via})${t.cuit ? ` · CUIT ${t.cuit}` : ""}`}
-        actions={<StatusBadge status={t.status === "activo" ? "activa" : "pausada"} label={t.status === "activo" ? "Activo" : "Suspendido"} />}
+        description={`${KIND_LABEL[t.kind]} · plan ${getPlan(t.plan_key)?.name ?? t.plan_key} · alta ${fmt.format(t.created_at)} (${t.created_via})${t.cuit ? ` · CUIT ${t.cuit}` : ""}${t.industries.length ? ` · rubros: ${t.industries.map((k) => INDUSTRY_NAMES[k] ?? k).join(", ")}` : ""}`}
+        actions={<StatusBadge status={t.status === "activo" ? "activa" : t.status === "prueba" ? "onboarding" : "pausada"} label={t.status === "activo" ? "Activo" : t.status === "prueba" ? `En prueba${t.trial_ends_at ? ` hasta ${fmt.format(t.trial_ends_at)}` : ""}` : "Suspendido"} />}
         className="mt-3"
       />
       {sp.ok && <Notice>{sp.ok}</Notice>}
@@ -99,8 +101,8 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
             {owner && (
               <form action={setTenantStatus} className="grid gap-2">
                 <input type="hidden" name="id" value={t.id} />
-                <input type="hidden" name="status" value={t.status === "activo" ? "suspendido" : "activo"} />
-                {t.status === "activo" ? (
+                <input type="hidden" name="status" value={t.status !== "suspendido" ? "suspendido" : "activo"} />
+                {t.status !== "suspendido" ? (
                   <>
                     <label htmlFor="reason" className="text-sm font-medium text-ink/80">
                       Motivo de la suspensión
@@ -179,10 +181,44 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
           </Panel>
         </div>
 
-        {t.kind === "studio" && (
+        {owner && (
+          <Panel title="Límites propios" icon={KeyRound}>
+            <p className="text-[14px] text-muted">Pisan los del plan para este tenant (por ejemplo, organizaciones extra). Vacío = el del plan; ∞ = sin límite.</p>
+            <form action={setTenantLimitsAction} className="mt-3 grid gap-3 sm:grid-cols-3">
+              <input type="hidden" name="id" value={t.id} />
+              {(
+                [
+                  ["organizations", "Organizaciones"],
+                  ["staffUsers", "Usuarios del estudio"],
+                  ["smartDocsPerMonth", "Lectura inteligente / mes"],
+                ] as const
+              ).map(([k, label]) => (
+                <label key={k} className="grid gap-1 text-[13px] text-muted">
+                  {label} (plan: {e?.plan.limits[k] ?? "∞"})
+                  <Input name={`limit_${k}`} defaultValue={k in (t.limits ?? {}) ? (t.limits[k] == null ? "∞" : String(t.limits[k])) : ""} />
+                </label>
+              ))}
+              <div className="sm:col-span-3">
+                <SubmitButton variant="secondary">Guardar límites</SubmitButton>
+              </div>
+            </form>
+          </Panel>
+        )}
+
+        <Panel title="Notas internas" icon={ShieldAlert}>
+          <form action={setTenantNotesAction} className="grid gap-2">
+            <input type="hidden" name="id" value={t.id} />
+            <textarea name="notes" defaultValue={t.notes ?? ""} rows={3} maxLength={4000} aria-label="Notas internas" placeholder="Solo las ve el equipo de Faro" className="rounded-md border border-line bg-surface p-3 text-[14px]" />
+            <div>
+              <SubmitButton variant="secondary">Guardar notas</SubmitButton>
+            </div>
+          </form>
+        </Panel>
+
+        {(
           <Panel title="Acceso asistido" icon={LifeBuoy}>
             <p className="text-[14px] text-muted">
-              Para dar soporte adentro del estudio. Es temporal (hasta 2 horas), se le avisa por mail al dueño y todo lo que hagas queda en la auditoría del estudio.
+              Para dar soporte adentro del tenant. Dura 30 minutos, se le avisa por mail al dueño, se ve un banner mientras dure y todo lo que hagas queda en la auditoría del tenant.
             </p>
             <form action={startAssistedAccess} className="mt-3 flex flex-wrap items-end gap-2">
               <input type="hidden" name="id" value={t.id} />
@@ -192,11 +228,6 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                 </label>
                 <Input id="ar" name="reason" required minLength={10} placeholder="Ej.: el estudio pidió ayuda para configurar Xubio (ticket 123)" className="mt-1" />
               </div>
-              <select name="minutes" defaultValue="60" aria-label="Duración" className="h-9 border border-line bg-surface px-2 text-[14px]">
-                <option value="30">30 minutos</option>
-                <option value="60">1 hora</option>
-                <option value="120">2 horas</option>
-              </select>
               <SubmitButton confirm={`¿Abrir un acceso asistido a ${t.name}? Se le avisa al dueño.`} confirmLabel="Abrir acceso">
                 Abrir acceso
               </SubmitButton>

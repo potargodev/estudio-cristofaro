@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, inArray, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -44,7 +44,7 @@ export interface CreateTenantState {
 /** Alta manual de un estudio o un autónomo con su dueño (contraseña temporal) */
 export async function createTenantAction(_prev: CreateTenantState, fd: FormData): Promise<CreateTenantState> {
   const faro = await requireFaro(true);
-  const kind = (s(fd, "kind") === "personal" ? "personal" : "studio") as TenantKind;
+  const kind = (s(fd, "kind") === "personal" || s(fd, "kind") === "persona" ? s(fd, "kind") : "studio") as TenantKind;
   const password = generatePassword();
   const r = await createTenant({
     kind,
@@ -86,6 +86,7 @@ export async function setTenantStatus(fd: FormData) {
   const t = await tenantOf(s(fd, "id"));
   if (!t) back(BASE, "error=tenant");
   const suspend = s(fd, "status") === "suspendido";
+  // Reactivar un tenant en prueba vencida lo deja activo
   const reason = s(fd, "reason");
   if (suspend && !reason) back(`${BASE}/${t!.id}`, "error=Escrib%C3%AD%20el%20motivo%20de%20la%20suspensi%C3%B3n");
   await getDb().update(studios).set({ status: suspend ? "suspendido" : "activo", suspended_reason: suspend ? reason : null }).where(eq(studios.id, t!.id));
@@ -120,14 +121,14 @@ export async function setModuleOverride(fd: FormData) {
   back(`${BASE}/${t!.id}`, "ok=M%C3%B3dulo%20actualizado#modulos");
 }
 
-/** Acceso asistido: explícito (con motivo), temporal (hasta 2 horas) y auditado; se le avisa al dueño del tenant */
+/** Acceso asistido: explícito (con motivo), temporal (30 minutos) y auditado; se le avisa al dueño del tenant */
 export async function startAssistedAccess(fd: FormData) {
   const faro = await requireFaro();
   const t = await tenantOf(s(fd, "id"));
   const reason = s(fd, "reason");
-  const minutes = Math.min(120, Math.max(15, Number(s(fd, "minutes") ?? 60) || 60));
+  // Modo soporte: siempre 30 minutos (§ Etapa 5), con motivo obligatorio
+  const minutes = 30;
   if (!t) back(BASE, "error=tenant");
-  if (t!.kind !== "studio") back(`${BASE}/${t!.id}`, "error=El%20acceso%20asistido%20por%20ahora%20es%20solo%20para%20estudios");
   if (!reason || reason.length < 10) back(`${BASE}/${t!.id}`, "error=Contá%20el%20motivo%20del%20acceso%20(al%20menos%2010%20caracteres)");
   const db = getDb();
   // Uno a la vez: se cierran los anteriores de esta persona
@@ -137,7 +138,7 @@ export async function startAssistedAccess(fd: FormData) {
     .values({ faro_user_id: faro.id, studio_id: t!.id, reason: reason!, expires_at: new Date(Date.now() + minutes * 60000) })
     .returning();
   await audit({ studioId: t!.id, actor: faro, action: "faro.asistido_iniciar", entityType: "acceso_asistido", entityId: g.id, metadata: { motivo: reason, minutos: minutes } });
-  const owners = await db.select({ email: users.email }).from(users).where(and(eq(users.studioId, t!.id), eq(users.role, "dueno"), eq(users.active, true)));
+  const owners = await db.select({ email: users.email }).from(users).where(and(eq(users.studioId, t!.id), inArray(users.role, ["dueno", "titular"]), eq(users.active, true)));
   for (const o of owners) {
     await sendMail({
       to: o.email,
@@ -149,7 +150,7 @@ export async function startAssistedAccess(fd: FormData) {
     });
   }
   (await cookies()).set(ASSISTED_COOKIE, g.id, { httpOnly: true, sameSite: "lax", secure: getSiteUrl().startsWith("https"), maxAge: minutes * 60, path: "/" });
-  redirect("/admin");
+  redirect(t!.kind === "studio" ? "/admin" : "/personal");
 }
 
 export async function endAssistedAccess() {

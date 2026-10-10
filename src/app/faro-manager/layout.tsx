@@ -1,70 +1,25 @@
+import { and, count, eq } from "drizzle-orm";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { FaroLogo } from "@/components/admin/kit/FaroLogo";
-import { SubmitButton } from "@/components/admin/ui";
-import { ThemeToggle } from "@/components/app/ThemeToggle";
+import { FaroManagerShell } from "@/components/faro/FaroManagerShell";
 import { Toaster } from "@/components/ui/sonner";
+import { getDb } from "@/db";
+import { plan_requests } from "@/db/schema";
 import { requireFaro } from "@/lib/auth";
 import { signOut } from "../admin/actions";
 
 export const metadata: Metadata = { title: { default: "Faro Manager", template: "%s · Faro Manager" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
+/** Faro Manager: solo el nivel plataforma (faro_owner y faro_support, con 2FA) */
 export default async function FaroManagerLayout({ children }: { children: React.ReactNode }) {
   const faro = await requireFaro();
+  const [[req]] = await Promise.all([getDb().select({ n: count() }).from(plan_requests).where(and(eq(plan_requests.status, "pendiente")))]);
   return (
-    <div className="admin-shell app-ui min-h-dvh bg-canvas text-ink">
-      <header className="sticky top-0 z-30 bg-night text-paper">
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <Link href="/faro-manager" aria-label="Faro Manager">
-            <FaroLogo size="sm" sub="Manager" />
-          </Link>
-          <nav aria-label="Faro Manager" className="ml-2 hidden items-center gap-1 text-[14px] sm:flex">
-            <Link href="/faro-manager" className="px-3 py-2 text-paper/80 hover:text-paper">
-              Tenants
-            </Link>
-            {faro.faroRole === "faro_owner" && (
-              <Link href="/faro-manager/nuevo" className="px-3 py-2 text-paper/80 hover:text-paper">
-                Alta manual
-              </Link>
-            )}
-            <Link href="/faro-manager/planes" className="px-3 py-2 text-paper/80 hover:text-paper">
-              Planes y módulos
-            </Link>
-            <Link href="/faro-manager/plantillas" className="px-3 py-2 text-paper/80 hover:text-paper">
-              Plantillas
-            </Link>
-          </nav>
-          <span className="flex-1" />
-          <span className="hidden text-[13px] text-paper/60 md:inline">
-            {faro.name} · {faro.faroRole === "faro_owner" ? "Owner de Faro" : "Soporte de Faro"}
-          </span>
-          <Link href="/admin" className="text-[13px] text-paper/80 underline-offset-4 hover:underline">
-            Mi estudio
-          </Link>
-          <ThemeToggle className="text-paper/75 hover:text-paper" />
-          <form action={signOut}>
-            <SubmitButton variant="secondary" pendingText="…">
-              Salir
-            </SubmitButton>
-          </form>
-        </div>
-        <nav aria-label="Faro Manager" className="flex gap-1 overflow-x-auto border-t border-paper/10 px-4 text-[14px] sm:hidden">
-          <Link href="/faro-manager" className="px-3 py-2 text-paper/80">
-            Tenants
-          </Link>
-          {faro.faroRole === "faro_owner" && (
-            <Link href="/faro-manager/nuevo" className="px-3 py-2 text-paper/80">
-              Alta manual
-            </Link>
-          )}
-          <Link href="/faro-manager/planes" className="px-3 py-2 text-paper/80">
-            Planes
-          </Link>
-        </nav>
-      </header>
-      <main className="mx-auto w-full max-w-[1440px] px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-8">{children}</main>
+    <>
+      <FaroManagerShell user={{ name: faro.name, email: faro.email, role: faro.faroRole! }} badges={{ requests: req?.n ?? 0 }} signOut={signOut}>
+        {children}
+      </FaroManagerShell>
       <Toaster position="top-center" />
-    </div>
+    </>
   );
 }
