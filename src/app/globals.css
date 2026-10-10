@@ -522,8 +522,18 @@ body {
   transform-origin: left center;
 }
 .hero-paused .hero-progress,
-.hero-paused .ken-burns {
+.hero-paused .ken-burns,
+.hero-paused .hero-zoom {
   animation-play-state: paused;
+}
+/* Zoom lento de la foto del hero (1 → 1,05); con reduced motion no se aplica */
+.hero-zoom {
+  animation: hero-zoom 9s linear both;
+  transform-origin: 60% 50%;
+}
+@keyframes hero-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
 }
 @keyframes hero-progress {
   from { transform: scaleX(0); }
@@ -560,6 +570,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .ken-burns,
+  .hero-zoom,
   .hero-progress,
   .tab-in,
   .skeleton {

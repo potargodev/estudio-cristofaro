@@ -15,11 +15,35 @@ import { HERO_SLIDE_EVENT } from "@/lib/hero";
 export function HeroStatements({ statements, interval }: { statements: string[]; interval: number }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [hover, setHover] = useState(false);
   const [reduce, setReduce] = useState(false);
   const busy = useRef(false);
   const stack = useRef<HTMLDivElement>(null);
+  // Tiempo ya visto de la frase actual: al pausar (botón o hover) y reanudar, sigue desde ahí
+  const elapsed = useRef(0);
+  const shownIndex = useRef(0);
+  const stopped = paused || hover;
 
   useEffect(() => setReduce(reducedMotion()), []);
+
+  // Pausa al pasar el mouse por el hero (no en pantallas táctiles)
+  useEffect(() => {
+    const section = stack.current?.closest("section");
+    if (!section || !window.matchMedia("(hover: hover)").matches) return;
+    const on = () => setHover(true);
+    const off = () => setHover(false);
+    section.addEventListener("mouseenter", on);
+    section.addEventListener("mouseleave", off);
+    return () => {
+      section.removeEventListener("mouseenter", on);
+      section.removeEventListener("mouseleave", off);
+    };
+  }, []);
+
+  // El fondo (zoom de la foto) se pausa junto con las frases
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent(HERO_SLIDE_EVENT, { detail: { paused: stopped } }));
+  }, [stopped]);
 
   // GSAP no se carga al abrir la página: se precarga poco antes del primer cambio
   useEffect(() => {
@@ -29,11 +53,19 @@ export function HeroStatements({ statements, interval }: { statements: string[];
   }, [reduce, interval, statements.length]);
 
   useEffect(() => {
-    if (reduce || paused || statements.length < 2) return;
-    // Durante la intro (primera visita) la primera frase espera a que termine
-    const t = window.setTimeout(() => go((index + 1) % statements.length), interval * 1000);
-    return () => window.clearTimeout(t);
-  }, [index, paused, reduce, interval, statements.length]); // eslint-disable-line react-hooks/exhaustive-deps
+    // Frase nueva: el tiempo arranca de cero
+    if (shownIndex.current !== index) {
+      shownIndex.current = index;
+      elapsed.current = 0;
+    }
+    if (reduce || stopped || statements.length < 2) return;
+    const start = performance.now();
+    const t = window.setTimeout(() => go((index + 1) % statements.length), Math.max(0, interval * 1000 - elapsed.current));
+    return () => {
+      window.clearTimeout(t);
+      elapsed.current += performance.now() - start;
+    };
+  }, [index, stopped, reduce, interval, statements.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function go(next: number) {
     const root = stack.current;
@@ -123,9 +155,9 @@ export function HeroStatements({ statements, interval }: { statements: string[];
               <li key={s} className="relative h-px w-4 overflow-hidden bg-hair-strong sm:w-12">
                 {i === index && (
                   <span
-                    key={`${index}-${paused}`}
-                    className={cn("absolute inset-0 origin-left bg-rose-light", paused && "scale-x-100")}
-                    style={paused ? undefined : { animation: `hero-progress ${interval}s linear both` }}
+                    key={index}
+                    className="absolute inset-0 origin-left bg-rose-light"
+                    style={{ animation: `hero-progress ${interval}s linear both`, animationPlayState: stopped ? "paused" : "running" }}
                   />
                 )}
                 {i < index && <span className="absolute inset-0 bg-paper/40" />}
