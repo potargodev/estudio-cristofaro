@@ -131,7 +131,7 @@ async function Stats({ studioId }: { studioId: string }) {
             "Sin respuestas en 30 días"
           ) : (
             <span className={avgHours <= 24 ? "text-[#1f7a43]" : "text-[#b42318]"}>
-              Primera respuesta: {avgHours} h promedio · objetivo 24 h
+              1.ª respuesta: {avgHours}{"\u00a0"}h promedio · objetivo 24{"\u00a0"}h
             </span>
           )
         }
