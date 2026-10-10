@@ -24,7 +24,7 @@ export function FaroProblem() {
   return (
     <section aria-labelledby="problema" className="border-t border-hair bg-night py-16 lg:py-28">
       <Container>
-        <SectionIndex n="01">El problema</SectionIndex>
+        <SectionIndex n="02">El problema</SectionIndex>
         <SplitHeading id="problema" className="display-md mt-8 max-w-3xl text-paper">
           Los números están desparramados.
         </SplitHeading>
@@ -69,7 +69,7 @@ export function FaroLevels() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="04">Niveles</SectionIndex>
+            <SectionIndex n="05">Niveles</SectionIndex>
             <SplitHeading id="niveles" className="display-md mt-8 text-paper">
               Cada uno ve lo suyo. Nadie más.
             </SplitHeading>
@@ -100,7 +100,7 @@ export function FaroCase() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionIndex n="12">Caso real</SectionIndex>
+            <SectionIndex n="13">Caso real</SectionIndex>
             <SplitHeading id="caso-titulo" className="display-md mt-8 text-paper">
               Nació adentro de un estudio.
             </SplitHeading>
@@ -144,7 +144,7 @@ export function FaroFaq() {
   return (
     <section id="preguntas" aria-labelledby="faq-titulo" className="scroll-mt-16 border-t border-hair bg-night py-16 lg:py-28">
       <Container>
-        <SectionIndex n="13">Preguntas frecuentes</SectionIndex>
+        <SectionIndex n="14">Preguntas frecuentes</SectionIndex>
         <SplitHeading id="faq-titulo" className="display-md mt-8 text-paper">
           Lo que nos preguntan.
         </SplitHeading>
@@ -184,8 +184,8 @@ export function FaroCta() {
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-[17px] text-paper/70">Empezá gratis en dos minutos, o mirá Faro con alguien del equipo.</p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <CtaLink tone="gold" href="/faro/registro">
-              Crear mi cuenta gratis
+            <CtaLink tone="gold" href="/faro/registro?tipo=persona">
+              Empezá gratis
             </CtaLink>
             <GhostLink href="/faro/demo">Agendar una demo</GhostLink>
           </div>

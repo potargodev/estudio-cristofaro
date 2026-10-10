@@ -1,8 +1,13 @@
-import type { MetadataRoute } from "next";
+// App instalable (PWA) de Estudio Cristofaro: Android, iPhone/iPad, Windows y
+// Mac. Abre en /app, que lleva a cada uno a lo suyo (portal del cliente o
+// backoffice del estudio). Las pantallas de Faro usan /faro.webmanifest.
+export const dynamic = "force-static";
 
-// App instalable (PWA): Android, iPhone/iPad, Windows y Mac. Abre en /app, que
-// lleva a cada uno a lo suyo (portal del cliente o backoffice del estudio).
-export default function manifest(): MetadataRoute.Manifest {
+export function GET() {
+  return new Response(JSON.stringify(manifest()), { headers: { "Content-Type": "application/manifest+json", "Cache-Control": "public, max-age=3600" } });
+}
+
+function manifest() {
   return {
     id: "/app",
     name: "Estudio Cristofaro",

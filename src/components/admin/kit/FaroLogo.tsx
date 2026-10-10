@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Sello } from "./Sello";
 
 // Logo de Faro (docs/faro-producto.md §4): el isotipo circular de Estudio
-// Cristofaro + "FARO" en mayúsculas, en black con tracking amplio. Rosé de la
+// Cristofaro + "FARO" en mayúsculas, en Bodoni Moda 800 con tracking amplio. Rosé de la
 // marca sobre oscuro y azul noche sobre claro. Pendiente: isotipo propio de Faro.
 
 export function FaroLogo({ className, size = "md", sub, tone = "dark" }: { className?: string; size?: "sm" | "md" | "lg"; sub?: string | null; tone?: "dark" | "light" }) {
@@ -12,7 +12,7 @@ export function FaroLogo({ className, size = "md", sub, tone = "dark" }: { class
     <span className={cn("inline-flex min-w-0 items-center gap-3", className)}>
       <Sello className={cn("shrink-0", seal, tone === "dark" ? "text-gold" : "text-navy")} title="Faro" />
       <span className="min-w-0 leading-none">
-        <span className={cn("block font-sans font-black uppercase tracking-[0.28em]", word, tone === "dark" ? "text-paper" : "text-ink")}>Faro</span>
+        <span className={cn("block font-faro font-extrabold uppercase tracking-[0.24em]", word, tone === "dark" ? "text-paper" : "text-ink")}>Faro</span>
         {sub && <span className={cn("mt-1 block truncate text-[11px]", tone === "dark" ? "text-paper/60" : "text-muted")}>{sub}</span>}
       </span>
     </span>

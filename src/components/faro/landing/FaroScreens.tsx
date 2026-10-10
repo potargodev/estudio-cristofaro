@@ -246,7 +246,7 @@ export function FaroScreens() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="05">Así se ve</SectionIndex>
+            <SectionIndex n="06">Así se ve</SectionIndex>
             <SplitHeading id="pantallas-titulo" className="display-md mt-8 text-paper">
               Pantallas reales, datos de ejemplo.
             </SplitHeading>

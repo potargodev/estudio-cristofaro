@@ -43,8 +43,8 @@ export function FaroHeader() {
         <Link href="/ingresar" className="u-draw hidden pb-0.5 text-[14px] text-paper/80 hover:text-paper sm:inline">
           Ingresar
         </Link>
-        <CtaLink tone="gold" href="/faro/registro" className="hidden h-10 px-4 text-[14px] sm:inline-flex">
-          Empezar gratis
+        <CtaLink tone="gold" href="/faro/registro?tipo=persona" className="hidden h-10 px-4 text-[14px] sm:inline-flex">
+          Empezá gratis
         </CtaLink>
         <button type="button" onClick={() => setOpen(true)} aria-label="Abrir menú" aria-expanded={open} className="grid size-10 place-items-center border border-hair-strong text-paper xl:hidden">
           <Menu className="size-5" aria-hidden />
@@ -66,8 +66,8 @@ export function FaroHeader() {
             ))}
           </nav>
           <div className="mt-auto flex flex-wrap items-center gap-5">
-            <CtaLink tone="gold" href="/faro/registro" magnetic={false}>
-              Empezar gratis
+            <CtaLink tone="gold" href="/faro/registro?tipo=persona" magnetic={false}>
+              Empezá gratis
             </CtaLink>
             <Link href="/ingresar" className="text-[15px] text-paper/80">
               Ingresar

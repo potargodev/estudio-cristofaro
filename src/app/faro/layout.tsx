@@ -5,9 +5,11 @@ import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { Cursor } from "@/components/web/Cursor";
 import { MotionBoot } from "@/components/web/MotionBoot";
 import { FARO } from "@/lib/faro/brand";
+import { FARO_APP_METADATA } from "@/lib/faro/pwa";
 
 export const metadata: Metadata = {
-  title: { default: "Faro · Gestión para estudios contables y autónomos", template: "%s · Faro" },
+  ...FARO_APP_METADATA,
+  title: { absolute: "Faro · Tus finanzas, tu gestión y tus grupos de gastos", template: "%s · Faro" },
   description: `${FARO.claim} Cartera ordenada, automatizaciones, IA con aprobación humana y portal para tus clientes. Y Faro Personal para autónomos que llevan sus números solos.`,
 };
 

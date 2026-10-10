@@ -10,8 +10,9 @@ import { Toaster } from "@/components/ui/sonner";
 import { homeOf } from "@/modules/gastos/server/actor";
 import { getGastosActor } from "@/modules/gastos/server/session";
 import { gastosSignOut } from "./actions";
+import { FARO_APP_METADATA } from "@/lib/faro/pwa";
 
-export const metadata: Metadata = { title: { default: "Grupos de gastos", template: "%s · Grupos de gastos" }, robots: { index: false, follow: false } };
+export const metadata: Metadata = { ...FARO_APP_METADATA, title: { absolute: "Grupos de gastos · Faro", template: "%s · Grupos de gastos · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 const PANEL: Record<string, string> = { "/admin": "Volver al estudio", "/portal": "Volver al portal", "/personal": "Volver a tu panel" };

@@ -39,7 +39,7 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 ## Estilo
 - Textos de interfaz en español rioplatense (voseo), lenguaje simple para clientes y preciso para el estudio.
 - Identidad de marca: azul noche #1c2235, rosé #a57c6d (el "dorado" de la marca es este rosé / oro rosa, no un amarillo; los tokens `gold` apuntan a él), pizarra; títulos y números grandes en Gilda Display (reemplazó a Forum en el rediseño, elegida por el cliente) y textos en Archivo.
-- Logo de Faro: sello de Estudio Cristofaro + "FARO" en mayúsculas, Archivo black con tracking amplio (`FaroLogo`). El portal de una organización muestra la marca del estudio y "Con tecnología de Faro".
+- Logo de Faro: sello de Estudio Cristofaro + "FARO" en mayúsculas, Bodoni Moda 800 (next/font, `font-faro`) con tracking amplio (`FaroLogo`), en la app, /faro, el Faro Manager, los mails (`mailLayout` con marca "Faro") y los íconos de la PWA de Faro (`/faro.webmanifest`). El portal de una organización muestra la marca del estudio y "Con tecnología de Faro".
 - App (backoffice, portal, panel personal, gastos, Faro Manager): clase `app-ui`, modo claro y oscuro (`data-theme` en `<html>`), barra lateral siempre oscura (`keep-dark` o `bg-night`), esquinas sutiles (`rounded-md` = 6 px en la app, 0 en la web) y fondo de página `bg-canvas` (no `bg-paper`, que es el claro fijo para texto sobre oscuro). La web pública sigue en la dirección "Precisión" (recta y oscura).
 - Mobile first. Respetar prefers-reduced-motion.
 

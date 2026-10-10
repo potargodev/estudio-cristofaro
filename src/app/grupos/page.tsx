@@ -5,7 +5,7 @@ import { GROUP_TYPES, formatMoney, type GroupType } from "@/modules/gastos/const
 import { requireGastos } from "@/modules/gastos/server/session";
 import { listGroups } from "@/modules/gastos/server/service";
 
-export const metadata = { title: "Tus grupos" };
+export const metadata = { title: { absolute: "Tus grupos · Faro" } };
 
 export default async function GastosHome() {
   const actor = await requireGastos();

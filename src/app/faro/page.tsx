@@ -11,6 +11,7 @@ import { FaroCase, FaroCta, FaroFaq, FaroLevels, FaroProblem } from "@/component
 import { FaroShared } from "@/components/faro/landing/FaroShared";
 import { getUsdArs, publicPlans } from "@/lib/faro/pricing";
 import { FILE_TEMPLATES } from "@/modules/industries/catalog";
+import { FaroCopilot } from "@/components/faro/landing/FaroCopilot";
 
 // Landing de Faro (docs/faro-producto.md §0, §2.c a §2.l y §3). En staging vive
 // en /faro; con FARO_HOSTS el middleware la sirve en la raíz de su dominio.
@@ -30,6 +31,7 @@ export default async function FaroPage() {
   return (
     <>
       <FaroHero />
+      <FaroCopilot />
       <FaroProblem />
       <FaroPillars />
       <FaroForWhom />

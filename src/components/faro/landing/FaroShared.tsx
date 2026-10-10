@@ -132,7 +132,7 @@ export function FaroShared() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="08">Grupos de gastos</SectionIndex>
+            <SectionIndex n="09">Grupos de gastos</SectionIndex>
             <SplitHeading id="gastos-titulo" className="display-md mt-8 text-paper">
               Dividí gastos con socios, equipo o amigos, y que lo de la empresa quede en la contabilidad.
             </SplitHeading>
@@ -144,8 +144,8 @@ export function FaroShared() {
               ))}
             </ul>
             <p className="mt-6 text-[14px] text-paper/55">Incluido en todos los planes, para estudios, autónomos, empresas y empleados.</p>
-            <CtaLink tone="gold" href="/faro/registro" className="mt-8">
-              Empezar gratis
+            <CtaLink tone="gold" href="/faro/registro?tipo=persona" className="mt-8">
+              Empezá gratis
             </CtaLink>
           </div>
           <div className="lg:col-span-5 lg:col-start-8">

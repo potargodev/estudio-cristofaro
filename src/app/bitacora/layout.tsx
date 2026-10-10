@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { AppFrame } from "@/components/app/shell/AppFrame";
 import { requireUser } from "@/modules/bitacora/session";
+import { FARO_APP_METADATA } from "@/lib/faro/pwa";
 
-export const metadata: Metadata = { title: { default: "Bitácora", template: "%s · Bitácora" }, robots: { index: false, follow: false } };
+export const metadata: Metadata = { ...FARO_APP_METADATA, title: { absolute: "Bitácora · Faro", template: "%s · Bitácora · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 export default async function BitacoraLayout({ children }: { children: React.ReactNode }) {

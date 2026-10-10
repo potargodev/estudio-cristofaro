@@ -7,7 +7,9 @@ actualizado: 2026-10-10
 relacionados: [primeros-pasos/planes, primeros-pasos/primeros-pasos-estudio, grupos-de-gastos/crear-un-grupo]
 ---
 
-Crear la cuenta es gratis y no te pedimos tarjeta. Lo primero que te preguntamos es **¿Qué sos?**, porque cada tipo de cuenta arranca en un plan distinto.
+Crear la cuenta es gratis y no te pedimos tarjeta. Entrá a **/faro** o a **Ingresar** y tocá **Empezá gratis**. Lo primero que te preguntamos es **¿Qué sos?**, porque cada tipo de cuenta arranca en un plan distinto.
+
+Si te invitaron a un grupo de gastos, también podés crear la cuenta desde el enlace del grupo: vas directo al grupo.
 
 ## 1. Elegí qué sos
 
@@ -26,7 +28,7 @@ Después de entrar, Faro te hace unas preguntas cortas para dejar todo listo. Lo
 
 - **Estudio:** el nombre del estudio, los rubros que atendés y por dónde seguir.
 - **Autónomo:** tus datos (con tu CUIT armamos tu calendario), tu rubro y por dónde seguir.
-- **Persona:** qué querés hacer primero: dividir gastos, encontrar un contador o armar una Flota.
+- **Persona:** qué querés hacer primero: anotar tus gastos con el Copiloto, dividir gastos, encontrar un contador o armar una Flota. Al terminar, el **Copiloto** te saluda y te explica cómo usarlo: es tu pantalla de inicio.
 
 ## 4. La guía de primeros pasos
 
@@ -45,3 +47,13 @@ Todo Faro vive en el mismo marco: Copiloto, Bitácora, Grupos de gastos, Mensaje
 - En la computadora, el botón de arriba del menú lo **colapsa**: pasa a una barra horizontal de íconos arriba (pasá el mouse para ver el nombre). El botón de la izquierda lo vuelve a expandir. Faro recuerda tu elección. Atajo: tecla **[**.
 - En el celular, la barra de abajo tiene los accesos de todos los días y **Más** abre el menú completo.
 - Si tenés más de un espacio (por ejemplo, tu estudio y el Faro Manager, o varias organizaciones), cambiás desde tu nombre, abajo del menú.
+
+## Instalar Faro en el teléfono
+
+Faro se instala como una app, sin pasar por la tienda:
+
+- **Android (Chrome):** abrí Faro, tocá el menú **⋮** y elegí **Instalar app** (o **Agregar a la pantalla principal**).
+- **iPhone (Safari):** abrí Faro, tocá **Compartir** y elegí **Agregar a inicio**.
+
+La app abre directo en el **Copiloto**. Si mantenés apretado el ícono (en Android), tenés atajos al Copiloto, a la Bitácora y a tus Grupos.
+

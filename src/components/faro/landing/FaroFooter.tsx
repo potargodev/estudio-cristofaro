@@ -11,7 +11,7 @@ export function FaroFooter() {
         <div className="grid gap-10 border-b border-hair py-16 lg:grid-cols-12">
           <p className="display-sm lg:col-span-7">Prendé la luz: tu estudio, ordenado desde hoy.</p>
           <div className="flex flex-wrap items-end gap-4 lg:col-span-5 lg:justify-end">
-            <CtaLink tone="gold" href="/faro/registro">Empezar gratis</CtaLink>
+            <CtaLink tone="gold" href="/faro/registro?tipo=persona">Empezá gratis</CtaLink>
             <a href={`mailto:${FARO.contactEmail()}`} className="u-draw pb-0.5 text-[15px] text-paper/75 hover:text-paper">
               o escribinos
             </a>
@@ -38,7 +38,7 @@ export function FaroFooter() {
             <h2 className="text-[13px] text-gold">Cuenta</h2>
             <ul className="mt-4 space-y-2.5 text-[15px]">
               <li>
-                <Link href="/faro/registro" className="u-draw pb-0.5 text-paper/75 hover:text-paper">
+                <Link href="/faro/registro?tipo=persona" className="u-draw pb-0.5 text-paper/75 hover:text-paper">
                   Crear una cuenta
                 </Link>
               </li>

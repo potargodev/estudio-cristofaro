@@ -21,7 +21,7 @@ export function FaroPersonal() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="07" light>
+            <SectionIndex n="08" light>
               Faro Personal
             </SectionIndex>
             <SplitHeading id="personal-titulo" className="display-md mt-8 text-ink">
@@ -85,7 +85,7 @@ export function FaroPersonal() {
               ))}
             </ul>
             <CtaLink tone="gold" href="/faro/registro?tipo=personal" className="mt-6">
-              Empezar gratis
+              Empezá gratis
             </CtaLink>
           </div>
         </div>

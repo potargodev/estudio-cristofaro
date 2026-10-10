@@ -9,7 +9,7 @@ import { requirePersonal } from "@/lib/auth";
 import { getPlan, planFullName } from "@/lib/faro/plans";
 import { ownOrganization } from "@/lib/faro/tenants";
 
-export const metadata = { title: "Inicio" };
+export const metadata = { title: { absolute: "Inicio · Faro" } };
 
 const SOON = [
   { icon: FileText, title: "Facturación electrónica", text: "Facturas A, B, C y E con ARCA, con tu logo y link de pago." },

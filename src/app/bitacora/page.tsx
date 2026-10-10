@@ -8,7 +8,7 @@ import { listCategories, monthSummary } from "@/modules/bitacora/server";
 import { requireUser } from "@/modules/bitacora/session";
 import { createEntryAction, restoreEntryAction } from "./actions";
 
-export const metadata: Metadata = { title: "Bitácora" };
+export const metadata: Metadata = { title: { absolute: "Bitácora · Faro" } };
 
 const nextMonth = (m: string) => {
   const [y, mm] = m.split("-").map(Number);

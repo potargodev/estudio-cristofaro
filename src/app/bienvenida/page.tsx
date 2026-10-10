@@ -13,8 +13,9 @@ import { homeFor } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import { FILE_TEMPLATES } from "@/modules/industries/catalog";
 import { saveWelcomeData, saveWelcomeIndustries } from "./actions";
+import { FARO_APP_METADATA } from "@/lib/faro/pwa";
 
-export const metadata: Metadata = { title: "Bienvenida · Faro", robots: { index: false, follow: false } };
+export const metadata: Metadata = { ...FARO_APP_METADATA, title: { absolute: "Bienvenida · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 const field = "mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-[15px] text-ink focus:border-navy focus:outline-none";

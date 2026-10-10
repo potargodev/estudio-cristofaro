@@ -43,7 +43,7 @@ export function FaroHero() {
               Faro es una herramienta, no un estudio contable. Empezá gratis con Bitácora para tus finanzas personales; si sos autónomo, facturá y sabé cuánto pagar; si sos contador, gestioná tu cartera y conectá a tus clientes. Creada por contadores.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-6">
-              <CtaLink tone="gold" href="/faro/registro">Crear mi cuenta gratis</CtaLink>
+              <CtaLink tone="gold" href="/faro/registro?tipo=persona">Empezá gratis</CtaLink>
               <TextLink href="/faro/registro?tipo=studio" className="text-[15px] text-paper">
                 Soy estudio contable
               </TextLink>

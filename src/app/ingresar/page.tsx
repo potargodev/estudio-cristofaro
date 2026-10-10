@@ -7,12 +7,15 @@ import { isDbConfigured } from "@/db";
 import { getCurrentUser } from "@/lib/auth";
 import { AUTH_ERRORS, googleEnabled } from "@/lib/auth-server";
 import { homeFor } from "@/lib/roles";
+import { FARO_APP_METADATA } from "@/lib/faro/pwa";
 
-export const metadata: Metadata = { title: "Ingresar", robots: { index: false, follow: false } };
+export const metadata: Metadata = { ...FARO_APP_METADATA, title: { absolute: "Ingresar · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 function errorText(code?: string) {
   if (!code) return null;
+  // Google o enlace con un mail sin cuenta: puede ser alguien nuevo que quiere registrarse
+  if (code === "SIN_INVITACION") return "No encontramos una cuenta con ese mail. Si es tu primera vez, tocá «Empezá gratis» acá abajo. Si te invitó un estudio o una organización, pedile que te vuelva a invitar.";
   if (code in AUTH_ERRORS) return AUTH_ERRORS[code as keyof typeof AUTH_ERRORS];
   if (code === "INVALID_TOKEN" || code === "EXPIRED_TOKEN") return "El enlace venció o ya se usó. Pedí uno nuevo.";
   if (code === "access_denied") return "Cancelaste el ingreso con Google.";
@@ -36,13 +39,20 @@ export default async function IngresarPage({ searchParams }: { searchParams: Pro
         <div className="mt-8">
           <AccessChooser google={googleEnabled()} error={errorText(error)} />
         </div>
-        <p className="mt-10 text-[13px] leading-relaxed text-paper/50">
-          ¿Sos autónomo o tenés un estudio?{" "}
-          <Link href="/faro/registro" className="text-paper underline underline-offset-4 hover:text-rose-light">
-            Creá tu cuenta de Faro
+        <div className="mt-10 border-t border-paper/15 pt-6">
+          <p className="text-[15px] text-paper">¿Primera vez en Faro?</p>
+          <p className="mt-1 text-[13px] leading-relaxed text-paper/60">Creá tu cuenta gratis con Google o con un enlace por mail, sin contraseña: anotá tus gastos con el Copiloto y dividilos con amigos.</p>
+          <Link href="/faro/registro?tipo=persona" className="mt-4 inline-flex h-12 w-full items-center justify-center border border-rose-light/60 text-[15px] text-paper transition-colors hover:bg-paper/10">
+            Empezá gratis
           </Link>
-          .
-        </p>
+          <p className="mt-3 text-[13px] text-paper/50">
+            ¿Sos autónomo o tenés un estudio?{" "}
+            <Link href="/faro/registro" className="text-paper underline underline-offset-4 hover:text-rose-light">
+              Elegí tu tipo de cuenta
+            </Link>
+            .
+          </p>
+        </div>
         <p className="mt-3 text-[13px] leading-relaxed text-paper/50">
           ¿Todavía no sos cliente?{" "}
           <Link href="/agendar" className="text-paper underline underline-offset-4 hover:text-rose-light">

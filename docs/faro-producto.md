@@ -357,7 +357,7 @@ Los precios son de referencia y se editan desde el Faro Manager (USD con convers
 
 ## 4. Marca
 - Nombre: **Faro**. Concepto: la luz que te guía hacia una mejor gestión.
-- Logo inicial: el isotipo circular de Estudio Cristofaro + "FARO" en mayúsculas al lado.
+- Logo inicial: el isotipo circular de Estudio Cristofaro + "FARO" en mayúsculas al lado, en Bodoni Moda 800 con tracking amplio.
   - Pendiente antes de vender a otros estudios: un isotipo propio de Faro, para que no lleve el sello de otro estudio.
 - Colores: los de la marca (azul noche #1c2235, rosé #a57c6d y pizarra). El "dorado" de la marca es ese rosé (oro rosa, marrón clarito), con más presencia como "luz"; no se usa un amarillo.
 

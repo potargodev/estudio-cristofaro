@@ -6,7 +6,7 @@ import { requireUser } from "@/modules/bitacora/session";
 import { getPlatformAi, isConfigured } from "@/modules/copilot/platform";
 import { history, markSeen, welcomeIfEmpty } from "@/modules/copilot/server";
 
-export const metadata: Metadata = { title: "Copiloto" };
+export const metadata: Metadata = { title: { absolute: "Copiloto · Faro" } };
 
 /** Copiloto: la pantalla de inicio. El historial es del usuario de la sesión */
 export default async function CopilotoPage() {

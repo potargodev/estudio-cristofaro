@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
-import { Archivo, Gilda_Display } from "next/font/google";
+import { Archivo, Bodoni_Moda, Gilda_Display } from "next/font/google";
 import { PwaRegister } from "@/components/app/PwaRegister";
 import { themeScript } from "@/components/app/theme";
 import { MotionProvider } from "@/components/motion/MotionProvider";
@@ -21,6 +21,14 @@ const serif = Gilda_Display({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-serif",
+  display: "swap",
+});
+
+// Logo de Faro: la palabra FARO en Bodoni Moda 800, mayúsculas con tracking amplio
+const faroWord = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: "800",
+  variable: "--font-bodoni",
   display: "swap",
 });
 
@@ -45,6 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: { canonical: "/" },
     applicationName: site.name,
     // App instalada en iPhone/iPad (Agregar a inicio): pantalla completa con la barra en azul noche
+    manifest: "/manifest.webmanifest",
     appleWebApp: { capable: true, title: "Cristofaro", statusBarStyle: "black-translucent" },
     icons: { apple: "/icons/apple-touch-icon.png" },
     formatDetection: { telephone: false },
@@ -62,7 +71,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   await connection();
   return (
-    <html lang="es-AR" className={`${archivo.variable} ${serif.variable}`} suppressHydrationWarning>
+    <html lang="es-AR" className={`${archivo.variable} ${serif.variable} ${faroWord.variable}`} suppressHydrationWarning>
       <head>
         {/* Modo claro u oscuro de la app antes de pintar (la web pública es siempre oscura) */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

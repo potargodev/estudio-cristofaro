@@ -30,7 +30,7 @@ export function FaroIndustries({ items }: { items: IndustryPreview[] }) {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="06">Ecosistemas por industria</SectionIndex>
+            <SectionIndex n="07">Ecosistemas por industria</SectionIndex>
             <SplitHeading id="rubros-titulo" className="display-md mt-8 text-paper">
               Elegí el rubro y arranca configurado.
             </SplitHeading>

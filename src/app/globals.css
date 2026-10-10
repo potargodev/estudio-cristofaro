@@ -38,6 +38,7 @@
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   /* Títulos y números grandes: Gilda Display */
   --font-display: var(--font-serif), ui-serif, Georgia, serif;
+  --font-faro: var(--font-bodoni), "Bodoni 72", Didot, "Bodoni MT", ui-serif, serif;
 
   /* Tokens de shadcn/ui mapeados a la marca. Ojo: "muted" en este proyecto es el
      color de texto secundario; para fondos suaves se usa navy-soft. */
