@@ -26,7 +26,7 @@ Reglas:
 
 ## 2. Núcleo y módulos
 
-**Núcleo** (en todos los planes): estudios, organizaciones, usuarios y roles, auditoría, portal del cliente, vencimientos, documentos, solicitudes, agenda y alertas por mail.
+**Núcleo** (en todos los planes): estudios, organizaciones, usuarios y roles, auditoría, portal del cliente, vencimientos, documentos, solicitudes, agenda, alertas por mail y gastos compartidos (§2.e).
 
 **Módulos** (registro en código, habilitados por plan y con override por estudio desde Faro Manager):
 
@@ -81,6 +81,65 @@ Reglas de las conexiones:
 - Las escrituras hacia sistemas fiscales (crear comprobantes, presentar) siempre pasan por aprobación humana.
 - La disponibilidad real de cada API (planes del proveedor, recursos) se verifica al implementar cada conector.
 
+## 2.c Faro Personal (autónomos sin contador)
+
+Para el monotributista o responsable inscripto que lleva sus números solo, ya sea porque arranca o porque desconfía de las malas experiencias con contadores. Faro le allana el camino: le dice qué tiene que hacer, cuándo y cuánto, en palabras simples.
+
+**Tipo de cuenta:** un tenant de tipo `personal` (los estudios son tipo `studio`), con una sola razón social: la propia. Puede, cuando quiera, invitar a un estudio de Faro a acompañarlo (comparte sus datos con consentimiento explícito y revocable). Así un autónomo que crece se convierte en cliente de un estudio sin cambiar de herramienta.
+
+**Funciones:**
+- **Facturación electrónica con ARCA:** facturas A, B, C y E, notas de crédito y débito, por WSFE. El PDF lo genera Faro, así que se puede personalizar con logo, colores y datos de contacto, manteniendo todo lo obligatorio (CAE, vencimiento del CAE y código QR según la normativa vigente). Envío por mail o WhatsApp, link de pago (Mercado Pago) y clientes y productos frecuentes.
+- **Mi situación con ARCA:** constancia de inscripción y datos del padrón (categoría, actividades, impuestos) por web service oficial.
+- **Semáforo de monotributo:** facturación de los últimos 12 meses vs. el tope de la categoría, cuánto podés facturar sin pasarte, aviso de recategorización (enero y julio) con la categoría sugerida, alerta de exclusión y simulación de pase a responsable inscripto. Las escalas de categorías las mantiene el Faro Manager.
+- **Lo que no tiene web service oficial** (deuda en cuenta corriente, multas, intimaciones): Faro no lo inventa. Ofrece chequeos guiados (qué revisar en ARCA, con el link directo y un paso a paso en lenguaje simple), la carga de lo que el usuario ve y recordatorios periódicos. Si ARCA habilita un servicio oficial, se integra.
+- **Calendario personal:** vencimientos según CUIT y régimen (monotributo, IIBB, autónomos, IVA y Ganancias si es RI), con alertas por mail y WhatsApp y el importe cuando se puede calcular.
+- **Ingresos y gastos:** registro simple, comprobantes de compra (con lectura inteligente) y un resumen mensual "cuánto entró, cuánto salió, cuánto es para impuestos".
+- **Asistente IA en modo simple:** explica cada obligación sin jerga y responde "¿qué tengo que hacer este mes?". Nunca presenta nada solo.
+- **"Necesito un contador":** botón para pedir ayuda a un estudio de Faro (Estudio Cristofaro primero), lo que genera leads para los estudios.
+
+**Requisito técnico de ARCA:** para facturar en nombre de cada usuario, el usuario delega el servicio web de facturación electrónica a la CUIT de Faro en el Administrador de Relaciones de ARCA (así trabajan los facturadores en la nube). Esto requiere que la empresa que opera Faro tenga CUIT, certificado digital de producción y una homologación previa. Mientras tanto, se trabaja en el ambiente de homologación.
+
+**Planes de Faro Personal:**
+
+| | **Destello** (gratis) | **Guía** |
+|---|---|---|
+| Facturación | 10 comprobantes/mes | Ilimitada, con logo y link de pago |
+| Situación con ARCA y semáforo de monotributo | ✓ | ✓ |
+| Calendario y alertas | Mail | Mail y WhatsApp |
+| Ingresos y gastos | Básico | Con lectura inteligente de comprobantes |
+| Asistente IA | Consultas | Consultas y acciones con aprobación |
+| Pedir ayuda a un contador | ✓ | ✓ |
+| Precio | Gratis | $[precio] / mes |
+
+## 2.e Gastos compartidos (núcleo, para todos los tipos de usuario)
+
+Inspirado en Splitwise, pero conectado con la contabilidad: lo que se reparte también queda registrado donde corresponde.
+
+- **Grupos:** socios de una empresa, equipo de trabajo, oficina o cowork compartido, un proyecto, un viaje de trabajo o un grupo personal. Cualquier usuario de Faro (estudio, autónomo, organización o empleado) puede crear grupos e invitar por mail o link, incluso a personas sin cuenta, como invitados.
+- **Gastos:** quién pagó (uno o varios), monto, fecha, categoría, comprobante adjunto (con lectura inteligente que completa los datos) y comentarios.
+- **Formas de repartir:** en partes iguales, por porcentaje, por partes (por ejemplo 2:1), por montos exactos o por ítem del ticket.
+- **Moneda:** pesos y dólares (u otras), con la cotización del día elegible (oficial, MEP o manual) y saldo convertido.
+- **Saldos y deudas simplificadas:** quién le debe a quién, con el mínimo de transferencias posible.
+- **Saldar:** registrar el pago, o pagar con link de Mercado Pago o con el alias o CVU del acreedor; confirmación de ambas partes.
+- **Gastos recurrentes:** alquiler, servicios o suscripciones que se cargan solos cada mes.
+- **Recordatorios amables** de saldos pendientes, configurables.
+- **Mejoras sobre Splitwise:**
+  - **Rendición de gastos de empleados:** el empleado paga, sube el ticket y la empresa aprueba y reintegra. Queda como gasto de la organización.
+  - **Socios:** aportes y retiros entre socios, con el saldo de cada uno.
+  - **Contabilidad:** un gasto marcado "de la empresa" o "deducible" pasa a los gastos de la organización o del autónomo, con su comprobante, y lo ve el estudio.
+  - **Asistente IA:** "cargá que pagué $48.000 de la cena con Juan y Ana, dividido igual".
+  - **Exportación** a planilla y resumen del grupo.
+
+## 2.d Tipos de usuario y beneficios (para la landing de Faro)
+
+| Tipo | Beneficio principal |
+|---|---|
+| Estudios contables | Más clientes con el mismo equipo: cartera ordenada, automatizaciones, IA y portal para los clientes. |
+| Contadores independientes | Un estudio entero en una sola herramienta, sin depender de planillas. |
+| Autónomos (Faro Personal) | Facturar, saber cuánto pagar y no pasarte de categoría, sin ser contador. |
+| Empresas (clientes de un estudio) | Ver todo a la vista: vencimientos, pagos, documentos y un responsable que responde. |
+| Empleados | Recibos y comunicaciones en el celular, con firma en un toque. |
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Señal** | **Rumbo** (recomendado) | **Horizonte** |
@@ -116,8 +175,9 @@ Los límites y los módulos de cada plan viven en configuración, no en el códi
 ## 6. Hoja de ruta
 1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Señal), landing de Faro y mención de Faro en la web de Cristofaro.
 2. **F2 · IA, MCP y Conexiones:** configuración de IA multi-proveedor, Asistente con caja de contexto, servidor MCP por estudio, bandeja de aprobaciones, hub de conexiones (Xubio, Alegra y Google primero; Tango migrado al hub).
-3. **F3 · Flujos:** canvas, motor de ejecución y plantillas.
-4. **F4 · Empleados:** legajo, recibos masivos con firma y comunicación interna.
-5. **F5 · Lectura inteligente** y conciliación bancaria.
-6. **F6 · ARCA**, cobranza de honorarios y suscripciones de Faro.
-7. **F7 · Cartera y tareas**, WhatsApp y marca blanca.
+3. **F3 · ARCA + Faro Personal:** web services de ARCA (homologación primero), facturación con PDF personalizado, situación y semáforo de monotributo, calendario personal y planes Destello y Guía.
+4. **F4 · Flujos:** canvas, motor de ejecución y plantillas.
+5. **F5 · Empleados:** legajo, recibos masivos con firma y comunicación interna.
+6. **F6 · Lectura inteligente** y conciliación bancaria.
+7. **F7 · Cobranza** de honorarios y suscripciones de Faro (Mercado Pago).
+8. **F8 · Cartera y tareas**, WhatsApp y marca blanca.
