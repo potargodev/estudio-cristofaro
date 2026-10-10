@@ -20,6 +20,13 @@ export function HeroStatements({ statements, interval }: { statements: string[];
 
   useEffect(() => setReduce(reducedMotion()), []);
 
+  // GSAP no se carga al abrir la página: se precarga poco antes del primer cambio
+  useEffect(() => {
+    if (reduce || statements.length < 2) return;
+    const t = window.setTimeout(() => void loadGsap(), Math.max(0, interval * 1000 - 1500));
+    return () => window.clearTimeout(t);
+  }, [reduce, interval, statements.length]);
+
   useEffect(() => {
     if (reduce || paused || statements.length < 2) return;
     // Durante la intro (primera visita) la primera frase espera a que termine
