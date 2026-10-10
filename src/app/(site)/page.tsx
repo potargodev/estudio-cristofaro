@@ -1,3 +1,4 @@
+import { AppDownload } from "@/components/home/AppDownload";
 import { Benefits } from "@/components/home/Benefits";
 import { ChaosToOrder } from "@/components/home/ChaosToOrder";
 import { CompanyPanel } from "@/components/home/CompanyPanel";
@@ -22,6 +23,7 @@ export default async function HomePage() {
       <ChaosToOrder />
       <PlatformDemo />
       <CompanyPanel />
+      <AppDownload />
       <Benefits />
       <Services />
       <PlansTable prices={prices} />

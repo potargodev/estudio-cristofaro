@@ -66,7 +66,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       >
         {children}
       </AdminShell>
-      <Toaster position="bottom-right" />
+      <Toaster position="top-center" />
     </>
   );
 }

@@ -1,4 +1,5 @@
-import { CheckCircle2, KeyRound, Mail, ShieldCheck, UserRound } from "lucide-react";
+import { InstallPanel } from "@/components/app/InstallApp";
+import { CheckCircle2, KeyRound, Mail, ShieldCheck, Smartphone, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { Avatar } from "@/components/admin/kit/Avatar";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
@@ -51,6 +52,10 @@ export default async function CuentaPage() {
               sigue activo.
             </li>
           </ul>
+        </Panel>
+        <Panel title="App del backoffice" icon={Smartphone}>
+          <p className="mb-5 text-[14px] text-muted">Instalala para entrar directo, con su ícono, desde el celular o la computadora.</p>
+          <InstallPanel tone="light" />
         </Panel>
       </div>
     </div>

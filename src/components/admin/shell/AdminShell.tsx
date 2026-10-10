@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MoreHorizontal,
   Plug,
   Plus,
   Search,
@@ -42,6 +43,57 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   usuarios: Users,
   integraciones: Plug,
 };
+
+/** Barra inferior del celular, como en una app: las cuatro secciones de todos los días y "Más" (abre el menú completo) */
+const BOTTOM: { href: string; label: string; icon: NavIcon; badge?: BadgeKey; exact?: boolean }[] = [
+  { href: "/admin", label: "Resumen", icon: "resumen", exact: true },
+  { href: "/admin/organizaciones", label: "Clientes", icon: "organizaciones" },
+  { href: "/admin/vencimientos", label: "Vencim.", icon: "vencimientos", badge: "obligations" },
+  { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
+];
+
+function BottomBar({ badges, onMore, moreOpen }: { badges: Record<BadgeKey, number>; onMore: () => void; moreOpen: boolean }) {
+  const pathname = usePathname();
+  const inBar = BOTTOM.some((i) => (i.exact ? pathname === i.href : pathname.startsWith(i.href)));
+  return (
+    <nav aria-label="Secciones principales" className="fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper lg:hidden">
+      <ul className="grid grid-cols-5">
+        {BOTTOM.map((i) => {
+          const Icon = ICONS[i.icon];
+          const active = i.exact ? pathname === i.href : pathname.startsWith(i.href);
+          const count = i.badge ? badges[i.badge] : 0;
+          return (
+            <li key={i.href}>
+              <Link href={i.href} aria-current={active ? "page" : undefined} className={cn("flex flex-col items-center gap-1 pb-2 pt-2.5 text-[11px]", active ? "text-paper" : "text-paper/60")}>
+                <span className="relative">
+                  <Icon className={cn("size-[22px]", active && "text-rose-light")} strokeWidth={1.5} aria-hidden />
+                  {count > 0 && (
+                    <span className="tabular absolute -right-2.5 -top-1.5 min-w-4 bg-rose-light px-1 text-center text-[10px] font-semibold leading-4 text-night">
+                      {count}
+                      <span className="sr-only"> {BADGE_LABEL[i.badge!]}</span>
+                    </span>
+                  )}
+                </span>
+                {i.label}
+              </Link>
+            </li>
+          );
+        })}
+        <li>
+          <button
+            type="button"
+            onClick={onMore}
+            aria-expanded={moreOpen}
+            className={cn("flex w-full flex-col items-center gap-1 pb-2 pt-2.5 text-[11px]", !inBar ? "text-paper" : "text-paper/60")}
+          >
+            <MoreHorizontal className={cn("size-[22px]", !inBar && "text-rose-light")} strokeWidth={1.5} aria-hidden />
+            Más
+          </button>
+        </li>
+      </ul>
+    </nav>
+  );
+}
 
 const ROLE_LABEL: Record<string, string> = { admin: "Administrador", contador: "Contador" };
 
@@ -317,10 +369,11 @@ export function AdminShell({
             </Link>
           )}
         </header>
-        <main id="contenido" className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <main id="contenido" className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pb-8">
           <RouteReveal>{children}</RouteReveal>
         </main>
       </div>
+      <BottomBar badges={badges} onMore={() => setDrawer(true)} moreOpen={drawer} />
       <CommandPalette open={search} onClose={() => setSearch(false)} isAdmin={isAdmin} />
     </div>
   );

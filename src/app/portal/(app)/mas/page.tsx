@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { InstallPanel } from "@/components/app/InstallApp";
 import { PageTitle } from "@/components/portal/ui";
 import { requireMember } from "@/lib/auth";
 import { ORG_ROLE_LABELS } from "@/lib/permissions";
@@ -18,7 +19,7 @@ export default async function MasPage() {
       {extra.length === 0 ? (
         <p className="text-muted">No hay más secciones habilitadas.</p>
       ) : (
-        <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+        <ul className="divide-y divide-line border border-line bg-surface">
           {extra.map((item) => (
             <li key={item.href}>
               <Link href={item.href} className="flex items-center justify-between gap-3 px-4 py-4 text-[15px] hover:bg-paper">
@@ -29,6 +30,11 @@ export default async function MasPage() {
           ))}
         </ul>
       )}
+      <section aria-labelledby="instalar" className="mt-10">
+        <h2 id="instalar" className="font-display text-[22px]">Instalá la app</h2>
+        <p className="mt-1 text-[15px] text-muted">Tené tu portal a un toque, con su ícono, en el celular o la computadora.</p>
+        <InstallPanel tone="light" className="mt-5" />
+      </section>
     </>
   );
 }

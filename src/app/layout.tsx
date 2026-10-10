@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
 import { Archivo, Gilda_Display } from "next/font/google";
+import { PwaRegister } from "@/components/app/PwaRegister";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { getSiteUrl, isNoIndex } from "@/lib/runtime-config";
 import { site } from "@/lib/site";
@@ -41,6 +42,11 @@ export async function generateMetadata(): Promise<Metadata> {
       description: site.description,
     },
     alternates: { canonical: "/" },
+    applicationName: site.name,
+    // App instalada en iPhone/iPad (Agregar a inicio): pantalla completa con la barra en azul noche
+    appleWebApp: { capable: true, title: "Cristofaro", statusBarStyle: "black-translucent" },
+    icons: { apple: "/icons/apple-touch-icon.png" },
+    formatDetection: { telephone: false },
     // Staging: <meta name="robots" content="noindex, nofollow"> en todas las páginas
     ...(isNoIndex() && { robots: { index: false, follow: false } }),
   };
@@ -48,6 +54,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {
   themeColor: "#1c2235",
+  // Pantalla completa en celulares con notch: los menús usan env(safe-area-inset-*)
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -56,6 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="es-AR" className={`${archivo.variable} ${serif.variable}`}>
       <body className="min-h-dvh antialiased">
         <MotionProvider>{children}</MotionProvider>
+        <PwaRegister />
       </body>
     </html>
   );
