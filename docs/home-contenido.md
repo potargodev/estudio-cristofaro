@@ -28,16 +28,17 @@ Fuente: brief de producto. Público: PyMEs de servicios de CABA y GBA, de 5 a 30
 - Con Estudio Cristofaro: todo en un lugar, con alguien que responde.
   - Alertas antes de cada vencimiento, con el importe listo.
   - Subís cada documento una vez y queda ordenado.
-  - Un resumen mensual de una página, en criollo.
+  - Mensajes con el estudio en tiempo real, y el Vigía para anotar gastos con un audio.
   - Un responsable asignado que contesta en menos de 24 h.
 
 ## 4. Plataforma (demo por pestañas)
 - Titular: Una plataforma para ver tu empresa, no para cargar formularios.
-- Bajada: Los datos salen de Tango y de tus documentos. Vos solo confirmás.
-- Este mes: Lo importante, en una pantalla. Qué está resuelto, cuánto vas a pagar y qué viene. (Avance del mes, actividad del estudio en tiempo real, resumen mensual descargable). UI: Resuelto 8/10, A pagar $[importe], Próximo vencimiento 20/10, actividad reciente.
-- Vencimientos y pagos: Cada vencimiento con su importe. Te avisamos antes, con el monto y el VEP listo. (Alertas por mail y WhatsApp, link de pago o VEP, historial). UI: tabla IVA septiembre / Ganancias anticipo 5 / Ingresos Brutos CABA / F.931 con vencimiento, importe y estado.
-- Documentos: Subís una vez, queda ordenado. Leemos los datos de cada comprobante y te pedimos solo que confirmes. (Carga desde el celular, clasificación por período y tipo, descarga privada). UI: zona para arrastrar, archivos del estudio, factura de proveedor "para confirmar".
+- Bajada: Los datos salen de Tango, Xubio y tus documentos, y llegan a Faro, nuestra plataforma. La IA propone y una persona aprueba. Vos solo confirmás.
+- Este mes: Lo importante, en una pantalla. Qué está resuelto, cuánto vas a pagar y qué viene. (Avance del mes, actividad del estudio en tiempo real, desde el celular o la compu). UI: Resuelto 8/10, A pagar $[importe], Próximo vencimiento 20/10, actividad reciente.
+- Vencimientos y pagos: Cada vencimiento con su importe. Te avisamos antes, con el importe y cómo pagarlo. (Avisos en la app y por mail, importe y estado, historial). UI: tabla IVA septiembre / Ganancias anticipo 5 / Ingresos Brutos CABA / F.931 con vencimiento, importe y estado.
+- Documentos: Subís una vez, queda ordenado: desde el celular, clasificado por período y tipo, listo para el estudio. (Carga desde el celular, clasificación por período y tipo, descarga privada). UI: zona para arrastrar, archivos del estudio, detalle del documento.
 - Solicitudes: Escribí como en un chat. Contanos lo que pasa con tus palabras; armamos la solicitud y te pedimos solo lo que falta. UI: "Incorporamos una diseñadora el lunes 14." → "Solicitud creada: Alta de empleada. Nos faltan su CUIL y el sueldo acordado."
+- Mensajes y Vigía: Hablá con el estudio. Anotá gastos hablando. Chat en tiempo real con tu contador, y el Vigía para que cada persona de tu equipo cargue sus gastos con un audio o la foto del ticket (Bitácora privada y Grupos de gastos para cada persona). La IA propone; una persona aprueba.
 
 ## 5. Tu panel de empresa (la plataforma como valor)
 - Línea superior: Incluido en todos los planes
@@ -45,7 +46,7 @@ Fuente: brief de producto. Público: PyMEs de servicios de CABA y GBA, de 5 a 30
 - Bajada: Lo que antes era un mail al contador ahora es una pantalla que se actualiza sola.
 - Dashboard de escritorio (cliente "Agencia Norte", usuaria "Martina"): menú (Inicio, Vencimientos, Documentos, Solicitudes, Sueldos, Indicadores, Mi equipo), tarjeta del responsable, KPIs (Resuelto 8/10, A pagar en octubre $[importe] con 3 pagos pendientes, Documentos por confirmar 2), gráfico de impuestos pagados por mes (may–oct), próximos vencimientos.
 - Celular con notificaciones: "IVA vence en 3 días · $[importe]. Tocá para pagar con VEP." / "Recibos de sueldo listos · 12 recibos de septiembre." / "[Nombre] respondió tu consulta" / "Tu mes de septiembre, en una página".
-- Beneficios: Alertas antes de cada vencimiento · Resumen mensual en una página · Documentos seguros y ordenados · Tu equipo, con su propio acceso (dirección, RRHH, administración) · Pedidos con seguimiento · Números para decidir.
+- Beneficios: Alertas antes de cada vencimiento (en la app y por mail) · Mensajes con el estudio · Documentos seguros y ordenados · Tu equipo, con su propio acceso (dirección, RRHH, administración y empleados, cada uno con su Vigía y su Bitácora privada) · Pedidos con seguimiento · Números para decidir (impuestos pagados, gastos y rendiciones).
 
 ## 6. Servicios
 - Titular: Lo que resolvemos por vos, todos los meses.

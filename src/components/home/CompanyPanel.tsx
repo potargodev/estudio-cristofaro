@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const money = (n: number) => "$" + new Intl.NumberFormat("es-AR").format(n);
 
-const MENU = ["Inicio", "Vencimientos", "Documentos", "Solicitudes", "Sueldos", "Indicadores", "Mi equipo"];
+const MENU = ["Inicio", "Vencimientos", "Documentos", "Solicitudes", "Mensajes", "Vigía", "Mi equipo"];
 // Impuestos pagados por mes (miles de pesos, ejemplo)
 const CHART = [
   ["may", 820],
@@ -24,7 +24,7 @@ const NOTIFS = [
   { t: "IVA vence en 3 días", d: `${money(DEMO.ivaAmount)}. Tocá para pagar con VEP.` },
   { t: "Recibos de sueldo listos", d: "12 recibos de septiembre." },
   { t: "Lucía respondió tu consulta", d: "Sobre el alta de la diseñadora." },
-  { t: "Tu mes de septiembre, en una página", d: "Resumen mensual disponible." },
+  { t: "Vigía anotó un gasto", d: "Almuerzo con cliente · $ 18.450. Tocá para confirmar." },
 ];
 
 function Chart() {

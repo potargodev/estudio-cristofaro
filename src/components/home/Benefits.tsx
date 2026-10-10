@@ -5,12 +5,12 @@ import { Container, SectionIndex } from "@/components/web/ui";
 import { isDesktop, loadScrollTrigger, reducedMotion } from "@/lib/motion/gsap";
 
 const BENEFITS = [
-  { t: "Alertas antes de cada vencimiento", d: "Te avisamos por mail y WhatsApp con el importe y el VEP listos. Nada te toma por sorpresa." },
-  { t: "Resumen mensual en una página", d: "Qué se presentó, cuánto pagaste y qué viene. En criollo, para leer en dos minutos." },
+  { t: "Alertas antes de cada vencimiento", d: "Te avisamos en la app y por mail, con el importe. Nada te toma por sorpresa." },
+  { t: "Mensajes con el estudio", d: "Chateás con tu contador en tiempo real, con adjuntos y avisos en el celular." },
   { t: "Documentos seguros y ordenados", d: "Cada comprobante, recibo y balance clasificado por período y tipo. Descarga privada." },
-  { t: "Tu equipo, con su propio acceso", d: "Dirección, RRHH y administración ven y hacen solo lo que les corresponde." },
+  { t: "Tu equipo, con su propio acceso", d: "Dirección, RRHH, administración y empleados ven y hacen solo lo que les corresponde. Cada uno, con su Vigía y su Bitácora privada." },
   { t: "Pedidos con seguimiento", d: "Cada consulta tiene responsable, estado y respuesta. Nadie se pregunta quién la tiene." },
-  { t: "Números para decidir", d: "Impuestos pagados, cargas sociales e indicadores mes a mes, sin armar planillas." },
+  { t: "Números para decidir", d: "Lo que pagaste de impuestos y los gastos y rendiciones de la empresa, mes a mes, sin armar planillas." },
 ];
 
 /**

@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, CalendarClock, Check, FileText, House, LayoutDashboard, MessageSquare, Upload, UserRound, Users } from "lucide-react";
+import { Building2, CalendarClock, Check, FileText, House, LayoutDashboard, MessageSquare, MessagesSquare, Sparkles, Upload, UserRound, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, SectionIndex } from "@/components/web/ui";
@@ -25,8 +25,8 @@ function Chip({ tone, children }: { tone: Tone; children: React.ReactNode }) {
 
 function FlowStrip() {
   const nodes = [
-    { icon: Building2, title: "Tango y ARCA", text: "Comprobantes, vencimientos e importes" },
-    { icon: LayoutDashboard, title: "Plataforma Cristofaro", text: "El estudio revisa, ordena y liquida" },
+    { icon: Building2, title: "Tango, Xubio y archivos", text: "Clientes, comprobantes e importes" },
+    { icon: LayoutDashboard, title: "Faro, nuestra plataforma", text: "El estudio revisa, ordena y liquida; la IA propone y una persona aprueba" },
     { icon: UserRound, title: "Vos", text: "Ves el estado y confirmás" },
   ];
   return (
@@ -153,9 +153,9 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border border-rose-light/40 bg-rose-light/[0.06] px-4 py-3">
           <span>
             <span className="block text-paper">IVA septiembre · {money(DEMO.ivaAmount)}</span>
-            <span className="block text-[12px] text-paper/60">Te avisamos por mail y WhatsApp el 17/10</span>
+            <span className="block text-[12px] text-paper/60">Te avisamos en la app y por mail el 17/10</span>
           </span>
-          <span className="bg-rose-light px-3 py-1.5 text-[12px] font-medium text-night">Pagar con VEP</span>
+          <span className="bg-rose-light px-3 py-1.5 text-[12px] font-medium text-night">Ver cómo pagar</span>
         </div>
       </div>
     );
@@ -170,8 +170,8 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
           <div className="text-[13px]">
             {(
               [
-                ["Factura proveedor 0003-118", "Compras · octubre", "Para confirmar", "due"],
-                ["Factura proveedor 0001-904", "Compras · octubre", "Para confirmar", "due"],
+                ["Factura proveedor 0003-118", "Compras · octubre", "Subido por vos", "ok"],
+                ["Factura proveedor 0001-904", "Compras · octubre", "Subido por vos", "ok"],
                 ["Recibos de sueldo", "Sueldos · septiembre", "Del estudio", "info"],
                 ["Balance 2025", "Contabilidad · anual", "Del estudio", "info"],
                 ["Constancia de inscripción", "Societario", "Clasificado", "ok"],
@@ -191,15 +191,14 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
           </div>
         </div>
         <div className="border border-hair p-4 text-[13px]">
-          <p className="text-[12px] text-paper/60">Leímos este comprobante</p>
+          <p className="text-[12px] text-paper/60">Detalle del documento</p>
           <p className="mt-1 text-paper">Factura proveedor 0003-118</p>
           <dl className="mt-3 grid grid-cols-[5rem_1fr] gap-y-1.5 text-[12px]">
             {[
-              ["CUIT", "30-71234567-1"],
-              ["Fecha", "06/10/2026"],
-              ["Neto", "$184.000"],
-              ["IVA 21%", "$38.640"],
-              ["Total", "$222.640"],
+              ["Período", "Octubre 2026"],
+              ["Tipo", "Compras"],
+              ["Subido", "06/10 · Martina"],
+              ["Estado", "Recibido"],
             ].map(([k, v]) => (
               <div key={k} className="contents">
                 <dt className="text-paper/55">{k}</dt>
@@ -207,7 +206,32 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
               </div>
             ))}
           </dl>
-          <p className="mt-4 bg-rose-light py-2 text-center text-[12px] font-medium text-night">Confirmar datos</p>
+          <p className="mt-4 bg-rose-light py-2 text-center text-[12px] font-medium text-night">Lo ve tu contador</p>
+        </div>
+      </div>
+    );
+  if (tab === "mensajes")
+    return (
+      <div className="grid gap-4 md:grid-cols-[1fr_15rem]">
+        <div className="flex flex-col gap-2.5 border border-hair p-4 text-[14px]">
+          <p className="text-[12px] text-paper/55">Mensajes · Lucía G. (Estudio)</p>
+          <p className="max-w-[85%] self-start border border-hair bg-paper/[0.04] px-3 py-2 text-paper/85">¿Te llegó el F.931? Lo dejé en Documentos.</p>
+          <p className="max-w-[85%] self-end bg-rose-light/15 px-3 py-2 text-paper">Sí, ya lo pagamos. ¡Gracias!</p>
+          <p className="self-end text-[11px] text-paper/45">Visto</p>
+          <p className="text-[12px] text-paper/45">Lucía está escribiendo…</p>
+        </div>
+        <div className="flex flex-col gap-3 border border-hair p-4 text-[13px]">
+          <p className="flex items-center gap-2 text-[12px] text-paper/60">
+            <Sparkles className="size-3.5 text-rose-light" aria-hidden /> Vigía
+          </p>
+          <p className="self-end bg-rose-light/15 px-3 py-2 text-paper">«Almuerzo con el cliente, 18.450, con la tarjeta de la empresa»</p>
+          <div className="border border-hair p-3">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-paper/45">Gasto de la empresa</p>
+            <p className="mt-0.5 text-[15px] text-paper">$ 18.450 · Comida</p>
+            <p className="text-paper/55">Almuerzo con cliente · hoy</p>
+            <p className="mt-2 bg-rose-light py-1.5 text-center text-[12px] font-medium text-night">Confirmar</p>
+          </div>
+          <p className="text-[12px] text-paper/50">La IA propone; una persona aprueba.</p>
         </div>
       </div>
     );
@@ -257,6 +281,7 @@ const NAV = [
   { key: "vencimientos", label: "Vencimientos", icon: CalendarClock },
   { key: "documentos", label: "Documentos", icon: FileText },
   { key: "solicitudes", label: "Solicitudes", icon: MessageSquare },
+  { key: "mensajes", label: "Mensajes", icon: MessagesSquare },
   { key: "equipo", label: "Mi equipo", icon: Users },
 ] as const;
 

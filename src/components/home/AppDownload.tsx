@@ -7,7 +7,7 @@ const TABS = [
   { icon: House, label: "Inicio", on: true },
   { icon: CalendarClock, label: "Vencim." },
   { icon: FileText, label: "Docs" },
-  { icon: MessageSquare, label: "Consultas" },
+  { icon: MessageSquare, label: "Mensajes" },
   { icon: MoreHorizontal, label: "Más" },
 ];
 
@@ -106,8 +106,8 @@ export function AppDownload() {
             La contabilidad de tu empresa, <span className="text-rose-light">desde cualquier lugar.</span>
           </h2>
           <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-paper/65">
-            Descargá nuestra app y seguí todo lo de tu empresa desde el celular o la compu: qué vence, qué ya está pagado, tus documentos y la charla
-            con tu contador. Gratis para todos los clientes.
+            Descargá nuestra app y seguí todo lo de tu empresa desde el celular o la compu: qué vence, qué ya está pagado, tus documentos, los mensajes con tu contador y los gastos que anotás con el Vigía. Gratis para todos los
+            clientes.
           </p>
           <p className="mt-10 flex items-center gap-2 text-[15px] font-medium text-paper">
             <Download className="size-4 text-rose-light" aria-hidden />
