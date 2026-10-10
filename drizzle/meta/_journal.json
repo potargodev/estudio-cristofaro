@@ -64,6 +64,13 @@
       "when": 1791593839814,
       "tag": "0008_precio_planes",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791639135298,
+      "tag": "0009_f2_ia_mcp_conexiones",
+      "breakpoints": true
     }
   ]
 }

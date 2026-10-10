@@ -14,6 +14,14 @@
     "build:scripts": "esbuild scripts/migrate.ts scripts/seed.ts scripts/reset-password.ts --bundle --platform=node --format=esm --target=node22 --outdir=dist --out-extension:.js=.mjs --log-level=warning --banner:js=\"import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);\""
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.78",
+    "@ai-sdk/azure": "^4.0.99",
+    "@ai-sdk/google": "^4.0.93",
+    "@ai-sdk/openai": "^4.0.91",
+    "@ai-sdk/openai-compatible": "^3.0.67",
+    "@ai-sdk/react": "^4.0.140",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "ai": "^7.0.137",
     "better-auth": "^1.7.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -29,11 +37,13 @@
     "radix-ui": "^1.7.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
     "read-excel-file": "^9.3.12",
+    "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
-    "zod": "^3.25.0"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.0",

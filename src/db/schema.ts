@@ -523,6 +523,9 @@ export const documents = pgTable(
     uploaded_by: uuid("uploaded_by").references(() => users.id, { onDelete: "set null" }),
     // Documentos subidos por el cliente: null hasta que alguien del estudio los ve
     reviewed_at: timestamp("reviewed_at", { withTimezone: true }),
+    // Documentos que llegan por una conexión (Google Drive): fuente e ID externo
+    external_source: text("external_source"),
+    external_id: text("external_id"),
     created_at: createdAt(),
   },
   (t) => [index("documents_org_idx").on(t.organization_id, t.created_at)],
@@ -736,5 +739,328 @@ export const bookings = pgTable(
     index("bookings_studio_idx").on(t.studio_id, t.starts_at),
     index("bookings_org_idx").on(t.organization_id),
     index("bookings_lead_idx").on(t.lead_id),
+  ],
+);
+
+// ───────────────────────── F2 · IA, MCP y conexiones ─────────────────────────
+
+export const aiProviderKind = pgEnum("ai_provider_kind", ["anthropic", "openai", "google", "openrouter", "azure", "openai_compatible"]);
+export const toolOrigin = pgEnum("tool_origin", ["asistente", "mcp", "flujo"]);
+export const toolLevel = pgEnum("tool_level", ["lectura", "escritura", "sensible"]);
+export const approvalStatus = pgEnum("approval_status", ["pendiente", "ejecutada", "rechazada", "error", "cancelada"]);
+export const connectionStatus = pgEnum("connection_status", ["pendiente", "activa", "pausada", "error"]);
+
+/** Proveedores de IA del estudio. La clave va cifrada (AES-GCM con ENCRYPTION_KEY). */
+export interface AiProviderSettings {
+  /** Azure OpenAI: nombre del recurso y versión de la API */
+  resourceName?: string;
+  apiVersion?: string;
+  /** Modelos que el estudio cargó para este proveedor (para los selectores) */
+  models?: string[];
+}
+
+export const ai_providers = pgTable(
+  "ai_providers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    kind: aiProviderKind("kind").notNull(),
+    name: text("name").notNull(),
+    api_key_enc: text("api_key_enc"),
+    key_hint: text("key_hint"), // últimos 4 caracteres, para reconocerla
+    base_url: text("base_url"),
+    settings: jsonb("settings").$type<AiProviderSettings>().notNull().default({}),
+    active: boolean("active").notNull().default(true),
+    last_test_at: timestamp("last_test_at", { withTimezone: true }),
+    last_test_ok: boolean("last_test_ok"),
+    last_test_message: text("last_test_message"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("ai_providers_studio_idx").on(t.studio_id)],
+);
+
+export type AiTask = "chat" | "extraccion" | "redaccion";
+export interface ModelRef {
+  providerId: string;
+  model: string;
+}
+
+/** Configuración de IA del estudio: modelo por defecto, por tarea y límite de gasto */
+export const ai_settings = pgTable("ai_settings", {
+  studio_id: uuid("studio_id")
+    .primaryKey()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  default_model: jsonb("default_model").$type<ModelRef | null>(),
+  task_models: jsonb("task_models").$type<Partial<Record<AiTask, ModelRef>>>().notNull().default({}),
+  monthly_budget_usd: numeric("monthly_budget_usd", { precision: 10, scale: 2 }),
+  updated_at: updatedAt(),
+});
+
+/** Registro de uso: tokens y costo estimado por llamada */
+export const ai_usage = pgTable(
+  "ai_usage",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    provider_id: uuid("provider_id").references(() => ai_providers.id, { onDelete: "set null" }),
+    provider_kind: text("provider_kind").notNull(),
+    model: text("model").notNull(),
+    task: text("task").notNull().default("chat"),
+    user_id: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    conversation_id: uuid("conversation_id"),
+    input_tokens: integer("input_tokens").notNull().default(0),
+    output_tokens: integer("output_tokens").notNull().default(0),
+    cost_usd: numeric("cost_usd", { precision: 12, scale: 6 }).notNull().default("0"),
+    created_at: createdAt(),
+  },
+  (t) => [index("ai_usage_studio_idx").on(t.studio_id, t.created_at)],
+);
+
+/** Conversaciones del Asistente (cada una es de una persona del estudio) */
+export const ai_conversations = pgTable(
+  "ai_conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull().default("Conversación nueva"),
+    model: jsonb("model").$type<ModelRef | null>(),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("ai_conversations_user_idx").on(t.studio_id, t.user_id, t.updated_at)],
+);
+
+/** Mensajes en formato UIMessage del AI SDK (partes: texto, herramientas, archivos) */
+export const ai_messages = pgTable(
+  "ai_messages",
+  {
+    id: text("id").primaryKey(),
+    conversation_id: uuid("conversation_id")
+      .notNull()
+      .references(() => ai_conversations.id, { onDelete: "cascade" }),
+    role: text("role").notNull(),
+    message: jsonb("message").$type<Record<string, unknown>>().notNull(),
+    position: integer("position").notNull().default(0),
+    created_at: createdAt(),
+  },
+  (t) => [index("ai_messages_conversation_idx").on(t.conversation_id, t.position)],
+);
+
+/**
+ * Propuestas de acción: las herramientas sensibles (y las de escritura que el
+ * Asistente pide confirmar) no se ejecutan solas. `input` es el borrador
+ * completo; `context` guarda los límites del pedido original (organizaciones
+ * permitidas, acceso MCP) para respetarlos al ejecutar.
+ */
+export const approvals = pgTable(
+  "approvals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    origin: toolOrigin("origin").notNull(),
+    level: toolLevel("level").notNull(),
+    tool: text("tool").notNull(),
+    title: text("title").notNull(),
+    input: jsonb("input").$type<Record<string, unknown>>().notNull(),
+    context: jsonb("context").$type<Record<string, unknown>>().notNull().default({}),
+    status: approvalStatus("status").notNull().default("pendiente"),
+    requested_by: uuid("requested_by").references(() => users.id, { onDelete: "set null" }),
+    requested_label: text("requested_label"),
+    mcp_access_id: uuid("mcp_access_id"),
+    conversation_id: uuid("conversation_id"),
+    decided_by: uuid("decided_by").references(() => users.id, { onDelete: "set null" }),
+    decided_at: timestamp("decided_at", { withTimezone: true }),
+    reason: text("reason"),
+    edited: boolean("edited").notNull().default(false),
+    result: jsonb("result").$type<Record<string, unknown> | null>(),
+    created_at: createdAt(),
+  },
+  (t) => [index("approvals_studio_status_idx").on(t.studio_id, t.status, t.created_at)],
+);
+
+/** Accesos MCP: con token Bearer (creado en /admin/mcp) o por OAuth 2.1 */
+export const mcp_accesses = pgTable(
+  "mcp_accesses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    kind: text("kind").notNull().default("token"), // token | oauth
+    oauth_client_id: text("oauth_client_id"),
+    /** Módulos permitidos; vacío = todos */
+    modules: text("modules").array().notNull().default(sql`'{}'::text[]`),
+    can_write: boolean("can_write").notNull().default(false),
+    /** null = todas las organizaciones del estudio */
+    organization_ids: uuid("organization_ids").array(),
+    token_prefix: text("token_prefix"),
+    expires_at: timestamp("expires_at", { withTimezone: true }),
+    revoked_at: timestamp("revoked_at", { withTimezone: true }),
+    last_used_at: timestamp("last_used_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("mcp_accesses_studio_idx").on(t.studio_id, t.created_at)],
+);
+
+/** Tokens (SHA-256) de los accesos MCP: Bearer, access y refresh de OAuth y códigos de autorización */
+export const mcp_tokens = pgTable(
+  "mcp_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    access_id: uuid("access_id")
+      .notNull()
+      .references(() => mcp_accesses.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(), // bearer | access | refresh | code
+    token_hash: text("token_hash").notNull().unique(),
+    data: jsonb("data").$type<Record<string, unknown>>().notNull().default({}),
+    expires_at: timestamp("expires_at", { withTimezone: true }),
+    used_at: timestamp("used_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("mcp_tokens_access_idx").on(t.access_id)],
+);
+
+/** Clientes OAuth registrados dinámicamente (Claude, ChatGPT…): públicos, con PKCE */
+export const oauth_clients = pgTable("oauth_clients", {
+  client_id: text("client_id").primaryKey(),
+  name: text("name").notNull(),
+  redirect_uris: text("redirect_uris").array().notNull(),
+  created_at: createdAt(),
+});
+
+/** Log de llamadas por acceso MCP */
+export const mcp_calls = pgTable(
+  "mcp_calls",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    access_id: uuid("access_id")
+      .notNull()
+      .references(() => mcp_accesses.id, { onDelete: "cascade" }),
+    method: text("method").notNull(), // tools/list | tools/call
+    tool: text("tool"),
+    result: text("result").notNull(), // ok | error | denegado | aprobacion
+    duration_ms: integer("duration_ms").notNull().default(0),
+    message: text("message"),
+    created_at: createdAt(),
+  },
+  (t) => [index("mcp_calls_access_idx").on(t.access_id, t.created_at)],
+);
+
+/**
+ * Conexiones del hub (src/modules/connectors). Una fila por cuenta: del estudio
+ * (organization_id null) o propia de una organización. Las credenciales van
+ * cifradas como JSON. Tango sigue usando `integrations` (su conector local).
+ */
+export const connections = pgTable(
+  "connections",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    connector: text("connector").notNull(), // xubio | google_drive | mcp_externo | archivos
+    name: text("name").notNull(),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    status: connectionStatus("status").notNull().default("pendiente"),
+    credentials_enc: text("credentials_enc"),
+    settings: jsonb("settings").$type<Record<string, unknown>>().notNull().default({}),
+    last_sync_at: timestamp("last_sync_at", { withTimezone: true }),
+    last_error: text("last_error"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("connections_studio_idx").on(t.studio_id, t.connector)],
+);
+
+/** Mapeo de recursos externos a organizaciones (carpeta de Drive, empresa de Xubio…) */
+export const connection_links = pgTable(
+  "connection_links",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    connection_id: uuid("connection_id")
+      .notNull()
+      .references(() => connections.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    external_id: text("external_id").notNull(),
+    external_name: text("external_name"),
+    created_at: createdAt(),
+  },
+  (t) => [unique("connection_links_key").on(t.connection_id, t.organization_id)],
+);
+
+/** Log de sincronizaciones y pruebas de cada conexión */
+export const connection_logs = pgTable(
+  "connection_logs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    connection_id: uuid("connection_id")
+      .notNull()
+      .references(() => connections.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull().default("sync"), // sync | test | import
+    status: syncStatus("status").notNull().default("en_curso"),
+    records: integer("records").notNull().default(0),
+    message: text("message"),
+    actor_id: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    started_at: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+    finished_at: timestamp("finished_at", { withTimezone: true }),
+  },
+  (t) => [index("connection_logs_idx").on(t.connection_id, t.started_at)],
+);
+
+/**
+ * Registros traídos por las conexiones (Xubio, archivos, Drive…): fuente,
+ * fecha de sincronización, ID externo, estado de validación y registro original.
+ */
+export const external_records = pgTable(
+  "external_records",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    connection_id: uuid("connection_id")
+      .notNull()
+      .references(() => connections.id, { onDelete: "cascade" }),
+    source: text("source").notNull(), // xubio | holistor | bejerman | google_drive | …
+    resource: text("resource").notNull(), // clientes | comprobantes_venta | comprobantes_compra | asientos | archivos
+    external_id: text("external_id").notNull(),
+    cuit: text("cuit"),
+    name: text("name"),
+    record_date: date("record_date"),
+    amount: numeric("amount", { precision: 16, scale: 2 }),
+    validation_status: text("validation_status").notNull().default("sin_cruzar"), // sin_cruzar | cruzado | validado | con_error
+    raw: jsonb("raw").notNull(),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+    legal_entity_id: uuid("legal_entity_id").references(() => legal_entities.id, { onDelete: "set null" }),
+    synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique("external_records_key").on(t.connection_id, t.resource, t.external_id),
+    index("external_records_org_idx").on(t.organization_id, t.resource),
+    index("external_records_studio_idx").on(t.studio_id, t.source, t.resource),
   ],
 );
