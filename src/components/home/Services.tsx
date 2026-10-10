@@ -12,7 +12,7 @@ const SERVICES = [
 /** Servicios: sección en papel (contrapunto claro, una de las dos de la home) */
 export function Services() {
   return (
-    <section aria-labelledby="servicios-titulo" className="on-paper bg-paper py-24 text-ink lg:py-36">
+    <section aria-labelledby="servicios-titulo" className="on-paper bg-paper py-16 text-ink lg:py-36">
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <p className="flex items-center gap-3 text-[13px] text-muted lg:col-span-3">

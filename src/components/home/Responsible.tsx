@@ -10,7 +10,7 @@ import { STUDIO_FACTS } from "@/lib/home";
  */
 export function Responsible() {
   return (
-    <section aria-labelledby="responsable-titulo" className="overflow-hidden border-t border-hair bg-night py-24 text-paper lg:py-36">
+    <section aria-labelledby="responsable-titulo" className="overflow-hidden border-t border-hair bg-night py-16 text-paper lg:py-36">
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <figure className="relative lg:col-span-6">

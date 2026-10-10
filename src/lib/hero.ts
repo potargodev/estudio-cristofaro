@@ -1,6 +1,7 @@
 // Hero de la home: una foto de fondo atenuada (en /public/hero, ver el README de
 // esa carpeta) y frases que van rotando sobre los valores y servicios del estudio.
-// `position` y `mobilePosition` son el object-position CSS de escritorio y del
+// `position` es el object-position de escritorio; en el celular la foto se ve
+// completa (16:9) arriba. `mobilePosition` queda para un recorte vertical:
 // recorte vertical en el celular.
 
 export interface HeroSlide {

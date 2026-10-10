@@ -70,7 +70,12 @@ export function CompanyPanel() {
           ctx = gsap.context(() => {
             gsap
               .timeline()
-              .from("[data-desk]", { rotateX: 18, y: 60, opacity: 0.2, duration: 1.6, transformPerspective: 1600, transformOrigin: "50% 0%" })
+              .from(
+                "[data-desk]",
+                window.matchMedia("(min-width: 1024px)").matches
+                  ? { rotateX: 18, y: 60, opacity: 0.2, duration: 1.6, transformPerspective: 1600, transformOrigin: "50% 0%" }
+                  : { y: 30, opacity: 0, duration: 1 },
+              )
               .from("[data-chart]", { strokeDashoffset: 1, duration: 1.6, ease: "power2.inOut" }, 0.5)
               .from("[data-dot]", { opacity: 0, stagger: 0.12, duration: 0.3 }, 0.7)
               .from("[data-notif]", { y: 40, opacity: 0, stagger: 0.18, duration: 0.9 }, 0.6);
@@ -85,7 +90,7 @@ export function CompanyPanel() {
   }, []);
 
   return (
-    <section ref={root} aria-labelledby="panel-titulo" className="overflow-hidden border-t border-hair bg-navy-deep py-24 lg:py-36">
+    <section ref={root} aria-labelledby="panel-titulo" className="overflow-hidden border-t border-hair bg-navy-deep py-16 lg:py-36">
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">

@@ -24,7 +24,7 @@ function SlotsFallback() {
 /** Agendar: selector corto conectado a la agenda real; el horario se confirma en /agendar */
 export function ScheduleTeaser() {
   return (
-    <section id="agendar" aria-labelledby="agendar-titulo" className="scroll-mt-16 border-t border-hair bg-night py-24 lg:py-36">
+    <section id="agendar" aria-labelledby="agendar-titulo" className="scroll-mt-16 border-t border-hair bg-night py-16 lg:py-36">
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">

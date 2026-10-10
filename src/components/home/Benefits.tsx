@@ -54,7 +54,7 @@ export function Benefits() {
 
   return (
     <section ref={root} aria-labelledby="beneficios-titulo" className="border-t border-hair bg-night">
-      <div data-hpin className="overflow-hidden py-24 lg:flex lg:h-[100svh] lg:flex-col lg:justify-center lg:py-0">
+      <div data-hpin className="overflow-hidden py-16 lg:flex lg:h-[100svh] lg:flex-col lg:justify-center lg:py-0">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -75,16 +75,16 @@ export function Benefits() {
             </ol>
           </div>
         </Container>
-        <div className="mt-12 lg:mt-16">
+        <div className="mt-10 lg:mt-16">
           <ol data-track className="flex flex-col border-t border-hair lg:w-max lg:flex-row lg:border-t-0 lg:pl-[max(3rem,calc((100vw-1360px)/2+3rem))]">
             {BENEFITS.map((b, i) => (
               <li
                 key={b.t}
-                className="flex flex-col justify-between gap-10 border-b border-hair px-5 py-10 sm:px-8 lg:h-[52vh] lg:w-[34rem] lg:border-b-0 lg:border-l lg:px-10 lg:py-2 xl:w-[38rem]"
+                className="flex flex-col justify-between gap-5 border-b border-hair px-5 py-8 sm:px-8 lg:h-[52vh] lg:w-[34rem] lg:border-b-0 lg:border-l lg:px-10 lg:py-2 xl:w-[38rem]"
               >
-                <span className="tabular font-display text-[clamp(4rem,8vw,7.5rem)] leading-none text-rose-light">0{i + 1}</span>
+                <span className="tabular font-display text-[2.75rem] leading-none text-rose-light lg:text-[clamp(4rem,8vw,7.5rem)]">0{i + 1}</span>
                 <div>
-                  <h3 className="font-display text-[clamp(1.8rem,2.6vw,2.6rem)] leading-[1.05] text-paper">{b.t}</h3>
+                  <h3 className="font-display text-[1.6rem] leading-[1.1] text-paper lg:text-[clamp(1.8rem,2.6vw,2.6rem)] lg:leading-[1.05]">{b.t}</h3>
                   <p className="mt-4 max-w-[30ch] text-[15px] leading-relaxed text-paper/60">{b.d}</p>
                 </div>
               </li>

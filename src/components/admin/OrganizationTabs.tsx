@@ -502,7 +502,7 @@ export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: s
 
 // ───────────── integraciones ─────────────
 
-const syncFmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const syncFmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 
 export async function IntegrationsTab({ orgId, studioId }: { orgId: string; studioId: string }) {
   const db = getDb();

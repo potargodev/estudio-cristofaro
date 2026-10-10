@@ -81,7 +81,7 @@ export function HeroStatements({ statements, interval }: { statements: string[];
         ))}
       </div>
       {!reduce && statements.length > 1 && (
-        <div data-intro="fade" className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
+        <div data-intro="fade" className="mt-8 flex items-center gap-2.5 sm:gap-4">
           <button
             type="button"
             onClick={() => setPaused((p) => !p)}
@@ -118,9 +118,9 @@ export function HeroStatements({ statements, interval }: { statements: string[];
               <path d="m4.5 2 4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.4" />
             </svg>
           </button>
-          <ol className="flex items-center gap-2" aria-hidden>
+          <ol className="flex min-w-0 items-center gap-1.5 sm:gap-2" aria-hidden>
             {statements.map((s, i) => (
-              <li key={s} className="relative h-px w-6 overflow-hidden bg-hair-strong sm:w-12">
+              <li key={s} className="relative h-px w-4 overflow-hidden bg-hair-strong sm:w-12">
                 {i === index && (
                   <span
                     key={`${index}-${paused}`}

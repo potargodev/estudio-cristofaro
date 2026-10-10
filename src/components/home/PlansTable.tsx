@@ -53,7 +53,7 @@ export function PlansTable({
   const cell = (c: number) => cn("px-5 py-4 align-top transition-colors duration-300", col === c && "bg-paper/[0.035]", c === 2 && "border-x border-rose-light");
 
   return (
-    <section ref={root} id="planes" aria-labelledby={full ? undefined : "planes-titulo"} aria-label={full ? "Comparación de planes" : undefined} className={cn("scroll-mt-16 bg-night", full ? "py-16 lg:py-24" : "border-t border-hair py-24 lg:py-36")}>
+    <section ref={root} id="planes" aria-labelledby={full ? undefined : "planes-titulo"} aria-label={full ? "Comparación de planes" : undefined} className={cn("scroll-mt-16 bg-night", full ? "py-16 lg:py-24" : "border-t border-hair py-16 lg:py-36")}>
       <Container>
         {!full && <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">

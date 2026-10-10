@@ -5,7 +5,7 @@ import { getDb } from "@/db";
 import { audit_log } from "@/db/schema";
 import { auditLabel } from "@/lib/audit";
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 const PAGE = 50;
 
 /** Detalle legible de los metadatos más comunes */

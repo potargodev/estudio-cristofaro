@@ -5,7 +5,7 @@ import { AUDIENCES } from "@/lib/audiences";
 
 export function ForWhom() {
   return (
-    <section id="para-quien" aria-labelledby="para-quien-titulo" className="scroll-mt-20 border-t border-hair bg-night py-24 lg:py-36">
+    <section id="para-quien" aria-labelledby="para-quien-titulo" className="scroll-mt-20 border-t border-hair bg-night py-16 lg:py-36">
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">

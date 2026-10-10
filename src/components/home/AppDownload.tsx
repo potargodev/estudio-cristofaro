@@ -95,7 +95,7 @@ function Phone() {
  */
 export function AppDownload() {
   return (
-    <section id="app" aria-labelledby="app-titulo" className="scroll-mt-16 overflow-hidden border-t border-hair bg-night py-24 text-paper lg:py-32">
+    <section id="app" aria-labelledby="app-titulo" className="scroll-mt-16 overflow-hidden border-t border-hair bg-night py-16 text-paper lg:py-32">
       <Container className="grid items-center gap-16 lg:grid-cols-12 lg:gap-12">
         <div className="lg:col-span-6">
           <p className="flex items-center gap-3 text-[13px] text-paper/60">

@@ -60,7 +60,8 @@ export function HeroMotion({ slides, children }: { slides: HeroSlide[]; children
   return (
     <div>
       <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
-        <div ref={media} className="absolute inset-0 will-change-transform" style={{ transform: "scale(1.06)" }}>
+        {/* Celular: la foto completa (16:9) arriba, fundida en el azul; escritorio: a sangre completa */}
+        <div ref={media} className="absolute inset-x-0 top-16 aspect-[16/9] will-change-transform md:inset-0 md:top-0 md:aspect-auto" style={{ transform: "scale(1.06)" }}>
           {slides.map((s, i) => {
             if (i !== 0 && !rest) return null;
             const isActive = i === index;
@@ -79,15 +80,17 @@ export function HeroMotion({ slides, children }: { slides: HeroSlide[]; children
                   fetchPriority={i === 0 ? "high" : "low"}
                   sizes="100vw"
                   quality={70}
-                  className="object-cover object-[var(--pos-m)] md:object-[var(--pos)]"
+                  className="object-cover opacity-70 md:object-[var(--pos)] md:opacity-60"
                   style={{ "--pos": s.position, "--pos-m": s.mobilePosition } as React.CSSProperties}
                 />
               </div>
             );
           })}
+          <div className="absolute inset-[-1px] z-[3] bg-[linear-gradient(180deg,#0f1320_0%,rgb(15_19_32/0.3)_18%,rgb(15_19_32/0.45)_55%,#0f1320_100%)] md:hidden" />
         </div>
-        {/* Velo para el contraste del texto (abajo y a la izquierda) */}
-        <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgb(15_19_32/0.6)_0%,rgb(15_19_32/0.45)_35%,rgb(15_19_32/0.88)_62%,rgb(15_19_32/0.97)_100%)] md:bg-[linear-gradient(90deg,rgb(15_19_32/0.92)_0%,rgb(15_19_32/0.7)_50%,rgb(15_19_32/0.45)_100%),linear-gradient(180deg,transparent_50%,rgb(15_19_32/0.92)_100%)]" />
+        {/* Velos: la foto se pierde en el azul y el texto siempre se lee */}
+        <div className="absolute inset-x-0 top-0 z-[3] h-16 bg-night md:hidden" />
+        <div className="absolute inset-0 z-[3] hidden bg-[linear-gradient(90deg,rgb(15_19_32/0.96)_0%,rgb(15_19_32/0.82)_45%,rgb(15_19_32/0.55)_100%),linear-gradient(180deg,rgb(15_19_32/0.3)_0%,transparent_30%,rgb(15_19_32/0.95)_100%)] md:block" />
       </div>
       {children}
     </div>

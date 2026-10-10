@@ -51,8 +51,8 @@ export function addDays(date: string, n: number) {
 }
 
 export const fmtDateTime = (at: Date, tz = STUDIO_TZ) =>
-  new Intl.DateTimeFormat("es-AR", { timeZone: tz, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(at);
+  new Intl.DateTimeFormat("es-AR", { timeZone: tz, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(at);
 export const fmtTime = (at: Date, tz = STUDIO_TZ) =>
-  new Intl.DateTimeFormat("es-AR", { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(at);
+  new Intl.DateTimeFormat("es-AR", { timeZone: tz, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(at);
 export const fmtDay = (date: string) =>
   new Intl.DateTimeFormat("es-AR", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long" }).format(new Date(`${date}T12:00:00Z`));

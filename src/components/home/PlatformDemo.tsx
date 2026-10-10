@@ -304,7 +304,7 @@ export function PlatformDemo() {
   const current = PLATFORM_TABS.find((t) => t.key === tab)!;
 
   return (
-    <section id="plataforma" aria-labelledby="plataforma-titulo" className="scroll-mt-16 border-t border-hair bg-night py-24 lg:py-32">
+    <section id="plataforma" aria-labelledby="plataforma-titulo" className="scroll-mt-16 border-t border-hair bg-night py-16 lg:py-32">
       {/* anclas de las pestañas para el mega menú */}
       {PLATFORM_TABS.map((t) => (
         <span key={t.key} id={`plataforma-${t.key}`} className="sr-only" />

@@ -71,7 +71,7 @@ export function ChaosToOrder() {
   }, []);
 
   return (
-    <section ref={root} aria-labelledby="caos-titulo" className="on-paper border-t border-hair-ink bg-paper py-24 text-ink lg:py-32">
+    <section ref={root} aria-labelledby="caos-titulo" className="on-paper border-t border-hair-ink bg-paper py-16 text-ink lg:py-32">
       <Container className="grid gap-14 lg:grid-cols-12 lg:gap-12">
         {/* Planteo */}
         <div className="lg:col-span-4">

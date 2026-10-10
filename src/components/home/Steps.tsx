@@ -16,7 +16,7 @@ const STEPS = [
  */
 export function Steps() {
   return (
-    <section aria-labelledby="pasos-titulo" className="border-t border-hair bg-navy-deep py-24 lg:py-36">
+    <section aria-labelledby="pasos-titulo" className="border-t border-hair bg-navy-deep py-16 lg:py-36">
       <Container>
         <SectionIndex n="08">Proceso</SectionIndex>
         <SplitHeading id="pasos-titulo" className="display-md mt-8 max-w-[14ch] text-paper">
