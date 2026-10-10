@@ -27,6 +27,7 @@ import {
   users,
 } from "@/db/schema";
 import { getCurrentUser, getMemberships, ORG_COOKIE, type StaffUser } from "@/lib/auth";
+import { getPrefs, setPrefs } from "@/lib/prefs";
 import { CHECKLISTS, PROFILE_LABEL, type GuideView, type OnboardingProfile, type SpaceType } from "./catalog";
 
 // Progreso del onboarding por usuario y por espacio (tenant u organización),
@@ -85,7 +86,8 @@ async function detect(ctx: OnboardingContext): Promise<Set<string>> {
   const checks: Record<string, () => Promise<boolean>> = {
     seguridad: async () => user.twoFactorEnabled,
     grupo: () => has(db.select({ n: count() }).from(expense_groups).where(and(eq(expense_groups.studio_id, sid), eq(expense_groups.created_by, user.id)))),
-    gasto: () => has(db.select({ n: count() }).from(expenses).where(eq(expenses.created_by, user.id))),
+    // expenses.created_by es el integrante del grupo, no el usuario
+    gasto: () => has(db.select({ n: count() }).from(expenses).innerJoin(group_members, eq(group_members.id, expenses.created_by)).where(eq(group_members.user_id, user.id))),
     invitar: () =>
       has(
         db
@@ -150,6 +152,20 @@ async function progressRow(ctx: OnboardingContext) {
   return created;
 }
 
+/** Días en los que una cuenta se considera nueva (guía prendida por defecto) */
+const NEW_ACCOUNT_DAYS = 14;
+
+/**
+ * ¿La guía está prendida para este usuario? Lo que eligió (en sus preferencias,
+ * para todos sus espacios) manda; si nunca eligió, solo para cuentas nuevas.
+ */
+export async function guideEnabled(userId: string) {
+  const prefs = await getPrefs(userId);
+  if (typeof prefs.guide === "boolean") return prefs.guide;
+  const [u] = await getDb().select({ createdAt: users.createdAt }).from(users).where(eq(users.id, userId));
+  return !!u && Date.now() - u.createdAt.getTime() < NEW_ACCOUNT_DAYS * 86400_000;
+}
+
 /** Arma la guía de la sesión y guarda los pasos recién cumplidos (con su fecha) */
 export async function getGuide(ctx?: OnboardingContext | null, path?: string | null): Promise<GuideView | null> {
   const c = ctx === undefined ? await onboardingContext(path) : ctx;
@@ -169,7 +185,7 @@ export async function getGuide(ctx?: OnboardingContext | null, path?: string | n
     profileLabel: PROFILE_LABEL[c.profile],
     steps: CHECKLISTS[c.profile].map((s) => ({ ...s, done: !!completed[s.key] })),
     toursSeen: Object.keys(row.tours_seen ?? {}),
-    disabled: row.disabled,
+    disabled: !(await guideEnabled(c.user.id)),
   };
 }
 
@@ -199,6 +215,7 @@ export async function setGuideDisabled(disabled: boolean, resetTours = false, pa
   const c = await onboardingContext(path);
   if (!c) return false;
   const row = await progressRow(c);
+  await setPrefs(c.user.id, { guide: !disabled });
   await getDb()
     .update(onboarding_progress)
     .set({ disabled, ...(resetTours ? { tours_seen: {} } : {}) })
@@ -211,8 +228,8 @@ export async function guideBoot(path?: string | null): Promise<{ toursSeen: stri
   const c = await onboardingContext(path);
   if (!c) return null;
   const [row] = await getDb()
-    .select({ tours: onboarding_progress.tours_seen, disabled: onboarding_progress.disabled })
+    .select({ tours: onboarding_progress.tours_seen })
     .from(onboarding_progress)
     .where(and(eq(onboarding_progress.user_id, c.user.id), eq(onboarding_progress.space_type, c.spaceType), eq(onboarding_progress.space_id, c.spaceId)));
-  return { toursSeen: Object.keys(row?.tours ?? {}), disabled: row?.disabled ?? false };
+  return { toursSeen: Object.keys(row?.tours ?? {}), disabled: !(await guideEnabled(c.user.id)) };
 }

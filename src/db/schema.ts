@@ -1958,6 +1958,8 @@ export const user_preferences = pgTable("user_preferences", {
 });
 
 export interface UserPrefs {
+  /** Guía (recorridos automáticos y widget de primeros pasos). Sin valor: prendida solo para cuentas nuevas */
+  guide?: boolean;
   /** expanded | collapsed (en escritorio, colapsado = barra horizontal de íconos) */
   sidebar?: "expanded" | "collapsed";
   /** Copiloto: registrar solo los movimientos personales (siempre con Deshacer) */

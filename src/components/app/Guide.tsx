@@ -1,152 +1,143 @@
 "use client";
 
-import { Check, CircleHelp, Compass, X } from "lucide-react";
+import { CircleHelp, Compass, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { loadGuideAction, markTourSeenAction, setGuideDisabledAction } from "@/app/actions/onboarding";
-import { tourFor, type GuideView, type Tour } from "@/modules/onboarding/catalog";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { markTourSeenAction, setGuideDisabledAction } from "@/app/actions/onboarding";
+import { tourFor, type Tour } from "@/modules/onboarding/catalog";
 import { helpFor } from "@/lib/help-map";
 import { cn } from "@/lib/utils";
 
-// Onboarding guiado: el botón "Guía" (siempre visible arriba) abre el panel con
-// los primeros pasos y el recorrido de la pantalla. GuideHost va una sola vez
-// por layout: muestra el panel y los tours (salteables, con teclado y sin
-// animaciones si la persona pidió menos movimiento). El progreso vive en la base.
+// Onboarding guiado: el botón "Guía" (siempre visible arriba) abre un menú con
+// el interruptor de la guía, el tour de la pantalla y los primeros pasos.
+// GuideHost va una sola vez por layout y muestra los tours (salteables, con
+// teclado y sin animaciones si la persona pidió menos movimiento). El progreso
+// y la preferencia viven en la base.
 
-const OPEN = "faro:guia";
+// Estado compartido entre el botón «Guía» (en la barra) y GuideHost (uno por layout)
+type GuideState = { ready: boolean; disabled: boolean; hasTour: boolean };
+let state: GuideState = { ready: false, disabled: false, hasTour: false };
+const listeners = new Set<() => void>();
+const setState = (patch: Partial<GuideState>) => {
+  state = { ...state, ...patch };
+  listeners.forEach((l) => l());
+};
+const subscribe = (l: () => void) => {
+  listeners.add(l);
+  return () => listeners.delete(l);
+};
+const useGuide = () => useSyncExternalStore(subscribe, () => state, () => state);
+const START_TOUR = "faro:tour";
 
+/** Botón «Guía»: menú con el interruptor, el tour de esta pantalla y los primeros pasos */
 export function GuideButton({ className, compact }: { className?: string; compact?: boolean }) {
+  const g = useGuide();
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [open]);
+  const toggle = async () => {
+    const disabled = !g.disabled;
+    setState({ disabled });
+    await setGuideDisabledAction(disabled, window.location.pathname);
+  };
   return (
-    <button type="button" data-tour="guia" onClick={() => window.dispatchEvent(new Event(OPEN))} className={cn("inline-flex h-9 items-center gap-1.5 px-2.5 text-[13px]", className)} aria-label="Guía: primeros pasos y recorrido">
-      <Compass className="size-4" aria-hidden />
-      <span className={cn(compact ? "sr-only" : "hidden sm:inline")}>Guía</span>
-    </button>
+    <div ref={box} className="relative">
+      <button type="button" data-tour="guia" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-haspopup="menu" className={cn("inline-flex h-9 items-center gap-1.5 px-2.5 text-[13px]", className)} aria-label="Guía: recorridos y primeros pasos">
+        <Compass className="size-4" aria-hidden />
+        <span className={cn(compact ? "sr-only" : "hidden sm:inline")}>Guía</span>
+      </button>
+      {open && (
+        <div role="menu" aria-label="Guía" className="app-ui absolute right-0 top-full z-50 mt-2 w-72 rounded-md border border-line bg-surface p-1.5 text-[14px] text-ink shadow-[0_16px_40px_-16px_rgba(0,0,0,0.35)]">
+          <button type="button" role="menuitemcheckbox" aria-checked={!g.disabled} onClick={toggle} className="flex w-full items-center justify-between gap-3 rounded-[4px] px-3 py-2.5 text-left hover:bg-canvas">
+            <span>
+              <span className="block font-medium">Guía {g.disabled ? "apagada" : "prendida"}</span>
+              <span className="block text-[12px] text-muted">{g.disabled ? "No aparece nada solo." : "Un recorrido corto la primera vez que entrás a cada pantalla."}</span>
+            </span>
+            <span aria-hidden className={cn("relative h-5 w-9 shrink-0 rounded-full transition-colors", g.disabled ? "bg-line" : "bg-navy")}>
+              <span className={cn("absolute top-0.5 size-4 rounded-full bg-surface shadow transition-[left]", g.disabled ? "left-0.5" : "left-[18px]")} />
+            </span>
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            disabled={!g.hasTour}
+            onClick={() => {
+              setOpen(false);
+              window.dispatchEvent(new Event(START_TOUR));
+            }}
+            className="flex w-full items-center gap-2.5 rounded-[4px] px-3 py-2.5 text-left hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Compass className="size-4 text-muted" aria-hidden /> {g.hasTour ? "Ver el tour de esta pantalla" : "Esta pantalla no tiene tour"}
+          </button>
+          <Link href="/primeros-pasos" role="menuitem" onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-[4px] px-3 py-2.5 hover:bg-canvas">
+            <ListChecks className="size-4 text-muted" aria-hidden /> Primeros pasos
+          </Link>
+          <Link href="/ayuda" role="menuitem" onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-[4px] px-3 py-2.5 hover:bg-canvas">
+            <CircleHelp className="size-4 text-muted" aria-hidden /> Centro de ayuda
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }
 
+/**
+ * Tours: cada uno se muestra una sola vez por pantalla y por usuario (se marca
+ * visto apenas aparece, y queda guardado en la base). Con la guía apagada no
+ * aparece nada automático; el tour siempre se puede ver desde el menú «Guía».
+ */
 export function GuideHost({ boot }: { boot: { toursSeen: string[]; disabled: boolean } | null }) {
   const pathname = usePathname();
-  const [seen, setSeen] = useState<string[]>(boot?.toursSeen ?? []);
-  const [disabled, setDisabled] = useState(boot?.disabled ?? false);
+  const seen = useRef<string[]>(boot?.toursSeen ?? []);
+  const g = useGuide();
   const [tour, setTour] = useState<Tour | null>(null);
-  const [panel, setPanel] = useState(false);
-  const [guide, setGuide] = useState<GuideView | null>(null);
+
+  useEffect(() => {
+    if (boot) setState({ ready: true, disabled: boot.disabled });
+  }, [boot]);
+  useEffect(() => setState({ hasTour: !!boot && !!tourFor(pathname) }), [boot, pathname]);
+
+  const show = useCallback((t: Tour) => {
+    setTour(t);
+    if (!seen.current.includes(t.id)) {
+      seen.current = [...seen.current, t.id];
+      void markTourSeenAction(t.id, window.location.pathname);
+    }
+  }, []);
 
   // Tour automático la primera vez que se entra a una pantalla que lo tiene
   useEffect(() => {
-    if (!boot || disabled) return;
+    if (!boot || g.disabled || !g.ready) return;
     const t = tourFor(pathname);
-    if (!t || seen.includes(t.id)) return;
-    const id = setTimeout(() => setTour(t), 700);
+    if (!t || seen.current.includes(t.id)) return;
+    const id = setTimeout(() => show(t), 700);
     return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, disabled]);
+  }, [pathname, g.disabled, g.ready, boot, show]);
 
-  const openPanel = useCallback(async () => {
-    setPanel(true);
-    setGuide(await loadGuideAction(window.location.pathname));
-  }, []);
+  // «Ver el tour de esta pantalla» (desde el menú)
   useEffect(() => {
-    const h = () => void openPanel();
-    window.addEventListener(OPEN, h);
-    return () => window.removeEventListener(OPEN, h);
-  }, [openPanel]);
-
-  const finishTour = useCallback(
-    (t: Tour) => {
-      setTour(null);
-      if (!seen.includes(t.id)) {
-        setSeen((s) => [...s, t.id]);
-        void markTourSeenAction(t.id, window.location.pathname);
-      }
-    },
-    [seen],
-  );
-
-  const toggleGuide = async () => {
-    const next = !disabled;
-    setDisabled(next);
-    setGuide((g) => (g ? { ...g, disabled: next } : g));
-    await setGuideDisabledAction(next, window.location.pathname);
-  };
+    const h = () => {
+      const t = tourFor(window.location.pathname);
+      if (t) show(t);
+    };
+    window.addEventListener(START_TOUR, h);
+    return () => window.removeEventListener(START_TOUR, h);
+  }, [show]);
 
   if (!boot) return null;
-  const screenTour = tourFor(pathname);
-  const steps = guide?.steps ?? [];
-  const done = steps.filter((s) => s.done).length;
-  return (
-    <>
-      {panel && (
-        <div className="fixed inset-0 z-[60]">
-          <button type="button" aria-label="Cerrar la guía" className="absolute inset-0 bg-night/50" onClick={() => setPanel(false)} />
-          <aside role="dialog" aria-modal="true" aria-labelledby="guia-titulo" className="app-ui absolute inset-y-0 right-0 flex w-[380px] max-w-[92vw] flex-col border-l border-line bg-surface text-ink shadow-xl motion-safe:animate-[guia-in_.2s_ease-out]">
-            <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
-              <div>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-rose-deep">{guide?.profileLabel ?? "Guía"}</p>
-                <h2 id="guia-titulo" className="mt-1 font-display text-[26px] leading-tight">
-                  Primeros pasos
-                </h2>
-              </div>
-              <button type="button" onClick={() => setPanel(false)} aria-label="Cerrar" className="grid size-9 place-items-center rounded-md hover:bg-canvas" autoFocus>
-                <X className="size-5" aria-hidden />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto px-5 py-4">
-              {!guide ? (
-                <p className="text-[14px] text-muted">Cargando…</p>
-              ) : (
-                <>
-                  <p className="text-[14px] text-muted">
-                    {done === steps.length ? "¡Listo! Hiciste todos los pasos." : `${done} de ${steps.length} hechos. Se marcan solos cuando hacés cada cosa.`}
-                  </p>
-                  <div className="mt-3 h-1.5 rounded bg-navy-soft" aria-hidden>
-                    <div className="h-full rounded bg-navy motion-safe:transition-[width]" style={{ width: `${steps.length ? (done / steps.length) * 100 : 0}%` }} />
-                  </div>
-                  <ol className="mt-5 grid gap-2">
-                    {steps.map((s) => (
-                      <li key={s.key}>
-                        <Link href={s.href} onClick={() => setPanel(false)} className={cn("flex gap-3 rounded-md border p-3 transition-colors", s.done ? "border-line bg-canvas" : "border-line hover:border-muted")}>
-                          <span className={cn("mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border", s.done ? "border-navy bg-navy text-gold" : "border-line")}>{s.done && <Check className="size-3.5" aria-hidden />}</span>
-                          <span className="min-w-0">
-                            <span className={cn("block text-[14px] font-medium", s.done && "text-muted line-through decoration-1")}>{s.title}</span>
-                            <span className="block text-[13px] text-muted">{s.text}</span>
-                            <span className="sr-only">{s.done ? "Hecho" : "Pendiente"}</span>
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ol>
-                </>
-              )}
-            </div>
-            <div className="grid gap-2 border-t border-line px-5 py-4 text-[14px]">
-              {screenTour && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPanel(false);
-                    setTour(screenTour);
-                  }}
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-navy px-4 font-medium text-paper hover:bg-night"
-                >
-                  <Compass className="size-4" aria-hidden /> Recorrer esta pantalla
-                </button>
-              )}
-              <Link href="/ayuda" onClick={() => setPanel(false)} className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line px-4 hover:border-muted">
-                <CircleHelp className="size-4" aria-hidden /> Centro de ayuda
-              </Link>
-              <label className="mt-1 flex items-center justify-between gap-3 text-[13px] text-muted">
-                Mostrar recorridos automáticos
-                <input type="checkbox" checked={!disabled} onChange={toggleGuide} className="size-4 accent-navy" />
-              </label>
-            </div>
-          </aside>
-        </div>
-      )}
-      {tour && <TourOverlay key={tour.id} tour={tour} onEnd={() => finishTour(tour)} />}
-    </>
-  );
+  return tour ? <TourOverlay key={tour.id} tour={tour} onEnd={() => setTour(null)} /> : null;
 }
 
 interface Box {

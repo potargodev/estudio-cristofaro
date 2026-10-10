@@ -3,6 +3,7 @@
 import { NoticesBell, type Notice } from "./NoticesBell";
 import {
   ArrowLeftRight,
+  ListChecks,
   Blocks,
   Bot,
   Building2,
@@ -104,6 +105,7 @@ const ICONS: Record<ShellIcon, LucideIcon> = {
   plantillas: Factory,
   auditoria: ScrollText,
   opiniones: MessageSquareText,
+  pasos: ListChecks,
 };
 
 export interface ShellSpace {

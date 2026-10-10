@@ -30,15 +30,17 @@ Después de entrar, Faro te hace unas preguntas cortas para dejar todo listo. Lo
 - **Autónomo:** tus datos (con tu CUIT armamos tu calendario), tu rubro y por dónde seguir.
 - **Persona:** qué querés hacer primero: anotar tus gastos con el Copiloto, dividir gastos, encontrar un contador o armar una Flota. Al terminar, el **Copiloto** te saluda y te explica cómo usarlo: es tu pantalla de inicio.
 
-## 4. La guía de primeros pasos
+## 4. Primeros pasos y la Guía
 
-Arriba, en el menú, siempre tenés el botón **Guía**. Ahí ves tu lista de primeros pasos con el progreso. **Cada paso se marca solo** cuando hacés la acción de verdad: no hay que tildar nada.
+Arriba siempre tenés el botón **Guía**. Al tocarlo se abre un menú con:
 
-Desde la Guía también podés **Recorrer esta pantalla**: un recorrido corto que te señala lo importante. Los recorridos se pueden saltear en cualquier momento.
+- **Guía prendida / apagada:** el interruptor. Con la guía prendida, la primera vez que entrás a cada pantalla aparece un recorrido corto (una sola vez: queda guardado cuando lo cerrás o lo terminás). Con la guía apagada no aparece nada solo.
+- **Ver el tour de esta pantalla:** lo volvés a ver cuando quieras, aunque la guía esté apagada.
+- **Primeros pasos:** tu lista de pasos con el progreso («2 de 5 listos»). Cada paso tiene un botón **Hacer este paso**, y **se marca solo** cuando hacés la acción de verdad: no hay que tildar nada.
 
-## Apagar los recorridos automáticos
+En el **Inicio** ves un aviso corto, «Te faltan 3 pasos», que podés cerrar con la **X** (los pasos siguen en **Guía** → **Primeros pasos**). Los recorridos se pueden saltear en cualquier momento, también con la tecla **Esc**.
 
-Los recorridos aparecen la primera vez que entrás a cada pantalla. Si no los querés ver, entrá a **Mi cuenta** y destildá **Mostrar los recorridos automáticos** (en el portal de clientes está en **Más**). También lo podés apagar desde el panel de la Guía. El botón **Guía** queda siempre, aunque los apagues.
+La guía viene prendida en las cuentas nuevas. Si tu cuenta ya tenía un tiempo, viene apagada: prendela desde el menú si la querés. También la manejás desde **Mi cuenta** (en el portal de clientes, desde **Más**), donde además podés volver a ver los recorridos que ya viste.
 
 ## El menú
 

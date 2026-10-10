@@ -107,7 +107,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
         </p>
       )}
 
-      <details className="rounded-lg border border-line bg-surface" open={!!sp.cargar}>
+      <details data-tour="bitacora-cargar" className="rounded-lg border border-line bg-surface" open={!!sp.cargar}>
         <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 text-[16px] font-semibold">
           Cargar a mano
           <span className="text-[13px] font-normal text-muted">
@@ -172,7 +172,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
             Movimientos
           </h2>
           <div className="flex gap-2">
-            <Link href="/bitacora/categorias" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+            <Link href="/bitacora/categorias" data-tour="bitacora-categorias" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
               <Settings2 className="size-4" aria-hidden /> Categorías
             </Link>
             <a href={`/api/bitacora/csv?mes=${month}${cat ? `&categoria=${cat}` : ""}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">

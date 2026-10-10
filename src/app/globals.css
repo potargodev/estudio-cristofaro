@@ -794,6 +794,14 @@ body {
 :root[data-theme="dark"] .app-ui :not(.keep-dark, .keep-dark *, .bg-night, .bg-night *)[class*="border-navy"] {
   border-color: rgb(205 211 232 / 0.32);
 }
+/* Acentos en oscuro, invertidos: los cuadraditos de ícono (azul noche con ícono
+   rosé) pasan a fondo rosé con el ícono en azul noche. #1c2235 sobre #c9a596 =
+   7,1:1 (AA). En claro no cambian. */
+:root[data-theme="dark"] .app-ui :not(.keep-dark, .keep-dark *, .bg-night, .bg-night *):is(.bg-navy.text-gold, .bg-navy.text-rose-light, .bg-gold.text-night) {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: #1c2235;
+}
 /* Superficies siempre oscuras: tokens del modo claro */
 :root[data-theme="dark"] .app-ui :is(.keep-dark, .bg-night) {
   color-scheme: dark;

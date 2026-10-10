@@ -1,46 +1,43 @@
-import { Check, Compass } from "lucide-react";
+import { ListChecks } from "lucide-react";
 import Link from "next/link";
-import { getGuide } from "@/modules/onboarding/server";
+import { getCurrentUser } from "@/lib/auth";
+import { getPrefs } from "@/lib/prefs";
 import { cn } from "@/lib/utils";
+import { getGuide } from "@/modules/onboarding/server";
+import { HideFirstSteps } from "./HideFirstSteps";
 
-/** Tarjeta "Primeros pasos" del inicio: desaparece cuando están todos hechos o si la guía está apagada */
+/**
+ * Widget compacto del Inicio: «Te faltan 3 pasos». Desaparece cuando están
+ * todos hechos, si la guía está apagada o si la persona lo cerró.
+ */
 export async function FirstSteps({ className, path }: { className?: string; path?: string }) {
   const g = await getGuide(undefined, path);
   if (!g || g.disabled) return null;
+  // El del Inicio se puede cerrar (el de una Flota, no: es de ese espacio)
+  const me = path ? null : await getCurrentUser();
+  if (me && (await getPrefs(me.id)).hideFirstSteps) return null;
   const done = g.steps.filter((s) => s.done).length;
-  if (done === g.steps.length) return null;
-  const next = g.steps.find((s) => !s.done);
+  const left = g.steps.length - done;
+  if (left === 0) return null;
+  const next = g.steps.find((s) => !s.done)!;
   return (
-    <section aria-labelledby="primeros-pasos" className={cn("rounded-lg border border-line bg-surface p-5", className)}>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 id="primeros-pasos" className="flex items-center gap-2 text-[17px] font-semibold text-ink">
-            <span className="grid size-8 place-items-center rounded-md bg-navy text-gold">
-              <Compass className="size-4" aria-hidden />
-            </span>
-            Primeros pasos
-          </h2>
-          <p className="mt-1 text-[14px] text-muted">
-            {done} de {g.steps.length} hechos · se marcan solos cuando los hacés.
-          </p>
+    <section aria-label="Primeros pasos" className={cn("flex flex-wrap items-center gap-3 rounded-md border border-line bg-surface px-4 py-3", className)}>
+      <span className="grid size-9 shrink-0 place-items-center rounded-md bg-navy text-gold">
+        <ListChecks className="size-4" aria-hidden />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[14px] font-medium">Te {left === 1 ? "falta 1 paso" : `faltan ${left} pasos`}</p>
+        <div className="mt-1.5 flex items-center gap-2">
+          <span className="h-1.5 w-24 overflow-hidden rounded-full bg-navy-soft" aria-hidden>
+            <span className="block h-full rounded-full bg-navy" style={{ width: `${(done / g.steps.length) * 100}%` }} />
+          </span>
+          <span className="truncate text-[12px] text-muted">Ahora: {next.title}</span>
         </div>
-        {next && (
-          <Link href={next.href} className="inline-flex h-9 items-center rounded-md bg-navy px-4 text-[14px] font-medium text-paper hover:bg-night">
-            Seguir: {next.title.toLowerCase()}
-          </Link>
-        )}
       </div>
-      <ol className="mt-4 grid gap-2 sm:grid-cols-2">
-        {g.steps.map((s) => (
-          <li key={s.key}>
-            <Link href={s.href} className="flex items-start gap-2.5 rounded-md px-1 py-1 text-[14px] hover:bg-canvas">
-              <span className={cn("mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border", s.done ? "border-navy bg-navy text-gold" : "border-line")}>{s.done && <Check className="size-3" aria-hidden />}</span>
-              <span className={cn(s.done ? "text-muted line-through decoration-1" : "text-ink")}>{s.title}</span>
-              <span className="sr-only">{s.done ? "(hecho)" : "(pendiente)"}</span>
-            </Link>
-          </li>
-        ))}
-      </ol>
+      <Link href={path ? next.href : "/primeros-pasos"} className="inline-flex h-9 items-center rounded-md bg-navy px-3.5 text-[13px] font-medium text-paper hover:bg-night">
+        {path ? "Hacer este paso" : "Ver los pasos"}
+      </Link>
+      {!path && <HideFirstSteps />}
     </section>
   );
 }

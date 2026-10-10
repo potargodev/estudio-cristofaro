@@ -149,6 +149,26 @@ export const TOURS: Tour[] = [
     ],
   },
   {
+    id: "copiloto",
+    path: "/copiloto",
+    steps: [
+      { title: "Tu Copiloto", text: "Contale tus gastos como se los contarías a alguien: él los anota en tu Bitácora." },
+      { target: t("copiloto-texto"), title: "Escribí", text: "«Ayer 5000 de nafta y 3200 en el chino». Puede haber varios en un mensaje." },
+      { target: t("copiloto-mic"), title: "O hablá", text: "Mantené apretado el micrófono y soltalo para mandar el audio." },
+      { target: t("copiloto-adjunto"), title: "Fotos y PDF", text: "Un ticket, una factura o la captura de una transferencia." },
+      { target: t("copiloto-ajustes"), title: "Registrar solo", text: "Si querés, tus gastos personales se anotan sin confirmar (siempre con Deshacer)." },
+    ],
+  },
+  {
+    id: "bitacora",
+    path: "/bitacora",
+    steps: [
+      { title: "Tu Bitácora", text: "Lo que entró, lo que salió y lo que queda en el mes. Es privada." },
+      { target: t("bitacora-cargar"), title: "Cargá a mano", text: "Para cuando no querés hablar con el Copiloto." },
+      { target: t("bitacora-categorias"), title: "Tus categorías", text: "Cambiales el nombre, sumá nuevas o archivá las que no usás." },
+    ],
+  },
+  {
     id: "portal-inicio",
     path: "/portal",
     steps: [

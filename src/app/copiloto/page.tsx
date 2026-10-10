@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FirstSteps } from "@/components/app/FirstSteps";
 import { CopilotChat, type ChatMessage } from "@/components/copiloto/CopilotChat";
 import { getPrefs } from "@/lib/prefs";
 import { listCategories } from "@/modules/bitacora/server";
@@ -30,5 +31,10 @@ export default async function CopilotoPage() {
       return { id: p.id, tool: p.tool, status: p.status, auto: p.auto, title: pv.title ?? "", lines: pv.lines ?? [], needsConfirm: !!pv.needsConfirm, data: pv.data ?? {}, error: p.error };
     }),
   }));
-  return <CopilotChat messages={messages} categories={cats.map((c) => ({ id: c.id, name: c.name }))} aiReady={isConfigured(ai)} auto={prefs.copilotAuto === true} />;
+  return (
+    <>
+      {me.role === "titular" && <FirstSteps className="mb-3" />}
+      <CopilotChat messages={messages} categories={cats.map((c) => ({ id: c.id, name: c.name }))} aiReady={isConfigured(ai)} auto={prefs.copilotAuto === true} />
+    </>
+  );
 }

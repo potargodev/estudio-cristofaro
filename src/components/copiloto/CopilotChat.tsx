@@ -398,7 +398,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
           </div>
         </div>
         <div className="relative">
-          <button type="button" onClick={() => setSettings((s) => !s)} aria-expanded={settings} aria-label="Ajustes del Copiloto" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
+          <button type="button" onClick={() => setSettings((s) => !s)} aria-expanded={settings} aria-label="Ajustes del Copiloto" data-tour="copiloto-ajustes" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <Settings2 className="size-4" aria-hidden />
           </button>
           {settings && (
@@ -460,7 +460,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
           >
             <input ref={fileInput} type="file" accept="image/*,application/pdf,audio/*" className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
             <input ref={camInput} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-            <button type="button" onClick={() => fileInput.current?.click()} aria-label="Adjuntar foto, captura o PDF" className="grid size-11 shrink-0 place-items-center rounded-full text-muted hover:bg-surface hover:text-ink">
+            <button type="button" onClick={() => fileInput.current?.click()} aria-label="Adjuntar foto, captura o PDF" data-tour="copiloto-adjunto" className="grid size-11 shrink-0 place-items-center rounded-full text-muted hover:bg-surface hover:text-ink">
               <Paperclip className="size-5" aria-hidden />
             </button>
             <button type="button" onClick={() => camInput.current?.click()} aria-label="Sacar una foto" className="grid size-11 shrink-0 place-items-center rounded-full text-muted hover:bg-surface hover:text-ink sm:hidden">
@@ -471,6 +471,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
             </label>
             <textarea
               id="copiloto-texto"
+              data-tour="copiloto-texto"
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => {
@@ -493,6 +494,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
                 type="button"
                 disabled={sending}
                 aria-label="Mantené apretado para grabar un audio (o tocá para empezar y terminar)"
+                data-tour="copiloto-mic"
                 onPointerDown={(e) => {
                   e.preventDefault();
                   void startRec();

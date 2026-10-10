@@ -43,7 +43,8 @@ export type ShellIcon =
   | "pedidos"
   | "plantillas"
   | "auditoria"
-  | "opiniones";
+  | "opiniones"
+  | "pasos";
 
 export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "planRequests" | "verifications" | "portalRequests";
 
@@ -85,7 +86,13 @@ export const PERSONAL_GROUP: ShellGroup = {
   ],
 };
 
-const HELP_GROUP: ShellGroup = { title: "Ayuda", items: [{ href: "/ayuda", label: "Centro de ayuda", icon: "ayuda" }] };
+const HELP_GROUP: ShellGroup = {
+  title: "Ayuda",
+  items: [
+    { href: "/primeros-pasos", label: "Primeros pasos", icon: "pasos" },
+    { href: "/ayuda", label: "Centro de ayuda", icon: "ayuda" },
+  ],
+};
 
 const PORTAL_ICON: Record<string, ShellIcon> = {
   inicio: "resumen",
