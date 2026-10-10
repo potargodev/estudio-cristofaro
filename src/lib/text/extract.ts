@@ -68,7 +68,7 @@ export async function extractText(buf: Buffer, name: string, mime?: string | nul
       return done(rows.map((r) => r.map((c) => (c == null ? "" : c instanceof Date ? c.toISOString().slice(0, 10) : String(c))).join(" | ")).join("\n"));
     }
     if (ext === "pdf") return done(pdfText(buf));
-    if (["jpg", "jpeg", "png"].includes(ext)) return { ok: false, reason: "Es una imagen: la lectura de imágenes llega con la lectura inteligente (F5)." };
+    if (["jpg", "jpeg", "png"].includes(ext)) return { ok: false, reason: "Es una imagen: la lectura de imágenes llega con la lectura inteligente." };
     return { ok: false, reason: "Formato sin lectura de texto." };
   } catch (error) {
     console.error("[extract] No se pudo leer", name, error);
