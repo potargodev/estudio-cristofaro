@@ -26,7 +26,7 @@ Reglas:
 
 ## 2. Núcleo y módulos
 
-**Núcleo** (en todos los planes): estudios, organizaciones, usuarios y roles, auditoría, portal del cliente, vencimientos, documentos, solicitudes, agenda y alertas por mail.
+**Núcleo** (en todos los planes): estudios, organizaciones, usuarios y roles, auditoría, portal del cliente, vencimientos, documentos, solicitudes, agenda, alertas por mail y gastos compartidos (§2.e).
 
 **Módulos** (registro en código, habilitados por plan y con override por estudio desde Faro Manager):
 
@@ -110,6 +110,25 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 | Asistente IA | Consultas | Consultas y acciones con aprobación |
 | Pedir ayuda a un contador | ✓ | ✓ |
 | Precio | Gratis | $[precio] / mes |
+
+## 2.e Gastos compartidos (núcleo, para todos los tipos de usuario)
+
+Inspirado en Splitwise, pero conectado con la contabilidad: lo que se reparte también queda registrado donde corresponde.
+
+- **Grupos:** socios de una empresa, equipo de trabajo, oficina o cowork compartido, un proyecto, un viaje de trabajo o un grupo personal. Cualquier usuario de Faro (estudio, autónomo, organización o empleado) puede crear grupos e invitar por mail o link, incluso a personas sin cuenta, como invitados.
+- **Gastos:** quién pagó (uno o varios), monto, fecha, categoría, comprobante adjunto (con lectura inteligente que completa los datos) y comentarios.
+- **Formas de repartir:** en partes iguales, por porcentaje, por partes (por ejemplo 2:1), por montos exactos o por ítem del ticket.
+- **Moneda:** pesos y dólares (u otras), con la cotización del día elegible (oficial, MEP o manual) y saldo convertido.
+- **Saldos y deudas simplificadas:** quién le debe a quién, con el mínimo de transferencias posible.
+- **Saldar:** registrar el pago, o pagar con link de Mercado Pago o con el alias o CVU del acreedor; confirmación de ambas partes.
+- **Gastos recurrentes:** alquiler, servicios o suscripciones que se cargan solos cada mes.
+- **Recordatorios amables** de saldos pendientes, configurables.
+- **Mejoras sobre Splitwise:**
+  - **Rendición de gastos de empleados:** el empleado paga, sube el ticket y la empresa aprueba y reintegra. Queda como gasto de la organización.
+  - **Socios:** aportes y retiros entre socios, con el saldo de cada uno.
+  - **Contabilidad:** un gasto marcado "de la empresa" o "deducible" pasa a los gastos de la organización o del autónomo, con su comprobante, y lo ve el estudio.
+  - **Asistente IA:** "cargá que pagué $48.000 de la cena con Juan y Ana, dividido igual".
+  - **Exportación** a planilla y resumen del grupo.
 
 ## 2.d Tipos de usuario y beneficios (para la landing de Faro)
 
