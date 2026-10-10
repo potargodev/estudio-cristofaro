@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { approvals, organizations } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { isUuid } from "@/lib/ids";
+import { EXT_PREFIX, executeConfirmedExternal } from "@/modules/connectors/mcp-externo/tools";
 import { getTool, levelFor } from "./registry";
 import { ToolError, type HandlerContext, type ToolActor, type ToolContext, type ToolDefinition, type ToolModule, type ToolOutcome } from "./types";
 
@@ -178,8 +179,9 @@ export async function decideApproval(approvalId: string, approver: ToolActor & {
   if (!a) return { ok: false, message: "Propuesta inexistente." };
   if (a.status !== "pendiente") return { ok: false, message: "Esa propuesta ya se resolvió." };
   if (a.level === "escritura" && a.requested_by !== approver.id) return { ok: false, message: "Solo quien la pidió puede confirmar esta acción." };
+  const external = a.tool.startsWith(EXT_PREFIX);
   const t = getTool(a.tool);
-  if (!t) return { ok: false, message: "La herramienta ya no existe." };
+  if (!t && !external) return { ok: false, message: "La herramienta ya no existe." };
 
   if (!decision.approve) {
     const [done] = await db
@@ -200,6 +202,7 @@ export async function decideApproval(approvalId: string, approver: ToolActor & {
     return { ok: true, status: "rechazada" };
   }
 
+  if (external || !t) return approveExternal(a, approver);
   if (!t.roles.includes(approver.role)) return { ok: false, message: "Tu rol no puede aprobar esta acción." };
   const edited = decision.input !== undefined;
   const parsed = t.input.safeParse(decision.input ?? a.input);
@@ -251,4 +254,31 @@ export async function decideApproval(approvalId: string, approver: ToolActor & {
   });
   if (!ok) return { ok: false, message: "message" in outcome ? outcome.message : "No se pudo ejecutar." };
   return { ok: true, status: "ejecutada", result: outcome.result };
+}
+
+/** Herramienta de un servidor MCP externo confirmada en el Asistente (sin edición del borrador) */
+async function approveExternal(a: typeof approvals.$inferSelect, approver: ToolActor & { studioId: string }): Promise<DecisionResult> {
+  const db = getDb();
+  const [claimed] = await db
+    .update(approvals)
+    .set({ status: "ejecutada", decided_by: approver.id, decided_at: new Date() })
+    .where(and(eq(approvals.id, a.id), eq(approvals.status, "pendiente")))
+    .returning({ id: approvals.id });
+  if (!claimed) return { ok: false, message: "Esa propuesta ya se resolvió." };
+  const ctx: ToolContext = {
+    studioId: a.studio_id,
+    actor: { id: approver.id, email: approver.email, name: approver.name, role: approver.role },
+    origin: a.origin,
+    organizationIds: null,
+    modules: null,
+    canWrite: true,
+    conversationId: a.conversation_id,
+  };
+  const r = await executeConfirmedExternal(a.tool, a.input as Record<string, unknown>, ctx);
+  await db
+    .update(approvals)
+    .set({ status: r.ok ? "ejecutada" : "error", result: r.ok ? { ok: true, data: r.result as never } : { ok: false, message: r.message } })
+    .where(eq(approvals.id, a.id));
+  await audit({ studioId: a.studio_id, actor: approver, action: "herramienta.confirmar", entityType: "aprobacion", entityId: a.id, result: r.ok ? "ok" : "error", metadata: { herramienta: a.tool } });
+  return r.ok ? { ok: true, status: "ejecutada", result: r.result } : { ok: false, message: r.message };
 }
