@@ -1,8 +1,9 @@
 # Foto del hero de la home
 
-El fondo del hero es `reunion.jpg` (atenuada con un velo azul noche). Las frases
-que rotan encima están en `src/lib/hero.ts` (`HERO_STATEMENTS`). Para cambiar la
-foto, reemplazá el archivo manteniendo el nombre o editá `HERO_SLIDES`.
+Cada frase del hero tiene su foto (atenuada con un velo azul noche). Las frases
+están en `src/lib/hero.ts` (`HERO_STATEMENTS`) y las fotos, en el mismo orden, en
+`HERO_SLIDES`. Falta la foto de "Abono mensual fijo" (calendario): mientras
+tanto usa `reunion.jpg`.
 
 `hero-3.jpg` es un placeholder del retrato del bloque "Responsable" hasta tener
 la foto real del equipo.

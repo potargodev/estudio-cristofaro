@@ -14,10 +14,10 @@ export function Hero() {
   return (
     <section aria-label="Presentación" className="relative isolate min-h-[100svh] overflow-hidden bg-night">
       <script dangerouslySetInnerHTML={{ __html: introScript }} />
-      <HeroMotion slides={HERO_SLIDES} interval={HERO_INTERVAL}>
+      <HeroMotion slides={HERO_SLIDES}>
         <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1360px] flex-col px-5 pb-8 pt-28 sm:px-8 lg:px-12 lg:pb-10 lg:pt-32">
-          {/* Arriba: titular, centrado en el espacio libre para que la foto respire */}
-          <div className="my-auto py-10 lg:py-14">
+          {/* Arriba: titular, centrado en el espacio libre; nunca pasa la mitad de la pantalla */}
+          <div className="my-auto py-10 lg:w-1/2 lg:py-14">
             <p data-intro="fade" className="text-[14px] text-paper/70">
               Estudio contable para PyMEs de servicios en CABA y GBA
             </p>

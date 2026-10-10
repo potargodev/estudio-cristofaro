@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { loadGsap, padMasks, reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
 import { MaskText } from "@/components/web/MaskText";
+import { HERO_SLIDE_EVENT } from "@/lib/hero";
 
 /**
  * Titular rotativo del hero: cada `interval` s la frase sale hacia arriba línea
@@ -40,6 +41,8 @@ export function HeroStatements({ statements, interval }: { statements: string[];
     const out = root.children[index] as HTMLElement;
     const inc = root.children[next] as HTMLElement;
     busy.current = true;
+    // La foto del fondo cambia junto con la frase
+    window.dispatchEvent(new CustomEvent(HERO_SLIDE_EVENT, { detail: next }));
     loadGsap().then(({ gsap, SplitText }) => {
       const a = SplitText.create(out, { type: "lines", mask: "lines" });
       padMasks(a.masks);
@@ -64,7 +67,7 @@ export function HeroStatements({ statements, interval }: { statements: string[];
   return (
     <div className="relative mt-6">
       <h1 className="sr-only">{statements[0]}</h1>
-      <div ref={stack} aria-hidden className="display-hero grid max-w-[17ch] text-paper lg:max-w-[22ch]">
+      <div ref={stack} aria-hidden className="display-hero grid max-w-[17ch] text-paper lg:max-w-full">
         {statements.map((s, i) => (
           i === 0 ? (
             <MaskText key={s} as="p" intro className="[grid-area:1/1]" style={i === index ? undefined : { visibility: "hidden" }}>

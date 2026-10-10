@@ -2,16 +2,15 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { HeroSlide } from "@/lib/hero";
+import { HERO_SLIDE_EVENT, type HeroSlide } from "@/lib/hero";
 import { reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
 
 /**
  * Fondo del hero: foto a sangre completa atenuada con un velo azul noche y
- * parallax leve (si hubiera varias, cambian con un wipe de clip-path cada
- * `interval` s).
+ * parallax leve. Cada frase del titular trae su foto, que entra con un wipe.
  */
-export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]; interval: number; children: React.ReactNode }) {
+export function HeroMotion({ slides, children }: { slides: HeroSlide[]; children: React.ReactNode }) {
   const [index, setIndex] = useState(0);
   const [prev, setPrev] = useState<number | null>(null);
   const [rest, setRest] = useState(false);
@@ -25,14 +24,19 @@ export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]
     const t = window.setTimeout(() => setRest(true), 1600);
     return () => window.clearTimeout(t);
   }, []);
+  // El titular (HeroStatements) marca el ritmo: cada frase trae su foto
   useEffect(() => {
-    if (reduce || slides.length < 2) return;
-    const t = window.setTimeout(() => {
-      setPrev(index);
-      setIndex((i) => (i + 1) % slides.length);
-    }, interval * 1000);
-    return () => window.clearTimeout(t);
-  }, [index, interval, reduce, slides.length]);
+    const onSlide = (e: Event) => {
+      const next = (e as CustomEvent<number>).detail % slides.length;
+      setRest(true);
+      setIndex((cur) => {
+        if (cur !== next) setPrev(cur);
+        return next;
+      });
+    };
+    window.addEventListener(HERO_SLIDE_EVENT, onSlide);
+    return () => window.removeEventListener(HERO_SLIDE_EVENT, onSlide);
+  }, [slides.length]);
 
   // Parallax leve: la foto baja a menor velocidad que el scroll
   useEffect(() => {
@@ -84,16 +88,8 @@ export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]
         </div>
         {/* Velo para el contraste del texto (abajo y a la izquierda) */}
         <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgb(15_19_32/0.6)_0%,rgb(15_19_32/0.45)_35%,rgb(15_19_32/0.88)_62%,rgb(15_19_32/0.97)_100%)] md:bg-[linear-gradient(90deg,rgb(15_19_32/0.92)_0%,rgb(15_19_32/0.7)_50%,rgb(15_19_32/0.45)_100%),linear-gradient(180deg,transparent_50%,rgb(15_19_32/0.92)_100%)]" />
-        {/* Guías verticales de la retícula */}
-        <div className="grid-guides absolute inset-y-0 left-1/2 z-[4] w-full max-w-[1360px] -translate-x-1/2 px-5 opacity-60 sm:px-8 lg:px-12" />
       </div>
       {children}
-      {/* Progreso: línea fina que se completa con cada foto */}
-      {!reduce && slides.length > 1 && (
-        <div aria-hidden className="absolute inset-x-0 bottom-0 z-10 h-px bg-hair">
-          <div key={index} className="h-full origin-left bg-rose-light" style={{ animation: `hero-progress ${interval}s linear both` }} />
-        </div>
-      )}
     </div>
   );
 }

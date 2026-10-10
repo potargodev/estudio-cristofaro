@@ -11,7 +11,16 @@ export interface HeroSlide {
   mobilePosition: string;
 }
 
-export const HERO_SLIDES: HeroSlide[] = [{ src: "/hero/reunion.jpg", alt: "", position: "70% 45%", mobilePosition: "74% 45%" }];
+/** Una foto por frase, en el mismo orden que HERO_STATEMENTS */
+export const HERO_SLIDES: HeroSlide[] = [
+  { src: "/hero/empresa-crece.webp", alt: "", position: "70% 45%", mobilePosition: "70% 45%" },
+  { src: "/hero/impuestos.webp", alt: "", position: "70% 45%", mobilePosition: "64% 45%" },
+  { src: "/hero/sueldos.webp", alt: "", position: "70% 40%", mobilePosition: "62% 40%" },
+  { src: "/hero/contabilidad.webp", alt: "", position: "70% 40%", mobilePosition: "72% 40%" },
+  { src: "/hero/responsable.webp", alt: "", position: "60% 40%", mobilePosition: "50% 40%" },
+  // Abono mensual fijo: falta la foto del calendario; mientras tanto, la de la reunión
+  { src: "/hero/reunion.jpg", alt: "", position: "70% 45%", mobilePosition: "74% 45%" },
+];
 
 /**
  * Frases del hero, en orden. La primera es el titular aprobado
@@ -28,3 +37,6 @@ export const HERO_STATEMENTS = [
 
 /** Segundos que se ve cada frase */
 export const HERO_INTERVAL = 6;
+
+/** Evento con el que el titular le avisa al fondo qué foto mostrar */
+export const HERO_SLIDE_EVENT = "hero:slide";
