@@ -20,16 +20,38 @@ const RESOURCES = [
   { href: "/equipo", label: "Equipo", text: "Quiénes llevan tus números." },
 ];
 
+const MENUS = ["plataforma", "para-quien", "recursos"] as const;
+
+function PanelIntro({ title, text, href, cta }: { title: string; text: string; href: string; cta: string }) {
+  return (
+    <div className="col-span-3 pr-6">
+      <p className="font-display text-3xl leading-none text-paper">{title}</p>
+      <p className="mt-3 text-sm leading-relaxed text-paper/65">{text}</p>
+      <Link href={href} className="u-draw mt-5 inline-block text-sm text-rose-light">
+        {cta}
+      </Link>
+    </div>
+  );
+}
+
 /**
  * Header de la web: transparente sobre el hero; al bajar gana fondo con blur,
  * hairline inferior y se achica. Mega menú de Plataforma con previews,
  * desplegables de Para quién y Recursos, y overlay a pantalla completa en el
- * celular. Todo operable con teclado (Escape cierra).
+ * celular. Los desplegables comparten un panel de alto fijo (cambiar de uno a
+ * otro solo funde el contenido) y, abiertos, atenúan la página con un velo
+ * azul noche. Todo operable con teclado: Escape, clic afuera o sacar el foco
+ * del header los cierra.
  */
 export function SiteHeader() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState<MenuKey>(null);
+  // Último desplegable abierto: el panel se desvanece sin vaciarse al cerrar
+  const [shown, setShown] = useState<Exclude<MenuKey, null>>("plataforma");
+  useEffect(() => {
+    if (menu) setShown(menu);
+  }, [menu]);
   const [mobile, setMobile] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
   useEffect(() => setPortalReady(true), []);
@@ -74,7 +96,7 @@ export function SiteHeader() {
       type="button"
       aria-expanded={menu === k}
       aria-controls={`${panelId}-${k}`}
-      onClick={() => setMenu(menu === k ? null : k)}
+      onClick={() => (menu === k ? setMenu(null) : open(k))}
       onPointerEnter={() => open(k)}
       onPointerLeave={scheduleClose}
       className={cn("u-draw py-1 text-[14px] transition-colors", menu === k ? "text-paper" : "text-paper/75 hover:text-paper")}
@@ -96,6 +118,9 @@ export function SiteHeader() {
     <>
       <header
         data-intro="fade"
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setMenu(null);
+        }}
         className={cn(
           "fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-500",
           solid ? "border-hair bg-night/85 backdrop-blur-xl" : "border-transparent bg-transparent",
@@ -143,72 +168,85 @@ export function SiteHeader() {
           </button>
         </div>
 
-        {/* Paneles de escritorio */}
+        {/* Panel de escritorio: alto fijo, el mismo para los tres desplegables */}
         <div
-          id={`${panelId}-plataforma`}
-          hidden={menu !== "plataforma"}
-          onPointerEnter={() => open("plataforma")}
+          onPointerEnter={() => menu && open(menu)}
           onPointerLeave={scheduleClose}
-          className="hidden border-t border-hair bg-navy-deep lg:block"
+          className={cn(
+            "absolute inset-x-0 top-full hidden h-[320px] border-y border-hair bg-navy-deep transition-[opacity,transform,visibility] duration-200 lg:block",
+            menu ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-1 opacity-0",
+          )}
         >
-          <div className="mx-auto grid max-w-[1360px] grid-cols-12 gap-px px-12 py-8">
-            <div className="col-span-3 pr-8">
-              <p className="font-display text-3xl leading-none text-paper">La plataforma</p>
-              <p className="mt-3 text-sm leading-relaxed text-paper/60">
-                Tu empresa en una pantalla: lo resuelto, lo que hay que pagar y lo que viene.
-              </p>
-              <Link href="/#plataforma" className="u-draw mt-5 inline-block text-sm text-rose-light">
-                Ver la demo
-              </Link>
-            </div>
-            {PLATFORM_TABS.map((t) => (
-              <Link key={t.key} href={`/#plataforma-${t.key}`} className="group col-span-2 border-l border-hair pl-5 pr-2">
-                <PlatformMini tab={t.key} />
-                <p className="mt-3 text-sm text-paper group-hover:text-rose-light">{t.label}</p>
-                <p className="mt-1 text-[13px] leading-snug text-paper/55">{t.title}</p>
-              </Link>
-            ))}
-            <div className="col-span-1" />
+          <div className="mx-auto grid h-full max-w-[1360px] px-12">
+            {MENUS.map((k) => {
+              const active = shown === k;
+              return (
+                <div
+                  key={k}
+                  id={`${panelId}-${k}`}
+                  inert={!active || !menu}
+                  aria-hidden={!active || !menu}
+                  className={cn(
+                    "grid grid-cols-12 items-center gap-x-6 transition-opacity duration-200 [grid-area:1/1]",
+                    active ? "opacity-100" : "pointer-events-none opacity-0",
+                  )}
+                >
+                  {k === "plataforma" && (
+                    <>
+                      <PanelIntro title="La plataforma" text="Tu empresa en una pantalla: lo resuelto, lo que hay que pagar y lo que viene." href="/#plataforma" cta="Ver la demo" />
+                      {PLATFORM_TABS.map((t) => (
+                        <Link key={t.key} href={`/#plataforma-${t.key}`} className="group col-span-2 border-l border-hair pl-5 pr-2">
+                          <PlatformMini tab={t.key} />
+                          <p className="mt-3 text-sm text-paper group-hover:text-rose-light">{t.label}</p>
+                          <p className="mt-1 text-[13px] leading-snug text-paper/60">{t.title}</p>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                  {k === "para-quien" && (
+                    <>
+                      <PanelIntro title="Para quién" text="Empresas de servicios de 5 a 30 personas, con dueños que todavía administran." href="/#para-quien" cta="Ver todos los rubros" />
+                      {AUDIENCES.map((a, i) => (
+                        <Link key={a.slug} href={`/${a.slug}`} className="group col-span-2 block border-l border-hair pl-5 pr-2">
+                          <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
+                          <span className="mt-2 block font-display text-[1.35rem] leading-tight text-paper group-hover:text-rose-light">{a.name}</span>
+                          <span className="mt-2 block text-[13px] leading-snug text-paper/60">{a.summary}</span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                  {k === "recursos" && (
+                    <>
+                      <PanelIntro title="Recursos" text="Novedades, fechas y respuestas para ordenar tu administración." href="/novedades" cta="Ver novedades" />
+                      {RESOURCES.map((r, i) => (
+                        <Link key={r.href} href={r.href} className="group col-span-2 block border-l border-hair pl-5 pr-2">
+                          <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
+                          <span className="mt-2 block font-display text-[1.35rem] leading-tight text-paper group-hover:text-rose-light">{r.label}</span>
+                          <span className="mt-2 block text-[13px] leading-snug text-paper/60">{r.text}</span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
-        <div
-          id={`${panelId}-para-quien`}
-          hidden={menu !== "para-quien"}
-          onPointerEnter={() => open("para-quien")}
-          onPointerLeave={scheduleClose}
-          className="hidden border-t border-hair bg-navy-deep lg:block"
-        >
-          <ul className="mx-auto grid max-w-[1360px] grid-cols-4 px-12 py-8">
-            {AUDIENCES.map((a, i) => (
-              <li key={a.slug} className="border-l border-hair pl-5 pr-6">
-                <Link href={`/${a.slug}`} className="group block">
-                  <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
-                  <span className="mt-2 block font-display text-2xl leading-tight text-paper group-hover:text-rose-light">{a.name}</span>
-                  <span className="mt-2 block text-[13px] leading-snug text-paper/55">{a.summary}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div
-          id={`${panelId}-recursos`}
-          hidden={menu !== "recursos"}
-          onPointerEnter={() => open("recursos")}
-          onPointerLeave={scheduleClose}
-          className="hidden border-t border-hair bg-navy-deep lg:block"
-        >
-          <ul className="mx-auto grid max-w-[1360px] grid-cols-4 px-12 py-8">
-            {RESOURCES.map((r) => (
-              <li key={r.href} className="border-l border-hair pl-5 pr-6">
-                <Link href={r.href} className="group block">
-                  <span className="block text-paper group-hover:text-rose-light">{r.label}</span>
-                  <span className="mt-1 block text-[13px] leading-snug text-paper/55">{r.text}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
       </header>
+      {/* Velo sobre la página mientras hay un desplegable abierto (por debajo del header) */}
+      {portalReady &&
+        createPortal(
+          <div
+            aria-hidden
+            onClick={() => setMenu(null)}
+            onPointerEnter={scheduleClose}
+            className={cn(
+              "fixed inset-0 z-40 hidden bg-night/60 backdrop-blur-[3px] transition-opacity duration-200 lg:block",
+              menu ? "opacity-100" : "pointer-events-none opacity-0",
+            )}
+          />,
+          document.body,
+        )}
       {/* Overlay del celular: va al <body> (el header con blur o animación sería
         el contenedor de un "fixed" y lo dejaría del alto del header) */}
       {portalReady &&
