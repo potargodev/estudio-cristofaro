@@ -6,6 +6,16 @@
 
 Este documento manda sobre `docs/brief-producto.md` en todo lo que sea plataforma, niveles, planes y módulos. El brief sigue vigente para lo que el estudio ofrece a sus clientes (organizaciones).
 
+## 0. Posicionamiento
+
+- **Faro es una herramienta, no un estudio contable.** Nunca se presenta como un estudio ni compite con los estudios: los potencia, los automatiza y los hace evolucionar.
+- **Faro es para todos, no solo para estudios.** La puerta de entrada universal es **Bitácora**, gratis, para llevar tus finanzas personales. Desde ahí cada uno escala según quién es:
+  - **Persona:** Bitácora gratis. Si necesita un contador, lo encuentra en la Red de estudios Faro (§2.i), con estudios confiables, calificados, puntuados y reseñados, y lo contrata desde ahí.
+  - **Autónomo:** activa Faro Personal (facturación, ARCA, semáforo de monotributo).
+  - **Contador o estudio:** gestiona su cartera con Faro y conecta a sus clientes y a los empleados de sus clientes.
+- **Origen:** Faro fue creado por contadores (el equipo fundador de Estudio Cristofaro), lo que le da credibilidad profesional. En la landing se cuenta en "Quiénes somos" o "Nuestra historia", nunca como si Faro fuera un estudio. En la Red de estudios, Estudio Cristofaro es uno más, sin prioridad.
+- **Mensaje madre:** "Faro: tu gestión y tus finanzas, a la vista. Para personas, autónomos y estudios contables."
+
 ## 1. Niveles (multi-tenant de cuatro capas)
 
 | Nivel | Quién | Qué hace |
