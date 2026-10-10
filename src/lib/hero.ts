@@ -1,6 +1,7 @@
-// Fotos del slider del hero. Las imágenes están en /public/hero (ver el README
-// de esa carpeta con las especificaciones). `position` y `mobilePosition` son el
-// object-position CSS de escritorio y del recorte 4:5 en el celular.
+// Hero de la home: una foto de fondo atenuada (en /public/hero, ver el README de
+// esa carpeta) y frases que van rotando sobre los valores y servicios del estudio.
+// `position` y `mobilePosition` son el object-position CSS de escritorio y del
+// recorte vertical en el celular.
 
 export interface HeroSlide {
   src: string;
@@ -10,16 +11,20 @@ export interface HeroSlide {
   mobilePosition: string;
 }
 
-// Fotos previstas (docs/home-contenido.md): reunión con un cliente, videollamada
-// por Meet, equipo en la oficina, revisión del informe mensual y un cliente en su
-// agencia. Hoy son placeholders: reemplazar los archivos manteniendo los nombres.
-export const HERO_SLIDES: HeroSlide[] = [
-  { src: "/hero/hero-1.jpg", alt: "", position: "65% 50%", mobilePosition: "68% 50%" },
-  { src: "/hero/hero-2.jpg", alt: "", position: "70% 55%", mobilePosition: "72% 50%" },
-  { src: "/hero/hero-3.jpg", alt: "", position: "62% 50%", mobilePosition: "64% 50%" },
-  { src: "/hero/hero-4.jpg", alt: "", position: "68% 40%", mobilePosition: "70% 45%" },
-  { src: "/hero/hero-5.jpg", alt: "", position: "64% 58%", mobilePosition: "66% 55%" },
+export const HERO_SLIDES: HeroSlide[] = [{ src: "/hero/reunion.jpg", alt: "", position: "70% 45%", mobilePosition: "74% 45%" }];
+
+/**
+ * Frases del hero, en orden. La primera es el titular aprobado
+ * (docs/home-contenido.md) y es también el h1 de la página.
+ */
+export const HERO_STATEMENTS = [
+  "Tu empresa crece. Que la administración no la frene.",
+  "Impuestos al día, sin sorpresas.",
+  "Sueldos liquidados en tiempo y forma.",
+  "Contabilidad que sirve para decidir.",
+  "Un responsable con nombre y apellido.",
+  "Abono mensual fijo. Sin letra chica.",
 ];
 
-/** Segundos que se ve cada foto */
+/** Segundos que se ve cada frase */
 export const HERO_INTERVAL = 6;

@@ -1,8 +1,11 @@
-# Fotos del hero (slider de la home)
+# Foto del hero de la home
 
-Las imágenes `hero-1.jpg` … `hero-5.jpg` de esta carpeta son **placeholders**
-abstractos con la paleta de marca. Para cambiarlas, reemplazá los archivos
-manteniendo los nombres (o editá `src/lib/hero.ts`).
+El fondo del hero es `reunion.jpg` (atenuada con un velo azul noche). Las frases
+que rotan encima están en `src/lib/hero.ts` (`HERO_STATEMENTS`). Para cambiar la
+foto, reemplazá el archivo manteniendo el nombre o editá `HERO_SLIDES`.
+
+`hero-3.jpg` es un placeholder del retrato del bloque "Responsable" hasta tener
+la foto real del equipo.
 
 ## Especificaciones
 

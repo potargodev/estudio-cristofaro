@@ -1,7 +1,8 @@
-import { HERO_INTERVAL, HERO_SLIDES } from "@/lib/hero";
+import { HERO_INTERVAL, HERO_SLIDES, HERO_STATEMENTS } from "@/lib/hero";
 import { SCHEDULE_HREF } from "@/lib/site";
 import { CtaLink, TextLink } from "@/components/web/ui";
 import { HeroMotion } from "./HeroMotion";
+import { HeroStatements } from "./HeroStatements";
 
 const GUARANTEES = ["Respuesta en menos de 24 h hábiles", "Abono mensual fijo", "Conectado con Tango"];
 
@@ -18,9 +19,7 @@ export function Hero() {
           <p data-intro="fade" className="text-[14px] text-paper/70">
             Estudio contable para PyMEs de servicios en CABA y GBA
           </p>
-          <h1 data-intro-heading className="display mt-5 max-w-[12ch] text-paper">
-            Tu empresa crece. Que la administración no la frene.
-          </h1>
+          <HeroStatements statements={HERO_STATEMENTS} interval={HERO_INTERVAL} />
           <div data-intro="line" className="mt-10 h-px origin-left bg-hair-strong" />
           <div className="grid gap-8 pt-8 lg:grid-cols-12">
             <p data-intro="fade" className="max-w-xl text-[17px] leading-relaxed text-paper/80 lg:col-span-6">

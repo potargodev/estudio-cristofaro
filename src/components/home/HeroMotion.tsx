@@ -8,9 +8,9 @@ import { loadGsap, reducedMotion, padMasks } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
 
 /**
- * Fondo del hero: fotos a sangre completa en duotono que cambian con un wipe de
- * clip-path cada `interval` s, parallax leve y una línea de progreso. El texto
- * (children) queda fijo. También corre la intro (una vez por sesión).
+ * Fondo del hero: foto a sangre completa atenuada con un velo azul noche y
+ * parallax leve (si hubiera varias, cambian con un wipe de clip-path cada
+ * `interval` s). También corre la intro (una vez por sesión).
  */
 export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]; interval: number; children: React.ReactNode }) {
   const [index, setIndex] = useState(0);
@@ -95,7 +95,7 @@ export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]
             return (
               <div
                 key={s.src}
-                className={cn("duotone absolute inset-0", isActive ? "z-[2]" : isPrev ? "z-[1]" : "z-0 opacity-0")}
+                className={cn("absolute inset-0", isActive ? "z-[2]" : isPrev ? "z-[1]" : "z-0 opacity-0")}
                 style={isActive && prev !== null && !reduce ? { animation: "hero-wipe 1.3s var(--ease-expo) both" } : undefined}
               >
                 <Image
@@ -114,7 +114,7 @@ export function HeroMotion({ slides, interval, children }: { slides: HeroSlide[]
           })}
         </div>
         {/* Velo para el contraste del texto (abajo y a la izquierda) */}
-        <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgb(15_19_32/0.55)_0%,rgb(15_19_32/0.25)_35%,rgb(15_19_32/0.86)_62%,rgb(15_19_32/0.96)_100%)] md:bg-[linear-gradient(90deg,rgb(15_19_32/0.9)_0%,rgb(15_19_32/0.6)_55%,rgb(15_19_32/0.3)_100%),linear-gradient(180deg,transparent_45%,rgb(15_19_32/0.9)_100%)]" />
+        <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgb(15_19_32/0.6)_0%,rgb(15_19_32/0.45)_35%,rgb(15_19_32/0.88)_62%,rgb(15_19_32/0.97)_100%)] md:bg-[linear-gradient(90deg,rgb(15_19_32/0.92)_0%,rgb(15_19_32/0.7)_50%,rgb(15_19_32/0.45)_100%),linear-gradient(180deg,transparent_50%,rgb(15_19_32/0.92)_100%)]" />
         {/* Guías verticales de la retícula */}
         <div className="grid-guides absolute inset-y-0 left-1/2 z-[4] w-full max-w-[1360px] -translate-x-1/2 px-5 opacity-60 sm:px-8 lg:px-12" />
       </div>
