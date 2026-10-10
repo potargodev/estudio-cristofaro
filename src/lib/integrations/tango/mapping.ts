@@ -1,6 +1,6 @@
 // Mapeo tolerante de campos del JSON de Tango. No sabemos con certeza los
 // nombres reales (dependen de la versión y de la vista), así que cada dato se
-// busca en una lista de candidatos configurable desde /admin/integraciones.
+// busca en una lista de candidatos configurable desde /admin/conexiones/tango.
 // El JSON crudo se guarda siempre, así un cambio de mapeo aplica a lo ya sincronizado.
 
 export interface TangoMapping {

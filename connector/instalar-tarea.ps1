@@ -30,7 +30,7 @@ $version = & $node -p "process.versions.node.split('.')[0]"
 if ([int]$version -lt 22) { throw "Se necesita Node 22 o superior (tenés la versión $version)." }
 
 if (-not (Test-Path (Join-Path $carpeta "config.json"))) {
-  throw "Falta config.json en $carpeta. Bajalo desde /admin/integraciones de la plataforma."
+  throw "Falta config.json en $carpeta. Bajalo desde /admin/conexiones/tango de la plataforma."
 }
 
 Write-Host "Probando la conexión antes de crear la tarea..."

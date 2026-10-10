@@ -9,7 +9,7 @@ export function loadConfig(configPath) {
   try {
     raw = readFileSync(configPath, "utf8");
   } catch {
-    throw new ConfigError(`No encontré ${configPath}. Copiá config.example.json como config.json o bajalo de /admin/integraciones.`);
+    throw new ConfigError(`No encontré ${configPath}. Copiá config.example.json como config.json o bajalo de /admin/conexiones/tango.`);
   }
   let c;
   try {
@@ -29,7 +29,7 @@ export function loadConfig(configPath) {
   if (!c.apiAuthorization || String(c.apiAuthorization).startsWith("PEGAR_")) problems.push('Falta "apiAuthorization": el token de la API de Tango');
   if (!Array.isArray(c.companies) || c.companies.length === 0) problems.push('"companies" tiene que tener al menos una empresa de Tango');
   if (!isUrl(c.platformUrl)) problems.push('"platformUrl" tiene que ser la URL de la plataforma, por ejemplo https://app.estudiocristofaro.com');
-  if (!c.connectorKey || String(c.connectorKey).startsWith("PEGAR_")) problems.push('Falta "connectorKey": generala en /admin/integraciones');
+  if (!c.connectorKey || String(c.connectorKey).startsWith("PEGAR_")) problems.push('Falta "connectorKey": generala en /admin/conexiones/tango');
   if (problems.length) throw new ConfigError(`Revisá config.json:\n  - ${problems.join("\n  - ")}`);
 
   const companies = c.companies.map((x) => (typeof x === "object" && x !== null ? { id: String(x.id), name: x.name ?? null } : { id: String(x), name: null }));

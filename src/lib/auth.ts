@@ -146,3 +146,14 @@ export const requireMember = cache(async (permission?: Permission): Promise<Port
     modules: mods.map((m) => m.key),
   };
 });
+
+/**
+ * Usuario del estudio para rutas de API (sin redirects): sesión vigente, rol
+ * admin o contador, contraseña definitiva y segundo factor activo. Si no, null.
+ */
+export async function staffForApi(): Promise<StaffUser | null> {
+  const user = await getCurrentUser();
+  if (!user || (user.role !== "admin" && user.role !== "contador")) return null;
+  if (user.mustChangePassword || !user.twoFactorEnabled) return null;
+  return user;
+}

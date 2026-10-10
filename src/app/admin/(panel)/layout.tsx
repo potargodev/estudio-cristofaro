@@ -4,7 +4,7 @@ import { AdminShell } from "@/components/admin/shell/AdminShell";
 import { sidebarBootScript } from "@/components/admin/shell/nav";
 import { Toaster } from "@/components/ui/sonner";
 import { getDb, isDbConfigured } from "@/db";
-import { leads, obligations, requests } from "@/db/schema";
+import { approvals, leads, obligations, requests } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { signOut } from "../actions";
 
@@ -33,7 +33,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const today = new Date().toISOString().slice(0, 10);
   const inAWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
   // Badges del menú: pendientes de cada bandeja (siempre del estudio de la sesión)
-  const [[req], [lead], [due]] = await Promise.all([
+  const [[req], [lead], [due], [appr]] = await Promise.all([
     db
       .select({ n: count() })
       .from(requests)
@@ -53,6 +53,10 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           notInArray(obligations.status, ["presentado", "pagado"]),
         ),
       ),
+    db
+      .select({ n: count() })
+      .from(approvals)
+      .where(and(eq(approvals.studio_id, user.studioId), eq(approvals.status, "pendiente"), eq(approvals.level, "sensible"))),
   ]);
 
   return (
@@ -61,7 +65,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       <AdminShell
         user={{ id: user.id, name: user.name, email: user.email, role: user.role }}
         isAdmin={user.role === "admin"}
-        badges={{ requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0 }}
+        badges={{ requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0, approvals: appr?.n ?? 0 }}
         signOut={signOut}
       >
         {children}

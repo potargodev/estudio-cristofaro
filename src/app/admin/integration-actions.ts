@@ -23,8 +23,8 @@ function s(fd: FormData, key: string): string | null {
   return t === "" ? null : t;
 }
 
-const BASE = "/admin/integraciones";
-const CLIENTS = "/admin/integraciones/tango/clientes";
+const BASE = "/admin/conexiones/tango";
+const CLIENTS = "/admin/conexiones/tango/clientes";
 
 async function getTango(studioId: string) {
   const [row] = await getDb()

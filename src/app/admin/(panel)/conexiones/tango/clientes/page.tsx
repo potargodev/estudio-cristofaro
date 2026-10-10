@@ -79,7 +79,7 @@ export default async function TangoClientesPage({
 
   return (
     <div className="max-w-6xl">
-      <Link href="/admin/integraciones" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
+      <Link href="/admin/conexiones/tango" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
         Integraciones
       </Link>
       <div className="mt-2">

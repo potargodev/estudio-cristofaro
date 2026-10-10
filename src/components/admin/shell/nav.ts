@@ -1,8 +1,21 @@
 // Navegación del backoffice: grupos, secciones, badges y acción principal.
 // Archivo sin "use client": lo usan el layout (servidor) y el shell (cliente).
 
-export type NavIcon = "resumen" | "organizaciones" | "vencimientos" | "solicitudes" | "consultas" | "agenda" | "contenidos" | "usuarios" | "integraciones";
-export type BadgeKey = "requests" | "leads" | "obligations";
+export type NavIcon =
+  | "resumen"
+  | "organizaciones"
+  | "vencimientos"
+  | "solicitudes"
+  | "consultas"
+  | "agenda"
+  | "contenidos"
+  | "usuarios"
+  | "integraciones"
+  | "asistente"
+  | "aprobaciones"
+  | "mcp"
+  | "ia";
+export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
   href: string;
@@ -30,13 +43,22 @@ export const NAV_GROUPS: { title: string; adminOnly?: boolean; items: NavItem[] 
       { href: "/admin/agenda", label: "Agenda", icon: "agenda" },
     ],
   },
+  {
+    title: "Faro IA",
+    items: [
+      { href: "/admin/asistente", label: "Asistente", icon: "asistente" },
+      { href: "/admin/aprobaciones", label: "Aprobaciones", icon: "aprobaciones", badge: "approvals" },
+    ],
+  },
   { title: "Sitio web", items: [{ href: "/admin/contenidos", label: "Contenidos", icon: "contenidos" }] },
   {
     title: "Configuración",
     adminOnly: true,
     items: [
       { href: "/admin/usuarios", label: "Usuarios", icon: "usuarios", adminOnly: true },
-      { href: "/admin/integraciones", label: "Integraciones", icon: "integraciones", adminOnly: true },
+      { href: "/admin/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true },
+      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp", adminOnly: true },
+      { href: "/admin/ia/configuracion", label: "IA", icon: "ia", adminOnly: true },
     ],
   },
 ];
@@ -45,6 +67,7 @@ export const BADGE_LABEL: Record<BadgeKey, string> = {
   requests: "solicitudes abiertas",
   leads: "consultas nuevas",
   obligations: "vencimientos esta semana",
+  approvals: "propuestas para aprobar",
 };
 
 /** Breadcrumb: grupo › sección › subpantalla, a partir de la ruta */
@@ -55,7 +78,20 @@ export function crumbs(pathname: string): { label: string; href?: string }[] {
   if (!item) return [{ label: "Backoffice" }];
   const out: { label: string; href?: string }[] = [{ label: item.group }, { label: item.label, href: item.href }];
   const rest = pathname.slice(item.href.length).split("/").filter(Boolean);
-  const SUB: Record<string, string> = { nueva: "Nueva", nuevo: "Nuevo", importar: "Importar", novedades: "Novedades", preguntas: "Preguntas frecuentes", planes: "Planes", tango: "Tango", clientes: "Clientes" };
+  const SUB: Record<string, string> = {
+    nueva: "Nueva",
+    nuevo: "Nuevo",
+    importar: "Importar",
+    novedades: "Novedades",
+    preguntas: "Preguntas frecuentes",
+    planes: "Planes",
+    tango: "Tango",
+    clientes: "Clientes",
+    xubio: "Xubio",
+    "google-drive": "Google Drive",
+    "mcp-externo": "MCP externo",
+    archivos: "Archivos",
+  };
   for (const seg of rest) out.push({ label: SUB[seg] ?? "Detalle" });
   return out;
 }
@@ -68,6 +104,18 @@ export function primaryAction(pathname: string): { href: string; label: string }
   if (pathname === "/admin/agenda") return { href: "/admin/agenda?tab=disponibilidad", label: "Mi disponibilidad" };
   if (pathname === "/admin/contenidos" || pathname === "/admin/contenidos/novedades") return { href: "/admin/contenidos/novedades/nueva", label: "Nueva novedad" };
   return null;
+}
+
+/**
+ * Contexto de la pantalla actual para "Preguntar a Faro": la ficha de una
+ * organización o la solicitud abierta. Solo IDs: el servidor los valida.
+ */
+export function askFaroHref(pathname: string, search: URLSearchParams) {
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const org = /^\/admin\/organizaciones\/([^/]+)/.exec(pathname)?.[1];
+  const req = pathname === "/admin/solicitudes" ? search.get("id") : null;
+  const ctx = org && uuid.test(org) ? `organizacion:${org}` : req && uuid.test(req) ? `solicitud:${req}` : null;
+  return `/admin/asistente?nueva=1${ctx ? `&contexto=${ctx}` : ""}`;
 }
 
 export const sidebarStorageKey = (id: string) => `admin-sidebar:${id}`;

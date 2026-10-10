@@ -36,7 +36,7 @@ export async function POST(request: Request) {
   if (Buffer.byteLength(body) > MAX_BODY_BYTES) return fail(413, "El lote es demasiado grande.");
 
   const integration = await findIntegrationByKey(key);
-  if (!integration) return fail(401, "La clave del conector no es válida. Generá una nueva en /admin/integraciones.");
+  if (!integration) return fail(401, "La clave del conector no es válida. Generá una nueva en /admin/conexiones/tango.");
   if (!/^[0-9a-f]{64}$/.test(signature) || !safeEqualHex(signBody(key, timestamp, body), signature)) {
     return fail(401, "La firma no es válida.");
   }

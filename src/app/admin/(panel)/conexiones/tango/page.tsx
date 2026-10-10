@@ -15,7 +15,7 @@ import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { MAPPING_LABELS, getMapping, type TangoMapping } from "@/lib/integrations/tango/mapping";
 import { getSiteUrl } from "@/lib/runtime-config";
 
-export const metadata: Metadata = { title: "Integraciones" };
+export const metadata: Metadata = { title: "Tango · Conexiones" };
 
 const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const when = (d: Date | null) => (d ? fmt.format(d) : "Nunca");
@@ -59,7 +59,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
 
   return (
     <div className="max-w-5xl space-y-8">
-      <AdminPageHeader title="Integraciones" description="Fuentes de datos externas. Todo lo que llega guarda origen, fecha de sincronización e ID externo; si Tango no está, se puede importar por archivo." />
+      <AdminPageHeader title="Tango Gestión" description="Conector local de Tango dentro del hub de Conexiones. Todo lo que llega guarda origen, fecha de sincronización e ID externo; si Tango no está, se puede importar por archivo." />
       {guardado && <Notice>Cambios guardados.</Notice>}
       {error && <Notice tone="error">No se pudo guardar. Revisá los datos.</Notice>}
 
@@ -101,7 +101,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
             <div>
               <dt className="text-sm text-muted">Clientes en Tango</dt>
               <dd>
-                <Link href="/admin/integraciones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
+                <Link href="/admin/conexiones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
                   {records.n} sincronizados
                 </Link>
               </dd>
@@ -116,7 +116,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
               <a href="/api/integrations/tango/config" className={adminButton.secondary}>
                 Descargar config.json (sin clave)
               </a>
-              <Link href="/admin/integraciones/tango/clientes" className={adminButton.secondary}>
+              <Link href="/admin/conexiones/tango/clientes" className={adminButton.secondary}>
                 Ver clientes en Tango
               </Link>
             </>

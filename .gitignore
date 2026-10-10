@@ -10,3 +10,5 @@ dist
 
 # Archivos subidos en desarrollo
 .uploads
+scripts/pruebas/.salida.json
+scripts/pruebas/_*.mjs

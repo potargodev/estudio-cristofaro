@@ -32,6 +32,12 @@ const nextConfig: NextConfig = {
       { source: "/admin/clientes", destination: "/admin/organizaciones", permanent: true },
       { source: "/admin/clientes/nuevo", destination: "/admin/organizaciones/nueva", permanent: true },
       { source: "/admin/clientes/:id", destination: "/admin/organizaciones/:id", permanent: true },
+      // Tango pasó al hub de Conexiones
+      { source: "/admin/integraciones", destination: "/admin/conexiones/tango", permanent: true },
+      { source: "/admin/integraciones/tango/clientes", destination: "/admin/conexiones/tango/clientes", permanent: true },
+      // Rutas del panel del estudio con el nombre de la visión de Faro (/estudio/…)
+      { source: "/estudio", destination: "/admin", permanent: false },
+      { source: "/estudio/:path*", destination: "/admin/:path*", permanent: false },
     ];
   },
 };

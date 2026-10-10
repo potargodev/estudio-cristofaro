@@ -21,7 +21,7 @@ No necesita `npm install`: no usa dependencias externas.
 ## Instalación
 
 1. Copiá la carpeta `connector` a la PC de Tango, por ejemplo en `C:\ConectorTango`.
-2. En la plataforma, entrá a **Backoffice → Integraciones** (usuario admin) y tocá **Activar Tango y generar clave**.
+2. En la plataforma, entrá a **Backoffice → Conexiones → Tango** (usuario admin) y tocá **Activar Tango y generar clave**.
    Descargá el `config.json` que aparece (ya trae la clave; se muestra una sola vez) y guardalo en la carpeta del conector.
 3. Completá en `config.json`:
 
@@ -53,7 +53,7 @@ No necesita `npm install`: no usa dependencias externas.
    node index.mjs sync
    ```
 
-   Los clientes aparecen en **Integraciones → Clientes en Tango**.
+   Los clientes aparecen en **Conexiones → Tango → Clientes en Tango**.
 
 ## Tarea programada
 
@@ -76,7 +76,7 @@ Alternativa sin tarea programada: `node index.mjs watch` deja el conector abiert
 - Cada envío lleva la clave del conector (`X-Connector-Key`), la hora (`X-Timestamp`) y una firma
   `X-Signature = HMAC-SHA256(clave, "<hora>.<cuerpo>")`. La plataforma guarda solo el hash de la clave, rechaza
   firmas inválidas y envíos con más de 5 minutos de diferencia (la PC tiene que tener la hora bien).
-- Si la clave se filtra, regenerala en Integraciones: la anterior deja de funcionar al instante.
+- Si la clave se filtra, regenerala en Conexiones → Tango: la anterior deja de funcionar al instante.
 - `config.json` tiene secretos: no lo compartas ni lo subas a ningún repositorio.
 
 ## Problemas frecuentes

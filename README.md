@@ -31,7 +31,7 @@ Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · No
 - Archivos privados: solo se bajan por `/api/archivos/[id]`, que verifica la membresía y el permiso, y cada descarga queda auditada.
 
 **Integración con Tango Gestión (v1: conexión y clientes)**
-- `/admin/integraciones` (solo admin): activar Tango, generar o regenerar la clave del conector (se muestra una sola vez, con el `config.json` listo para bajar), estado de la conexión, log de las últimas 20 sincronizaciones, empresas de Tango ↔ clientes y mapeo configurable de campos.
+- `/admin/conexiones/tango` (solo admin): activar Tango, generar o regenerar la clave del conector (se muestra una sola vez, con el `config.json` listo para bajar), estado de la conexión, log de las últimas 20 sincronizaciones, empresas de Tango ↔ clientes y mapeo configurable de campos.
 - "Clientes en Tango": cruce por CUIT con los clientes de la plataforma, vincular o importar como cliente nuevo. La ficha del cliente vinculado muestra "Vinculado con Tango".
 - Conector local en [`connector/`](connector/README.md) (Node 22, sin dependencias) que lee la API Delta en la red del estudio y manda los datos firmados con HMAC a `POST /api/integrations/tango/ingest`. Incluye un simulador de la API Delta para desarrollo.
 - Diseño enchufable (`src/lib/integrations/tango`): la interfaz `TangoSource` tiene la implementación "connector" y lugar para una futura "file" (importar exportaciones de Tango).
@@ -203,7 +203,7 @@ En desarrollo: `npm run reset-password -- persona@estudiocristofaro.com`.
 
 ### 8. Conector de Tango
 
-El conector se instala en la PC de la contadora donde corre Tango, no en Easypanel. Paso a paso en [`connector/README.md`](connector/README.md): Node 22, `config.json` bajado de **Integraciones**, `node index.mjs test`, `node index.mjs sync` y la tarea programada con `instalar-tarea.ps1`.
+El conector se instala en la PC de la contadora donde corre Tango, no en Easypanel. Paso a paso en [`connector/README.md`](connector/README.md): Node 22, `config.json` bajado de **Conexiones → Tango**, `node index.mjs test`, `node index.mjs sync` y la tarea programada con `instalar-tarea.ps1`.
 
 Para desarrollar sin Tango: `node connector/mock/server.mjs` levanta un simulador de la API Delta en `http://localhost:17000` (token `11111111-2222-3333-4444-555555555555`, empresas 1 y 2, 30 clientes).
 

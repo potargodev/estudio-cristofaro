@@ -16,6 +16,10 @@ import {
   MoreHorizontal,
   Plug,
   Plus,
+  Bot,
+  ShieldCheck,
+  Sparkles,
+  Waypoints,
   Search,
   UserRound,
   Users,
@@ -23,14 +27,14 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RouteReveal } from "@/components/app/RouteReveal";
 import { cn } from "@/lib/utils";
 import { Avatar } from "../kit/Avatar";
 import { Sello } from "../kit/Sello";
 import { CommandPalette } from "./CommandPalette";
-import { BADGE_LABEL, crumbs, NAV_GROUPS, primaryAction, sidebarStorageKey as storageKey, type BadgeKey, type NavIcon } from "./nav";
+import { askFaroHref, BADGE_LABEL, crumbs, NAV_GROUPS, primaryAction, sidebarStorageKey as storageKey, type BadgeKey, type NavIcon } from "./nav";
 
 const ICONS: Record<NavIcon, LucideIcon> = {
   resumen: LayoutDashboard,
@@ -42,6 +46,10 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   contenidos: Globe,
   usuarios: Users,
   integraciones: Plug,
+  asistente: Bot,
+  aprobaciones: ShieldCheck,
+  mcp: Waypoints,
+  ia: Sparkles,
 };
 
 /** Barra inferior del celular, como en una app: las cuatro secciones de todos los días y "Más" (abre el menú completo) */
@@ -279,6 +287,8 @@ export function AdminShell({
   useEffect(() => setDrawer(false), [pathname]);
 
   const action = primaryAction(pathname);
+  const searchParams = useSearchParams();
+  const askHref = askFaroHref(pathname, searchParams);
   const trail = crumbs(pathname);
 
   const brand = (small: boolean) => (
@@ -351,6 +361,17 @@ export function AdminShell({
               ))}
             </ol>
           </nav>
+          {!pathname.startsWith("/admin/asistente") && (
+            <Link
+              href={askHref}
+              className="inline-flex h-9 items-center gap-1.5 border border-line bg-surface px-2.5 text-[13px] font-medium text-ink hover:border-muted sm:px-3"
+              title="Preguntar a Faro sobre esta pantalla"
+            >
+              <Sparkles className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden />
+              <span className="hidden md:inline">Preguntar a Faro</span>
+              <span className="sr-only md:hidden">Preguntar a Faro</span>
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => setSearch(true)}

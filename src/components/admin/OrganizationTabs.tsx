@@ -531,11 +531,11 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
         <p>Esta organización no está vinculada con Tango.</p>
         <p className="mt-2">
           Podés vincular sus razones sociales desde{" "}
-          <Link href="/admin/integraciones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
+          <Link href="/admin/conexiones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
             Clientes en Tango
           </Link>{" "}
           o asignarle una empresa de Tango en{" "}
-          <Link href="/admin/integraciones#empresas" className="text-ink underline underline-offset-4 hover:text-rose-deep">
+          <Link href="/admin/conexiones/tango#empresas" className="text-ink underline underline-offset-4 hover:text-rose-deep">
             Integraciones
           </Link>
           . Sin Tango, todo funciona igual con importación de archivos.

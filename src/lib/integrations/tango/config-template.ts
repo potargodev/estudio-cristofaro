@@ -1,4 +1,4 @@
-// config.json del conector local. Lo usan la descarga desde /admin/integraciones
+// config.json del conector local. Lo usan la descarga desde /admin/conexiones/tango
 // (con la clave recién generada) y la ruta /api/integrations/tango/config (sin clave).
 
 export const KEY_PLACEHOLDER = "PEGAR_ACA_LA_CLAVE_DEL_CONECTOR";
