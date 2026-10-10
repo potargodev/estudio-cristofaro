@@ -24,6 +24,9 @@
   --color-rose-deep: #7d5848;
   --color-rose-light: #c9a596;
   --color-rose-soft: #f1e7e2;
+  /* Dorado: solo para números y datos destacados sobre azul noche (nunca superficies).
+     #c8a465 sobre #0f1320 = 7,9:1; sobre #141826 = 7,5:1; sobre #1c2235 = 6,7:1 (AA). */
+  --color-gold: #c8a465;
 
   --color-danger: #a33a2a;
 
@@ -617,4 +620,31 @@ body {
 /* La home ya cierra con su propio bloque de agenda: el footer no lo repite */
 .site:has(#agendar) [data-footer-cta] {
   display: none;
+}
+
+/* Franja de flujo de la plataforma: un pulso viaja por la conexión */
+.flow-pulse {
+  left: 0;
+  animation: flow-pulse 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes flow-pulse {
+  from {
+    left: -4rem;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    left: 100%;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-pulse {
+    display: none;
+  }
 }
