@@ -63,19 +63,19 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="border border-line bg-surface px-4 py-3">
             <p className="text-[13px] text-muted">Organizaciones</p>
-            <p className="font-display text-[30px] text-ink">
+            <p className="num text-[30px] text-ink">
               {orgs.n} <span className="text-[16px] text-muted">/ {e?.limits.organizations ?? "∞"}</span>
             </p>
           </div>
           <div className="border border-line bg-surface px-4 py-3">
             <p className="text-[13px] text-muted">Usuarios</p>
-            <p className="font-display text-[30px] text-ink">
+            <p className="num text-[30px] text-ink">
               {staff.filter((u) => u.active).length} <span className="text-[16px] text-muted">/ {e?.limits.staffUsers ?? "∞"}</span>
             </p>
           </div>
           <div className="border border-line bg-surface px-4 py-3">
             <p className="text-[13px] text-muted">IA este mes</p>
-            <p className="font-display text-[30px] text-ink">US$ {Number(ai.cost).toLocaleString("es-AR", { maximumFractionDigits: 2 })}</p>
+            <p className="num text-[30px] text-ink">US$ {Number(ai.cost).toLocaleString("es-AR", { maximumFractionDigits: 2 })}</p>
             <p className="text-[12px] text-muted">{ai.calls} llamadas</p>
           </div>
         </div>

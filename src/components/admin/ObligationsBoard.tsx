@@ -169,7 +169,7 @@ export function ObligationsBoard({
       </div>
 
       {selected.size > 0 && (
-        <div className="sticky top-14 z-10 flex flex-wrap items-center gap-3 border-b border-line bg-navy px-4 py-2.5 text-[14px] text-paper">
+        <div className="sticky top-[var(--app-top,3.5rem)] z-10 flex flex-wrap items-center gap-3 border-b border-line bg-navy px-4 py-2.5 text-[14px] text-paper">
           <span className="tabular">{selected.size} seleccionados</span>
           {(
             [

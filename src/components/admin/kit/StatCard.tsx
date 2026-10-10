@@ -47,7 +47,7 @@ export function StatCard({
         {spark && <Sparkline data={spark} className="h-7 w-24" />}
       </div>
       <p className="mt-4 text-[14px] font-medium text-muted">{label}</p>
-      <p className="tabular mt-1 font-display text-[44px] leading-none text-ink">
+      <p className="tabular mt-1 num text-[44px] leading-none text-ink">
         {display ?? (value === null ? "—" : <Counter value={value} prefix={prefix} suffix={suffix} duration={800} />)}
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">

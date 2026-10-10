@@ -22,7 +22,7 @@ function Metric({ label, value, hint, icon: Icon, href }: { label: string; value
         <Icon className="size-5" strokeWidth={1.6} aria-hidden />
       </span>
       <p className="mt-4 text-[14px] font-medium text-muted">{label}</p>
-      <p className="mt-1 font-display text-[44px] leading-none text-ink">{value}</p>
+      <p className="mt-1 num text-[44px] leading-none text-ink">{value}</p>
       {hint && <p className="mt-2 text-[13px] text-muted">{hint}</p>}
     </>
   );

@@ -144,7 +144,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
 
   return (
     <div className="flex min-h-[calc(100dvh-13rem)] flex-col">
-      <header className="sticky top-14 z-20 -mx-4 flex items-center gap-2 border-b border-line bg-canvas/95 px-4 py-2 backdrop-blur sm:mx-0 sm:px-0">
+      <header className="sticky top-[var(--app-top,3.5rem)] z-20 -mx-4 flex items-center gap-2 border-b border-line bg-canvas/95 px-4 py-2 backdrop-blur sm:mx-0 sm:px-0">
         <Link href="/mensajes" aria-label="Volver a Mensajes" className="grid size-9 place-items-center rounded-md hover:bg-surface">
           <ArrowLeft className="size-4" aria-hidden />
         </Link>

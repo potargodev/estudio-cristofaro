@@ -30,11 +30,11 @@ function Phone() {
             <div className="mt-4 grid grid-cols-2 gap-2">
               <div className="border border-paper/15 px-3 py-2">
                 <p className="text-[10px] text-paper/60">A pagar en octubre</p>
-                <p className="tabular font-display text-[17px]">$1.284.300</p>
+                <p className="tabular num text-[17px]">$1.284.300</p>
               </div>
               <div className="border border-paper/15 px-3 py-2">
                 <p className="text-[10px] text-paper/60">Resuelto</p>
-                <p className="tabular font-display text-[17px]">8/10</p>
+                <p className="tabular num text-[17px]">8/10</p>
               </div>
             </div>
           </div>

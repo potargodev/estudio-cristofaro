@@ -88,7 +88,7 @@ function BitacoraCard() {
         ].map(([l, v]) => (
           <div key={l}>
             <p className="text-[11px] text-paper/50">{l}</p>
-            <p className="font-display text-[20px] leading-tight text-paper">{v}</p>
+            <p className="num text-[20px] leading-tight text-paper">{v}</p>
           </div>
         ))}
       </div>

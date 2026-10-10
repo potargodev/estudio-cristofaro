@@ -77,7 +77,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
 
       <section aria-label="Tu saldo" className="mt-5 border border-line bg-surface p-5">
         <p className="text-[13px] text-muted">Tu saldo en este grupo</p>
-        <p className="mt-1 font-display text-[30px] leading-tight">
+        <p className="mt-1 num text-[30px] leading-tight">
           {myCurrencies.length === 0 ? <span className="text-muted">Estás al día</span> : myCurrencies.map(([cur, b]) => <BalanceLine key={cur} cents={b[me.id]} currency={cur} className="block" />)}
         </p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:flex">

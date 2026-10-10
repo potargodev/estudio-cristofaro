@@ -59,7 +59,7 @@ export default async function RendicionesPage() {
                             </a>
                           </p>
                         </div>
-                        <p className="shrink-0 font-display text-xl tabular-nums">{formatMoney(r.amount, r.currency)}</p>
+                        <p className="shrink-0 num text-xl">{formatMoney(r.amount, r.currency)}</p>
                       </div>
                       <DecideButtons id={r.id} />
                     </li>

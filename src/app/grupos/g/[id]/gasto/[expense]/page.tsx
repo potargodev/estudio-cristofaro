@@ -36,7 +36,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
         {CATEGORIES[e.category as Category] ?? "Otros"} · {date}
       </p>
       <h1 className="mt-1 font-display text-4xl leading-tight">{e.description}</h1>
-      <p className="mt-2 font-display text-[44px] leading-none tabular-nums">{formatMoney(e.amount, e.currency)}</p>
+      <p className="mt-2 num text-[44px] leading-none">{formatMoney(e.amount, e.currency)}</p>
       {e.fx_rate && (
         <p className="mt-2 text-[14px] text-muted">
           ≈ {formatMoney(Math.round(e.amount * Number(e.fx_rate)), v.group.base_currency)} · 1 {e.currency} = {Number(e.fx_rate).toLocaleString("es-AR")} {v.group.base_currency} ({FX_SOURCES[e.fx_source as keyof typeof FX_SOURCES] ?? e.fx_source}, {e.fx_date})

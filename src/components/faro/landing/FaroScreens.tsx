@@ -57,7 +57,7 @@ function StudioScreen() {
             {stats.map((s, i) => (
               <div key={s.l} className="faro-demo-in rounded-md border border-hair p-3" style={d(i * 80)}>
                 <p className="text-[11px] text-paper/50">{s.l}</p>
-                <p className="mt-1 font-display text-[26px] leading-none text-paper">{s.v}</p>
+                <p className="mt-1 num text-[26px] leading-none text-paper">{s.v}</p>
               </div>
             ))}
           </div>
@@ -92,7 +92,7 @@ function PortalScreen() {
         <div className="faro-demo-in mt-4 rounded-lg border border-hair p-3" style={d(0)}>
           <p className="text-[11px] text-paper/50">Próximo vencimiento</p>
           <p className="mt-1 text-[15px] text-paper">IVA de septiembre</p>
-          <p className="font-display text-[28px] leading-tight text-gold">$ 482.900</p>
+          <p className="num text-[28px] leading-tight text-gold">$ 482.900</p>
           <p className="text-[11px] text-paper/50">Vence hoy · con link de pago</p>
         </div>
         <ul className="mt-3 grid gap-2 text-[12px]">

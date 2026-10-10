@@ -64,7 +64,7 @@ export function FaroHero() {
                 {TODAY.map((t) => (
                   <li key={t.label} className="flex items-baseline justify-between gap-4 py-3">
                     <span className="text-[14px] text-paper/75">{t.label}</span>
-                    <Counter value={t.value} className={`font-display text-[34px] leading-none ${t.tone}`} />
+                    <Counter value={t.value} className={`num text-[34px] leading-none ${t.tone}`} />
                   </li>
                 ))}
               </ul>

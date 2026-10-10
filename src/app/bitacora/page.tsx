@@ -89,7 +89,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
         ].map((x) => (
           <div key={x.l} className="rounded-lg border border-line bg-surface p-3 sm:p-5">
             <p className="text-[12px] text-muted sm:text-[13px]">{x.l}</p>
-            <p className={cn("mt-1 font-display text-[20px] leading-tight tabular-nums sm:text-[32px]", x.tone)}>{money(x.v)}</p>
+            <p className={cn("mt-1 num text-[20px] leading-tight sm:text-[32px]", x.tone)}>{money(x.v)}</p>
             {x.b !== null && (
               <span className="hidden sm:block">
                 <Delta now={x.v} before={x.b} />

@@ -153,7 +153,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
             placeholder="0"
             value={amountText}
             onChange={(e) => setAmountText(e.target.value.replace(/[^\d.,]/g, ""))}
-            className="h-14 min-w-0 flex-1 bg-transparent font-display text-[40px] tabular-nums leading-none focus:outline-none"
+            className="h-14 min-w-0 flex-1 bg-transparent num text-[40px] leading-none focus:outline-none"
           />
         </div>
         {foreign && (

@@ -20,7 +20,7 @@ export default async function GastosEmpresaPage() {
         {Object.entries(totals).map(([c, v]) => (
           <Card key={c} className="min-w-48">
             <p className="text-sm text-muted">Total en {c}</p>
-            <p className="font-display text-3xl tabular-nums">{formatMoney(v, c)}</p>
+            <p className="num text-3xl">{formatMoney(v, c)}</p>
           </Card>
         ))}
       </div>

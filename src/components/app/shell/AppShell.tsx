@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, LayoutGroup, LazyMotion, domMax, m, useReducedMotion } from "motion/react";
 import { NoticesBell, type Notice } from "./NoticesBell";
 import {
   ArrowLeftRight,
@@ -140,6 +141,9 @@ export interface ShellProps {
   children: React.ReactNode;
 }
 
+/** Resorte del sidebar (ancho y viaje de los íconos entre la barra lateral y la horizontal) */
+const SPRING = { type: "spring", stiffness: 260, damping: 30 } as const;
+
 const isActive = (i: ShellItem, active: ShellItem | null) => !!active && active.href === i.href;
 
 function Count({ n, badge, className }: { n: number; badge: ShellBadge; className?: string }) {
@@ -152,7 +156,8 @@ function Count({ n, badge, className }: { n: number; badge: ShellBadge; classNam
   );
 }
 
-function SideNav({ groups, badges, active, onNavigate }: { groups: ShellGroup[]; badges: ShellProps["badges"]; active: ShellItem | null; onNavigate?: () => void }) {
+function SideNav({ groups, badges, active, onNavigate, shared = false }: { groups: ShellGroup[]; badges: ShellProps["badges"]; active: ShellItem | null; onNavigate?: () => void; shared?: boolean }) {
+  let order = 0;
   return (
     <nav aria-label="Menú" data-tour="nav" className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2">
       {groups.map((g) => (
@@ -163,6 +168,7 @@ function SideNav({ groups, badges, active, onNavigate }: { groups: ShellGroup[];
               const Icon = ICONS[i.icon];
               const on = isActive(i, active);
               const n = i.badge ? (badges[i.badge] ?? 0) : 0;
+              const k = order++;
               return (
                 <li key={`${g.title}-${i.href}`}>
                   <Link
@@ -171,8 +177,20 @@ function SideNav({ groups, badges, active, onNavigate }: { groups: ShellGroup[];
                     aria-current={on ? "page" : undefined}
                     className={cn("relative flex h-10 items-center gap-3 rounded-md px-3 text-[14px] transition-colors", on ? "bg-paper/[0.08] text-paper" : "text-paper/70 hover:bg-paper/[0.04] hover:text-paper")}
                   >
-                    <Icon className={cn("size-[18px] shrink-0", on && "text-rose-light")} strokeWidth={1.5} aria-hidden />
-                    <span className="flex-1 truncate">{i.label}</span>
+                    {shared ? (
+                      <m.span layoutId={`nav-${g.title}-${i.href}`} transition={SPRING} className="grid size-[18px] shrink-0 place-items-center">
+                        <Icon className={cn("size-[18px]", on && "text-rose-light")} strokeWidth={1.5} aria-hidden />
+                      </m.span>
+                    ) : (
+                      <Icon className={cn("size-[18px] shrink-0", on && "text-rose-light")} strokeWidth={1.5} aria-hidden />
+                    )}
+                    {shared ? (
+                      <m.span initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.28, delay: 0.08 + Math.min(k, 14) * 0.018, ease: [0.16, 1, 0.3, 1] }} className="flex-1 truncate">
+                        {i.label}
+                      </m.span>
+                    ) : (
+                      <span className="flex-1 truncate">{i.label}</span>
+                    )}
                     {i.locked && <Lock className="size-3.5 text-paper/45" aria-label="No incluido en tu plan" />}
                     {i.badge && <Count n={n} badge={i.badge} />}
                   </Link>
@@ -231,7 +249,9 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
     ) : (
       <li key={i.key} className="group relative">
         <Link href={i.href} aria-label={i.label} aria-current={on ? "page" : undefined} className={cn("relative grid size-10 place-items-center rounded-md transition-colors", on ? "bg-paper/[0.1] text-rose-light" : "text-paper/65 hover:bg-paper/[0.06] hover:text-paper")}>
-          <Icon className="size-[18px]" strokeWidth={1.5} aria-hidden />
+          <m.span layoutId={`nav-${i.key}`} transition={SPRING} className="grid size-[18px] place-items-center">
+            <Icon className="size-[18px]" strokeWidth={1.5} aria-hidden />
+          </m.span>
           {n > 0 && <span aria-hidden className="absolute right-1.5 top-1.5 size-2 rounded-full bg-rose-light" />}
         </Link>
         <span role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-50 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded border border-paper/15 bg-night px-2 py-1 text-[12px] text-paper opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
@@ -242,7 +262,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
     );
   };
   return (
-    <div className="keep-dark sticky top-0 z-40 hidden h-14 items-center gap-2 border-b border-paper/10 bg-night px-3 text-paper lg:flex">
+    <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="keep-dark sticky top-0 z-40 hidden h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-night px-3 text-paper lg:flex">
       <button type="button" onClick={onExpand} aria-label="Expandir la barra lateral ( [ )" title="Expandir ( [ )" className="grid size-9 shrink-0 place-items-center rounded-md text-paper/70 hover:bg-paper/[0.06] hover:text-paper">
         <ChevronsRight className="size-[18px]" strokeWidth={1.6} aria-hidden />
       </button>
@@ -267,7 +287,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
         </nav>
       </div>
       <div className="w-56 shrink-0">{right}</div>
-    </div>
+    </m.div>
   );
 }
 
@@ -337,6 +357,7 @@ export function AppShell(p: ShellProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [collapsed, setCollapsed] = useState(p.collapsedInitial);
+  const reduce = useReducedMotion();
   const [drawer, setDrawer] = useState(false);
   const [search, setSearch] = useState(false);
   const active = activeItem(p.groups, pathname);
@@ -387,28 +408,42 @@ export function AppShell(p: ShellProps) {
       )}
     </Link>
   );
-  const pad = collapsed ? "lg:pl-0" : "lg:pl-[248px]";
+  // El contenido acompaña a la barra con la misma curva (sin salto); con reduced motion, directo
+  const pad = cn("motion-safe:transition-[padding] motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "lg:pl-0" : "lg:pl-[248px]");
 
   return (
-    <div className="admin-shell app-ui min-h-dvh bg-canvas text-ink">
+    <div className={cn("admin-shell app-ui min-h-dvh bg-canvas text-ink", collapsed && "lg:[--app-top:calc(var(--header-h)*2)]")}>
       {/* Escritorio expandido: barra lateral (siempre oscura) */}
+      <LazyMotion features={domMax}>
+      <LayoutGroup id="shell-nav">
+      <AnimatePresence initial={false}>
       {!collapsed && (
-        <aside className="keep-dark fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col bg-night text-paper lg:flex">
-          <div className="flex h-20 items-center justify-between gap-2 border-b border-paper/10 pl-5 pr-3">
+        <m.aside
+          key="sidebar"
+          initial={{ width: 64 }}
+          animate={{ width: 248 }}
+          exit={{ width: 0 }}
+          transition={reduce ? { duration: 0 } : SPRING}
+          className="keep-dark fixed inset-y-0 left-0 z-40 hidden flex-col overflow-hidden bg-night text-paper lg:flex"
+        >
+          <div className="flex w-[248px] flex-1 flex-col">
+          <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between gap-2 border-b border-[var(--shell-line)] pl-5 pr-3">
             {brand(false)}
             <button type="button" onClick={toggle} aria-label="Contraer la barra lateral ( [ )" title="Contraer ( [ )" className="grid size-8 shrink-0 place-items-center rounded-md text-paper/60 hover:bg-paper/[0.06] hover:text-paper">
               <ChevronsLeft className="size-[18px]" strokeWidth={1.6} aria-hidden />
             </button>
           </div>
-          <SideNav groups={p.groups} badges={p.badges} active={active} />
+          <SideNav groups={p.groups} badges={p.badges} active={active} shared />
           <div className="border-t border-paper/10 p-3">
             <UserMenu {...p} />
           </div>
-        </aside>
+          </div>
+        </m.aside>
       )}
       {/* Escritorio colapsado: barra horizontal de íconos */}
       {collapsed && (
         <TopIconBar
+          key="topbar"
           groups={p.groups}
           badges={p.badges}
           active={active}
@@ -417,6 +452,9 @@ export function AppShell(p: ShellProps) {
           right={<UserMenu {...p} up={false} />}
         />
       )}
+      </AnimatePresence>
+      </LayoutGroup>
+      </LazyMotion>
 
       {/* Celular: drawer */}
       {drawer && (
@@ -442,7 +480,7 @@ export function AppShell(p: ShellProps) {
       )}
 
       <div className={pad}>
-        <header className={cn("sticky z-30 flex h-14 items-center gap-2 border-b border-line bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8", collapsed ? "top-0 lg:top-14" : "top-0")}>
+        <header className={cn("sticky z-30 flex h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8", collapsed ? "top-0 lg:top-[var(--header-h)]" : "top-0")}>
           <button type="button" onClick={() => setDrawer(true)} aria-label="Abrir menú" className="grid size-9 place-items-center rounded-md border border-line lg:hidden">
             <Menu className="size-5" aria-hidden />
           </button>

@@ -70,7 +70,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
             <option key={c}>{c}</option>
           ))}
         </select>
-        <input name="amount" inputMode="decimal" required defaultValue={initial.amount} aria-label="Importe" placeholder="0" className="h-14 min-w-0 flex-1 bg-transparent font-display text-[36px] tabular-nums focus:outline-none" />
+        <input name="amount" inputMode="decimal" required defaultValue={initial.amount} aria-label="Importe" placeholder="0" className="h-14 min-w-0 flex-1 bg-transparent num text-[36px] focus:outline-none" />
       </div>
       <fieldset>
         <legend className="mb-2 text-[14px] font-medium">¿Cómo?</legend>

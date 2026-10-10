@@ -166,6 +166,16 @@ html:has(.site) {
   letter-spacing: -0.02em;
   font-size: clamp(2.4rem, 6vw, 6.4rem);
 }
+/* Números (métricas, saldos, importes, tablas, gráficos): Archivo, cifras
+   tabulares y de altura de mayúscula, en peso medio o semibold. Los títulos
+   siguen en Gilda Display. */
+.num {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}
+
 /* Frases rotativas del hero: más chicas, equilibradas en 2 o 3 líneas */
 .hero-statement {
   font-family: var(--font-display);
@@ -200,7 +210,7 @@ html:has(.site) {
   font-size: clamp(1.8rem, 3.2vw, 3.2rem);
 }
 .tabular {
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 /* Guías verticales de la retícula de 12 columnas */
@@ -748,6 +758,11 @@ body {
    oscuras: adentro se restauran los tokens del modo claro con los que se diseñaron.
    Esquinas apenas redondeadas y más contraste que en la web pública. */
 .app-ui {
+  /* Una sola altura y un solo borde para el bloque del logo del sidebar, la
+     barra superior y la barra horizontal colapsada: la línea es continua */
+  --header-h: 64px;
+  --app-top: var(--header-h);
+  --shell-line: #dddbdf;
   --color-ink: #141826;
   --color-muted: #4b5266;
   --color-foreground: #141826;
@@ -774,6 +789,7 @@ body {
 }
 :root[data-theme="dark"] .app-ui {
   color-scheme: dark;
+  --shell-line: #283044;
   --color-canvas: #0d111b;
   --color-surface: #151a27;
   --color-ink: #eeece8;

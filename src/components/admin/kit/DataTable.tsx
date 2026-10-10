@@ -251,7 +251,7 @@ export function DataTable({
           <div className="hidden md:block">
             <table className="w-full border-collapse text-[14px]">
               <caption className="sr-only">{caption}</caption>
-              <thead className="sticky top-14 z-10 bg-canvas">
+              <thead className="sticky top-[var(--app-top,3.5rem)] z-10 bg-canvas">
                 <tr className="border-b border-line text-[13px] text-muted">
                   {selectable && (
                     <th scope="col" className="w-10 px-3">

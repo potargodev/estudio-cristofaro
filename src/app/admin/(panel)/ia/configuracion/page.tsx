@@ -177,7 +177,7 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-[13px] text-muted">Gasto estimado este mes</p>
-              <p className="font-display text-[36px] leading-none text-ink">{usd(spend.usd)}</p>
+              <p className="num text-[36px] leading-none text-ink">{usd(spend.usd)}</p>
               <p className="mt-1 text-[13px] text-muted">
                 {spend.tokens.toLocaleString("es-AR")} tokens{budget ? ` · límite ${usd(budget)}` : " · sin límite"}
               </p>

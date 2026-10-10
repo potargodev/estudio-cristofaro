@@ -23,7 +23,7 @@ function Metric({ label, value, hint, icon: Icon }: { label: string; value: stri
       <p className="flex items-center gap-2 text-[13px] text-muted">
         <Icon className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden /> {label}
       </p>
-      <p className="mt-1 font-display text-[34px] leading-none text-ink">{value}</p>
+      <p className="mt-1 num text-[34px] leading-none text-ink">{value}</p>
       {hint && <p className="mt-1.5 text-[12px] text-muted">{hint}</p>}
     </div>
   );
@@ -92,7 +92,7 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
           <Link key={p.key} href={href("plan", plan === p.key ? null : p.key)} className={cn("border bg-surface px-4 py-3 hover:border-muted", plan === p.key ? "border-navy" : "border-line")}>
             <p className="text-[12px] text-muted">{KIND_LABEL[p.kind]}</p>
             <p className="font-medium text-ink">{p.name}</p>
-            <p className="font-display text-[26px] leading-tight text-ink">{byKind.find((r) => r.plan === p.key)?.n ?? 0}</p>
+            <p className="num text-[26px] leading-tight text-ink">{byKind.find((r) => r.plan === p.key)?.n ?? 0}</p>
           </Link>
         ))}
       </section>

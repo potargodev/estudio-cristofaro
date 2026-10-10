@@ -38,11 +38,11 @@ export default async function GastosHome() {
       <section aria-label="Tu saldo total" className="mt-6 grid gap-3 sm:grid-cols-2">
         <div className="border border-line bg-surface p-5">
           <p className="text-[13px] text-muted">Te deben</p>
-          <p className="mt-1 font-display text-3xl tabular-nums text-[#24583a]">{currencies.length ? currencies.filter((c) => totals[c].owed).map((c) => formatMoney(totals[c].owed, c)).join(" · ") || formatMoney(0) : formatMoney(0)}</p>
+          <p className="mt-1 num text-3xl text-[#24583a]">{currencies.length ? currencies.filter((c) => totals[c].owed).map((c) => formatMoney(totals[c].owed, c)).join(" · ") || formatMoney(0) : formatMoney(0)}</p>
         </div>
         <div className="border border-line bg-surface p-5">
           <p className="text-[13px] text-muted">Debés</p>
-          <p className="mt-1 font-display text-3xl tabular-nums text-rose-deep">{currencies.length ? currencies.filter((c) => totals[c].owe).map((c) => formatMoney(totals[c].owe, c)).join(" · ") || formatMoney(0) : formatMoney(0)}</p>
+          <p className="mt-1 num text-3xl text-rose-deep">{currencies.length ? currencies.filter((c) => totals[c].owe).map((c) => formatMoney(totals[c].owe, c)).join(" · ") || formatMoney(0) : formatMoney(0)}</p>
         </div>
       </section>
 

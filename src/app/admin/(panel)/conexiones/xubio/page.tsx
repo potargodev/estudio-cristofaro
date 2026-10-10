@@ -140,7 +140,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                   return (
                     <div key={k} className="border border-line bg-canvas px-3 py-2">
                       <dt className="text-[12px] text-muted">{label}</dt>
-                      <dd className="font-display text-[26px] leading-tight text-ink">{row?.n ?? 0}</dd>
+                      <dd className="num text-[26px] leading-tight text-ink">{row?.n ?? 0}</dd>
                       {row && <dd className="text-[12px] text-muted">{row.cruzados} con organización</dd>}
                     </div>
                   );

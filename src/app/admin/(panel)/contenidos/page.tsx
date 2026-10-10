@@ -34,7 +34,7 @@ export default async function ContenidosPage() {
               <span className="grid size-10 place-items-center border border-line text-ink">
                 <s.icon className="size-5" strokeWidth={1.5} aria-hidden />
               </span>
-              <span className="tabular font-display text-[40px] leading-none text-ink">{s.count ?? 0}</span>
+              <span className="tabular num text-[40px] leading-none text-ink">{s.count ?? 0}</span>
             </span>
             <h2 className="mt-4 text-[16px] font-medium text-ink">{s.title}</h2>
             <p className="mt-1 text-[14px] text-muted">{s.text}</p>
