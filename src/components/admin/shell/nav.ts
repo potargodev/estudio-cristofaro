@@ -16,7 +16,8 @@ export type NavIcon =
   | "mcp"
   | "ia"
   | "faro"
-  | "gastos";
+  | "gastos"
+  | "modulos";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -32,6 +33,8 @@ export interface NavItem {
   personal?: boolean;
   /** Solo para la cuenta personal */
   personalOnly?: boolean;
+  /** Módulo de Faro que lo habilita (src/modules/registry.ts); sin él, el ítem queda con candado */
+  module?: string;
 }
 
 interface NavGroup {
@@ -53,6 +56,8 @@ export interface NavAccess {
   isFaro: boolean;
   /** Tenant personal (Faro Personal): solo lo marcado como personal */
   isPersonal?: boolean;
+  /** Módulos activos del tenant (plan + overrides). Sin dato, no se filtra */
+  modules?: string[];
 }
 
 export const NAV_GROUPS: NavGroup[] = [
@@ -61,13 +66,13 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin", label: "Resumen", icon: "resumen", exact: true },
       { href: "/personal", label: "Mi panel", icon: "resumen", exact: true, personal: true, personalOnly: true },
-      { href: "/gastos", label: "Gastos compartidos", icon: "gastos", personal: true },
+      { href: "/gastos", label: "Gastos compartidos", icon: "gastos", personal: true, module: "shared_expenses" },
     ],
   },
   {
     title: "Clientes",
     items: [
-      { href: "/admin/organizaciones", label: "Organizaciones", icon: "organizaciones" },
+      { href: "/admin/organizaciones", label: "Organizaciones", icon: "organizaciones", module: "core" },
       { href: "/admin/vencimientos", label: "Vencimientos", icon: "vencimientos", badge: "obligations" },
       { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
     ],
@@ -83,9 +88,9 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     title: "Faro IA",
     items: [
-      { href: "/admin/asistente", label: "Asistente", icon: "asistente", personal: true },
-      { href: "/admin/aprobaciones", label: "Aprobaciones", icon: "aprobaciones", badge: "approvals", personal: true },
-      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp", personal: true },
+      { href: "/admin/asistente", label: "Asistente", icon: "asistente", personal: true, module: "ai" },
+      { href: "/admin/aprobaciones", label: "Aprobaciones", icon: "aprobaciones", badge: "approvals", personal: true, module: "ai" },
+      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp", personal: true, module: "ai" },
     ],
   },
   { title: "Sitio web", siteOnly: true, operatorOnly: true, items: [{ href: "/admin/contenidos", label: "Contenidos", icon: "contenidos" }] },
@@ -94,13 +99,17 @@ export const NAV_GROUPS: NavGroup[] = [
     adminOnly: true,
     items: [
       { href: "/admin/usuarios", label: "Usuarios", icon: "usuarios", adminOnly: true },
-      { href: "/admin/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true },
+      { href: "/admin/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true, module: "connections" },
       { href: "/admin/ia/configuracion", label: "IA", icon: "ia", adminOnly: true, personal: true },
-      { href: "/admin/plan", label: "Plan y módulos", icon: "faro", adminOnly: true, personal: true },
+      { href: "/admin/plan", label: "Plan y facturación", icon: "faro", adminOnly: true, personal: true },
+      { href: "/admin/modulos", label: "Módulos", icon: "modulos", personal: true },
     ],
   },
   { title: "Faro", faroOnly: true, items: [{ href: "/faro-manager", label: "Faro Manager", icon: "faro" }] },
 ];
+
+/** ¿El ítem está habilitado por los módulos del tenant? (sin módulo o sin dato: sí) */
+export const itemEnabled = (i: { module?: string }, a: NavAccess) => !i.module || !a.modules || a.modules.includes(i.module);
 
 export function visibleGroups(a: NavAccess) {
   return NAV_GROUPS.filter((g) => (!g.adminOnly || a.isAdmin) && (!g.operatorOnly || a.isOperator) && (!g.siteOnly || a.hasSite) && (!g.faroOnly || a.isFaro))

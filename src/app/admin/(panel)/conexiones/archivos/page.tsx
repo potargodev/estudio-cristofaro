@@ -12,6 +12,7 @@ import { SubmitButton } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { external_records, organizations } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth";
+import { requireModule } from "@/lib/faro/require-module";
 import { RESOURCE_LABEL } from "@/modules/connectors/archivos/templates";
 import { getConnector } from "@/modules/connectors/catalog";
 import { connectionsOf, recentLogs } from "@/modules/connectors/store";
@@ -21,6 +22,7 @@ export const metadata: Metadata = { title: "Archivos · Conexiones" };
 export default async function ArchivosPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
   const admin = await requireAdmin();
+  await requireModule(admin.studioId, "tango_files");
   const def = getConnector("archivos")!;
   const db = getDb();
   const [orgs, list] = await Promise.all([

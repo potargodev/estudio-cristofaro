@@ -11,7 +11,7 @@ import { StatusBadge, Tag } from "@/components/admin/kit/StatusBadge";
 import { SubmitButton } from "@/components/admin/ui";
 import { Input } from "@/components/ui/input";
 import { getDb } from "@/db";
-import { ai_usage, assisted_access, audit_log, organizations, studio_module_overrides, studios, users } from "@/db/schema";
+import { ai_usage, assisted_access, audit_log, organizations, tenant_modules, studios, users } from "@/db/schema";
 import { auditLabel } from "@/lib/audit";
 import { requireFaro } from "@/lib/auth";
 import { getEntitlements } from "@/lib/faro/entitlements";
@@ -37,7 +37,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
     db.select({ n: count() }).from(organizations).where(and(eq(organizations.studio_id, t.id), inArray(organizations.status, ["onboarding", "activa", "pausada"]))),
     // Solo el equipo del tenant (nombre, rol y estado): nada de sus clientes
     db.select({ name: users.name, email: users.email, role: users.role, active: users.active, twoFactor: users.twoFactorEnabled }).from(users).where(and(eq(users.studioId, t.id), inArray(users.role, ["dueno", "contador", "colaborador", "titular"]))),
-    db.select().from(studio_module_overrides).where(eq(studio_module_overrides.studio_id, t.id)),
+    db.select().from(tenant_modules).where(eq(tenant_modules.studio_id, t.id)),
     db.select({ cost: sql<string>`coalesce(sum(${ai_usage.cost_usd}), 0)`, calls: sql<number>`count(*)::int` }).from(ai_usage).where(and(eq(ai_usage.studio_id, t.id), sql`${ai_usage.created_at} >= date_trunc('month', now())`)),
     db.select().from(audit_log).where(and(eq(audit_log.studio_id, t.id), like(audit_log.action, "faro.%"))).orderBy(desc(audit_log.created_at)).limit(20),
     db.select({ g: assisted_access, who: users.name }).from(assisted_access).innerJoin(users, eq(users.id, assisted_access.faro_user_id)).where(eq(assisted_access.studio_id, t.id)).orderBy(desc(assisted_access.created_at)).limit(10),

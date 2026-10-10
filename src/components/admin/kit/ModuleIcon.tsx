@@ -1,0 +1,55 @@
+import {
+  Bot,
+  Building2,
+  ChartLine,
+  Factory,
+  FileSignature,
+  FileSpreadsheet,
+  HandCoins,
+  IdCard,
+  KanbanSquare,
+  Landmark,
+  Megaphone,
+  MessageCircle,
+  MessagesSquare,
+  Palette,
+  Plug,
+  PlugZap,
+  Puzzle,
+  Receipt,
+  ScanText,
+  ShieldCheck,
+  Wallet,
+  Workflow,
+  type LucideIcon,
+} from "lucide-react";
+
+// Íconos de los módulos de Faro (el registro guarda el nombre: src/modules/registry.ts)
+const ICONS: Record<string, LucideIcon> = {
+  Bot,
+  Building2,
+  ChartLine,
+  Factory,
+  FileSignature,
+  FileSpreadsheet,
+  HandCoins,
+  IdCard,
+  KanbanSquare,
+  Landmark,
+  Megaphone,
+  MessageCircle,
+  MessagesSquare,
+  Palette,
+  Plug,
+  PlugZap,
+  Receipt,
+  ScanText,
+  ShieldCheck,
+  Wallet,
+  Workflow,
+};
+
+export function ModuleIcon({ name, className }: { name: string; className?: string }) {
+  const Icon = ICONS[name] ?? Puzzle;
+  return <Icon className={className} strokeWidth={1.6} aria-hidden />;
+}

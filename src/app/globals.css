@@ -837,7 +837,7 @@ body {
   font-weight: 650;
   color: var(--color-ink);
 }
-.app-ui :is(h2, h3, p)[class*="uppercase"][class*="tracking"]:not(.bg-night *, .keep-dark *) {
+.app-ui :is(h2, h3, p)[class*="uppercase"][class*="tracking"][class*="text-muted"]:not(.bg-night *, .keep-dark *) {
   font-weight: 650;
   color: var(--color-ink);
   opacity: 0.78;

@@ -17,6 +17,8 @@ import {
   Plug,
   Plus,
   Bot,
+  Blocks,
+  Lock,
   ShieldCheck,
   Sparkles,
   Waypoints,
@@ -38,7 +40,7 @@ import { Avatar } from "../kit/Avatar";
 import { FaroLogo } from "../kit/FaroLogo";
 import { Sello } from "../kit/Sello";
 import { CommandPalette } from "./CommandPalette";
-import { askFaroHref, BADGE_LABEL, crumbs, primaryAction, sidebarStorageKey as storageKey, visibleGroups, type BadgeKey, type NavAccess, type NavIcon } from "./nav";
+import { askFaroHref, BADGE_LABEL, crumbs, itemEnabled, primaryAction, sidebarStorageKey as storageKey, visibleGroups, type BadgeKey, type NavAccess, type NavIcon } from "./nav";
 
 const ICONS: Record<NavIcon, LucideIcon> = {
   resumen: LayoutDashboard,
@@ -56,6 +58,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   ia: Sparkles,
   faro: Compass,
   gastos: Wallet,
+  modulos: Blocks,
 };
 
 /** Barra inferior del celular, como en una app: las cuatro secciones de todos los días y "Más" (abre el menú completo) */
@@ -162,13 +165,15 @@ function Nav({
           <ul>
             {g.items
               .map((i) => {
+                const enabled = itemEnabled(i, access);
+                const href = enabled ? i.href : `/admin/modulos/${i.module}`;
                 const active = i.exact ? pathname === i.href : pathname.startsWith(i.href);
                 const Icon = ICONS[i.icon];
-                const count = i.badge ? badges[i.badge] : 0;
+                const count = enabled && i.badge ? badges[i.badge] : 0;
                 return (
                   <li key={i.href} className="relative">
                     <Link
-                      href={i.href}
+                      href={href}
                       onClick={onNavigate}
                       onMouseEnter={(e) => showTip(e, i.label, count)}
                       onFocus={(e) => showTip(e, i.label, count)}
@@ -184,6 +189,7 @@ function Nav({
                         {collapsed && count > 0 && <span aria-hidden className="absolute -right-1 -top-1 size-2 bg-rose-light" />}
                       </span>
                       <span className={cn("flex-1 truncate transition-opacity duration-200", collapsed && "sr-only")}>{i.label}</span>
+                      {!enabled && <Lock className={cn("size-3.5 text-paper/45", collapsed && "sr-only")} aria-label="No incluido en tu plan" />}
                       {count > 0 && (
                         <span className={cn("tabular min-w-5 bg-rose-light px-1.5 text-center text-[12px] font-medium leading-5 text-night", collapsed && "sr-only")}>
                           {count}

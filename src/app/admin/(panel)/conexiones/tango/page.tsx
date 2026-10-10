@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
 import { integration_syncs, integrations, organizations, tango_companies, tango_records } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth";
+import { requireModule } from "@/lib/faro/require-module";
 import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { MAPPING_LABELS, getMapping, type TangoMapping } from "@/lib/integrations/tango/mapping";
 import { getSiteUrl } from "@/lib/runtime-config";
@@ -31,6 +32,7 @@ function connectionState(lastSeen: Date | null, status: string) {
 export default async function IntegracionesPage({ searchParams }: { searchParams: Promise<{ guardado?: string; error?: string }> }) {
   const { guardado, error } = await searchParams;
   const admin = await requireAdmin();
+  await requireModule(admin.studioId, "tango");
   const db = getDb();
   const [tango] = await db
     .select()

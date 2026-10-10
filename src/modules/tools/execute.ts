@@ -4,6 +4,8 @@ import { getDb } from "@/db";
 import { approvals, organizations } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { isUuid } from "@/lib/ids";
+import { hasModule } from "@/lib/faro/entitlements";
+import { moduleOfTool } from "@/modules/registry";
 import { EXT_PREFIX, executeConfirmedExternal } from "@/modules/connectors/mcp-externo/tools";
 import { getTool, levelFor } from "./registry";
 import { ToolError, type HandlerContext, type ToolActor, type ToolContext, type ToolDefinition, type ToolModule, type ToolOutcome } from "./types";
@@ -135,6 +137,9 @@ export async function executeTool(name: string, rawInput: unknown, ctx: ToolCont
   if (!t) return deny(ctx, name, "Esa herramienta no existe.");
   if (!t.roles.includes(ctx.actor.role)) return deny(ctx, name, "Tu rol no tiene permiso para esta herramienta.");
   if (ctx.modules && !ctx.modules.includes(t.module)) return deny(ctx, name, "Este acceso no incluye el módulo de esta herramienta.");
+  // Módulo de Faro de la herramienta (registro): tiene que estar activo en el plan del tenant
+  const faroModule = moduleOfTool(t.name);
+  if (faroModule && !(await hasModule(ctx.studioId, faroModule))) return deny(ctx, name, "Esta herramienta es de un módulo que no está incluido en el plan.");
   const parsed = t.input.safeParse(rawInput ?? {});
   if (!parsed.success) return { status: "error", message: `Entrada inválida: ${firstIssue(parsed.error)}` };
   const input = parsed.data as Record<string, unknown>;

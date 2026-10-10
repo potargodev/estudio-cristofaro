@@ -8,7 +8,8 @@ import { and, eq, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "../src/db/schema";
-import { faqs, plans, service_plans, studios, users } from "../src/db/schema";
+import { faqs, faro_plans, plans, service_plans, studios, users } from "../src/db/schema";
+import { PLANS as FARO_PLANS } from "../src/lib/faro/plans";
 import { SERVICE_PLANS } from "../src/lib/service-plans";
 import { createUserWithPassword } from "../src/lib/users";
 
@@ -143,6 +144,30 @@ async function main() {
       newFaqs++;
     }
     console.log(`Preguntas frecuentes: ${newFaqs} nuevas, ${FAQS.length - newFaqs} ya estaban.`);
+
+    // Planes de Faro (configuración → base, editables después en el Faro Manager; no pisa lo editado)
+    const seededPlans = await db
+      .insert(faro_plans)
+      .values(
+        FARO_PLANS.map((p, i) => ({
+          key: p.key,
+          kind: p.kind,
+          name: p.name,
+          tagline: p.tagline,
+          for_whom: p.forWhom,
+          price_ars: p.priceArs,
+          free: p.free,
+          recommended: !!p.recommended,
+          ai: p.ai,
+          limits: { ...p.limits },
+          modules: [...p.modules],
+          support: p.support,
+          position: i,
+        })),
+      )
+      .onConflictDoNothing()
+      .returning({ key: faro_plans.key });
+    console.log(`Planes de Faro: ${seededPlans.length} nuevos, ${FARO_PLANS.length - seededPlans.length} ya estaban.`);
 
     const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
     const password = process.env.ADMIN_PASSWORD;

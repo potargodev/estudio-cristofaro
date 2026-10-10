@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { assisted_access, studio_module_overrides, studios, users } from "@/db/schema";
+import { assisted_access, tenant_modules, studios, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { ASSISTED_COOKIE, getCurrentUser, requireFaro } from "@/lib/auth";
 import { esc, sendMail } from "@/lib/email";
@@ -101,7 +101,7 @@ export async function setModuleOverride(fd: FormData) {
   const key = s(fd, "module");
   if (!t || !isFaroModuleKey(key)) back(BASE, "error=modulo");
   if (s(fd, "mode") === "quitar") {
-    await getDb().delete(studio_module_overrides).where(and(eq(studio_module_overrides.studio_id, t!.id), eq(studio_module_overrides.module_key, key!)));
+    await getDb().delete(tenant_modules).where(and(eq(tenant_modules.studio_id, t!.id), eq(tenant_modules.module_key, key!)));
     await audit({ studioId: t!.id, actor: faro, action: "faro.modulo_override", entityType: "tenant", entityId: t!.id, metadata: { modulo: key, quitar: true } });
   } else {
     const enabled = s(fd, "enabled") !== "false";
@@ -111,9 +111,9 @@ export async function setModuleOverride(fd: FormData) {
     if (!reason) back(`${BASE}/${t!.id}`, "error=Escrib%C3%AD%20el%20motivo%20del%20override");
     const values = { enabled, expires_at: expires, reason, created_by: faro.id };
     await getDb()
-      .insert(studio_module_overrides)
+      .insert(tenant_modules)
       .values({ studio_id: t!.id, module_key: key!, ...values })
-      .onConflictDoUpdate({ target: [studio_module_overrides.studio_id, studio_module_overrides.module_key], set: values });
+      .onConflictDoUpdate({ target: [tenant_modules.studio_id, tenant_modules.module_key], set: values });
     await audit({ studioId: t!.id, actor: faro, action: "faro.modulo_override", entityType: "tenant", entityId: t!.id, metadata: { modulo: key, habilitado: enabled, vence: expires?.toISOString() ?? null, motivo: reason } });
   }
   revalidatePath(`${BASE}/${t!.id}`);

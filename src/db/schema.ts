@@ -1134,8 +1134,9 @@ export const external_records = pgTable(
 // ───────────────────────── F1 · Núcleo Faro ─────────────────────────
 
 /** Módulos habilitados fuera del plan (o deshabilitados) por el Faro Manager, con vencimiento opcional */
-export const studio_module_overrides = pgTable(
-  "studio_module_overrides",
+/** Overrides de módulos por tenant (Faro Manager): habilitar o deshabilitar, con vencimiento y motivo */
+export const tenant_modules = pgTable(
+  "tenant_modules",
   {
     studio_id: uuid("studio_id")
       .notNull()
@@ -1148,6 +1149,58 @@ export const studio_module_overrides = pgTable(
     created_at: createdAt(),
   },
   (t) => [primaryKey({ columns: [t.studio_id, t.module_key] })],
+);
+
+/**
+ * Planes de Faro editables desde el Faro Manager. Se siembran desde
+ * src/lib/faro/plans.ts (scripts/seed.ts); si la fila no existe, manda la
+ * configuración del código.
+ */
+export const faro_plans = pgTable("faro_plans", {
+  key: text("key").primaryKey(),
+  kind: tenantKind("kind").notNull(),
+  name: text("name").notNull(),
+  tagline: text("tagline").notNull().default(""),
+  for_whom: text("for_whom").notNull().default(""),
+  price_ars: integer("price_ars"),
+  free: boolean("free").notNull().default(false),
+  recommended: boolean("recommended").notNull().default(false),
+  ai: text("ai").notNull().default("consultas"),
+  limits: jsonb("limits").$type<Record<string, number | null>>().notNull().default({}),
+  modules: text("modules").array().notNull().default(sql`'{}'::text[]`),
+  support: text("support").notNull().default(""),
+  position: integer("position").notNull().default(0),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** Liberación global de un módulo (de "próximamente" a "beta" o "disponible") */
+export const faro_module_releases = pgTable("faro_module_releases", {
+  module_key: text("module_key").primaryKey(),
+  status: text("status").notNull(),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** "Quiero mejorar mi plan": pedido de un tenant al Faro Manager (el cobro llega en la F7) */
+export const plan_requests = pgTable(
+  "plan_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    from_plan: text("from_plan").notNull(),
+    to_plan: text("to_plan").notNull(),
+    module_key: text("module_key"),
+    message: text("message"),
+    status: text("status").notNull().default("pendiente"), // pendiente | aplicado | descartado
+    requested_by: uuid("requested_by").references(() => users.id, { onDelete: "set null" }),
+    resolved_by: uuid("resolved_by").references(() => users.id, { onDelete: "set null" }),
+    resolved_at: timestamp("resolved_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("plan_requests_status_idx").on(t.status, t.created_at)],
 );
 
 /** Acceso asistido del equipo de Faro a un tenant: explícito, temporal y auditado */
