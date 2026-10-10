@@ -1,0 +1,125 @@
+{
+  "clave": "servicios_profesionales",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Servicios profesionales",
+  "descripcion": "Abogados, contadores, psicólogos, traductores, consultores individuales y otros profesionales independientes que facturan honorarios.",
+  "icono": "Briefcase",
+  "actividades": [
+    { "codigo": "691001", "descripcion": "Servicios jurídicos", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA." },
+    { "codigo": "692000", "descripcion": "Servicios de contabilidad, auditoría y asesoría fiscal", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "749009", "descripcion": "Otras actividades profesionales, científicas y técnicas n.c.p.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "869090", "descripcion": "Servicios relacionados con la salud humana n.c.p. (psicología y similares)", "nota": "Si la actividad es de salud, ver también la plantilla de salud.", "validar": "Confirmar código vigente en CLAE." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Gravado a la alícuota general si es responsable inscripto; incluido en la cuota si es monotributista.",
+      "alicuotas": ["21% (general)"],
+      "nota": "Algunas prestaciones pueden estar exentas (por ejemplo, ciertos servicios de salud o educación).",
+      "validar": "Revisar exenciones del art. 7 de la Ley de IVA según el tipo de servicio."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Local si presta servicios en una sola jurisdicción; Convenio Multilateral (régimen especial de profesiones liberales) si trabaja en varias. En algunas jurisdicciones las profesiones liberales tienen tratamientos especiales.",
+      "validar": "Alícuota y posibles exenciones dependen de cada jurisdicción (por ejemplo CABA o Provincia de Buenos Aires) y de la matrícula profesional."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Retención de Ganancias sobre honorarios (RG 830)", "nota": "La practica el cliente que es agente de retención, salvo monotributistas.", "validar": "Montos no sujetos y alícuotas vigentes de la RG 830." },
+      { "nombre": "Retenciones de IIBB de agentes de recaudación", "validar": "Depende de la jurisdicción y del padrón de alícuotas." },
+      { "nombre": "SIRCREB (retenciones bancarias de IIBB)", "nota": "Para inscriptos en Convenio Multilateral.", "validar": "Alícuota según padrón." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Monotributo (categorías de servicios)", "nota": "Verificar topes de facturación y recategorización semestral." },
+      { "nombre": "Aportes a la Caja o Colegio profesional", "nota": "Según la profesión y la provincia, puede reemplazar o complementar los aportes de autónomos.", "validar": "Revisar la caja previsional que corresponde a cada matrícula." }
+    ],
+    "nota": "El perfil depende de si es monotributista o responsable inscripto y de la provincia donde presta servicios."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Empleados de comercio (personal administrativo)", "numero": "CCT 130/75", "nota": "Lo habitual para secretarias y administrativos de estudios.", "validar": "Confirmar encuadre convencional según la actividad y escalas vigentes." }
+    ],
+    "categorias": ["Administrativo A", "Administrativo B", "Maestranza"],
+    "conceptos": ["Sueldo básico", "Presentismo", "Antigüedad", "Horas extras", "SAC", "Vacaciones"],
+    "nota": "La mayoría no tiene empleados; si los tiene, suelen ser pocos y administrativos."
+  },
+  "obligaciones": [
+    { "clave": "monotributo", "impuesto": "Monotributo", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA." },
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Calendario de vencimientos de ARCA del año." },
+    { "clave": "iibb_mensual", "impuesto": "Ingresos Brutos (anticipo)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT y jurisdicción (o calendario de Convenio Multilateral).", "validar": "Depende de la jurisdicción." },
+    { "clave": "autonomos", "impuesto": "Aportes de autónomos", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, primera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Categoría de autónomos y calendario vigente." },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias personas humanas (DDJJ anual)", "frecuencia": "anual", "vencimiento": "Junio, según terminación de CUIT.", "aplica_a": "Responsables inscriptos", "validar": "Fechas de la resolución general del año." },
+    { "clave": "bienes_personales", "impuesto": "Bienes Personales (DDJJ anual)", "frecuencia": "anual", "vencimiento": "Junio, junto con Ganancias.", "aplica_a": "Si supera el mínimo no imponible", "validar": "Mínimo no imponible vigente." },
+    { "clave": "recategorizacion", "impuesto": "Recategorización de Monotributo", "frecuencia": "semestral", "vencimiento": "Enero y julio (hasta el día 20 o según calendario).", "aplica_a": "Monotributistas" },
+    { "clave": "caja_profesional", "impuesto": "Aporte a la Caja profesional", "frecuencia": "mensual", "vencimiento": "Según la caja o colegio.", "validar": "Depende de la profesión y la provincia." }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de inscripción en Ingresos Brutos (o CM01)", "obligatorio": true },
+    { "clave": "matricula", "item": "Matrícula profesional vigente", "obligatorio": true },
+    { "clave": "caja_profesional", "item": "Constancia de afiliación a la caja o colegio profesional", "obligatorio": false },
+    { "clave": "cbu", "item": "Datos de la cuenta bancaria (CBU) para cobros", "obligatorio": false },
+    { "clave": "facturas_ultimos_12", "item": "Facturas emitidas de los últimos 12 meses", "obligatorio": true },
+    { "clave": "ddjj_anteriores", "item": "Declaraciones juradas presentadas el año anterior", "obligatorio": false }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.01", "nombre": "Caja", "tipo": "activo" },
+    { "codigo": "1.1.02", "nombre": "Banco cuenta corriente", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Honorarios a cobrar", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "Retenciones sufridas de Ganancias", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "Retenciones y percepciones de IIBB", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Equipos de computación", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "IVA a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "IIBB a pagar", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Honorarios profesionales", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Alquiler de consultorio u oficina", "tipo": "egreso" },
+    { "codigo": "5.1.02", "nombre": "Aportes a la caja profesional", "tipo": "egreso" },
+    { "codigo": "5.1.03", "nombre": "Software y suscripciones", "tipo": "egreso" },
+    { "codigo": "5.1.04", "nombre": "Capacitación y matrícula", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "honorarios", "nombre": "Honorarios" },
+      { "clave": "consultas", "nombre": "Consultas y sesiones" },
+      { "clave": "otros_ingresos", "nombre": "Otros ingresos" }
+    ],
+    "gastos": [
+      { "clave": "alquiler", "nombre": "Alquiler de consultorio u oficina" },
+      { "clave": "caja_profesional", "nombre": "Caja o colegio profesional" },
+      { "clave": "software", "nombre": "Software y suscripciones" },
+      { "clave": "capacitacion", "nombre": "Capacitación" },
+      { "clave": "movilidad", "nombre": "Movilidad y viáticos" },
+      { "clave": "servicios", "nombre": "Servicios (luz, internet, teléfono)" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "control_facturacion", "titulo": "Controlar facturación del mes y topes de categoría", "frecuencia": "mensual" },
+    { "clave": "conciliar_retenciones", "titulo": "Conciliar retenciones sufridas (Ganancias e IIBB)", "frecuencia": "mensual" },
+    { "clave": "recategorizacion", "titulo": "Revisar recategorización del Monotributo", "frecuencia": "semestral" },
+    { "clave": "ddjj_anual", "titulo": "Preparar DDJJ de Ganancias y Bienes Personales", "frecuencia": "anual" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "recordatorio_facturacion", "nombre": "Recordar facturar a fin de mes", "descripcion": "Aviso al cliente el último día hábil si no emitió facturas." },
+    { "plantilla": "alerta_tope_monotributo", "nombre": "Alerta de tope de Monotributo", "descripcion": "Avisa cuando la facturación de 12 meses supera el 80% del tope de la categoría." }
+  ],
+  "indicadores": [
+    { "clave": "facturacion_mensual", "nombre": "Facturación mensual", "descripcion": "Honorarios facturados por mes y su evolución." },
+    { "clave": "margen_tope", "nombre": "Margen hasta el tope de categoría", "descripcion": "Cuánto puede facturar sin pasarse de categoría (Monotributo)." },
+    { "clave": "dias_cobro", "nombre": "Días promedio de cobro", "descripcion": "Tiempo entre la factura y el cobro." }
+  ],
+  "riesgos": [
+    { "clave": "exclusion_monotributo", "titulo": "Exclusión del Monotributo", "descripcion": "Superar el tope de facturación o los parámetros de la categoría máxima.", "validar": "Topes vigentes de la ley de Monotributo." },
+    { "clave": "retenciones_acumuladas", "titulo": "Saldos a favor por retenciones", "descripcion": "Retenciones de Ganancias e IIBB que no se computan a tiempo." },
+    { "clave": "facturar_tarde", "titulo": "Facturación fuera de término", "descripcion": "Emitir comprobantes después de prestado el servicio sin respetar los plazos." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Alícuotas, calendarios y regímenes provinciales dependen de la jurisdicción y cambian por resoluciones: verificar cada año.",
+    "La caja previsional depende de la profesión y la provincia."
+  ]
+}

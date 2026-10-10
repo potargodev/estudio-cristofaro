@@ -1,0 +1,152 @@
+{
+  "clave": "comercio_minorista",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Comercio minorista",
+  "descripcion": "Locales a la calle, almacenes, kioscos, tiendas de ropa, ferreterías, librerías y otros comercios que venden mercadería a consumidor final, con o sin empleados, cobrando en efectivo, tarjetas, QR y transferencias.",
+  "icono": "Store",
+  "actividades": [
+    { "codigo": "471190", "descripcion": "Venta al por menor en kioscos, polirrubros y comercios no especializados n.c.p.", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA y su equivalente en el nomenclador NAES de la jurisdicción." },
+    { "codigo": "471130", "descripcion": "Venta al por menor en almacenes y otros comercios no especializados con predominio de alimentos y bebidas", "validar": "Confirmar código vigente en CLAE/NAES." },
+    { "codigo": "477190", "descripcion": "Venta al por menor de prendas y accesorios de vestir n.c.p.", "nota": "Para indumentaria hay códigos más específicos (ropa de bebés, deportiva, etc.).", "validar": "Elegir el código más específico según el producto principal; confirmar en CLAE." },
+    { "codigo": "475230", "descripcion": "Venta al por menor de artículos de ferretería y materiales eléctricos", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "476110", "descripcion": "Venta al por menor de libros", "nota": "Los libros tienen tratamiento de IVA particular (exentos).", "validar": "Confirmar código vigente en CLAE y la exención de IVA aplicable." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Gravado si es responsable inscripto: emite factura B a consumidor final y A a inscriptos. Si es monotributista, el IVA está incluido en la cuota y emite factura C. Las compras a proveedores grandes suelen traer percepciones de IVA.",
+      "alicuotas": ["21% (general)", "10,5% (algunos alimentos: carnes, frutas, verduras, harinas, pan)", "Exento (libros y otros casos puntuales)"],
+      "nota": "Un mismo comercio puede vender productos con distintas alícuotas: hay que cargar bien cada artículo en el sistema de facturación.",
+      "validar": "Revisar las alícuotas reducidas y exenciones de la Ley de IVA (arts. 7 y 28) según los productos que vende el comercio."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Local si tiene uno o más locales en una sola jurisdicción. Convenio Multilateral si tiene sucursales en otras provincias o vende a clientes de otras jurisdicciones de forma habitual (por ejemplo, también por internet).",
+      "validar": "Alícuota de comercio minorista según la ley tarifaria de la jurisdicción; algunas provincias tienen alícuotas distintas por tipo de producto o por monto de facturación anual."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Percepciones de IVA sufridas en compras a proveedores agentes de percepción (RG 2408 y concordantes)", "nota": "Son pago a cuenta del IVA: hay que computarlas en la DDJJ del período.", "validar": "Régimen y alícuotas vigentes de percepción de IVA en compras de mercadería." },
+      { "nombre": "Percepciones de IIBB sufridas en compras", "nota": "Las cobran los proveedores que son agentes de percepción de la provincia.", "validar": "Padrón de alícuotas por sujeto de cada jurisdicción (por ejemplo ARBA o AGIP)." },
+      { "nombre": "Retenciones de IVA, Ganancias e IIBB en liquidaciones de tarjetas de crédito y débito", "nota": "Las practican las administradoras de tarjetas y procesadores de pagos sobre cada liquidación del posnet.", "validar": "Regímenes de retención vigentes de ARCA sobre pagos con tarjetas y medios electrónicos, y SIRTAC para IIBB." },
+      { "nombre": "SIRCREB y SIRCUPA (retenciones de IIBB en cuentas bancarias y billeteras virtuales)", "nota": "Afecta sobre todo a inscriptos en Convenio Multilateral y a algunos regímenes locales.", "validar": "Alícuota según padrón de la Comisión Arbitral; pedir exclusión o reducción si se generan saldos a favor." },
+      { "nombre": "Actuación como agente de percepción de IIBB", "nota": "Comercios grandes pueden ser designados agentes por la provincia.", "validar": "Verificar si el contribuyente fue nombrado agente en su jurisdicción y desde cuándo." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Monotributo (categorías de venta de cosas muebles)", "nota": "Los topes de venta de bienes son más altos que los de servicios, pero también se controlan superficie del local, energía consumida y alquileres.", "validar": "Topes y parámetros vigentes de la ley de Monotributo." },
+      { "nombre": "Controlador fiscal o factura electrónica", "nota": "Los comercios que venden a consumidor final tienen que emitir comprobantes con controlador fiscal de nueva generación o factura electrónica, según el caso.", "validar": "Obligatoriedad del controlador fiscal y excepciones vigentes de ARCA según la actividad y el nivel de ventas." },
+      { "nombre": "Medios de pago electrónicos obligatorios", "nota": "Los comercios que venden a consumidor final deben aceptar pagos con tarjeta de débito u otros medios electrónicos.", "validar": "Normativa vigente sobre aceptación obligatoria de medios de pago electrónicos." }
+    ],
+    "nota": "El perfil cambia mucho entre un monotributista con un solo local y una sociedad con varias sucursales: revisar caso por caso."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Empleados de comercio (FAECYS)", "numero": "CCT 130/75", "nota": "Es el convenio habitual para vendedores, cajeros y administrativos de comercio.", "validar": "Confirmar encuadre convencional (algunos rubros, como supermercados o farmacias, pueden tener acuerdos propios) y escalas salariales vigentes." }
+    ],
+    "categorias": ["Maestranza", "Administrativo", "Cajero", "Auxiliar", "Auxiliar especializado", "Vendedor"],
+    "conceptos": ["Sueldo básico", "Presentismo (asistencia y puntualidad)", "Antigüedad", "Horas extras", "Adicional por jornada en feriados", "Aporte solidario y cuota sindical", "SAC", "Vacaciones", "Sumas no remunerativas acordadas en paritarias"],
+    "nota": "Revisar mensualmente las paritarias de comercio: suelen incorporar sumas no remunerativas y cambios de escala."
+  },
+  "obligaciones": [
+    { "clave": "monotributo", "impuesto": "Monotributo", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA." },
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002 / Libro IVA Digital)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Calendario de vencimientos de ARCA del año." },
+    { "clave": "iibb_mensual", "impuesto": "Ingresos Brutos (anticipo)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT y jurisdicción, o calendario de Convenio Multilateral.", "validar": "Depende de la jurisdicción." },
+    { "clave": "f931", "impuesto": "Cargas sociales (F. 931)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, en la primera quincena del mes siguiente.", "aplica_a": "Empleadores", "validar": "Calendario vigente de ARCA." },
+    { "clave": "cct_aportes", "impuesto": "Aportes y contribuciones del convenio de comercio (sindicato, FAECYS, obra social)", "frecuencia": "mensual", "vencimiento": "Según las boletas del sindicato y del convenio.", "aplica_a": "Empleadores con personal en CCT 130/75", "validar": "Conceptos y porcentajes vigentes del convenio." },
+    { "clave": "seguridad_higiene", "impuesto": "Tasa de seguridad e higiene (o equivalente municipal)", "frecuencia": "mensual", "vencimiento": "Según el calendario del municipio.", "nota": "En algunos municipios es bimestral o se calcula sobre ingresos brutos.", "validar": "Base, alícuota y vencimientos dependen de cada municipio." },
+    { "clave": "agente_percepcion_iibb", "impuesto": "DDJJ de agente de percepción de IIBB", "frecuencia": "mensual", "vencimiento": "Según el calendario de la provincia.", "aplica_a": "Comercios designados agentes", "validar": "Confirmar designación y calendario de la jurisdicción." },
+    { "clave": "recategorizacion", "impuesto": "Recategorización de Monotributo", "frecuencia": "semestral", "vencimiento": "Enero y julio (hasta el día 20 o según calendario).", "aplica_a": "Monotributistas" },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias (DDJJ anual de personas humanas o sociedades)", "frecuencia": "anual", "vencimiento": "Personas humanas en junio; sociedades al quinto mes del cierre de ejercicio.", "aplica_a": "Responsables inscriptos", "validar": "Fechas de la resolución general del año." },
+    { "clave": "inventario_anual", "impuesto": "Inventario de mercadería al cierre", "frecuencia": "anual", "vencimiento": "A la fecha de cierre del ejercicio o al 31 de diciembre para personas humanas.", "nota": "Se necesita para determinar el costo de ventas en Ganancias y para el balance." }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de inscripción en Ingresos Brutos (o CM01)", "obligatorio": true },
+    { "clave": "habilitacion_municipal", "item": "Habilitación municipal del local comercial", "obligatorio": true },
+    { "clave": "contrato_alquiler", "item": "Contrato de alquiler del local (o título si es propio)", "obligatorio": false },
+    { "clave": "punto_venta", "item": "Puntos de venta habilitados en ARCA y datos del controlador fiscal o sistema de facturación", "obligatorio": true },
+    { "clave": "medios_cobro", "item": "Listado de medios de cobro: posnet, Mercado Pago, QR, cuentas bancarias", "obligatorio": true },
+    { "clave": "liquidaciones_tarjetas", "item": "Liquidaciones de tarjetas y procesadores de pago de los últimos meses", "obligatorio": false },
+    { "clave": "proveedores_principales", "item": "Listado de proveedores principales y condiciones de pago", "obligatorio": false },
+    { "clave": "inventario_inicial", "item": "Inventario inicial de mercadería valorizado", "obligatorio": true },
+    { "clave": "nomina_empleados", "item": "Nómina de empleados con categoría, fecha de ingreso y jornada", "obligatorio": false },
+    { "clave": "ddjj_anteriores", "item": "Declaraciones juradas presentadas el año anterior", "obligatorio": false }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.01", "nombre": "Caja", "tipo": "activo" },
+    { "codigo": "1.1.02", "nombre": "Banco cuenta corriente", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Cupones de tarjetas a liquidar", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "Saldo en billeteras virtuales y procesadores de pago", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "Percepciones de IVA sufridas", "tipo": "activo" },
+    { "codigo": "1.1.06", "nombre": "Retenciones y percepciones de IIBB sufridas", "tipo": "activo" },
+    { "codigo": "1.1.07", "nombre": "IVA crédito fiscal", "tipo": "activo" },
+    { "codigo": "1.1.08", "nombre": "Mercaderías de reventa", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Instalaciones y mobiliario del local", "tipo": "activo" },
+    { "codigo": "1.2.02", "nombre": "Equipos (controlador fiscal, balanzas, computación)", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores de mercadería", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "IVA débito fiscal", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "IIBB a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.04", "nombre": "Sueldos y cargas sociales a pagar", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Ventas de mercadería", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Costo de mercadería vendida", "tipo": "egreso" },
+    { "codigo": "5.1.02", "nombre": "Comisiones y aranceles de tarjetas y procesadores", "tipo": "egreso" },
+    { "codigo": "5.1.03", "nombre": "Alquiler del local", "tipo": "egreso" },
+    { "codigo": "5.1.04", "nombre": "Faltantes, roturas y mermas de mercadería", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "ventas_mostrador", "nombre": "Ventas en el local" },
+      { "clave": "ventas_tarjeta", "nombre": "Ventas con tarjeta y QR" },
+      { "clave": "ventas_online", "nombre": "Ventas por redes o internet" },
+      { "clave": "otros_ingresos", "nombre": "Otros ingresos" }
+    ],
+    "gastos": [
+      { "clave": "mercaderia", "nombre": "Compra de mercadería" },
+      { "clave": "alquiler", "nombre": "Alquiler del local" },
+      { "clave": "sueldos", "nombre": "Sueldos y cargas sociales" },
+      { "clave": "comisiones_cobro", "nombre": "Comisiones de tarjetas y medios de cobro" },
+      { "clave": "servicios", "nombre": "Servicios (luz, agua, internet, teléfono)" },
+      { "clave": "tasas_municipales", "nombre": "Tasas municipales" },
+      { "clave": "fletes", "nombre": "Fletes y envíos" },
+      { "clave": "mantenimiento", "nombre": "Mantenimiento y limpieza del local" },
+      { "clave": "publicidad", "nombre": "Publicidad y cartelería" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "control_facturacion", "titulo": "Controlar ventas del mes contra cierres Z del controlador o facturación electrónica", "frecuencia": "mensual" },
+    { "clave": "conciliar_tarjetas", "titulo": "Conciliar liquidaciones de tarjetas y procesadores con las ventas y el banco", "frecuencia": "mensual", "nota": "Detecta cupones no liquidados, contracargos y retenciones." },
+    { "clave": "computar_percepciones", "titulo": "Cargar y computar percepciones de IVA e IIBB de las facturas de compra", "frecuencia": "mensual" },
+    { "clave": "liquidar_sueldos", "titulo": "Liquidar sueldos con las escalas vigentes de comercio", "frecuencia": "mensual" },
+    { "clave": "recategorizacion", "titulo": "Revisar recategorización del Monotributo (ventas, superficie, energía y alquileres)", "frecuencia": "semestral" },
+    { "clave": "inventario", "titulo": "Pedir y valorizar el inventario de mercadería al cierre", "frecuencia": "anual" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "pedido_liquidaciones_tarjetas", "nombre": "Pedido mensual de liquidaciones y ventas", "descripcion": "El primer día hábil del mes pide al cliente los cierres Z, las liquidaciones de tarjetas y los resúmenes de Mercado Pago del mes anterior." },
+    { "plantilla": "alerta_tope_monotributo", "nombre": "Alerta de tope de Monotributo", "descripcion": "Avisa cuando las ventas de 12 meses superan el 80% del tope de la categoría." },
+    { "plantilla": "recordatorio_inventario", "nombre": "Recordatorio de inventario de cierre", "descripcion": "Un mes antes del cierre recuerda al cliente que tiene que contar y valorizar el stock." }
+  ],
+  "indicadores": [
+    { "clave": "ventas_mensuales", "nombre": "Ventas mensuales", "descripcion": "Ventas del mes y su evolución, separadas por medio de cobro." },
+    { "clave": "margen_bruto", "nombre": "Margen bruto", "descripcion": "Diferencia entre ventas y costo de la mercadería vendida, en porcentaje." },
+    { "clave": "costo_cobro", "nombre": "Costo de los medios de cobro", "descripcion": "Comisiones, aranceles y retenciones de tarjetas y billeteras sobre el total vendido." },
+    { "clave": "rotacion_stock", "nombre": "Rotación de stock", "descripcion": "Cuántas veces por año se renueva la mercadería en el local." },
+    { "clave": "saldo_a_favor_iibb", "nombre": "Saldo a favor de IIBB", "descripcion": "Acumulación de percepciones y retenciones de IIBB que no se llegan a compensar." }
+  ],
+  "riesgos": [
+    { "clave": "exclusion_monotributo", "titulo": "Exclusión del Monotributo", "descripcion": "Superar topes de ventas, superficie, energía o alquileres, o tener compras y gastos incompatibles con lo facturado.", "validar": "Parámetros y causales de exclusión vigentes de la ley de Monotributo." },
+    { "clave": "ventas_sin_facturar", "titulo": "Diferencias entre cobros y facturación", "descripcion": "ARCA y las provincias cruzan lo acreditado por tarjetas, billeteras y bancos con lo facturado: los cobros sin comprobante generan intimaciones." },
+    { "clave": "saldos_a_favor", "titulo": "Saldos a favor acumulados", "descripcion": "Percepciones de IVA e IIBB más retenciones bancarias y de tarjetas que superan el impuesto determinado y quedan inmovilizadas.", "validar": "Procedimientos de exclusión, reducción o devolución vigentes en ARCA y en cada jurisdicción." },
+    { "clave": "clausura", "titulo": "Clausura por no emitir comprobantes", "descripcion": "Las inspecciones en el local pueden terminar en multa y clausura si no se entrega factura o ticket.", "validar": "Sanciones vigentes de la Ley 11.683." },
+    { "clave": "stock_desactualizado", "titulo": "Stock sin control", "descripcion": "Sin inventario confiable no se puede calcular bien el costo de ventas ni detectar faltantes o mermas." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Habilitación del local, tasa de seguridad e higiene, cartelería y publicidad dependen del municipio; alícuotas de IIBB y regímenes de percepción dependen de la provincia o CABA.",
+    "Si el comercio también vende por internet o marketplaces, combinar con la plantilla de e-commerce (puede cambiar el régimen de IIBB).",
+    "Las escalas salariales de comercio cambian con cada paritaria: revisarlas antes de cada liquidación."
+  ]
+}

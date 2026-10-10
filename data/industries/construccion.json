@@ -1,0 +1,156 @@
+{
+  "clave": "construccion",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Construcción",
+  "descripcion": "Empresas constructoras, contratistas y subcontratistas de obra, oficios (electricistas, plomeros, pintores, albañiles) y desarrolladores que construyen, reforman o reparan inmuebles, con obreros propios o tercerizados.",
+  "icono": "HardHat",
+  "actividades": [
+    { "codigo": "410011", "descripcion": "Construcción, reforma y reparación de edificios residenciales", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA y su equivalente NAES en la jurisdicción." },
+    { "codigo": "410021", "descripcion": "Construcción, reforma y reparación de edificios no residenciales", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "432110", "descripcion": "Instalaciones eléctricas, electromecánicas y electrónicas", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "432200", "descripcion": "Instalaciones de gas, agua, sanitarios y de climatización", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "433090", "descripcion": "Terminación de edificios n.c.p. (pintura, yesería, revestimientos)", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "421000", "descripcion": "Construcción, reforma y reparación de obras de infraestructura para el transporte (obras viales)", "nota": "Habitual en contratistas de obra pública.", "validar": "Confirmar código vigente en CLAE." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Las obras sobre inmueble ajeno y las de inmueble propio para venta están gravadas. El hecho imponible se perfecciona en general con la aceptación del certificado de obra o la percepción, lo que ocurra primero.",
+      "alicuotas": ["21% (general)", "10,5% (obras destinadas a vivienda, en ciertos casos)"],
+      "nota": "Hay que separar en el certificado la parte de vivienda de la de locales u oficinas si la obra es mixta.",
+      "validar": "Revisar momento del hecho imponible (art. 5 Ley de IVA) y requisitos de la alícuota reducida para vivienda (art. 28); en obra pública verificar el tratamiento de anticipos y redeterminaciones."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Local si solo hace obras en su jurisdicción. Si hace obras en otras provincias, Convenio Multilateral con el régimen especial de construcción, que atribuye la mayor parte de los ingresos a la jurisdicción donde está la obra.",
+      "validar": "Aplicación del art. 6 del Convenio Multilateral (empresas de construcción) y alícuotas de cada jurisdicción; algunas provincias tienen alícuotas reducidas o exenciones para vivienda."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Retención de Ganancias sobre pagos de contratos de obra (RG 830)", "nota": "La practican los comitentes agentes de retención sobre cada certificado.", "validar": "Montos no sujetos y alícuotas vigentes de la RG 830 para locaciones de obra." },
+      { "nombre": "Retención de IVA en obra pública y por grandes comitentes", "validar": "Regímenes de retención de IVA vigentes (organismos públicos y agentes designados)." },
+      { "nombre": "Retención de contribuciones de la seguridad social en contratos de construcción (SUSS)", "nota": "El comitente o contratista principal retiene sobre pagos a subcontratistas.", "validar": "Resolución general vigente del régimen de retención de seguridad social para la industria de la construcción y montos mínimos." },
+      { "nombre": "Retenciones de IIBB en certificados y SIRCREB", "validar": "Agentes, padrones y alícuotas de cada jurisdicción donde se hace la obra." },
+      { "nombre": "Fondos de reparo retenidos por el comitente", "nota": "No es un impuesto, pero se descuenta del certificado y se devuelve al terminar la garantía: hay que registrarlo aparte." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Régimen laboral de la industria de la construcción (Ley 22.250)", "nota": "Reemplaza la indemnización por despido por el fondo de cese laboral (ex fondo de desempleo).", "validar": "Vigencia de la Ley 22.250 y modificaciones recientes en materia laboral." },
+      { "nombre": "Inscripción en el IERIC", "nota": "Los empleadores de la construcción deben inscribirse en el Instituto de Estadística y Registro de la Industria de la Construcción y presentar declaraciones periódicas.", "validar": "Obligación de inscripción, aranceles y presentaciones vigentes ante el IERIC." },
+      { "nombre": "Monotributo (servicios de oficios)", "nota": "Electricistas, plomeros, pintores y albañiles suelen ser monotributistas; la obra completa con materiales puede requerir encuadre distinto.", "validar": "Encuadre en servicios o venta de bienes y topes vigentes." },
+      { "nombre": "Registros de contratistas de obra pública", "nota": "Para obra pública suele exigirse inscripción en el registro nacional o provincial de constructores y certificado de capacidad.", "validar": "Requisitos del registro de cada jurisdicción u organismo licitante." }
+    ],
+    "nota": "El perfil cambia mucho entre un oficio monotributista, una pyme constructora con obreros y un desarrollador inmobiliario que vende unidades propias."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Obreros de la construcción (UOCRA)", "numero": "CCT 76/75", "nota": "Convenio de los operarios de obra; se combina con el régimen de la Ley 22.250.", "validar": "Confirmar escalas salariales vigentes por zona y acuerdos paritarios de UOCRA." },
+      { "nombre": "Empleados administrativos de empresas constructoras (UECARA)", "nota": "El personal administrativo y técnico puede tener su propio convenio.", "validar": "Confirmar número de convenio y encuadre del personal no obrero." }
+    ],
+    "categorias": ["Ayudante", "Medio oficial", "Oficial", "Oficial especializado", "Sereno", "Capataz", "Administrativo"],
+    "conceptos": ["Jornal básico por hora según categoría y zona", "Asistencia", "Horas extras", "Fondo de cese laboral (aporte mensual a cuenta del trabajador)", "Aporte al IERIC", "Seguro de vida obligatorio", "Indumentaria y elementos de seguridad", "SAC", "Vacaciones", "Aportes sindicales y obra social (OSPeCon)"],
+    "nota": "El pago es quincenal y por hora; el fondo de cese laboral se deposita mensualmente en una cuenta a nombre del trabajador. Los porcentajes y su forma de cálculo hay que validarlos con la normativa vigente."
+  },
+  "obligaciones": [
+    { "clave": "monotributo", "impuesto": "Monotributo", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA." },
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002 / Libro IVA Digital)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Calendario de vencimientos de ARCA del año." },
+    { "clave": "iibb_mensual", "impuesto": "Ingresos Brutos (anticipo local o Convenio Multilateral)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT y calendario de la jurisdicción o de la Comisión Arbitral.", "validar": "Depende de la jurisdicción y de las obras en curso." },
+    { "clave": "f931", "impuesto": "Cargas sociales (F. 931)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, en la primera quincena del mes siguiente.", "aplica_a": "Empleadores", "validar": "Calendario vigente de ARCA." },
+    { "clave": "fondo_cese", "impuesto": "Depósito del fondo de cese laboral", "frecuencia": "mensual", "vencimiento": "Dentro de los primeros días del mes siguiente, según la normativa del régimen.", "aplica_a": "Empleadores con obreros de la construcción", "validar": "Porcentajes, plazo de depósito y entidad bancaria según Ley 22.250 y normas vigentes." },
+    { "clave": "ieric", "impuesto": "Declaración y aporte al IERIC", "frecuencia": "mensual", "vencimiento": "Según el calendario del IERIC.", "aplica_a": "Empleadores de la construcción", "validar": "Aranceles y vencimientos vigentes del IERIC." },
+    { "clave": "uocra_aportes", "impuesto": "Aportes sindicales y de convenio (UOCRA, fundación, seguro de vida)", "frecuencia": "mensual", "vencimiento": "Según las boletas del sindicato.", "aplica_a": "Empleadores con personal en CCT 76/75", "validar": "Conceptos y porcentajes vigentes del convenio." },
+    { "clave": "sicore", "impuesto": "Retenciones practicadas (SICORE / SIRE)", "frecuencia": "mensual", "vencimiento": "Según el calendario de ARCA para agentes de retención.", "aplica_a": "Constructoras que son agentes de retención de Ganancias o seguridad social", "validar": "Régimen y calendario vigentes de ARCA." },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias (DDJJ anual de personas humanas o sociedades)", "frecuencia": "anual", "vencimiento": "Personas humanas en junio; sociedades al quinto mes del cierre de ejercicio.", "aplica_a": "Responsables inscriptos", "validar": "Fechas de la resolución general del año y método de reconocimiento de resultados de obras." },
+    { "clave": "recategorizacion", "impuesto": "Recategorización de Monotributo", "frecuencia": "semestral", "vencimiento": "Enero y julio (hasta el día 20 o según calendario).", "aplica_a": "Monotributistas" }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de inscripción en Ingresos Brutos (o CM01 con las jurisdicciones de obra)", "obligatorio": true },
+    { "clave": "ieric_inscripcion", "item": "Constancia de inscripción en el IERIC", "obligatorio": true },
+    { "clave": "uocra_alta", "item": "Alta como empleador ante UOCRA y obra social, y datos de la cuenta del fondo de cese", "obligatorio": true },
+    { "clave": "nomina_obreros", "item": "Nómina de obreros con categoría, obra asignada y fecha de ingreso", "obligatorio": true },
+    { "clave": "art_seguros", "item": "Contrato de ART, seguro de vida obligatorio y seguros de obra", "obligatorio": true },
+    { "clave": "contratos_obra", "item": "Contratos de obra vigentes con comitentes y subcontratistas", "obligatorio": true },
+    { "clave": "certificados_obra", "item": "Certificados de obra emitidos y aceptados de los últimos 12 meses", "obligatorio": true },
+    { "clave": "registro_constructores", "item": "Inscripción en registros de constructores o de obra pública", "obligatorio": false },
+    { "clave": "habilitaciones_profesionales", "item": "Matrículas de profesionales responsables (director de obra, representante técnico)", "obligatorio": false },
+    { "clave": "ddjj_anteriores", "item": "Declaraciones juradas y balances del año anterior", "obligatorio": false }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.01", "nombre": "Caja", "tipo": "activo" },
+    { "codigo": "1.1.02", "nombre": "Banco cuenta corriente", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Certificados de obra a cobrar", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "Fondos de reparo a cobrar", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "Anticipos a subcontratistas y proveedores", "tipo": "activo" },
+    { "codigo": "1.1.06", "nombre": "IVA crédito fiscal", "tipo": "activo" },
+    { "codigo": "1.1.07", "nombre": "Retenciones sufridas (Ganancias, IVA, SUSS, IIBB)", "tipo": "activo" },
+    { "codigo": "1.1.08", "nombre": "Materiales en depósito y en obra", "tipo": "activo" },
+    { "codigo": "1.1.09", "nombre": "Obras en curso", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Maquinarias y equipos de obra", "tipo": "activo" },
+    { "codigo": "1.2.02", "nombre": "Rodados y utilitarios", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores de materiales", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "Subcontratistas a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "Anticipos de comitentes", "tipo": "pasivo" },
+    { "codigo": "2.1.04", "nombre": "Jornales y cargas sociales a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.05", "nombre": "Fondo de cese laboral a depositar", "tipo": "pasivo" },
+    { "codigo": "2.1.06", "nombre": "IVA débito fiscal", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Ingresos por certificados de obra", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Costo de obra: materiales, mano de obra y subcontratos", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "certificados_obra", "nombre": "Certificados de obra" },
+      { "clave": "adicionales_obra", "nombre": "Adicionales y redeterminaciones" },
+      { "clave": "trabajos_menores", "nombre": "Trabajos y reparaciones menores" },
+      { "clave": "venta_unidades", "nombre": "Venta de unidades propias" }
+    ],
+    "gastos": [
+      { "clave": "materiales", "nombre": "Materiales de construcción" },
+      { "clave": "jornales", "nombre": "Jornales y cargas sociales" },
+      { "clave": "fondo_cese", "nombre": "Fondo de cese laboral" },
+      { "clave": "subcontratos", "nombre": "Subcontratistas" },
+      { "clave": "alquiler_equipos", "nombre": "Alquiler de equipos y volquetes" },
+      { "clave": "fletes", "nombre": "Fletes y combustible" },
+      { "clave": "seguros", "nombre": "ART, seguros de vida y de obra" },
+      { "clave": "seguridad_obra", "nombre": "Elementos de seguridad e indumentaria" },
+      { "clave": "honorarios_tecnicos", "nombre": "Honorarios de profesionales técnicos" },
+      { "clave": "derechos_construccion", "nombre": "Derechos de construcción y permisos municipales" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "control_certificados", "titulo": "Controlar certificados de obra emitidos, aceptados y facturados", "frecuencia": "mensual", "nota": "El IVA nace con la aceptación del certificado: facturar a tiempo." },
+    { "clave": "liquidar_jornales", "titulo": "Liquidar jornales quincenales con escalas vigentes de UOCRA", "frecuencia": "mensual" },
+    { "clave": "depositar_fondo_cese", "titulo": "Calcular y depositar el fondo de cese laboral y el aporte al IERIC", "frecuencia": "mensual" },
+    { "clave": "conciliar_retenciones", "titulo": "Conciliar retenciones sufridas en certificados (Ganancias, IVA, SUSS, IIBB)", "frecuencia": "mensual" },
+    { "clave": "control_subcontratistas", "titulo": "Pedir a subcontratistas constancias de F. 931, ART y pagos de cargas", "frecuencia": "mensual", "nota": "Reduce el riesgo de responsabilidad solidaria laboral." },
+    { "clave": "coeficientes_cm", "titulo": "Recalcular la atribución de ingresos por obra para Convenio Multilateral", "frecuencia": "anual" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "pedido_certificados", "nombre": "Pedido mensual de certificados y novedades", "descripcion": "A fin de mes pide al cliente los certificados de obra, las horas trabajadas por obrero y las facturas de materiales y subcontratistas." },
+    { "plantilla": "control_documentacion_subcontratistas", "nombre": "Control de documentación de subcontratistas", "descripcion": "Recuerda pedir F. 931, ART y constancias de pago a cada subcontratista antes de pagarle el certificado." },
+    { "plantilla": "alerta_fondo_cese", "nombre": "Alerta de depósito del fondo de cese", "descripcion": "Avisa unos días antes del vencimiento del depósito del fondo de cese y del aporte al IERIC." }
+  ],
+  "indicadores": [
+    { "clave": "avance_obra", "nombre": "Avance certificado por obra", "descripcion": "Porcentaje certificado y cobrado de cada obra sobre el contrato." },
+    { "clave": "margen_obra", "nombre": "Margen por obra", "descripcion": "Ingresos certificados menos costos imputados a cada obra." },
+    { "clave": "costo_mano_obra", "nombre": "Costo de mano de obra sobre certificado", "descripcion": "Jornales, cargas sociales y fondo de cese en relación con lo certificado." },
+    { "clave": "dias_cobro", "nombre": "Días promedio de cobro de certificados", "descripcion": "Tiempo entre la aceptación del certificado y el cobro, clave en obra pública." },
+    { "clave": "saldo_retenciones", "nombre": "Saldo de retenciones a favor", "descripcion": "Retenciones sufridas acumuladas que todavía no se compensaron." }
+  ],
+  "riesgos": [
+    { "clave": "solidaridad_laboral", "titulo": "Responsabilidad solidaria por subcontratistas", "descripcion": "Si un subcontratista no registra o no paga a sus obreros, el contratista principal puede tener que responder.", "validar": "Alcance del art. 30 de la Ley de Contrato de Trabajo y del art. 32 de la Ley 22.250." },
+    { "clave": "fondo_cese_impago", "titulo": "Fondo de cese laboral no depositado", "descripcion": "La falta de depósito o la libreta incompleta genera intimaciones, multas y reclamos al finalizar la relación laboral.", "validar": "Sanciones y régimen vigentes de la Ley 22.250 y del IERIC." },
+    { "clave": "iva_certificados", "titulo": "IVA devengado sin cobrar", "descripcion": "Al nacer el IVA con la aceptación del certificado, se puede tener que pagar el impuesto antes de cobrar, sobre todo en obra pública.", "validar": "Momento del hecho imponible y regímenes de diferimiento para pymes vigentes." },
+    { "clave": "atribucion_cm", "titulo": "Mala atribución de ingresos entre jurisdicciones", "descripcion": "No aplicar el régimen especial de construcción del Convenio Multilateral genera diferencias con cada provincia donde hubo obra.", "validar": "Art. 6 del Convenio Multilateral y criterios de la Comisión Arbitral." },
+    { "clave": "accidentes_obra", "titulo": "Accidentes de trabajo sin cobertura", "descripcion": "Obreros sin alta, sin ART o sin seguro de vida exponen al empleador a juicios por montos muy altos." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Permisos de obra, derechos de construcción y tasas dependen del municipio; alícuotas de IIBB y regímenes de retención dependen de cada provincia donde se hace la obra.",
+    "El régimen laboral de la construcción (Ley 22.250, fondo de cese, IERIC) puede tener cambios por reformas laborales recientes: revisarlo antes de dar de alta al cliente.",
+    "Si el cliente es desarrollador y vende unidades propias, revisar además el tratamiento de la venta de inmuebles en Ganancias, IVA e IIBB."
+  ]
+}

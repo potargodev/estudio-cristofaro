@@ -1,0 +1,154 @@
+{
+  "clave": "gastronomia",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Gastronomía",
+  "descripcion": "Restaurantes, bares, cafeterías, pizzerías, rotiserías, locales de comida rápida, delivery y servicios de catering, con atención al público, venta para llevar o a través de aplicaciones de reparto.",
+  "icono": "UtensilsCrossed",
+  "actividades": [
+    { "codigo": "561011", "descripcion": "Servicios de restaurantes y cantinas sin espectáculo", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA y su equivalente NAES en la jurisdicción." },
+    { "codigo": "561013", "descripcion": "Servicios de comida rápida (fast food) y locales de venta de comidas y bebidas al paso", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "561014", "descripcion": "Servicios de expendio de bebidas en bares", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "561020", "descripcion": "Servicios de preparación de comidas para llevar", "nota": "Rotiserías y cocinas que trabajan solo con delivery o take away.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "562010", "descripcion": "Servicios de preparación de comidas para empresas y eventos (catering)", "validar": "Confirmar código vigente en CLAE; el catering para empresas puede tener otro tratamiento en IIBB." },
+    { "codigo": "561019", "descripcion": "Servicios de expendio de comidas y bebidas en establecimientos con servicio de mesa o mostrador n.c.p. (cafeterías, heladerías y similares)", "validar": "Confirmar código vigente en CLAE." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "El servicio de restaurante y bar está gravado si es responsable inscripto; se factura B a consumidor final y A a empresas. Si es monotributista, emite factura C y el IVA está en la cuota.",
+      "alicuotas": ["21% (general para servicios gastronómicos)"],
+      "nota": "Las compras de insumos suelen tener alícuotas distintas (10,5% en carnes, frutas y verduras; 21% en bebidas y otros), lo que puede generar saldo técnico a pagar alto.",
+      "validar": "Confirmar alícuota de las prestaciones gastronómicas y de las compras según la Ley de IVA (art. 28) y regímenes de reducción vigentes."
+    },
+    "iibb": {
+      "regimen": "local",
+      "nota": "Normalmente local, porque el local está en una sola jurisdicción. Pasa a Convenio Multilateral si tiene sucursales en otras provincias o un catering que presta servicios en varias.",
+      "validar": "Alícuota de restaurantes y bares en la ley tarifaria de la jurisdicción; algunas provincias diferencian por monto de facturación o por tipo de local."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Retenciones de IVA, Ganancias e IIBB en liquidaciones de tarjetas, QR y billeteras", "nota": "Se descuentan de cada liquidación del posnet o del procesador de pagos.", "validar": "Regímenes de retención vigentes de ARCA sobre pagos electrónicos y SIRTAC para IIBB." },
+      { "nombre": "Retenciones y comisiones de aplicaciones de delivery (PedidosYa, Rappi y similares)", "nota": "Las plataformas descuentan comisión y pueden actuar como agentes de retención de IIBB.", "validar": "Verificar en cada liquidación qué retenciones se practican y si están correctamente certificadas." },
+      { "nombre": "Percepciones de IVA e IIBB sufridas en compras a distribuidores de bebidas y alimentos", "validar": "Padrones y alícuotas de percepción vigentes en cada jurisdicción." },
+      { "nombre": "SIRCREB y SIRCUPA (retenciones de IIBB en cuentas bancarias y billeteras)", "validar": "Alícuota según padrón de la Comisión Arbitral o régimen local." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Monotributo (locación y prestación de servicios)", "nota": "La gastronomía se encuadra como servicios: topes más bajos que la venta de bienes. Se controlan además superficie, energía y alquileres.", "validar": "Encuadre de la actividad gastronómica en la ley de Monotributo y topes vigentes." },
+      { "nombre": "Controlador fiscal de nueva generación o factura electrónica", "nota": "Los locales que venden a consumidor final tienen que emitir ticket o factura en cada consumo, incluido el delivery.", "validar": "Obligatoriedad del controlador fiscal para el rubro y excepciones vigentes de ARCA." },
+      { "nombre": "Impuestos internos sobre bebidas", "nota": "Normalmente los paga el fabricante o importador; el local solo los soporta en el costo.", "validar": "Confirmar que el local no es sujeto de impuestos internos (por ejemplo, si elabora bebidas propias como cerveza artesanal)." }
+    ],
+    "nota": "Rubro intensivo en mano de obra y con mucho cobro electrónico: el foco está en la liquidación de sueldos y en conciliar ventas, tarjetas y aplicaciones."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Trabajadores gastronómicos (UTHGRA – FEHGRA)", "numero": "CCT 389/04", "nota": "Convenio habitual para mozos, cocineros, bacheros, cajeros y personal de barra.", "validar": "Confirmar encuadre convencional, categoría del establecimiento y escalas salariales vigentes; algunas seccionales tienen acuerdos regionales." },
+      { "nombre": "Pastelería, confitería y heladería (para locales que elaboran productos)", "nota": "Algunas confiterías o heladerías pueden encuadrarse en convenios de pasteleros.", "validar": "Revisar el encuadre según la actividad principal del establecimiento." }
+    ],
+    "categorias": ["Peón general / bachero", "Ayudante de cocina", "Cocinero", "Jefe de cocina", "Mozo / camarero", "Cajero", "Barman", "Encargado", "Repartidor"],
+    "conceptos": ["Sueldo básico según categoría del establecimiento", "Asistencia perfecta", "Antigüedad", "Adicional por alimentación (comida)", "Horas extras y nocturnas", "Feriados trabajados", "Sumas no remunerativas acordadas en paritarias", "SAC", "Vacaciones", "Aportes al sindicato y a la obra social (OSUTHGRA)"],
+    "nota": "Propinas: el convenio y la ley de contrato de trabajo tienen reglas sobre su tratamiento y sobre si pueden considerarse remuneración; validar el criterio con el contador y el asesor laboral. Es frecuente la rotación de personal y las jornadas parciales."
+  },
+  "obligaciones": [
+    { "clave": "monotributo", "impuesto": "Monotributo", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA." },
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002 / Libro IVA Digital)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Calendario de vencimientos de ARCA del año." },
+    { "clave": "iibb_mensual", "impuesto": "Ingresos Brutos (anticipo)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT y jurisdicción.", "validar": "Depende de la jurisdicción." },
+    { "clave": "f931", "impuesto": "Cargas sociales (F. 931)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, en la primera quincena del mes siguiente.", "aplica_a": "Empleadores", "validar": "Calendario vigente de ARCA." },
+    { "clave": "uthgra_aportes", "impuesto": "Aportes sindicales y de convenio (UTHGRA y otros fondos del CCT)", "frecuencia": "mensual", "vencimiento": "Según las boletas del sindicato.", "aplica_a": "Empleadores con personal en CCT 389/04", "validar": "Conceptos, porcentajes y vencimientos vigentes del convenio y de la seccional." },
+    { "clave": "seguridad_higiene", "impuesto": "Tasa de seguridad e higiene (o equivalente municipal)", "frecuencia": "mensual", "vencimiento": "Según el calendario del municipio.", "validar": "Base, alícuota y vencimientos dependen de cada municipio." },
+    { "clave": "tasa_mesas_veredas", "impuesto": "Permiso o tasa por uso de veredas (mesas y sillas)", "frecuencia": "anual", "vencimiento": "Según el municipio.", "aplica_a": "Locales con mesas en la vereda", "validar": "Depende del municipio; en algunos es mensual o por temporada." },
+    { "clave": "derechos_musica", "impuesto": "Derechos por música funcional (SADAIC, AADI-CAPIF)", "frecuencia": "mensual", "vencimiento": "Según el convenio con cada entidad.", "aplica_a": "Locales que pasan música", "validar": "Aranceles y entidades vigentes según el tipo de local." },
+    { "clave": "recategorizacion", "impuesto": "Recategorización de Monotributo", "frecuencia": "semestral", "vencimiento": "Enero y julio (hasta el día 20 o según calendario).", "aplica_a": "Monotributistas" },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias (DDJJ anual de personas humanas o sociedades)", "frecuencia": "anual", "vencimiento": "Personas humanas en junio; sociedades al quinto mes del cierre de ejercicio.", "aplica_a": "Responsables inscriptos", "validar": "Fechas de la resolución general del año." }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de inscripción en Ingresos Brutos", "obligatorio": true },
+    { "clave": "habilitacion_municipal", "item": "Habilitación municipal del local gastronómico", "obligatorio": true },
+    { "clave": "bromatologia", "item": "Libretas sanitarias o carnet de manipulación de alimentos del personal y constancias de bromatología", "obligatorio": true },
+    { "clave": "contrato_alquiler", "item": "Contrato de alquiler del local (o título si es propio)", "obligatorio": false },
+    { "clave": "punto_venta", "item": "Puntos de venta en ARCA y datos del controlador fiscal o sistema de facturación", "obligatorio": true },
+    { "clave": "medios_cobro", "item": "Listado de medios de cobro: posnet, QR, Mercado Pago y aplicaciones de delivery", "obligatorio": true },
+    { "clave": "nomina_empleados", "item": "Nómina de empleados con categoría, jornada, fecha de ingreso y alta en ARCA", "obligatorio": true },
+    { "clave": "art", "item": "Contrato de ART y seguro de vida obligatorio", "obligatorio": true },
+    { "clave": "proveedores_principales", "item": "Listado de proveedores principales (carnes, verdulería, bebidas, almacén)", "obligatorio": false },
+    { "clave": "ddjj_anteriores", "item": "Declaraciones juradas presentadas el año anterior", "obligatorio": false }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.01", "nombre": "Caja", "tipo": "activo" },
+    { "codigo": "1.1.02", "nombre": "Banco cuenta corriente", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Cupones de tarjetas a liquidar", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "Liquidaciones a cobrar de aplicaciones de delivery", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "IVA crédito fiscal", "tipo": "activo" },
+    { "codigo": "1.1.06", "nombre": "Retenciones y percepciones sufridas (IVA, Ganancias, IIBB)", "tipo": "activo" },
+    { "codigo": "1.1.07", "nombre": "Materias primas e insumos de cocina", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Equipamiento de cocina", "tipo": "activo" },
+    { "codigo": "1.2.02", "nombre": "Muebles, vajilla y mantelería", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "IVA débito fiscal", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "IIBB a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.04", "nombre": "Sueldos a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.05", "nombre": "Cargas sociales y aportes sindicales a pagar", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Ventas en salón", "tipo": "ingreso" },
+    { "codigo": "4.1.02", "nombre": "Ventas por delivery y take away", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Costo de materia prima consumida", "tipo": "egreso" },
+    { "codigo": "5.1.02", "nombre": "Comisiones de aplicaciones de delivery y medios de cobro", "tipo": "egreso" },
+    { "codigo": "5.1.03", "nombre": "Mermas y desperdicios", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "ventas_salon", "nombre": "Ventas en salón" },
+      { "clave": "ventas_delivery", "nombre": "Ventas por delivery y aplicaciones" },
+      { "clave": "ventas_take_away", "nombre": "Ventas para llevar" },
+      { "clave": "eventos_catering", "nombre": "Eventos y catering" }
+    ],
+    "gastos": [
+      { "clave": "materia_prima", "nombre": "Materia prima y alimentos" },
+      { "clave": "bebidas", "nombre": "Bebidas" },
+      { "clave": "sueldos", "nombre": "Sueldos y cargas sociales" },
+      { "clave": "alquiler", "nombre": "Alquiler del local" },
+      { "clave": "comisiones_apps", "nombre": "Comisiones de apps de delivery y medios de cobro" },
+      { "clave": "gas_luz", "nombre": "Gas, luz y agua" },
+      { "clave": "descartables", "nombre": "Descartables y packaging" },
+      { "clave": "limpieza_mantenimiento", "nombre": "Limpieza, control de plagas y mantenimiento" },
+      { "clave": "tasas_municipales", "nombre": "Tasas municipales y permisos" },
+      { "clave": "publicidad", "nombre": "Publicidad y redes" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "control_ventas", "titulo": "Controlar ventas del mes contra cierres Z, facturación electrónica y sistema de comandas", "frecuencia": "mensual" },
+    { "clave": "conciliar_cobros", "titulo": "Conciliar liquidaciones de tarjetas, QR y aplicaciones de delivery con las ventas", "frecuencia": "mensual", "nota": "Las apps descuentan comisiones, promociones y retenciones: separar cada concepto." },
+    { "clave": "liquidar_sueldos", "titulo": "Liquidar sueldos con escalas vigentes del convenio gastronómico", "frecuencia": "mensual" },
+    { "clave": "costo_mercaderia", "titulo": "Calcular costo de mercadería consumida y mermas", "frecuencia": "mensual", "nota": "Pide inventario de cámaras y depósito a fin de mes, aunque sea estimado." },
+    { "clave": "vencimientos_habilitaciones", "titulo": "Revisar vencimientos de habilitación, libretas sanitarias, control de plagas y matafuegos", "frecuencia": "semestral" },
+    { "clave": "recategorizacion", "titulo": "Revisar recategorización del Monotributo", "frecuencia": "semestral" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "pedido_cierres_mes", "nombre": "Pedido mensual de ventas y liquidaciones", "descripcion": "El primer día hábil pide al cliente los cierres Z, las liquidaciones de tarjetas y de aplicaciones de delivery y las novedades de personal." },
+    { "plantilla": "novedades_sueldos", "nombre": "Novedades para liquidar sueldos", "descripcion": "Unos días antes de fin de mes pide altas, bajas, horas extras, feriados trabajados y ausencias." },
+    { "plantilla": "alerta_vencimiento_habilitacion", "nombre": "Alerta de vencimiento de habilitaciones", "descripcion": "Avisa 30 días antes del vencimiento de habilitaciones, libretas sanitarias o certificados de control de plagas cargados." }
+  ],
+  "indicadores": [
+    { "clave": "ventas_mensuales", "nombre": "Ventas mensuales por canal", "descripcion": "Ventas en salón, delivery y take away, y su evolución." },
+    { "clave": "food_cost", "nombre": "Costo de mercadería sobre ventas (food cost)", "descripcion": "Porcentaje de las ventas que se va en materia prima y bebidas." },
+    { "clave": "costo_laboral", "nombre": "Costo laboral sobre ventas", "descripcion": "Sueldos y cargas sociales en relación con lo vendido." },
+    { "clave": "costo_apps", "nombre": "Costo de aplicaciones y medios de cobro", "descripcion": "Comisiones, promociones y aranceles sobre el total cobrado por esos canales." },
+    { "clave": "ticket_promedio", "nombre": "Ticket promedio", "descripcion": "Venta promedio por comprobante emitido." }
+  ],
+  "riesgos": [
+    { "clave": "personal_no_registrado", "titulo": "Personal no registrado o mal encuadrado", "descripcion": "Es un rubro con alta rotación y jornadas parciales: el trabajo no registrado o en categoría incorrecta genera multas y juicios laborales.", "validar": "Sanciones y régimen de registración laboral vigentes." },
+    { "clave": "ventas_sin_facturar", "titulo": "Diferencias entre cobros y facturación", "descripcion": "ARCA y las provincias cruzan cobros con tarjeta, QR y aplicaciones con lo facturado. Las ventas sin comprobante generan intimaciones y clausuras.", "validar": "Sanciones de la Ley 11.683 por no emitir comprobantes." },
+    { "clave": "exclusion_monotributo", "titulo": "Exclusión del Monotributo", "descripcion": "Los topes de servicios se alcanzan rápido en gastronomía; también se controlan superficie y energía del local.", "validar": "Topes y parámetros vigentes de la ley de Monotributo." },
+    { "clave": "habilitacion_bromatologia", "titulo": "Clausura por habilitación o bromatología", "descripcion": "Habilitación vencida, falta de libretas sanitarias o incumplimientos de higiene pueden terminar en clausura municipal.", "validar": "Requisitos del código bromatológico y de habilitaciones del municipio." },
+    { "clave": "propinas", "titulo": "Tratamiento de las propinas", "descripcion": "Cómo se reparten y si se consideran remuneración puede generar reclamos laborales.", "validar": "Revisar el CCT 389/04, la Ley de Contrato de Trabajo y cualquier norma reciente sobre propinas cobradas por medios electrónicos." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Habilitación, bromatología, uso de veredas, tasa de seguridad e higiene y horarios dependen del municipio; alícuotas de IIBB dependen de la provincia o CABA.",
+    "El convenio gastronómico tiene escalas por categoría de establecimiento y acuerdos por seccional: revisarlos antes de cada liquidación.",
+    "Si el local vende también productos envasados o mercadería al por menor, combinar con la plantilla de comercio minorista."
+  ]
+}

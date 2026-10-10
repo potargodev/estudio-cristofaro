@@ -1,0 +1,551 @@
+{
+  "clave": "arquitectura_ingenieria_diseno",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Arquitectura, ingeniería y diseño",
+  "descripcion": "Estudios de arquitectura, ingenieros, maestros mayores de obra, agrimensores, diseñadores industriales, de interiores y gráficos. Facturan honorarios de proyecto, dirección de obra, cálculo, relevamientos y diseño; algunos también ejecutan obras o administran fondos de obra.",
+  "icono": "Ruler",
+  "actividades": [
+    {
+      "codigo": "711001",
+      "descripcion": "Servicios relacionados con la construcción (proyecto y dirección de obra)",
+      "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA."
+    },
+    {
+      "codigo": "711009",
+      "descripcion": "Servicios de arquitectura e ingeniería y servicios conexos de asesoramiento técnico n.c.p.",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "711002",
+      "descripcion": "Servicios geológicos y de prospección (agrimensura y relevamientos)",
+      "nota": "Para agrimensores, confirmar si el código correcto es este u otro de servicios técnicos.",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "712000",
+      "descripcion": "Ensayos y análisis técnicos",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "741000",
+      "descripcion": "Servicios de diseño especializado (industrial, interiores, gráfico)",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "410011",
+      "descripcion": "Construcción, reforma y reparación de edificios residenciales",
+      "nota": "Solo si además ejecuta obras: cambia el perfil laboral, de IVA y las retenciones.",
+      "validar": "Confirmar código vigente en CLAE."
+    }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Los honorarios profesionales están gravados a la alícuota general si es responsable inscripto. Si además ejecuta obras sobre inmueble ajeno destinado a vivienda, esa parte puede tener alícuota reducida. La administración de fondos de obra del comitente no es ingreso propio si se documenta como tal.",
+      "alicuotas": [
+        "21% (honorarios)",
+        "10,5% (ciertas obras sobre inmueble ajeno destinado a vivienda, ver validar)"
+      ],
+      "nota": "Separar honorarios de proyecto y dirección de los montos de obra que se administran por cuenta del comitente.",
+      "validar": "Revisar art. 28 de la Ley de IVA (alícuota reducida para obras de vivienda) y si alcanza a honorarios de proyecto y dirección facturados junto con la obra o por separado."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Local si trabaja en una sola jurisdicción; Convenio Multilateral si tiene obras en varias provincias. En Convenio, las obras en otra jurisdicción pueden tener régimen especial (construcción, art. 7) y los profesionales liberales el régimen del art. 10. Algunas jurisdicciones tienen tratamientos particulares para profesiones liberales matriculadas.",
+      "validar": "Confirmar régimen de Convenio aplicable (general, art. 7 de construcción o art. 10 de profesiones liberales), alícuota y exenciones de cada jurisdicción."
+    },
+    "retenciones_percepciones": [
+      {
+        "nombre": "Retención de Ganancias sobre honorarios (RG 830)",
+        "validar": "Montos no sujetos y alícuotas vigentes para honorarios de profesiones liberales y para locaciones de obra."
+      },
+      {
+        "nombre": "Retenciones de IVA de clientes agentes de retención",
+        "nota": "Frecuente con empresas constructoras, desarrolladoras y organismos públicos.",
+        "validar": "Revisar si el cliente es agente de retención de IVA y la alícuota aplicable."
+      },
+      {
+        "nombre": "Retenciones de IIBB y SIRCREB",
+        "validar": "Depende de la jurisdicción y del padrón de alícuotas."
+      },
+      {
+        "nombre": "Retención de seguridad social (SUSS) en obras",
+        "nota": "Si factura como contratista de construcción a empresas, puede sufrir retenciones de SUSS.",
+        "validar": "Revisar régimen de retención de SUSS para construcción (RG 1784 y modificatorias) y si alcanza a servicios profesionales."
+      }
+    ],
+    "regimenes_especiales": [
+      {
+        "nombre": "Matrícula y consejo o colegio profesional",
+        "nota": "Para firmar planos y dirigir obra hace falta matrícula vigente en el consejo o colegio de la jurisdicción (por ejemplo CPAU o CPII en CABA, CAPBA o colegios de ingenieros en Provincia de Buenos Aires). Hay derecho anual de matrícula y aportes o tasas por encomienda o visado de tareas.",
+        "validar": "Confirmar consejo o colegio de cada matrícula, montos de matrícula anual y tasas de encomienda o visado vigentes."
+      },
+      {
+        "nombre": "Caja previsional profesional",
+        "nota": "En algunas provincias los aportes a la caja profesional son obligatorios y pueden reemplazar los de autónomos (por ejemplo, la caja de arquitectos, ingenieros, agrimensores y técnicos de Provincia de Buenos Aires). En CABA, en general, se aporta como autónomo.",
+        "validar": "Revisar la caja que corresponde según profesión y provincia, si es sustitutiva o complementaria de autónomos, y los aportes por obra o mínimos vigentes."
+      },
+      {
+        "nombre": "Aranceles o honorarios de referencia",
+        "nota": "Algunos colegios publican aranceles mínimos o de referencia que se usan para calcular aportes por encomienda.",
+        "validar": "Confirmar si en la jurisdicción hay aranceles obligatorios o solo orientativos."
+      },
+      {
+        "nombre": "Inscripción en IERIC y régimen de la construcción",
+        "nota": "Solo si el estudio ejecuta obras y tiene personal de obra.",
+        "validar": "Confirmar obligación de inscripción en IERIC y requisitos vigentes."
+      },
+      {
+        "nombre": "Monotributo (categorías de servicios)",
+        "nota": "Frecuente en profesionales jóvenes y diseñadores. Revisar topes si se administran fondos de obra.",
+        "validar": "Topes vigentes de la ley de Monotributo."
+      }
+    ],
+    "nota": "El perfil depende de la profesión, la matrícula, la provincia y de si solo presta servicios profesionales o también ejecuta obras."
+  },
+  "laboral": {
+    "convenios": [
+      {
+        "nombre": "Empleados de comercio (personal administrativo y dibujantes)",
+        "numero": "CCT 130/75",
+        "nota": "Lo habitual para administrativos y personal técnico de estudios.",
+        "validar": "Confirmar encuadre convencional según la actividad y escalas vigentes."
+      },
+      {
+        "nombre": "Industria de la construcción (UOCRA)",
+        "numero": "CCT 76/75",
+        "nota": "Solo si el estudio ejecuta obras con personal propio. Implica fondo de cese laboral en lugar de indemnización.",
+        "validar": "Confirmar encuadre, escalas vigentes y aportes al fondo de cese laboral."
+      },
+      {
+        "nombre": "Personal fuera de convenio",
+        "nota": "Arquitectos e ingenieros en relación de dependencia suelen estar fuera de convenio."
+      }
+    ],
+    "categorias": [
+      "Arquitecto o ingeniero asociado",
+      "Proyectista",
+      "Dibujante / modelador BIM",
+      "Jefe de obra",
+      "Diseñador",
+      "Administrativo"
+    ],
+    "conceptos": [
+      "Sueldo básico",
+      "Presentismo",
+      "Antigüedad",
+      "Adicional por título",
+      "Horas extras",
+      "Viáticos de obra",
+      "SAC",
+      "Vacaciones"
+    ],
+    "nota": "Muchos estudios trabajan con colaboradores matriculados que facturan como independientes: revisar que no haya relación de dependencia encubierta."
+  },
+  "obligaciones": [
+    {
+      "clave": "iva_ddjj",
+      "impuesto": "IVA (F. 2002)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.",
+      "aplica_a": "Responsables inscriptos",
+      "validar": "Calendario de vencimientos de ARCA del año."
+    },
+    {
+      "clave": "iibb_mensual",
+      "impuesto": "Ingresos Brutos (anticipo)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT y jurisdicción (o calendario de Convenio Multilateral).",
+      "validar": "Depende de la jurisdicción y del régimen de Convenio."
+    },
+    {
+      "clave": "autonomos",
+      "impuesto": "Aportes de autónomos",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, primera semana del mes siguiente.",
+      "aplica_a": "Responsables inscriptos sin caja sustitutiva",
+      "validar": "Categoría de autónomos y si la caja profesional los reemplaza."
+    },
+    {
+      "clave": "caja_profesional",
+      "impuesto": "Aportes a la caja previsional profesional",
+      "frecuencia": "mensual",
+      "vencimiento": "Según el calendario de la caja (mínimos mensuales o anuales y aportes por obra).",
+      "aplica_a": "Profesionales matriculados en provincias con caja obligatoria",
+      "validar": "Depende de la profesión y la provincia."
+    },
+    {
+      "clave": "matricula_anual",
+      "impuesto": "Derecho anual de matrícula profesional",
+      "frecuencia": "anual",
+      "vencimiento": "Según el consejo o colegio, generalmente en el primer trimestre.",
+      "validar": "Monto y fecha según cada consejo o colegio."
+    },
+    {
+      "clave": "encomiendas",
+      "impuesto": "Tasas de encomienda o visado de tareas profesionales",
+      "frecuencia": "eventual",
+      "vencimiento": "Al registrar cada encomienda o antes de presentar planos.",
+      "aplica_a": "Proyectos, direcciones de obra y certificaciones",
+      "validar": "Tasas y procedimiento del consejo o colegio de la jurisdicción."
+    },
+    {
+      "clave": "f931",
+      "impuesto": "Cargas sociales (F. 931)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, primeros días del mes siguiente.",
+      "aplica_a": "Con empleados",
+      "validar": "Calendario de ARCA del año."
+    },
+    {
+      "clave": "ganancias_anual",
+      "impuesto": "Ganancias (DDJJ anual de personas humanas o sociedades)",
+      "frecuencia": "anual",
+      "vencimiento": "Personas humanas: junio. Sociedades: quinto mes posterior al cierre.",
+      "validar": "Fechas de la resolución general del año."
+    },
+    {
+      "clave": "monotributo",
+      "impuesto": "Monotributo",
+      "frecuencia": "mensual",
+      "vencimiento": "Día 20 de cada mes (puede correrse por feriados).",
+      "aplica_a": "Monotributistas",
+      "validar": "Confirmar calendario vigente de ARCA."
+    },
+    {
+      "clave": "recategorizacion",
+      "impuesto": "Recategorización de Monotributo",
+      "frecuencia": "semestral",
+      "vencimiento": "Enero y julio (hasta el día 20 o según calendario).",
+      "aplica_a": "Monotributistas"
+    }
+  ],
+  "checklist_alta": [
+    {
+      "clave": "constancia_cuit",
+      "item": "Constancia de inscripción en ARCA",
+      "obligatorio": true
+    },
+    {
+      "clave": "clave_fiscal",
+      "item": "Delegación de servicios con clave fiscal al estudio",
+      "obligatorio": true
+    },
+    {
+      "clave": "iibb_inscripcion",
+      "item": "Constancia de inscripción en Ingresos Brutos (o CM01)",
+      "obligatorio": true
+    },
+    {
+      "clave": "matricula",
+      "item": "Matrícula profesional vigente y consejo o colegio emisor",
+      "obligatorio": true
+    },
+    {
+      "clave": "caja_profesional",
+      "item": "Constancia de afiliación a la caja previsional y estado de deuda",
+      "obligatorio": false
+    },
+    {
+      "clave": "encomiendas_vigentes",
+      "item": "Listado de obras y encomiendas en curso (comitente, lugar, honorarios pactados)",
+      "obligatorio": true
+    },
+    {
+      "clave": "contratos_comitentes",
+      "item": "Contratos de locación de obra o servicios con comitentes",
+      "obligatorio": false
+    },
+    {
+      "clave": "fondos_obra",
+      "item": "Detalle de fondos de obra que administra por cuenta de comitentes",
+      "obligatorio": false
+    },
+    {
+      "clave": "seguro_responsabilidad",
+      "item": "Póliza de seguro de responsabilidad civil profesional",
+      "obligatorio": false
+    },
+    {
+      "clave": "nomina",
+      "item": "Nómina de empleados y convenio aplicado",
+      "obligatorio": false
+    },
+    {
+      "clave": "facturas_ultimos_12",
+      "item": "Facturas emitidas y recibidas de los últimos 12 meses",
+      "obligatorio": true
+    }
+  ],
+  "plan_de_cuentas": [
+    {
+      "codigo": "1.1.02",
+      "nombre": "Banco cuenta corriente",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.03",
+      "nombre": "Banco: fondos de obra de comitentes",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.04",
+      "nombre": "Honorarios a cobrar",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.05",
+      "nombre": "Certificados de obra a cobrar",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.07",
+      "nombre": "Retenciones de IVA, IIBB y SUSS",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.08",
+      "nombre": "Trabajos en curso (proyectos sin facturar)",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.2.02",
+      "nombre": "Instrumental técnico (estación total, niveles, drones)",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.2.03",
+      "nombre": "Licencias de software técnico (CAD, BIM)",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "2.1.02",
+      "nombre": "Fondos de obra a rendir a comitentes",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.03",
+      "nombre": "Anticipos de honorarios",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.06",
+      "nombre": "Caja profesional a pagar",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "3.1.01",
+      "nombre": "Capital",
+      "tipo": "patrimonio"
+    },
+    {
+      "codigo": "4.1.01",
+      "nombre": "Honorarios de proyecto",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.02",
+      "nombre": "Honorarios de dirección de obra",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.03",
+      "nombre": "Servicios de diseño",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.04",
+      "nombre": "Relevamientos, cálculos y certificaciones",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "5.1.01",
+      "nombre": "Aportes a caja profesional y tasas de encomienda",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.03",
+      "nombre": "Honorarios de colaboradores y calculistas",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.04",
+      "nombre": "Ploteos, maquetas y renders",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.05",
+      "nombre": "Seguro de responsabilidad civil profesional",
+      "tipo": "egreso"
+    }
+  ],
+  "categorias": {
+    "ingresos": [
+      {
+        "clave": "proyecto",
+        "nombre": "Honorarios de proyecto"
+      },
+      {
+        "clave": "direccion_obra",
+        "nombre": "Dirección de obra"
+      },
+      {
+        "clave": "diseno",
+        "nombre": "Diseño (interiores, industrial, gráfico)"
+      },
+      {
+        "clave": "relevamientos",
+        "nombre": "Relevamientos, cálculos y certificaciones"
+      },
+      {
+        "clave": "otros_ingresos",
+        "nombre": "Otros ingresos"
+      }
+    ],
+    "gastos": [
+      {
+        "clave": "caja_matricula",
+        "nombre": "Caja profesional, matrícula y encomiendas"
+      },
+      {
+        "clave": "colaboradores",
+        "nombre": "Colaboradores y calculistas"
+      },
+      {
+        "clave": "software",
+        "nombre": "Software técnico (CAD, BIM, render)"
+      },
+      {
+        "clave": "ploteos",
+        "nombre": "Ploteos, impresiones y maquetas"
+      },
+      {
+        "clave": "movilidad",
+        "nombre": "Movilidad y viáticos de obra"
+      },
+      {
+        "clave": "seguros",
+        "nombre": "Seguros"
+      },
+      {
+        "clave": "alquiler",
+        "nombre": "Alquiler de estudio"
+      },
+      {
+        "clave": "sueldos",
+        "nombre": "Sueldos y cargas sociales"
+      }
+    ]
+  },
+  "tareas_recurrentes": [
+    {
+      "clave": "control_facturacion",
+      "titulo": "Controlar facturación de honorarios por obra y topes de categoría",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "conciliar_fondos_obra",
+      "titulo": "Conciliar fondos de obra administrados y rendir a comitentes",
+      "frecuencia": "mensual",
+      "nota": "Mantener separados de los ingresos propios."
+    },
+    {
+      "clave": "conciliar_retenciones",
+      "titulo": "Conciliar retenciones sufridas (Ganancias, IVA, IIBB, SUSS)",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "aportes_caja",
+      "titulo": "Controlar aportes a la caja profesional y tasas de encomienda por obra",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "matricula",
+      "titulo": "Recordar pago de matrícula anual y renovación de seguros",
+      "frecuencia": "anual"
+    },
+    {
+      "clave": "ddjj_anual",
+      "titulo": "Preparar DDJJ de Ganancias y Bienes Personales",
+      "frecuencia": "anual"
+    }
+  ],
+  "flujos_sugeridos": [
+    {
+      "plantilla": "alta_encomienda",
+      "nombre": "Alta de una nueva obra o encomienda",
+      "descripcion": "Pide al cliente datos del comitente, honorarios pactados y lugar de la obra para calcular tasas, aportes y la jurisdicción de IIBB."
+    },
+    {
+      "plantilla": "recordatorio_matricula",
+      "nombre": "Recordatorio de matrícula y caja",
+      "descripcion": "Aviso antes del vencimiento de la matrícula anual y de los mínimos de la caja profesional."
+    },
+    {
+      "plantilla": "alerta_tope_monotributo",
+      "nombre": "Alerta de tope de Monotributo",
+      "descripcion": "Avisa cuando la facturación de 12 meses supera el 80% del tope de la categoría."
+    }
+  ],
+  "indicadores": [
+    {
+      "clave": "facturacion_por_obra",
+      "nombre": "Facturación por obra",
+      "descripcion": "Honorarios facturados y cobrados por cada obra o encomienda."
+    },
+    {
+      "clave": "honorarios_pendientes",
+      "nombre": "Honorarios pactados pendientes de facturar",
+      "descripcion": "Saldo de honorarios por etapas de obra aún no facturadas."
+    },
+    {
+      "clave": "fondos_terceros",
+      "nombre": "Fondos de comitentes en custodia",
+      "descripcion": "Saldo de fondos de obra administrados que hay que rendir."
+    },
+    {
+      "clave": "dias_cobro",
+      "nombre": "Días promedio de cobro",
+      "descripcion": "Tiempo entre la factura y el cobro."
+    }
+  ],
+  "riesgos": [
+    {
+      "clave": "fondos_obra_mezclados",
+      "titulo": "Fondos de obra mezclados con ingresos propios",
+      "descripcion": "Si los fondos del comitente pasan por la cuenta del profesional sin documentar, pueden tomarse como ingresos gravados en IVA, IIBB y Ganancias y agotar el tope de Monotributo.",
+      "validar": "Revisar documentación respaldatoria (mandato, rendiciones) aceptada por ARCA y la jurisdicción."
+    },
+    {
+      "clave": "deuda_caja",
+      "titulo": "Deuda con la caja profesional",
+      "descripcion": "Aportes impagos pueden impedir visar encomiendas o acceder a beneficios previsionales.",
+      "validar": "Reglas de la caja de la provincia."
+    },
+    {
+      "clave": "matricula_vencida",
+      "titulo": "Matrícula vencida",
+      "descripcion": "Firmar planos o dirigir obra sin matrícula vigente expone a sanciones del consejo o colegio y a responsabilidad profesional."
+    },
+    {
+      "clave": "responsabilidad_profesional",
+      "titulo": "Reclamos por responsabilidad profesional",
+      "descripcion": "Vicios de obra o errores de cálculo pueden generar reclamos importantes: conviene tener seguro y contratos claros."
+    },
+    {
+      "clave": "relacion_dependencia_encubierta",
+      "titulo": "Colaboradores con relación de dependencia encubierta",
+      "descripcion": "Colaboradores que facturan pero trabajan con horario y exclusividad pueden reclamar relación laboral.",
+      "validar": "Analizar cada caso con criterio laboral."
+    }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Matrícula, consejo o colegio y caja previsional dependen de la profesión y de la provincia: no son iguales para arquitectos, ingenieros, agrimensores, técnicos y diseñadores.",
+    "Los diseñadores sin matrícula obligatoria tienen un perfil más parecido al de servicios profesionales generales; revisar esa plantilla si corresponde.",
+    "Si el estudio ejecuta obras, revisar también el perfil de construcción (UOCRA, IERIC, retenciones de SUSS)."
+  ]
+}

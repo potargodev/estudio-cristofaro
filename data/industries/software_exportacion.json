@@ -1,0 +1,549 @@
+{
+  "clave": "software_exportacion",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Software y exportación de servicios",
+  "descripcion": "Empresas de software, desarrolladores freelance, SaaS, consultoras de tecnología y profesionales que exportan servicios (diseño, desarrollo, soporte, contenido) a clientes del exterior. Incluye el régimen de Economía del Conocimiento, la factura E y la liquidación de divisas.",
+  "icono": "Code",
+  "actividades": [
+    {
+      "codigo": "620100",
+      "descripcion": "Servicios de consultores en informática y suministros de programas de informática (desarrollo de software)",
+      "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA."
+    },
+    {
+      "codigo": "620300",
+      "descripcion": "Servicios de consultores en tecnología de la información",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "620900",
+      "descripcion": "Servicios de informática n.c.p. (soporte, mantenimiento, testing)",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "631110",
+      "descripcion": "Procesamiento de datos",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "631120",
+      "descripcion": "Hospedaje de datos (hosting, SaaS, servicios en la nube)",
+      "validar": "Confirmar código vigente en CLAE y si un SaaS encuadra mejor aquí o en desarrollo de software."
+    },
+    {
+      "codigo": "582000",
+      "descripcion": "Edición de programas de informática (licencias de software propio)",
+      "nota": "Si el ingreso principal son licencias, revisar tratamiento de regalías.",
+      "validar": "Confirmar código vigente en CLAE."
+    }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Las ventas locales están gravadas a la alícuota general. La exportación de servicios (utilización o explotación efectiva en el exterior) está exenta o con tasa 0 para el exportador, que puede recuperar el IVA de sus compras vinculadas (crédito fiscal) por reintegro o transferencia.",
+      "alicuotas": [
+        "21% (servicios locales)",
+        "Exportación de servicios: sin IVA, con recupero de crédito fiscal"
+      ],
+      "nota": "La clave es que el servicio se utilice efectivamente en el exterior: si el cliente es del exterior pero el servicio se aprovecha en Argentina, puede no ser exportación.",
+      "validar": "Revisar art. 1 y 8 de la Ley de IVA y su reglamentación sobre utilización efectiva en el exterior, y el régimen de recupero de IVA por exportaciones (RG 2000 y modificatorias) vigente."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Local o Convenio Multilateral según dónde se presten los servicios locales. En la mayoría de las jurisdicciones la exportación de servicios está exenta o no gravada, y varias provincias y CABA tienen beneficios para la industria del software.",
+      "validar": "Confirmar en el Código Fiscal de la jurisdicción si la exportación de servicios está exenta y con qué requisitos, y los beneficios locales para software (por ejemplo regímenes de distritos tecnológicos o leyes provinciales de adhesión)."
+    },
+    "retenciones_percepciones": [
+      {
+        "nombre": "Retención de Ganancias de clientes locales (RG 830)",
+        "validar": "Montos no sujetos y alícuotas vigentes; si tiene certificado de Economía del Conocimiento, revisar exclusión."
+      },
+      {
+        "nombre": "Retenciones de IVA de clientes locales",
+        "nota": "Los beneficiarios de Economía del Conocimiento pueden estar excluidos de retenciones y percepciones de IVA.",
+        "validar": "Confirmar vigencia del certificado de exclusión y el procedimiento ante ARCA."
+      },
+      {
+        "nombre": "Retenciones de IIBB y SIRCREB",
+        "nota": "Los cobros del exterior acreditados en cuenta pueden sufrir SIRCREB aunque la exportación esté exenta: pedir exclusión o reducción.",
+        "validar": "Alícuotas según padrón y procedimiento de exclusión en cada jurisdicción."
+      },
+      {
+        "nombre": "Impuesto a los débitos y créditos bancarios",
+        "validar": "Alícuota vigente y cómputo como pago a cuenta de Ganancias; revisar beneficios del régimen de Economía del Conocimiento."
+      }
+    ],
+    "regimenes_especiales": [
+      {
+        "nombre": "Régimen de Promoción de la Economía del Conocimiento (Ley 27.506 y modificatoria Ley 27.570)",
+        "nota": "Beneficios posibles: reducción de la alícuota de Ganancias según tamaño, bono de crédito fiscal por contribuciones patronales, exclusión de retenciones de IVA y estabilidad fiscal. Requiere inscripción en el registro, cumplir porcentajes mínimos de actividad promovida y requisitos de mejora continua, I+D, capacitación o exportaciones.",
+        "validar": "Confirmar porcentajes de reducción, tope del bono, requisitos vigentes, tasas o aportes al fondo del régimen y las resoluciones de la autoridad de aplicación del año."
+      },
+      {
+        "nombre": "Exportación de servicios con factura E",
+        "nota": "Se emite factura electrónica de exportación (tipo E) en moneda extranjera, con datos del cliente del exterior. No hay permiso de embarque.",
+        "validar": "Revisar RG vigente de factura electrónica de exportación (RG 2758 y modificatorias) y tipo de cambio a usar."
+      },
+      {
+        "nombre": "Ingreso y liquidación de divisas (normativa cambiaria del BCRA)",
+        "nota": "Los cobros de exportaciones de servicios pueden tener obligación de ingreso y liquidación en el mercado de cambios, con plazos y excepciones para personas humanas según montos.",
+        "validar": "Revisar las comunicaciones vigentes del BCRA (texto ordenado de Exterior y Cambios): obligación, plazo, montos exceptuados y uso de plataformas de cobro (Payoneer, PayPal, Wise)."
+      },
+      {
+        "nombre": "Derechos de exportación sobre servicios",
+        "validar": "Confirmar si hoy rigen derechos de exportación para servicios, su alícuota y las exclusiones para beneficiarios de Economía del Conocimiento o pequeños exportadores."
+      },
+      {
+        "nombre": "Monotributo para exportadores de servicios",
+        "nota": "Pueden emitir factura E; lo exportado cuenta para el tope de la categoría.",
+        "validar": "Topes vigentes y tratamiento de la exportación dentro del Monotributo."
+      }
+    ],
+    "nota": "El perfil cambia mucho según si el cliente es local o del exterior, si es monotributista o responsable inscripto, y si está inscripto en Economía del Conocimiento."
+  },
+  "laboral": {
+    "convenios": [
+      {
+        "nombre": "Personal fuera de convenio",
+        "nota": "Lo habitual en la industria del software: no hay un convenio colectivo de actividad de aplicación generalizada.",
+        "validar": "Confirmar que no corresponda un encuadre convencional por la actividad concreta o por adhesión."
+      },
+      {
+        "nombre": "Empleados de comercio (personal administrativo)",
+        "numero": "CCT 130/75",
+        "nota": "Se usa en algunos casos para personal administrativo o de soporte.",
+        "validar": "Confirmar encuadre convencional y escalas vigentes."
+      }
+    ],
+    "categorias": [
+      "Desarrollador trainee",
+      "Desarrollador junior",
+      "Desarrollador semi senior",
+      "Desarrollador senior",
+      "Líder técnico",
+      "QA / tester",
+      "Diseñador UX/UI",
+      "Administrativo"
+    ],
+    "conceptos": [
+      "Sueldo básico",
+      "Bonos por objetivos",
+      "Ajustes por inflación o salario en moneda extranjera",
+      "Compensación de gastos de trabajo remoto",
+      "Beneficios (prepaga, capacitación)",
+      "SAC",
+      "Vacaciones"
+    ],
+    "nota": "Es frecuente contratar devs del exterior o pagar parte del sueldo en moneda extranjera: revisar impacto laboral, cambiario y en cargas sociales. Los beneficiarios de Economía del Conocimiento pueden usar el bono de crédito fiscal contra contribuciones patronales."
+  },
+  "obligaciones": [
+    {
+      "clave": "iva_ddjj",
+      "impuesto": "IVA (F. 2002)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.",
+      "aplica_a": "Responsables inscriptos",
+      "nota": "Declarar exportaciones por separado para conservar el crédito fiscal recuperable.",
+      "validar": "Calendario de vencimientos de ARCA del año."
+    },
+    {
+      "clave": "recupero_iva_exportacion",
+      "impuesto": "Solicitud de recupero de IVA por exportaciones",
+      "frecuencia": "eventual",
+      "vencimiento": "Se presenta después de la DDJJ de IVA del período, según el régimen de reintegro.",
+      "aplica_a": "Exportadores responsables inscriptos",
+      "validar": "Procedimiento vigente (RG 2000 y modificatorias), requisitos de facturación y tope por período."
+    },
+    {
+      "clave": "iibb_mensual",
+      "impuesto": "Ingresos Brutos (anticipo)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT y jurisdicción (o calendario de Convenio Multilateral).",
+      "nota": "Declarar las exportaciones como exentas o no gravadas.",
+      "validar": "Depende de la jurisdicción."
+    },
+    {
+      "clave": "f931",
+      "impuesto": "Cargas sociales (F. 931)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, primeros días del mes siguiente.",
+      "aplica_a": "Con empleados",
+      "validar": "Calendario de ARCA y forma de aplicar el bono de Economía del Conocimiento."
+    },
+    {
+      "clave": "economia_conocimiento_ddjj",
+      "impuesto": "Economía del Conocimiento: declaraciones y requisitos anuales",
+      "frecuencia": "anual",
+      "vencimiento": "Según el calendario de la autoridad de aplicación (informe anual de cumplimiento de requisitos).",
+      "aplica_a": "Inscriptos en el régimen",
+      "validar": "Requisitos, plazos y aportes vigentes del régimen."
+    },
+    {
+      "clave": "liquidacion_divisas",
+      "impuesto": "Ingreso y liquidación de divisas de exportaciones",
+      "frecuencia": "eventual",
+      "vencimiento": "Dentro del plazo que fije la normativa cambiaria desde el cobro.",
+      "aplica_a": "Exportadores de servicios alcanzados",
+      "validar": "Plazos y excepciones vigentes del BCRA."
+    },
+    {
+      "clave": "ganancias_anual",
+      "impuesto": "Ganancias (DDJJ anual de sociedades o personas humanas)",
+      "frecuencia": "anual",
+      "vencimiento": "Sociedades: quinto mes posterior al cierre. Personas humanas: junio.",
+      "validar": "Fechas del año y alícuota reducida si es beneficiario de Economía del Conocimiento."
+    },
+    {
+      "clave": "precios_transferencia",
+      "impuesto": "Precios de transferencia (DDJJ y estudio)",
+      "frecuencia": "anual",
+      "vencimiento": "Según el calendario específico posterior al cierre de ejercicio.",
+      "aplica_a": "Si factura a empresas vinculadas del exterior",
+      "validar": "Umbrales vigentes y formularios del régimen de precios de transferencia."
+    },
+    {
+      "clave": "monotributo",
+      "impuesto": "Monotributo",
+      "frecuencia": "mensual",
+      "vencimiento": "Día 20 de cada mes (puede correrse por feriados).",
+      "aplica_a": "Monotributistas",
+      "validar": "Confirmar calendario vigente de ARCA."
+    },
+    {
+      "clave": "recategorizacion",
+      "impuesto": "Recategorización de Monotributo",
+      "frecuencia": "semestral",
+      "vencimiento": "Enero y julio (hasta el día 20 o según calendario).",
+      "aplica_a": "Monotributistas",
+      "nota": "Sumar la facturación de exportación al calcular la categoría."
+    }
+  ],
+  "checklist_alta": [
+    {
+      "clave": "constancia_cuit",
+      "item": "Constancia de inscripción en ARCA",
+      "obligatorio": true
+    },
+    {
+      "clave": "clave_fiscal",
+      "item": "Delegación de servicios con clave fiscal al estudio (incluido Comprobantes en línea o webservice de factura E)",
+      "obligatorio": true
+    },
+    {
+      "clave": "iibb_inscripcion",
+      "item": "Constancia de inscripción en Ingresos Brutos (o CM01)",
+      "obligatorio": true
+    },
+    {
+      "clave": "punto_venta_e",
+      "item": "Punto de venta habilitado para factura de exportación (E)",
+      "obligatorio": true
+    },
+    {
+      "clave": "contratos_exterior",
+      "item": "Contratos u órdenes de trabajo con clientes del exterior",
+      "obligatorio": true
+    },
+    {
+      "clave": "plataformas_cobro",
+      "item": "Detalle de cómo cobra del exterior (banco, Payoneer, PayPal, Wise, cripto) y extractos",
+      "obligatorio": true
+    },
+    {
+      "clave": "economia_conocimiento",
+      "item": "Constancia de inscripción en el Registro de Economía del Conocimiento y certificado de exclusión de IVA",
+      "obligatorio": false
+    },
+    {
+      "clave": "cuenta_moneda_extranjera",
+      "item": "Datos de la cuenta bancaria en moneda extranjera",
+      "obligatorio": false
+    },
+    {
+      "clave": "nomina",
+      "item": "Nómina de empleados y forma de pago (pesos, moneda extranjera, mixta)",
+      "obligatorio": false
+    },
+    {
+      "clave": "vinculadas_exterior",
+      "item": "Detalle de empresas vinculadas en el exterior (si las hay)",
+      "obligatorio": false
+    },
+    {
+      "clave": "facturas_ultimos_12",
+      "item": "Facturas emitidas (A, B, C y E) de los últimos 12 meses",
+      "obligatorio": true
+    }
+  ],
+  "plan_de_cuentas": [
+    {
+      "codigo": "1.1.02",
+      "nombre": "Banco cuenta corriente en pesos",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.03",
+      "nombre": "Banco cuenta en moneda extranjera",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.04",
+      "nombre": "Saldos en plataformas de cobro del exterior",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.06",
+      "nombre": "Deudores del exterior",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.07",
+      "nombre": "IVA crédito fiscal vinculado a exportaciones (recuperable)",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.08",
+      "nombre": "Bono de crédito fiscal Economía del Conocimiento",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.09",
+      "nombre": "Retenciones y percepciones sufridas",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.2.01",
+      "nombre": "Equipos de computación",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.2.02",
+      "nombre": "Software desarrollado (activo intangible)",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "2.1.02",
+      "nombre": "Proveedores del exterior (cloud, licencias)",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.03",
+      "nombre": "Cobros anticipados de clientes",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.04",
+      "nombre": "IVA a pagar",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "3.1.01",
+      "nombre": "Capital",
+      "tipo": "patrimonio"
+    },
+    {
+      "codigo": "4.1.01",
+      "nombre": "Servicios de software al mercado local",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.02",
+      "nombre": "Exportación de servicios",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.03",
+      "nombre": "Suscripciones SaaS y licencias",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.2.01",
+      "nombre": "Diferencias de cambio",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "5.1.01",
+      "nombre": "Sueldos y cargas sociales de desarrollo",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.02",
+      "nombre": "Servicios cloud y hosting",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.03",
+      "nombre": "Comisiones de plataformas de cobro",
+      "tipo": "egreso"
+    }
+  ],
+  "categorias": {
+    "ingresos": [
+      {
+        "clave": "exportacion_servicios",
+        "nombre": "Exportación de servicios"
+      },
+      {
+        "clave": "servicios_locales",
+        "nombre": "Servicios a clientes locales"
+      },
+      {
+        "clave": "suscripciones",
+        "nombre": "Suscripciones y licencias"
+      },
+      {
+        "clave": "diferencia_cambio",
+        "nombre": "Diferencias de cambio"
+      },
+      {
+        "clave": "otros_ingresos",
+        "nombre": "Otros ingresos"
+      }
+    ],
+    "gastos": [
+      {
+        "clave": "sueldos",
+        "nombre": "Sueldos y cargas sociales"
+      },
+      {
+        "clave": "contratistas",
+        "nombre": "Contratistas y freelancers"
+      },
+      {
+        "clave": "cloud",
+        "nombre": "Cloud y hosting"
+      },
+      {
+        "clave": "licencias",
+        "nombre": "Licencias y herramientas"
+      },
+      {
+        "clave": "comisiones_cobro",
+        "nombre": "Comisiones de plataformas y bancos"
+      },
+      {
+        "clave": "equipos",
+        "nombre": "Equipos de computación"
+      },
+      {
+        "clave": "coworking",
+        "nombre": "Oficina o coworking"
+      },
+      {
+        "clave": "capacitacion",
+        "nombre": "Capacitación y certificaciones"
+      }
+    ]
+  },
+  "tareas_recurrentes": [
+    {
+      "clave": "facturas_e",
+      "titulo": "Emitir y controlar facturas E del mes con el tipo de cambio correcto",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "control_divisas",
+      "titulo": "Controlar ingreso y liquidación de divisas de los cobros del exterior",
+      "frecuencia": "mensual",
+      "nota": "Comparar facturas E contra acreditaciones."
+    },
+    {
+      "clave": "credito_fiscal_exportacion",
+      "titulo": "Separar el crédito fiscal de IVA vinculado a exportaciones",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "recupero_iva",
+      "titulo": "Evaluar y presentar la solicitud de recupero de IVA",
+      "frecuencia": "trimestral"
+    },
+    {
+      "clave": "requisitos_eco_conocimiento",
+      "titulo": "Revisar cumplimiento de requisitos de Economía del Conocimiento (porcentaje de actividad, masa salarial, exportaciones)",
+      "frecuencia": "semestral"
+    },
+    {
+      "clave": "ddjj_anual",
+      "titulo": "Preparar DDJJ anual de Ganancias y, si corresponde, precios de transferencia",
+      "frecuencia": "anual"
+    }
+  ],
+  "flujos_sugeridos": [
+    {
+      "plantilla": "cobro_exterior",
+      "nombre": "Registrar cobro del exterior",
+      "descripcion": "Cuando el cliente informa un cobro, pide comprobante de la plataforma o banco, lo asocia a la factura E y controla la liquidación de divisas."
+    },
+    {
+      "plantilla": "alerta_tope_monotributo",
+      "nombre": "Alerta de tope de Monotributo",
+      "descripcion": "Avisa cuando la facturación de 12 meses (incluida la exportación) supera el 80% del tope de la categoría."
+    },
+    {
+      "plantilla": "revision_eco_conocimiento",
+      "nombre": "Revisión semestral de Economía del Conocimiento",
+      "descripcion": "Recordatorio para el estudio de controlar requisitos y vencimientos del régimen."
+    }
+  ],
+  "indicadores": [
+    {
+      "clave": "porcentaje_exportacion",
+      "nombre": "Porcentaje de exportación",
+      "descripcion": "Ingresos por exportación sobre ingresos totales, útil para requisitos de Economía del Conocimiento."
+    },
+    {
+      "clave": "iva_a_recuperar",
+      "nombre": "IVA a recuperar acumulado",
+      "descripcion": "Crédito fiscal vinculado a exportaciones pendiente de reintegro."
+    },
+    {
+      "clave": "facturacion_usd",
+      "nombre": "Facturación en moneda extranjera",
+      "descripcion": "Total facturado en dólares por mes y su equivalente en pesos."
+    },
+    {
+      "clave": "costo_laboral",
+      "nombre": "Costo laboral sobre ingresos",
+      "descripcion": "Sueldos y cargas sociales sobre facturación total."
+    }
+  ],
+  "riesgos": [
+    {
+      "clave": "no_liquidar_divisas",
+      "titulo": "Incumplir la normativa cambiaria",
+      "descripcion": "No ingresar o liquidar en plazo los cobros de exportación, o cobrar por canales no admitidos, puede generar sanciones del régimen penal cambiario.",
+      "validar": "Normativa cambiaria vigente del BCRA y excepciones aplicables."
+    },
+    {
+      "clave": "perder_beneficios_eco",
+      "titulo": "Perder beneficios de Economía del Conocimiento",
+      "descripcion": "No cumplir los requisitos mínimos o no presentar el informe anual puede dar baja del régimen y reclamo de los beneficios usados.",
+      "validar": "Requisitos y sanciones vigentes del régimen."
+    },
+    {
+      "clave": "exportacion_mal_encuadrada",
+      "titulo": "Servicio que no califica como exportación",
+      "descripcion": "Si el servicio se aprovecha en el país, ARCA puede impugnar la factura E y reclamar IVA.",
+      "validar": "Criterio de utilización efectiva en el exterior según ley, reglamentación y jurisprudencia."
+    },
+    {
+      "clave": "credito_iva_inmovilizado",
+      "titulo": "Crédito fiscal de IVA inmovilizado",
+      "descripcion": "Exportadores que no tramitan el recupero acumulan saldos a favor que pierden valor con la inflación."
+    },
+    {
+      "clave": "plataformas_cobro",
+      "titulo": "Cobros en plataformas sin conciliar",
+      "descripcion": "Saldos en Payoneer, PayPal o cripto que no se registran ni se declaran (Ganancias, Bienes Personales)."
+    }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "La normativa cambiaria y el régimen de Economía del Conocimiento cambian con frecuencia por comunicaciones del BCRA y resoluciones de la autoridad de aplicación: revisar en cada período.",
+    "Los beneficios de Ingresos Brutos para software y exportaciones dependen de cada provincia o de CABA.",
+    "Para freelancers monotributistas, revisar cada caso: muchas reglas del régimen (recupero de IVA, Economía del Conocimiento) aplican distinto o no aplican."
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "clave": "ecommerce",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "E-commerce",
+  "descripcion": "Vendedores online que operan en Mercado Libre y otros marketplaces, tiendas propias (Tiendanube, Shopify, WooCommerce) o redes sociales, cobrando por Mercado Pago, pasarelas de pago o transferencias y enviando a todo el país.",
+  "icono": "ShoppingCart",
+  "actividades": [
+    { "codigo": "479101", "descripcion": "Venta al por menor por internet", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA y su equivalente NAES en cada jurisdicción." },
+    { "codigo": "479109", "descripcion": "Venta al por menor por correo, televisión y otros medios de comunicación n.c.p.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "464999", "descripcion": "Venta al por mayor de mercancías n.c.p. (vendedores que venden también a revendedores)", "nota": "Solo si una parte importante de las ventas es mayorista.", "validar": "Confirmar código vigente y si corresponde una actividad mayorista adicional." },
+    { "codigo": "731001", "descripcion": "Servicios de comercialización de tiempo y espacio publicitario (si cobra por publicidad o afiliados)", "nota": "Aplica a quienes además monetizan contenido o programas de afiliados.", "validar": "Confirmar código vigente en CLAE y si la actividad existe en el caso." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Gravado si es responsable inscripto, con factura B a consumidor final y A a inscriptos. Monotributistas emiten factura C. Cada venta del marketplace tiene que tener su comprobante, aunque la plataforma ofrezca facturar en forma automática.",
+      "alicuotas": ["21% (general)", "10,5% (algunos bienes, según producto)"],
+      "nota": "Las comisiones y cargos de Mercado Libre y otras plataformas vienen facturados con IVA y son crédito fiscal para el inscripto.",
+      "validar": "Revisar la alícuota de cada producto vendido (Ley de IVA, art. 28) y el tratamiento del envío cuando se cobra junto con la venta."
+    },
+    "iibb": {
+      "regimen": "convenio_multilateral",
+      "nota": "Al vender a compradores de distintas provincias, en general corresponde Convenio Multilateral: las ventas a distancia se atribuyen a la jurisdicción del domicilio del comprador. Un vendedor muy chico que solo vende en su provincia puede seguir en el régimen local o simplificado.",
+      "validar": "Aplicación del art. 1 último párrafo del Convenio Multilateral y de las resoluciones de la Comisión Arbitral sobre comercio electrónico; alícuotas y regímenes simplificados de cada jurisdicción."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Retenciones de IVA y Ganancias de Mercado Pago y otros administradores de pagos", "nota": "Se aplican sobre las ventas cobradas y son mayores si el vendedor no acredita su condición fiscal.", "validar": "Régimen vigente de ARCA para administradores de cuentas y pasarelas de pago, alícuotas y causales de exclusión." },
+      { "nombre": "SIRTAC (retenciones de IIBB sobre cobros con tarjetas y pasarelas)", "nota": "Lo aplican procesadores y plataformas para todas las jurisdicciones adheridas.", "validar": "Alícuota según padrón de la Comisión Arbitral; revisar exclusiones y saldos a favor." },
+      { "nombre": "SIRCUPA y SIRCREB (retenciones de IIBB en billeteras y cuentas bancarias)", "validar": "Alícuota según padrón de la Comisión Arbitral." },
+      { "nombre": "Retenciones de IIBB practicadas por marketplaces en cada provincia", "nota": "Mercado Libre y otras plataformas pueden ser agentes de retención de varias jurisdicciones a la vez.", "validar": "Padrones y alícuotas por jurisdicción; constancias en el panel de facturación de la plataforma." },
+      { "nombre": "Percepciones de IVA en compras de mercadería y en importaciones", "nota": "Si importa mercadería, la aduana percibe IVA y Ganancias.", "validar": "Regímenes de percepción vigentes y su cómputo." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Monotributo (categorías de venta de cosas muebles)", "nota": "Muchos vendedores online empiezan como monotributistas; el crecimiento de ventas obliga a revisar los topes con frecuencia.", "validar": "Topes y parámetros vigentes de la ley de Monotributo." },
+      { "nombre": "Régimen de información de plataformas", "nota": "Los marketplaces y billeteras informan a ARCA y a las provincias las ventas y cobros de cada vendedor.", "validar": "Regímenes de información vigentes de ARCA y de las jurisdicciones." },
+      { "nombre": "Importación (courier o importación formal)", "nota": "Si el vendedor importa lo que vende, revisar inscripción como importador y percepciones aduaneras.", "validar": "Requisitos de registro de importadores y régimen de courier vigentes." }
+    ],
+    "nota": "Lo clave en e-commerce es conciliar ventas, cobros, comisiones, envíos y retenciones de cada plataforma: los reportes de Mercado Libre y Mercado Pago son la fuente principal."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Empleados de comercio (FAECYS)", "numero": "CCT 130/75", "nota": "Lo habitual para personal de atención, armado de pedidos y administración.", "validar": "Confirmar encuadre convencional y escalas vigentes; si hay depósito propio con logística, revisar si corresponde otro convenio." },
+      { "nombre": "Personal de logística y reparto propio", "nota": "Si el vendedor tiene reparto propio, puede corresponder el convenio de camioneros u otro.", "validar": "Revisar encuadre según la tarea efectiva del personal." }
+    ],
+    "categorias": ["Administrativo", "Vendedor / atención al cliente", "Auxiliar de depósito", "Armado de pedidos", "Repartidor"],
+    "conceptos": ["Sueldo básico", "Presentismo", "Antigüedad", "Horas extras", "SAC", "Vacaciones", "Sumas no remunerativas acordadas en paritarias"],
+    "nota": "Muchos vendedores online no tienen empleados o contratan servicios de logística y fulfillment tercerizados."
+  },
+  "obligaciones": [
+    { "clave": "monotributo", "impuesto": "Monotributo", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA." },
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002 / Libro IVA Digital)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Calendario de vencimientos de ARCA del año." },
+    { "clave": "iibb_cm", "impuesto": "Ingresos Brutos Convenio Multilateral (CM03)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, calendario de la Comisión Arbitral.", "aplica_a": "Inscriptos en Convenio Multilateral", "validar": "Calendario vigente de la Comisión Arbitral." },
+    { "clave": "iibb_cm05", "impuesto": "DDJJ anual de Convenio Multilateral (CM05) y coeficientes", "frecuencia": "anual", "vencimiento": "Alrededor de junio, según calendario de la Comisión Arbitral.", "aplica_a": "Inscriptos en Convenio Multilateral", "validar": "Fecha vigente y tratamiento de ventas a distancia en el cálculo de coeficientes." },
+    { "clave": "f931", "impuesto": "Cargas sociales (F. 931)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, en la primera quincena del mes siguiente.", "aplica_a": "Empleadores", "validar": "Calendario vigente de ARCA." },
+    { "clave": "seguridad_higiene", "impuesto": "Tasa de seguridad e higiene (depósito u oficina)", "frecuencia": "mensual", "vencimiento": "Según el calendario del municipio.", "aplica_a": "Si tiene depósito, local u oficina habilitados", "validar": "Depende del municipio; algunos gravan también ingresos de otras jurisdicciones." },
+    { "clave": "recategorizacion", "impuesto": "Recategorización de Monotributo", "frecuencia": "semestral", "vencimiento": "Enero y julio (hasta el día 20 o según calendario).", "aplica_a": "Monotributistas" },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias (DDJJ anual de personas humanas o sociedades)", "frecuencia": "anual", "vencimiento": "Personas humanas en junio; sociedades al quinto mes del cierre de ejercicio.", "aplica_a": "Responsables inscriptos", "validar": "Fechas de la resolución general del año." },
+    { "clave": "bienes_personales", "impuesto": "Bienes Personales (DDJJ anual)", "frecuencia": "anual", "vencimiento": "Junio, junto con Ganancias.", "aplica_a": "Personas humanas que superan el mínimo no imponible", "validar": "Mínimo no imponible vigente; incluir saldos en billeteras y stock." }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de inscripción en Ingresos Brutos (CM01 si es Convenio Multilateral)", "obligatorio": true },
+    { "clave": "cuentas_plataformas", "item": "Listado de cuentas en marketplaces, tiendas online y billeteras (Mercado Libre, Mercado Pago, Tiendanube, otras)", "obligatorio": true },
+    { "clave": "datos_fiscales_plataformas", "item": "Datos fiscales cargados correctamente en cada plataforma (para evitar retenciones de más)", "obligatorio": true },
+    { "clave": "reportes_ventas", "item": "Reportes de ventas, cobros y liquidaciones de cada plataforma de los últimos 12 meses", "obligatorio": true },
+    { "clave": "facturas_comisiones", "item": "Facturas de comisiones y cargos emitidas por las plataformas", "obligatorio": true },
+    { "clave": "certificados_retencion", "item": "Constancias de retenciones de IVA, Ganancias e IIBB de las plataformas", "obligatorio": true },
+    { "clave": "facturacion_automatica", "item": "Configuración de la facturación (manual, automática de la plataforma o sistema externo)", "obligatorio": true },
+    { "clave": "logistica", "item": "Contratos o condiciones de logística y fulfillment (Mercado Envíos Full, correo, flex)", "obligatorio": false },
+    { "clave": "inventario_inicial", "item": "Inventario de mercadería, propia y en depósitos de terceros", "obligatorio": false }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.01", "nombre": "Banco cuenta corriente", "tipo": "activo" },
+    { "codigo": "1.1.02", "nombre": "Saldo disponible en Mercado Pago y billeteras", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Dinero a liberar de plataformas", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "IVA crédito fiscal", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "Retenciones de IVA y Ganancias sufridas en plataformas", "tipo": "activo" },
+    { "codigo": "1.1.06", "nombre": "Retenciones de IIBB sufridas (SIRTAC, SIRCUPA, SIRCREB)", "tipo": "activo" },
+    { "codigo": "1.1.07", "nombre": "Mercaderías en depósito propio", "tipo": "activo" },
+    { "codigo": "1.1.08", "nombre": "Mercaderías en depósito de terceros (fulfillment)", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Equipos de computación y fotografía", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores de mercadería", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "IVA débito fiscal", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "IIBB Convenio Multilateral a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.04", "nombre": "Devoluciones y reclamos a reintegrar", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Ventas en marketplaces", "tipo": "ingreso" },
+    { "codigo": "4.1.02", "nombre": "Ventas en tienda online propia", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Costo de mercadería vendida", "tipo": "egreso" },
+    { "codigo": "5.1.02", "nombre": "Comisiones y cargos de marketplaces", "tipo": "egreso" },
+    { "codigo": "5.1.03", "nombre": "Costos de envío y logística", "tipo": "egreso" },
+    { "codigo": "5.1.04", "nombre": "Publicidad en plataformas y redes", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "ventas_mercado_libre", "nombre": "Ventas en Mercado Libre" },
+      { "clave": "ventas_tienda_propia", "nombre": "Ventas en tienda online propia" },
+      { "clave": "ventas_redes", "nombre": "Ventas por redes sociales y WhatsApp" },
+      { "clave": "ventas_mayoristas", "nombre": "Ventas mayoristas" },
+      { "clave": "otros_ingresos", "nombre": "Otros ingresos" }
+    ],
+    "gastos": [
+      { "clave": "mercaderia", "nombre": "Compra de mercadería" },
+      { "clave": "comisiones_plataformas", "nombre": "Comisiones de marketplaces" },
+      { "clave": "costos_cobro", "nombre": "Costos de cobro y pasarelas de pago" },
+      { "clave": "envios", "nombre": "Envíos y logística" },
+      { "clave": "publicidad", "nombre": "Publicidad online" },
+      { "clave": "packaging", "nombre": "Packaging y embalaje" },
+      { "clave": "suscripciones", "nombre": "Suscripciones (tienda online, software de gestión)" },
+      { "clave": "devoluciones", "nombre": "Devoluciones y contracargos" },
+      { "clave": "importaciones", "nombre": "Gastos de importación" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "descargar_reportes", "titulo": "Descargar reportes de ventas, liquidaciones y retenciones de cada plataforma", "frecuencia": "mensual" },
+    { "clave": "control_facturacion", "titulo": "Verificar que cada venta tenga su factura y que coincida con lo cobrado", "frecuencia": "mensual", "nota": "Incluye cancelaciones, devoluciones y notas de crédito." },
+    { "clave": "atribucion_jurisdicciones", "titulo": "Distribuir las ventas por provincia del comprador para el Convenio Multilateral", "frecuencia": "mensual" },
+    { "clave": "computar_retenciones", "titulo": "Computar retenciones de IVA, Ganancias e IIBB de las plataformas y controlar saldos a favor", "frecuencia": "mensual" },
+    { "clave": "recategorizacion", "titulo": "Revisar recategorización del Monotributo", "frecuencia": "semestral" },
+    { "clave": "inventario", "titulo": "Valorizar el stock propio y en depósitos de terceros al cierre", "frecuencia": "anual" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "pedido_reportes_plataformas", "nombre": "Pedido mensual de reportes de plataformas", "descripcion": "El primer día hábil pide al cliente los reportes de ventas y liquidaciones de Mercado Libre, Mercado Pago y su tienda online, si el estudio no tiene acceso directo." },
+    { "plantilla": "alerta_tope_monotributo", "nombre": "Alerta de tope de Monotributo", "descripcion": "Avisa cuando las ventas de 12 meses superan el 80% del tope de la categoría." },
+    { "plantilla": "alerta_retenciones_altas", "nombre": "Alerta de retenciones de más", "descripcion": "Avisa cuando las retenciones del mes superan el impuesto estimado, para revisar datos fiscales en la plataforma o pedir exclusión." }
+  ],
+  "indicadores": [
+    { "clave": "ventas_por_canal", "nombre": "Ventas por canal", "descripcion": "Ventas mensuales en cada marketplace, tienda propia y redes." },
+    { "clave": "costo_plataformas", "nombre": "Costo de plataformas sobre ventas", "descripcion": "Comisiones, cargos, costos de cobro y envíos en relación con lo vendido." },
+    { "clave": "margen_neto_venta", "nombre": "Margen neto por venta", "descripcion": "Lo que queda de cada venta después de mercadería, comisiones, envío e impuestos." },
+    { "clave": "ventas_por_provincia", "nombre": "Ventas por provincia", "descripcion": "Distribución de las ventas según el domicilio del comprador (base del Convenio Multilateral)." },
+    { "clave": "saldo_retenciones", "nombre": "Saldo de retenciones a favor", "descripcion": "Retenciones acumuladas de IVA, Ganancias e IIBB pendientes de compensar." }
+  ],
+  "riesgos": [
+    { "clave": "cruce_plataformas", "titulo": "Diferencias con lo informado por las plataformas", "descripcion": "ARCA y las provincias reciben información de marketplaces y billeteras: si lo facturado o declarado es menor, llegan intimaciones o exclusiones.", "validar": "Regímenes de información vigentes y procedimiento de fiscalización." },
+    { "clave": "iibb_mal_atribuido", "titulo": "IIBB mal distribuido entre provincias", "descripcion": "Declarar todo en la provincia del vendedor, cuando las ventas son a distancia, genera reclamos del resto de las jurisdicciones.", "validar": "Criterios de la Comisión Arbitral para ventas a distancia y comercio electrónico." },
+    { "clave": "retenciones_de_mas", "titulo": "Retenciones de más por datos fiscales incompletos", "descripcion": "Si la plataforma no tiene bien la condición fiscal del vendedor, aplica alícuotas agravadas que inmovilizan dinero.", "validar": "Alícuotas diferenciales y procedimiento para acreditar la condición fiscal en cada plataforma." },
+    { "clave": "exclusion_monotributo", "titulo": "Exclusión del Monotributo", "descripcion": "El crecimiento rápido de ventas o compras puede superar los topes sin que el vendedor lo note.", "validar": "Topes y causales de exclusión vigentes." },
+    { "clave": "stock_terceros", "titulo": "Stock en depósitos de terceros sin control", "descripcion": "La mercadería en fulfillment o en consignación se pierde de vista: hay que conciliarla con los reportes de la plataforma." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Las alícuotas de IIBB, los regímenes de retención y los padrones dependen de cada provincia o CABA; el tratamiento de las ventas a distancia cambia con resoluciones de la Comisión Arbitral.",
+    "Si el vendedor tiene depósito u oficina, la habilitación y la tasa de seguridad e higiene dependen del municipio.",
+    "Si además tiene local a la calle, combinar con la plantilla de comercio minorista."
+  ]
+}

@@ -1,0 +1,559 @@
+{
+  "clave": "consultoras",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Consultoras",
+  "descripcion": "Consultoras de gestión, estrategia, recursos humanos, procesos, medio ambiente y capacitación, organizadas como sociedades o equipos de profesionales. Trabajan por proyectos, abonos o jornadas, con viáticos, subcontratación de especialistas y, a veces, contratos con el Estado u organismos internacionales.",
+  "icono": "Lightbulb",
+  "actividades": [
+    {
+      "codigo": "702099",
+      "descripcion": "Servicios de asesoramiento, dirección y gestión empresarial n.c.p.",
+      "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA."
+    },
+    {
+      "codigo": "732000",
+      "descripcion": "Estudio de mercado, realización de encuestas de opinión pública",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "749009",
+      "descripcion": "Otras actividades profesionales, científicas y técnicas n.c.p. (consultoría ambiental, técnica)",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "781000",
+      "descripcion": "Obtención y dotación de personal (consultoras de selección)",
+      "nota": "Si además provee personal eventual, revisar el régimen de empresas de servicios eventuales.",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "854990",
+      "descripcion": "Servicios de enseñanza n.c.p. (capacitación empresarial)",
+      "nota": "Ver posibles exenciones de IVA para ciertas actividades educativas.",
+      "validar": "Confirmar código vigente en CLAE y si la capacitación encuadra en alguna exención."
+    }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Gravado a la alícuota general sobre honorarios y servicios de consultoría. Los viáticos y gastos que se refacturan al cliente forman parte del precio y en general están gravados; los reintegros de gastos a nombre del cliente pueden quedar fuera si se documentan como tales.",
+      "alicuotas": [
+        "21% (general)"
+      ],
+      "nota": "Si presta servicios a clientes del exterior con utilización en el exterior, puede ser exportación de servicios (ver plantilla de software y exportación).",
+      "validar": "Revisar tratamiento de viáticos y reintegros de gastos en IVA, posibles exenciones para capacitación (art. 7 de la Ley de IVA) y para contratos financiados por organismos internacionales."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Muchas consultoras trabajan para clientes en varias provincias y quedan en Convenio Multilateral (régimen general, distribución por ingresos y gastos). Si solo opera en una jurisdicción, local.",
+      "validar": "Confirmar coeficientes unificados, alícuota de cada jurisdicción y tratamiento de los viáticos en la base imponible."
+    },
+    "retenciones_percepciones": [
+      {
+        "nombre": "Retención de Ganancias de clientes (RG 830)",
+        "validar": "Montos no sujetos y alícuotas vigentes según concepto (locación de servicios, honorarios)."
+      },
+      {
+        "nombre": "Retenciones de IVA de grandes empresas y organismos públicos",
+        "validar": "Revisar si el cliente es agente de retención de IVA y la alícuota aplicable."
+      },
+      {
+        "nombre": "Retenciones del Estado al pagar facturas (nacionales, provinciales y municipales)",
+        "nota": "Los organismos públicos suelen retener Ganancias, IVA, IIBB y, en algunos casos, SUSS o tasas propias.",
+        "validar": "Revisar el régimen de cada organismo contratante y la jurisdicción."
+      },
+      {
+        "nombre": "Retenciones de IIBB y SIRCREB",
+        "validar": "Alícuotas según padrones de cada jurisdicción."
+      },
+      {
+        "nombre": "Retenciones que practica la consultora a consultores independientes",
+        "nota": "Al pagar a especialistas subcontratados, si es agente de retención.",
+        "validar": "Confirmar designación como agente de retención (SICORE e IIBB)."
+      }
+    ],
+    "regimenes_especiales": [
+      {
+        "nombre": "Contrataciones con el Estado nacional",
+        "nota": "Requiere inscripción en el sistema de proveedores (SIPRO / COMPR.AR), no tener deuda fiscal ni previsional y, según el procedimiento, garantías de oferta y de cumplimiento (habitualmente seguros de caución).",
+        "validar": "Revisar requisitos vigentes del régimen de contrataciones de la Administración Nacional, la habilidad fiscal para contratar ante ARCA y los porcentajes de garantía."
+      },
+      {
+        "nombre": "Contrataciones con provincias y municipios",
+        "nota": "Cada jurisdicción tiene su registro de proveedores, certificado de libre deuda y sus propias garantías.",
+        "validar": "Depende de cada provincia o municipio."
+      },
+      {
+        "nombre": "Impuesto de sellos sobre contratos",
+        "nota": "Los contratos de consultoría, especialmente con el Estado o de monto alto, pueden estar alcanzados por sellos en la jurisdicción donde se firman o tienen efectos.",
+        "validar": "Alícuota, exenciones y quién soporta el impuesto según el Código Fiscal de cada jurisdicción."
+      },
+      {
+        "nombre": "Proyectos financiados por organismos internacionales (BID, Banco Mundial, CAF, ONU)",
+        "nota": "Pueden tener reglas propias de contratación, moneda y tratamiento impositivo.",
+        "validar": "Revisar el convenio de financiamiento y si hay exenciones de IVA u otros impuestos aplicables."
+      },
+      {
+        "nombre": "Honorarios de directores (si es sociedad anónima)",
+        "nota": "Límites de deducción en Ganancias y retención específica.",
+        "validar": "Revisar art. 91 de la Ley de Ganancias (texto ordenado) sobre deducción de honorarios de directores y la retención vigente."
+      }
+    ],
+    "nota": "El perfil depende de si es sociedad o persona humana, de la cantidad de jurisdicciones donde trabaja y de si contrata con el Estado."
+  },
+  "laboral": {
+    "convenios": [
+      {
+        "nombre": "Empleados de comercio (personal administrativo y analistas)",
+        "numero": "CCT 130/75",
+        "nota": "Lo habitual para administrativos y analistas.",
+        "validar": "Confirmar encuadre convencional según la actividad y escalas vigentes."
+      },
+      {
+        "nombre": "Personal fuera de convenio",
+        "nota": "Consultores senior, gerentes y socios gerentes suelen estar fuera de convenio."
+      },
+      {
+        "nombre": "Empresas de servicios eventuales",
+        "nota": "Solo si la consultora provee personal eventual a terceros: régimen específico con habilitación y garantías.",
+        "validar": "Revisar habilitación ante el Ministerio de Trabajo y normativa vigente del régimen de servicios eventuales."
+      }
+    ],
+    "categorias": [
+      "Socio / director",
+      "Gerente de proyecto",
+      "Consultor senior",
+      "Consultor junior",
+      "Analista",
+      "Administrativo"
+    ],
+    "conceptos": [
+      "Sueldo básico",
+      "Presentismo",
+      "Antigüedad",
+      "Horas extras",
+      "Viáticos (con o sin rendición)",
+      "Bonos por proyecto",
+      "SAC",
+      "Vacaciones"
+    ],
+    "nota": "Los viáticos sin comprobantes que se pagan a empleados pueden considerarse remuneración: revisar topes y rendiciones. Es común subcontratar consultores independientes por proyecto."
+  },
+  "obligaciones": [
+    {
+      "clave": "iva_ddjj",
+      "impuesto": "IVA (F. 2002)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.",
+      "aplica_a": "Responsables inscriptos",
+      "validar": "Calendario de vencimientos de ARCA del año."
+    },
+    {
+      "clave": "iibb_cm",
+      "impuesto": "Ingresos Brutos (Convenio Multilateral, CM03)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, calendario de la Comisión Arbitral.",
+      "aplica_a": "Inscriptos en Convenio Multilateral",
+      "validar": "Calendario vigente y coeficientes del año."
+    },
+    {
+      "clave": "iibb_local",
+      "impuesto": "Ingresos Brutos local (anticipo)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT y jurisdicción.",
+      "aplica_a": "Contribuyentes locales",
+      "validar": "Depende de la jurisdicción."
+    },
+    {
+      "clave": "f931",
+      "impuesto": "Cargas sociales (F. 931)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, primeros días del mes siguiente.",
+      "aplica_a": "Con empleados",
+      "validar": "Calendario de ARCA del año."
+    },
+    {
+      "clave": "sicore",
+      "impuesto": "Retenciones practicadas (SICORE)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según calendario de SICORE.",
+      "aplica_a": "Agentes de retención",
+      "validar": "Confirmar designación y calendario vigente."
+    },
+    {
+      "clave": "cm05",
+      "impuesto": "Convenio Multilateral (DDJJ anual CM05)",
+      "frecuencia": "anual",
+      "vencimiento": "Según calendario de la Comisión Arbitral, generalmente mediados de año.",
+      "aplica_a": "Inscriptos en Convenio Multilateral",
+      "validar": "Calendario de la Comisión Arbitral del año."
+    },
+    {
+      "clave": "ganancias_sociedades",
+      "impuesto": "Ganancias sociedades (DDJJ anual)",
+      "frecuencia": "anual",
+      "vencimiento": "Quinto mes posterior al cierre de ejercicio, según terminación de CUIT.",
+      "aplica_a": "Sociedades",
+      "validar": "Alícuotas escalonadas vigentes y montos de cada tramo."
+    },
+    {
+      "clave": "estados_contables",
+      "impuesto": "Estados contables y presentación ante el registro societario",
+      "frecuencia": "anual",
+      "vencimiento": "Según el organismo de control (IGJ en CABA, DPPJ en Provincia de Buenos Aires) y el cierre de ejercicio.",
+      "aplica_a": "Sociedades",
+      "validar": "Requisitos y plazos del registro de la jurisdicción."
+    },
+    {
+      "clave": "proveedores_estado",
+      "impuesto": "Actualización en registros de proveedores del Estado",
+      "frecuencia": "anual",
+      "vencimiento": "Según cada registro (SIPRO y registros provinciales o municipales).",
+      "aplica_a": "Consultoras que contratan con el Estado",
+      "validar": "Plazos de vigencia de cada registro."
+    },
+    {
+      "clave": "sellos",
+      "impuesto": "Impuesto de sellos sobre contratos",
+      "frecuencia": "eventual",
+      "vencimiento": "Dentro del plazo de la jurisdicción desde la firma del contrato.",
+      "aplica_a": "Contratos alcanzados",
+      "validar": "Plazos y alícuotas según el Código Fiscal de cada jurisdicción."
+    }
+  ],
+  "checklist_alta": [
+    {
+      "clave": "constancia_cuit",
+      "item": "Constancia de inscripción en ARCA",
+      "obligatorio": true
+    },
+    {
+      "clave": "clave_fiscal",
+      "item": "Delegación de servicios con clave fiscal al estudio",
+      "obligatorio": true
+    },
+    {
+      "clave": "iibb_inscripcion",
+      "item": "Constancia de inscripción en Ingresos Brutos (CM01 si es Convenio)",
+      "obligatorio": true
+    },
+    {
+      "clave": "estatuto",
+      "item": "Estatuto o contrato social, actas y autoridades vigentes",
+      "obligatorio": false
+    },
+    {
+      "clave": "contratos_vigentes",
+      "item": "Contratos y propuestas aprobadas de los proyectos en curso (monto, plazo, hitos)",
+      "obligatorio": true
+    },
+    {
+      "clave": "politica_viaticos",
+      "item": "Política de viáticos y forma de refacturar gastos a clientes",
+      "obligatorio": false
+    },
+    {
+      "clave": "registro_proveedores",
+      "item": "Inscripciones en registros de proveedores del Estado (SIPRO, provinciales, municipales)",
+      "obligatorio": false
+    },
+    {
+      "clave": "garantias",
+      "item": "Pólizas de caución vigentes (oferta, cumplimiento, anticipo)",
+      "obligatorio": false
+    },
+    {
+      "clave": "subcontratistas",
+      "item": "Listado de consultores independientes subcontratados y su situación fiscal",
+      "obligatorio": false
+    },
+    {
+      "clave": "nomina",
+      "item": "Nómina de empleados, convenio aplicado y recibos del último mes",
+      "obligatorio": false
+    },
+    {
+      "clave": "ultimo_balance",
+      "item": "Último balance y DDJJ de Ganancias presentados",
+      "obligatorio": true
+    },
+    {
+      "clave": "facturas_ultimos_12",
+      "item": "Facturas emitidas y recibidas de los últimos 12 meses",
+      "obligatorio": true
+    }
+  ],
+  "plan_de_cuentas": [
+    {
+      "codigo": "1.1.02",
+      "nombre": "Banco cuenta corriente",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.03",
+      "nombre": "Deudores por servicios",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.04",
+      "nombre": "Deudores del Estado (certificados de avance)",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.05",
+      "nombre": "Proyectos en curso sin facturar",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.06",
+      "nombre": "Gastos a refacturar a clientes",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.07",
+      "nombre": "Anticipos de viáticos a rendir",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.08",
+      "nombre": "Retenciones sufridas de Ganancias e IVA",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.10",
+      "nombre": "Fondos de reparo retenidos por clientes",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "2.1.02",
+      "nombre": "Consultores subcontratados a pagar",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.03",
+      "nombre": "Anticipos de clientes",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.04",
+      "nombre": "IVA a pagar",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "3.1.01",
+      "nombre": "Capital social",
+      "tipo": "patrimonio"
+    },
+    {
+      "codigo": "4.1.01",
+      "nombre": "Honorarios por proyectos",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.02",
+      "nombre": "Abonos de consultoría",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.03",
+      "nombre": "Capacitaciones",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.04",
+      "nombre": "Recupero de viáticos y gastos",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "5.1.02",
+      "nombre": "Honorarios de consultores subcontratados",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.03",
+      "nombre": "Viáticos, pasajes y alojamiento",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.04",
+      "nombre": "Seguros de caución y garantías",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.05",
+      "nombre": "Impuesto de sellos",
+      "tipo": "egreso"
+    }
+  ],
+  "categorias": {
+    "ingresos": [
+      {
+        "clave": "proyectos",
+        "nombre": "Proyectos de consultoría"
+      },
+      {
+        "clave": "abonos",
+        "nombre": "Abonos mensuales"
+      },
+      {
+        "clave": "capacitaciones",
+        "nombre": "Capacitaciones"
+      },
+      {
+        "clave": "recupero_gastos",
+        "nombre": "Recupero de viáticos y gastos"
+      },
+      {
+        "clave": "otros_ingresos",
+        "nombre": "Otros ingresos"
+      }
+    ],
+    "gastos": [
+      {
+        "clave": "sueldos",
+        "nombre": "Sueldos y cargas sociales"
+      },
+      {
+        "clave": "subcontratados",
+        "nombre": "Consultores subcontratados"
+      },
+      {
+        "clave": "viaticos",
+        "nombre": "Viáticos, pasajes y alojamiento"
+      },
+      {
+        "clave": "garantias",
+        "nombre": "Seguros de caución y garantías"
+      },
+      {
+        "clave": "sellos",
+        "nombre": "Impuesto de sellos"
+      },
+      {
+        "clave": "software",
+        "nombre": "Software y suscripciones"
+      },
+      {
+        "clave": "alquiler",
+        "nombre": "Alquiler de oficina"
+      },
+      {
+        "clave": "capacitacion",
+        "nombre": "Capacitación del equipo"
+      }
+    ]
+  },
+  "tareas_recurrentes": [
+    {
+      "clave": "facturar_hitos",
+      "titulo": "Facturar hitos o avances de proyectos cumplidos en el mes",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "rendir_viaticos",
+      "titulo": "Rendir viáticos del equipo y refacturar gastos a clientes",
+      "frecuencia": "mensual",
+      "nota": "Separar lo que se refactura de lo que es costo propio."
+    },
+    {
+      "clave": "conciliar_retenciones",
+      "titulo": "Conciliar retenciones sufridas, incluidas las del Estado",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "rentabilidad_proyectos",
+      "titulo": "Revisar rentabilidad por proyecto (horas, costos y facturación)",
+      "frecuencia": "trimestral"
+    },
+    {
+      "clave": "vigencia_registros",
+      "titulo": "Controlar vigencia de registros de proveedores del Estado y pólizas de caución",
+      "frecuencia": "trimestral"
+    },
+    {
+      "clave": "cierre_ejercicio",
+      "titulo": "Cierre de ejercicio, balance y DDJJ de Ganancias",
+      "frecuencia": "anual"
+    }
+  ],
+  "flujos_sugeridos": [
+    {
+      "plantilla": "alta_proyecto",
+      "nombre": "Alta de un nuevo proyecto",
+      "descripcion": "Pide al cliente el contrato, hitos de facturación, jurisdicción y si hay viáticos, para revisar sellos, IIBB y calendario de facturación."
+    },
+    {
+      "plantilla": "licitacion_estado",
+      "nombre": "Preparar documentación para licitación",
+      "descripcion": "Reúne constancias fiscales, balances, libre deuda y pólizas para presentarse a una contratación pública."
+    },
+    {
+      "plantilla": "rendicion_viaticos",
+      "nombre": "Rendición mensual de viáticos",
+      "descripcion": "Recordatorio al cliente para cargar comprobantes de viáticos antes del cierre del mes."
+    }
+  ],
+  "indicadores": [
+    {
+      "clave": "rentabilidad_proyecto",
+      "nombre": "Rentabilidad por proyecto",
+      "descripcion": "Facturación menos costos directos (sueldos asignados, subcontratados, viáticos) por proyecto."
+    },
+    {
+      "clave": "backlog",
+      "nombre": "Cartera contratada pendiente",
+      "descripcion": "Monto de proyectos firmados que falta facturar."
+    },
+    {
+      "clave": "dias_cobro",
+      "nombre": "Días promedio de cobro",
+      "descripcion": "Tiempo entre la factura y el cobro, separado entre clientes privados y Estado."
+    },
+    {
+      "clave": "peso_viaticos",
+      "nombre": "Peso de viáticos sobre ingresos",
+      "descripcion": "Viáticos no refacturados sobre facturación total."
+    }
+  ],
+  "riesgos": [
+    {
+      "clave": "demora_pagos_estado",
+      "titulo": "Demora en los pagos del Estado",
+      "descripcion": "Facturas a organismos públicos que se cobran muy tarde, con IVA ya ingresado y retenciones que se acumulan.",
+      "validar": "Revisar regímenes de diferimiento de IVA para facturas a organismos públicos, si están vigentes."
+    },
+    {
+      "clave": "viaticos_remunerativos",
+      "titulo": "Viáticos sin comprobantes tomados como sueldo",
+      "descripcion": "Viáticos fijos sin rendición pueden considerarse remuneración y generar deuda de cargas sociales.",
+      "validar": "Revisar tratamiento de viáticos en la Ley de Contrato de Trabajo y en el convenio aplicable."
+    },
+    {
+      "clave": "sellos_omitidos",
+      "titulo": "Sellos no pagados sobre contratos",
+      "descripcion": "Contratos firmados sin ingresar el impuesto de sellos generan multas e intereses.",
+      "validar": "Código Fiscal de cada jurisdicción."
+    },
+    {
+      "clave": "subcontratados_dependencia",
+      "titulo": "Consultores subcontratados con relación de dependencia encubierta",
+      "descripcion": "Consultores que facturan pero trabajan en exclusividad y con horario pueden reclamar relación laboral.",
+      "validar": "Analizar cada caso con criterio laboral."
+    },
+    {
+      "clave": "inhabilidad_estado",
+      "titulo": "Quedar inhabilitado para contratar con el Estado",
+      "descripcion": "Deuda fiscal o previsional, o registros de proveedores vencidos, impiden cobrar o presentarse a licitaciones.",
+      "validar": "Requisitos vigentes de habilidad para contratar."
+    }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Sellos, registros de proveedores y retenciones de organismos públicos dependen de cada provincia y municipio: revisar en cada contrato.",
+    "Si la consultora es un profesional individual, revisar también la plantilla de servicios profesionales.",
+    "Para clientes del exterior, revisar la plantilla de software y exportación de servicios (factura E, divisas, IVA exportación)."
+  ]
+}

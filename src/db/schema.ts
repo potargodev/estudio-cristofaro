@@ -1203,6 +1203,81 @@ export const plan_requests = pgTable(
   (t) => [index("plan_requests_status_idx").on(t.status, t.created_at)],
 );
 
+// ───────────────────────── Ecosistemas por industria (§2.f) ─────────────────────────
+
+/**
+ * Versiones de las plantillas de rubro editadas desde el Faro Manager. La base
+ * es el archivo de /data/industries; cada edición guarda una versión nueva.
+ */
+export const industry_template_versions = pgTable(
+  "industry_template_versions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    industry_key: text("industry_key").notNull(),
+    version: integer("version").notNull(),
+    content: jsonb("content").$type<Record<string, unknown>>().notNull(),
+    status: text("status").notNull().default("borrador"), // borrador | validada
+    validated_by_name: text("validated_by_name"),
+    validated_by_license: text("validated_by_license"),
+    validated_at: timestamp("validated_at", { withTimezone: true }),
+    note: text("note"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("industry_template_versions_key_idx").on(t.industry_key, t.version)],
+);
+
+/** Rubro aplicado a una organización: qué versión y una copia de lo aplicado (para ver diferencias) */
+export const organization_industries = pgTable(
+  "organization_industries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    industry_key: text("industry_key").notNull(),
+    version: integer("version").notNull(),
+    /** Estado de la plantilla al aplicarla (borrador = sugerencia a revisar) */
+    template_status: text("template_status").notNull().default("borrador"),
+    snapshot: jsonb("snapshot").$type<Record<string, unknown>>().notNull(),
+    applied_by: uuid("applied_by").references(() => users.id, { onDelete: "set null" }),
+    applied_at: timestamp("applied_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("organization_industries_org_idx").on(t.organization_id, t.industry_key)],
+);
+
+/**
+ * Lo que una plantilla dejó en la organización: obligaciones del rubro,
+ * checklist de alta, categorías, tareas, cuentas, indicadores, riesgos,
+ * actividades y flujos sugeridos. Si el estudio lo edita queda `customized` y
+ * una actualización de la plantilla nunca lo pisa.
+ */
+export const organization_setup_items = pgTable(
+  "organization_setup_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    industry_key: text("industry_key").notNull(),
+    kind: text("kind").notNull(),
+    key: text("key").notNull(),
+    data: jsonb("data").$type<Record<string, unknown>>().notNull(),
+    customized: boolean("customized").notNull().default(false),
+    done: boolean("done").notNull().default(false),
+    removed: boolean("removed").notNull().default(false),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("organization_setup_items_key_idx").on(t.organization_id, t.industry_key, t.kind, t.key), index("organization_setup_items_org_idx").on(t.organization_id, t.kind)],
+);
+
 /** Acceso asistido del equipo de Faro a un tenant: explícito, temporal y auditado */
 export const assisted_access = pgTable(
   "assisted_access",

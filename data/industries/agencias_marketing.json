@@ -1,0 +1,556 @@
+{
+  "clave": "agencias_marketing",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Agencias de marketing y comunicación",
+  "descripcion": "Agencias de publicidad, marketing digital, redes sociales, prensa y relaciones públicas, productoras de contenido y centrales de medios. Facturan fees, honorarios creativos, producción y comisiones por compra de medios, y suelen contratar talentos, influencers y proveedores freelance.",
+  "icono": "Megaphone",
+  "actividades": [
+    {
+      "codigo": "731001",
+      "descripcion": "Servicios de comercialización de tiempo y espacio publicitario",
+      "nota": "Centrales de medios y agencias que compran y revenden pauta.",
+      "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA."
+    },
+    {
+      "codigo": "731009",
+      "descripcion": "Servicios de publicidad n.c.p. (creatividad, campañas, marketing digital)",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "732000",
+      "descripcion": "Estudio de mercado, realización de encuestas de opinión pública",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "741000",
+      "descripcion": "Servicios de diseño especializado (diseño gráfico y de marca)",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "591110",
+      "descripcion": "Producción de filmes y videocintas (productoras de contenido audiovisual)",
+      "nota": "Si la producción audiovisual es la actividad principal, revisar regímenes de cine (INCAA) y aportes específicos.",
+      "validar": "Confirmar código vigente en CLAE."
+    },
+    {
+      "codigo": "702099",
+      "descripcion": "Servicios de asesoramiento, dirección y gestión empresarial n.c.p. (relaciones públicas y comunicación institucional)",
+      "validar": "Confirmar si corresponde este código o el de publicidad según la actividad real."
+    }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Gravado a la alícuota general sobre fees, creatividad, producción y comisiones. Cuando la agencia compra medios por cuenta y orden del anunciante, hay que distinguir si factura la pauta completa (actúa en nombre propio) o solo la comisión (intermediación), porque cambia la base del IVA y de Ingresos Brutos.",
+      "alicuotas": [
+        "21% (general)",
+        "Alícuotas diferenciales en publicidad en ciertos medios (ver validar)"
+      ],
+      "nota": "La pauta en medios gráficos, radio y TV puede tener alícuotas reducidas según el tamaño del medio. La pauta en plataformas del exterior (Meta, Google, TikTok) puede tributar IVA por servicios digitales prestados desde el exterior.",
+      "validar": "Revisar art. 28 de la Ley de IVA (alícuotas reducidas para publicidad en medios), el régimen de servicios digitales del exterior (RG 4240 y modificatorias) y si la agencia debe actuar como responsable sustituto o computa percepciones de tarjeta."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Local si la agencia opera en una sola jurisdicción; Convenio Multilateral (régimen general) si tiene clientes en varias provincias. En algunas jurisdicciones, como CABA, las agencias de publicidad tienen base imponible especial: tributan sobre comisiones y servicios propios, no sobre la pauta que solo intermedian.",
+      "validar": "Confirmar base imponible diferencial para agencias de publicidad en el Código Fiscal de cada jurisdicción, alícuota vigente y requisitos (facturación por cuenta y orden, documentación de la pauta)."
+    },
+    "retenciones_percepciones": [
+      {
+        "nombre": "Retención de Ganancias de clientes (RG 830)",
+        "nota": "Los anunciantes grandes suelen ser agentes de retención sobre honorarios y servicios.",
+        "validar": "Montos no sujetos y alícuotas vigentes de la RG 830 según el concepto (honorarios, locación de servicios)."
+      },
+      {
+        "nombre": "Retenciones de IVA de grandes anunciantes",
+        "validar": "Revisar si los clientes son agentes de retención de IVA (RG 2854 y modificatorias) y si la agencia puede pedir certificado de exclusión."
+      },
+      {
+        "nombre": "Retenciones de IIBB y SIRCREB",
+        "nota": "Retenciones de clientes agentes de recaudación y retenciones bancarias.",
+        "validar": "Alícuotas según padrones de cada jurisdicción."
+      },
+      {
+        "nombre": "Retenciones que practica la agencia a talentos y freelancers",
+        "nota": "Si la agencia es agente de retención, debe retener Ganancias (y eventualmente IVA e IIBB) al pagar a proveedores, locutores, modelos y creativos.",
+        "validar": "Confirmar si la agencia fue designada agente de retención (SICORE) y en qué jurisdicciones de IIBB."
+      },
+      {
+        "nombre": "Percepciones en tarjeta por pauta en plataformas del exterior",
+        "nota": "Pagos con tarjeta a plataformas del exterior pueden generar percepciones de IVA y Ganancias computables.",
+        "validar": "Revisar el régimen de percepciones vigente sobre consumos en moneda extranjera y cómo se computan."
+      }
+    ],
+    "regimenes_especiales": [
+      {
+        "nombre": "Facturación por cuenta y orden de terceros (pauta)",
+        "nota": "Requiere documentar que la agencia actúa como intermediaria y emitir comprobantes con los datos del comitente.",
+        "validar": "Revisar requisitos de facturación por cuenta y orden (RG 1415 y anexos) y su efecto en IVA e IIBB."
+      },
+      {
+        "nombre": "Cesión de derechos de imagen y de autor",
+        "nota": "Contratos con modelos, actores, locutores e influencers: definir si se paga una locación de servicios, una cesión de derechos (regalías) o ambas, porque cambia la retención de Ganancias y el IVA.",
+        "validar": "Revisar tratamiento de regalías en Ganancias (RG 830) y si la cesión está gravada o exenta en IVA según el caso."
+      },
+      {
+        "nombre": "Aportes a entidades de gestión colectiva (SADAIC, AADI-CAPIF, SAGAI)",
+        "nota": "Si las piezas usan música o actores, pueden corresponder pagos a entidades de gestión.",
+        "validar": "Confirmar qué entidades aplican a cada pieza y su tarifa vigente."
+      },
+      {
+        "nombre": "Monotributo (categorías de servicios)",
+        "nota": "Agencias chicas o unipersonales. La pauta facturada en nombre propio cuenta para el tope y lo agota rápido.",
+        "validar": "Topes vigentes de la categoría máxima de servicios."
+      }
+    ],
+    "nota": "El punto clave del rubro es separar ingresos propios (fee, creatividad, comisión) de fondos de terceros (pauta que se intermedia). Si no se documenta bien, se paga IVA e IIBB sobre plata que no es de la agencia."
+  },
+  "laboral": {
+    "convenios": [
+      {
+        "nombre": "Convenio de la actividad publicitaria (Sindicato Único de la Publicidad)",
+        "nota": "Aplica a agencias de publicidad adheridas o encuadradas en la actividad.",
+        "validar": "Confirmar número de CCT vigente, encuadre de la agencia y escalas salariales actualizadas."
+      },
+      {
+        "nombre": "Empleados de comercio (personal administrativo)",
+        "numero": "CCT 130/75",
+        "nota": "Alternativa frecuente en agencias digitales o de comunicación no encuadradas en publicidad.",
+        "validar": "Confirmar encuadre convencional según la actividad principal."
+      },
+      {
+        "nombre": "Personal fuera de convenio",
+        "nota": "Directores creativos, cuentas y gerentes suelen estar fuera de convenio."
+      }
+    ],
+    "categorias": [
+      "Director creativo",
+      "Redactor creativo",
+      "Director de arte",
+      "Ejecutivo de cuentas",
+      "Planner de medios",
+      "Community manager",
+      "Diseñador gráfico",
+      "Administrativo"
+    ],
+    "conceptos": [
+      "Sueldo básico",
+      "Presentismo",
+      "Antigüedad",
+      "Horas extras",
+      "Adicional por título",
+      "Bonos por objetivos",
+      "SAC",
+      "Vacaciones",
+      "Trabajo remoto (compensación de gastos)"
+    ],
+    "nota": "Es un rubro con mucha contratación de freelancers monotributistas: revisar que no haya relación de dependencia encubierta (horario fijo, exclusividad, un solo cliente)."
+  },
+  "obligaciones": [
+    {
+      "clave": "iva_ddjj",
+      "impuesto": "IVA (F. 2002)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.",
+      "aplica_a": "Responsables inscriptos",
+      "validar": "Calendario de vencimientos de ARCA del año."
+    },
+    {
+      "clave": "libro_iva_digital",
+      "impuesto": "Libro de IVA Digital",
+      "frecuencia": "mensual",
+      "vencimiento": "Junto con la DDJJ de IVA.",
+      "aplica_a": "Responsables inscriptos",
+      "nota": "Cargar bien las facturas por cuenta y orden y las de medios.",
+      "validar": "Confirmar si sigue vigente el Libro de IVA Digital o el régimen que lo reemplace."
+    },
+    {
+      "clave": "iibb_mensual",
+      "impuesto": "Ingresos Brutos (anticipo)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT y jurisdicción (o calendario de Convenio Multilateral).",
+      "validar": "Depende de la jurisdicción y de la base imponible especial para publicidad."
+    },
+    {
+      "clave": "f931",
+      "impuesto": "Cargas sociales (F. 931)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según terminación de CUIT, primeros días del mes siguiente.",
+      "aplica_a": "Agencias con empleados",
+      "validar": "Calendario de ARCA del año."
+    },
+    {
+      "clave": "sicore",
+      "impuesto": "Retenciones de Ganancias e IVA practicadas (SICORE)",
+      "frecuencia": "mensual",
+      "vencimiento": "Según calendario de SICORE (primera y segunda quincena).",
+      "aplica_a": "Agencias designadas agentes de retención",
+      "validar": "Confirmar designación y calendario vigente."
+    },
+    {
+      "clave": "iibb_agente",
+      "impuesto": "Retenciones y percepciones de IIBB practicadas",
+      "frecuencia": "mensual",
+      "vencimiento": "Según calendario de cada jurisdicción.",
+      "aplica_a": "Agentes de recaudación de IIBB",
+      "validar": "Depende de la jurisdicción (por ejemplo ARCIBA en CABA o ARBA en Provincia de Buenos Aires)."
+    },
+    {
+      "clave": "ganancias_anual",
+      "impuesto": "Ganancias (DDJJ anual de sociedades o personas humanas)",
+      "frecuencia": "anual",
+      "vencimiento": "Sociedades: quinto mes posterior al cierre de ejercicio. Personas humanas: junio.",
+      "validar": "Fechas de la resolución general del año y alícuotas vigentes."
+    },
+    {
+      "clave": "cm05",
+      "impuesto": "Convenio Multilateral (DDJJ anual CM05)",
+      "frecuencia": "anual",
+      "vencimiento": "Según calendario de la Comisión Arbitral, generalmente mediados de año.",
+      "aplica_a": "Inscriptos en Convenio Multilateral",
+      "validar": "Calendario de la Comisión Arbitral del año."
+    },
+    {
+      "clave": "monotributo",
+      "impuesto": "Monotributo",
+      "frecuencia": "mensual",
+      "vencimiento": "Día 20 de cada mes (puede correrse por feriados).",
+      "aplica_a": "Monotributistas",
+      "validar": "Confirmar calendario vigente de ARCA."
+    },
+    {
+      "clave": "recategorizacion",
+      "impuesto": "Recategorización de Monotributo",
+      "frecuencia": "semestral",
+      "vencimiento": "Enero y julio (hasta el día 20 o según calendario).",
+      "aplica_a": "Monotributistas"
+    }
+  ],
+  "checklist_alta": [
+    {
+      "clave": "constancia_cuit",
+      "item": "Constancia de inscripción en ARCA",
+      "obligatorio": true
+    },
+    {
+      "clave": "clave_fiscal",
+      "item": "Delegación de servicios con clave fiscal al estudio",
+      "obligatorio": true
+    },
+    {
+      "clave": "iibb_inscripcion",
+      "item": "Constancia de inscripción en Ingresos Brutos (o CM01) y alícuotas",
+      "obligatorio": true
+    },
+    {
+      "clave": "estatuto",
+      "item": "Estatuto o contrato social y autoridades vigentes (si es sociedad)",
+      "obligatorio": false
+    },
+    {
+      "clave": "contratos_clientes",
+      "item": "Contratos o propuestas aceptadas con los principales clientes (fee, comisión, pauta)",
+      "obligatorio": true
+    },
+    {
+      "clave": "modalidad_pauta",
+      "item": "Detalle de cómo se factura la pauta: en nombre propio o por cuenta y orden",
+      "obligatorio": true
+    },
+    {
+      "clave": "proveedores_medios",
+      "item": "Listado de medios y plataformas con los que trabaja (Meta, Google, medios locales)",
+      "obligatorio": false
+    },
+    {
+      "clave": "contratos_talentos",
+      "item": "Modelos de contrato con talentos, influencers y cesión de derechos de imagen",
+      "obligatorio": false
+    },
+    {
+      "clave": "nomina",
+      "item": "Nómina de empleados, convenio aplicado y recibos del último mes",
+      "obligatorio": false
+    },
+    {
+      "clave": "agente_retencion",
+      "item": "Constancias de designación como agente de retención o percepción",
+      "obligatorio": false
+    },
+    {
+      "clave": "facturas_ultimos_12",
+      "item": "Facturas emitidas y recibidas de los últimos 12 meses",
+      "obligatorio": true
+    }
+  ],
+  "plan_de_cuentas": [
+    {
+      "codigo": "1.1.02",
+      "nombre": "Banco cuenta corriente",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.03",
+      "nombre": "Deudores por servicios",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.04",
+      "nombre": "Anunciantes: pauta a recuperar",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.05",
+      "nombre": "Anticipos a medios y plataformas",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.06",
+      "nombre": "Retenciones sufridas de Ganancias",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.08",
+      "nombre": "Retenciones y percepciones de IIBB",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "1.1.09",
+      "nombre": "Producciones en curso",
+      "tipo": "activo"
+    },
+    {
+      "codigo": "2.1.01",
+      "nombre": "Medios y plataformas a pagar",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.02",
+      "nombre": "Proveedores de producción y freelancers",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.03",
+      "nombre": "Anticipos de anunciantes para pauta",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.04",
+      "nombre": "IVA a pagar",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "2.1.06",
+      "nombre": "Retenciones practicadas a depositar",
+      "tipo": "pasivo"
+    },
+    {
+      "codigo": "3.1.01",
+      "nombre": "Capital",
+      "tipo": "patrimonio"
+    },
+    {
+      "codigo": "4.1.01",
+      "nombre": "Fees y abonos mensuales",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.02",
+      "nombre": "Comisiones por compra de medios",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "4.1.03",
+      "nombre": "Producción y creatividad por proyecto",
+      "tipo": "ingreso"
+    },
+    {
+      "codigo": "5.1.01",
+      "nombre": "Costo de producción (fotografía, video, imprenta)",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.02",
+      "nombre": "Honorarios de freelancers y talentos",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.03",
+      "nombre": "Derechos de imagen, música y gestión colectiva",
+      "tipo": "egreso"
+    },
+    {
+      "codigo": "5.1.04",
+      "nombre": "Software, licencias y bancos de imágenes",
+      "tipo": "egreso"
+    }
+  ],
+  "categorias": {
+    "ingresos": [
+      {
+        "clave": "fees",
+        "nombre": "Fees y abonos mensuales"
+      },
+      {
+        "clave": "comisiones_medios",
+        "nombre": "Comisiones de medios"
+      },
+      {
+        "clave": "proyectos",
+        "nombre": "Proyectos y campañas puntuales"
+      },
+      {
+        "clave": "produccion",
+        "nombre": "Producción de contenido"
+      },
+      {
+        "clave": "otros_ingresos",
+        "nombre": "Otros ingresos"
+      }
+    ],
+    "gastos": [
+      {
+        "clave": "pauta",
+        "nombre": "Pauta en medios y plataformas"
+      },
+      {
+        "clave": "produccion",
+        "nombre": "Producción (foto, video, imprenta)"
+      },
+      {
+        "clave": "freelancers",
+        "nombre": "Freelancers y talentos"
+      },
+      {
+        "clave": "derechos",
+        "nombre": "Derechos de imagen y música"
+      },
+      {
+        "clave": "sueldos",
+        "nombre": "Sueldos y cargas sociales"
+      },
+      {
+        "clave": "software",
+        "nombre": "Software y suscripciones"
+      },
+      {
+        "clave": "alquiler",
+        "nombre": "Alquiler y coworking"
+      },
+      {
+        "clave": "eventos",
+        "nombre": "Eventos y activaciones"
+      }
+    ]
+  },
+  "tareas_recurrentes": [
+    {
+      "clave": "separar_pauta",
+      "titulo": "Separar pauta de terceros de ingresos propios en la facturación del mes",
+      "frecuencia": "mensual",
+      "nota": "Impacta en la base de IVA e IIBB."
+    },
+    {
+      "clave": "conciliar_plataformas",
+      "titulo": "Conciliar consumos de plataformas digitales con resúmenes de tarjeta y facturas",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "conciliar_retenciones",
+      "titulo": "Conciliar retenciones sufridas de Ganancias, IVA e IIBB",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "retenciones_practicadas",
+      "titulo": "Liquidar y depositar retenciones practicadas a proveedores y talentos",
+      "frecuencia": "mensual"
+    },
+    {
+      "clave": "revisar_freelancers",
+      "titulo": "Revisar situación fiscal de freelancers (monotributo vigente, categoría)",
+      "frecuencia": "trimestral"
+    },
+    {
+      "clave": "ddjj_anual",
+      "titulo": "Preparar DDJJ anuales de Ganancias y Convenio Multilateral",
+      "frecuencia": "anual"
+    }
+  ],
+  "flujos_sugeridos": [
+    {
+      "plantilla": "cierre_pauta_mensual",
+      "nombre": "Cierre mensual de pauta",
+      "descripcion": "Pide al cliente el detalle de pauta del mes por anunciante y plataforma antes de liquidar IVA e IIBB."
+    },
+    {
+      "plantilla": "alta_talento",
+      "nombre": "Alta de talento o influencer",
+      "descripcion": "Checklist para contratar un talento: constancia fiscal, contrato de cesión de derechos y retenciones a aplicar."
+    },
+    {
+      "plantilla": "recordatorio_facturacion",
+      "nombre": "Recordar facturar fees a fin de mes",
+      "descripcion": "Aviso el último día hábil si quedan abonos sin facturar."
+    }
+  ],
+  "indicadores": [
+    {
+      "clave": "ingresos_propios",
+      "nombre": "Ingresos propios vs. pauta intermediada",
+      "descripcion": "Qué parte de lo facturado es ingreso de la agencia y qué parte es pauta de terceros."
+    },
+    {
+      "clave": "margen_por_cliente",
+      "nombre": "Margen por cliente",
+      "descripcion": "Ingresos propios menos costos directos (producción, freelancers) por cuenta."
+    },
+    {
+      "clave": "concentracion_clientes",
+      "nombre": "Concentración de clientes",
+      "descripcion": "Porcentaje de la facturación que depende de los tres clientes principales."
+    },
+    {
+      "clave": "dias_cobro",
+      "nombre": "Días promedio de cobro",
+      "descripcion": "Tiempo entre la factura y el cobro, clave cuando la agencia adelanta pauta."
+    }
+  ],
+  "riesgos": [
+    {
+      "clave": "base_imponible_pauta",
+      "titulo": "Pagar impuestos sobre la pauta",
+      "descripcion": "Si la pauta se factura en nombre propio sin documentar la intermediación, se tributa IVA e IIBB sobre el total y no sobre la comisión.",
+      "validar": "Revisar requisitos de la base imponible especial en la jurisdicción y de la facturación por cuenta y orden."
+    },
+    {
+      "clave": "relacion_dependencia_encubierta",
+      "titulo": "Freelancers con relación de dependencia encubierta",
+      "descripcion": "Colaboradores monotributistas con horario, exclusividad y un solo cliente pueden reclamar indemnización y generar deuda de cargas sociales.",
+      "validar": "Analizar cada caso con criterio laboral."
+    },
+    {
+      "clave": "derechos_imagen",
+      "titulo": "Uso de imagen o música sin contrato",
+      "descripcion": "Piezas con imagen de personas o música sin cesión de derechos firmada generan reclamos y gastos no previstos."
+    },
+    {
+      "clave": "adelanto_pauta",
+      "titulo": "Financiar la pauta del cliente",
+      "descripcion": "Pagar medios antes de cobrar al anunciante tensiona la caja y expone a incobrables."
+    },
+    {
+      "clave": "plataformas_exterior",
+      "titulo": "Gastos en plataformas del exterior sin respaldo",
+      "descripcion": "Consumos en Meta, Google u otras plataformas sin factura o con percepciones no computadas.",
+      "validar": "Revisar régimen de servicios digitales del exterior y cómputo de percepciones vigentes."
+    }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "La base imponible especial para agencias de publicidad depende del Código Fiscal de cada jurisdicción (CABA, Provincia de Buenos Aires y otras): verificar cada año.",
+    "El encuadre convencional depende de la actividad principal real de la agencia (publicidad tradicional, digital o comunicación).",
+    "Si la agencia presta servicios a clientes del exterior, revisar también la plantilla de software y exportación de servicios (factura E, divisas, IVA exportación)."
+  ]
+}

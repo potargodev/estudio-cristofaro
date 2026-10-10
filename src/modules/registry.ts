@@ -116,7 +116,7 @@ export const FARO_MODULES: FaroModule[] = [
     roles: ["dueno", "contador", "titular"],
     nav: [],
     events: ["plantilla.aplicada"],
-    tools: [],
+    tools: ["listar_rubros", "obligaciones_tipicas_rubro", "vista_previa_plantilla_rubro", "aplicar_plantilla_rubro"],
   },
   {
     key: "ai",

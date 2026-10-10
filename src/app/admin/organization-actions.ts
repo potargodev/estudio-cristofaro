@@ -1,5 +1,7 @@
 "use server";
 
+import { isIndustryKey } from "@/modules/industries/catalog";
+
 import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -114,6 +116,9 @@ export async function createOrganization(fd: FormData) {
     metadata: { nombre: name, plan: plan?.name ?? null },
   });
   revalidateOrg(created.organizationId);
+  // Con rubro elegido: vista previa de la plantilla antes de confirmar
+  const rubro = s(fd, "industry");
+  if (rubro && isIndustryKey(rubro)) redirect(`/admin/organizaciones/${created.organizationId}/rubro/${rubro}?nueva=1`);
   redirect(ficha(created.organizationId, "general", "nueva=1"));
 }
 

@@ -31,6 +31,9 @@ export default async function FaroManagerLayout({ children }: { children: React.
             <Link href="/faro-manager/planes" className="px-3 py-2 text-paper/80 hover:text-paper">
               Planes y módulos
             </Link>
+            <Link href="/faro-manager/plantillas" className="px-3 py-2 text-paper/80 hover:text-paper">
+              Plantillas
+            </Link>
           </nav>
           <span className="flex-1" />
           <span className="hidden text-[13px] text-paper/60 md:inline">

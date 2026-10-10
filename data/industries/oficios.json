@@ -1,0 +1,148 @@
+{
+  "clave": "oficios",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Autónomos de oficios",
+  "descripcion": "Plomeros, electricistas, gasistas, pintores, albañiles, mecánicos, peluqueros y otros trabajadores de oficio que trabajan por su cuenta. La mayoría es monotributista, cobra en efectivo, transferencias o billeteras virtuales, compra materiales para cada trabajo y en algunos oficios necesita matrícula habilitante.",
+  "icono": "Wrench",
+  "actividades": [
+    { "codigo": "432200", "descripcion": "Instalaciones de gas, agua, sanitarios y de climatización, con sus artefactos conexos", "nota": "Plomeros, gasistas y técnicos de aire acondicionado.", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA." },
+    { "codigo": "432190", "descripcion": "Instalaciones eléctricas, electromecánicas y electrónicas n.c.p.", "nota": "Electricistas domiciliarios e industriales.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "433040", "descripcion": "Pintura y trabajos de decoración", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "452800", "descripcion": "Mantenimiento y reparación del motor n.c.p.; mecánica integral", "nota": "Talleres mecánicos. Hay códigos específicos para electricidad del automotor, chapa y pintura, gomería, etc.", "validar": "Confirmar código vigente en CLAE y elegir el más específico según el tipo de taller." },
+    { "codigo": "960201", "descripcion": "Servicios de peluquería", "validar": "Confirmar código vigente en CLAE; si también hace tratamientos de belleza, revisar el código correspondiente." },
+    { "codigo": "439990", "descripcion": "Actividades especializadas de construcción n.c.p.", "nota": "Albañiles y otros oficios de obra que no encuadran en los códigos anteriores.", "validar": "Confirmar código vigente en CLAE." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Si es monotributista (lo más habitual), el IVA está incluido en la cuota y emite factura C. Si es responsable inscripto, los servicios de reparación e instalación están gravados a la alícuota general, con alícuota reducida en algunos trabajos sobre vivienda.",
+      "alicuotas": ["21% (servicios de reparación, instalación y peluquería)", "10,5% (algunas obras sobre inmuebles destinados a vivienda)"],
+      "nota": "Cuando el trabajo incluye materiales, conviene definir si se factura todo como servicio (locación de obra) o se discriminan los materiales.",
+      "validar": "Alícuota reducida del art. 28 de la Ley de IVA para obras sobre vivienda y tratamiento de los materiales incorporados al trabajo."
+    },
+    "iibb": {
+      "regimen": "local",
+      "nota": "En general trabaja en una sola jurisdicción. Varias provincias tienen un régimen simplificado de IIBB unificado con el Monotributo (se paga junto con la cuota). Si trabaja habitualmente en dos jurisdicciones (por ejemplo CABA y conurbano), puede corresponder Convenio Multilateral.",
+      "validar": "Adhesión de la jurisdicción al régimen simplificado unificado, categoría y alícuota; analizar Convenio Multilateral si presta servicios en más de una jurisdicción."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Retenciones de IIBB en cuentas bancarias y billeteras virtuales (SIRCREB / regímenes provinciales)", "nota": "Los cobros por transferencia y QR pueden sufrir retenciones aunque la persona esté en el régimen simplificado.", "validar": "Padrón de alícuotas, si el régimen simplificado lo excluye y cómo pedir la exclusión o devolución." },
+      { "nombre": "Regímenes de información de bancos y billeteras virtuales", "nota": "ARCA y las provincias reciben información de los cobros: lo cobrado tiene que coincidir con lo facturado.", "validar": "Regímenes de información vigentes y umbrales." },
+      { "nombre": "Retención de Ganancias e IVA de clientes empresas", "nota": "Solo si es responsable inscripto y trabaja para empresas agentes de retención.", "validar": "Alícuotas y montos no sujetos de la RG 830 y regímenes de IVA aplicables." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Monotributo (categorías de servicios)", "nota": "Es el régimen típico. Controlar topes de facturación, alquiler del local o taller, energía consumida y superficie, y recategorizar en enero y julio.", "validar": "Topes y parámetros vigentes; si alguna actividad (por ejemplo, venta de repuestos o productos) debe encuadrarse como venta de bienes." },
+      { "nombre": "Monotributo social o regímenes de inclusión", "nota": "Puede aplicar a trabajadores con ingresos muy bajos que cumplan los requisitos.", "validar": "Vigencia del régimen y requisitos de inscripción." },
+      { "nombre": "Matrículas y habilitaciones del oficio", "nota": "Los gasistas necesitan matrícula ante la distribuidora o el ente regulador para firmar instalaciones; los electricistas, según la jurisdicción, matrícula o registro para certificar instalaciones; talleres y peluquerías, habilitación municipal.", "validar": "Requisitos vigentes de matriculación (ENARGAS y distribuidoras para gas; registros provinciales o municipales para electricidad) y de habilitación municipal según el domicilio." }
+    ],
+    "nota": "El perfil depende del oficio, de si tiene local o taller propio, de si compra y revende materiales o repuestos y de la provincia donde trabaja."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Industria de la construcción (ayudantes y oficiales de obra)", "numero": "CCT 76/75", "nota": "Aplica si contrata ayudantes en trabajos de construcción, plomería o electricidad de obra. Usa el fondo de cese laboral en lugar de la indemnización común.", "validar": "Encuadre según la actividad real, inscripción en el IERIC, aportes al fondo de cese laboral (Ley 22.250) y escalas vigentes." },
+      { "nombre": "Empleados de comercio", "numero": "CCT 130/75", "nota": "Puede aplicar al personal de atención de talleres o locales.", "validar": "Revisar el encuadre: talleres mecánicos y peluquerías pueden tener convenios propios." },
+      { "nombre": "Convenio propio de la actividad (peluquerías, talleres mecánicos)", "nota": "Algunos oficios con local tienen convenios colectivos específicos.", "validar": "Identificar el convenio vigente que corresponde según la actividad y la zona antes de liquidar sueldos." }
+    ],
+    "categorias": ["Ayudante", "Medio oficial", "Oficial", "Oficial especializado", "Recepcionista o cajero"],
+    "conceptos": ["Jornal o sueldo básico", "Presentismo o asistencia", "Horas extras", "Fondo de cese laboral (construcción)", "Herramientas y ropa de trabajo", "SAC", "Vacaciones"],
+    "nota": "La mayoría trabaja solo. Si suma ayudantes, tienen que estar registrados: la informalidad es la principal contingencia del rubro."
+  },
+  "obligaciones": [
+    { "clave": "monotributo", "impuesto": "Monotributo (incluye régimen simplificado de IIBB si la jurisdicción está adherida)", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA y adhesión de la jurisdicción al pago unificado." },
+    { "clave": "recategorizacion", "impuesto": "Recategorización de Monotributo", "frecuencia": "semestral", "vencimiento": "Enero y julio (hasta el día 20 o según calendario).", "aplica_a": "Monotributistas", "validar": "Calendario y parámetros vigentes." },
+    { "clave": "iibb_mensual", "impuesto": "Ingresos Brutos (anticipo)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT y jurisdicción.", "aplica_a": "Contribuyentes de IIBB no incluidos en el régimen simplificado", "validar": "Depende de la jurisdicción." },
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Calendario de vencimientos de ARCA del año." },
+    { "clave": "autonomos", "impuesto": "Aportes de autónomos", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, primera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Categoría de autónomos y calendario vigente." },
+    { "clave": "f931", "impuesto": "Cargas sociales (F. 931)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, en la primera quincena del mes siguiente.", "aplica_a": "Si tiene empleados o ayudantes", "validar": "Calendario vigente y aportes especiales del convenio que corresponda." },
+    { "clave": "matricula_renovacion", "impuesto": "Renovación de matrícula habilitante (gasista, electricista u otra)", "frecuencia": "eventual", "vencimiento": "Según el organismo que otorga la matrícula.", "aplica_a": "Oficios matriculados", "validar": "Organismo, periodicidad y costo según el oficio y la jurisdicción." },
+    { "clave": "tasa_municipal", "impuesto": "Tasa municipal de seguridad e higiene (o equivalente)", "frecuencia": "mensual", "vencimiento": "Según el calendario del municipio.", "aplica_a": "Si tiene local, taller o peluquería habilitada", "validar": "Depende del municipio: periodicidad, base y alícuota." },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias y Bienes Personales (DDJJ anual)", "frecuencia": "anual", "vencimiento": "Junio, según terminación de CUIT.", "aplica_a": "Responsables inscriptos, o monotributistas con bienes sobre el mínimo (solo Bienes Personales)", "validar": "Fechas de la resolución general del año y mínimo no imponible vigente." }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA (Monotributo o responsable inscripto)", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de Ingresos Brutos o del régimen simplificado provincial", "obligatorio": true },
+    { "clave": "matricula_oficio", "item": "Matrícula habilitante vigente (gasista, electricista u otra que exija el oficio)", "obligatorio": false },
+    { "clave": "habilitacion_municipal", "item": "Habilitación municipal del local, taller o peluquería", "obligatorio": false },
+    { "clave": "cuentas_cobro", "item": "Cuentas bancarias y billeteras virtuales donde recibe cobros (CBU, CVU, alias)", "obligatorio": true },
+    { "clave": "punto_venta", "item": "Punto de venta para factura electrónica habilitado (app o web de ARCA)", "obligatorio": true },
+    { "clave": "facturas_ultimos_12", "item": "Facturas emitidas de los últimos 12 meses", "obligatorio": true },
+    { "clave": "parametros_monotributo", "item": "Datos para la categoría: alquiler del local, superficie y consumo de energía", "obligatorio": false },
+    { "clave": "seguro_responsabilidad", "item": "Seguro de responsabilidad civil o de accidentes personales", "obligatorio": false },
+    { "clave": "herramientas_vehiculo", "item": "Listado de herramientas y vehículo de trabajo con valor aproximado", "obligatorio": false }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.01", "nombre": "Caja (efectivo)", "tipo": "activo" },
+    { "codigo": "1.1.02", "nombre": "Banco cuenta de cobros", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Billeteras virtuales", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "Trabajos a cobrar", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "Retenciones bancarias de IIBB", "tipo": "activo" },
+    { "codigo": "1.1.06", "nombre": "Materiales y repuestos en stock", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Herramientas y equipos", "tipo": "activo" },
+    { "codigo": "1.2.02", "nombre": "Vehículo de trabajo", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores de materiales", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "Señas de clientes", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "Monotributo e impuestos a pagar", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Mano de obra", "tipo": "ingreso" },
+    { "codigo": "4.1.02", "nombre": "Materiales facturados al cliente", "tipo": "ingreso" },
+    { "codigo": "4.1.03", "nombre": "Servicios de local (peluquería, taller)", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Materiales y repuestos", "tipo": "egreso" },
+    { "codigo": "5.1.02", "nombre": "Herramientas menores y ropa de trabajo", "tipo": "egreso" },
+    { "codigo": "5.1.03", "nombre": "Combustible y movilidad", "tipo": "egreso" },
+    { "codigo": "5.1.04", "nombre": "Alquiler de local o taller", "tipo": "egreso" },
+    { "codigo": "5.1.05", "nombre": "Matrícula, habilitaciones y seguros", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "mano_obra", "nombre": "Mano de obra" },
+      { "clave": "materiales_facturados", "nombre": "Materiales facturados" },
+      { "clave": "servicios_local", "nombre": "Servicios en local o taller" },
+      { "clave": "urgencias", "nombre": "Urgencias y visitas" },
+      { "clave": "otros_ingresos", "nombre": "Otros ingresos" }
+    ],
+    "gastos": [
+      { "clave": "materiales", "nombre": "Materiales y repuestos" },
+      { "clave": "herramientas", "nombre": "Herramientas" },
+      { "clave": "movilidad", "nombre": "Combustible y movilidad" },
+      { "clave": "alquiler_local", "nombre": "Alquiler de local o taller" },
+      { "clave": "ayudantes", "nombre": "Ayudantes" },
+      { "clave": "matricula_seguros", "nombre": "Matrícula, habilitación y seguros" },
+      { "clave": "telefono", "nombre": "Teléfono e internet" },
+      { "clave": "comisiones_cobro", "nombre": "Comisiones de billeteras y posnet" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "conciliar_cobros", "titulo": "Comparar los cobros del mes (efectivo, transferencias y billeteras) con lo facturado", "frecuencia": "mensual", "nota": "Lo que entra a cuentas y billeteras lo informan los bancos: si no está facturado, aparece la diferencia." },
+    { "clave": "control_tope", "titulo": "Controlar la facturación acumulada de 12 meses contra el tope de la categoría", "frecuencia": "mensual" },
+    { "clave": "revisar_retenciones", "titulo": "Revisar retenciones bancarias de IIBB y pedir exclusión o devolución si corresponde", "frecuencia": "trimestral" },
+    { "clave": "recategorizacion", "titulo": "Revisar recategorización del Monotributo", "frecuencia": "semestral" },
+    { "clave": "vencimiento_matricula", "titulo": "Controlar vencimiento de matrícula, habilitación y seguros", "frecuencia": "anual" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "recordatorio_facturacion", "nombre": "Recordar facturar cada trabajo", "descripcion": "Aviso semanal al cliente para que emita las facturas de los trabajos cobrados, con acceso directo a la app de facturación." },
+    { "plantilla": "alerta_tope_monotributo", "nombre": "Alerta de tope de Monotributo", "descripcion": "Avisa cuando la facturación de 12 meses supera el 80% del tope de la categoría." },
+    { "plantilla": "cobros_sin_facturar", "nombre": "Cobros sin factura", "descripcion": "Cuando el cliente sube el resumen bancario o de la billetera, se marcan los cobros que no tienen factura asociada." }
+  ],
+  "indicadores": [
+    { "clave": "facturacion_mensual", "nombre": "Facturación mensual", "descripcion": "Lo facturado por mes y su evolución." },
+    { "clave": "cobros_vs_facturado", "nombre": "Cobros contra facturado", "descripcion": "Diferencia entre lo que entró a cuentas y billeteras y lo que se facturó." },
+    { "clave": "margen_tope", "nombre": "Margen hasta el tope de categoría", "descripcion": "Cuánto puede facturar sin pasarse de categoría." },
+    { "clave": "materiales_sobre_ingresos", "nombre": "Materiales sobre ingresos", "descripcion": "Qué parte de lo cobrado se va en materiales y repuestos." }
+  ],
+  "riesgos": [
+    { "clave": "cobros_no_facturados", "titulo": "Cobros sin facturar", "descripcion": "Transferencias y cobros por QR que no se facturan quedan a la vista de ARCA y de la provincia por los regímenes de información.", "validar": "Regímenes de información vigentes de bancos y billeteras virtuales." },
+    { "clave": "exclusion_monotributo", "titulo": "Exclusión del Monotributo", "descripcion": "Superar el tope de facturación, o tener gastos y depósitos bancarios incompatibles con la categoría.", "validar": "Topes y causales de exclusión vigentes de la ley de Monotributo." },
+    { "clave": "trabajo_sin_matricula", "titulo": "Trabajos sin matrícula habilitante", "descripcion": "Hacer instalaciones de gas o electricidad sin matrícula vigente puede generar multas y responsabilidad ante accidentes.", "validar": "Requisitos de matriculación según el oficio y la jurisdicción." },
+    { "clave": "ayudantes_informales", "titulo": "Ayudantes sin registrar", "descripcion": "Contratar ayudantes en negro expone a reclamos laborales, multas y deuda de cargas sociales.", "validar": "Convenio aplicable y obligaciones de registro (incluido IERIC en construcción)." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "La matrícula y la habilitación dependen del oficio, la provincia y el municipio: no hay una regla única para todo el país.",
+    "El régimen simplificado de IIBB y su pago unificado con el Monotributo dependen de que la jurisdicción esté adherida.",
+    "Para clientes que cobran mucho en efectivo, conviene acordar una rutina simple (facturar en el momento desde el celular) antes que reconstruir el mes al final."
+  ]
+}

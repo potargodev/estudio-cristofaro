@@ -1,0 +1,154 @@
+{
+  "clave": "salud",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Salud y profesionales médicos",
+  "descripcion": "Médicos, odontólogos, kinesiólogos, psicólogos, nutricionistas, bioquímicos y otros profesionales de la salud que atienden en consultorio propio o en instituciones, y cobran a obras sociales, prepagas, círculos médicos y pacientes particulares.",
+  "icono": "Stethoscope",
+  "actividades": [
+    { "codigo": "862110", "descripcion": "Servicios de consultas médicas", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA." },
+    { "codigo": "862200", "descripcion": "Servicios odontológicos", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "863110", "descripcion": "Servicios de prácticas de diagnóstico en laboratorios", "nota": "Bioquímicos y laboratorios de análisis clínicos.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "863120", "descripcion": "Servicios de prácticas de diagnóstico por imágenes", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "869010", "descripcion": "Servicios de rehabilitación física", "nota": "Kinesiólogos y fisioterapeutas.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "869090", "descripcion": "Servicios relacionados con la salud humana n.c.p.", "nota": "Psicólogos, nutricionistas, fonoaudiólogos y otras profesiones de la salud no incluidas en los códigos anteriores.", "validar": "Confirmar código vigente en CLAE y si la profesión tiene un código más específico." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "Depende de quién paga la prestación. Las prestaciones médicas a obras sociales (o cobradas a través de ellas) suelen estar exentas; las cubiertas por prepagas pueden estar gravadas a la alícuota reducida o exentas según el caso; las cobradas a particulares sin cobertura requieren análisis. Si es monotributista, el IVA está incluido en la cuota.",
+      "alicuotas": ["Exento (prestaciones a obras sociales)", "10,5% (prestaciones vía prepagas, según el caso)", "21% (prestaciones no exentas, por ejemplo estética no terapéutica)"],
+      "nota": "Un mismo profesional suele tener operaciones exentas y gravadas a la vez: hay que prorratear el crédito fiscal de compras de uso común.",
+      "validar": "Revisar el art. 7, inc. h), punto 7 de la Ley de IVA y el art. 28 (alícuota reducida para prepagas), el alcance para pacientes particulares, coseguros y prácticas estéticas, y el prorrateo del crédito fiscal (art. 13)."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Local si atiende en una sola jurisdicción; Convenio Multilateral si atiende o cobra en varias. Varias jurisdicciones prevén exenciones o tratamientos especiales para profesiones liberales universitarias o para los ingresos que provienen de obras sociales.",
+      "validar": "Alícuota, exenciones (profesión con título universitario, ingresos de obras sociales) y requisitos de reconocimiento de la exención en el Código Fiscal y la Ley Tarifaria de cada jurisdicción (CABA, Provincia de Buenos Aires, etc.)."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Retención de Ganancias sobre honorarios (RG 830)", "nota": "La practican obras sociales, prepagas, clínicas y círculos médicos que son agentes de retención, salvo a monotributistas.", "validar": "Concepto aplicable (honorarios de profesiones liberales), montos no sujetos y alícuotas vigentes de la RG 830." },
+      { "nombre": "Retenciones de IIBB practicadas por obras sociales, prepagas y clínicas", "validar": "Depende de la jurisdicción, del padrón de alícuotas y de si el profesional tiene exención reconocida." },
+      { "nombre": "Retenciones y gastos administrativos del círculo o colegio médico", "nota": "El círculo liquida los honorarios cobrados a las obras sociales y descuenta gastos de administración, cuotas y retenciones impositivas. Hay que conciliar cada liquidación.", "validar": "Revisar qué retenciones impositivas practica el círculo como agente y cómo se documentan (certificados)." },
+      { "nombre": "SIRCREB (retenciones bancarias de IIBB)", "nota": "Para inscriptos en Convenio Multilateral o en jurisdicciones adheridas.", "validar": "Alícuota según padrón y posibilidad de exclusión si tiene exención." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Monotributo (categorías de servicios)", "nota": "Habitual en profesionales que recién empiezan. Controlar topes de facturación y recategorización semestral; el cobro diferido de obras sociales puede distorsionar el cálculo.", "validar": "Topes y parámetros vigentes; si se computa lo facturado o lo cobrado." },
+      { "nombre": "Caja de previsión médica o profesional", "nota": "En algunas provincias la matrícula obliga a aportar a una caja propia (por ejemplo, la Caja de Previsión y Seguro Médico de la Provincia de Buenos Aires); en otras jurisdicciones se aporta como autónomo.", "validar": "Caja que corresponde según profesión y provincia de matriculación, y si reemplaza o se suma a los aportes de autónomos." },
+      { "nombre": "Facturación a obras sociales y prepagas", "nota": "Puede ser directa (el profesional factura a cada financiador) o a través del círculo médico, que factura y liquida. Los financiadores suelen exigir factura electrónica con datos específicos (período, prestaciones, afiliado).", "validar": "Modalidad de cada convenio y requisitos de facturación de cada financiador." }
+    ],
+    "nota": "El perfil depende de la condición (monotributista o responsable inscripto), de la mezcla de pacientes (obras sociales, prepagas, particulares) y de la provincia de matriculación."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Sanidad: establecimientos sin internación (consultorios, centros médicos)", "numero": "CCT 108/75", "nota": "Lo habitual para personal de consultorios, centros de diagnóstico y laboratorios.", "validar": "Confirmar encuadre convencional (FATSA) según el tipo de establecimiento y escalas vigentes." },
+      { "nombre": "Empleados de comercio (personal administrativo)", "numero": "CCT 130/75", "nota": "Algunos consultorios encuadran así a la secretaria o recepcionista.", "validar": "Revisar el encuadre correcto: puede corresponder sanidad y no comercio." }
+    ],
+    "categorias": ["Recepcionista o secretaria", "Administrativo", "Auxiliar de enfermería", "Técnico (rayos, laboratorio)", "Maestranza"],
+    "conceptos": ["Sueldo básico", "Antigüedad", "Presentismo", "Título", "Horas extras", "Nocturnidad", "SAC", "Vacaciones"],
+    "nota": "Muchos profesionales no tienen empleados. Si comparten consultorio, revisar quién es el empleador de la secretaria y cómo se reparte el costo."
+  },
+  "obligaciones": [
+    { "clave": "monotributo", "impuesto": "Monotributo", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA." },
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "nota": "Aunque todas las operaciones sean exentas, si está inscripto en IVA presenta la DDJJ.", "validar": "Calendario de vencimientos de ARCA del año y prorrateo del crédito fiscal." },
+    { "clave": "iibb_mensual", "impuesto": "Ingresos Brutos (anticipo)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT y jurisdicción (o calendario de Convenio Multilateral).", "nota": "Aunque tenga exención, en muchas jurisdicciones debe presentar la DDJJ informativa.", "validar": "Depende de la jurisdicción y de si la exención está reconocida." },
+    { "clave": "autonomos", "impuesto": "Aportes de autónomos", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, primera semana del mes siguiente.", "aplica_a": "Responsables inscriptos no excluidos por una caja provincial", "validar": "Categoría de autónomos, calendario vigente y si la caja médica lo reemplaza." },
+    { "clave": "caja_medica", "impuesto": "Aporte a la Caja de previsión médica o profesional", "frecuencia": "mensual", "vencimiento": "Según el calendario de la caja.", "validar": "Depende de la profesión y la provincia de matriculación." },
+    { "clave": "matricula_colegio", "impuesto": "Cuota de matrícula del colegio o consejo profesional", "frecuencia": "anual", "vencimiento": "Según el colegio (algunos cobran en cuotas).", "validar": "Depende de la profesión y la jurisdicción." },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias personas humanas (DDJJ anual)", "frecuencia": "anual", "vencimiento": "Junio, según terminación de CUIT.", "aplica_a": "Responsables inscriptos", "validar": "Fechas de la resolución general del año." },
+    { "clave": "ganancias_anticipos", "impuesto": "Anticipos de Ganancias", "frecuencia": "bimestral", "vencimiento": "Según terminación de CUIT, a partir de agosto.", "aplica_a": "Responsables inscriptos con impuesto determinado", "validar": "Cantidad de anticipos y porcentajes vigentes para personas humanas." },
+    { "clave": "bienes_personales", "impuesto": "Bienes Personales (DDJJ anual)", "frecuencia": "anual", "vencimiento": "Junio, junto con Ganancias.", "aplica_a": "Si supera el mínimo no imponible", "validar": "Mínimo no imponible vigente." },
+    { "clave": "recategorizacion", "impuesto": "Recategorización de Monotributo", "frecuencia": "semestral", "vencimiento": "Enero y julio (hasta el día 20 o según calendario).", "aplica_a": "Monotributistas" }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de inscripción en Ingresos Brutos (o CM01) y, si tiene, resolución de exención", "obligatorio": true },
+    { "clave": "matricula", "item": "Matrícula profesional vigente (nacional o provincial)", "obligatorio": true },
+    { "clave": "caja_medica", "item": "Constancia de afiliación y estado de deuda con la caja de previsión médica o profesional", "obligatorio": false },
+    { "clave": "convenios_financiadores", "item": "Listado de obras sociales y prepagas con las que trabaja y copia de los convenios o aranceles", "obligatorio": true },
+    { "clave": "circulo_medico", "item": "Constancia de adhesión al círculo o colegio médico y últimas liquidaciones", "obligatorio": false },
+    { "clave": "seguro_mala_praxis", "item": "Póliza vigente del seguro de responsabilidad profesional (mala praxis)", "obligatorio": false },
+    { "clave": "habilitacion_consultorio", "item": "Habilitación del consultorio (ministerio de salud o municipio, según jurisdicción)", "obligatorio": false },
+    { "clave": "cbu", "item": "Datos de la cuenta bancaria (CBU) donde cobra a financiadores y pacientes", "obligatorio": false },
+    { "clave": "facturas_ultimos_12", "item": "Facturas emitidas de los últimos 12 meses, separadas por financiador", "obligatorio": true },
+    { "clave": "ddjj_anteriores", "item": "Declaraciones juradas presentadas el año anterior", "obligatorio": false }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.01", "nombre": "Caja", "tipo": "activo" },
+    { "codigo": "1.1.02", "nombre": "Banco cuenta corriente", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Honorarios a cobrar a obras sociales", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "Honorarios a cobrar a prepagas", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "Liquidaciones a cobrar del círculo médico", "tipo": "activo" },
+    { "codigo": "1.1.06", "nombre": "Retenciones sufridas de Ganancias", "tipo": "activo" },
+    { "codigo": "1.1.07", "nombre": "Retenciones y percepciones de IIBB", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Equipamiento médico", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores de insumos médicos", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "IVA a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "IIBB a pagar", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Honorarios por prestaciones a obras sociales", "tipo": "ingreso" },
+    { "codigo": "4.1.02", "nombre": "Honorarios por prestaciones a prepagas", "tipo": "ingreso" },
+    { "codigo": "4.1.03", "nombre": "Consultas de pacientes particulares", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Alquiler de consultorio", "tipo": "egreso" },
+    { "codigo": "5.1.02", "nombre": "Gastos administrativos del círculo médico", "tipo": "egreso" },
+    { "codigo": "5.1.03", "nombre": "Seguro de mala praxis", "tipo": "egreso" },
+    { "codigo": "5.1.04", "nombre": "Insumos y descartables médicos", "tipo": "egreso" },
+    { "codigo": "5.1.05", "nombre": "Aportes a la caja médica y matrícula", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "obras_sociales", "nombre": "Prestaciones a obras sociales" },
+      { "clave": "prepagas", "nombre": "Prestaciones a prepagas" },
+      { "clave": "particulares", "nombre": "Pacientes particulares" },
+      { "clave": "relacion_institucion", "nombre": "Honorarios de clínicas y sanatorios" },
+      { "clave": "otros_ingresos", "nombre": "Otros ingresos (docencia, peritajes)" }
+    ],
+    "gastos": [
+      { "clave": "alquiler_consultorio", "nombre": "Alquiler de consultorio" },
+      { "clave": "insumos_medicos", "nombre": "Insumos y descartables" },
+      { "clave": "seguro_mala_praxis", "nombre": "Seguro de mala praxis" },
+      { "clave": "caja_matricula", "nombre": "Caja médica, colegio y matrícula" },
+      { "clave": "circulo_medico", "nombre": "Gastos del círculo médico" },
+      { "clave": "equipamiento", "nombre": "Equipamiento y mantenimiento" },
+      { "clave": "secretaria", "nombre": "Secretaria y personal" },
+      { "clave": "capacitacion", "nombre": "Congresos y capacitación" },
+      { "clave": "software_turnos", "nombre": "Software de turnos e historia clínica" },
+      { "clave": "servicios", "nombre": "Servicios (luz, internet, teléfono)" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "facturar_financiadores", "titulo": "Emitir la facturación mensual a obras sociales y prepagas", "frecuencia": "mensual", "nota": "Respetar las fechas de corte de cada financiador para no perder el período." },
+    { "clave": "conciliar_liquidaciones", "titulo": "Conciliar liquidaciones del círculo médico y de financiadores contra lo facturado (débitos, gastos y retenciones)", "frecuencia": "mensual" },
+    { "clave": "conciliar_retenciones", "titulo": "Conciliar retenciones sufridas (Ganancias e IIBB) con sus certificados", "frecuencia": "mensual" },
+    { "clave": "prorrateo_iva", "titulo": "Revisar el prorrateo del crédito fiscal entre operaciones exentas y gravadas", "frecuencia": "mensual", "nota": "Solo responsables inscriptos." },
+    { "clave": "recategorizacion", "titulo": "Revisar recategorización del Monotributo", "frecuencia": "semestral" },
+    { "clave": "ddjj_anual", "titulo": "Preparar DDJJ de Ganancias y Bienes Personales", "frecuencia": "anual" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "recordatorio_facturacion_financiadores", "nombre": "Recordar el cierre de facturación a obras sociales", "descripcion": "Aviso al cliente unos días antes de la fecha de corte de cada financiador para que cargue las prestaciones del mes." },
+    { "plantilla": "control_liquidacion_circulo", "nombre": "Control de liquidación del círculo médico", "descripcion": "Cuando el cliente sube la liquidación, se compara con lo facturado y se marcan débitos o diferencias para revisar." },
+    { "plantilla": "vencimiento_seguro_matricula", "nombre": "Vencimiento del seguro y la matrícula", "descripcion": "Avisa 30 días antes del vencimiento de la póliza de mala praxis o de la renovación de la matrícula." }
+  ],
+  "indicadores": [
+    { "clave": "facturacion_por_financiador", "nombre": "Facturación por financiador", "descripcion": "Cuánto se factura a cada obra social, prepaga y a particulares, y su peso en el total." },
+    { "clave": "dias_cobro_financiadores", "nombre": "Días promedio de cobro por financiador", "descripcion": "Tiempo entre la factura y el cobro efectivo de cada obra social o prepaga." },
+    { "clave": "debitos_rechazos", "nombre": "Débitos y rechazos", "descripcion": "Porcentaje de lo facturado que el financiador no reconoce o debita." },
+    { "clave": "margen_tope", "nombre": "Margen hasta el tope de categoría", "descripcion": "Cuánto puede facturar sin pasarse de categoría (Monotributo)." }
+  ],
+  "riesgos": [
+    { "clave": "iva_mal_encuadrado", "titulo": "Encuadre incorrecto del IVA", "descripcion": "Tratar como exentas prestaciones gravadas (o al revés), o computar todo el crédito fiscal sin prorratear.", "validar": "Alcance de la exención del art. 7, inc. h), punto 7 y alícuota reducida del art. 28 de la Ley de IVA." },
+    { "clave": "exclusion_monotributo", "titulo": "Exclusión del Monotributo", "descripcion": "Superar el tope de facturación de la categoría máxima, sobre todo cuando se cobran juntas varias liquidaciones atrasadas.", "validar": "Topes vigentes y criterio de imputación de ingresos." },
+    { "clave": "deuda_caja_medica", "titulo": "Deuda con la caja médica", "descripcion": "Aportes impagos a la caja provincial que pueden generar intereses e impedir trámites o beneficios.", "validar": "Régimen de la caja de la provincia de matriculación." },
+    { "clave": "retenciones_no_computadas", "titulo": "Retenciones sin computar", "descripcion": "Retenciones practicadas por círculos, obras sociales y prepagas que no se reclaman o no tienen certificado." },
+    { "clave": "exencion_iibb_vencida", "titulo": "Exención de IIBB sin reconocer o vencida", "descripcion": "Perder la exención por no tramitarla o renovarla, y sufrir retenciones o deuda.", "validar": "Requisitos y vigencia de la exención en cada jurisdicción." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "La exención de IVA en salud depende de quién paga la prestación y del tipo de práctica; conviene revisar cada financiador y las prestaciones a particulares.",
+    "La caja previsional, la matrícula y la exención de IIBB dependen de la profesión y de la provincia (no es lo mismo CABA que Provincia de Buenos Aires u otras).",
+    "Si cobra a través de un círculo médico, la liquidación del círculo es el documento clave para conciliar ingresos, gastos y retenciones."
+  ]
+}

@@ -73,6 +73,14 @@ function decide(body) {
     return want("crear_gasto", { descripcion, monto, dividir_entre });
   }
   if (/saldo|cu[aá]nto (?:le )?debo|me deben/.test(q)) return want("consultar_saldos", {});
+  // Rubros: "aplicá la plantilla de gastronomía a esta organización" / "¿qué obligaciones típicas tiene la construcción?"
+  const plantilla = q.match(/plantilla de ([a-záéíóúñ\s-]+?)(?: a | en |$)/);
+  if (plantilla && /apl[ií]c/.test(q)) {
+    const org = uuid ?? contextId(system, "organizacion");
+    return org ? want("aplicar_plantilla_rubro", { organizacion_id: org, rubro: plantilla[1].trim() }) : { text: "¿A qué organización?" };
+  }
+  const tipicas = q.match(/obligaciones t[ií]picas (?:tiene |de )?(?:el |la |los |las )?(?:rubro )?([a-záéíóúñ\s-]+)/);
+  if (tipicas) return want("obligaciones_tipicas_rubro", { rubro: tipicas[1].replace(/[?¿]/g, "").trim() });
   if (q.includes("respond")) {
     const id = uuid ?? contextId(system, "solicitud");
     return id ? want("responder_solicitud", { solicitud_id: id, mensaje: "Hola, ya revisamos tu consulta: la factura se emite esta semana y te la mandamos por el portal. Cualquier duda, escribinos." }) : { text: "¿Qué solicitud querés responder?" };

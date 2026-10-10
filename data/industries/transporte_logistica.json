@@ -1,0 +1,156 @@
+{
+  "clave": "transporte_logistica",
+  "version": 1,
+  "estado": "borrador",
+  "validado_por": null,
+  "validado_el": null,
+  "actualizado_el": "2026-10-10",
+  "nombre": "Transporte y logística",
+  "descripcion": "Transportistas de cargas (camioneros con unidad propia, fleteros y empresas de transporte), servicios de mudanza, distribución de última milla y depósitos logísticos. Suelen recorrer varias provincias, tener vehículos como principal activo y gastos fuertes en combustible, peajes y seguros.",
+  "icono": "Truck",
+  "actividades": [
+    { "codigo": "492290", "descripcion": "Servicio de transporte automotor de cargas n.c.p.", "validar": "Confirmar código y descripción vigentes en el nomenclador CLAE (F. 883) de ARCA." },
+    { "codigo": "492221", "descripcion": "Servicio de transporte automotor de cereales", "nota": "Si transporta granos, aplica la carta de porte electrónica.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "492280", "descripcion": "Servicio de transporte automotor urbano de carga n.c.p.", "nota": "Fletes y distribución de última milla dentro de una ciudad.", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "492210", "descripcion": "Servicios de mudanza", "validar": "Confirmar código vigente en CLAE." },
+    { "codigo": "521020", "descripcion": "Servicios de almacenamiento y depósito", "nota": "Depósitos y centros de distribución.", "validar": "Confirmar código vigente en CLAE y si corresponde un código más específico (por ejemplo, depósitos fiscales o frigoríficos)." },
+    { "codigo": "523090", "descripcion": "Servicios de gestión y logística para el transporte de mercaderías n.c.p.", "nota": "Operadores logísticos que contratan fleteros de terceros.", "validar": "Confirmar código vigente en CLAE." }
+  ],
+  "perfil_impositivo": {
+    "iva": {
+      "tratamiento": "El transporte de cargas está gravado a la alícuota general si es responsable inscripto; incluido en la cuota si es monotributista. El combustible, los peajes, los repuestos y los vehículos generan crédito fiscal importante, a veces con saldo técnico a favor por la compra de unidades.",
+      "alicuotas": ["21% (transporte de cargas y logística)", "10,5% (compra de algunos bienes de capital, según el caso)"],
+      "nota": "El transporte internacional de cargas tiene un tratamiento distinto (exportación de servicios) y el de pasajeros otro régimen; esta plantilla apunta a cargas nacionales.",
+      "validar": "Alícuota aplicable a cada servicio, tratamiento del transporte internacional, alícuota reducida para bienes de capital (art. 28 Ley de IVA) y posibilidad de recuperar saldos técnicos por compra de bienes de uso."
+    },
+    "iibb": {
+      "regimen": "depende",
+      "nota": "Si los viajes salen de una sola jurisdicción tributa en forma local; si opera en varias, Convenio Multilateral con el régimen especial de transporte, que atribuye los ingresos a la jurisdicción donde se origina cada viaje. Hay que registrar el origen de cada viaje para distribuir la base.",
+      "validar": "Aplicación del art. 9 del Convenio Multilateral (transporte), alícuotas de cada jurisdicción y regímenes de recaudación provinciales."
+    },
+    "retenciones_percepciones": [
+      { "nombre": "Retención de Ganancias sobre fletes (RG 830)", "nota": "La practican los dadores de carga que son agentes de retención.", "validar": "Concepto de transporte de carga, alícuota y monto no sujeto vigentes en la RG 830." },
+      { "nombre": "Retenciones de IVA de dadores de carga o regímenes específicos", "validar": "Revisar si algún cliente o régimen (por ejemplo, granos) practica retención de IVA y su alícuota." },
+      { "nombre": "Retenciones y percepciones de IIBB en varias jurisdicciones", "nota": "Se acumulan saldos a favor por retenciones de provincias donde casi no se generan ingresos.", "validar": "Padrones de cada jurisdicción y SIRCREB; evaluar pedidos de exclusión o reducción." },
+      { "nombre": "Percepciones en la compra de combustible y repuestos", "validar": "Regímenes de percepción vigentes de IVA e IIBB en las compras habituales." }
+    ],
+    "regimenes_especiales": [
+      { "nombre": "Cómputo del impuesto sobre el gasoil como pago a cuenta", "nota": "Existen regímenes que permiten a transportistas de cargas computar parte del impuesto sobre combustibles del gasoil como pago a cuenta de Ganancias.", "validar": "Vigencia, porcentaje, requisitos de inscripción (RUTA) y forma de cómputo del régimen al momento de usarlo." },
+      { "nombre": "Carta de porte electrónica y documentación de traslado", "nota": "Para granos se exige carta de porte electrónica; para otras mercaderías puede exigirse remito y códigos provinciales de traslado (por ejemplo, el COT de ARBA).", "validar": "Resoluciones vigentes de ARCA sobre carta de porte y regímenes provinciales de código de traslado." },
+      { "nombre": "Registro Único del Transporte Automotor (RUTA) y CNRT", "nota": "El transporte interjurisdiccional de cargas requiere inscripción en el RUTA; los choferes, licencia nacional habilitante y controles psicofísicos.", "validar": "Requisitos vigentes de la Secretaría de Transporte y CNRT y si alcanzan al cliente." },
+      { "nombre": "Monotributo", "nota": "Posible para fleteros pequeños; controlar topes, cantidad de unidades y que el valor de los vehículos no lleve a exclusión por gastos o bienes.", "validar": "Topes, parámetros y causales de exclusión vigentes de la ley de Monotributo." }
+    ],
+    "nota": "El perfil cambia mucho entre un fletero monotributista, un camionero responsable inscripto con una unidad y una empresa de transporte con flota y choferes."
+  },
+  "laboral": {
+    "convenios": [
+      { "nombre": "Camioneros: transporte automotor de cargas, logística y servicios", "numero": "CCT 40/89", "nota": "Lo habitual para choferes, acompañantes y personal de depósito en transporte de cargas.", "validar": "Confirmar encuadre por rama (cargas generales, larga distancia, logística, mudanzas, etc.) y escalas vigentes del convenio." },
+      { "nombre": "Empleados de comercio (personal administrativo)", "numero": "CCT 130/75", "nota": "Puede aplicar al personal administrativo según el encuadre de la empresa.", "validar": "Revisar si el administrativo encuadra en camioneros o en comercio." }
+    ],
+    "categorias": ["Chofer de primera (larga distancia)", "Chofer de segunda", "Acompañante", "Peón de carga y descarga", "Personal de depósito", "Administrativo"],
+    "conceptos": ["Sueldo básico", "Viáticos por comida y pernocte", "Adicional por kilómetro recorrido", "Horas extras", "Antigüedad", "Permanencia fuera de residencia", "Adicional por carga peligrosa", "SAC", "Vacaciones"],
+    "nota": "Los viáticos del convenio tienen tratamiento particular en aportes y Ganancias; revisarlos en cada liquidación."
+  },
+  "obligaciones": [
+    { "clave": "iva_ddjj", "impuesto": "IVA (F. 2002)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, alrededor de la tercera semana del mes siguiente.", "aplica_a": "Responsables inscriptos", "validar": "Calendario de vencimientos de ARCA del año." },
+    { "clave": "monotributo", "impuesto": "Monotributo", "frecuencia": "mensual", "vencimiento": "Día 20 de cada mes (puede correrse por feriados).", "aplica_a": "Monotributistas", "validar": "Confirmar calendario vigente de ARCA." },
+    { "clave": "iibb_cm", "impuesto": "Ingresos Brutos Convenio Multilateral (CM03)", "frecuencia": "mensual", "vencimiento": "Según el calendario de la Comisión Arbitral y terminación de CUIT.", "aplica_a": "Contribuyentes de Convenio Multilateral", "validar": "Calendario anual de la Comisión Arbitral." },
+    { "clave": "iibb_cm05", "impuesto": "Ingresos Brutos Convenio Multilateral (CM05, DDJJ anual)", "frecuencia": "anual", "vencimiento": "Según el calendario de la Comisión Arbitral, en general a mitad de año.", "aplica_a": "Contribuyentes de Convenio Multilateral", "validar": "Si con el régimen especial de transporte corresponde presentar coeficientes y en qué fecha." },
+    { "clave": "f931", "impuesto": "Cargas sociales (F. 931)", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, en la primera quincena del mes siguiente.", "aplica_a": "Empleadores", "validar": "Calendario vigente y aportes especiales del convenio de camioneros." },
+    { "clave": "autonomos", "impuesto": "Aportes de autónomos", "frecuencia": "mensual", "vencimiento": "Según terminación de CUIT, primera semana del mes siguiente.", "aplica_a": "Personas humanas responsables inscriptas", "validar": "Categoría de autónomos y calendario vigente." },
+    { "clave": "patentes", "impuesto": "Impuesto automotor (patentes)", "frecuencia": "bimestral", "vencimiento": "Según el calendario de la provincia o municipio de radicación de cada unidad.", "validar": "La periodicidad y el calendario dependen de la jurisdicción de radicación." },
+    { "clave": "ganancias_anual", "impuesto": "Ganancias (DDJJ anual)", "frecuencia": "anual", "vencimiento": "Personas humanas: junio. Sociedades: quinto mes posterior al cierre de ejercicio.", "validar": "Fechas de la resolución general del año." },
+    { "clave": "rto_vtv", "impuesto": "Revisión técnica obligatoria (RTO/VTV) de las unidades", "frecuencia": "eventual", "vencimiento": "Según la antigüedad y el tipo de vehículo (en general anual o semestral).", "nota": "No es un impuesto, pero sin RTO vigente la unidad no puede circular ni el seguro responde bien.", "validar": "Periodicidad vigente según categoría del vehículo y jurisdicción." },
+    { "clave": "ruta_renovacion", "impuesto": "Renovación de inscripción en RUTA y licencias de choferes", "frecuencia": "eventual", "vencimiento": "Según los vencimientos de cada inscripción y licencia.", "validar": "Plazos vigentes de la CNRT." }
+  ],
+  "checklist_alta": [
+    { "clave": "constancia_cuit", "item": "Constancia de inscripción en ARCA", "obligatorio": true },
+    { "clave": "clave_fiscal", "item": "Delegación de servicios con clave fiscal al estudio", "obligatorio": true },
+    { "clave": "iibb_inscripcion", "item": "Constancia de inscripción en Ingresos Brutos o en Convenio Multilateral (CM01) con las jurisdicciones dadas de alta", "obligatorio": true },
+    { "clave": "ruta", "item": "Constancia de inscripción en el RUTA (si hace transporte interjurisdiccional)", "obligatorio": false },
+    { "clave": "titulos_vehiculos", "item": "Títulos y cédulas de cada vehículo y acoplado, con fecha y valor de compra", "obligatorio": true },
+    { "clave": "polizas", "item": "Pólizas de seguro vigentes (responsabilidad civil, carga y casco)", "obligatorio": true },
+    { "clave": "rto", "item": "Revisión técnica obligatoria vigente de cada unidad", "obligatorio": false },
+    { "clave": "prendas_leasing", "item": "Contratos de prenda, leasing o créditos sobre las unidades", "obligatorio": false },
+    { "clave": "nomina_choferes", "item": "Nómina de choferes con licencias habilitantes y altas laborales", "obligatorio": false },
+    { "clave": "art", "item": "Contrato de ART y seguro de vida obligatorio", "obligatorio": false },
+    { "clave": "principales_clientes", "item": "Listado de principales dadores de carga y condiciones de pago", "obligatorio": false },
+    { "clave": "facturas_ultimos_12", "item": "Facturas emitidas y compras (combustible, peajes) de los últimos 12 meses", "obligatorio": true }
+  ],
+  "plan_de_cuentas": [
+    { "codigo": "1.1.02", "nombre": "Banco cuenta corriente", "tipo": "activo" },
+    { "codigo": "1.1.03", "nombre": "Fletes a cobrar", "tipo": "activo" },
+    { "codigo": "1.1.04", "nombre": "IVA crédito fiscal", "tipo": "activo" },
+    { "codigo": "1.1.05", "nombre": "Retenciones y percepciones de IIBB por jurisdicción", "tipo": "activo" },
+    { "codigo": "1.1.07", "nombre": "Anticipos a choferes por viajes", "tipo": "activo" },
+    { "codigo": "1.2.01", "nombre": "Rodados: camiones y tractores", "tipo": "activo" },
+    { "codigo": "1.2.02", "nombre": "Rodados: acoplados y semirremolques", "tipo": "activo" },
+    { "codigo": "2.1.01", "nombre": "Proveedores de combustible", "tipo": "pasivo" },
+    { "codigo": "2.1.02", "nombre": "Deudas prendarias y leasing de unidades", "tipo": "pasivo" },
+    { "codigo": "2.1.03", "nombre": "IVA a pagar", "tipo": "pasivo" },
+    { "codigo": "2.1.04", "nombre": "IIBB Convenio Multilateral a pagar", "tipo": "pasivo" },
+    { "codigo": "3.1.01", "nombre": "Capital", "tipo": "patrimonio" },
+    { "codigo": "4.1.01", "nombre": "Fletes de corta distancia", "tipo": "ingreso" },
+    { "codigo": "4.1.02", "nombre": "Fletes de larga distancia", "tipo": "ingreso" },
+    { "codigo": "5.1.01", "nombre": "Combustible y lubricantes", "tipo": "egreso" },
+    { "codigo": "5.1.02", "nombre": "Peajes", "tipo": "egreso" },
+    { "codigo": "5.1.03", "nombre": "Seguros de unidades y cargas", "tipo": "egreso" },
+    { "codigo": "5.1.04", "nombre": "Neumáticos, repuestos y reparaciones", "tipo": "egreso" },
+    { "codigo": "5.1.05", "nombre": "Amortización de rodados", "tipo": "egreso" },
+    { "codigo": "5.1.06", "nombre": "Viáticos de choferes", "tipo": "egreso" }
+  ],
+  "categorias": {
+    "ingresos": [
+      { "clave": "fletes_corta", "nombre": "Fletes de corta distancia" },
+      { "clave": "fletes_larga", "nombre": "Fletes de larga distancia" },
+      { "clave": "mudanzas", "nombre": "Mudanzas" },
+      { "clave": "deposito_logistica", "nombre": "Depósito y logística" },
+      { "clave": "otros_ingresos", "nombre": "Otros ingresos (estadías, reembolsos)" }
+    ],
+    "gastos": [
+      { "clave": "combustible", "nombre": "Combustible y lubricantes" },
+      { "clave": "peajes", "nombre": "Peajes" },
+      { "clave": "seguros", "nombre": "Seguros" },
+      { "clave": "mantenimiento", "nombre": "Mantenimiento, neumáticos y repuestos" },
+      { "clave": "patentes_rto", "nombre": "Patentes y revisión técnica" },
+      { "clave": "sueldos_choferes", "nombre": "Sueldos y viáticos de choferes" },
+      { "clave": "fleteros_terceros", "nombre": "Fletes contratados a terceros" },
+      { "clave": "cuotas_unidades", "nombre": "Cuotas de prenda o leasing" },
+      { "clave": "rastreo_comunicaciones", "nombre": "Rastreo satelital y comunicaciones" },
+      { "clave": "playa_estacionamiento", "nombre": "Playa y estacionamiento de unidades" }
+    ]
+  },
+  "tareas_recurrentes": [
+    { "clave": "distribucion_jurisdicciones", "titulo": "Clasificar los fletes del mes por jurisdicción de origen del viaje para el Convenio Multilateral", "frecuencia": "mensual" },
+    { "clave": "conciliar_retenciones", "titulo": "Conciliar retenciones y percepciones de IIBB por jurisdicción y de Ganancias", "frecuencia": "mensual", "nota": "Detectar saldos a favor que crecen en provincias con pocos ingresos." },
+    { "clave": "control_combustible", "titulo": "Controlar facturas de combustible y peajes contra viajes y kilómetros", "frecuencia": "mensual" },
+    { "clave": "vencimientos_unidades", "titulo": "Revisar vencimientos de seguros, RTO, patentes y licencias de cada unidad y chofer", "frecuencia": "mensual" },
+    { "clave": "amortizaciones", "titulo": "Actualizar el cuadro de amortizaciones de rodados y altas o bajas de unidades", "frecuencia": "anual" },
+    { "clave": "ddjj_anual", "titulo": "Preparar DDJJ de Ganancias, Bienes Personales y CM05", "frecuencia": "anual" }
+  ],
+  "flujos_sugeridos": [
+    { "plantilla": "carga_comprobantes_viaje", "nombre": "Carga de comprobantes por viaje", "descripcion": "El cliente sube por viaje la carta de porte o remito, tickets de combustible y peajes; el estudio los asocia a la factura del flete y a la jurisdicción de origen." },
+    { "plantilla": "alerta_vencimiento_unidades", "nombre": "Alerta de vencimientos de unidades", "descripcion": "Avisa 30 días antes del vencimiento de pólizas, RTO, patentes, RUTA o licencias de choferes." },
+    { "plantilla": "alerta_saldos_iibb", "nombre": "Alerta de saldos a favor de IIBB", "descripcion": "Avisa cuando el saldo a favor en una jurisdicción supera un monto definido, para evaluar un pedido de exclusión o reducción de retenciones." }
+  ],
+  "indicadores": [
+    { "clave": "costo_por_km", "nombre": "Costo por kilómetro", "descripcion": "Combustible, peajes, mantenimiento y amortización divididos por los kilómetros recorridos." },
+    { "clave": "combustible_sobre_ingresos", "nombre": "Combustible sobre ingresos", "descripcion": "Porcentaje de la facturación que se va en combustible." },
+    { "clave": "ingresos_por_unidad", "nombre": "Facturación por unidad", "descripcion": "Cuánto factura cada camión o utilitario por mes." },
+    { "clave": "ingresos_por_jurisdiccion", "nombre": "Ingresos por jurisdicción", "descripcion": "Distribución de los fletes según la provincia de origen del viaje." },
+    { "clave": "dias_cobro", "nombre": "Días promedio de cobro", "descripcion": "Tiempo entre la factura del flete y el cobro." }
+  ],
+  "riesgos": [
+    { "clave": "distribucion_cm_incorrecta", "titulo": "Distribución incorrecta en Convenio Multilateral", "descripcion": "Atribuir ingresos con el régimen general en lugar del especial de transporte, o no registrar el origen de cada viaje, genera ajustes de las provincias.", "validar": "Aplicación del art. 9 del Convenio Multilateral y criterios de la Comisión Arbitral." },
+    { "clave": "saldos_iibb_inmovilizados", "titulo": "Saldos a favor de IIBB inmovilizados", "descripcion": "Retenciones y percepciones de muchas provincias que no se pueden compensar y afectan la caja.", "validar": "Mecanismos de exclusión, reducción o devolución de cada jurisdicción." },
+    { "clave": "documentacion_traslado", "titulo": "Viajes sin documentación de traslado", "descripcion": "Circular sin carta de porte, remito o código de traslado expone a multas, decomiso de la carga o impugnación de la operación.", "validar": "Normativa vigente de carta de porte electrónica y códigos provinciales de traslado." },
+    { "clave": "gastos_sin_respaldo", "titulo": "Combustible y gastos sin comprobante válido", "descripcion": "Tickets sin CUIT o pagos a terceros sin factura que no se pueden deducir ni computar como crédito fiscal." },
+    { "clave": "encuadre_choferes", "titulo": "Choferes no registrados o mal encuadrados", "descripcion": "Fleteros que en la práctica son empleados, o viáticos mal liquidados, generan contingencias laborales y de cargas sociales.", "validar": "Encuadre en el CCT 40/89 y tratamiento de viáticos en aportes y Ganancias." }
+  ],
+  "notas": [
+    "Borrador generado con criterio técnico general para Argentina: un contador tiene que validarlo antes de marcarlo como validado.",
+    "Las alícuotas de IIBB, los regímenes de recaudación y los códigos de traslado dependen de cada provincia; con Convenio Multilateral hay que revisar todas las jurisdicciones dadas de alta.",
+    "El impuesto automotor y la RTO dependen de la jurisdicción de radicación de cada unidad.",
+    "La vida útil y la amortización de los rodados conviene definirlas con el contador según el uso real (kilómetros) y la normativa de Ganancias."
+  ]
+}

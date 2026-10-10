@@ -14,6 +14,7 @@ import {
 } from "@/app/admin/member-actions";
 import { ActivityTimeline } from "@/components/admin/ActivityTimeline";
 import { OrgExpensesTab } from "@/components/admin/OrgExpensesTab";
+import { OrgIndustryTab } from "@/components/admin/OrgIndustryTab";
 import { Notice } from "@/components/admin/AdminField";
 import { LegalEntitiesSection, OrganizationGeneralForm } from "@/components/admin/OrganizationForms";
 import {
@@ -57,7 +58,8 @@ export default async function OrganizacionPage({
 }) {
   const { id } = await params;
   const sp = await searchParams;
-  const { studioId } = await requireStaff();
+  const me = await requireStaff();
+  const { studioId } = me;
   const org = await studioOrganization(id, studioId);
   if (!org) notFound();
   const db = getDb();
@@ -224,6 +226,14 @@ export default async function OrganizacionPage({
         {tab === "solicitudes" && <RequestsTab orgId={org.id} studioId={studioId} />}
         {tab === "integraciones" && <IntegrationsTab orgId={org.id} studioId={studioId} />}
         {tab === "gastos" && <OrgExpensesTab orgId={org.id} studioId={studioId} />}
+        {tab === "rubro" && (
+          <OrgIndustryTab
+            orgId={org.id}
+            studioId={studioId}
+            canEdit={me.role !== "colaborador"}
+            notice={sp.aplicado ? `Listo: se aplicó el rubro (${sp.aplicado} ítems nuevos).` : sp.actualizado ? `Incorporamos ${sp.actualizado} novedades${sp.propios && sp.propios !== "0" ? `; ${sp.propios} con cambios propios se mantuvieron` : ""}.` : null}
+          />
+        )}
         {tab === "miembros" && (
           <TeamPanel
             organizationId={org.id}

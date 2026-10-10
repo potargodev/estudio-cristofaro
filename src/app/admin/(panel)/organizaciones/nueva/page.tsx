@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { createOrganization } from "@/app/admin/organization-actions";
 import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { LegalEntityFields } from "@/components/admin/OrganizationForms";
@@ -43,6 +44,9 @@ export default async function NuevaOrganizacionPage({ searchParams }: { searchPa
           <legend className="px-1 font-semibold">Organización</legend>
           <AdminField label="Nombre de la organización" htmlFor="name" hint="Como la conocen en el estudio." className="sm:col-span-2">
             <Input id="name" name="name" required />
+          </AdminField>
+          <AdminField label="Rubro" htmlFor="industry" hint="Precarga obligaciones, checklist, categorías y tareas típicas. Vas a ver una vista previa antes de confirmar." className="sm:col-span-2">
+            <FormSelect id="industry" name="industry" defaultValue="" options={[{ value: "", label: "Elegir después" }, ...Object.entries(INDUSTRY_NAMES).map(([value, label]) => ({ value, label }))]} />
           </AdminField>
           <AdminField label="Plan" htmlFor="service_plan_id">
             <FormSelect
