@@ -13,7 +13,7 @@ const money = (n: number) => "$" + new Intl.NumberFormat("es-AR").format(n);
 type Tone = "ok" | "warn" | "due" | "info";
 const chip: Record<Tone, string> = {
   ok: "border-[#5f9a72]/60 text-[#9fd3ae]",
-  warn: "border-gold/60 text-gold",
+  warn: "border-rose-light/60 text-rose-light",
   due: "border-rose-light/60 text-rose-light",
   info: "border-paper/25 text-paper/75",
 };
@@ -43,7 +43,7 @@ function FlowStrip() {
             </span>
             <span>
               <span className="block text-[15px] text-paper">
-                <span className="tabular mr-2 text-[12px] text-gold">0{i + 1}</span>
+                <span className="tabular mr-2 text-[12px] text-rose-light">0{i + 1}</span>
                 {n.title}
               </span>
               <span className="mt-1 block text-[13px] text-paper/60">{n.text}</span>
@@ -395,7 +395,7 @@ export function PlatformDemo() {
               {current.facts.map((f) => (
                 <div key={f.label} className="border-b border-hair py-5">
                   <dt className="sr-only">{f.label}</dt>
-                  <dd className="tabular font-display text-[2.4rem] leading-none text-gold">{f.value}</dd>
+                  <dd className="tabular font-display text-[2.4rem] leading-none text-rose-light">{f.value}</dd>
                   <dd aria-hidden className="mt-2 text-[14px] leading-snug text-paper/70">{f.label}</dd>
                 </div>
               ))}

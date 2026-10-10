@@ -21,7 +21,7 @@ export default function EquipoPage() {
     <>
       <PageHeader
         eyebrow="Equipo"
-        title="Una persona con nombre y apellido, no un ticket."
+        title="Tu empresa, en manos de alguien que la conoce."
         intro="Somos un estudio contable de CABA que acompaña a PyMEs de servicios. Relación de largo plazo, comunicación directa y un responsable asignado."
       />
       <section aria-label="Integrantes del equipo">

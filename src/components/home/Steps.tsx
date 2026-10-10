@@ -36,7 +36,7 @@ export function Steps() {
                 <s.icon className="size-6" strokeWidth={1.3} aria-hidden />
               </span>
               <div className="lg:mt-8">
-                <p className="tabular font-display text-[clamp(2.4rem,3.6vw,3.4rem)] leading-none text-gold">
+                <p className="tabular font-display text-[clamp(2.4rem,3.6vw,3.4rem)] leading-none text-rose-light">
                   <span className="sr-only">Paso </span>0{i + 1}
                 </p>
                 <h3 className="mt-4 text-[18px] font-medium text-paper">{s.t}</h3>
