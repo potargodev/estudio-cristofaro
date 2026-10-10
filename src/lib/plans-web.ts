@@ -45,7 +45,9 @@ export const MODULES = [
 
 /** Precio para mostrar: el cargado en el backoffice o "Consultá el precio" */
 export function priceLabel(key: string, prices: Record<string, string | null> = {}) {
-  return prices[key] || "Consultá el precio";
+  const raw = prices[key];
+  // Separador de miles en los importes cargados sin puntos ("$845130" → "$845.130")
+  return raw ? raw.replace(/\d{4,}/g, (n) => Number(n).toLocaleString("es-AR")) : "Consultá el precio";
 }
 
 

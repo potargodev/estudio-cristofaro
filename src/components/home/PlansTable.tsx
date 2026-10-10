@@ -79,12 +79,18 @@ export function PlansTable({
               <col />
             </colgroup>
             <thead>
-              <tr data-row className="align-bottom">
-                <td className="pb-6" />
+              <tr data-row className="align-top">
+                <th scope="col" className="pb-6 pr-6 pt-6 text-left font-normal">
+                  <span className="block font-display text-[1.75rem] leading-[1.05] text-rose-light">Planes disponibles</span>
+                  <span className="mt-3 block max-w-[22ch] text-[13px] leading-relaxed text-paper/55">Servicio contable integral, con la plataforma incluida.</span>
+                </th>
                 {HOME_PLANS.map((p, i) => (
                   <th key={p.key} scope="col" onMouseEnter={() => setCol(i + 1)} className={cn(cell(i + 1), "pb-6 pt-6 font-normal", i === 1 && "border-t")}>
-                    {"featured" in p && <span className="mb-3 block text-[12px] text-rose-light">El más elegido</span>}
-                    <span className="block font-display text-[2rem] leading-none text-paper">{p.name}</span>
+                    <span className="flex h-6 items-center justify-between gap-2 text-[12px]">
+                      <span className="tabular text-rose-light">Plan 0{i + 1}</span>
+                      {"featured" in p && <span className="border border-rose-light/50 px-1.5 py-0.5 leading-none text-rose-light">El más elegido</span>}
+                    </span>
+                    <span className="mt-3 flex min-h-[2.1em] items-start font-display text-[1.85rem] leading-[1.05] text-paper">{p.name}</span>
                     <span className="tabular mt-3 block text-[14px] text-paper/55">{priceLabel(p.key, prices)}</span>
                   </th>
                 ))}
@@ -124,10 +130,14 @@ export function PlansTable({
         </div>
 
         {/* Celular y tablet: bloques */}
-        <ul className={cn("grid gap-px border border-hair bg-hair lg:hidden", !full && "mt-14")}>
+        <p className={cn("font-display text-[1.6rem] leading-none text-rose-light lg:hidden", !full && "mt-14")}>Planes disponibles</p>
+        <ul className="mt-6 grid gap-px border border-hair bg-hair lg:hidden">
           {HOME_PLANS.map((p) => (
             <li key={p.key} className={cn("bg-night p-6", "featured" in p && "outline outline-1 -outline-offset-1 outline-rose-light")}>
-              {"featured" in p && <p className="mb-2 text-[12px] text-rose-light">El más elegido</p>}
+              <p className="mb-2 flex items-center justify-between text-[12px] text-rose-light">
+                <span className="tabular">Plan 0{HOME_PLANS.indexOf(p) + 1}</span>
+                {"featured" in p && <span className="border border-rose-light/50 px-1.5 py-0.5 leading-none">El más elegido</span>}
+              </p>
               <PlanName className="font-display text-[2rem] leading-none text-paper">{p.name}</PlanName>
               <p className="tabular mt-2 text-[14px] text-paper/55">{priceLabel(p.key, prices)}</p>
               <ul className="mt-5 border-t border-hair text-[14px] text-paper/80">

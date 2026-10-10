@@ -13,18 +13,18 @@ export function Responsible() {
     <section aria-labelledby="responsable-titulo" className="overflow-hidden border-t border-hair bg-night py-24 text-paper lg:py-36">
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
-          <figure className="relative lg:col-span-5">
-            <div className="relative aspect-[4/5] overflow-hidden bg-navy">
+          <figure className="relative lg:col-span-6">
+            <div className="relative aspect-[4/3] overflow-hidden bg-navy">
               <Image
-                src="/hero/responsable.webp"
-                alt="Un contador del estudio revisa los números de una empresa junto a su cliente"
+                src="/hero/atencion.webp"
+                alt="Un contador del estudio revisa informes en su escritorio, con el sello de Estudio Cristofaro en la pared"
                 fill
-                sizes="(min-width:1024px) 34vw, 100vw"
-                className="object-cover object-[52%_50%]"
+                sizes="(min-width:1024px) 46vw, 100vw"
+                className="object-cover object-[58%_50%]"
               />
             </div>
           </figure>
-          <div className="flex flex-col justify-center lg:col-span-6 lg:col-start-7">
+          <div className="flex flex-col justify-center lg:col-span-6 lg:pl-6">
             <p className="flex items-center gap-3 text-[13px] text-paper/60">
               <span className="tabular text-rose-light">09</span>
               <span aria-hidden className="h-px w-8 bg-hair-strong" />

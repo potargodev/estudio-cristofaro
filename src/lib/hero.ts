@@ -18,8 +18,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   { src: "/hero/sueldos.webp", alt: "", position: "70% 40%", mobilePosition: "62% 40%" },
   { src: "/hero/contabilidad.webp", alt: "", position: "70% 40%", mobilePosition: "72% 40%" },
   { src: "/hero/responsable.webp", alt: "", position: "60% 40%", mobilePosition: "50% 40%" },
-  // Abono mensual fijo: falta la foto del calendario; mientras tanto, la de la reunión
-  { src: "/hero/reunion.jpg", alt: "", position: "70% 45%", mobilePosition: "74% 45%" },
+  { src: "/hero/abono.webp", alt: "", position: "70% 45%", mobilePosition: "62% 45%" },
 ];
 
 /**

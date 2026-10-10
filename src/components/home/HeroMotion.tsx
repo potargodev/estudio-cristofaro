@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Fondo del hero: foto a sangre completa atenuada con un velo azul noche y
- * parallax leve. Cada frase del titular trae su foto, que entra con un wipe.
+ * parallax leve. Cada frase del titular trae su foto, que aparece con un fundido sobre la anterior.
  */
 export function HeroMotion({ slides, children }: { slides: HeroSlide[]; children: React.ReactNode }) {
   const [index, setIndex] = useState(0);
@@ -69,7 +69,7 @@ export function HeroMotion({ slides, children }: { slides: HeroSlide[]; children
               <div
                 key={s.src}
                 className={cn("absolute inset-0", isActive ? "z-[2]" : isPrev ? "z-[1]" : "z-0 opacity-0")}
-                style={isActive && prev !== null && !reduce ? { animation: "hero-wipe 1.3s var(--ease-expo) both" } : undefined}
+                style={isActive && prev !== null && !reduce ? { animation: "hero-fade 1.6s ease-in-out both" } : undefined}
               >
                 <Image
                   src={s.src}

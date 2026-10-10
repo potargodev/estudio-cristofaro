@@ -2,8 +2,7 @@
 
 Cada frase del hero tiene su foto (atenuada con un velo azul noche). Las frases
 están en `src/lib/hero.ts` (`HERO_STATEMENTS`) y las fotos, en el mismo orden, en
-`HERO_SLIDES`. Falta la foto de "Abono mensual fijo" (calendario): mientras
-tanto usa `reunion.jpg`.
+`HERO_SLIDES`.
 
 `hero-3.jpg` es un placeholder del retrato del bloque "Responsable" hasta tener
 la foto real del equipo.

@@ -592,6 +592,14 @@ body {
   }
 }
 
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 @keyframes hero-wipe {
   from {
     clip-path: inset(0 0 0 100%);
