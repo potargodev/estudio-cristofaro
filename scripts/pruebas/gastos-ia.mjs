@@ -1,4 +1,4 @@
-// Asistente + gastos compartidos (solo desarrollo, con el modelo de prueba):
+// Asistente + grupos de gastos (solo desarrollo, con el modelo de prueba):
 //   node --env-file=.env.local scripts/pruebas/gastos-ia.mjs
 import postgres from "postgres";
 import { chat, check, data, failures } from "./lib.mjs";
@@ -15,7 +15,7 @@ const shares = await sql`select amount from expense_shares where expense_id = ${
 check("quedó el gasto de $48.000 dividido en 3", Number(e.amount) === 4800000 && shares.length === 3 && shares.every((s) => Number(s.amount) === 1600000));
 const [a] = await sql`select metadata from audit_log where action = 'gastos.gasto_crear' and entity_id = ${e.id}`;
 check("auditado con origen asistente", a?.metadata?.origen === "asistente");
-const r2 = await chat(d.cookies.adminA, { text: "¿cuál es mi saldo en los gastos compartidos?" });
+const r2 = await chat(d.cookies.adminA, { text: "¿cuál es mi saldo en los grupos de gastos?" });
 check("consultar_saldos responde", r2.tools.some((t) => t.type === "tool-output-available") && r2.text.length > 10, r2.text.slice(0, 120));
 await sql.end();
 console.log(failures ? `\n${failures} prueba(s) fallaron` : "\nTodo OK");

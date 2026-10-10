@@ -66,7 +66,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin", label: "Resumen", icon: "resumen", exact: true },
       { href: "/personal", label: "Mi panel", icon: "resumen", exact: true, personal: true, personalOnly: true },
-      { href: "/gastos", label: "Gastos compartidos", icon: "gastos", personal: true, module: "shared_expenses" },
+      { href: "/grupos", label: "Grupos de gastos", icon: "gastos", personal: true, module: "shared_expenses" },
     ],
   },
   {

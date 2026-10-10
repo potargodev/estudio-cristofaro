@@ -13,7 +13,7 @@ import { readReceipt, type ReceiptGuess } from "@/modules/gastos/server/receipt"
 import * as svc from "@/modules/gastos/server/service";
 import { parseAmount } from "@/modules/gastos/core/split";
 
-// Acciones de gastos compartidos. Cada una resuelve el actor en el servidor y
+// Acciones de grupos de gastos. Cada una resuelve el actor en el servidor y
 // delega en el servicio, que valida que sea integrante del grupo.
 
 export type FormState = { ok?: boolean; message?: string; link?: string | null };
@@ -22,7 +22,7 @@ const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
 
 async function actor() {
   const a = await getGastosActor();
-  if (!a) redirect("/gastos/entrar");
+  if (!a) redirect("/grupos/entrar");
   return a;
 }
 
@@ -50,7 +50,7 @@ export async function createGroupAction(_: FormState, fd: FormData): Promise<For
     id = g.id;
   });
   if (!r.ok) return r;
-  redirect(`/gastos/g/${id}?nuevo=1`);
+  redirect(`/grupos/g/${id}?nuevo=1`);
 }
 
 export async function updateGroupAction(_: FormState, fd: FormData): Promise<FormState> {
@@ -58,7 +58,7 @@ export async function updateGroupAction(_: FormState, fd: FormData): Promise<For
   const groupId = str(fd, "group");
   return attempt(async () => {
     await svc.updateGroup(a, groupId, { name: str(fd, "name"), simplify: fd.get("simplify") === "on", reminders: str(fd, "reminders"), color: str(fd, "color") || undefined });
-    revalidatePath(`/gastos/g/${groupId}`);
+    revalidatePath(`/grupos/g/${groupId}`);
     return { ok: true, message: "Guardamos la configuración." };
   });
 }
@@ -71,7 +71,7 @@ export async function toggleSimplifyAction(fd: FormData) {
   } catch (e) {
     if (!(e instanceof svc.GastosError)) throw e;
   }
-  revalidatePath(`/gastos/g/${groupId}`);
+  revalidatePath(`/grupos/g/${groupId}`);
 }
 
 export async function archiveGroupAction(fd: FormData) {
@@ -81,7 +81,7 @@ export async function archiveGroupAction(fd: FormData) {
   } catch (e) {
     if (!(e instanceof svc.GastosError)) throw e;
   }
-  redirect("/gastos");
+  redirect("/grupos");
 }
 
 export async function inviteAction(_: FormState, fd: FormData): Promise<FormState> {
@@ -89,7 +89,7 @@ export async function inviteAction(_: FormState, fd: FormData): Promise<FormStat
   const groupId = str(fd, "group");
   return attempt(async () => {
     const r = await svc.inviteMember(a, groupId, { name: str(fd, "name"), email: str(fd, "email") });
-    revalidatePath(`/gastos/g/${groupId}`);
+    revalidatePath(`/grupos/g/${groupId}`);
     return {
       ok: true,
       link: r.link,
@@ -108,7 +108,7 @@ export async function updateMeAction(_: FormState, fd: FormData): Promise<FormSt
   const groupId = str(fd, "group");
   return attempt(async () => {
     await svc.updateMyMember(a, groupId, { alias: str(fd, "alias"), cvu: str(fd, "cvu"), optOut: fd.get("optout") === "on" });
-    revalidatePath(`/gastos/g/${groupId}`);
+    revalidatePath(`/grupos/g/${groupId}`);
     return { ok: true, message: "Guardamos tus datos." };
   });
 }
@@ -120,9 +120,9 @@ export async function removeMemberAction(fd: FormData) {
     await svc.removeMember(a, groupId, str(fd, "member"));
   } catch (e) {
     if (!(e instanceof svc.GastosError)) throw e;
-    redirect(`/gastos/g/${groupId}?tab=integrantes&error=${encodeURIComponent(e.message)}`);
+    redirect(`/grupos/g/${groupId}?tab=integrantes&error=${encodeURIComponent(e.message)}`);
   }
-  revalidatePath(`/gastos/g/${groupId}`);
+  revalidatePath(`/grupos/g/${groupId}`);
 }
 
 export async function createExpenseAction(_: FormState, fd: FormData): Promise<FormState> {
@@ -133,8 +133,8 @@ export async function createExpenseAction(_: FormState, fd: FormData): Promise<F
     await svc.createExpense(a, groupId, { ...input, receipt: fileFromForm(fd, "receipt") });
   });
   if (!r.ok) return r;
-  revalidatePath(`/gastos/g/${groupId}`);
-  redirect(`/gastos/g/${groupId}?guardado=gasto`);
+  revalidatePath(`/grupos/g/${groupId}`);
+  redirect(`/grupos/g/${groupId}?guardado=gasto`);
 }
 
 export async function deleteExpenseAction(fd: FormData) {
@@ -144,9 +144,9 @@ export async function deleteExpenseAction(fd: FormData) {
     await svc.deleteExpense(a, groupId, str(fd, "expense"));
   } catch (e) {
     if (!(e instanceof svc.GastosError)) throw e;
-    redirect(`/gastos/g/${groupId}?error=${encodeURIComponent(e.message)}`);
+    redirect(`/grupos/g/${groupId}?error=${encodeURIComponent(e.message)}`);
   }
-  redirect(`/gastos/g/${groupId}?guardado=borrado`);
+  redirect(`/grupos/g/${groupId}?guardado=borrado`);
 }
 
 export async function stopRecurrenceAction(fd: FormData) {
@@ -158,7 +158,7 @@ export async function stopRecurrenceAction(fd: FormData) {
   } catch (e) {
     if (!(e instanceof svc.GastosError)) throw e;
   }
-  revalidatePath(`/gastos/g/${groupId}/gasto/${expenseId}`);
+  revalidatePath(`/grupos/g/${groupId}/gasto/${expenseId}`);
 }
 
 export async function settleAction(_: FormState, fd: FormData): Promise<FormState> {
@@ -179,11 +179,11 @@ export async function settleAction(_: FormState, fd: FormData): Promise<FormStat
     if (s.payment_link) return { ok: true, link: s.payment_link, message: "Registramos el pago. Abrí el link de Mercado Pago para pagar." };
   });
   if (!r.ok || r.link) {
-    if (r.ok) revalidatePath(`/gastos/g/${groupId}`);
+    if (r.ok) revalidatePath(`/grupos/g/${groupId}`);
     return r;
   }
-  revalidatePath(`/gastos/g/${groupId}`);
-  redirect(`/gastos/g/${groupId}?tab=saldos&guardado=pago`);
+  revalidatePath(`/grupos/g/${groupId}`);
+  redirect(`/grupos/g/${groupId}?tab=saldos&guardado=pago`);
 }
 
 export async function answerSettlementAction(fd: FormData) {
@@ -194,7 +194,7 @@ export async function answerSettlementAction(fd: FormData) {
   } catch (e) {
     if (!(e instanceof svc.GastosError)) throw e;
   }
-  revalidatePath(`/gastos/g/${groupId}`);
+  revalidatePath(`/grupos/g/${groupId}`);
 }
 
 export async function partnerMovementAction(_: FormState, fd: FormData): Promise<FormState> {
@@ -209,7 +209,7 @@ export async function partnerMovementAction(_: FormState, fd: FormData): Promise
       date: str(fd, "date"),
       note: str(fd, "note"),
     });
-    revalidatePath(`/gastos/g/${groupId}`);
+    revalidatePath(`/grupos/g/${groupId}`);
     return { ok: true, message: "Movimiento registrado." };
   });
 }
@@ -219,7 +219,7 @@ export async function commentAction(_: FormState, fd: FormData): Promise<FormSta
   const groupId = str(fd, "group");
   return attempt(async () => {
     await svc.addComment(a, groupId, { expenseId: str(fd, "expense") || null, body: str(fd, "body") });
-    revalidatePath(`/gastos/g/${groupId}`, "layout");
+    revalidatePath(`/grupos/g/${groupId}`, "layout");
     return { ok: true };
   });
 }
@@ -253,5 +253,5 @@ export async function gastosSignOut() {
     }
     redirect(homeOf(a) === "/admin" ? "/admin/login" : "/ingresar");
   }
-  redirect("/gastos/entrar");
+  redirect("/grupos/entrar");
 }

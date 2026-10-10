@@ -72,7 +72,7 @@ await member(empleadaNorte, norte, "empleado");
 await sql`insert into employees (studio_id, organization_id, first_name, last_name, email, user_id, position) values (${A}, ${norte}, 'Ema', 'Empleada', 'empleada@agencianorte.com.ar', ${empleadaNorte}, 'Ejecutiva de cuentas')
   on conflict do nothing`;
 // Cuenta personal (Faro Personal) con su organización propia
-const [P] = await sql`insert into studios (slug, name, kind, plan_key, cuit) values ('prueba-personal', 'Pablo Personal', 'personal', 'destello', '20304050607')
+const [P] = await sql`insert into studios (slug, name, kind, plan_key, cuit) values ('prueba-personal', 'Pablo Personal', 'personal', 'autonomo_gratis', '20304050607')
   on conflict (slug) do update set name = excluded.name returning id`;
 const personal = P.id;
 const titular = await user(personal, "titular@ejemplo.com", "Pablo Personal", "titular");

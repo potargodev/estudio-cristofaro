@@ -288,7 +288,22 @@ Una misma persona puede tener varias "puertas" a la vez (por ejemplo, contador e
 |---|---|
 | Personas (Bitácora) | Gratis · Plus |
 | Autónomos (Faro Personal) | Gratis · Pro |
-| Estudios y contadores | Inicial (gratis) · Profesional · Avanzado |
+| Estudios y contadores | Inicial · Profesional · Avanzado |
+
+**Precios de referencia (editables desde el Faro Manager, base en USD con conversión a ARS configurable; el usuario ve el precio en pesos):**
+
+| Plan | USD / mes |
+|---|---|
+| Personas · Gratis | 0 |
+| Personas · Plus | 4 |
+| Autónomos · Gratis | 0 |
+| Autónomos · Pro | 9 |
+| Estudios · Inicial (hasta 10 organizaciones) | 49 |
+| Estudios · Profesional (hasta 40) | 119 |
+| Estudios · Avanzado (hasta 120) | 249 |
+| Organización extra (estudios) | 2 |
+
+Prueba gratis de 30 días en los planes pagos. Pago anual: 2 meses de regalo. Son valores de referencia: el Faro Manager los ajusta sin tocar código.
 
 Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de estudios, Flotas, Grupos de gastos). Todo lo demás se nombra por lo que es.
 
@@ -307,11 +322,14 @@ Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de e
 
 ## 3. Planes de Faro (para estudios)
 
-| | **Inicial** (gratis) | **Profesional** (recomendado) | **Avanzado** |
+| | **Inicial** | **Profesional** (recomendado) | **Avanzado** |
 |---|---|---|---|
 | Para quién | Contador independiente que arranca | Estudio chico en crecimiento | Estudio mediano que quiere automatizar |
-| Precio | Gratis | $[precio] / mes | $[precio] / mes |
-| Organizaciones | Hasta 5 | Hasta 60 | Ilimitadas |
+| Precio de referencia | USD 49 / mes | USD 119 / mes | USD 249 / mes |
+| Organizaciones incluidas | Hasta 10 | Hasta 40 | Hasta 120 |
+| Organización extra | USD 2 / mes | USD 2 / mes | USD 2 / mes |
+| Prueba gratis | 30 días | 30 días | 30 días |
+| Red de estudios (aparecer en el directorio) | — | ✓ | ✓ |
 | Usuarios del estudio | 1 | Hasta 5 | Hasta 25 |
 | Núcleo | ✓ | ✓ | ✓ |
 | Asistente IA | Con clave propia, consultas | Con clave propia, consultas y acciones | Acciones avanzadas y agentes |
@@ -324,13 +342,13 @@ Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de e
 | Marca blanca | — | — | ✓ |
 | Soporte | Comunidad y mail | Mail prioritario | Dedicado |
 
-Los límites y los módulos de cada plan viven en configuración, no en el código de las pantallas. El Faro Manager puede habilitar un módulo fuera del plan a un estudio puntual (override con vencimiento opcional), y queda auditado.
+Los precios son de referencia y se editan desde el Faro Manager (USD con conversión a ARS configurable); pago anual con 2 meses de regalo. Los límites y los módulos de cada plan viven en configuración, no en el código de las pantallas. El Faro Manager puede habilitar un módulo fuera del plan a un estudio puntual (override con vencimiento opcional), y queda auditado.
 
 ## 4. Marca
 - Nombre: **Faro**. Concepto: la luz que te guía hacia una mejor gestión.
 - Logo inicial: el isotipo circular de Estudio Cristofaro + "FARO" en mayúsculas al lado.
   - Pendiente antes de vender a otros estudios: un isotipo propio de Faro, para que no lleve el sello de otro estudio.
-- Colores: los de la marca (azul noche, rosé, dorado #c8a465), con más presencia del dorado como "luz".
+- Colores: los de la marca (azul noche #1c2235, rosé #a57c6d y pizarra). El "dorado" de la marca es ese rosé (oro rosa, marrón clarito), con más presencia como "luz"; no se usa un amarillo.
 
 ## 5. Dominios
 - Faro: dominio propio (pendiente de elegir, por ejemplo faro + .app/.com.ar), con la landing de Faro y la app en `app.<dominio>`.

@@ -20,7 +20,7 @@ export const TOOL_MODULES = {
   consultas: "Consultas comerciales",
   estudio: "Resumen del estudio",
   conexiones: "Conexiones (Tango, Xubio, archivos)",
-  gastos: "Gastos compartidos",
+  gastos: "Grupos de gastos",
   industrias: "Ecosistemas por industria",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;

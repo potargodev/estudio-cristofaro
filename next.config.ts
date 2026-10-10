@@ -35,6 +35,9 @@ const nextConfig: NextConfig = {
       // Tango pasó al hub de Conexiones
       { source: "/admin/integraciones", destination: "/admin/conexiones/tango", permanent: true },
       { source: "/admin/integraciones/tango/clientes", destination: "/admin/conexiones/tango/clientes", permanent: true },
+      // Gastos compartidos pasó a llamarse Grupos de gastos (§2.e): los links viejos siguen andando
+      { source: "/gastos", destination: "/grupos", permanent: true },
+      { source: "/gastos/:path*", destination: "/grupos/:path*", permanent: true },
       // Rutas del panel del estudio con el nombre de la visión de Faro (/estudio/…)
       { source: "/estudio", destination: "/admin", permanent: false },
       { source: "/estudio/:path*", destination: "/admin/:path*", permanent: false },

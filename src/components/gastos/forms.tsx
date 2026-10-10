@@ -3,7 +3,7 @@
 import { Check, Copy } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { commentAction, inviteAction, partnerMovementAction, renewLinkAction, updateGroupAction, updateMeAction, type FormState } from "@/app/gastos/actions";
+import { commentAction, inviteAction, partnerMovementAction, renewLinkAction, updateGroupAction, updateMeAction, type FormState } from "@/app/grupos/actions";
 import { CURRENCIES, GROUP_COLORS, REMINDER_FREQUENCIES, todayAR } from "@/modules/gastos/constants";
 import { cn } from "@/lib/utils";
 

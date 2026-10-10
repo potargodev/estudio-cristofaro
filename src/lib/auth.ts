@@ -26,8 +26,8 @@ export interface StaffUser {
   assisted: { id: string; studioName: string; expiresAt: Date; homeStudioId: string } | null;
   /** Tenant suspendido por el Faro Manager */
   tenantSuspended: boolean;
-  /** Tipo de tenant: estudio o cuenta personal (autónomo) */
-  tenantKind: "studio" | "personal";
+  /** Tipo de tenant: estudio, cuenta personal (autónomo) o persona (Bitácora) */
+  tenantKind: "studio" | "personal" | "persona";
 }
 
 export type TenantKind = StaffUser["tenantKind"];
@@ -70,13 +70,13 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
       .innerJoin(studios, eq(studios.id, assisted_access.studio_id))
       .where(and(eq(assisted_access.id, grantId), eq(assisted_access.faro_user_id, u.id)));
     if (g && !g.ended && g.expiresAt > new Date()) {
-      return { ...base, studioId: g.studioId, role: g.kind === "personal" ? "titular" : "dueno", tenantKind: g.kind, tenantSuspended: g.status === "suspendido", assisted: { id: g.id, studioName: g.name, expiresAt: g.expiresAt, homeStudioId: u.studioId } };
+      return { ...base, studioId: g.studioId, role: g.kind === "studio" ? "dueno" : "titular", tenantKind: g.kind, tenantSuspended: g.status === "suspendido", assisted: { id: g.id, studioName: g.name, expiresAt: g.expiresAt, homeStudioId: u.studioId } };
     }
   }
   return base;
 });
 
-const TENANT_HOME = { studio: "/admin", personal: "/personal" } as const;
+const TENANT_HOME = { studio: "/admin", personal: "/personal", persona: "/personal" } as const;
 
 /**
  * Guarda de nivel tenant. Sesión vigente de un usuario de tenant (estudio o
@@ -85,14 +85,15 @@ const TENANT_HOME = { studio: "/admin", personal: "/personal" } as const;
  * uno de esos roles (si no, sin-permiso y queda auditado). Toda query de
  * tenant filtra por el studioId que devuelve.
  */
-export async function requireTenant(kind?: TenantKind | null, roles?: readonly UserRole[]): Promise<StaffUser> {
+export async function requireTenant(kind?: TenantKind | readonly TenantKind[] | null, roles?: readonly UserRole[]): Promise<StaffUser> {
   const user = await getCurrentUser();
-  if (!user) redirect(kind === "personal" ? "/ingresar" : "/admin/login");
+  const kinds = kind ? (Array.isArray(kind) ? kind : [kind]) : null;
+  if (!user) redirect(kinds && !kinds.includes("studio") ? "/ingresar" : "/admin/login");
   // Un miembro de una organización (o un empleado) nunca entra a un tenant: va a su portal
   if (user.role === "cliente") redirect(homeFor(user.role));
   const personal = user.role === "titular";
   if (!personal && !isStudioRole(user.role)) redirect("/admin/sin-acceso");
-  if (kind && user.tenantKind !== kind) redirect(TENANT_HOME[user.tenantKind]);
+  if (kinds && !kinds.includes(user.tenantKind)) redirect(TENANT_HOME[user.tenantKind]);
   // Contraseña temporal (reset-password): nada hasta cambiarla
   if (user.mustChangePassword) redirect("/admin/cambiar-clave");
   // Segundo factor obligatorio para el estudio (la cuenta personal entra con Google, enlace o contraseña)
@@ -115,8 +116,8 @@ export const requireStaff = () => requireTenant("studio");
 /** Dueño o contador: lo que el colaborador no hace (consultas comerciales, alta y edición de organizaciones) */
 export const requireOperator = () => requireTenant("studio", ["dueno", "contador"]);
 
-/** Titular de una cuenta personal (Faro Personal) */
-export const requirePersonal = () => requireTenant("personal");
+/** Titular de una cuenta personal: autónomo (Faro Personal) o persona (Bitácora) */
+export const requirePersonal = () => requireTenant(["personal", "persona"]);
 
 /** Nivel plataforma (Faro Manager): faro_owner o faro_support, con 2FA */
 export async function requireFaro(owner = false): Promise<StaffUser> {
@@ -228,7 +229,7 @@ export interface EmployeeUser extends PortalUser {
 
 /**
  * Guarda de nivel empleado: miembro con rol "empleado" en la organización
- * activa y su ficha en employees. Solo ve lo suyo (gastos compartidos,
+ * activa y su ficha en employees. Solo ve lo suyo (grupos de gastos,
  * rendiciones; después recibos y comunicaciones).
  */
 export async function requireEmployee(): Promise<EmployeeUser> {

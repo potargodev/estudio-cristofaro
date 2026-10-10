@@ -69,7 +69,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       <script dangerouslySetInnerHTML={{ __html: sidebarBootScript(user.id) }} />
       <AdminShell
         user={{ id: user.id, name: user.name, email: user.email, role: user.role }}
-        access={{ isAdmin: TENANT_OWNERS.includes(user.role), isOperator: user.role !== "colaborador", isPersonal: user.tenantKind === "personal", modules: ent ? [...ent.modules] : undefined, hasSite: studio?.slug === SITE_STUDIO_SLUG(), isFaro: Boolean(user.faroRole) }}
+        access={{ isAdmin: TENANT_OWNERS.includes(user.role), isOperator: user.role !== "colaborador", isPersonal: user.tenantKind !== "studio", modules: ent ? [...ent.modules] : undefined, hasSite: studio?.slug === SITE_STUDIO_SLUG(), isFaro: Boolean(user.faroRole) }}
         studioName={studio?.name ?? "Estudio"}
         assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}
         endAssisted={endAssistedAccess}

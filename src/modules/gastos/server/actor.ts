@@ -7,7 +7,7 @@ import type { AuditEvent } from "@/lib/audit";
 import { homeFor } from "@/lib/roles";
 import type { UserRole } from "@/lib/types";
 
-// Quién usa gastos compartidos en este pedido. Siempre sale del servidor:
+// Quién usa grupos de gastos en este pedido. Siempre sale del servidor:
 // - un usuario de Faro con sesión (estudio, autónomo o cliente del portal);
 // - un invitado sin cuenta, por la cookie de su link mágico, que solo vale
 //   para SU grupo.

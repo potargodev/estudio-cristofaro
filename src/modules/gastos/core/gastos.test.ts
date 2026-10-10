@@ -1,4 +1,4 @@
-// Tests del núcleo de gastos compartidos: npm test
+// Tests del núcleo de grupos de gastos: npm test
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { balancesInBase, computeBalances, directDebts, simplifyDebts, type LedgerExpense, type Transfer } from "./balances";

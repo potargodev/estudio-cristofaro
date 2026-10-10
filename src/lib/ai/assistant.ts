@@ -105,7 +105,7 @@ export function systemPrompt(user: StaffUser, studioName: string, context: Conte
         .join("\n")}`
     : "";
   const who =
-    user.tenantKind === "personal"
+    user.tenantKind !== "studio"
       ? `Sos Faro, el asistente de Faro Personal. Hablás con ${user.name}, titular de su cuenta (autónomo, sin contador). Explicá todo sin jerga: qué tiene que hacer, cuándo y cuánto. Nunca presentes nada en su nombre.`
       : `Sos Faro, el asistente de gestión del ${studioName}, un estudio contable de Argentina. Hablás con ${user.name} (${user.role === "dueno" ? "dueño" : user.role} del estudio).`;
   return `${who} Hoy es ${today}.

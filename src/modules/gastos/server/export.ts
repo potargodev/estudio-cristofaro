@@ -94,7 +94,7 @@ export async function toPdf(v: GroupView): Promise<Uint8Array> {
     y -= opts.gap ?? size + 6;
   };
   page.drawRectangle({ x: 0, y: 812, width: 595, height: 30, color: night });
-  page.drawText("FARO · Gastos compartidos", { x: 50, y: 823, size: 10, font: bold, color: rgb(0.78, 0.64, 0.4) });
+  page.drawText("FARO · Grupos de gastos", { x: 50, y: 823, size: 10, font: bold, color: rgb(0.78, 0.64, 0.4) });
   line(v.group.name, { size: 22, f: bold, gap: 26 });
   line(`${GROUP_TYPES[v.group.type as GroupType]} · ${v.members.length} personas · moneda base ${v.group.base_currency} · ${new Date().toLocaleDateString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })}`, { color: muted, gap: 24 });
 

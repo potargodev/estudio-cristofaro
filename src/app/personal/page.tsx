@@ -9,7 +9,7 @@ import { getDb } from "@/db";
 import { accounting_expenses, studios } from "@/db/schema";
 import { categoryName, formatMoney } from "@/modules/gastos/constants";
 import { requirePersonal } from "@/lib/auth";
-import { getPlan } from "@/lib/faro/plans";
+import { getPlan, planFullName } from "@/lib/faro/plans";
 import { ownOrganization } from "@/lib/faro/tenants";
 
 export const metadata = { title: "Inicio" };
@@ -41,18 +41,19 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
       {sp.contador && <Notice>{sp.contador === "1" ? "Listo: un contador del Estudio Cristofaro te va a escribir." : "No pudimos mandar el pedido. Probá de nuevo."}</Notice>}
       <header>
         <p className="text-[13px] text-muted">
-          {sp.bienvenida ? "Te damos la bienvenida a Faro Personal" : "Faro Personal"} · plan {getPlan(t?.plan_key)?.name} · CUIT {cuitFmt(t?.cuit ?? null)}
+          {t?.kind === "persona" ? (sp.bienvenida ? "Te damos la bienvenida a Faro" : "Tu espacio en Faro") : sp.bienvenida ? "Te damos la bienvenida a Faro Personal" : "Faro Personal"} · plan {getPlan(t?.plan_key) ? planFullName(getPlan(t?.plan_key)!) : ""}
+          {t?.kind !== "persona" && <> · CUIT {cuitFmt(t?.cuit ?? null)}</>}
         </p>
         <h1 className="mt-2 font-display text-[34px] leading-tight text-ink sm:text-[44px]">Hola, {first}.</h1>
-        <p className="mt-2 max-w-xl text-[15px] text-muted">Desde acá vas a llevar tus números sin ser contador. Arrancamos por los gastos compartidos; lo demás llega muy pronto.</p>
+        <p className="mt-2 max-w-xl text-[15px] text-muted">Desde acá vas a llevar tus números sin ser contador. Arrancamos por los grupos de gastos; lo demás llega muy pronto.</p>
       </header>
 
-      <Link href="/gastos" className="group flex items-center gap-4 border border-line bg-surface p-5 transition-colors hover:border-muted">
+      <Link href="/grupos" className="group flex items-center gap-4 border border-line bg-surface p-5 transition-colors hover:border-muted">
         <span className="grid size-12 shrink-0 place-items-center bg-navy text-gold">
           <Wallet className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[17px] font-medium text-ink">Gastos compartidos</span>
+          <span className="block text-[17px] font-medium text-ink">Grupos de gastos</span>
           <span className="block text-[14px] text-muted">Dividí gastos con socios, clientes o amigos. Lo deducible queda marcado para tu contabilidad.</span>
         </span>
         <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>

@@ -13,8 +13,8 @@ import { PLANS as FARO_PLANS } from "../src/lib/faro/plans";
 import { SERVICE_PLANS } from "../src/lib/service-plans";
 import { createUserWithPassword } from "../src/lib/users";
 
-// Estudio Cristofaro es el cliente cero de Faro: plan Horizonte
-const STUDIO = { slug: process.env.STUDIO_SLUG || "cristofaro", name: "Estudio Cristofaro & Asociados", plan_key: "horizonte", created_via: "seed" };
+// Estudio Cristofaro es el cliente cero de Faro: plan Avanzado
+const STUDIO = { slug: process.env.STUDIO_SLUG || "cristofaro", name: "Estudio Cristofaro & Asociados", plan_key: "avanzado", created_via: "seed" };
 
 // Planes de referencia (completar price_label con los montos reales desde el backoffice)
 const PLANS = [
@@ -155,7 +155,9 @@ async function main() {
           name: p.name,
           tagline: p.tagline,
           for_whom: p.forWhom,
-          price_ars: p.priceArs,
+          price_usd: String(p.priceUsd),
+          extra_org_usd: p.extraOrgUsd == null ? null : String(p.extraOrgUsd),
+          trial_days: p.trialDays,
           free: p.free,
           recommended: !!p.recommended,
           ai: p.ai,

@@ -28,7 +28,10 @@ export type FaroModuleKey =
   | "whatsapp"
   | "white_label"
   | "shared_expenses"
-  | "personal_invoicing";
+  | "personal_invoicing"
+  | "flotas"
+  | "red_estudios"
+  | "bitacora";
 
 export type ModuleStatus = "disponible" | "beta" | "proximamente";
 export type StudioRoleKey = "dueno" | "contador" | "colaborador" | "titular";
@@ -46,7 +49,7 @@ export interface FaroModule {
   description: string;
   status: ModuleStatus;
   /** Plan mínimo de estudio (o de Faro Personal) que lo incluye */
-  minPlan: { studio?: string; personal?: string };
+  minPlan: { studio?: string; personal?: string; persona?: string };
   /** Quiénes lo usan; los dueños del tenant (dueno, titular) además lo configuran */
   roles: StudioRoleKey[];
   nav: { href: string; label: string }[];
@@ -66,7 +69,7 @@ export const FARO_MODULES: FaroModule[] = [
     core: true,
     description: "Organizaciones, usuarios y roles, portal del cliente, vencimientos, documentos, solicitudes, agenda, consultas y auditoría.",
     status: "disponible",
-    minPlan: { studio: "senal" },
+    minPlan: { studio: "inicial" },
     roles: ALL_STAFF,
     nav: [
       { href: "/admin/organizaciones", label: "Organizaciones" },
@@ -99,7 +102,7 @@ export const FARO_MODULES: FaroModule[] = [
     core: true,
     description: "Hub de integraciones: API oficiales (Xubio, Google), conector local (Tango), MCP externos y archivos, con datos trazables.",
     status: "disponible",
-    minPlan: { studio: "senal", personal: "destello" },
+    minPlan: { studio: "inicial", personal: "autonomo_gratis" },
     roles: ["dueno", "contador", "colaborador", "titular"],
     nav: [{ href: "/admin/conexiones", label: "Conexiones" }],
     events: ["conexion.sincronizada"],
@@ -112,7 +115,7 @@ export const FARO_MODULES: FaroModule[] = [
     core: true,
     description: "Plantillas de rubro con actividades, perfil impositivo, laboral, calendario, checklist, plan de cuentas, categorías y tareas.",
     status: "disponible",
-    minPlan: { studio: "senal", personal: "destello" },
+    minPlan: { studio: "inicial", personal: "autonomo_gratis" },
     roles: ["dueno", "contador", "titular"],
     nav: [],
     events: ["plantilla.aplicada"],
@@ -125,7 +128,7 @@ export const FARO_MODULES: FaroModule[] = [
     core: true,
     description: "Chat con contexto que opera sobre toda la plataforma, con la IA y la clave propia del estudio. Las acciones sensibles pasan por aprobación.",
     status: "disponible",
-    minPlan: { studio: "senal", personal: "destello" },
+    minPlan: { studio: "inicial", personal: "autonomo_gratis" , persona: "persona_gratis" },
     roles: [...ALL_STAFF, "titular"],
     nav: [
       { href: "/admin/asistente", label: "Asistente" },
@@ -137,14 +140,14 @@ export const FARO_MODULES: FaroModule[] = [
   },
   {
     key: "shared_expenses",
-    name: "Gastos compartidos",
+    name: "Grupos de gastos",
     icon: "Wallet",
     core: true,
     description: "Grupos, gastos divididos, saldos y deudas simplificadas, conectados con la contabilidad.",
     status: "disponible",
-    minPlan: { studio: "senal", personal: "destello" },
+    minPlan: { studio: "inicial", personal: "autonomo_gratis" , persona: "persona_gratis" },
     roles: [...ALL_STAFF, "titular"],
-    nav: [{ href: "/gastos", label: "Gastos compartidos" }],
+    nav: [{ href: "/grupos", label: "Grupos de gastos" }],
     events: ["gasto.creado", "pago.registrado"],
     tools: ["listar_grupos_gastos", "crear_gasto", "dividir_gasto", "consultar_saldos", "registrar_pago"],
   },
@@ -154,7 +157,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "Workflow",
     description: "Canvas visual con disparadores, condiciones y acciones, con plantillas listas para usar.",
     status: "proximamente",
-    minPlan: { studio: "senal" },
+    minPlan: { studio: "inicial" },
     roles: ["dueno", "contador"],
     nav: [],
     events: [],
@@ -167,7 +170,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "FileSignature",
     description: "Envío masivo de recibos a la nómina con firma conforme o no conforme.",
     status: "proximamente",
-    minPlan: { studio: "rumbo" },
+    minPlan: { studio: "profesional" },
     roles: ALL_STAFF,
     nav: [],
     events: ["recibo.firmado"],
@@ -179,7 +182,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "IdCard",
     description: "La organización administra a sus empleados: datos, documentos, altas y bajas.",
     status: "proximamente",
-    minPlan: { studio: "rumbo" },
+    minPlan: { studio: "profesional" },
     roles: ALL_STAFF,
     nav: [],
     events: ["empleado.alta", "empleado.baja"],
@@ -191,7 +194,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "Megaphone",
     description: "Avisos y comunicados a los empleados de una organización con confirmación de lectura.",
     status: "proximamente",
-    minPlan: { studio: "rumbo" },
+    minPlan: { studio: "profesional" },
     roles: ALL_STAFF,
     nav: [],
     events: [],
@@ -203,7 +206,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "ScanText",
     description: "Extrae datos de facturas, tickets y extractos con detección de duplicados y confirmación humana.",
     status: "proximamente",
-    minPlan: { studio: "senal", personal: "guia" },
+    minPlan: { studio: "inicial", personal: "autonomo_pro" },
     roles: [...ALL_STAFF, "titular"],
     nav: [],
     events: ["documento.leido"],
@@ -216,7 +219,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "Landmark",
     description: "Cruza extractos con facturas: pagadas, pendientes, pagos sin factura y comisiones.",
     status: "proximamente",
-    minPlan: { studio: "horizonte" },
+    minPlan: { studio: "avanzado" },
     roles: ["dueno", "contador"],
     nav: [],
     events: [],
@@ -228,7 +231,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "HandCoins",
     description: "Abonos del estudio a sus clientes, facturación, recordatorios y cobro con Mercado Pago.",
     status: "proximamente",
-    minPlan: { studio: "rumbo" },
+    minPlan: { studio: "profesional" },
     roles: ["dueno"],
     nav: [],
     events: [],
@@ -240,7 +243,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "KanbanSquare",
     description: "Vista tipo planilla, kanban y calendario del trabajo por cliente, con tareas recurrentes.",
     status: "proximamente",
-    minPlan: { studio: "rumbo" },
+    minPlan: { studio: "profesional" },
     roles: ALL_STAFF,
     nav: [],
     events: [],
@@ -252,7 +255,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "ShieldCheck",
     description: "Padrón, facturación electrónica, vencimientos según CUIT y VEP por web services oficiales.",
     status: "proximamente",
-    minPlan: { studio: "rumbo", personal: "destello" },
+    minPlan: { studio: "profesional", personal: "autonomo_gratis" },
     roles: [...ALL_STAFF, "titular"],
     nav: [],
     events: [],
@@ -264,7 +267,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "Plug",
     description: "Conector instalado en la PC de Tango que sincroniza por la API Delta.",
     status: "disponible",
-    minPlan: { studio: "rumbo" },
+    minPlan: { studio: "profesional" },
     roles: ["dueno"],
     nav: [{ href: "/admin/conexiones/tango", label: "Tango" }],
     events: ["tango.sincronizado"],
@@ -276,7 +279,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "FileSpreadsheet",
     description: "Importación de exportaciones de Tango y otros sistemas con plantillas de mapeo.",
     status: "disponible",
-    minPlan: { studio: "senal" },
+    minPlan: { studio: "inicial" },
     roles: ["dueno"],
     nav: [{ href: "/admin/conexiones/archivos", label: "Archivos" }],
     events: [],
@@ -288,7 +291,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "MessagesSquare",
     description: "Los clientes consultan; la IA prepara la respuesta y el estudio la aprueba.",
     status: "proximamente",
-    minPlan: { studio: "rumbo" },
+    minPlan: { studio: "profesional" },
     roles: ALL_STAFF,
     nav: [],
     events: [],
@@ -300,7 +303,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "ChartLine",
     description: "Tableros financieros y de gestión por organización y del estudio.",
     status: "proximamente",
-    minPlan: { studio: "horizonte" },
+    minPlan: { studio: "avanzado" },
     roles: ["dueno", "contador"],
     nav: [],
     events: [],
@@ -312,7 +315,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "MessageCircle",
     description: "Avisos y recepción de comprobantes por WhatsApp Business API.",
     status: "proximamente",
-    minPlan: { studio: "horizonte", personal: "guia" },
+    minPlan: { studio: "avanzado", personal: "autonomo_pro" },
     roles: ALL_STAFF,
     nav: [],
     events: [],
@@ -324,7 +327,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "Palette",
     description: "Logo, colores y dominio propio del estudio en el portal de sus clientes.",
     status: "proximamente",
-    minPlan: { studio: "horizonte" },
+    minPlan: { studio: "avanzado" },
     roles: ["dueno"],
     nav: [],
     events: [],
@@ -336,7 +339,7 @@ export const FARO_MODULES: FaroModule[] = [
     icon: "Receipt",
     description: "Facturas A, B, C y E por WSFE con PDF propio, semáforo de monotributo y calendario personal.",
     status: "proximamente",
-    minPlan: { personal: "destello" },
+    minPlan: { personal: "autonomo_gratis" },
     roles: ["titular"],
     nav: [],
     events: [],
@@ -344,6 +347,47 @@ export const FARO_MODULES: FaroModule[] = [
     limit: "invoicesPerMonth",
   },
 ];
+
+// Módulos sumados en la etapa de Red de estudios, Flotas y Bitácora
+FARO_MODULES.push(
+  {
+    key: "flotas",
+    name: "Flotas",
+    icon: "Sailboat",
+    core: true,
+    description: "Grupos informales de 3 a 20 personas que contratan juntos un estudio de la Red, cada uno con su acuerdo y su abono.",
+    status: "disponible",
+    minPlan: { personal: "autonomo_gratis", persona: "persona_gratis" },
+    roles: ["titular"],
+    nav: [{ href: "/flotas", label: "Flotas" }],
+    events: ["flota.creada", "flota.propuesta", "flota.acuerdo_firmado"],
+    tools: [],
+  },
+  {
+    key: "red_estudios",
+    name: "Red de estudios",
+    icon: "Network",
+    description: "Aparecé en el directorio neutral de estudios de Faro, recibí pedidos de propuesta y reseñas de clientes verificados.",
+    status: "disponible",
+    minPlan: { studio: "profesional" },
+    roles: ["dueno", "contador"],
+    nav: [{ href: "/admin/red", label: "Red de estudios" }],
+    events: ["red.pedido_propuesta", "red.resena"],
+    tools: [],
+  },
+  {
+    key: "bitacora",
+    name: "Bitácora",
+    icon: "NotebookPen",
+    description: "Tus finanzas personales sin cargar a mano: audio, tickets, mails y Mercado Pago, con presupuesto, metas y coach.",
+    status: "proximamente",
+    minPlan: { persona: "persona_gratis", personal: "autonomo_gratis" },
+    roles: ["titular"],
+    nav: [],
+    events: [],
+    tools: [],
+  },
+);
 
 export const getFaroModule = (key: string) => FARO_MODULES.find((m) => m.key === key);
 export const isFaroModuleKey = (k: unknown): k is FaroModuleKey => typeof k === "string" && FARO_MODULES.some((m) => m.key === k);

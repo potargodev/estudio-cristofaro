@@ -9,7 +9,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { formatMoney, todayAR } from "../constants";
 import { ledgerBalances, nextDate, syncAccounting } from "./service";
 
-// Tareas de gastos compartidos (corren solas desde instrumentation.ts y por
+// Tareas de grupos de gastos (corren solas desde instrumentation.ts y por
 // /api/gastos/cron con CRON_SECRET):
 // - gastos recurrentes: crea la copia del día y mueve la próxima fecha;
 // - recordatorios: a quien debe, con la frecuencia del grupo y si no se dio de baja.
@@ -107,7 +107,7 @@ export async function sendGroupReminders(now = new Date()) {
         html: mailLayout(
           `Tenés un saldo pendiente en ${g.name}`,
           `<p>Hola ${esc(m.name)}, en el grupo <strong>${esc(g.name)}</strong> debés ${esc(total)}. Desde el grupo ves a quién pagarle y podés registrar el pago.</p>${m.user_id ? "" : "<p>Entrá con el enlace personal que te pasaron.</p>"}<p style="color:#5a6176;font-size:13px">Si no querés más recordatorios de este grupo, desactivalos en Integrantes → Tus datos.</p>`,
-          m.user_id ? { href: `${getSiteUrl()}/gastos/g/${g.id}`, label: "Ver el grupo" } : undefined,
+          m.user_id ? { href: `${getSiteUrl()}/grupos/g/${g.id}`, label: "Ver el grupo" } : undefined,
           "Faro",
         ),
       });

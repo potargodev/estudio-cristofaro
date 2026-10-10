@@ -2,7 +2,7 @@
 
 import { Camera, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { createExpenseAction, fxAction, readReceiptAction, type FormState } from "@/app/gastos/actions";
+import { createExpenseAction, fxAction, readReceiptAction, type FormState } from "@/app/grupos/actions";
 import { cn } from "@/lib/utils";
 import { CATEGORIES, CURRENCIES, FX_SOURCES, RECURRENCES, SPLIT_METHODS, formatMoney, todayAR, type FxSource } from "@/modules/gastos/constants";
 import { parseAmount, splitExpense, type SplitMethod, type SplitSpec } from "@/modules/gastos/core/split";

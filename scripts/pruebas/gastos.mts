@@ -1,4 +1,4 @@
-// Pruebas de gastos compartidos contra la base (solo desarrollo): aislamiento
+// Pruebas de grupos de gastos contra la base (solo desarrollo): aislamiento
 // forzando IDs, invitados acotados a su grupo, contexto contable, rendiciones
 // y gastos recurrentes.
 //   npx tsx --conditions=react-server --env-file=.env.local scripts/pruebas/gastos.mts
@@ -126,9 +126,9 @@ const res3 = await fetch(`${BASE}/api/gastos/archivo/rendicion/${r.id}`, { heade
 check("ticket de una rendición desde otro estudio: 404", res3.status === 404);
 const res4 = await fetch(`${BASE}/api/gastos/archivo/rendicion/${r.id}`, { headers: { Cookie: d.cookies.empleadaNorte } });
 check("la empleada ve su ticket", res4.ok);
-const res5 = await fetch(`${BASE}/gastos/g/${g.id}`, { headers: { Cookie: cookieB }, redirect: "manual" });
+const res5 = await fetch(`${BASE}/grupos/g/${g.id}`, { headers: { Cookie: cookieB }, redirect: "manual" });
 check("página del grupo desde otro estudio: 404", res5.status === 404);
-const res6 = await fetch(`${BASE}/gastos/invitado/token-falso-de-prueba-1234567890`, { redirect: "manual" });
+const res6 = await fetch(`${BASE}/grupos/invitado/token-falso-de-prueba-1234567890`, { redirect: "manual" });
 check("link de invitado falso no entra", res6.status >= 300 && res6.status < 400 && (res6.headers.get("location") ?? "").includes("invitacion=invalida"));
 
 await db.update(group_members).set({ active: true }).where(eq(group_members.group_id, g.id));

@@ -34,7 +34,9 @@ function fromRow(r: typeof faro_plans.$inferSelect, base?: FaroPlan): FaroPlan {
     name: r.name,
     tagline: r.tagline,
     forWhom: r.for_whom,
-    priceArs: r.price_ars,
+    priceUsd: Number(r.price_usd),
+    extraOrgUsd: r.extra_org_usd == null ? null : Number(r.extra_org_usd),
+    trialDays: r.trial_days,
     free: r.free,
     recommended: r.recommended,
     ai: (["consultas", "acciones", "avanzado"].includes(r.ai) ? r.ai : "consultas") as AiLevel,
@@ -112,7 +114,7 @@ export async function moduleAvailability(studioId: string, key: FaroModuleKey): 
   return { state: "plan", plan };
 }
 
-/** ¿La IA del tenant puede proponer acciones (escritura)? Señal y Destello: solo consultas. */
+/** ¿La IA del tenant puede proponer acciones (escritura)? Inicial y planes gratis: solo consultas. */
 export async function aiCanAct(studioId: string) {
   const e = await getEntitlements(studioId);
   return Boolean(e && e.plan.ai !== "consultas");

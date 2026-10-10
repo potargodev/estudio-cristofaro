@@ -7,7 +7,7 @@ import { GastosError, createExpense, getGroupView, listGroups, recordSettlement,
 import { defineTool, ToolError, type HandlerContext } from "../types";
 import { uuid } from "./helpers";
 
-// Gastos compartidos para el Asistente y MCP. Operan como la persona que
+// Grupos de gastos para el Asistente y MCP. Operan como la persona que
 // pregunta (solo sus grupos). Crear y consultar no piden aprobación; un pago
 // por Mercado Pago es sensible y va a Aprobaciones.
 
@@ -46,7 +46,7 @@ function findMember<T extends { id: string; name: string }>(members: T[], wanted
 /** Grupo por id, por nombre o, si no se dice, el único grupo donde están todas las personas nombradas */
 async function resolveGroup(actor: GastosActor, input: { grupo_id?: string; grupo?: string }, names: string[]) {
   const groups = await listGroups(actor);
-  if (!groups.length) throw new ToolError("No tenés grupos de gastos compartidos. Creá uno en Gastos compartidos.", "entrada_invalida");
+  if (!groups.length) throw new ToolError("No tenés grupos de grupos de gastos. Creá uno en Grupos de gastos.", "entrada_invalida");
   if (input.grupo_id) return input.grupo_id;
   if (input.grupo) {
     const w = norm(input.grupo);
@@ -93,7 +93,7 @@ export const gastosTools = [
   defineTool({
     name: "listar_grupos_gastos",
     title: "Ver mis grupos de gastos",
-    description: "Grupos de gastos compartidos de quien pregunta, con su saldo en cada uno (positivo: le deben).",
+    description: "Grupos de grupos de gastos de quien pregunta, con su saldo en cada uno (positivo: le deben).",
     module: "gastos",
     level: "lectura",
     roles: ROLES,
@@ -106,7 +106,7 @@ export const gastosTools = [
   defineTool({
     name: "consultar_saldos",
     title: "Consultar saldos",
-    description: "Saldos de un grupo de gastos compartidos (o de todos) y las transferencias para quedar a mano.",
+    description: "Saldos de un grupo de grupos de gastos (o de todos) y las transferencias para quedar a mano.",
     module: "gastos",
     level: "lectura",
     roles: ROLES,
@@ -160,7 +160,7 @@ export const gastosTools = [
     name: "crear_gasto",
     title: "Cargar un gasto compartido",
     description:
-      'Carga un gasto en un grupo de gastos compartidos y lo divide. Ej.: "pagué $48.000 de la cena con Juan y Ana, dividido igual" → descripcion "Cena", monto 48000, dividir_entre ["Juan","Ana"]. No pide aprobación.',
+      'Carga un gasto en un grupo de grupos de gastos y lo divide. Ej.: "pagué $48.000 de la cena con Juan y Ana, dividido igual" → descripcion "Cena", monto 48000, dividir_entre ["Juan","Ana"]. No pide aprobación.',
     module: "gastos",
     level: "escritura",
     autoRun: true,
@@ -204,7 +204,7 @@ export const gastosTools = [
           listo: `Cargué ${e.description} por ${formatMoney(total, e.currency)} en ${fresh.group.name}`,
           pago: name(payer),
           partes: Object.entries(exp.shares).map(([m, c]) => `${name(m)}: ${formatMoney(c, e.currency)}`),
-          link: `/gastos/g/${groupId}/gasto/${e.id}`,
+          link: `/grupos/g/${groupId}/gasto/${e.id}`,
         };
       });
     },
@@ -212,7 +212,7 @@ export const gastosTools = [
   defineTool({
     name: "registrar_pago",
     title: "Registrar un pago entre personas",
-    description: "Registra que alguien le pagó a otra persona de un grupo de gastos compartidos. Con Mercado Pago es sensible y pasa por Aprobaciones.",
+    description: "Registra que alguien le pagó a otra persona de un grupo de grupos de gastos. Con Mercado Pago es sensible y pasa por Aprobaciones.",
     module: "gastos",
     level: (i: z.infer<typeof pagoInput>) => (i.medio === "mercado_pago" ? "sensible" : "escritura"),
     roles: ROLES,

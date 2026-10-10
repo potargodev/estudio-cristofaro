@@ -24,11 +24,11 @@ export default async function GastosHome() {
     <>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-[clamp(2.1rem,6vw,3rem)] leading-none">Gastos compartidos</h1>
+          <h1 className="font-display text-[clamp(2.1rem,6vw,3rem)] leading-none">Grupos de gastos</h1>
           <p className="mt-2 text-muted">{actor.kind === "guest" ? `Hola, ${actor.name}. Este es el grupo al que te invitaron.` : "Quién pagó qué, cuánto debe cada uno y cómo saldarlo."}</p>
         </div>
         {actor.kind === "user" && (
-          <Link href="/gastos/nuevo" className="inline-flex h-11 items-center gap-2 bg-navy px-4 text-paper hover:bg-navy-deep">
+          <Link href="/grupos/nuevo" className="inline-flex h-11 items-center gap-2 bg-navy px-4 text-paper hover:bg-navy-deep">
             <Plus className="size-4" aria-hidden />
             Nuevo grupo
           </Link>
@@ -52,7 +52,7 @@ export default async function GastosHome() {
           <p className="font-display text-2xl">Todavía no tenés grupos</p>
           <p className="mx-auto mt-2 max-w-sm text-muted">Armá uno para un viaje, la oficina, un proyecto o tus socios, y sumá a las personas (aunque no tengan cuenta).</p>
           {actor.kind === "user" && (
-            <Link href="/gastos/nuevo" className="mt-6 inline-flex h-11 items-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep">
+            <Link href="/grupos/nuevo" className="mt-6 inline-flex h-11 items-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep">
               <Plus className="size-4" aria-hidden />
               Crear el primer grupo
             </Link>
@@ -64,7 +64,7 @@ export default async function GastosHome() {
             const curs = Object.keys(g.mine);
             return (
               <li key={g.id}>
-                <Link href={`/gastos/g/${g.id}`} className="flex items-center gap-4 px-1 py-4 transition-colors hover:bg-navy-soft/50">
+                <Link href={`/grupos/g/${g.id}`} className="flex items-center gap-4 px-1 py-4 transition-colors hover:bg-navy-soft/50">
                   <GroupDot color={g.color} name={g.name} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[16px] font-medium">{g.name}</span>

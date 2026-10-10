@@ -1,7 +1,7 @@
 // Tareas en segundo plano del servidor (solo runtime Node, nunca en el build).
 // - Recordatorios de la agenda cada 5 minutos (AGENDA_REMINDERS=off los apaga,
 //   por ejemplo si se usa un cron externo contra /api/agenda/recordatorios).
-// - Gastos compartidos (recurrentes y recordatorios) cada hora (GASTOS_JOBS=off
+// - Grupos de gastos (recurrentes y recordatorios) cada hora (GASTOS_JOBS=off
 //   los apaga; cron externo: /api/gastos/cron).
 
 export async function register() {

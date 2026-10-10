@@ -29,7 +29,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
   const date = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${e.date}T12:00:00Z`));
   return (
     <>
-      <Link href={`/gastos/g/${v.group.id}`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+      <Link href={`/grupos/g/${v.group.id}`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
         ← {v.group.name}
       </Link>
       <p className="mt-4 text-[13px] text-muted">

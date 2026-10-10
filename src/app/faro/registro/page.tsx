@@ -6,10 +6,10 @@ import { getPlan } from "@/lib/faro/plans";
 export const metadata: Metadata = { title: "Crear una cuenta" };
 
 const PERKS = [
-  "Estudios: hasta 5 organizaciones gratis, para siempre, con portal para tus clientes",
-  "Autónomos: tu panel con vencimientos y, muy pronto, facturación y semáforo de monotributo",
-  "Asistente IA con tu propia clave",
-  "Gastos compartidos incluidos",
+  "Personas: gratis, con grupos de gastos, Flotas y la Red de estudios (Bitácora, muy pronto)",
+  "Autónomos: gratis, con tu panel y, muy pronto, facturación y semáforo de monotributo",
+  "Estudios: 30 días de prueba gratis, hasta 10 organizaciones con Inicial",
+  "Asistente IA con tu propia clave y grupos de gastos incluidos",
 ];
 
 export default async function RegistroPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -33,7 +33,7 @@ export default async function RegistroPage({ searchParams }: { searchParams: Pro
             {interest && <p className="mt-6 text-[14px] text-paper/60">Empezás en el plan gratis y te contactamos para pasar a {getPlan(interest)?.name}.</p>}
           </div>
           <div className="border border-hair-strong bg-navy-deep/70 p-6 sm:p-8 lg:col-span-6 lg:col-start-7">
-            <RegisterForm initial={sp.tipo === "personal" ? "personal" : sp.tipo === "studio" ? "studio" : undefined} interest={interest} />
+            <RegisterForm initial={sp.tipo === "personal" || sp.tipo === "studio" || sp.tipo === "persona" ? sp.tipo : undefined} interest={interest} />
           </div>
         </div>
       </Container>

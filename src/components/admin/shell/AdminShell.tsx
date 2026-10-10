@@ -69,11 +69,11 @@ const BOTTOM: { href: string; label: string; icon: NavIcon; badge?: BadgeKey; ex
   { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
 ];
 
-/** Cuenta personal: su panel, el Asistente, gastos compartidos y "Más" */
+/** Cuenta personal: su panel, el Asistente, grupos de gastos y "Más" */
 const BOTTOM_PERSONAL: typeof BOTTOM = [
   { href: "/personal", label: "Inicio", icon: "resumen", exact: true },
   { href: "/admin/asistente", label: "Asistente", icon: "asistente" },
-  { href: "/gastos", label: "Gastos", icon: "gastos" },
+  { href: "/grupos", label: "Gastos", icon: "gastos" },
   { href: "/admin/mcp", label: "MCP", icon: "mcp" },
 ];
 

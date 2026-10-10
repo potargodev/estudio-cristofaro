@@ -43,13 +43,13 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
   const name = (mid: string | null) => v.allMembers.find((m) => m.id === mid)?.name ?? "Alguien";
   const myCurrencies = Object.entries(v.balances).filter(([, b]) => b[me.id]);
   const pendingForMe = v.settlements.filter((s) => s.status === "informado" && ((s.to_member === me.id && !s.confirmed_by_to) || (s.from_member === me.id && !s.confirmed_by_from)));
-  const href = (t: string) => `/gastos/g/${group.id}${t === "actividad" ? "" : `?tab=${t}`}`;
+  const href = (t: string) => `/grupos/g/${group.id}${t === "actividad" ? "" : `?tab=${t}`}`;
 
   return (
     <>
       {sp.guardado && SAVED[sp.guardado] && <Notice>{SAVED[sp.guardado]}</Notice>}
       {sp.error && <Notice tone="error">{sp.error.slice(0, 200)}</Notice>}
-      <Link href="/gastos" className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+      <Link href="/grupos" className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
         ← Tus grupos
       </Link>
 
@@ -71,11 +71,11 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
           {myCurrencies.length === 0 ? <span className="text-muted">Estás al día</span> : myCurrencies.map(([cur, b]) => <BalanceLine key={cur} cents={b[me.id]} currency={cur} className="block" />)}
         </p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:flex">
-          <Link href={`/gastos/g/${group.id}/gasto`} className="col-span-2 inline-flex h-14 items-center justify-center gap-2 bg-navy px-6 text-[17px] text-paper hover:bg-navy-deep sm:h-12 sm:text-[16px]">
+          <Link href={`/grupos/g/${group.id}/gasto`} className="col-span-2 inline-flex h-14 items-center justify-center gap-2 bg-navy px-6 text-[17px] text-paper hover:bg-navy-deep sm:h-12 sm:text-[16px]">
             <Plus className="size-5" aria-hidden />
             Agregar gasto
           </Link>
-          <Link href={`/gastos/g/${group.id}/saldar`} className="inline-flex h-12 items-center justify-center gap-2 border border-navy/30 px-5 text-navy hover:bg-navy-soft">
+          <Link href={`/grupos/g/${group.id}/saldar`} className="inline-flex h-12 items-center justify-center gap-2 border border-navy/30 px-5 text-navy hover:bg-navy-soft">
             <ArrowRightLeft className="size-4" aria-hidden />
             Saldar
           </Link>
@@ -171,7 +171,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                 return (
                   <li key={a.id} className="border-b border-line last:border-0">
                     {e ? (
-                      <Link href={`/gastos/g/${group.id}/gasto/${e.id}`} className="flex gap-3 px-1 py-3.5 hover:bg-navy-soft/50">
+                      <Link href={`/grupos/g/${group.id}/gasto/${e.id}`} className="flex gap-3 px-1 py-3.5 hover:bg-navy-soft/50">
                         {body}
                       </Link>
                     ) : (
@@ -228,7 +228,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                           )}
                         </p>
                         {canSettle && (
-                          <Link href={`/gastos/g/${group.id}/saldar?from=${t.from}&to=${t.to}&monto=${t.amount}&moneda=${cur}`} className="inline-flex h-10 items-center bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">
+                          <Link href={`/grupos/g/${group.id}/saldar?from=${t.from}&to=${t.to}&monto=${t.amount}&moneda=${cur}`} className="inline-flex h-10 items-center bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">
                             Saldar
                           </Link>
                         )}
@@ -396,7 +396,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       </div>
 
       <Link
-        href={`/gastos/g/${group.id}/gasto`}
+        href={`/grupos/g/${group.id}/gasto`}
         aria-label="Agregar gasto"
         className="fixed bottom-[calc(20px+env(safe-area-inset-bottom))] right-5 z-30 grid size-16 place-items-center rounded-full bg-navy text-paper shadow-[0_12px_30px_-10px_rgba(15,19,32,0.7)] hover:bg-navy-deep sm:hidden"
       >

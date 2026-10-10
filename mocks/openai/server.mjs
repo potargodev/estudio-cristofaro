@@ -64,7 +64,7 @@ function decide(body) {
   const want = (tool, args) => (tools.has(tool) ? { tool, args } : { text: `No tengo disponible la herramienta \`${tool}\` con tus permisos.` });
   if (/confirm[eé]|cancel[eé]/.test(q)) return { text: "Perfecto, ya quedó registrado." };
   const uuid = q.match(UUID)?.[0];
-  // Gastos compartidos: "pagué $48.000 de la cena con Juan y Ana, dividido igual"
+  // Grupos de gastos: "pagué $48.000 de la cena con Juan y Ana, dividido igual"
   const gasto = q.match(/pagu[eé]\s*\$?\s*([\d.,]+)\s*(?:de (?:la |el |los |las )?(.+?))?\s+con\s+(.+?)(?:,|\.|$)/);
   if (gasto) {
     const monto = Number(gasto[1].replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", "."));

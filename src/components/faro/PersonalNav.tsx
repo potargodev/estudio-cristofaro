@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/personal", label: "Inicio", icon: Home, exact: true },
-  { href: "/gastos", label: "Gastos compartidos", icon: Wallet },
+  { href: "/grupos", label: "Grupos de gastos", icon: Wallet },
   { href: "/admin/asistente", label: "Asistente IA", icon: Bot },
   { href: "/admin/cambiar-clave", label: "Mi cuenta", icon: KeyRound },
 ];

@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, ne } from "drizzle-orm";
 import { getDb } from "@/db";
 import { legal_entities, organizations, service_plans, studios, users } from "@/db/schema";
 import { SERVICE_PLANS } from "@/lib/service-plans";
@@ -79,7 +79,7 @@ export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
   if (taken) return { ok: false, message: "Ya hay una cuenta con ese email. Entrá con tu contraseña o recuperala." };
   if (cuit) {
     const [dup] = await db.select({ id: studios.id }).from(studios).where(eq(studios.cuit, cuit));
-    if (dup && t.kind === "personal") return { ok: false, message: "Ya hay una cuenta de Faro Personal con ese CUIT." };
+    if (dup && t.kind !== "studio") return { ok: false, message: "Ya hay una cuenta de Faro Personal con ese CUIT." };
   }
   const [studio] = await db
     .insert(studios)
@@ -93,6 +93,9 @@ export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
       legal_name: name,
       tax_regime: t.taxRegime ?? null,
       industries: (t.industries ?? []).slice(0, 12),
+      // Planes pagos arrancan con la prueba gratis (el cobro llega en la F7)
+      status: plan.trialDays > 0 && !plan.free ? "prueba" : "activo",
+      trial_ends_at: plan.trialDays > 0 && !plan.free ? new Date(Date.now() + plan.trialDays * 86400000) : null,
     })
     .returning({ id: studios.id });
   try {
@@ -101,12 +104,12 @@ export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
       name: t.owner.name.trim().slice(0, 120) || email.split("@")[0],
       email,
       password: t.owner.password,
-      role: t.kind === "personal" ? "titular" : "dueno",
+      role: t.kind === "studio" ? "dueno" : "titular",
     });
     if (t.owner.mustChangePassword) await db.update(users).set({ mustChangePassword: true }).where(eq(users.id, user.id));
     await db.update(studios).set({ owner_user_id: user.id }).where(eq(studios.id, studio.id));
     // Cuenta personal: una sola organización, la propia (contexto de sus gastos y, después, su facturación)
-    if (t.kind === "personal") {
+    if (t.kind !== "studio") {
       const [org] = await db.insert(organizations).values({ studio_id: studio.id, name, status: "activa" }).returning({ id: organizations.id });
       if (cuit)
         await db.insert(legal_entities).values({
@@ -135,7 +138,7 @@ export async function ownOrganization(studioId: string) {
     .select({ id: organizations.id, name: organizations.name })
     .from(organizations)
     .innerJoin(studios, eq(studios.id, organizations.studio_id))
-    .where(and(eq(organizations.studio_id, studioId), eq(studios.kind, "personal")))
+    .where(and(eq(organizations.studio_id, studioId), ne(studios.kind, "studio")))
     .orderBy(asc(organizations.created_at))
     .limit(1);
   return o ?? null;

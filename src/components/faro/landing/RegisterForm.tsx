@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, Check, UserRound } from "lucide-react";
+import { Building2, Check, NotebookPen, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { registerTenant, type RegisterState } from "@/app/faro/registro/actions";
@@ -8,15 +8,16 @@ import type { TenantKind } from "@/lib/faro/plans";
 import { cn } from "@/lib/utils";
 
 const KINDS: { kind: TenantKind; title: string; text: string; plan: string; icon: typeof Building2 }[] = [
-  { kind: "studio", title: "Un estudio o un contador", text: "Gestionás clientes: organizaciones, vencimientos, documentos y equipo.", plan: "Plan Señal, gratis", icon: Building2 },
-  { kind: "personal", title: "Autónomo", text: "Llevás tus números solo: facturación, monotributo y vencimientos.", plan: "Plan Destello, gratis", icon: UserRound },
+  { kind: "persona", title: "Una persona", text: "Querés llevar tus finanzas, dividir gastos o encontrar un contador.", plan: "Personas · Gratis", icon: NotebookPen },
+  { kind: "personal", title: "Autónomo", text: "Llevás tus números solo: facturación, monotributo y vencimientos.", plan: "Autónomos · Gratis", icon: UserRound },
+  { kind: "studio", title: "Un estudio o un contador", text: "Gestionás clientes: organizaciones, vencimientos, documentos y equipo.", plan: "Estudios · Inicial, 30 días gratis", icon: Building2 },
 ];
 
 const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-[15px] text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
 const label = "text-[13px] text-paper/70";
 
 /** Autoregistro: primero "¿Qué sos?", después los datos. Sin tarjeta. */
-export function RegisterForm({ kinds = ["studio", "personal"], initial, interest }: { kinds?: TenantKind[]; initial?: TenantKind; interest?: string }) {
+export function RegisterForm({ kinds = ["persona", "personal", "studio"], initial, interest }: { kinds?: TenantKind[]; initial?: TenantKind; interest?: string }) {
   const options = KINDS.filter((k) => kinds.includes(k.kind));
   const [kind, setKind] = useState<TenantKind | null>(options.length === 1 ? options[0].kind : (initial ?? null));
   const [state, action, pending] = useActionState<RegisterState, FormData>(registerTenant, { ok: false });
@@ -104,7 +105,7 @@ export function RegisterForm({ kinds = ["studio", "personal"], initial, interest
             </p>
           )}
           <button type="submit" disabled={pending} className="mt-2 h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
-            {pending ? "Creando tu cuenta…" : kind === "studio" ? "Crear mi estudio gratis" : "Empezar gratis"}
+            {pending ? "Creando tu cuenta…" : kind === "studio" ? "Probar 30 días gratis" : "Crear mi cuenta gratis"}
           </button>
           <p className="text-[13px] text-paper/55">
             {kind === "studio"

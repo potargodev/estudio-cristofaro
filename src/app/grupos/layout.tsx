@@ -8,12 +8,12 @@ import { homeOf } from "@/modules/gastos/server/actor";
 import { getGastosActor } from "@/modules/gastos/server/session";
 import { gastosSignOut } from "./actions";
 
-export const metadata: Metadata = { title: { default: "Gastos compartidos", template: "%s · Gastos compartidos" }, robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: { default: "Grupos de gastos", template: "%s · Grupos de gastos" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 const PANEL: Record<string, string> = { "/admin": "Volver al estudio", "/portal": "Volver al portal", "/personal": "Volver a tu panel" };
 
-/** Gastos compartidos: mismo lugar para todos (estudio, autónomo, portal, empleados e invitados) */
+/** Grupos de gastos: mismo lugar para todos (estudio, autónomo, portal, empleados e invitados) */
 export default async function GastosLayout({ children }: { children: React.ReactNode }) {
   const actor = await getGastosActor();
   const home = actor ? homeOf(actor) : null;
@@ -21,8 +21,8 @@ export default async function GastosLayout({ children }: { children: React.React
     <div className="admin-shell app-ui min-h-dvh bg-canvas text-ink">
       <header className="sticky top-0 z-30 bg-night text-paper">
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-3 px-4 sm:px-6">
-          <Link href={actor ? "/gastos" : "/gastos/entrar"} aria-label="Gastos compartidos, inicio">
-            <FaroLogo size="sm" sub="Gastos compartidos" />
+          <Link href={actor ? "/grupos" : "/grupos/entrar"} aria-label="Grupos de gastos, inicio">
+            <FaroLogo size="sm" sub="Grupos de gastos" />
           </Link>
           <span className="flex-1" />
           {home && (

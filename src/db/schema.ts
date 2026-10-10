@@ -41,7 +41,7 @@ const updatedAt = () =>
 // Roles de tenant: estudio (dueno, contador, colaborador) y personal (titular).
 // cliente = miembro de una organización (su rol vive en memberships).
 export const userRole = pgEnum("user_role", ["dueno", "contador", "cliente", "colaborador", "titular"]);
-export const tenantKind = pgEnum("tenant_kind", ["studio", "personal"]);
+export const tenantKind = pgEnum("tenant_kind", ["studio", "personal", "persona"]);
 export const tenantStatus = pgEnum("tenant_status", ["activo", "prueba", "suspendido"]);
 export const leadStatus = pgEnum("lead_status", ["nuevo", "contactado", "presupuesto", "ganado", "perdido"]);
 export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro", "agenda"]);
@@ -72,7 +72,7 @@ export const studios = pgTable("studios", {
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   kind: tenantKind("kind").notNull().default("studio"),
-  plan_key: text("plan_key").notNull().default("senal"),
+  plan_key: text("plan_key").notNull().default("inicial"),
   status: tenantStatus("status").notNull().default("activo"),
   /** CUIT del autónomo (personal) o del estudio */
   cuit: text("cuit"),
@@ -1162,7 +1162,11 @@ export const faro_plans = pgTable("faro_plans", {
   name: text("name").notNull(),
   tagline: text("tagline").notNull().default(""),
   for_whom: text("for_whom").notNull().default(""),
+  /** En desuso: el precio se carga en USD (price_usd) y se convierte con faro_settings.usd_ars */
   price_ars: integer("price_ars"),
+  price_usd: numeric("price_usd", { precision: 10, scale: 2 }).notNull().default("0"),
+  extra_org_usd: numeric("extra_org_usd", { precision: 10, scale: 2 }),
+  trial_days: integer("trial_days").notNull().default(0),
   free: boolean("free").notNull().default(false),
   recommended: boolean("recommended").notNull().default(false),
   ai: text("ai").notNull().default("consultas"),
@@ -1170,6 +1174,14 @@ export const faro_plans = pgTable("faro_plans", {
   modules: text("modules").array().notNull().default(sql`'{}'::text[]`),
   support: text("support").notNull().default(""),
   position: integer("position").notNull().default(0),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** Configuración de la plataforma (Faro Manager): conversión USD → ARS, etc. */
+export const faro_settings = pgTable("faro_settings", {
+  key: text("key").primaryKey(),
+  value: jsonb("value").$type<unknown>().notNull(),
   updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
   updated_at: updatedAt(),
 });
@@ -1297,7 +1309,7 @@ export const assisted_access = pgTable(
   (t) => [index("assisted_access_user_idx").on(t.faro_user_id, t.expires_at)],
 );
 
-// ───────────────────────── Gastos compartidos (núcleo, docs/faro-producto.md §2.e) ─────────────────────────
+// ───────────────────────── Grupos de gastos (núcleo, docs/faro-producto.md §2.e) ─────────────────────────
 // Todos los montos en centavos enteros (bigint, modo number: hasta 9 billones de pesos).
 
 export const groupType = pgEnum("group_type", ["socios", "equipo", "oficina", "proyecto", "viaje", "personal"]);

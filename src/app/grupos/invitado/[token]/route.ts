@@ -13,11 +13,11 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const base = getSiteUrl();
-  if (!rateLimit(`gastos-invitado:${clientIp(request.headers)}`, 30, 10 * 60 * 1000)) return NextResponse.redirect(`${base}/gastos/entrar?invitacion=limite`);
+  if (!rateLimit(`gastos-invitado:${clientIp(request.headers)}`, 30, 10 * 60 * 1000)) return NextResponse.redirect(`${base}/grupos/entrar?invitacion=limite`);
   const g = await guestByToken(token);
-  if (!g) return NextResponse.redirect(`${base}/gastos/entrar?invitacion=invalida`);
+  if (!g) return NextResponse.redirect(`${base}/grupos/entrar?invitacion=invalida`);
   await audit({ studioId: g.studioId, actorLabel: `invitado: ${g.email ?? g.name}`, action: "gastos.invitado_ingresar", entityType: "integrante_gastos", entityId: g.memberId, metadata: { grupo: g.groupId } });
-  const res = NextResponse.redirect(`${base}/gastos/g/${g.groupId}`);
+  const res = NextResponse.redirect(`${base}/grupos/g/${g.groupId}`);
   res.cookies.set(GUEST_COOKIE, token, { httpOnly: true, sameSite: "lax", secure: base.startsWith("https"), maxAge: 60 * 60 * 24 * 90, path: "/" });
   return res;
 }

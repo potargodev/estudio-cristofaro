@@ -113,6 +113,13 @@
       "when": 1791652153162,
       "tag": "0015_industrias",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1791652998400,
+      "tag": "0016_planes_nombres_precios",
+      "breakpoints": true
     }
   ]
 }

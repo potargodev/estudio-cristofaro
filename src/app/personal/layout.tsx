@@ -6,7 +6,7 @@ import { PersonalNav } from "@/components/faro/PersonalNav";
 import { Toaster } from "@/components/ui/sonner";
 import { signOut } from "../admin/actions";
 
-export const metadata: Metadata = { title: { default: "Faro Personal", template: "%s · Faro Personal" }, robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: { default: "Faro", template: "%s · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 /** Panel del autónomo (Faro Personal): pensado para el celular, con barra inferior */

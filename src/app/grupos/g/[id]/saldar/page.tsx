@@ -26,7 +26,7 @@ export default async function Saldar({ params, searchParams }: { params: Promise
   const currency = sp.moneda && /^[A-Z]{3}$/.test(sp.moneda) ? sp.moneda : (mine?.cur ?? v.group.base_currency);
   return (
     <>
-      <Link href={`/gastos/g/${v.group.id}?tab=saldos`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+      <Link href={`/grupos/g/${v.group.id}?tab=saldos`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
         ← {v.group.name}
       </Link>
       <h1 className="mb-2 mt-3 font-display text-4xl leading-none">Saldar</h1>

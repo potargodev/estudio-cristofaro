@@ -15,7 +15,7 @@ export interface PortalNavItem {
 }
 
 export function buildPortalNav(role: OrgRole, activeModules: string[]) {
-  // El empleado tiene su propio inicio (/portal/empleado): gastos compartidos y sus rendiciones
+  // El empleado tiene su propio inicio (/portal/empleado): grupos de gastos y sus rendiciones
   const main: PortalNavItem[] = can(role, "inicio.ver")
     ? [{ href: "/portal", label: "Inicio", icon: "inicio", exact: true }]
     : role === "empleado"
@@ -42,10 +42,10 @@ export function buildPortalNav(role: OrgRole, activeModules: string[]) {
 
   const extra: PortalNavItem[] = [];
   const rendiciones: PortalNavItem = { href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" };
-  if (role === "empleado") main.push(rendiciones, { href: "/gastos", label: "Gastos compartidos", icon: "gastos" });
+  if (role === "empleado") main.push(rendiciones, { href: "/grupos", label: "Grupos de gastos", icon: "gastos" });
   else if (can(role, "gastos.rendir") || can(role, "finanzas.gestionar")) extra.push(rendiciones);
   if (can(role, "finanzas.ver")) extra.push({ href: "/portal/gastos-empresa", label: "Gastos de la empresa", icon: "gastos" });
-  if (role !== "empleado") extra.push({ href: "/gastos", label: "Gastos compartidos", icon: "gastos" });
+  if (role !== "empleado") extra.push({ href: "/grupos", label: "Grupos de gastos", icon: "gastos" });
   for (const m of MODULES) {
     if (!activeModules.includes(m.key) || !can(role, m.permissions.view)) continue;
     for (const item of m.nav)

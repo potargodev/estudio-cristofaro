@@ -48,8 +48,8 @@ export function FaroFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/" className="u-draw pb-0.5 text-paper/75 hover:text-paper">
-                  Estudio Cristofaro, el primer estudio en Faro
+                <Link href="/faro#caso" className="u-draw pb-0.5 text-paper/75 hover:text-paper">
+                  Caso de uso: un estudio con Faro
                 </Link>
               </li>
             </ul>

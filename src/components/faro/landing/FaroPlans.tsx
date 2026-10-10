@@ -3,14 +3,26 @@
 import { useState } from "react";
 import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, CtaLink, GhostLink, SectionIndex } from "@/components/web/ui";
-import { PERSONAL_ROWS, STUDIO_ROWS } from "@/lib/faro/plan-rows";
-import { plansFor, priceLabel, type TenantKind } from "@/lib/faro/plans";
+import { PERSONA_ROWS, PERSONAL_ROWS, STUDIO_ROWS } from "@/lib/faro/plan-rows";
+import { ANNUAL_FREE_MONTHS, formatArs, formatUsd, PLANS, type FaroPlan, type TenantKind } from "@/lib/faro/plans";
 import { cn } from "@/lib/utils";
 
 const TABS: { kind: TenantKind; label: string; intro: string }[] = [
-  { kind: "studio", label: "Para estudios", intro: "Señal es gratis para siempre hasta 5 organizaciones. Rumbo y Horizonte suman automatización, módulos y equipo." },
+  { kind: "persona", label: "Para personas", intro: "Bitácora gratis para tus finanzas, tus grupos de gastos y para encontrar un contador cuando lo necesites." },
   { kind: "personal", label: "Para autónomos", intro: "Faro Personal para monotributistas y responsables inscriptos que llevan sus números solos." },
+  { kind: "studio", label: "Para estudios", intro: "30 días de prueba gratis en todos los planes. Profesional y Avanzado suman automatización, módulos, equipo y la Red de estudios." },
 ];
+
+/** "USD 49 / mes" y "≈ $ 68.600 por mes" */
+function Price({ p, usdArs }: { p: FaroPlan; usdArs: number }) {
+  if (p.free || !p.priceUsd) return <span className="tabular mt-4 block text-[18px] text-paper">Gratis</span>;
+  return (
+    <span className="mt-4 block">
+      <span className="tabular block text-[18px] text-paper">{formatUsd(p.priceUsd)} / mes</span>
+      <span className="tabular block text-[13px] text-paper/55">≈ {formatArs(p.priceUsd * usdArs)} por mes · {p.trialDays} días gratis</span>
+    </span>
+  );
+}
 
 function Cell({ v }: { v: string }) {
   if (v === "✓") return <span className="text-gold" aria-label="Incluido">✓</span>;
@@ -18,12 +30,12 @@ function Cell({ v }: { v: string }) {
   return <>{v}</>;
 }
 
-/** Planes en pestañas: estudios (Señal, Rumbo, Horizonte) y autónomos (Destello, Guía) */
-export function FaroPlans({ kinds = ["studio", "personal"] }: { kinds?: TenantKind[] }) {
+/** Planes en pestañas: personas (Gratis, Plus), autónomos (Gratis, Pro) y estudios (Inicial, Profesional, Avanzado) */
+export function FaroPlans({ kinds = ["persona", "personal", "studio"], plans: allPlans = PLANS, usdArs = 1400 }: { kinds?: TenantKind[]; plans?: FaroPlan[]; usdArs?: number }) {
   const tabs = TABS.filter((t) => kinds.includes(t.kind));
   const [kind, setKind] = useState<TenantKind>(tabs[0].kind);
-  const plans = plansFor(kind);
-  const rows = kind === "studio" ? STUDIO_ROWS : PERSONAL_ROWS;
+  const plans = allPlans.filter((p) => p.kind === kind);
+  const rows = kind === "studio" ? STUDIO_ROWS : kind === "personal" ? PERSONAL_ROWS : PERSONA_ROWS;
   const tab = tabs.find((t) => t.kind === kind)!;
   const cta = (key: string, free: boolean) =>
     free ? (
@@ -32,7 +44,7 @@ export function FaroPlans({ kinds = ["studio", "personal"] }: { kinds?: TenantKi
       </CtaLink>
     ) : (
       <GhostLink href={`/faro/registro?tipo=${kind}&interes=${key}`} className="h-11 w-full justify-center">
-        Empezar y pasar a {plans.find((p) => p.key === key)?.name}
+        Probar {plans.find((p) => p.key === key)?.name} 30 días gratis
       </GhostLink>
     );
   return (
@@ -65,6 +77,7 @@ export function FaroPlans({ kinds = ["studio", "personal"] }: { kinds?: TenantKi
             ))}
           </div>
         )}
+        <p className="mt-6 text-[13px] text-paper/55">Precios de referencia en USD, convertidos a pesos al tipo de cambio que publica Faro. Pago anual: {ANNUAL_FREE_MONTHS} meses de regalo.</p>
         <div id="planes-panel" role="tabpanel" aria-labelledby={`tab-${kind}`} className="mt-8">
           {/* Escritorio: tabla */}
           <table className="hidden w-full table-fixed border-collapse text-left text-[14px] text-paper/80 lg:table">
@@ -77,7 +90,7 @@ export function FaroPlans({ kinds = ["studio", "personal"] }: { kinds?: TenantKi
                     <span className="flex items-center gap-2 text-[12px] text-gold">{p.recommended ? "Recomendado" : " "}</span>
                     <span className="mt-1 block font-display text-[36px] leading-none text-paper">{p.name}</span>
                     <span className="mt-3 block text-[14px] text-paper/65">{p.tagline}</span>
-                    <span className="tabular mt-4 block text-[18px] text-paper">{priceLabel(p)}</span>
+                    <Price p={p} usdArs={usdArs} />
                     <span className="mt-5 block">{cta(p.key, p.free)}</span>
                   </th>
                 ))}
@@ -105,7 +118,7 @@ export function FaroPlans({ kinds = ["studio", "personal"] }: { kinds?: TenantKi
                 {p.recommended && <p className="text-[12px] text-gold">Recomendado</p>}
                 <h3 className="font-display text-[32px] leading-none text-paper">{p.name}</h3>
                 <p className="mt-2 text-[14px] text-paper/65">{p.tagline}</p>
-                <p className="tabular mt-3 text-[17px] text-paper">{priceLabel(p)}</p>
+                <Price p={p} usdArs={usdArs} />
                 <dl className="mt-4 divide-y divide-hair border-y border-hair text-[14px]">
                   {rows.map(([label, ...vals]) => (
                     <div key={label} className="flex justify-between gap-4 py-2.5">

@@ -34,18 +34,18 @@ export function FaroHero() {
             <p className="flex items-center gap-3 text-[13px] text-paper/65">
               <span className="tabular text-gold">Faro</span>
               <span aria-hidden className="h-px w-8 bg-hair-strong" />
-              Para estudios contables, contadores y autónomos
+              Para personas, autónomos y estudios contables
             </p>
             <MaskText as="h1" className="display-hero mt-8 text-paper">
-              La luz que guía la gestión de tu estudio.
+              Tu gestión y tus finanzas, a la vista.
             </MaskText>
             <p className="mt-8 max-w-xl text-[17px] leading-relaxed text-paper/75">
-              Faro ordena la cartera de clientes, automatiza el trabajo repetitivo y conecta al estudio con sus clientes y sus empleados. Con IA que propone y una persona que aprueba.
+              Faro es una herramienta, no un estudio contable. Empezá gratis con Bitácora para tus finanzas personales; si sos autónomo, facturá y sabé cuánto pagar; si sos contador, gestioná tu cartera y conectá a tus clientes. Creada por contadores.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-6">
-              <CtaLink tone="gold" href="/faro/registro">Empezar gratis</CtaLink>
-              <TextLink href="/faro#planes" className="text-[15px] text-paper">
-                Ver planes
+              <CtaLink tone="gold" href="/faro/registro">Crear mi cuenta gratis</CtaLink>
+              <TextLink href="/faro/registro?tipo=studio" className="text-[15px] text-paper">
+                Soy estudio contable
               </TextLink>
             </div>
           </div>
@@ -73,7 +73,7 @@ export function FaroHero() {
           </div>
         </div>
         <ul className="mt-16 grid border-t border-hair text-[13px] text-paper/65 sm:grid-cols-3">
-          {["Gratis para empezar, sin tarjeta", "IA con tu propia clave, en todos los planes", "Estudio Cristofaro, el primer estudio en Faro"].map((g, i) => (
+          {["Bitácora gratis, la puerta de entrada", "IA que propone, una persona que aprueba", "Creada por contadores, para todos"].map((g, i) => (
             <li key={g} className="flex items-center gap-3 border-b border-hair py-3 sm:border-b-0 sm:border-l sm:px-4 sm:first:border-l-0 sm:first:pl-0">
               <span className="tabular text-gold">0{i + 1}</span>
               {g}

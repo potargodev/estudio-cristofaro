@@ -19,7 +19,7 @@ export function FaroModules() {
             </SplitHeading>
           </div>
           <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
-            Estudios, organizaciones, usuarios, auditoría, portal, vencimientos, documentos, solicitudes, agenda, alertas y gastos compartidos están en todos los planes. El resto se suma según el plan.
+            Estudios, organizaciones, usuarios, auditoría, portal, vencimientos, documentos, solicitudes, agenda, alertas y grupos de gastos están en todos los planes. El resto se suma según el plan.
           </p>
         </div>
         <Reveal as="ul" className="mt-14 grid gap-px bg-hair sm:grid-cols-2 lg:grid-cols-4" stagger={0.04}>

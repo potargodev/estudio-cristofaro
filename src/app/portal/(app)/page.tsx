@@ -14,7 +14,7 @@ import { OBLIGATION_STATUS, REQUEST_STATUS, REQUEST_TYPES, categoryLabel, dateLa
 
 export default async function PortalHome() {
   const me = await requireMember();
-  // El empleado solo usa gastos compartidos y rendiciones
+  // El empleado solo usa grupos de gastos y rendiciones
   if (!can(me.orgRole, "inicio.ver")) redirect(me.orgRole === "empleado" ? "/portal/empleado" : "/portal/rendiciones");
   const show = {
     obligations: can(me.orgRole, "vencimientos.ver"),

@@ -24,7 +24,7 @@ interface Target {
 }
 
 /**
- * Comprobantes de gastos compartidos, pagos, rendiciones y gastos contables.
+ * Comprobantes de grupos de gastos, pagos, rendiciones y gastos contables.
  * - gasto y pago: solo integrantes activos del grupo (también invitados);
  * - rendicion: quien la cargó, quien aprueba en la organización o el estudio;
  * - contable: el estudio, miembros con finanzas.ver de la organización o el

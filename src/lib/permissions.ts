@@ -21,7 +21,7 @@ export const ORG_ROLE_DESCRIPTIONS: Record<OrgRole, string> = {
   administracion: "Gestiona documentos, vencimientos, pagos y solicitudes.",
   rrhh: "Accede solo a empleados, sueldos y procesos laborales.",
   consulta: "Solo lectura de los módulos habilitados.",
-  empleado: "Solo gastos compartidos y sus rendiciones de gastos.",
+  empleado: "Solo grupos de gastos y sus rendiciones de gastos.",
 };
 
 /** Roles sensibles: si los invita un admin de la organización, los confirma el estudio. */
@@ -74,7 +74,7 @@ export const ROLE_PERMISSIONS: Record<OrgRole, readonly Permission[]> = {
   rrhh: ["inicio.ver", "solicitudes.laborales", "sueldos.ver", "sueldos.gestionar", "personal.ver", "personal.gestionar", "agenda.reservar"],
   // Consulta: solo lectura. Sueldos y reportes quedan afuera por ser información sensible (Dirección).
   consulta: READ_ONLY.filter((p) => p !== "sueldos.ver" && p !== "reportes.ver"),
-  // Empleado: solo gastos compartidos y sus propias rendiciones.
+  // Empleado: solo grupos de gastos y sus propias rendiciones.
   empleado: ["gastos.rendir"],
 };
 

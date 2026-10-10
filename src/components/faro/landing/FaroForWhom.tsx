@@ -1,38 +1,48 @@
 "use client";
 
-import { Building2, Briefcase, Check, Store, UserRound, Users } from "lucide-react";
+import { Building2, Briefcase, Check, NotebookPen, Store, UserRound, Users } from "lucide-react";
 import { useState } from "react";
 import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, CtaLink, GhostLink, SectionIndex } from "@/components/web/ui";
 import { cn } from "@/lib/utils";
 
-// docs/faro-producto.md §2.d: los cinco tipos de usuario y su beneficio principal
+// docs/faro-producto.md §0 y §2.d: Faro es para todos. La puerta de entrada es
+// Bitácora (personas); después autónomos, estudios, sus clientes y empleados.
 
-type Key = "estudios" | "contadores" | "autonomos" | "empresas" | "empleados";
+type Key = "personas" | "estudios" | "contadores" | "autonomos" | "empresas" | "empleados";
 
 const TYPES: { key: Key; label: string; icon: typeof Building2; benefit: string; features: string[]; cta: { href: string; label: string; ghost?: boolean }; note?: string }[] = [
+  {
+    key: "personas",
+    label: "Personas",
+    icon: NotebookPen,
+    benefit: "Tus finanzas a la vista, sin cargar a mano. Y un contador confiable cuando lo necesites.",
+    features: ["Bitácora gratis: decile lo que gastaste y lo registra", "Grupos de gastos con amigos, pareja o el equipo", "Flotas: contratá un estudio en grupo, cada uno con su acuerdo", "Red de estudios con reseñas de clientes reales"],
+    cta: { href: "/faro/registro?tipo=persona", label: "Crear mi cuenta gratis" },
+    note: "Bitácora, próximamente. Grupos de gastos, ya disponibles",
+  },
   {
     key: "estudios",
     label: "Estudios contables",
     icon: Building2,
     benefit: "Más clientes con el mismo equipo: cartera ordenada, automatizaciones, IA y portal para los clientes.",
     features: ["Cartera con la salud de cada cliente", "Vencimientos y solicitudes en bandejas con prioridad", "Asistente IA que propone y vos aprobás", "Portal y app para cada cliente y su equipo"],
-    cta: { href: "/faro/registro?tipo=studio", label: "Crear mi estudio gratis" },
+    cta: { href: "/faro/registro?tipo=studio", label: "Probar 30 días gratis" },
   },
   {
     key: "contadores",
     label: "Contadores independientes",
     icon: Briefcase,
     benefit: "Un estudio entero en una sola herramienta, sin depender de planillas.",
-    features: ["Gratis hasta 5 clientes con el plan Señal", "El calendario de toda tu cartera en una vista", "Los comprobantes llegan solos por Drive", "Llamadas con Meet desde tu agenda"],
-    cta: { href: "/faro/registro?tipo=studio", label: "Empezar gratis" },
+    features: ["Hasta 10 organizaciones con el plan Inicial, 30 días gratis", "El calendario de toda tu cartera en una vista", "Tu rubro ya configurado con las plantillas por industria", "Llamadas con Meet desde tu agenda"],
+    cta: { href: "/faro/registro?tipo=studio", label: "Probar 30 días gratis" },
   },
   {
     key: "autonomos",
     label: "Autónomos",
     icon: UserRound,
     benefit: "Facturar, saber cuánto pagar y no pasarte de categoría, sin ser contador.",
-    features: ["Facturas con tu logo y link de pago", "Semáforo de monotributo y recategorización", "Tus vencimientos con el importe", "Un botón para pedir ayuda a un contador"],
+    features: ["Facturas con tu logo y link de pago", "Semáforo de monotributo y recategorización", "Tus vencimientos con el importe", "Un contador de la Red de estudios cuando lo necesites"],
     cta: { href: "/faro/registro?tipo=personal", label: "Empezar gratis" },
     note: "Facturación y semáforo, próximamente",
   },
@@ -64,6 +74,19 @@ const Row = ({ a, b, tone = "text-paper/80", d = 0 }: { a: string; b: string; to
 
 /** Mini demo de la pantalla que usaría cada tipo de usuario */
 function Demo({ k }: { k: Key }) {
+  if (k === "personas")
+    return (
+      <>
+        <p className="text-[12px] text-paper/55">Bitácora · octubre</p>
+        <p className="faro-demo-in mt-3 font-display text-[34px] leading-none text-paper">$ 214.300</p>
+        <p className="text-[12px] text-paper/55">te quedan para el mes</p>
+        <div className="mt-3">
+          <Row a="“Un café y dos medialunas, 4.800”" b="Comida · registrado" tone="text-[#8fd1a5]" d={120} />
+          <Row a="Delivery de noche" b="+38% vs. septiembre" tone="text-gold" d={200} />
+          <Row a="Viaje a Mendoza (grupo)" b="Te deben $ 32.000" tone="text-[#8fd1a5]" d={280} />
+        </div>
+      </>
+    );
   if (k === "estudios")
     return (
       <>
@@ -138,7 +161,7 @@ function Demo({ k }: { k: Key }) {
 }
 
 export function FaroForWhom() {
-  const [k, setK] = useState<Key>("estudios");
+  const [k, setK] = useState<Key>("personas");
   const t = TYPES.find((x) => x.key === k)!;
   return (
     <section id="para-quien" aria-labelledby="para-quien-titulo" className="scroll-mt-16 border-t border-hair bg-night py-16 lg:py-32">
@@ -147,11 +170,11 @@ export function FaroForWhom() {
           <div className="lg:col-span-6">
             <SectionIndex n="02">Para quién es Faro</SectionIndex>
             <SplitHeading id="para-quien-titulo" className="display-md mt-8 text-paper">
-              Una plataforma, cinco maneras de usarla.
+              Una herramienta, seis maneras de usarla.
             </SplitHeading>
           </div>
           <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
-            Los estudios trabajan su cartera, sus clientes ven todo a la vista y los empleados de esos clientes reciben lo suyo en el celular. Y si sos autónomo, Faro te acompaña sin contador.
+            Empezás gratis con tus finanzas. Si sos autónomo, Faro te acompaña sin contador; si sos contador, gestionás tu cartera y conectás a tus clientes y a sus empleados.
           </p>
         </div>
         <div className="mt-14 grid gap-8 lg:grid-cols-12">

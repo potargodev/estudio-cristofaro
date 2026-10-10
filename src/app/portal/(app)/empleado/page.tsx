@@ -5,11 +5,11 @@ import { requireEmployee } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Mi espacio" };
 
-/** Portal mínimo del empleado: gastos compartidos y rendiciones; recibos y comunicaciones llegan en la F5 */
+/** Portal mínimo del empleado: grupos de gastos y rendiciones; recibos y comunicaciones llegan en la F5 */
 export default async function EmpleadoHome() {
   const me = await requireEmployee();
   const cards = [
-    { href: "/gastos", icon: Wallet, title: "Gastos compartidos", text: "Dividí gastos con tu equipo, socios o amigos y saldá cuentas." },
+    { href: "/grupos", icon: Wallet, title: "Grupos de gastos", text: "Dividí gastos con tu equipo, socios o amigos y saldá cuentas." },
     { href: "/portal/rendiciones", icon: ReceiptText, title: "Rendiciones", text: `Cargá lo que gastaste para ${me.organizationName} con su ticket y seguí el reintegro.` },
   ];
   const soon = [

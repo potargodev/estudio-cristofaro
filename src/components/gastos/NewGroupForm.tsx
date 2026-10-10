@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { createGroupAction, type FormState } from "@/app/gastos/actions";
+import { createGroupAction, type FormState } from "@/app/grupos/actions";
 import { CURRENCIES, GROUP_COLORS, GROUP_TYPES } from "@/modules/gastos/constants";
 import { cn } from "@/lib/utils";
 

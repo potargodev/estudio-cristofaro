@@ -8,17 +8,19 @@ const lim = (key: string, f: "organizations" | "staffUsers" | "smartDocsPerMonth
   return v == null ? "Ilimitadas" : f === "smartDocsPerMonth" ? `${v.toLocaleString("es-AR")} documentos/mes` : `Hasta ${v}`;
 };
 
-/** [fila, Señal, Rumbo, Horizonte] */
+/** [fila, Inicial, Profesional, Avanzado] */
 export const STUDIO_ROWS: [string, string, string, string][] = [
   ["Para quién", "Contador independiente que arranca", "Estudio chico en crecimiento", "Estudio mediano que quiere automatizar"],
-  ["Organizaciones", lim("senal", "organizations"), lim("rumbo", "organizations"), lim("horizonte", "organizations")],
-  ["Usuarios del estudio", "1", lim("rumbo", "staffUsers"), lim("horizonte", "staffUsers")],
+  ["Organizaciones", lim("inicial", "organizations"), lim("profesional", "organizations"), lim("avanzado", "organizations")],
+  ["Usuarios del estudio", "1", lim("profesional", "staffUsers"), lim("avanzado", "staffUsers")],
+  ["Organización extra", "USD 2 / mes", "USD 2 / mes", "USD 2 / mes"],
+  ["Aparecer en la Red de estudios", "—", "✓", "✓"],
   ["Núcleo: portal, vencimientos, documentos, solicitudes y agenda", "✓", "✓", "✓"],
-  ["Gastos compartidos", "✓", "✓", "✓"],
+  ["Grupos de gastos", "✓", "✓", "✓"],
   ["Asistente IA", "Con clave propia, consultas", "Consultas y acciones con aprobación", "Acciones avanzadas y agentes"],
   ["Flujos", "1 plantilla activa", "10 flujos, plantillas", "Ilimitados, editor libre"],
   ["Recibos, legajo y comunicación interna", "—", "✓", "✓"],
-  ["Lectura inteligente", lim("senal", "smartDocsPerMonth"), lim("rumbo", "smartDocsPerMonth"), lim("horizonte", "smartDocsPerMonth")],
+  ["Lectura inteligente", lim("inicial", "smartDocsPerMonth"), lim("profesional", "smartDocsPerMonth"), lim("avanzado", "smartDocsPerMonth")],
   ["Cartera y tareas, Tango, ARCA", "Tango por archivos", "✓", "✓"],
   ["Cobranza de honorarios", "—", "✓", "✓"],
   ["Conciliación bancaria, indicadores, WhatsApp", "—", "—", "✓"],
@@ -26,13 +28,23 @@ export const STUDIO_ROWS: [string, string, string, string][] = [
   ["Soporte", "Comunidad y mail", "Mail prioritario", "Dedicado"],
 ];
 
-/** [fila, Destello, Guía] */
+/** [fila, Personas Gratis, Plus] */
+export const PERSONA_ROWS: [string, string, string][] = [
+  ["Bitácora: tus finanzas personales", "Captura por audio limitada al mes", "Captura ilimitada, mails y Mercado Pago"],
+  ["Grupos de gastos", "✓", "✓"],
+  ["Flotas: contratar un estudio en grupo", "✓", "✓"],
+  ["Red de estudios: encontrar un contador", "✓", "✓"],
+  ["WhatsApp, coach y metas", "—", "✓"],
+  ["Asistente IA", "Consultas", "Consultas y acciones con aprobación"],
+];
+
+/** [fila, Autónomos Gratis, Pro] */
 export const PERSONAL_ROWS: [string, string, string][] = [
   ["Facturación electrónica", "10 comprobantes/mes", "Ilimitada, con logo y link de pago"],
   ["Situación con ARCA y semáforo de monotributo", "✓", "✓"],
   ["Calendario y alertas", "Mail", "Mail y WhatsApp"],
   ["Ingresos y gastos", "Básico", "Con lectura inteligente de comprobantes"],
-  ["Gastos compartidos", "✓", "✓"],
+  ["Grupos de gastos", "✓", "✓"],
   ["Asistente IA", "Consultas", "Consultas y acciones con aprobación"],
-  ["Pedir ayuda a un contador", "✓", "✓"],
+  ["Encontrar un contador en la Red de estudios", "✓", "✓"],
 ];

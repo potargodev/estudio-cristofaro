@@ -2,7 +2,7 @@
 
 import { ExternalLink } from "lucide-react";
 import { useActionState, useState } from "react";
-import { settleAction, type FormState } from "@/app/gastos/actions";
+import { settleAction, type FormState } from "@/app/grupos/actions";
 import { cn } from "@/lib/utils";
 import { CURRENCIES, SETTLEMENT_METHODS, type SettlementMethodKey } from "@/modules/gastos/constants";
 import { CopyButton } from "./forms";
@@ -33,7 +33,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
           <ExternalLink className="size-4" aria-hidden />
         </a>
         <p className="text-[13px] text-muted">Integración de prueba: el cobro real con Mercado Pago llega más adelante. El pago queda informado hasta que la otra persona lo confirme.</p>
-        <a href={`/gastos/g/${groupId}?tab=saldos`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+        <a href={`/grupos/g/${groupId}?tab=saldos`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
           Volver a los saldos
         </a>
       </div>

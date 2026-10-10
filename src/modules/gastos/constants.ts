@@ -1,4 +1,4 @@
-// Etiquetas y formatos de gastos compartidos (los usan el servidor y la interfaz).
+// Etiquetas y formatos de grupos de gastos (los usan el servidor y la interfaz).
 
 export const GROUP_TYPES = {
   personal: "Personal",

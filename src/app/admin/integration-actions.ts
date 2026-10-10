@@ -44,8 +44,8 @@ export interface KeyState {
 /** Activa Tango (si hace falta) y genera una clave nueva. La clave anterior deja de funcionar. */
 export async function generateTangoKey(_prev: KeyState, _fd: FormData): Promise<KeyState> {
   const admin = await requireAdmin();
-  // El conector local de Tango es de Rumbo en adelante (en Señal, Tango por archivos)
-  if (!(await hasModule(admin.studioId, "tango"))) return { ok: false, message: "El conector local de Tango está incluido desde el plan Rumbo. En Señal podés importar las exportaciones de Tango desde Conexiones → Archivos." };
+  // El conector local de Tango es de Profesional en adelante (en Inicial, Tango por archivos)
+  if (!(await hasModule(admin.studioId, "tango"))) return { ok: false, message: "El conector local de Tango está incluido desde el plan Profesional. En Inicial podés importar las exportaciones de Tango desde Conexiones → Archivos." };
   const { key, hash, prefix } = generateConnectorKey();
   const db = getDb();
   const current = await getTango(admin.studioId);

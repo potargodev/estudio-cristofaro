@@ -108,7 +108,7 @@ export interface NewGroup {
 
 export async function createGroup(actor: GastosActor, input: NewGroup) {
   const u = userActor(actor);
-  if (!(await hasModule(u.studioId, "shared_expenses"))) throw new GastosError("Gastos compartidos no está incluido en tu plan.");
+  if (!(await hasModule(u.studioId, "shared_expenses"))) throw new GastosError("Grupos de gastos no está incluido en tu plan.");
   const name = input.name.trim().slice(0, 80);
   if (name.length < 2) throw new GastosError("Ponele un nombre al grupo.");
   const type = (Object.keys(GROUP_TYPES).includes(input.type) ? input.type : "personal") as GroupType;
@@ -189,7 +189,7 @@ export async function inviteMember(actor: GastosActor, groupId: string, input: {
     .insert(group_members)
     .values({ group_id: group.id, user_id: existing?.id ?? null, name, email, role: "miembro", guest_token_hash: token?.hash ?? null, invited_by: me.id })
     .returning();
-  const link = token ? `${getSiteUrl()}/gastos/invitado/${token.token}` : `${getSiteUrl()}/gastos/g/${group.id}`;
+  const link = token ? `${getSiteUrl()}/grupos/invitado/${token.token}` : `${getSiteUrl()}/grupos/g/${group.id}`;
   let mailed = false;
   if (email)
     mailed = await sendMail({
@@ -197,7 +197,7 @@ export async function inviteMember(actor: GastosActor, groupId: string, input: {
       subject: `${me.name} te sumó a "${group.name}" en Faro`,
       html: mailLayout(
         `Te sumaron a ${group.name}`,
-        `<p>${esc(me.name)} te sumó al grupo de gastos compartidos <strong>${esc(group.name)}</strong>. Ahí ves quién pagó qué y cuánto debe cada uno.</p>${token ? "<p>No necesitás crear una cuenta: el enlace es personal y solo abre este grupo.</p>" : ""}`,
+        `<p>${esc(me.name)} te sumó al grupo de grupos de gastos <strong>${esc(group.name)}</strong>. Ahí ves quién pagó qué y cuánto debe cada uno.</p>${token ? "<p>No necesitás crear una cuenta: el enlace es personal y solo abre este grupo.</p>" : ""}`,
         { href: link, label: "Ver el grupo" },
         "Faro",
       ),
@@ -216,7 +216,7 @@ export async function renewGuestLink(actor: GastosActor, groupId: string, member
   const token = newGuestToken();
   await getDb().update(group_members).set({ guest_token_hash: token.hash }).where(eq(group_members.id, m.id));
   await groupAudit(actor, group, "gastos.integrante_link", "integrante_gastos", m.id, { por: me.id });
-  return `${getSiteUrl()}/gastos/invitado/${token.token}`;
+  return `${getSiteUrl()}/grupos/invitado/${token.token}`;
 }
 
 export async function updateMyMember(actor: GastosActor, groupId: string, input: { alias?: string; cvu?: string; optOut?: boolean; name?: string }) {

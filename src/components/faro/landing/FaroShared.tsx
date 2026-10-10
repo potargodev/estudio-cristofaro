@@ -132,7 +132,7 @@ export function FaroShared() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="04">Gastos compartidos</SectionIndex>
+            <SectionIndex n="04">Grupos de gastos</SectionIndex>
             <SplitHeading id="gastos-titulo" className="display-md mt-8 text-paper">
               Dividí gastos con socios, equipo o amigos, y que lo de la empresa quede en la contabilidad.
             </SplitHeading>

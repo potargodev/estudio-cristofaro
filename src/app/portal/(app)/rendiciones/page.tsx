@@ -25,8 +25,8 @@ export default async function RendicionesPage() {
     <>
       <PageTitle title="Rendiciones" intro={approver ? "Los gastos que rinde el equipo: aprobá, rechazá y marcá los reintegros. Lo aprobado pasa a los gastos de la empresa." : "Cargá lo que gastaste para la empresa con su ticket. Administración lo revisa y te avisa."}>
         {me.orgRole === "empleado" && (
-          <Link href="/gastos" className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
-            Gastos compartidos →
+          <Link href="/grupos" className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+            Grupos de gastos →
           </Link>
         )}
       </PageTitle>
