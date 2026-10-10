@@ -166,6 +166,25 @@ html:has(.site) {
   letter-spacing: -0.02em;
   font-size: clamp(2.4rem, 6vw, 6.4rem);
 }
+/* Frases rotativas del hero: más chicas, equilibradas en 2 o 3 líneas */
+.hero-statement {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  font-size: clamp(2.1rem, 3.4vw + 0.6rem, 4.4rem);
+  max-width: 100%;
+  text-wrap: balance;
+}
+@media (min-width: 1024px) {
+  .hero-statement {
+    max-width: 21ch;
+  }
+}
+.hero-statement > p {
+  text-wrap: balance;
+  padding-bottom: 0.08em;
+}
 .display-md {
   font-family: var(--font-display);
   font-weight: 400;

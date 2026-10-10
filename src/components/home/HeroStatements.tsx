@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { loadGsap, padMasks, reducedMotion } from "@/lib/motion/gsap";
+import { reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
-import { MaskText } from "@/components/web/MaskText";
 import { HERO_SLIDE_EVENT } from "@/lib/hero";
 
 /**
- * Titular rotativo del hero: cada `interval` s la frase sale hacia arriba línea
- * por línea con máscara y entra la siguiente. El h1 (para lectores de pantalla
+ * Titular rotativo del hero: cada `interval` s la frase se funde (su propio
+ * fundido, aparte del de la foto) y entra la siguiente. Todas comparten la
+ * misma celda de la grilla, así el bloque tiene la altura de la más larga y
+ * no salta el layout. El h1 (para lectores de pantalla
  * y buscadores) es siempre la primera frase; las frases visibles van ocultas
  * para lectores. Se puede pausar (y se pausa sola con reduced-motion).
  */
+/** Sin palabra huérfana: la última palabra viaja con la anterior */
+const noOrphan = (t: string) => t.replace(/\s+(\S+)$/, "\u00a0$1");
+
 export function HeroStatements({ statements, interval }: { statements: string[]; interval: number }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -45,13 +49,6 @@ export function HeroStatements({ statements, interval }: { statements: string[];
     window.dispatchEvent(new CustomEvent(HERO_SLIDE_EVENT, { detail: { paused: stopped } }));
   }, [stopped]);
 
-  // GSAP no se carga al abrir la página: se precarga poco antes del primer cambio
-  useEffect(() => {
-    if (reduce || statements.length < 2) return;
-    const t = window.setTimeout(() => void loadGsap(), Math.max(0, interval * 1000 - 1500));
-    return () => window.clearTimeout(t);
-  }, [reduce, interval, statements.length]);
-
   useEffect(() => {
     // Frase nueva: el tiempo arranca de cero
     if (shownIndex.current !== index) {
@@ -67,49 +64,36 @@ export function HeroStatements({ statements, interval }: { statements: string[];
     };
   }, [index, stopped, reduce, interval, statements.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [prev, setPrev] = useState<number | null>(null);
   function go(next: number) {
-    const root = stack.current;
-    if (!root || busy.current) return;
-    const out = root.children[index] as HTMLElement;
-    const inc = root.children[next] as HTMLElement;
+    if (busy.current || next === index) return;
     busy.current = true;
-    // La foto del fondo cambia junto con la frase
+    // La foto del fondo cambia junto con la frase (cada una con su propio fundido)
     window.dispatchEvent(new CustomEvent(HERO_SLIDE_EVENT, { detail: next }));
-    loadGsap().then(({ gsap, SplitText }) => {
-      const a = SplitText.create(out, { type: "lines", mask: "lines" });
-      padMasks(a.masks);
-      const b = SplitText.create(inc, { type: "lines", mask: "lines" });
-      padMasks(b.masks);
-      gsap.set(inc, { visibility: "visible" });
-      gsap
-        .timeline({
-          onComplete: () => {
-            a.revert();
-            b.revert();
-            gsap.set(out, { visibility: "hidden" });
-            busy.current = false;
-            setIndex(next);
-          },
-        })
-        .to(a.lines, { yPercent: -110, duration: 0.8, stagger: 0.06, ease: "expo.in" })
-        .from(b.lines, { yPercent: 110, duration: 1.2, stagger: 0.08, ease: "expo.out" }, 0.55);
-    });
+    setPrev(index);
+    setIndex(next);
+    window.setTimeout(() => {
+      busy.current = false;
+      setPrev(null);
+    }, 700);
   }
 
   return (
     <div className="relative mt-6">
       <h1 className="sr-only">{statements[0]}</h1>
-      <div ref={stack} aria-hidden className="display-hero grid max-w-[17ch] text-paper lg:max-w-full">
+      <div ref={stack} aria-hidden className="hero-statement grid text-paper">
         {statements.map((s, i) => (
-          i === 0 ? (
-            <MaskText key={s} as="p" intro className="[grid-area:1/1]" style={i === index ? undefined : { visibility: "hidden" }}>
-              {s}
-            </MaskText>
-          ) : (
-            <p key={s} className="[grid-area:1/1]" style={i === index ? undefined : { visibility: "hidden" }}>
-              {s}
-            </p>
-          )
+          <p
+            key={s}
+            {...(i === 0 ? { "data-intro": "fade" } : {})}
+            className={cn(
+              "[grid-area:1/1] transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+              i === index ? "translate-y-0 opacity-100" : i === prev ? "-translate-y-3 opacity-0" : "translate-y-3 opacity-0",
+            )}
+            style={i === index || i === prev ? undefined : { visibility: "hidden" }}
+          >
+            {noOrphan(s)}
+          </p>
         ))}
       </div>
       {!reduce && statements.length > 1 && (
