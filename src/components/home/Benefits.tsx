@@ -82,7 +82,7 @@ export function Benefits() {
                 key={b.t}
                 className="flex flex-col justify-between gap-10 border-b border-hair px-5 py-10 sm:px-8 lg:h-[52vh] lg:w-[34rem] lg:border-b-0 lg:border-l lg:px-10 lg:py-2 xl:w-[38rem]"
               >
-                <span aria-hidden data-n={`0${i + 1}`} className="tabular font-display text-[clamp(4rem,8vw,7.5rem)] leading-none text-paper/15 before:content-[attr(data-n)]" />
+                <span className="tabular font-display text-[clamp(4rem,8vw,7.5rem)] leading-none text-gold">0{i + 1}</span>
                 <div>
                   <h3 className="font-display text-[clamp(1.8rem,2.6vw,2.6rem)] leading-[1.05] text-paper">{b.t}</h3>
                   <p className="mt-4 max-w-[30ch] text-[15px] leading-relaxed text-paper/60">{b.d}</p>

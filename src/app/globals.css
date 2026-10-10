@@ -648,3 +648,43 @@ body {
     display: none;
   }
 }
+
+/* Cómo empezamos: la línea que une los pasos se dibuja con el scroll */
+.steps-line {
+  transform: scaleY(1);
+}
+@media (min-width: 1024px) {
+  .steps-line {
+    transform: scaleX(1);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .steps-line {
+      animation: steps-draw-y linear both;
+      animation-timeline: view();
+      animation-range: entry 40% cover 55%;
+    }
+    @media (min-width: 1024px) {
+      .steps-line {
+        animation-name: steps-draw-x;
+      }
+    }
+  }
+}
+@keyframes steps-draw-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes steps-draw-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
