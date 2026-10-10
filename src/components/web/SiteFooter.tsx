@@ -9,7 +9,7 @@ const columns = [
     links: [
       { href: "/#plataforma", label: "Cómo funciona" },
       { href: "/planes", label: "Planes y módulos" },
-      { href: "/portal/login", label: "Ingresar al portal" },
+      { href: "/ingresar", label: "Ingresar" },
       { href: "/#app", label: "Descargá la app" },
     ],
   },

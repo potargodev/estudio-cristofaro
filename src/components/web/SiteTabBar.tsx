@@ -11,7 +11,7 @@ const TABS = [
   { href: "/#plataforma", label: "Plataforma", icon: LayoutGrid },
   { href: SCHEDULE_HREF, label: "Agendar", icon: CalendarPlus, primary: true },
   { href: "/planes", label: "Planes", icon: Tags },
-  { href: "/portal/login", label: "Ingresar", icon: LogIn },
+  { href: "/ingresar", label: "Ingresar", icon: LogIn },
 ];
 
 /**

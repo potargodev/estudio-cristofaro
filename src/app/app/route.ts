@@ -5,6 +5,6 @@ import { getCurrentUser } from "@/lib/auth";
 // Location relativo: funciona igual detrás del proxy de Easypanel.
 export async function GET() {
   const user = await getCurrentUser();
-  const to = !user ? "/portal/login" : user.role === "cliente" ? "/portal" : "/admin";
+  const to = !user ? "/ingresar" : user.role === "cliente" ? "/portal" : "/admin";
   return new Response(null, { status: 307, headers: { Location: to, "Cache-Control": "no-store" } });
 }

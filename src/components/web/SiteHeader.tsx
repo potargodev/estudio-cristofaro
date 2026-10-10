@@ -143,7 +143,7 @@ export function SiteHeader() {
             {trigger("recursos", "Recursos")}
           </nav>
           <div className="hidden items-center gap-6 lg:flex">
-            <Link href="/portal/login" className="u-draw py-1 text-[14px] text-paper/75 hover:text-paper">
+            <Link href="/ingresar" className="u-draw py-1 text-[14px] text-paper/75 hover:text-paper">
               Ingresar
             </Link>
             <Link
@@ -274,7 +274,7 @@ export function SiteHeader() {
                     ["/planes", "Planes"],
                     ["/servicios", "Cómo trabajamos"],
                     ["/novedades", "Recursos"],
-                    ["/portal/login", "Ingresar"],
+                    ["/ingresar", "Ingresar"],
                   ].map(([href, label], i) => (
                     <li
                       key={href}
