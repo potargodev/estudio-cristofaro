@@ -157,6 +157,59 @@ Cuando un estudio, un contador o un autónomo se da de alta, y cada vez que se c
 - La IA puede proponer ajustes a una plantilla para un cliente puntual, siempre con aprobación.
 - Los estudios en Horizonte pueden crear y compartir sus propias plantillas dentro del estudio.
 
+## 2.g Bitácora (finanzas personales)
+
+> "Tu plata, como un diario de viaje." La bitácora es el registro que lleva un barco de cada día de travesía; el faro le marca el rumbo.
+
+Módulo de finanzas personales de Faro, disponible para cualquier persona: usuarios que solo quieren esto, autónomos, empleados de organizaciones y miembros de estudios. Además, es **la puerta de entrada de Faro**: una persona puede usar solo Bitácora y, si un día empieza a facturar, activar Faro Personal en la misma cuenta, y después sumar a un estudio. Una app, varias puertas: el inicio se adapta a lo que cada uno tiene activo.
+
+**Principio rector: cero fricción.** Si hay que cargar a mano, la gente abandona. Bitácora se alimenta sola y solo pregunta cuando duda.
+
+**Captura sin esfuerzo:**
+- **Audio o texto al agente:** "me compré un alfajor en el kiosco" (desde la app, con un botón de mantener para hablar, o por WhatsApp o Telegram). El agente transcribe, detecta monto, comercio, categoría, fecha y medio de pago, y lo registra. Solo pregunta si algo es ambiguo.
+- **Foto del ticket o la factura:** lectura inteligente.
+- **Mails:** conexión con Gmail (o una dirección propia para reenviar) que detecta facturas de servicios (luz, gas, agua, internet, telefonía), suscripciones (streaming, apps) y resúmenes de tarjeta.
+- **Mercado Pago:** conexión con la cuenta propia para leer los movimientos.
+- **Bancos y tarjetas:** importación de resúmenes PDF o CSV. En la app de Android, lectura opcional de notificaciones de las apps bancarias. Cuando exista finanzas abiertas reguladas en Argentina, conexión directa.
+- **Sueldo automático:** si la persona es empleada de una organización en Faro, su recibo de sueldo alimenta sus ingresos. Si no, lo carga una vez y se repite.
+- **Gastos fijos y suscripciones:** se detectan solos (alquiler, expensas, servicios, plataformas), con aviso de vencimiento, de renovación y de aumentos de precio.
+
+**Inteligencia:**
+- **Tablero simple:** cuánto entró, cuánto salió, cuánto queda para el mes y en qué se fue, en pesos y en valores reales (ajustados por inflación), con opción en dólares (MEP).
+- **Presupuesto automático** por categorías ("sobres") a partir de los primeros meses, ajustable.
+- **Fugas:** detecta en qué y cuándo se desordena cada uno (delivery de noche, el fin de semana después de cobrar, suscripciones olvidadas) y avisa antes de que pase, no después.
+- **Metas** (viaje, fondo de emergencia, un objetivo puntual) con ahorro sugerido por semana.
+- **Resumen semanal de un minuto:** el domingo, por la app o WhatsApp, en texto o audio.
+- **Coach de finanzas:** el agente de Bitácora explica, aconseja hábitos y compara alternativas generales para el ahorro (plazo fijo, fondos money market, dólar MEP) con fines educativos.
+  - El asesoramiento de inversión personalizado es una actividad regulada (CNV, idóneos registrados). Bitácora da educación e información general y, si la persona quiere asesoramiento, la deriva a un asesor matriculado. Puede ser un servicio de Estudio Cristofaro o de socios.
+
+**Conexión con el resto de Faro:**
+- **Gastos compartidos:** los gastos de grupos ya cuentan en Bitácora.
+- **Hogar o pareja:** finanzas compartidas con permisos.
+- **Si sos autónomo:** separa lo personal de lo profesional y pasa lo deducible a Faro Personal.
+
+**Privacidad:**
+- Bitácora es siempre personal. Ni el empleador, ni la organización, ni el estudio ven nada, salvo que la persona lo comparta explícitamente.
+- Los datos financieros personales se cifran.
+
+**Modelo:**
+- Bitácora gratis (captura por audio limitada al mes) y Bitácora Plus (captura ilimitada, WhatsApp, conexiones de mail y Mercado Pago, coach y metas).
+- Las organizaciones y los estudios pueden regalar Bitácora Plus a sus empleados como beneficio.
+
+## 2.h Mapa de roles y jerarquías
+
+| Nivel | Tipo de cuenta | Roles | Ve y gestiona |
+|---|---|---|---|
+| Plataforma | Faro | faro_owner, faro_support | Tenants, planes, módulos, plantillas, métricas. Datos de clientes solo en acceso asistido. |
+| Tenant | Estudio | dueño, contador, colaborador | Su cartera de organizaciones, su equipo, IA, MCP, conexiones y flujos |
+| Tenant | Personal (autónomo) | titular | Su facturación, ARCA, su organización propia |
+| Organización | Cliente de un estudio | administrador, dirección, administración, RRHH, consulta | Su empresa según el rol; sus empleados (RRHH) |
+| Empleado | De una organización | empleado | Sus recibos, comunicaciones, rendiciones de gastos |
+| Persona | Cualquier usuario | titular | Su Bitácora y sus grupos de gastos compartidos |
+| Invitado | Sin cuenta | invitado | Solo el grupo de gastos al que fue invitado |
+
+Una misma persona puede tener varias "puertas" a la vez (por ejemplo, contador en un estudio, empleado en otra organización y titular de su Bitácora). La app muestra un selector de espacio, y cada espacio tiene su propio aislamiento.
+
 ## 2.d Tipos de usuario y beneficios (para la landing de Faro)
 
 | Tipo | Beneficio principal |
@@ -207,4 +260,5 @@ Los límites y los módulos de cada plan viven en configuración, no en el códi
 5. **F5 · Empleados:** legajo, recibos masivos con firma y comunicación interna.
 6. **F6 · Lectura inteligente** y conciliación bancaria.
 7. **F7 · Cobranza** de honorarios y suscripciones de Faro (Mercado Pago).
-8. **F8 · Cartera y tareas**, WhatsApp y marca blanca.
+8. **F8 · Bitácora** (finanzas personales): captura por audio, mails, Mercado Pago, coach y metas.
+9. **F9 · Cartera y tareas**, WhatsApp y marca blanca.
