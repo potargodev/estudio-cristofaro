@@ -21,7 +21,7 @@ export function FaroPersonal() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="03" light>
+            <SectionIndex n="07" light>
               Faro Personal
             </SectionIndex>
             <SplitHeading id="personal-titulo" className="display-md mt-8 text-ink">

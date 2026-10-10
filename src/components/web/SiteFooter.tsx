@@ -75,12 +75,15 @@ export function SiteFooter() {
               Trabajamos con Faro
             </Link>
           </p>
-          <p className="flex gap-6">
+          <p className="flex flex-wrap gap-x-6 gap-y-2">
             <Link href="/privacidad" className="u-draw hover:text-paper">
               Privacidad
             </Link>
             <Link href="/admin" className="u-draw hover:text-paper">
               Acceso del estudio
+            </Link>
+            <Link href="/faro" className="u-draw hover:text-paper">
+              Con tecnología de Faro
             </Link>
           </p>
         </div>

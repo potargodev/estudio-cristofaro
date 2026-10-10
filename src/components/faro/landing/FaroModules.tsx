@@ -13,7 +13,7 @@ export function FaroModules() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="05">Módulos</SectionIndex>
+            <SectionIndex n="09">Módulos</SectionIndex>
             <SplitHeading id="modulos-titulo" className="display-md mt-8 text-paper">
               Un núcleo sólido y módulos que se prenden.
             </SplitHeading>

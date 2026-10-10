@@ -16,7 +16,7 @@ export function FaroPillars() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionIndex n="01">Qué es Faro</SectionIndex>
+            <SectionIndex n="02">Qué es Faro</SectionIndex>
             <SplitHeading id="pilares" className="display-md mt-8 text-paper">
               Más clientes con el mismo equipo.
             </SplitHeading>

@@ -168,7 +168,7 @@ export function FaroForWhom() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="02">Para quién es Faro</SectionIndex>
+            <SectionIndex n="03">Para quién es Faro</SectionIndex>
             <SplitHeading id="para-quien-titulo" className="display-md mt-8 text-paper">
               Una herramienta, seis maneras de usarla.
             </SplitHeading>

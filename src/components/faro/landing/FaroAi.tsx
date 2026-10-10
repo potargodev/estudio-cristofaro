@@ -72,7 +72,7 @@ export function FaroAi() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionIndex n="06">IA, MCP y conexiones</SectionIndex>
+            <SectionIndex n="10">IA, MCP y conexiones</SectionIndex>
             <SplitHeading id="ia-titulo" className="display-md mt-8 text-paper">
               La IA propone. Vos aprobás.
             </SplitHeading>
