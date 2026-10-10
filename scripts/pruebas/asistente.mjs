@@ -45,10 +45,12 @@ const cv = await chat(d.cookies.adminA, { text: "Crear vencimiento de IVA", cont
 check("un vencimiento con importe y aviso al cliente (fiscal) también va a Aprobaciones", outputOf(cv)?.estado === "enviado_a_aprobacion");
 
 // 5. Escritura → confirmación en línea, no se ejecuta hasta confirmar
+const countOpened = async () => (await sql`select count(*)::int n from requests where organization_id = ${d.orgs.norte} and subject = 'Pedido recibido por WhatsApp'`)[0].n;
+const openedBefore = await countOpened();
 const w = await chat(d.cookies.adminA, { text: "Abrí una solicitud", context: [{ kind: "organizacion", id: d.orgs.norte }] });
 const wo = outputOf(w);
 const [wa] = wo?.aprobacion_id ? await sql`select * from approvals where id = ${wo.aprobacion_id}` : [];
-const opened = (await sql`select count(*)::int n from requests where organization_id = ${d.orgs.norte} and subject = 'Pedido recibido por WhatsApp'`)[0].n;
+const opened = (await countOpened()) - openedBefore;
 check("crear una solicitud pide confirmación en la tarjeta", wo?.estado === "requiere_confirmacion" && wa?.level === "escritura" && wa?.status === "pendiente");
 check("…y todavía no se creó", opened === 0);
 
