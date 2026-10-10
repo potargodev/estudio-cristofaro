@@ -34,7 +34,7 @@ export default async function NovedadesAdminPage() {
           <li key={p.id}>
             <Link href={`/admin/contenidos/novedades/${p.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
               <span className="font-medium">{p.title}</span>
-              <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs ${p.published ? "bg-navy-soft text-navy-deep" : "bg-line/60 text-muted"}`}>
+              <span className={`shrink-0 rounded-[2px] px-2.5 py-0.5 text-xs ${p.published ? "bg-navy-soft text-navy-deep" : "bg-line/60 text-muted"}`}>
                 {p.published ? "Publicada" : "Borrador"}
               </span>
             </Link>

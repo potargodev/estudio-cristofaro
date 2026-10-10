@@ -27,8 +27,8 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`whitespace-nowrap rounded-md px-3 py-2 text-[15px] ${
-              active ? "bg-rose-light font-medium text-navy-deep" : "text-paper/80 hover:bg-paper/10 hover:text-paper"
+            className={`whitespace-nowrap border-b px-3 py-2 text-[15px] transition-colors md:border-b-0 md:border-l ${
+              active ? "border-rose-light bg-paper/[0.04] text-paper" : "border-transparent text-paper/65 hover:text-paper"
             }`}
           >
             {item.label}

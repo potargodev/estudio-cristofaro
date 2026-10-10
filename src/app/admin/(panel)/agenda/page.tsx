@@ -91,7 +91,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         {notices}
         {tabs}
         <div className="tab-in grid gap-6 lg:grid-cols-[1fr_320px]">
-          <form action={saveAvailability} className="space-y-6 rounded-md border border-line bg-surface p-6 shadow-brand-sm">
+          <form action={saveAvailability} className="space-y-6 rounded-md border border-line bg-surface p-6">
             <div className="flex flex-wrap gap-6">
               <FormCheckbox id="active" name="active" label="Acepto llamadas" defaultChecked={av?.active ?? false} />
               <FormCheckbox id="public" name="public" label="Aparezco en la agenda de la web (/agendar)" defaultChecked={av?.public ?? false} />
@@ -164,7 +164,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <SubmitButton>Guardar disponibilidad</SubmitButton>
           </form>
           <aside className="space-y-4">
-            <section className="rounded-md border border-line bg-surface p-5 shadow-brand-sm">
+            <section className="rounded-md border border-line bg-surface p-5">
               <h2 className="font-semibold">Google Calendar</h2>
               {conn ? (
                 <>
@@ -259,13 +259,13 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
           <div className="flex gap-1 text-sm">
             <Link
               href={`/admin/agenda?${new URLSearchParams({ tab: "semana", semana: monday }).toString()}`}
-              className={cn("rounded-full border px-3 py-1", mine ? "border-navy bg-navy text-paper" : "border-line")}
+              className={cn("rounded-[2px] border px-3 py-1", mine ? "border-navy bg-navy text-paper" : "border-line")}
             >
               Mis llamadas
             </Link>
             <Link
               href={`/admin/agenda?${new URLSearchParams({ tab: "semana", semana: monday, quien: "todos" }).toString()}`}
-              className={cn("rounded-full border px-3 py-1", !mine ? "border-navy bg-navy text-paper" : "border-line")}
+              className={cn("rounded-[2px] border px-3 py-1", !mine ? "border-navy bg-navy text-paper" : "border-line")}
             >
               Todo el estudio
             </Link>

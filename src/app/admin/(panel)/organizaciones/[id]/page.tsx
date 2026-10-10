@@ -116,7 +116,7 @@ export default async function OrganizacionPage({
         <Badge tone={org.status === "activa" ? "ok" : org.status === "onboarding" ? "warn" : "neutral"}>{ORGANIZATION_STATUSES[org.status]}</Badge>
         {limits.planName && <Badge tone="neutral">{limits.planName}</Badge>}
         {tango.n > 0 && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e3efe6] px-2.5 py-0.5 text-xs font-medium text-[#24583a]">
+          <span className="inline-flex items-center gap-1.5 rounded-[2px] bg-[#e3efe6] px-2.5 py-0.5 text-xs font-medium text-[#24583a]">
             Vinculada con Tango
             <span className="font-normal">
               · última sincronización{" "}

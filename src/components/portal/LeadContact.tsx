@@ -31,9 +31,9 @@ export function LeadContact({ lead, team, children }: { lead: StudioContact | nu
       <div className="mt-3 flex items-center gap-3">
         {lead.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={lead.image} alt="" width={56} height={56} className="size-14 rounded-full object-cover" />
+          <img src={lead.image} alt="" width={56} height={56} className="size-14 object-cover" />
         ) : (
-          <span aria-hidden className="grid size-14 shrink-0 place-items-center rounded-full bg-navy font-display text-xl text-rose-light">
+          <span aria-hidden className="grid size-14 shrink-0 place-items-center bg-navy font-display text-xl text-rose-light">
             {initials(lead.name)}
           </span>
         )}

@@ -77,7 +77,7 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
               )}
             >
               {t.label}
-              {!!counts[t.key] && <span className="rounded-full bg-rose-soft px-1.5 text-xs font-semibold text-rose-deep">{counts[t.key]}</span>}
+              {!!counts[t.key] && <span className="rounded-[2px] bg-rose-soft px-1.5 text-xs font-semibold text-rose-deep">{counts[t.key]}</span>}
             </Link>
           </li>
         ))}
@@ -590,8 +590,8 @@ function Meter({ label, used, max, extra }: { label: string; used: number; max: 
         <span className="text-lg text-muted"> / {max ?? "∞"}</span>
       </p>
       {max != null && (
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden>
-          <div className={cn("h-full rounded-full", over ? "bg-danger" : "bg-rose")} style={{ width: `${pct}%` }} />
+        <div className="mt-2 h-1.5 overflow-hidden bg-line" aria-hidden>
+          <div className={cn("h-full", over ? "bg-danger" : "bg-rose")} style={{ width: `${pct}%` }} />
         </div>
       )}
       {extra > 0 && <p className="mt-2 text-xs text-rose-deep">Incluye +{extra} por excepción</p>}

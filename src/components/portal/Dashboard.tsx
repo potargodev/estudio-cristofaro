@@ -2,6 +2,7 @@ import { CalendarClock, FileText, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import type { PortalUser } from "@/lib/auth";
 import { getTimeline, type TimelineItem } from "@/lib/portal-data";
+import { Counter } from "@/components/web/Counter";
 import { cn } from "@/lib/utils";
 import { Card, Empty } from "./ui";
 
@@ -13,23 +14,22 @@ export function Ring({ value, total, label, empty }: { value: number; total: num
   return (
     <div className="flex items-center gap-4">
       <svg viewBox="0 0 80 80" className="size-20 shrink-0 -rotate-90" role="img" aria-label={`${label}: ${value} de ${total}`}>
-        <circle cx="40" cy="40" r={r} fill="none" stroke="rgb(247 245 243 / 0.15)" strokeWidth="7" />
+        <circle cx="40" cy="40" r={r} fill="none" stroke="rgb(247 245 243 / 0.15)" strokeWidth="4" />
         <circle
           cx="40"
           cy="40"
           r={r}
           fill="none"
           stroke={pct === 1 ? "#8cc7a0" : "var(--color-rose-light)"}
-          strokeWidth="7"
-          strokeLinecap="round"
+          strokeWidth="4"
           strokeDasharray={`${c * pct} ${c}`}
           opacity={total ? 1 : 0}
         />
       </svg>
       <div>
-        <p className="font-display text-4xl leading-none">
-          {value}
-          <span className="text-xl text-muted">/{total}</span>
+        <p className="tabular font-display text-5xl leading-none">
+          <Counter value={value} duration={900} />
+          <span className="text-2xl text-muted">/{total}</span>
         </p>
         <p className="mt-1 text-sm text-muted">{total ? label : empty}</p>
       </div>
@@ -44,9 +44,11 @@ export function SplitBar({ a, b, labelA, labelB, title }: { a: number; b: number
     <div>
       <p className="flex items-baseline justify-between">
         <span className="text-sm text-muted">{title}</span>
-        <span className="font-display text-4xl leading-none">{total}</span>
+        <span className="tabular font-display text-5xl leading-none">
+          <Counter value={total} duration={900} />
+        </span>
       </p>
-      <div className="mt-3 flex h-2.5 overflow-hidden rounded-full bg-paper/15" aria-hidden>
+      <div className="mt-3 flex h-1 overflow-hidden bg-paper/15" aria-hidden>
         {total > 0 && (
           <>
             <span className="h-full bg-paper/85" style={{ width: `${(a / total) * 100}%` }} />
@@ -80,7 +82,7 @@ const fmt = new Intl.DateTimeFormat("es-AR", {
 export function Timeline({ items }: { items: TimelineItem[] }) {
   return (
     <Card>
-      <h2 className="font-semibold">Actividad reciente</h2>
+      <h2 className="font-display text-2xl">Actividad reciente</h2>
       {items.length === 0 ? (
         <div className="mt-3">
           <Empty>Todavía no hay movimientos.</Empty>
@@ -91,7 +93,7 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
             const Icon = ICONS[it.kind];
             return (
               <li key={`${it.kind}-${it.id}`} className="relative">
-                <span className="absolute -left-[37px] grid size-6 place-items-center rounded-full border border-line bg-surface text-rose-deep">
+                <span className="absolute -left-[37px] grid size-6 place-items-center border border-line bg-surface text-rose-deep">
                   <Icon className="size-3.5" aria-hidden />
                 </span>
                 <Link href={it.href} className="group block">
@@ -110,7 +112,7 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
 
 export function MonthCard({ children, month, className }: { children: React.ReactNode; month: string; className?: string }) {
   return (
-    <Card className={cn("grain relative overflow-hidden border-navy bg-navy text-paper", className)}>
+    <Card className={cn("relative overflow-hidden border-night bg-night text-paper", className)}>
       <p className="text-sm text-rose-light">Este mes · {month}</p>
       <div className="mt-4 grid gap-6 sm:grid-cols-3 [&_.text-muted]:text-paper/70">{children}</div>
     </Card>

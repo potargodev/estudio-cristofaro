@@ -16,7 +16,7 @@ export function OrgSwitcher({ current, options }: { current: string; options: { 
         name="organization_id"
         defaultValue={current}
         onChange={() => form.current?.requestSubmit()}
-        className="max-w-full truncate rounded-md border border-paper/25 bg-navy px-2 py-1 font-display text-lg text-paper focus-visible:outline-2 focus-visible:outline-rose-light"
+        className="max-w-full truncate border border-paper/20 bg-night px-2 py-1 font-display text-lg text-paper focus-visible:outline-2 focus-visible:outline-rose-light"
       >
         {options.map((o) => (
           <option key={o.id} value={o.id}>

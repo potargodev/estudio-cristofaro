@@ -8,6 +8,7 @@ import { requireMember } from "@/lib/auth";
 import { canSeeRequests } from "@/lib/permissions";
 import { buildPortalNav } from "@/lib/portal-nav";
 import { getRequests } from "@/lib/portal-data";
+import { RouteReveal } from "@/components/app/RouteReveal";
 import { portalSignOut } from "../actions";
 
 export const metadata: Metadata = {
@@ -23,14 +24,14 @@ export default async function PortalLayout({ children }: { children: React.React
   const nav = buildPortalNav(me.orgRole, me.modules);
 
   return (
-    <div className="min-h-dvh bg-paper">
-      <header className="bg-navy text-paper">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <div className="flex min-w-0 items-center gap-2.5">
+    <div className="min-h-dvh bg-paper md:grid md:grid-cols-[248px_1fr]">
+      <aside className="bg-night text-paper md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:border-r md:border-paper/10">
+        <div className="flex items-center justify-between gap-4 px-4 py-3 md:block md:px-5 md:pb-6 md:pt-7">
+          <div className="flex min-w-0 items-center gap-3">
             <Link
               href="/portal"
               aria-label="Inicio del portal"
-              className="grid size-9 shrink-0 place-items-center rounded-full border border-rose-light/60 text-rose-light"
+              className="grid size-9 shrink-0 place-items-center border border-rose-light/50 text-rose-light"
             >
               <Monogram className="size-6" />
             </Link>
@@ -46,18 +47,25 @@ export default async function PortalLayout({ children }: { children: React.React
               ) : (
                 <span className="block truncate font-display text-lg">{me.organizationName}</span>
               )}
-              <span className="block text-xs text-paper/70">Portal de clientes · Estudio Cristofaro</span>
+              <span className="block text-xs text-paper/60">Portal · Estudio Cristofaro</span>
             </div>
           </div>
-          <form action={portalSignOut}>
-            <button type="submit" className="rounded-md border border-paper/30 px-3 py-1.5 text-sm text-paper/90 transition-colors hover:bg-paper/10">
+          <form action={portalSignOut} className="md:hidden">
+            <button type="submit" className="border border-paper/25 px-3 py-1.5 text-sm text-paper/90 transition-colors hover:border-paper/60">
               Salir
             </button>
           </form>
         </div>
         <PortalNav main={nav.main} extra={nav.extra} openRequests={open.length} />
-      </header>
-      <main className="mx-auto max-w-5xl px-4 pb-28 pt-6 sm:px-6 md:pb-12 md:pt-8">{children}</main>
+        <form action={portalSignOut} className="mt-auto hidden border-t border-paper/10 px-5 py-5 md:block">
+          <button type="submit" className="text-sm text-paper/70 transition-colors hover:text-paper">
+            Cerrar sesión
+          </button>
+        </form>
+      </aside>
+      <main className="mx-auto w-full max-w-5xl px-4 pb-28 pt-6 sm:px-6 md:px-10 md:pb-14 md:pt-10">
+        <RouteReveal>{children}</RouteReveal>
+      </main>
       <Toaster position="top-center" />
     </div>
   );

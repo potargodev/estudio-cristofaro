@@ -63,7 +63,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
             >
               <h2 className="flex items-center justify-between px-2 py-1.5 text-sm font-semibold">
                 {col.label}
-                <span className="rounded-full bg-surface px-2 text-xs text-muted">{items.length}</span>
+                <span className="rounded-[2px] bg-surface px-2 text-xs text-muted">{items.length}</span>
               </h2>
               <ul className="mt-1 space-y-2">
                 {items.map((l) => {
@@ -80,7 +80,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                     <div
                       draggable
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", l.id)}
-                      className="cursor-grab rounded-md border border-line bg-surface p-3 shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing"
+                      className="cursor-grab rounded-md border border-line bg-surface p-3 transition-shadow hover:active:cursor-grabbing"
                     >
                       <Link href={`/admin/consultas/${l.id}`} className="block font-medium leading-snug hover:text-rose-deep">
                         {l.name}

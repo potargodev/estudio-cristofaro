@@ -14,7 +14,7 @@ export function WeeklyBars({
   const max = Math.max(1, ...data.map((d) => d.value));
   const color = tone === "navy" ? "var(--color-navy)" : "var(--color-rose)";
   return (
-    <figure className="rounded-md border border-line bg-surface p-5 shadow-brand-sm">
+    <figure className="rounded-md border border-line bg-surface p-5">
       <figcaption className="text-sm text-muted">{title}</figcaption>
       <div className="mt-4 flex h-36 items-end gap-2" aria-hidden>
         {data.map((d, i) => (

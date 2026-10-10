@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, gte, inArray, isNotNull, isNull, lt, lte, notInArray } from "drizzle-orm";
 import Link from "next/link";
+import { Counter } from "@/components/web/Counter";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { getDb } from "@/db";
 import { documents, leads, obligations, organizations, requests } from "@/db/schema";
@@ -132,17 +133,19 @@ export default async function AdminHome() {
         </Link>
       </AdminPageHeader>
 
-      <dl className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <dl className="grid gap-px border border-line bg-line sm:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Consultas este mes", value: String(thisMonth.length) },
-          { label: "Sin contactar", value: String(all.filter((l) => l.status === "nuevo").length) },
-          { label: "Conversión del mes", value: closed ? `${Math.round((won / closed) * 100)}%` : "—" },
-          { label: "Organizaciones activas", value: String(activeClients.length), sub: mrr ? `${money.format(mrr)} / mes` : undefined },
+          { label: "Consultas este mes", value: thisMonth.length },
+          { label: "Sin contactar", value: all.filter((l) => l.status === "nuevo").length },
+          { label: "Conversión del mes", value: closed ? Math.round((won / closed) * 100) : null, suffix: "%" },
+          { label: "Organizaciones activas", value: activeClients.length, sub: mrr ? `${money.format(mrr)} / mes` : undefined },
         ].map((k) => (
-          <div key={k.label} className="rounded-md border border-line bg-surface p-6 shadow-brand-sm">
+          <div key={k.label} className="bg-surface p-6">
             <dt className="text-sm text-muted">{k.label}</dt>
-            <dd className="mt-2 font-display text-5xl leading-none text-navy">{k.value}</dd>
-            {k.sub && <dd className="mt-0.5 text-sm text-muted">{k.sub}</dd>}
+            <dd className="tabular mt-3 font-display text-5xl leading-none text-navy">
+              {k.value === null ? "—" : <Counter value={k.value} suffix={k.suffix} duration={900} />}
+            </dd>
+            {k.sub && <dd className="mt-1.5 text-sm text-muted">{k.sub}</dd>}
           </div>
         ))}
       </dl>
@@ -270,8 +273,8 @@ export default async function AdminHome() {
                   <span>{LEAD_SOURCES[source as Lead["source"]] ?? source}</span>
                   <span className="font-medium">{count}</span>
                 </div>
-                <div className="mt-1.5 h-2 rounded-full bg-navy-soft">
-                  <div className="h-2 rounded-full bg-navy" style={{ width: `${(count / thisMonth.length) * 100}%` }} />
+                <div className="mt-1.5 h-2 bg-navy-soft">
+                  <div className="h-2 bg-navy" style={{ width: `${(count / thisMonth.length) * 100}%` }} />
                 </div>
               </li>
             ))}

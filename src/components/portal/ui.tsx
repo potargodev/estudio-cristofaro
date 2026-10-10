@@ -10,7 +10,7 @@ const tones = {
 } as const;
 
 export function Badge({ tone = "neutral", children }: { tone?: keyof typeof tones; children: React.ReactNode }) {
-  return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium", tones[tone])}>{children}</span>;
+  return <span className={cn("inline-flex items-center rounded-[2px] px-2.5 py-0.5 text-xs font-medium", tones[tone])}>{children}</span>;
 }
 
 export function obligationTone(status: string, dueDate: string, today: string): keyof typeof tones {
@@ -24,14 +24,14 @@ export function requestTone(status: string): keyof typeof tones {
 }
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={cn("rounded-md border border-line bg-surface p-5 shadow-brand-sm", className)}>{children}</section>;
+  return <section className={cn("rounded-md border border-line bg-surface p-5", className)}>{children}</section>;
 }
 
 export function PageTitle({ title, intro, children }: { title: string; intro?: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
       <div>
-        <h1 className="font-display text-3xl sm:text-4xl">{title}</h1>
+        <h1 className="font-display text-[clamp(2rem,3.4vw,2.9rem)] leading-none">{title}</h1>
         {intro && <p className="mt-2 max-w-xl text-muted">{intro}</p>}
       </div>
       {children}

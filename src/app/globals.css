@@ -486,13 +486,20 @@ body {
   to { transform: scaleX(1); }
 }
 
-/* Contenido de pestañas: entra con un fundido corto */
+/* Contenido de pestañas (portal y backoffice): entra con una máscara corta que
+   barre de izquierda a derecha, no con un corte. Rápido: 320 ms. */
 .tab-in {
-  animation: tab-in 260ms var(--ease-out-soft) both;
+  animation: tab-in 320ms var(--ease-expo) backwards;
 }
 @keyframes tab-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: none; }
+  from {
+    clip-path: inset(0 100% 0 0);
+    transform: translateX(-6px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
 }
 
 /* Skeletons de carga */
@@ -556,7 +563,7 @@ body {
 
 /* Pestañas de la web: la pantalla nueva entra barriendo con una máscara */
 .tab-mask {
-  animation: tab-mask 0.9s var(--ease-expo) both;
+  animation: tab-mask 0.9s var(--ease-expo) backwards;
 }
 @keyframes tab-mask {
   from {

@@ -25,7 +25,7 @@ export default async function ModuloPage({ params }: { params: Promise<{ key: st
   if (Screen) return <Screen me={me} path={path} />;
   return (
     <Card className="mx-auto max-w-xl text-center">
-      <span className="mx-auto grid size-14 place-items-center rounded-full bg-rose-soft text-rose-deep">
+      <span className="mx-auto grid size-14 place-items-center bg-rose-soft text-rose-deep">
         <Blocks className="size-7" aria-hidden />
       </span>
       <p className="mt-4 text-sm font-medium uppercase tracking-wider text-rose-deep">Próximamente</p>
