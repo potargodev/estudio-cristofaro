@@ -1,5 +1,6 @@
 import { ArrowRight, Download } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Badge, Card, Empty, obligationTone, requestTone } from "@/components/portal/ui";
 import { LeadContact } from "@/components/portal/LeadContact";
 import { requireMember } from "@/lib/auth";
@@ -13,6 +14,8 @@ import { OBLIGATION_STATUS, REQUEST_STATUS, REQUEST_TYPES, categoryLabel, dateLa
 
 export default async function PortalHome() {
   const me = await requireMember();
+  // El empleado solo usa gastos compartidos y rendiciones
+  if (!can(me.orgRole, "inicio.ver")) redirect("/portal/rendiciones");
   const show = {
     obligations: can(me.orgRole, "vencimientos.ver"),
     documents: can(me.orgRole, "documentos.ver"),

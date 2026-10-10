@@ -50,7 +50,13 @@ export interface NavAccess {
 }
 
 export const NAV_GROUPS: NavGroup[] = [
-  { title: "General", items: [{ href: "/admin", label: "Resumen", icon: "resumen", exact: true }] },
+  {
+    title: "General",
+    items: [
+      { href: "/admin", label: "Resumen", icon: "resumen", exact: true },
+      { href: "/gastos", label: "Gastos compartidos", icon: "gastos" },
+    ],
+  },
   {
     title: "Clientes",
     items: [

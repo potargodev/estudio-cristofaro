@@ -13,6 +13,7 @@ import {
   staffRevokeMember,
 } from "@/app/admin/member-actions";
 import { ActivityTimeline } from "@/components/admin/ActivityTimeline";
+import { OrgExpensesTab } from "@/components/admin/OrgExpensesTab";
 import { Notice } from "@/components/admin/AdminField";
 import { LegalEntitiesSection, OrganizationGeneralForm } from "@/components/admin/OrganizationForms";
 import {
@@ -222,6 +223,7 @@ export default async function OrganizacionPage({
         {tab === "documentos" && <DocumentsTab orgId={org.id} studioId={studioId} error={sp.error} entities={entityOptions} />}
         {tab === "solicitudes" && <RequestsTab orgId={org.id} studioId={studioId} />}
         {tab === "integraciones" && <IntegrationsTab orgId={org.id} studioId={studioId} />}
+        {tab === "gastos" && <OrgExpensesTab orgId={org.id} studioId={studioId} />}
         {tab === "miembros" && (
           <TeamPanel
             organizationId={org.id}

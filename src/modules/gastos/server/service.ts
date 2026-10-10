@@ -412,7 +412,7 @@ export async function stopRecurrence(actor: GastosActor, groupId: string, expens
  * Gastos de la empresa o deducibles de un grupo con contexto contable: quedan
  * en los gastos de la organización (o del autónomo) con su comprobante.
  */
-async function syncAccounting(group: GroupRow, e: typeof expenses.$inferSelect) {
+export async function syncAccounting(group: GroupRow, e: typeof expenses.$inferSelect) {
   if (!(e.is_company || e.is_deductible) || (!group.organization_id && !group.context_tenant)) return;
   // El importe contable va en pesos si hay cotización; si no, en la moneda del gasto
   const amount = e.fx_rate && group.base_currency === "ARS" ? Math.round(e.amount * Number(e.fx_rate)) : e.amount;
@@ -589,7 +589,7 @@ function toLedger(l: Awaited<ReturnType<typeof loadLedger>>, groupId: string) {
   return { ledger, sets, payers, shares };
 }
 
-async function ledgerBalances(group: GroupRow) {
+export async function ledgerBalances(group: GroupRow) {
   const l = await loadLedger([group.id]);
   const { ledger, sets } = toLedger(l, group.id);
   return { balances: computeBalances(ledger, sets), ledger, sets };

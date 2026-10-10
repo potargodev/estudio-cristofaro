@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Wallet } from "lucide-react";
 import Link from "next/link";
 import { requestAccountant } from "./actions";
@@ -6,7 +6,8 @@ import { Notice } from "@/components/admin/AdminField";
 import { SubmitButton } from "@/components/admin/ui";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
-import { studios } from "@/db/schema";
+import { accounting_expenses, studios } from "@/db/schema";
+import { categoryName, formatMoney } from "@/modules/gastos/constants";
 import { requirePersonal } from "@/lib/auth";
 import { getPlan } from "@/lib/faro/plans";
 
@@ -25,6 +26,13 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const me = await requirePersonal();
   const [t] = await getDb().select().from(studios).where(eq(studios.id, me.studioId));
+  // Gastos de la actividad: lo que marcó "de la empresa" o "deducible" en grupos conectados a su contabilidad
+  const activity = await getDb()
+    .select()
+    .from(accounting_expenses)
+    .where(and(eq(accounting_expenses.studio_id, me.studioId), isNull(accounting_expenses.organization_id)))
+    .orderBy(desc(accounting_expenses.date))
+    .limit(8);
   const first = me.name.split(" ")[0];
   return (
     <div className="grid gap-6 pb-10">
@@ -47,6 +55,37 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
         </span>
         <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
       </Link>
+
+      {activity.length > 0 && (
+        <section aria-labelledby="actividad" className="border border-line bg-surface p-5">
+          <h2 id="actividad" className="text-[17px] font-medium text-ink">
+            Gastos de tu actividad
+          </h2>
+          <p className="mt-1 text-[14px] text-muted">Los que marcaste como de la actividad o deducibles, con su comprobante. Quedan listos para tu contabilidad.</p>
+          <ul className="mt-3 divide-y divide-line">
+            {activity.map((a) => (
+              <li key={a.id} className="flex items-start justify-between gap-3 py-2.5 text-[14px]">
+                <span className="min-w-0">
+                  <span className="block truncate text-ink">{a.description}</span>
+                  <span className="block text-muted">
+                    {a.date} · {categoryName(a.category)}
+                    {a.deductible && " · deducible"}
+                    {a.receipt_path && (
+                      <>
+                        {" · "}
+                        <a href={`/api/gastos/archivo/contable/${a.id}`} target="_blank" className="text-rose-deep underline-offset-4 hover:underline">
+                          comprobante
+                        </a>
+                      </>
+                    )}
+                  </span>
+                </span>
+                <span className="shrink-0 tabular-nums">{formatMoney(a.amount, a.currency)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section aria-labelledby="pronto">
         <h2 id="pronto" className="text-[13px] font-medium uppercase tracking-wide text-muted">

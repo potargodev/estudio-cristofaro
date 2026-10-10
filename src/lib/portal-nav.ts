@@ -5,7 +5,7 @@ import { can, canSeeRequests, type OrgRole } from "./permissions";
 // organización. Es solo presentación: cada página vuelve a validar el permiso
 // en el servidor.
 
-export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas";
+export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas" | "gastos" | "rendiciones";
 
 export interface PortalNavItem {
   href: string;
@@ -15,7 +15,8 @@ export interface PortalNavItem {
 }
 
 export function buildPortalNav(role: OrgRole, activeModules: string[]) {
-  const main: PortalNavItem[] = [{ href: "/portal", label: "Inicio", icon: "inicio", exact: true }];
+  // El empleado no tiene inicio: solo gastos compartidos y sus rendiciones
+  const main: PortalNavItem[] = can(role, "inicio.ver") ? [{ href: "/portal", label: "Inicio", icon: "inicio", exact: true }] : [];
   if (can(role, "vencimientos.ver"))
     main.push({
       href: "/portal/vencimientos",
@@ -36,6 +37,11 @@ export function buildPortalNav(role: OrgRole, activeModules: string[]) {
     });
 
   const extra: PortalNavItem[] = [];
+  const rendiciones: PortalNavItem = { href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" };
+  if (role === "empleado") main.push(rendiciones, { href: "/gastos", label: "Gastos compartidos", icon: "gastos" });
+  else if (can(role, "gastos.rendir") || can(role, "finanzas.gestionar")) extra.push(rendiciones);
+  if (can(role, "finanzas.ver")) extra.push({ href: "/portal/gastos-empresa", label: "Gastos de la empresa", icon: "gastos" });
+  if (role !== "empleado") extra.push({ href: "/gastos", label: "Gastos compartidos", icon: "gastos" });
   for (const m of MODULES) {
     if (!activeModules.includes(m.key) || !can(role, m.permissions.view)) continue;
     for (const item of m.nav)

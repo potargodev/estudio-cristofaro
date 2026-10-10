@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { Activity, Building2, CalendarClock, FileText, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users } from "lucide-react";
+import { Activity, Building2, CalendarClock, FileText, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet } from "lucide-react";
 import Link from "next/link";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
@@ -53,6 +53,7 @@ export const ORG_TABS = [
   { key: "documentos", label: "Documentos", icon: FileText },
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare },
   { key: "integraciones", label: "Integraciones", icon: PlugZap },
+  { key: "gastos", label: "Gastos", icon: Wallet },
   { key: "actividad", label: "Actividad", icon: Activity },
 ] as const;
 
