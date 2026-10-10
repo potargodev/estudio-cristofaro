@@ -4,6 +4,7 @@ import { MotionBoot } from "@/components/web/MotionBoot";
 import { PageTransitions } from "@/components/web/PageTransitions";
 import { SiteFooter } from "@/components/web/SiteFooter";
 import { SiteHeader } from "@/components/web/SiteHeader";
+import { Splash } from "@/components/web/Splash";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { site } from "@/lib/site";
 
@@ -33,6 +34,7 @@ function getJsonLd() {
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="site">
+      <Splash />
       <MotionBoot />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getJsonLd()) }} />
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-paper focus:px-3 focus:py-2 focus:text-night">

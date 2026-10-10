@@ -8,7 +8,7 @@ const GUARANTEES = ["Respuesta en menos de 24 h hábiles", "Abono mensual fijo",
 
 // La intro se ve una sola vez por sesión y solo con movimiento permitido: el
 // script marca el estado inicial antes de pintar (sin parpadeo).
-const introScript = `!function(){try{var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('intro-visto'))return;sessionStorage.setItem('intro-visto','1');d.classList.add('intro');setTimeout(function(){d.classList.remove('intro')},2600)}catch(e){}}()`;
+const introScript = `!function(){try{var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('intro-visto'))return;sessionStorage.setItem('intro-visto','1');d.classList.add('intro');setTimeout(function(){d.classList.remove('intro')},d.classList.contains('splash-on')?6000:2600)}catch(e){}}()`;
 
 export function Hero() {
   return (

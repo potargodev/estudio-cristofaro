@@ -49,11 +49,23 @@ const PATHS = [
   { d: "M 366.75 113.48 C 347.36 113.48 331.59 129.25 331.59 148.64 C 331.59 168.02 347.36 183.8 366.75 183.8 C 386.13 183.8 401.91 168.02 401.91 148.64 C 401.91 129.25 386.13 113.48 366.75 113.48 M 366.75 184.15 C 347.16 184.15 331.23 168.22 331.23 148.64 C 331.23 129.06 347.16 113.12 366.75 113.12 C 386.33 113.12 402.26 129.06 402.26 148.64 C 402.26 168.22 386.33 184.15 366.75 184.15", rule: "nonzero" },
 ] as const;
 
-export function Sello({ className, title = "Estudio Cristofaro" }: { className?: string; title?: string }) {
+/**
+ * `animated`: cada trazo lleva su índice (--i) y su papel (data-part: letra del
+ * aro, la C, la E o el círculo) para animarlo por CSS (ver .splash en globals.css).
+ */
+export function Sello({ className, title = "Estudio Cristofaro", animated = false }: { className?: string; title?: string; animated?: boolean }) {
+  const n = PATHS.length;
+  const part = (i: number) => (i === n - 1 ? "ring" : i === n - 2 ? "bar" : i === n - 3 ? "c" : "letter");
   return (
     <svg viewBox="330.73 112.63 72.02 72.03" className={className} fill="currentColor" role="img" aria-label={title}>
       {PATHS.map((p, i) => (
-        <path key={i} d={p.d} fillRule={p.rule as "nonzero" | "evenodd" | undefined} />
+        <path
+          key={i}
+          d={p.d}
+          fillRule={p.rule as "nonzero" | "evenodd" | undefined}
+          data-part={animated ? part(i) : undefined}
+          style={animated ? ({ "--i": i } as React.CSSProperties) : undefined}
+        />
       ))}
     </svg>
   );
