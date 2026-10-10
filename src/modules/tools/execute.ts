@@ -13,8 +13,9 @@ import { ToolError, type HandlerContext, type ToolActor, type ToolContext, type 
 // la organización (del estudio y permitida). Después:
 // - lectura: se ejecuta;
 // - escritura: desde el Asistente pide confirmación en línea (queda una
-//   propuesta de nivel "escritura" que confirma la misma persona); desde MCP
-//   con alcance de escritura se ejecuta;
+//   propuesta de nivel "escritura" que confirma la misma persona), salvo las
+//   marcadas autoRun (cargar un gasto compartido); desde MCP con alcance de
+//   escritura se ejecuta;
 // - sensible: nunca se ejecuta sola, crea una propuesta en Aprobaciones.
 // Toda ejecución queda en la auditoría con el origen y el resultado.
 
@@ -153,7 +154,7 @@ export async function executeTool(name: string, rawInput: unknown, ctx: ToolCont
     const p = await propose(t, input, ctx, "sensible", organizationId);
     return { status: "aprobacion", approvalId: p.id, summary: p.summary };
   }
-  if (level === "escritura" && ctx.origin === "asistente") {
+  if (level === "escritura" && ctx.origin === "asistente" && !t.autoRun) {
     const p = await propose(t, input, ctx, "escritura", organizationId);
     return { status: "confirmacion", approvalId: p.id, summary: p.summary };
   }

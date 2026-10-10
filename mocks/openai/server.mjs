@@ -34,6 +34,8 @@ function summarize(result) {
   if (result.estado === "enviado_a_aprobacion") return `Listo: lo dejé como borrador en **Aprobaciones** para que alguien del estudio lo revise. No se envió nada todavía.\n\n> ${result.resumen}`;
   if (result.estado === "requiere_confirmacion") return `Para hacerlo necesito que lo confirmes en la tarjeta: **${result.resumen}**.`;
   if (result.estado === "denegado" || result.estado === "error") return `No pude hacerlo: ${result.motivo}`;
+  const data = result.resultado ?? result;
+  if (data && typeof data.listo === "string") return `${data.listo}.${Array.isArray(data.partes) ? `\n\n${data.partes.map((p) => `- ${p}`).join("\n")}` : ""}`;
   const rows = firstArray(result);
   if (rows && rows.length && typeof rows[0] === "object") {
     const cols = Object.keys(rows[0]).filter((k) => !/id$/.test(k) && typeof rows[0][k] !== "object").slice(0, 4);
@@ -62,6 +64,15 @@ function decide(body) {
   const want = (tool, args) => (tools.has(tool) ? { tool, args } : { text: `No tengo disponible la herramienta \`${tool}\` con tus permisos.` });
   if (/confirm[eé]|cancel[eé]/.test(q)) return { text: "Perfecto, ya quedó registrado." };
   const uuid = q.match(UUID)?.[0];
+  // Gastos compartidos: "pagué $48.000 de la cena con Juan y Ana, dividido igual"
+  const gasto = q.match(/pagu[eé]\s*\$?\s*([\d.,]+)\s*(?:de (?:la |el |los |las )?(.+?))?\s+con\s+(.+?)(?:,|\.|$)/);
+  if (gasto) {
+    const monto = Number(gasto[1].replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", "."));
+    const descripcion = gasto[2] ? gasto[2].charAt(0).toUpperCase() + gasto[2].slice(1) : "Gasto";
+    const dividir_entre = gasto[3].split(/\s*(?:,|\by\b)\s*/).map((n) => n.trim()).filter(Boolean).map((n) => n.charAt(0).toUpperCase() + n.slice(1));
+    return want("crear_gasto", { descripcion, monto, dividir_entre });
+  }
+  if (/saldo|cu[aá]nto (?:le )?debo|me deben/.test(q)) return want("consultar_saldos", {});
   if (q.includes("respond")) {
     const id = uuid ?? contextId(system, "solicitud");
     return id ? want("responder_solicitud", { solicitud_id: id, mensaje: "Hola, ya revisamos tu consulta: la factura se emite esta semana y te la mandamos por el portal. Cualquier duda, escribinos." }) : { text: "¿Qué solicitud querés responder?" };

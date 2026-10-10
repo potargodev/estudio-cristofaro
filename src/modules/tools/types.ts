@@ -20,6 +20,7 @@ export const TOOL_MODULES = {
   consultas: "Consultas comerciales",
   estudio: "Resumen del estudio",
   conexiones: "Conexiones (Tango, Xubio, archivos)",
+  gastos: "Gastos compartidos",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 
@@ -63,6 +64,11 @@ export interface ToolDefinition<I = Record<string, unknown>, O = unknown> {
   /** Nivel fijo o según la entrada (ej. un vencimiento con importe o link de pago es sensible) */
   level: ToolLevel | ((input: I) => ToolLevel);
   roles: readonly StaffRole[];
+  /**
+   * Escritura que el Asistente ejecuta sin pedir confirmación (cargar un gasto
+   * compartido propio). Nunca aplica a lo sensible, que siempre va a Aprobaciones.
+   */
+  autoRun?: boolean;
   /** Organización afectada (para validarla antes de proponer y mostrarla en aprobaciones) */
   organizationOf?: (input: I, ctx: HandlerContext) => Promise<string | null>;
   /** Resumen legible de lo que se va a hacer (propuestas y confirmaciones) */
