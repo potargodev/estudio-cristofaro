@@ -1,13 +1,14 @@
 "use client";
 
-import { Bot, Home, KeyRound, Wallet } from "lucide-react";
+import { Bot, Home, KeyRound, Ship, Wallet } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/personal", label: "Inicio", icon: Home, exact: true },
-  { href: "/grupos", label: "Grupos de gastos", icon: Wallet },
+  { href: "/grupos", label: "Grupos", icon: Wallet },
+  { href: "/flotas", label: "Flotas", icon: Ship },
   { href: "/admin/asistente", label: "Asistente IA", icon: Bot },
   { href: "/personal/cuenta", label: "Mi cuenta", icon: KeyRound },
 ];
@@ -27,7 +28,7 @@ export function PersonalNav({ variant }: { variant: "top" | "bottom" }) {
     );
   return (
     <nav aria-label="Secciones" data-tour="nav" className="fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper md:hidden">
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-5">
         {ITEMS.map((i) => (
           <li key={i.href}>
             <Link href={i.href} aria-current={active(i) ? "page" : undefined} className={cn("flex flex-col items-center gap-1 pb-2 pt-2.5 text-[11px]", active(i) ? "text-paper" : "text-paper/60")}>

@@ -45,7 +45,7 @@ export function GuideHost({ boot }: { boot: { toursSeen: string[]; disabled: boo
 
   const openPanel = useCallback(async () => {
     setPanel(true);
-    setGuide(await loadGuideAction());
+    setGuide(await loadGuideAction(window.location.pathname));
   }, []);
   useEffect(() => {
     const h = () => void openPanel();
@@ -58,7 +58,7 @@ export function GuideHost({ boot }: { boot: { toursSeen: string[]; disabled: boo
       setTour(null);
       if (!seen.includes(t.id)) {
         setSeen((s) => [...s, t.id]);
-        void markTourSeenAction(t.id);
+        void markTourSeenAction(t.id, window.location.pathname);
       }
     },
     [seen],
@@ -68,7 +68,7 @@ export function GuideHost({ boot }: { boot: { toursSeen: string[]; disabled: boo
     const next = !disabled;
     setDisabled(next);
     setGuide((g) => (g ? { ...g, disabled: next } : g));
-    await setGuideDisabledAction(next);
+    await setGuideDisabledAction(next, window.location.pathname);
   };
 
   if (!boot) return null;

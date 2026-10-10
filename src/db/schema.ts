@@ -1733,3 +1733,173 @@ export const directory_reviews = pgTable(
   },
   (t) => [unique("directory_reviews_org_key").on(t.studio_id, t.organization_id), index("directory_reviews_studio_idx").on(t.studio_id, t.status)],
 );
+
+// ───────────────────────── Flotas (docs/faro-producto.md §2.j) ─────────────────────────
+// Grupo informal de 3 a 20 personas que pide junto una propuesta a estudios
+// de la Red. No es una sociedad: cada integrante firma su propio Acuerdo de
+// servicio con el estudio y paga solo su abono. Nadie ve las finanzas de nadie.
+
+export const fleetMemberStatus = pgEnum("fleet_member_status", ["invitado", "activo", "salio", "rechazo"]);
+export const fleetMemberRole = pgEnum("fleet_member_role", ["capitan", "tripulante"]);
+export const agreementStatus = pgEnum("agreement_status", ["activo", "baja_solicitada", "finalizado"]);
+
+export const fleets = pgTable("fleets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  /** activa | cerrada */
+  status: text("status").notNull().default("activa"),
+  /** Pedido de propuesta grupal: borrador | publicado | cerrado */
+  request_status: text("request_status").notNull().default("borrador"),
+  request_zone: text("request_zone"),
+  request_services: text("request_services").array().notNull().default(sql`'{}'::text[]`),
+  request_message: text("request_message"),
+  request_published_at: timestamp("request_published_at", { withTimezone: true }),
+  created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+  updated_at: updatedAt(),
+});
+
+export const fleet_members = pgTable(
+  "fleet_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fleet_id: uuid("fleet_id")
+      .notNull()
+      .references(() => fleets.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    email: text("email").notNull(),
+    name: text("name").notNull(),
+    /** monotributista | responsable_inscripto | relacion_dependencia | sin_actividad */
+    profile: text("profile"),
+    role: fleetMemberRole("role").notNull().default("tripulante"),
+    status: fleetMemberStatus("status").notNull().default("invitado"),
+    /** Aceptó el aviso de informalidad al unirse */
+    informal_ack_at: timestamp("informal_ack_at", { withTimezone: true }),
+    invited_by: uuid("invited_by").references(() => users.id, { onDelete: "set null" }),
+    joined_at: timestamp("joined_at", { withTimezone: true }),
+    left_at: timestamp("left_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [unique("fleet_members_email_key").on(t.fleet_id, t.email), index("fleet_members_user_idx").on(t.user_id)],
+);
+
+/** Propuesta grupal de un estudio de la Red: precio mensual por integrante según su perfil */
+export const fleet_proposals = pgTable(
+  "fleet_proposals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fleet_id: uuid("fleet_id")
+      .notNull()
+      .references(() => fleets.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    /** Pesos por mes, por perfil (null = no lo atiende) */
+    prices: jsonb("prices").$type<Record<string, number | null>>().notNull(),
+    includes: text("includes").notNull(),
+    min_members: integer("min_members").notNull().default(3),
+    /** Preaviso de baja (máximo 30 días, sin penalidades) */
+    notice_days: integer("notice_days").notNull().default(30),
+    /** enviada | retirada */
+    status: text("status").notNull().default("enviada"),
+    /** Desde cuándo quedó por debajo del mínimo (aviso de 30 días) */
+    below_min_since: timestamp("below_min_since", { withTimezone: true }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [unique("fleet_proposals_key").on(t.fleet_id, t.studio_id)],
+);
+
+/** Votación no vinculante: cuál propuesta considerar */
+export const fleet_votes = pgTable(
+  "fleet_votes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fleet_id: uuid("fleet_id")
+      .notNull()
+      .references(() => fleets.id, { onDelete: "cascade" }),
+    member_id: uuid("member_id")
+      .notNull()
+      .references(() => fleet_members.id, { onDelete: "cascade" }),
+    proposal_id: uuid("proposal_id")
+      .notNull()
+      .references(() => fleet_proposals.id, { onDelete: "cascade" }),
+    created_at: createdAt(),
+  },
+  (t) => [unique("fleet_votes_member_key").on(t.fleet_id, t.member_id)],
+);
+
+/** Conversación interna y línea de tiempo de la Flota */
+export const fleet_events = pgTable(
+  "fleet_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fleet_id: uuid("fleet_id")
+      .notNull()
+      .references(() => fleets.id, { onDelete: "cascade" }),
+    /** mensaje | evento */
+    kind: text("kind").notNull().default("evento"),
+    actor_id: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    actor_label: text("actor_label"),
+    body: text("body").notNull(),
+    created_at: createdAt(),
+  },
+  (t) => [index("fleet_events_fleet_idx").on(t.fleet_id, t.created_at)],
+);
+
+/**
+ * Acuerdo de servicio individual entre un integrante y el estudio, con las
+ * condiciones de la propuesta (copiadas al firmar). Cada uno paga solo su abono.
+ */
+export const service_agreements = pgTable(
+  "service_agreements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    fleet_id: uuid("fleet_id").references(() => fleets.id, { onDelete: "set null" }),
+    proposal_id: uuid("proposal_id").references(() => fleet_proposals.id, { onDelete: "set null" }),
+    /** Organización creada en el estudio al aceptar (con consentimiento) */
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+    member_name: text("member_name").notNull(),
+    member_email: text("member_email").notNull(),
+    profile: text("profile").notNull(),
+    monthly_price: integer("monthly_price").notNull(),
+    terms: jsonb("terms").$type<{ includes: string; minMembers: number; noticeDays: number; studioName: string; fleetName: string; version: string }>().notNull(),
+    status: agreementStatus("status").notNull().default("activo"),
+    signed_name: text("signed_name").notNull(),
+    signed_at: timestamp("signed_at", { withTimezone: true }).notNull(),
+    signed_ip: text("signed_ip"),
+    /** Vigencia del precio grupal si la Flota quedó por debajo del mínimo */
+    group_price_until: date("group_price_until"),
+    end_requested_at: timestamp("end_requested_at", { withTimezone: true }),
+    ends_on: date("ends_on"),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("service_agreements_user_idx").on(t.user_id), index("service_agreements_studio_idx").on(t.studio_id)],
+);
+
+/** Pagos de cada acuerdo (por período), que registra el estudio */
+export const agreement_payments = pgTable(
+  "agreement_payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    agreement_id: uuid("agreement_id")
+      .notNull()
+      .references(() => service_agreements.id, { onDelete: "cascade" }),
+    /** AAAA-MM */
+    period: text("period").notNull(),
+    amount: integer("amount").notNull(),
+    method: text("method"),
+    registered_by: uuid("registered_by").references(() => users.id, { onDelete: "set null" }),
+    paid_at: timestamp("paid_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("agreement_payments_period_key").on(t.agreement_id, t.period)],
+);

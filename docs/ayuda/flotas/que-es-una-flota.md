@@ -7,7 +7,7 @@ actualizado: 2026-10-10
 relacionados: [flotas/pedir-propuestas, flotas/acuerdos-y-salida, red-de-estudios/buscar-un-estudio]
 ---
 
-> **Próximamente.** Las Flotas todavía no están disponibles. Este artículo cuenta cómo van a funcionar.
+Entrá desde tu panel personal a **Flotas**. Ahí creás una, respondés invitaciones y ves **Mis servicios**.
 
 Una **Flota** es un grupo de **3 a 20 personas** que se juntan para conseguir mejores condiciones con un estudio o contador de la [Red de estudios](/ayuda/red-de-estudios/buscar-un-estudio). Barcos independientes que navegan juntos, guiados por el mismo faro.
 
@@ -19,16 +19,20 @@ El nombre es libre, pero no puede tener palabras que sugieran un tipo legal ("S.
 
 ## Capitán y Tripulantes
 
-- **Capitán:** quien crea la Flota. Invita y quita integrantes, publica el pedido de propuesta y edita el nombre. Puede **transferir el rol** a otro integrante. Si se va, el rol pasa al integrante más antiguo, o la Flota vota.
+- **Capitán:** quien crea la Flota. Invita y quita integrantes, publica el pedido de propuesta y edita el nombre. Puede **transferir el rol** a otro integrante («Hacer Capitán»). Si sale de la Flota, el rol pasa solo al integrante activo más antiguo.
 - **Tripulantes:** el resto. Pueden salir cuando quieran.
 
-Cada integrante declara su perfil: monotributista, responsable inscripto, en relación de dependencia o sin actividad.
+Cada integrante declara su perfil: monotributista, responsable inscripto, en relación de dependencia o sin actividad. Lo podés cambiar en el espacio de la Flota, en **Tu perfil**.
+
+## Invitar y unirse
+
+El Capitán invita por mail. La persona entra a Faro con ese mail (si no tiene cuenta, la crea gratis como persona) y en **Flotas → Te invitaron** elige su perfil, acepta el aviso de informalidad y toca **Unirme a la Flota**.
 
 ## El espacio de la Flota
 
 Todos los integrantes comparten un espacio con:
 
-- nombre, imagen y descripción;
+- nombre y descripción;
 - la lista de integrantes, con su nombre, perfil y estado (invitado, activo, aceptó la propuesta);
 - el **pedido** de propuesta;
 - las **propuestas** de los estudios en un **comparador**, con votación no vinculante;

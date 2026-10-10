@@ -4,8 +4,8 @@ import { getGuide } from "@/modules/onboarding/server";
 import { cn } from "@/lib/utils";
 
 /** Tarjeta "Primeros pasos" del inicio: desaparece cuando están todos hechos o si la guía está apagada */
-export async function FirstSteps({ className }: { className?: string }) {
-  const g = await getGuide();
+export async function FirstSteps({ className, path }: { className?: string; path?: string }) {
+  const g = await getGuide(undefined, path);
   if (!g || g.disabled) return null;
   const done = g.steps.filter((s) => s.done).length;
   if (done === g.steps.length) return null;

@@ -1,5 +1,5 @@
 import { and, desc, eq, isNull, or } from "drizzle-orm";
-import { CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Wallet } from "lucide-react";
+import { CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Ship, Wallet } from "lucide-react";
 import Link from "next/link";
 import { FirstSteps } from "@/components/app/FirstSteps";
 import { getDb } from "@/db";
@@ -104,6 +104,17 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
           ))}
         </ul>
       </section>
+
+      <Link href="/flotas" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
+        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
+          <Ship className="size-6" strokeWidth={1.5} aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[17px] font-medium text-ink">Flotas</span>
+          <span className="block text-[14px] text-muted">Entre 3 y 20 personas piden juntas una propuesta a un estudio. Cada uno firma su acuerdo y paga solo lo suyo.</span>
+        </span>
+        <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
+      </Link>
 
       <Link href="/red" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
         <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">

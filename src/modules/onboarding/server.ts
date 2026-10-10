@@ -8,6 +8,10 @@ import {
   documents,
   expense_groups,
   expenses,
+  fleet_members,
+  fleet_proposals,
+  fleet_votes,
+  fleets,
   group_members,
   invitations,
   obligations,
@@ -17,6 +21,7 @@ import {
   reimbursements,
   request_messages,
   requests,
+  service_agreements,
   studios,
   users,
 } from "@/db/schema";
@@ -37,11 +42,24 @@ export interface OnboardingContext {
   organizationId: string | null;
 }
 
-/** Perfil y espacio de la sesión actual (o null: sin sesión o en acceso asistido) */
-export async function onboardingContext(): Promise<OnboardingContext | null> {
+/**
+ * Perfil y espacio de la sesión actual (o null: sin sesión o en acceso
+ * asistido). Con la ruta de una Flota de la que es integrante activo, el
+ * espacio es esa Flota (Capitán o Tripulante).
+ */
+export async function onboardingContext(path?: string | null): Promise<OnboardingContext | null> {
   const user = await getCurrentUser();
   // El equipo de Faro en acceso asistido no deja progreso en el tenant ajeno
   if (!user || user.assisted) return null;
+  const fleetId = path?.match(/^\/flotas\/([0-9a-f-]{36})/i)?.[1];
+  if (fleetId && user.role === "titular") {
+    const [m] = await getDb()
+      .select({ role: fleet_members.role })
+      .from(fleet_members)
+      .innerJoin(fleets, eq(fleets.id, fleet_members.fleet_id))
+      .where(and(eq(fleet_members.fleet_id, fleetId), eq(fleet_members.user_id, user.id), eq(fleet_members.status, "activo"), eq(fleets.status, "activa")));
+    if (m) return { user, profile: m.role === "capitan" ? "capitan" : "tripulante", spaceType: "fleet", spaceId: fleetId, organizationId: null };
+  }
   if (user.role === "cliente") {
     const list = await getMemberships(user.id, user.studioId);
     if (!list.length) return null;
@@ -101,6 +119,17 @@ async function detect(ctx: OnboardingContext): Promise<Set<string>> {
                 .where(and(eq(requests.studio_id, sid), eq(request_messages.author_id, user.id), eq(request_messages.from_client, false))),
             ),
     documento: () => has(db.select({ n: count() }).from(documents).where(and(eq(documents.studio_id, sid), eq(documents.organization_id, ctx.spaceId), eq(documents.uploaded_by, user.id)))),
+    flota_miembros: () => has(db.select({ n: sql<number>`case when count(*) >= 3 then 1 else 0 end::int` }).from(fleet_members).where(and(eq(fleet_members.fleet_id, ctx.spaceId), eq(fleet_members.status, "activo")))),
+    flota_pedido: () => has(db.select({ n: count() }).from(fleets).where(and(eq(fleets.id, ctx.spaceId), ne(fleets.request_status, "borrador")))),
+    flota_propuestas: () =>
+      has(
+        db
+          .select({ n: count() })
+          .from(fleet_votes)
+          .innerJoin(fleet_members, eq(fleet_members.id, fleet_votes.member_id))
+          .where(and(eq(fleet_votes.fleet_id, ctx.spaceId), eq(fleet_members.user_id, user.id))),
+      ),
+    flota_acuerdo: () => has(db.select({ n: count() }).from(service_agreements).where(and(eq(service_agreements.fleet_id, ctx.spaceId), eq(service_agreements.user_id, user.id)))),
     rendicion: () => has(db.select({ n: count() }).from(reimbursements).where(and(eq(reimbursements.studio_id, sid), eq(reimbursements.organization_id, ctx.spaceId), eq(reimbursements.user_id, user.id)))),
   };
   const keys = CHECKLISTS[ctx.profile].map((s) => s.key).filter((k) => checks[k]);
@@ -120,8 +149,8 @@ async function progressRow(ctx: OnboardingContext) {
 }
 
 /** Arma la guía de la sesión y guarda los pasos recién cumplidos (con su fecha) */
-export async function getGuide(ctx?: OnboardingContext | null): Promise<GuideView | null> {
-  const c = ctx === undefined ? await onboardingContext() : ctx;
+export async function getGuide(ctx?: OnboardingContext | null, path?: string | null): Promise<GuideView | null> {
+  const c = ctx === undefined ? await onboardingContext(path) : ctx;
   if (!c) return null;
   const row = await progressRow(c);
   const detected = await detect(c);
@@ -143,8 +172,8 @@ export async function getGuide(ctx?: OnboardingContext | null): Promise<GuideVie
 }
 
 /** Marca un paso que no deja rastro propio (por ejemplo, abrir una pantalla) */
-export async function markStep(key: string) {
-  const c = await onboardingContext();
+export async function markStep(key: string, path?: string) {
+  const c = await onboardingContext(path);
   if (!c || !CHECKLISTS[c.profile].some((s) => s.key === key)) return;
   const row = await progressRow(c);
   if (row.completed[key]) return;
@@ -154,8 +183,8 @@ export async function markStep(key: string) {
     .where(eq(onboarding_progress.id, row.id));
 }
 
-export async function setTourSeen(tourId: string) {
-  const c = await onboardingContext();
+export async function setTourSeen(tourId: string, path?: string | null) {
+  const c = await onboardingContext(path);
   if (!c) return;
   const row = await progressRow(c);
   await getDb()
@@ -164,8 +193,8 @@ export async function setTourSeen(tourId: string) {
     .where(eq(onboarding_progress.id, row.id));
 }
 
-export async function setGuideDisabled(disabled: boolean, resetTours = false) {
-  const c = await onboardingContext();
+export async function setGuideDisabled(disabled: boolean, resetTours = false, path?: string | null) {
+  const c = await onboardingContext(path);
   if (!c) return false;
   const row = await progressRow(c);
   await getDb()
@@ -176,8 +205,8 @@ export async function setGuideDisabled(disabled: boolean, resetTours = false) {
 }
 
 /** Datos mínimos para el cliente al cargar el layout: tours vistos y si la guía está apagada */
-export async function guideBoot(): Promise<{ toursSeen: string[]; disabled: boolean } | null> {
-  const c = await onboardingContext();
+export async function guideBoot(path?: string | null): Promise<{ toursSeen: string[]; disabled: boolean } | null> {
+  const c = await onboardingContext(path);
   if (!c) return null;
   const [row] = await getDb()
     .select({ tours: onboarding_progress.tours_seen, disabled: onboarding_progress.disabled })

@@ -57,6 +57,9 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
           <div className="flex flex-wrap items-center justify-between gap-4 text-[14px]">
             <p className="max-w-xl text-muted">{issue ?? "Tu ficha aparece en la Red. Los pedidos de propuesta llegan a Consultas."}</p>
             <div className="flex flex-wrap items-center gap-2">
+              <Link href="/admin/red/flotas" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+                Pedidos de Flotas
+              </Link>
               {!issue && studio && (
                 <Link href={`/red/${studio.slug}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
                   <Eye className="size-4" aria-hidden /> Ver ficha pública
