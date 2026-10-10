@@ -121,9 +121,9 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 | Pedir ayuda a un contador | ✓ | ✓ |
 | Precio | Gratis | $[precio] / mes |
 
-## 2.e Vaquitas: gastos compartidos (núcleo, para todos los tipos de usuario)
+## 2.e Grupos de gastos (núcleo, para todos los tipos de usuario)
 
-Cada grupo de gastos compartidos se llama **Vaquita** ("armá una vaquita"), como se dice en Argentina cuando un grupo junta plata para algo. Es libre, gratis y sin requisitos.
+En la interfaz se llaman **Grupos de gastos**: libres, gratis y sin requisitos. No confundir con las Flotas (§2.j), que son para contratar un estudio en conjunto.
 
 Inspirado en Splitwise, pero conectado con la contabilidad: lo que se reparte también queda registrado donde corresponde.
 
@@ -231,6 +231,16 @@ Una **Flota** es un grupo informal de 3 a 20 personas que se juntan para consegu
 - **Creación:** cualquier usuario (Bitácora incluida) crea la Flota e invita. Cada miembro declara su perfil: monotributista, responsable inscripto, en relación de dependencia o sin actividad.
 - **Pedido de propuesta grupal:** la Flota lo publica en la Red de estudios (§2.i), con la cantidad de miembros por perfil y la zona (sin datos personales). Los estudios ofertan un precio por miembro según su perfil (por ejemplo: monotributo, RI y un paquete para empleados con deducciones de Ganancias y Bienes Personales), con lo que incluye y un mínimo de miembros.
 - **Contratación individual:** cada miembro acepta o no la propuesta elegida. El vínculo y la facturación son entre el estudio y cada persona, con la tarifa grupal. Al aceptar, queda como organización del estudio (con consentimiento explícito).
+- **La propuesta grupal define:** servicios incluidos por perfil, precio mensual por miembro y perfil, frecuencia de pago (mensual por adelantado), mínimo de miembros, preaviso de baja (máximo 30 días, sin penalidades) y qué pasa si se baja del mínimo.
+- **Acuerdo individual:** cada tripulante que acepta firma digitalmente en Faro su propio "Acuerdo de servicio" con el estudio, con las condiciones de la propuesta. No hay contrato de la Flota ni pozo común.
+- **Pagos (nadie paga ni debe por otro):**
+  - Cada tripulante paga solo su abono, directamente al estudio.
+  - En Faro, por suscripción de Mercado Pago con débito automático a la cuenta del estudio (cuando esté la integración, F7), o por el medio que acuerde con el estudio, que lo registra.
+  - Cada tripulante ve en "Mis servicios" su estado de cuenta con el estudio: al día, próximo vencimiento o pendiente.
+- **Irse:**
+  - **Salir de la Flota** no rescinde el acuerdo con el estudio: lo mantiene con la tarifa grupal hasta el próximo cambio de condiciones, o lo da de baja.
+  - **Dar de baja el acuerdo:** se hace desde "Mis servicios", con el preaviso pactado. Antes de confirmar, Faro muestra la liquidación final: períodos pagados, si queda algo pendiente y la fecha de fin del servicio.
+  - No se puede quedar debiendo sin saberlo: si hay un saldo pendiente, se muestra en la baja y se puede pagar ahí mismo.
 - **Vigencia:** el precio grupal se mantiene mientras se cumpla el mínimo de miembros. Si no se cumple, el estudio avisa con 30 días de anticipación antes de pasar a su tarifa normal.
 - **Informalidad explícita:** una Flota no es una sociedad ni una entidad legal, no implica actividad, patrimonio ni responsabilidad compartida, y nunca se la llama "sociedad". Cada miembro mantiene su CUIT, sus obligaciones y su responsabilidad. Se muestra un aviso claro al crearla y al unirse.
 - **Gobierno de la Flota:**
