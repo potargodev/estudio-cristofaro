@@ -19,7 +19,8 @@ export type NavIcon =
   | "gastos"
   | "modulos"
   | "ayuda"
-  | "red";
+  | "red"
+  | "rubros";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -77,6 +78,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/organizaciones", label: "Organizaciones", icon: "organizaciones", module: "core" },
       { href: "/admin/vencimientos", label: "Vencimientos", icon: "vencimientos", badge: "obligations" },
       { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
+      { href: "/admin/rubros", label: "Rubros", icon: "rubros", module: "industries" },
     ],
   },
   {

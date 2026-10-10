@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { industry_template_versions, organization_industries, organization_setup_items, organizations } from "@/db/schema";
+import { industry_template_versions, organization_industries, organization_setup_items, organizations, studio_template_validations } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { FILE_TEMPLATES, ITEM_KINDS, isIndustryKey, templateItems, type ItemKind, type TemplateItem } from "./catalog";
 import { industryTemplateSchema, templateIssue, type IndustryTemplate } from "./schema";
@@ -251,3 +251,41 @@ export async function updateSetupItem(studioId: string, actor: Actor, organizati
 }
 
 export const kindLabel = (k: string) => ITEM_KINDS[k as ItemKind] ?? k;
+
+// ── Validación por estudio ("Plantilla en revisión por el estudio") ──
+
+export const STUDIO_REVIEW_LABEL = "Plantilla en revisión por el estudio";
+
+export type StudioTemplateStatus = { state: "validada_faro" | "validada_estudio" | "en_revision"; label: string; by?: string; at?: Date };
+
+/** Estado de cada plantilla para un estudio: validada por Faro, por el propio estudio (versión vigente) o en revisión */
+export async function studioTemplateStatuses(studioId: string): Promise<Record<string, StudioTemplateStatus>> {
+  const [templates, rows] = await Promise.all([listTemplates(), getDb().select().from(studio_template_validations).where(eq(studio_template_validations.studio_id, studioId))]);
+  return Object.fromEntries(
+    templates.map((t) => {
+      if (t.estado === "validada") return [t.clave, { state: "validada_faro", label: `Validada por ${t.validado_por?.nombre ?? "un profesional"}` }];
+      const v = rows.find((r) => r.industry_key === t.clave && r.version === t.version);
+      return [t.clave, v ? { state: "validada_estudio", label: `Validada por el estudio (${v.validated_by_name})`, by: v.validated_by_name, at: v.validated_at } : { state: "en_revision", label: STUDIO_REVIEW_LABEL }];
+    }),
+  );
+}
+
+/** El estudio marca como validada la versión vigente de una plantilla (queda en la auditoría) */
+export async function validateForStudio(studioId: string, actor: Actor & { name: string }, key: string, note?: string) {
+  const t = await getTemplate(key);
+  if (!t) throw new IndustryError("Ese rubro no existe.");
+  await getDb()
+    .insert(studio_template_validations)
+    .values({ studio_id: studioId, industry_key: key, version: t.version, validated_by: actor.id, validated_by_name: actor.name, note: note?.trim().slice(0, 500) || null })
+    .onConflictDoNothing();
+  await audit({ studioId, actor, action: "rubro.validar_estudio", entityType: "rubro", metadata: { rubro: key, version: t.version, nota: note || null } });
+}
+
+export async function revokeStudioValidation(studioId: string, actor: Actor, key: string) {
+  const t = await getTemplate(key);
+  if (!t) throw new IndustryError("Ese rubro no existe.");
+  await getDb()
+    .delete(studio_template_validations)
+    .where(and(eq(studio_template_validations.studio_id, studioId), eq(studio_template_validations.industry_key, key), eq(studio_template_validations.version, t.version)));
+  await audit({ studioId, actor, action: "rubro.validar_estudio_quitar", entityType: "rubro", metadata: { rubro: key, version: t.version } });
+}

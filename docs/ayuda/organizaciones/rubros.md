@@ -27,7 +27,13 @@ Lo aplican el dueño y los contadores. El colaborador lo ve, pero no lo cambia. 
 
 ## Sugerencias a revisar y datos "a validar"
 
-Cada plantilla tiene un estado: **validada** (la revisó un profesional) o **sugerencia a revisar** (borrador). Por ahora todas las plantillas son sugerencias a revisar.
+Cada plantilla es una sugerencia hasta que alguien del estudio la revisa. Mientras tanto se muestra como **«Plantilla en revisión por el estudio»**. Para validarla:
+
+1. En el menú, en **Clientes**, entrá a **Rubros** (o abrí la vista previa del rubro de una organización).
+2. Revisá las obligaciones, documentos y tareas de la plantilla.
+3. Tocá **Marcar como validada**. Lo pueden hacer el dueño y los contadores; queda en la auditoría con tu nombre y la fecha.
+
+La validación vale para la versión vigente: si Faro publica una versión nueva, vuelve a «en revisión». También podés **Quitar validación**. Si una plantilla la validó un profesional de Faro, se muestra como validada para todos los estudios.
 
 Los datos normativos (alícuotas, convenios, regímenes) llevan la marca **"A validar"**, porque dependen de la jurisdicción o del caso. Revisalos antes de usarlos con el cliente.
 

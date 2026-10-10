@@ -2,6 +2,7 @@
 // pantalla. El primer prefijo que coincide gana (de lo más específico a lo general).
 const MAP: [string, string][] = [
   ["/admin/organizaciones/nueva", "organizaciones/rubros"],
+  ["/admin/rubros", "organizaciones/rubros"],
   ["/admin/organizaciones", "organizaciones/invitaciones"],
   ["/admin/usuarios", "organizaciones/roles"],
   ["/admin/vencimientos", "vencimientos/calendario"],

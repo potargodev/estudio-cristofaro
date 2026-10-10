@@ -1903,3 +1903,25 @@ export const agreement_payments = pgTable(
   },
   (t) => [unique("agreement_payments_period_key").on(t.agreement_id, t.period)],
 );
+
+/**
+ * Validación de una plantilla de rubro por cada estudio: mientras no la marque
+ * como validada (para la versión vigente), se muestra "Plantilla en revisión
+ * por el estudio". Es independiente de la validación global de Faro.
+ */
+export const studio_template_validations = pgTable(
+  "studio_template_validations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    industry_key: text("industry_key").notNull(),
+    version: integer("version").notNull(),
+    validated_by: uuid("validated_by").references(() => users.id, { onDelete: "set null" }),
+    validated_by_name: text("validated_by_name").notNull(),
+    note: text("note"),
+    validated_at: timestamp("validated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("studio_template_validations_key").on(t.studio_id, t.industry_key, t.version)],
+);

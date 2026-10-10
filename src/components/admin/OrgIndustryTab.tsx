@@ -2,7 +2,7 @@ import { AlertTriangle, ArrowUpCircle, Factory, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { updateSetupItemAction } from "@/app/admin/industry-actions";
 import { INDUSTRY_NAMES, ITEM_KINDS, type ItemKind } from "@/modules/industries/catalog";
-import { organizationSetup } from "@/modules/industries/server";
+import { organizationSetup, studioTemplateStatuses } from "@/modules/industries/server";
 import { cn } from "@/lib/utils";
 
 const PERFIL: Record<string, string> = { impositivo: "Perfil impositivo típico", laboral: "Perfil laboral (convenios y conceptos)" };
@@ -10,7 +10,8 @@ const label = (d: Record<string, unknown>, fallback: string) => String(d.etiquet
 
 /** Ficha → Rubro: plantillas aplicadas, novedades y lo que dejaron (editable) */
 export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { orgId: string; studioId: string; canEdit: boolean; notice?: string | null }) {
-  const s = await organizationSetup(studioId, orgId);
+  const [s, statuses] = await Promise.all([organizationSetup(studioId, orgId), studioTemplateStatuses(studioId)]);
+  const reviewed = Object.fromEntries(Object.entries(statuses).map(([k, v]) => [k, v.state !== "en_revision"]));
   const kinds = Object.keys(ITEM_KINDS) as ItemKind[];
   const available = Object.entries(INDUSTRY_NAMES).filter(([k]) => !s.industries.some((i) => i.key === k));
   return (
@@ -33,7 +34,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
                   <p className="font-medium text-ink">{i.name}</p>
                   <p className="text-[13px] text-muted">
                     Versión {i.version} aplicada el {i.appliedAt.toLocaleDateString("es-AR")} ·{" "}
-                    {i.status === "validada" ? <span className="text-[#1f5f36]">validada</span> : <span className="text-[#7a5410]">sugerencia a revisar</span>}
+                    {reviewed?.[i.key] ? <span className="text-[#1f5f36]">validada</span> : <span className="text-[#7a5410]">plantilla en revisión por el estudio</span>}
                   </p>
                 </div>
                 {i.latest > i.version && canEdit && (

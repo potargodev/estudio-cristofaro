@@ -18,6 +18,7 @@ import {
   Plus,
   Bot,
   Blocks,
+  Factory,
   Network,
   CircleHelp,
   Lock,
@@ -64,6 +65,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   modulos: Blocks,
   ayuda: CircleHelp,
   red: Network,
+  rubros: Factory,
 };
 
 /** Barra inferior del celular, como en una app: las cuatro secciones de todos los días y "Más" (abre el menú completo) */

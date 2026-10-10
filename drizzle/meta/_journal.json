@@ -148,6 +148,13 @@
       "when": 1791658632207,
       "tag": "0020_flotas",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1791659411967,
+      "tag": "0021_validacion_plantillas_estudio",
+      "breakpoints": true
     }
   ]
 }

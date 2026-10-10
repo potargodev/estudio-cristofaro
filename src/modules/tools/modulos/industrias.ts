@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod/v4";
 import { FILE_TEMPLATES, INDUSTRY_NAMES, ITEM_KINDS, templateItems, type ItemKind } from "@/modules/industries/catalog";
-import { IndustryError, applyTemplate, getTemplate, listTemplates, previewApply } from "@/modules/industries/server";
+import { IndustryError, applyTemplate, getTemplate, listTemplates, previewApply, studioTemplateStatuses } from "@/modules/industries/server";
 import { defineTool, ToolError } from "../types";
 import { uuid } from "./helpers";
 
@@ -45,8 +45,9 @@ export const industriasTools = [
     level: "lectura",
     roles: [...ROLES, "colaborador"],
     input: z.object({}),
-    async handler() {
-      return (await listTemplates()).map((t) => ({ clave: t.clave, rubro: t.nombre, version: t.version, estado: t.estado === "validada" ? "validada" : "borrador (sugerencia a revisar)" }));
+    async handler(_input, ctx) {
+      const st = await studioTemplateStatuses(ctx.studioId);
+      return (await listTemplates()).map((t) => ({ clave: t.clave, rubro: t.nombre, version: t.version, estado: st[t.clave]?.label ?? "Plantilla en revisión por el estudio" }));
     },
   }),
   defineTool({
