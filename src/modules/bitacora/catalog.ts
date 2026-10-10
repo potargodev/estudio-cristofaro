@@ -53,7 +53,7 @@ export const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "j
 export const monthLabel = (month: string) => `${MONTHS[Number(month.slice(5)) - 1]} ${month.slice(0, 4)}`;
 
 /** "$ 12.345,60" o "US$ 20" */
-export function money(cents: number, currency = "ARS") {
+export function money(cents: number, currency = "ARS"): string {
   if (cents < 0) return `−${money(-cents, currency)}`;
   const v = cents / 100;
   const s = v.toLocaleString("es-AR", { minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 });
