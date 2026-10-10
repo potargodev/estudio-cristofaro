@@ -27,6 +27,8 @@
   /* Dorado: solo para números y datos destacados sobre azul noche (nunca superficies).
      #c8a465 sobre #0f1320 = 7,9:1; sobre #141826 = 7,5:1; sobre #1c2235 = 6,7:1 (AA). */
   --color-gold: #c8a465;
+  /* Dorado para fondos claros (backoffice): #8a6a2a sobre blanco = 5:1 (AA) */
+  --color-gold-ink: #8a6a2a;
 
   --color-danger: #a33a2a;
 
