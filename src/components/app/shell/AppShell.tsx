@@ -446,7 +446,7 @@ export function AppShell(p: ShellProps) {
             <ol className="flex min-w-0 items-center gap-1.5 text-[13px] text-muted">
               {trail.map((c, i) => (
                 <li key={i} className={cn("flex min-w-0 items-center gap-1.5", i < trail.length - 1 && "hidden sm:flex")}>
-                  {i > 0 && <ChevronRight className="size-3.5 shrink-0" aria-hidden />}
+                  {i > 0 && <ChevronRight className="hidden size-3.5 shrink-0 sm:block" aria-hidden />}
                   {"href" in c && c.href && i < trail.length - 1 ? (
                     <Link href={c.href} className="truncate hover:text-ink">
                       {c.label}

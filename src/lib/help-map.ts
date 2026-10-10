@@ -23,6 +23,7 @@ const MAP: [string, string][] = [
   ["/portal/rendiciones", "grupos-de-gastos/rendiciones"],
   ["/portal", "documentos/subir-documentos"],
   ["/grupos", "grupos-de-gastos/crear-un-grupo"],
+  ["/bitacora", "bitacora/bitacora"],
   ["/flotas", "flotas/que-es-una-flota"],
   ["/red", "red-de-estudios/buscar-un-estudio"],
   ["/personal/plan", "primeros-pasos/planes"],

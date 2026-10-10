@@ -169,6 +169,13 @@
       "when": 1791661096299,
       "tag": "0023_preferencias",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791662059980,
+      "tag": "0024_bitacora",
+      "breakpoints": true
     }
   ]
 }

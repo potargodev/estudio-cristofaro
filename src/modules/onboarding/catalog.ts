@@ -39,6 +39,7 @@ export const PROFILE_LABEL: Record<OnboardingProfile, string> = {
 /** Cada paso se marca solo cuando la persona hace la acción real (ver server.ts) */
 export const CHECKLISTS: Record<OnboardingProfile, ChecklistStep[]> = {
   persona: [
+    { key: "movimiento", title: "Cargá tu primer gasto en Bitácora", text: "Con el Copiloto («gasté 3500 en el kiosco») o a mano.", href: "/copiloto", help: "bitacora/bitacora" },
     { key: "grupo", title: "Creá tu primer grupo de gastos", text: "Un viaje, la casa o la oficina: dividí sin hacer cuentas.", href: "/grupos/nuevo", help: "grupos-de-gastos/crear-un-grupo" },
     { key: "gasto", title: "Cargá un gasto", text: "Con foto del ticket si querés. Faro calcula quién le debe a quién.", href: "/grupos", help: "grupos-de-gastos/cargar-gastos" },
     { key: "invitar", title: "Sumá a alguien al grupo", text: "Puede entrar sin crear cuenta, con un enlace.", href: "/grupos", help: "grupos-de-gastos/invitar" },

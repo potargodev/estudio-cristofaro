@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { getDb } from "@/db";
 import {
   accounting_expenses,
+  bitacora_entries,
   ai_conversations,
   documents,
   expense_groups,
@@ -130,6 +131,7 @@ async function detect(ctx: OnboardingContext): Promise<Set<string>> {
           .where(and(eq(fleet_votes.fleet_id, ctx.spaceId), eq(fleet_members.user_id, user.id))),
       ),
     flota_acuerdo: () => has(db.select({ n: count() }).from(service_agreements).where(and(eq(service_agreements.fleet_id, ctx.spaceId), eq(service_agreements.user_id, user.id)))),
+    movimiento: () => has(db.select({ n: count() }).from(bitacora_entries).where(eq(bitacora_entries.user_id, user.id))),
     rendicion: () => has(db.select({ n: count() }).from(reimbursements).where(and(eq(reimbursements.studio_id, sid), eq(reimbursements.organization_id, ctx.spaceId), eq(reimbursements.user_id, user.id)))),
   };
   const keys = CHECKLISTS[ctx.profile].map((s) => s.key).filter((k) => checks[k]);

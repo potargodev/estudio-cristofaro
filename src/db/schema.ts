@@ -1962,3 +1962,56 @@ export interface UserPrefs {
   /** Primeros pasos: el widget del Inicio está oculto */
   hideFirstSteps?: boolean;
 }
+
+// ───────────────────────── Bitácora (docs/faro-producto.md §2.g) ─────────────────────────
+// Finanzas personales: siempre privadas. Todo se filtra por user_id de la sesión.
+
+export const movementKind = pgEnum("movement_kind", ["gasto", "ingreso"]);
+export const paymentMethod = pgEnum("payment_method", ["efectivo", "debito", "credito", "transferencia", "mercado_pago"]);
+
+/** Categorías de cada persona (se siembran las predeterminadas la primera vez; editables) */
+export const bitacora_categories = pgTable(
+  "bitacora_categories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** Clave estable de las predeterminadas (supermercado, comida…); null en las propias */
+    key: text("key"),
+    name: text("name").notNull(),
+    kind: movementKind("kind").notNull().default("gasto"),
+    position: integer("position").notNull().default(0),
+    archived: boolean("archived").notNull().default(false),
+    created_at: createdAt(),
+  },
+  (t) => [index("bitacora_categories_user_idx").on(t.user_id), uniqueIndex("bitacora_categories_key").on(t.user_id, t.key).where(sql`${t.key} is not null`)],
+);
+
+export const bitacora_entries = pgTable(
+  "bitacora_entries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: movementKind("kind").notNull().default("gasto"),
+    /** En centavos */
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    date: date("date").notNull(),
+    category_id: uuid("category_id").references(() => bitacora_categories.id, { onDelete: "set null" }),
+    description: text("description").notNull(),
+    payment_method: paymentMethod("payment_method"),
+    note: text("note"),
+    /** manual | copiloto */
+    source: text("source").notNull().default("manual"),
+    /** Mensaje del Copiloto que lo originó (texto, audio o imagen, con transcripción y modelo) */
+    copilot_message_id: uuid("copilot_message_id"),
+    /** Borrado suave: Deshacer y la papelera */
+    deleted_at: timestamp("deleted_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("bitacora_entries_user_date_idx").on(t.user_id, t.date)],
+);
