@@ -983,3 +983,12 @@ body {
     animation: none;
   }
 }
+
+/* Gastos compartidos: barras que crecen al aparecer */
+@keyframes gastos-grow-x { from { transform: scaleX(0); } }
+@keyframes gastos-grow-y { from { transform: scaleY(0); } }
+.gastos-bar { animation: gastos-grow-x 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.gastos-col { animation: gastos-grow-y 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .gastos-bar, .gastos-col { animation: none; }
+}
