@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, CtaLink, SectionIndex, TextLink } from "@/components/web/ui";
-import { HOME_PLANS, MODULES, PLAN_ROWS as ROWS, priceLabel } from "@/lib/plans-web";
+import { HOME_PLANS, MODULES, PLAN_ROWS, priceLabel } from "@/lib/plans-web";
 import { loadGsap, reducedMotion } from "@/lib/motion/gsap";
 import { SCHEDULE_HREF } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -12,8 +12,18 @@ import { cn } from "@/lib/utils";
  * Planes como tabla editorial con hairlines: al pasar el mouse se ilumina la
  * columna; "Empresa en Control" lleva borde rosé de 1px. Las filas aparecen
  * en secuencia. En el celular, cada plan es un bloque con sus puntos.
+ * `full`: la comparación completa de /planes (sin el encabezado de la home).
  */
-export function PlansTable() {
+export function PlansTable({
+  rows = PLAN_ROWS,
+  full = false,
+  prices = {},
+}: {
+  rows?: [string, string, string, string][];
+  full?: boolean;
+  prices?: Record<string, string | null>;
+}) {
+  const ROWS = rows;
   const root = useRef<HTMLElement>(null);
   const [col, setCol] = useState<number | null>(null);
   useEffect(() => {
@@ -31,9 +41,9 @@ export function PlansTable() {
   const cell = (c: number) => cn("px-5 py-4 align-top transition-colors duration-300", col === c && "bg-paper/[0.035]", c === 2 && "border-x border-rose-light");
 
   return (
-    <section ref={root} id="planes" aria-labelledby="planes-titulo" className="scroll-mt-16 border-t border-hair bg-night py-24 lg:py-36">
+    <section ref={root} id="planes" aria-labelledby={full ? undefined : "planes-titulo"} aria-label={full ? "Comparación de planes" : undefined} className={cn("scroll-mt-16 bg-night", full ? "py-16 lg:py-24" : "border-t border-hair py-24 lg:py-36")}>
       <Container>
-        <div className="grid gap-10 lg:grid-cols-12">
+        {!full && <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <SectionIndex n="07">Planes</SectionIndex>
             <SplitHeading id="planes-titulo" className="display-md mt-8 text-paper">
@@ -44,10 +54,10 @@ export function PlansTable() {
             Todos incluyen la plataforma, las alertas y un responsable asignado. El precio final depende de razones sociales, empleados y volumen. La
             implementación inicial se cotiza aparte.
           </p>
-        </div>
+        </div>}
 
         {/* Escritorio: tabla */}
-        <div data-table className="mt-16 hidden lg:block" onMouseLeave={() => setCol(null)}>
+        <div data-table className={cn("hidden lg:block", !full && "mt-16")} onMouseLeave={() => setCol(null)}>
           <table className="w-full table-fixed border-collapse text-left text-[14px] text-paper/80">
             <caption className="sr-only">Comparación de planes</caption>
             <colgroup>
@@ -63,7 +73,7 @@ export function PlansTable() {
                   <th key={p.key} scope="col" onMouseEnter={() => setCol(i + 1)} className={cn(cell(i + 1), "pb-6 pt-6 font-normal", i === 1 && "border-t")}>
                     {"featured" in p && <span className="mb-3 block text-[12px] text-rose-light">El más elegido</span>}
                     <span className="block font-display text-[2rem] leading-none text-paper">{p.name}</span>
-                    <span className="tabular mt-3 block text-[14px] text-paper/55">{priceLabel(p.key)}</span>
+                    <span className="tabular mt-3 block text-[14px] text-paper/55">{priceLabel(p.key, prices)}</span>
                   </th>
                 ))}
               </tr>
@@ -102,14 +112,20 @@ export function PlansTable() {
         </div>
 
         {/* Celular y tablet: bloques */}
-        <ul className="mt-14 grid gap-px border border-hair bg-hair lg:hidden">
+        <ul className={cn("grid gap-px border border-hair bg-hair lg:hidden", !full && "mt-14")}>
           {HOME_PLANS.map((p) => (
             <li key={p.key} className={cn("bg-night p-6", "featured" in p && "outline outline-1 -outline-offset-1 outline-rose-light")}>
               {"featured" in p && <p className="mb-2 text-[12px] text-rose-light">El más elegido</p>}
               <h3 className="font-display text-[2rem] leading-none text-paper">{p.name}</h3>
-              <p className="tabular mt-2 text-[14px] text-paper/55">{priceLabel(p.key)}</p>
+              <p className="tabular mt-2 text-[14px] text-paper/55">{priceLabel(p.key, prices)}</p>
               <ul className="mt-5 border-t border-hair text-[14px] text-paper/80">
-                {p.bullets.map((b) => (
+                {(full
+                  ? ROWS.flatMap(([label, ...vals]) => {
+                      const v = vals[HOME_PLANS.indexOf(p)];
+                      return v === "—" ? [] : [v === "Incluido" ? label : `${label}: ${v}`];
+                    })
+                  : p.bullets
+                ).map((b) => (
                   <li key={b} className="border-b border-hair py-2.5">
                     {b}
                   </li>
@@ -127,11 +143,13 @@ export function PlansTable() {
             ))}
           </ul>
         </div>
-        <p className="mt-10">
-          <TextLink href="/planes" className="text-[15px] text-rose-light">
-            Ver la comparación completa
-          </TextLink>
-        </p>
+        {!full && (
+          <p className="mt-10">
+            <TextLink href="/planes" className="text-[15px] text-rose-light">
+              Ver la comparación completa
+            </TextLink>
+          </p>
+        )}
       </Container>
     </section>
   );

@@ -5,9 +5,9 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { faqs, leads, plans, posts, sessions, users } from "@/db/schema";
+import { faqs, leads, posts, service_plans, sessions, users } from "@/db/schema";
 import { requireAdmin, requireStaff } from "@/lib/auth";
-import { audit } from "@/lib/audit";
+import { audit, requestIp } from "@/lib/audit";
 import { AUTH_ERRORS, getAuth, type AuthErrorCode } from "@/lib/auth-server";
 import type { LeadStatus, UserRole } from "@/lib/types";
 import { createUserWithPassword } from "@/lib/users";
@@ -303,41 +303,29 @@ export async function deleteFaq(fd: FormData) {
 
 // ───────────── planes ─────────────
 
-export async function savePlan(fd: FormData) {
-  const { studioId } = await requireStaff();
+/** Precio publicado de un plan del brief (solo el texto que muestra la web) */
+export async function savePlanPrice(fd: FormData) {
+  const user = await requireStaff();
   const planId = id(fd);
-  const name = s(fd, "name");
-  if (!name) redirect("/admin/contenidos/planes?error=nombre");
-  const payload = {
-    name,
-    segment: s(fd, "segment"),
-    price_label: s(fd, "price_label"),
-    description: s(fd, "description"),
-    features: lines(fd, "features"),
-    highlighted: fd.get("highlighted") !== null,
-    position: Number(s(fd, "position") ?? 0) || 0,
-    published: fd.get("published") !== null,
-  };
-  const db = getDb();
-  if (planId)
-    await db
-      .update(plans)
-      .set(payload)
-      .where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
-  else await db.insert(plans).values({ studio_id: studioId, ...payload });
+  if (!planId) redirect("/admin/contenidos/planes");
+  const price = (s(fd, "price_label") ?? "").slice(0, 80) || null;
+  const [row] = await getDb()
+    .update(service_plans)
+    .set({ price_label: price })
+    .where(and(eq(service_plans.id, planId), eq(service_plans.studio_id, user.studioId)))
+    .returning({ key: service_plans.key });
+  await audit({
+    studioId: user.studioId,
+    actor: user,
+    action: "plan.precio",
+    entityType: "service_plan",
+    entityId: planId,
+    result: row ? "ok" : "denegado",
+    metadata: { plan: row?.key, precio: price },
+    ip: await requestIp(),
+  });
   revalidateSite();
   redirect("/admin/contenidos/planes?guardado=1");
-}
-
-export async function deletePlan(fd: FormData) {
-  const { studioId } = await requireStaff();
-  const planId = id(fd);
-  if (planId)
-    await getDb()
-      .delete(plans)
-      .where(and(eq(plans.id, planId), eq(plans.studio_id, studioId)));
-  revalidateSite();
-  redirect("/admin/contenidos/planes");
 }
 
 // ───────────── usuarios (solo admin) ─────────────

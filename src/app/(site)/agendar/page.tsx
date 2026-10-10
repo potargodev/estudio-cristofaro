@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BookingForm } from "@/components/agenda/BookingForm";
 import { PageHeader } from "@/components/site/PageHeader";
+import { Container } from "@/components/web/ui";
 import { toPickerDays } from "@/lib/agenda/picker";
 import { availableSlots, getHosts } from "@/lib/agenda/slots";
 import { getStudioId } from "@/lib/data";
@@ -18,11 +19,16 @@ export default async function AgendarPage({ searchParams }: { searchParams: Prom
   return (
     <>
       <PageHeader
-        title="Agendá una llamada"
-        intro="Elegí un horario y hablamos por videollamada. Te llega la confirmación con el link de Google Meet y un archivo para sumarla a tu calendario."
+        eyebrow="Agendar"
+        title="Veinte minutos para ordenar lo que viene."
+        intro="Elegí un horario y te mandamos el link de Google Meet. Sin compromiso. Te llega la confirmación con un archivo para sumarla a tu calendario."
       />
-      <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-        <BookingForm days={days} initial={typeof inicio === "string" ? inicio : undefined} />
+      <section aria-label="Agendar una llamada">
+        <Container className="py-16 lg:py-24">
+          <div className="max-w-4xl">
+            <BookingForm days={days} initial={typeof inicio === "string" ? inicio : undefined} />
+          </div>
+        </Container>
       </section>
     </>
   );

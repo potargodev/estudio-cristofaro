@@ -1,111 +1,8 @@
-import type { Faq, Plan, Post } from "./types";
+import type { Faq, Post } from "./types";
 
-// Contenido estático de la web. Planes, preguntas frecuentes y novedades
+// Contenido estático de la web. Preguntas frecuentes y novedades
 // se administran desde el backoffice; estos valores son el respaldo
 // cuando la base no está configurada o no responde.
-
-export interface Segment {
-  slug: string;
-  name: string;
-  question: string; // cómo se presenta en el selector del home
-  title: string;
-  intro: string;
-  pains: string[];
-  includes: string[];
-  services: string[]; // slugs de servicios relacionados
-  contributorType: string;
-}
-
-export const segments: Segment[] = [
-  {
-    slug: "monotributistas",
-    name: "Monotributistas",
-    question: "Facturo como monotributista",
-    title: "Monotributo en orden, todos los meses",
-    intro:
-      "Controlamos tu categoría, te avisamos antes de cada pago y te decimos con tiempo si te conviene recategorizarte o pasar a Responsable Inscripto.",
-    pains: [
-      "No sabés si tu facturación te deja en la categoría correcta.",
-      "Te enterás de los vencimientos cuando ya pasaron.",
-      "Ingresos Brutos te genera más dudas que el propio monotributo.",
-    ],
-    includes: [
-      "Revisión de tu categoría cada mes, no solo en la recategorización",
-      "Recategorizaciones semestrales hechas por nosotros",
-      "Ingresos Brutos local o Convenio Multilateral",
-      "Alerta por WhatsApp o mail antes de cada pago",
-      "Aviso anticipado si te acercás al tope de tu categoría",
-    ],
-    services: ["impositivo"],
-    contributorType: "monotributista",
-  },
-  {
-    slug: "pymes-y-sociedades",
-    name: "PyMEs y sociedades",
-    question: "Tengo una PyME o una sociedad",
-    title: "Contabilidad e impuestos para que la empresa decida con números",
-    intro:
-      "Llevamos la contabilidad, liquidamos los impuestos y cada mes te mandamos un informe simple: cuánto pagaste, cuánto vas a pagar y qué conviene hacer.",
-    pains: [
-      "Los balances llegan tarde y no sirven para decidir.",
-      "Cada mes hay una sorpresa en el saldo de IVA.",
-      "Los libros societarios y las actas quedan siempre para después.",
-    ],
-    includes: [
-      "Registraciones contables y balance anual",
-      "IVA, Ingresos Brutos y Ganancias",
-      "Informe mensual de gestión e impuestos",
-      "Libros societarios, actas y trámites en IGJ",
-      "Atención de inspecciones y requerimientos de ARCA",
-    ],
-    services: ["contable", "impositivo", "societario"],
-    contributorType: "sociedad",
-  },
-  {
-    slug: "empleadores",
-    name: "Empleadores",
-    question: "Tengo empleados",
-    title: "Sueldos liquidados en fecha y sin errores",
-    intro:
-      "Nos ocupamos de altas, bajas, liquidaciones mensuales y finales, cargas sociales y libro de sueldos. Vos te ocupás de tu equipo.",
-    pains: [
-      "Cada convenio tiene sus escalas y no llegás a seguirlas.",
-      "Una baja mal hecha termina en un reclamo.",
-      "El F.931 y los sindicatos te consumen días todos los meses.",
-    ],
-    includes: [
-      "Liquidación mensual de sueldos y F.931",
-      "Altas y bajas en ARCA y sindicatos",
-      "Recibos y libro de sueldos digital",
-      "Liquidaciones finales e indemnizaciones",
-      "Actualización de escalas por convenio",
-    ],
-    services: ["laboral"],
-    contributorType: "empleador",
-  },
-  {
-    slug: "emprendedores",
-    name: "Emprendedores",
-    question: "Estoy por empezar",
-    title: "Arrancá con la figura correcta desde el primer día",
-    intro:
-      "Te ayudamos a elegir entre monotributo, Responsable Inscripto o una sociedad, hacemos el alta y dejamos todo listo para que empieces a facturar.",
-    pains: [
-      "No sabés qué figura te conviene según lo que vas a facturar.",
-      "Tenés miedo de arrancar con una deuda o una multa por no saber.",
-      "Querés armar una sociedad con socios y no sabés por dónde empezar.",
-    ],
-    includes: [
-      "Diagnóstico de la figura que más te conviene",
-      "Alta en ARCA, Ingresos Brutos y clave fiscal",
-      "Constitución de SAS o SRL",
-      "Configuración de facturación electrónica",
-      "Primer mes de acompañamiento sin costo adicional",
-    ],
-    services: ["impositivo", "societario"],
-    contributorType: "emprendedor",
-  },
-];
 
 export interface Service {
   slug: string;
@@ -114,111 +11,57 @@ export interface Service {
   items: string[];
 }
 
+// Orden y nombres como en la home (docs/home-contenido.md, sección 6)
 export const services: Service[] = [
   {
-    slug: "contable",
-    name: "Contable",
-    summary: "Registros al día y números que sirven para decidir.",
-    items: [
-      "Registraciones contables y confección de balances",
-      "Informes contables mensuales para la toma de decisiones",
-      "Elaboración de estados contables",
-      "Proyecciones sobre la marcha de la empresa",
-      "Certificaciones de ingresos y egresos",
-    ],
-  },
-  {
     slug: "impositivo",
-    name: "Impositivo",
-    summary: "Cada impuesto liquidado y presentado antes de su vencimiento.",
+    name: "Impuestos",
+    summary: "Cada impuesto liquidado y presentado antes de su vencimiento, con el importe y el VEP listos en tu panel.",
     items: [
-      "IVA, Ingresos Brutos y Ganancias de sociedades",
-      "Ganancias de personas humanas",
-      "Bienes Personales",
-      "Monotributo: altas, categorías y recategorizaciones",
-      "Asesoramiento y asistencia en inspecciones de ARCA y ARBA/AGIP",
+      "IVA e Ingresos Brutos (CABA, Provincia y Convenio Multilateral)",
+      "Ganancias y Bienes Personales de la sociedad y de los socios",
+      "Retenciones y percepciones",
+      "Servicios al exterior y facturación E",
+      "Asistencia en inspecciones de ARCA, ARBA y AGIP",
     ],
   },
   {
     slug: "laboral",
-    name: "Laboral",
-    summary: "Sueldos, cargas sociales y relación con los sindicatos.",
+    name: "Sueldos",
+    summary: "Liquidaciones, cargas sociales y novedades del equipo, todos los meses y a tiempo.",
     items: [
-      "Altas y bajas de empleados en ARCA y sindicatos",
       "Liquidación de sueldos y cargas sociales (F.931)",
-      "Liquidaciones finales y emisión de recibos",
-      "Libro de sueldos digital",
-      "Consultas laborales del día a día",
+      "Altas y bajas en ARCA, obra social y sindicato",
+      "Recibos de sueldo digitales",
+      "Liquidaciones finales",
+      "Libro de sueldos digital y consultas laborales del día a día",
+    ],
+  },
+  {
+    slug: "contable",
+    name: "Contabilidad",
+    summary: "Registros al día e informes mensuales que sirven para decidir, no solo para cumplir.",
+    items: [
+      "Registraciones contables y conciliaciones",
+      "Balances y estados contables",
+      "Informe mensual de una página",
+      "Indicadores y proyecciones",
+      "Certificaciones de ingresos",
     ],
   },
   {
     slug: "societario",
     name: "Societario",
-    summary: "Desde la constitución de la sociedad hasta su vida diaria.",
+    summary: "La vida de tu sociedad en regla: de la constitución a cada asamblea.",
     items: [
-      "Constitución de SAS, SRL y SA",
-      "Inscripciones y trámites ante IGJ",
+      "Constitución de SAS y SRL",
       "Libros societarios y actas",
+      "Trámites ante IGJ",
       "Cambios de autoridades, domicilio y estatuto",
       "Asesoramiento a socios",
     ],
   },
 ];
-
-// `icon` define el ícono animado de cada tarjeta de la grilla bento del home.
-export const differentials: { icon: "abono" | "respuesta" | "alertas" | "informe"; title: string; text: string }[] = [
-  {
-    icon: "abono",
-    title: "Abono fijo",
-    text: "Sabés cuánto pagás por mes antes de empezar. Sin extras por cada consulta.",
-  },
-  {
-    icon: "respuesta",
-    title: "Respuesta en menos de 24 h hábiles",
-    text: "Por WhatsApp, mail o desde el portal. Siempre con un contador que conoce tu caso.",
-  },
-  {
-    icon: "alertas",
-    title: "Alertas antes de cada vencimiento",
-    text: "Te avisamos qué hay que pagar y cuándo, con el importe listo.",
-  },
-  {
-    icon: "informe",
-    title: "Un informe por mes, en criollo",
-    text: "Qué pagaste, qué viene y qué conviene hacer. Una página, sin jerga.",
-  },
-];
-
-// TODO contenido real: reemplazar por los números reales del estudio antes de publicar.
-// Se muestran en la franja de números del home con un contador animado.
-export const stats: { value: number; prefix?: string; suffix?: string; label: string }[] = [
-  { value: 25, prefix: "+", label: "años de trayectoria" }, // TODO: años reales
-  { value: 180, prefix: "+", label: "clientes activos" }, // TODO: cantidad real
-  { value: 600, prefix: "+", label: "presentaciones por mes" }, // TODO: promedio real
-];
-
-// Rubros de clientes que aparecen en la marquesina del home.
-export const industries = [
-  "Comercios",
-  "Profesionales",
-  "Gastronomía",
-  "Salud",
-  "Construcción",
-  "Servicios",
-  "Emprendedores digitales",
-];
-
-export const steps = [
-  { title: "Diagnóstico", text: "Nos contás tu situación en el formulario o en una charla de 20 minutos." },
-  { title: "Propuesta cerrada", text: "Te mandamos qué incluye el servicio y el abono mensual, por escrito." },
-  { title: "Puesta al día", text: "Pedimos la documentación, revisamos pendientes y ordenamos lo que haga falta." },
-  { title: "Mes a mes", text: "Liquidamos, presentamos y te avisamos. Vos solo aprobás y pagás." },
-];
-
-// TODO contenido real: cargar testimonios reales de clientes, con su autorización.
-// La sección del home solo se muestra cuando esta lista tiene elementos.
-// Ejemplo: { quote: "…", author: "Nombre A.", role: "Comercio minorista, 8 empleados" }
-export const testimonials: { quote: string; author: string; role: string }[] = [];
 
 // TODO contenido real: nombres, matrícula, especialidad y foto del equipo.
 // `photo`: ruta en /public/equipo (ver el README de esa carpeta). Sin foto se
@@ -253,77 +96,6 @@ export const team: TeamMember[] = [
     detail: "",
     bio: "Completar con trayectoria y especialidad.",
     specialty: "Sueldos, cargas sociales y F.931",
-  },
-];
-
-export const defaultPlans: Plan[] = [
-  {
-    id: "p1",
-    name: "Monotributo",
-    segment: "monotributistas",
-    price_label: null,
-    description: "Para quienes facturan como monotributistas y quieren olvidarse de los trámites.",
-    features: [
-      "Control de categoría y recategorizaciones",
-      "Asistencia con la facturación",
-      "Alertas de pago mensual",
-      "Ingresos Brutos (local o Convenio)",
-      "Respuesta en menos de 24 h hábiles",
-    ],
-    highlighted: false,
-    position: 1,
-    published: true,
-  },
-  {
-    id: "p2",
-    name: "Responsable Inscripto",
-    segment: "pymes-y-sociedades",
-    price_label: null,
-    description: "Para profesionales y comercios inscriptos en IVA y Ganancias.",
-    features: [
-      "Liquidación mensual de IVA e Ingresos Brutos",
-      "Ganancias y Bienes Personales anuales",
-      "Informe mensual de impuestos",
-      "Atención de requerimientos de ARCA",
-      "Portal del cliente",
-    ],
-    highlighted: true,
-    position: 2,
-    published: true,
-  },
-  {
-    id: "p3",
-    name: "Sociedades",
-    segment: "pymes-y-sociedades",
-    price_label: null,
-    description: "Para SAS, SRL y SA que necesitan contabilidad, balances e impuestos al día.",
-    features: [
-      "Registraciones contables y balance anual",
-      "Impuestos nacionales y provinciales",
-      "Libros societarios y actas",
-      "Informes de gestión mensuales",
-      "Contador asignado",
-    ],
-    highlighted: false,
-    position: 3,
-    published: true,
-  },
-  {
-    id: "p4",
-    name: "Sueldos",
-    segment: "empleadores",
-    price_label: null,
-    description: "Para empleadores con personal en relación de dependencia.",
-    features: [
-      "Liquidación de sueldos y F.931",
-      "Altas y bajas en ARCA y sindicatos",
-      "Recibos y libro de sueldos digital",
-      "Liquidaciones finales",
-      "Consultas laborales del día a día",
-    ],
-    highlighted: false,
-    position: 4,
-    published: true,
   },
 ];
 

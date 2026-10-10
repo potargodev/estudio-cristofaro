@@ -10,9 +10,11 @@ import { ScheduleTeaser } from "@/components/home/ScheduleTeaser";
 import { SegmentsMarquee } from "@/components/home/SegmentsMarquee";
 import { Services } from "@/components/home/Services";
 import { Steps } from "@/components/home/Steps";
+import { getPlanPrices } from "@/lib/data";
 
 // Estructura y textos: docs/home-contenido.md (aprobado).
-export default function HomePage() {
+export default async function HomePage() {
+  const prices = await getPlanPrices();
   return (
     <>
       <Hero />
@@ -22,7 +24,7 @@ export default function HomePage() {
       <CompanyPanel />
       <Benefits />
       <Services />
-      <PlansTable />
+      <PlansTable prices={prices} />
       <SegmentsMarquee />
       <Steps />
       <Responsible />

@@ -24,8 +24,8 @@ export default async function GestionarPage({
   const b = await bookingByToken(token);
   if (!b) {
     return (
-      <section className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-        <h1 className="font-display text-4xl">Link inválido</h1>
+      <section className="mx-auto max-w-3xl px-5 pb-24 pt-36 sm:px-8 lg:pt-48">
+        <h1 className="display-sm text-paper">Link inválido</h1>
         <p className="mt-3 text-muted">No encontramos esa llamada. Revisá el link del mail o agendá una nueva.</p>
         <Link href="/agendar" className="mt-6 inline-block text-rose-deep underline">
           Agendar una llamada
@@ -39,10 +39,10 @@ export default async function GestionarPage({
     ? toPickerDays(await availableSlots(await getHosts(b.studio_id, { userIds: [b.host_user_id] }), { excludeBookingId: b.id }))
     : [];
   return (
-    <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <section className="mx-auto max-w-3xl px-5 pb-24 pt-36 sm:px-8 lg:pt-48">
       {sp.reprogramada && <SaveToast message="Listo, reprogramamos la llamada. Te mandamos la confirmación." />}
       <p className="text-sm text-muted">Tu llamada con el Estudio Cristofaro</p>
-      <h1 className="mt-2 font-display text-4xl first-letter:uppercase">
+      <h1 className="display-sm mt-4 text-paper first-letter:uppercase">
         {b.status === "cancelada" ? "Llamada cancelada" : fmtDateTime(b.starts_at)}
       </h1>
       {b.status === "confirmada" && (
@@ -73,12 +73,12 @@ export default async function GestionarPage({
       {past && b.status === "confirmada" && <p className="mt-3 text-muted">Esta llamada ya pasó.</p>}
       {editable && (
         <div className="mt-10 grid gap-8">
-          <section className="rounded-md border border-line bg-surface p-6 shadow-brand-sm">
-            <h2 className="mb-4 text-lg font-semibold">Reprogramar</h2>
+          <section className="border-t border-hair pt-8">
+            <h2 className="mb-6 font-display text-3xl">Reprogramar</h2>
             <RescheduleForm token={token} days={days} />
           </section>
-          <section className="rounded-md border border-dashed border-line p-6">
-            <h2 className="text-lg font-semibold">Cancelar</h2>
+          <section className="border-t border-hair pt-8">
+            <h2 className="font-display text-3xl">Cancelar</h2>
             <p className="mt-1 text-sm text-muted">Le avisamos al estudio y liberamos el horario.</p>
             <form action={cancelCall} className="mt-4">
               <input type="hidden" name="token" value={token} />

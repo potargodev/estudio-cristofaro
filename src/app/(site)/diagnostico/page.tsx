@@ -1,36 +1,40 @@
 import type { Metadata } from "next";
 import { DiagnosticForm } from "@/components/site/DiagnosticForm";
+import { PageHeader } from "@/components/site/PageHeader";
+import { Container } from "@/components/web/ui";
 
 export const metadata: Metadata = {
   title: "Diagnóstico gratis",
-  description: "Contanos tu situación en 4 pasos y te enviamos una propuesta con abono fijo en menos de 24 horas hábiles.",
+  description: "Contanos la situación de tu empresa en 4 pasos y te enviamos una propuesta cerrada en menos de 24 horas hábiles.",
   alternates: { canonical: "/diagnostico" },
 };
 
-export default async function DiagnosticoPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tipo?: string; plan?: string }>;
-}) {
+const NOTES = ["Te respondemos en menos de 24 horas hábiles.", "No te pedimos clave fiscal ni documentación en este paso.", "Sin compromiso de contratación."];
+
+export default async function DiagnosticoPage({ searchParams }: { searchParams: Promise<{ tipo?: string; plan?: string }> }) {
   const { tipo, plan } = await searchParams;
   return (
-    <section className="border-b border-line">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 md:grid-cols-[1fr_1.7fr] md:py-20">
-        <div>
-          <h1 className="text-4xl leading-[1.08] font-display">Diagnóstico gratis</h1>
-          <p className="mt-4 text-lg leading-relaxed text-muted">
-            Cuatro preguntas cortas. Con eso un contador revisa tu caso y te manda una propuesta con abono fijo.
-          </p>
-          <ul className="mt-8 space-y-3 text-[15px] text-muted">
-            <li>Te respondemos en menos de 24 horas hábiles.</li>
-            <li>No te pedimos clave fiscal ni documentación en este paso.</li>
-            <li>Sin compromiso de contratación.</li>
+    <>
+      <PageHeader
+        eyebrow="Diagnóstico gratis"
+        title="Cuatro preguntas para entender tu empresa."
+        intro="Con eso un contador revisa tu caso y te manda una propuesta cerrada: plan, módulos y abono por escrito."
+      />
+      <section aria-label="Formulario de diagnóstico">
+        <Container className="grid gap-16 py-16 lg:grid-cols-12 lg:py-24">
+          <ul className="border-t border-hair text-[15px] text-paper/70 lg:col-span-4">
+            {NOTES.map((n, i) => (
+              <li key={n} className="grid grid-cols-[2.5rem_1fr] border-b border-hair py-4">
+                <span className="tabular text-[12px] text-rose-light">0{i + 1}</span>
+                {n}
+              </li>
+            ))}
           </ul>
-        </div>
-        <div className="rounded-md border border-line bg-paper p-5 sm:p-8">
-          <DiagnosticForm defaultType={tipo} plan={plan} />
-        </div>
-      </div>
-    </section>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <DiagnosticForm defaultType={tipo} plan={plan} />
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }

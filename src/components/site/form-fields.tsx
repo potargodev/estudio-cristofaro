@@ -2,8 +2,9 @@
 
 import { m, useReducedMotion } from "motion/react";
 
+// Campos de la web (tema oscuro): rectos, borde hairline y foco en rosé
 export const inputClass =
-  "mt-1.5 block w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-[16px] placeholder:text-muted/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/25";
+  "mt-2 block w-full rounded-[2px] border border-hair-strong bg-night px-3.5 py-3 text-[16px] text-paper placeholder:text-paper/35 transition-colors focus:border-rose-light focus:outline-none aria-[invalid=true]:border-danger";
 
 export function Field({
   label,
@@ -20,13 +21,13 @@ export function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-[15px] font-medium">
+      <label htmlFor={name} className="block text-[14px] text-paper/80">
         {label}
       </label>
       {children}
-      {hint && !error && <p className="mt-1 text-sm text-muted">{hint}</p>}
+      {hint && !error && <p className="mt-1.5 text-[13px] text-paper/50">{hint}</p>}
       {error && (
-        <p id={`${name}-error`} className="mt-1 text-sm text-danger">
+        <p id={`${name}-error`} className="mt-1.5 text-[13px] text-danger">
           {error}
         </p>
       )}
@@ -54,10 +55,10 @@ export function SentMessage({ title, text, children }: { title: string; text: st
       initial={reduce ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease }}
-      className="flex gap-4 rounded-md border border-navy bg-navy-soft p-6"
+      className="flex gap-4 border border-rose-light/60 bg-navy-deep p-6"
     >
       {/* Check breve: el círculo se dibuja y después el tilde */}
-      <svg aria-hidden viewBox="0 0 40 40" className="size-10 shrink-0 text-rose-deep">
+      <svg aria-hidden viewBox="0 0 40 40" className="size-10 shrink-0 text-rose-light">
         <m.circle
           cx="20"
           cy="20"
@@ -82,8 +83,8 @@ export function SentMessage({ title, text, children }: { title: string; text: st
         />
       </svg>
       <div>
-        <p className="text-lg font-semibold text-navy-deep">{title}</p>
-        <p className="mt-2 leading-relaxed text-ink/80">{text}</p>
+        <p className="font-display text-2xl text-paper">{title}</p>
+        <p className="mt-2 leading-relaxed text-paper/75">{text}</p>
         {children}
       </div>
     </m.div>

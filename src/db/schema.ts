@@ -231,6 +231,8 @@ export const service_plans = pgTable(
       .default(sql`'{}'::text[]`),
     position: integer("position").notNull().default(0),
     active: boolean("active").notNull().default(true),
+    /** Precio que muestra la web, ej. "desde $450.000/mes" (vacío: "Consultá el precio") */
+    price_label: text("price_label"),
     created_at: createdAt(),
   },
   (t) => [unique("service_plans_studio_key").on(t.studio_id, t.key)],

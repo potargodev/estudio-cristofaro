@@ -1,0 +1,1 @@
+ALTER TABLE "service_plans" ADD COLUMN "price_label" text;

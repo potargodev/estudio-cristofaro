@@ -1,9 +1,9 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { cache } from "react";
 import { getDb, isDbConfigured } from "@/db";
-import { faqs, plans, posts, studios } from "@/db/schema";
-import { defaultFaqs, defaultPlans, defaultPosts } from "./content";
-import type { Faq, Plan, Post } from "./types";
+import { faqs, posts, service_plans, studios } from "@/db/schema";
+import { defaultFaqs, defaultPosts } from "./content";
+import type { Faq, Post } from "./types";
 
 const STUDIO_SLUG = process.env.STUDIO_SLUG ?? "cristofaro";
 
@@ -32,19 +32,20 @@ function toPost(row: typeof posts.$inferSelect): Post {
   return { ...row, published_at: row.published_at?.toISOString() ?? null };
 }
 
-export async function getPlans(): Promise<Plan[]> {
+/** Precio publicado de cada plan del brief, por clave (service_plans.price_label) */
+export async function getPlanPrices(): Promise<Record<string, string | null>> {
   return withFallback(
-    "planes",
+    "precios de planes",
     async () => {
       const studioId = await getStudioId();
-      if (!studioId) return defaultPlans;
-      return getDb()
-        .select()
-        .from(plans)
-        .where(and(eq(plans.studio_id, studioId), eq(plans.published, true)))
-        .orderBy(asc(plans.position));
+      if (!studioId) return {};
+      const rows = await getDb()
+        .select({ key: service_plans.key, price: service_plans.price_label })
+        .from(service_plans)
+        .where(eq(service_plans.studio_id, studioId));
+      return Object.fromEntries(rows.map((r) => [r.key, r.price?.trim() || null]));
     },
-    defaultPlans,
+    {},
   );
 }
 

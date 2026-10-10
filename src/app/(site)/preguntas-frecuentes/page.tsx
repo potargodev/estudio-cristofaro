@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { CtaBand } from "@/components/site/CtaBand";
 import { PageHeader } from "@/components/site/PageHeader";
+import { Container } from "@/components/web/ui";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getFaqs } from "@/lib/data";
 
@@ -25,22 +25,21 @@ export default async function FaqPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <PageHeader title="Preguntas frecuentes" />
-      <section className="border-b border-line">
-        <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-          <Accordion type="single" collapsible className="border-y border-line">
+      <PageHeader eyebrow="Recursos" title="Preguntas frecuentes" intro="Cómo trabajamos, cómo es el abono, qué necesitás para empezar y cómo es el cambio de contador." />
+      <section aria-label="Preguntas">
+        <Container className="py-16 lg:py-24">
+          <Accordion type="single" collapsible className="max-w-4xl border-t border-hair">
             {faqs.map((f) => (
-              <AccordionItem key={f.id} value={f.id} className="border-line">
-                <AccordionTrigger headingLevel={2} className="py-5 text-lg font-medium hover:no-underline hover:text-rose-deep [&>svg]:size-5 [&>svg]:text-rose-deep">
+              <AccordionItem key={f.id} value={f.id} className="border-hair">
+                <AccordionTrigger headingLevel={2} className="py-6 font-display text-[clamp(1.4rem,2.2vw,1.9rem)] font-normal leading-tight text-paper hover:no-underline hover:text-rose-light [&>svg]:size-5 [&>svg]:text-rose-light">
                   {f.question}
                 </AccordionTrigger>
-                <AccordionContent className="max-w-2xl pb-5 text-base leading-relaxed text-muted">{f.answer}</AccordionContent>
+                <AccordionContent className="max-w-2xl pb-6 text-[16px] leading-relaxed text-paper/70">{f.answer}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
+        </Container>
       </section>
-      <CtaBand title="¿No encontraste tu pregunta?" text="Escribinos y te respondemos en menos de 24 horas hábiles." />
     </>
   );
 }

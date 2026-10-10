@@ -95,6 +95,7 @@ export const AUDIT_LABELS: Record<string, string> = {
   "agenda.disponibilidad": "Actualizó su disponibilidad",
   "agenda.google_conectar": "Conectó Google Calendar",
   "agenda.google_desconectar": "Desconectó Google Calendar",
+  "plan.precio": "Cambió el precio publicado de un plan",
 };
 
 export const auditLabel = (action: string) => AUDIT_LABELS[action] ?? action;

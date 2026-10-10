@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/site/PageHeader";
+import { Container } from "@/components/web/ui";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -38,15 +39,20 @@ const sections = [
 export default function PrivacidadPage() {
   return (
     <>
-      <PageHeader title="Privacidad" intro="Cómo cuidamos los datos de quienes nos contactan, agendan una llamada o usan el portal." />
-      <section className="mx-auto max-w-3xl space-y-8 px-4 py-14 sm:px-6">
-        {sections.map((s) => (
-          <div key={s.title}>
-            <h2 className="text-xl font-semibold">{s.title}</h2>
-            <p className="mt-2 leading-relaxed text-muted">{s.text}</p>
-          </div>
-        ))}
-        <p className="text-sm text-muted">Última actualización: octubre de 2026.</p>
+      <PageHeader eyebrow="Legal" title="Privacidad" intro="Cómo cuidamos los datos de quienes nos contactan, agendan una llamada o usan el portal." />
+      <section aria-label="Política de privacidad">
+        <Container className="py-16 lg:py-24">
+          <ol className="max-w-4xl border-t border-hair">
+            {sections.map((s, i) => (
+              <li key={s.title} className="grid gap-3 border-b border-hair py-8 lg:grid-cols-[3rem_16rem_1fr] lg:gap-8">
+                <span className="tabular text-[12px] text-rose-light">0{i + 1}</span>
+                <h2 className="text-[17px] text-paper">{s.title}</h2>
+                <p className="text-[15px] leading-relaxed text-paper/65">{s.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-8 text-[13px] text-paper/45">Última actualización: octubre de 2026.</p>
+        </Container>
       </section>
     </>
   );

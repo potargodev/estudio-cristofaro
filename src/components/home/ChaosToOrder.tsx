@@ -72,7 +72,7 @@ export function ChaosToOrder() {
   }, []);
 
   return (
-    <section ref={root} aria-labelledby="caos-titulo" className="bg-paper text-ink">
+    <section ref={root} aria-labelledby="caos-titulo" className="on-paper bg-paper text-ink">
       <div data-pin className="flex min-h-[100svh] items-center py-24 lg:py-0">
         <Container>
           <div className="grid items-center gap-14 lg:grid-cols-12">

@@ -1,31 +1,25 @@
 import type { Metadata } from "next";
-import { CtaBand } from "@/components/site/CtaBand";
+import { PlansTable } from "@/components/home/PlansTable";
 import { PageHeader } from "@/components/site/PageHeader";
-import { PlanCard } from "@/components/site/PlanCard";
-import { getPlans } from "@/lib/data";
+import { getPlanPrices } from "@/lib/data";
+import { fullPlanRows } from "@/lib/plans-web";
 
 export const metadata: Metadata = {
-  title: "Planes y abonos mensuales",
-  description: "Abonos fijos para monotributistas, Responsables Inscriptos, sociedades y empleadores. Sabés cuánto pagás antes de empezar.",
+  title: "Planes y módulos",
+  description: "Negocio en Orden, Empresa en Control y Gestión Estratégica: abono mensual fijo con plataforma, alertas y un responsable asignado.",
   alternates: { canonical: "/planes" },
 };
 
 export default async function PlanesPage() {
-  const plans = await getPlans();
+  const prices = await getPlanPrices();
   return (
     <>
       <PageHeader
-        title="Planes con abono fijo"
-        intro="Sabés cuánto pagás por mes antes de empezar. El monto final depende de tu volumen de operaciones y cantidad de empleados; te lo pasamos por escrito después del diagnóstico."
+        eyebrow="Planes"
+        title="Un plan según el momento de tu empresa."
+        intro="Todos incluyen la plataforma, las alertas y un responsable asignado. El precio final depende de razones sociales, empleados y volumen. La implementación inicial se cotiza aparte."
       />
-      <section className="border-b border-line">
-        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
-          {plans.map((p) => (
-            <PlanCard key={p.id} plan={p} />
-          ))}
-        </div>
-      </section>
-      <CtaBand title="¿No sabés qué plan te corresponde?" text="Completá el diagnóstico y te recomendamos el que encaja con tu situación." />
+      <PlansTable full rows={fullPlanRows()} prices={prices} />
     </>
   );
 }

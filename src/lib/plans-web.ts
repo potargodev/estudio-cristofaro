@@ -1,5 +1,5 @@
 // Planes tal como se muestran en la web (docs/home-contenido.md, sección 7).
-import { PLAN_PRICES } from "./home";
+import { SERVICE_PLANS } from "./service-plans";
 
 export const HOME_PLANS = [
   {
@@ -43,8 +43,29 @@ export const MODULES = [
   "Novedades de personal",
 ];
 
-export function priceLabel(key: string) {
-  const p = PLAN_PRICES[key];
-  return p ? `desde ${p}/mes` : "Consultá el precio";
+/** Precio para mostrar: el cargado en el backoffice o "Consultá el precio" */
+export function priceLabel(key: string, prices: Record<string, string | null> = {}) {
+  return prices[key] || "Consultá el precio";
 }
 
+
+/**
+ * Comparación completa para /planes: límites y cada prestación de
+ * SERVICE_PLANS (los "Todo lo de …" se expanden a lo que incluyen).
+ */
+export function fullPlanRows(): [string, string, string, string][] {
+  const included: string[][] = [];
+  let acc: string[] = [];
+  for (const p of SERVICE_PLANS) {
+    acc = [...acc, ...p.features.filter((f) => !f.startsWith("Todo lo de"))];
+    included.push(acc);
+  }
+  const features = [...new Set(included.flat())];
+  const lim = (n: number, i: number) => (i === 0 ? String(n) : `Hasta ${n}`);
+  return [
+    ["Razones sociales", ...SERVICE_PLANS.map((p, i) => lim(p.max_legal_entities, i))] as [string, string, string, string],
+    ["Usuarios", ...SERVICE_PLANS.map((p) => `Hasta ${p.max_users}`)] as [string, string, string, string],
+    ["Módulos incluidos", ...SERVICE_PLANS.map((p, i) => lim(p.max_modules, i))] as [string, string, string, string],
+    ...features.map((f) => [f, ...included.map((list) => (list.includes(f) ? "Incluido" : "—"))] as [string, string, string, string]),
+  ];
+}

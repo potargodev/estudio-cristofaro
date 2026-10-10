@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
       { source: "/about.html", destination: "/equipo", permanent: true },
       { source: "/faq.html", destination: "/preguntas-frecuentes", permanent: true },
       { source: "/contact.html", destination: "/contacto", permanent: true },
+      // Landings de segmentos viejos (el público pasó a ser PyMEs de servicios)
+      { source: "/monotributistas", destination: "/#para-quien", permanent: true },
+      { source: "/pymes-y-sociedades", destination: "/#para-quien", permanent: true },
+      { source: "/emprendedores", destination: "/#para-quien", permanent: true },
+      { source: "/empleadores", destination: "/servicios/laboral", permanent: true },
       // Los clientes pasaron a ser organizaciones (mismos ids)
       { source: "/admin/clientes", destination: "/admin/organizaciones", permanent: true },
       { source: "/admin/clientes/nuevo", destination: "/admin/organizaciones/nueva", permanent: true },

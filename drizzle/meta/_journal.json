@@ -57,6 +57,13 @@
       "when": 1791581597182,
       "tag": "0007_agenda",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791593839814,
+      "tag": "0008_precio_planes",
+      "breakpoints": true
     }
   ]
 }

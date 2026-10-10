@@ -2,7 +2,7 @@ import { CalendarPlus, Video } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { LineIcon } from "@/components/icons/LineIcon";
+import { Container } from "@/components/web/ui";
 import { bookingByToken } from "@/lib/agenda/bookings";
 import { fmtDateTime, fmtTime } from "@/lib/agenda/time";
 
@@ -13,23 +13,27 @@ export default async function ConfirmadaPage({ searchParams }: { searchParams: P
   const b = t ? await bookingByToken(t) : null;
   if (!b || !t) notFound();
   return (
-    <section className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-      <LineIcon name="calendario" className="size-12 text-navy" />
-      <h1 className="mt-5 font-display text-4xl">¡Listo! Tu llamada está confirmada</h1>
-      <p className="mt-4 text-lg first-letter:uppercase">
+    <section className="pb-24 pt-36 lg:pt-48">
+      <Container className="max-w-[60rem]">
+      <p className="flex items-center gap-3 text-[13px] text-paper/60">
+        <span aria-hidden className="h-px w-8 bg-rose-light" />
+        Llamada confirmada
+      </p>
+      <h1 className="display-md mt-8 text-paper">Tu llamada está confirmada.</h1>
+      <p className="mt-10 border-t border-hair pt-6 text-xl text-paper first-letter:uppercase">
         {fmtDateTime(b.starts_at)} a {fmtTime(b.ends_at)} <span className="text-muted">(hora de Buenos Aires)</span>
       </p>
       <p className="mt-2 text-muted">Te mandamos la confirmación a {b.email}.</p>
       <div className="mt-8 flex flex-wrap gap-3">
         {b.meet_url && (
-          <a href={b.meet_url} className="inline-flex h-12 items-center gap-2 rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">
+          <a href={b.meet_url} className="inline-flex h-12 items-center gap-2 rounded-[2px] bg-rose-light px-5 text-night transition-colors hover:bg-paper">
             <Video className="size-5" aria-hidden />
             Link de la videollamada
           </a>
         )}
         <a
           href={`/api/agenda/ics/${t}`}
-          className="inline-flex h-12 items-center gap-2 rounded-md border border-line bg-surface px-5 hover:border-navy/40"
+          className="inline-flex h-12 items-center gap-2 rounded-[2px] border border-hair-strong px-5 text-paper transition-colors hover:border-paper/60"
         >
           <CalendarPlus className="size-5" aria-hidden />
           Agregar a mi calendario (.ics)
@@ -43,6 +47,7 @@ export default async function ConfirmadaPage({ searchParams }: { searchParams: P
         </Link>
         .
       </p>
+      </Container>
     </section>
   );
 }

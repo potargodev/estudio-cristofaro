@@ -13,12 +13,12 @@ export function BookingForm({ days, initial }: { days: PickerDay[]; initial?: st
   return (
     <form action={action} className="relative grid gap-8">
       <Honeypot />
-      <section className="rounded-md border border-line bg-surface p-6 shadow-brand-sm">
-        <h2 className="mb-4 text-lg font-semibold">1. Elegí día y horario</h2>
+      <section className="border-t border-line pt-8">
+        <h2 className="mb-6 flex items-baseline gap-4 font-display text-3xl"><span className="tabular text-[13px] font-sans text-rose-deep">01</span>Elegí día y horario</h2>
         <SlotPicker days={days} error={e.start} initial={initial} />
       </section>
-      <section className="rounded-md border border-line bg-surface p-6 shadow-brand-sm">
-        <h2 className="mb-4 text-lg font-semibold">2. Tus datos</h2>
+      <section className="border-t border-line pt-8">
+        <h2 className="mb-6 flex items-baseline gap-4 font-display text-3xl"><span className="tabular text-[13px] font-sans text-rose-deep">02</span>Tus datos</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Nombre y apellido" name="name" error={e.name}>
             <input id="name" name="name" required autoComplete="name" className={inputClass} />

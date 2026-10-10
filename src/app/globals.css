@@ -86,6 +86,51 @@ html:has(.site) {
 .site {
   background: var(--color-night);
   color: var(--color-paper);
+  /* Tokens semánticos en tema oscuro: texto, texto secundario, líneas y
+     superficies. Las secciones en papel (.on-paper) vuelven a los claros. */
+  --color-ink: #f7f5f3;
+  --color-muted: rgb(247 245 243 / 0.64);
+  --color-line: rgb(247 245 243 / 0.12);
+  --color-surface: #141826;
+  --color-navy-soft: #1c2235;
+  --color-rose-deep: #c9a596;
+  --color-rose-soft: rgb(201 165 150 / 0.14);
+  --color-danger: #f0a493;
+  --color-primary: #c9a596;
+  --color-primary-foreground: #0f1320;
+  --color-secondary: #1c2235;
+  --color-secondary-foreground: #f7f5f3;
+  --color-accent: #1c2235;
+  --color-accent-foreground: #f7f5f3;
+  --color-border: rgb(247 245 243 / 0.12);
+  --color-input: rgb(247 245 243 / 0.16);
+  --color-ring: #c9a596;
+  --color-background: #0f1320;
+  --color-foreground: #f7f5f3;
+  --color-card: #141826;
+  --color-card-foreground: #f7f5f3;
+  --color-popover: #141826;
+  --color-popover-foreground: #f7f5f3;
+}
+.site .on-paper {
+  background: var(--color-paper);
+  color: #1b1e26;
+  --color-ink: #1b1e26;
+  --color-muted: #5a6176;
+  --color-line: #dddbdf;
+  --color-surface: #ffffff;
+  --color-navy-soft: #eceef3;
+  --color-rose-deep: #7d5848;
+  --color-rose-soft: #f1e7e2;
+  --color-danger: #a33a2a;
+  --color-primary: #1c2235;
+  --color-primary-foreground: #f7f5f3;
+  --color-border: #dddbdf;
+  --color-input: #dddbdf;
+  --color-ring: #1c2235;
+  --color-foreground: #1b1e26;
+  --color-card: #ffffff;
+  --color-card-foreground: #1b1e26;
 }
 .site ::selection {
   background: var(--color-rose-light);
