@@ -155,6 +155,13 @@
       "when": 1791659411967,
       "tag": "0021_validacion_plantillas_estudio",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1791659787961,
+      "tag": "0022_aceptaciones_legales",
+      "breakpoints": true
     }
   ]
 }

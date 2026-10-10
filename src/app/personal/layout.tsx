@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LegalGate } from "@/components/app/LegalGate";
 import { GuideButton, GuideHost, HelpLink } from "@/components/app/Guide";
 import { guideBoot } from "@/modules/onboarding/server";
 import Link from "next/link";
@@ -48,6 +49,7 @@ export default async function PersonalLayout({ children }: { children: React.Rea
           </form>
         </div>
       )}
+      <LegalGate back="/personal" />
       <main className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 sm:pt-8">{children}</main>
       <PersonalNav variant="bottom" />
       <GuideHost boot={await guideBoot()} />

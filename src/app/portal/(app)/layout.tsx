@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
+import { LegalGate } from "@/components/app/LegalGate";
 import { getDb } from "@/db";
 import { studios } from "@/db/schema";
 import { GuideButton, GuideHost, HelpLink } from "@/components/app/Guide";
@@ -84,6 +85,7 @@ export default async function PortalLayout({ children }: { children: React.React
           <GuideButton className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
           <HelpLink className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
         </div>
+        <LegalGate back="/portal" />
         <RouteReveal>{children}</RouteReveal>
       </main>
       <GuideHost boot={await guideBoot()} />

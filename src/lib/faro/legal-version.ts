@@ -1,3 +1,5 @@
-// Versión vigente de los textos legales (términos y privacidad). Se guarda
-// con cada aceptación; si cambia, se vuelve a pedir la aceptación al entrar.
-export const LEGAL_VERSION = "2026-10-borrador";
+import { legalVersion } from "@/modules/legal/catalog";
+
+// Versión vigente de los términos (docs/legal/terminos.md): se guarda en cada
+// pedido de alta y en la aceptación de la cuenta.
+export const LEGAL_VERSION = legalVersion("terminos");

@@ -105,8 +105,12 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
           <label className="flex items-start gap-2.5 text-[13px] text-paper/70">
             <input name="terms" type="checkbox" required defaultChecked={state.values?.terms === "on"} className="mt-0.5 size-4 accent-[#c9a596]" />
             <span>
-              Acepto los términos y la{" "}
-              <Link href="/privacidad" className="underline underline-offset-4">
+              Acepto los{" "}
+              <Link href="/legal/terminos" target="_blank" className="underline underline-offset-4">
+                términos
+              </Link>{" "}
+              y la{" "}
+              <Link href="/legal/privacidad" target="_blank" className="underline underline-offset-4">
                 política de privacidad
               </Link>
               .

@@ -10,6 +10,8 @@ import { AUTH_ERRORS, getAuth, googleEnabled, googleSignInUrl, type AuthErrorCod
 import { DEFAULT_PLAN, getPlan, type TenantKind } from "@/lib/faro/plans";
 import { createTenant, EMAIL_RE, normalizeCuit } from "@/lib/faro/tenants";
 import { LEGAL_VERSION } from "@/lib/faro/legal-version";
+import { BASE_DOCS } from "@/modules/legal/catalog";
+import { recordAcceptance } from "@/modules/legal/server";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 // Autoregistro público de Faro: un estudio o contador (tenant studio, plan
@@ -51,6 +53,7 @@ async function register(fd: FormData): Promise<RegisterState> {
   const plan = DEFAULT_PLAN[kind];
   const r = await createTenant({ kind, name, planKey: plan, cuit: v(fd, "cuit") || null, owner: { name: v(fd, "name"), email, password }, via: "registro" });
   if (!r.ok) return { ok: false, message: r.message };
+  await recordAcceptance({ id: r.userId, email, studioId: r.studioId }, BASE_DOCS, clientIp(h));
   await audit({
     studioId: r.studioId,
     actor: { id: r.userId, email },

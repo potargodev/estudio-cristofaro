@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { audit } from "@/lib/audit";
 import { requireTenant, TENANT_OWNERS } from "@/lib/auth";
 import { requireModule } from "@/lib/faro/require-module";
+import { recordAcceptance } from "@/modules/legal/server";
 import { RedError, respondReview, saveProfile, setPublished } from "@/modules/red/server";
 
 // Ficha del estudio en la Red de estudios. El estudio sale de la sesión; la
@@ -56,6 +57,7 @@ export async function publishRedAction(fd: FormData) {
     throw e;
   }
   await audit({ studioId: me.studioId, actor: me, action: on ? "red.publicar" : "red.despublicar", entityType: "ficha_red", entityId: me.studioId });
+  if (on) await recordAcceptance(me, ["red-de-estudios"]);
   revalidatePath("/admin/red");
   back(`ok=${encodeURIComponent(on ? "Publicaste la ficha. Se ve en la Red cuando la matrícula está verificada." : "Sacaste la ficha de la Red.")}`);
 }

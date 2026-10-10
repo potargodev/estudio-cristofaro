@@ -1,5 +1,6 @@
 import { and, count, eq, gte, inArray, lte, notInArray } from "drizzle-orm";
 import type { Metadata } from "next";
+import { LegalGate } from "@/components/app/LegalGate";
 import { GuideHost } from "@/components/app/Guide";
 import { guideBoot } from "@/modules/onboarding/server";
 import { AdminShell } from "@/components/admin/shell/AdminShell";
@@ -78,6 +79,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
         badges={{ requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0, approvals: appr?.n ?? 0 }}
         signOut={signOut}
       >
+        <LegalGate back="/admin" />
         {children}
       </AdminShell>
       <GuideHost boot={await guideBoot()} />

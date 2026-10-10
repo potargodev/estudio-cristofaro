@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { ChevronRight, Mail, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AccountData } from "@/components/app/AccountData";
 import { GuidePreference } from "@/components/app/GuidePreference";
 import { getDb } from "@/db";
 import { studios } from "@/db/schema";
@@ -11,7 +12,8 @@ import { formatCuit } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
 
-export default async function PersonalCuentaPage() {
+export default async function PersonalCuentaPage({ searchParams }: { searchParams: Promise<{ baja?: string }> }) {
+  const sp = await searchParams;
   const me = await requirePersonal();
   const [t] = await getDb().select().from(studios).where(eq(studios.id, me.studioId));
   const plan = getPlan(t?.plan_key);
@@ -19,6 +21,7 @@ export default async function PersonalCuentaPage() {
     { href: "/personal/plan", label: "Plan y facturación", hint: plan ? planFullName(plan) : "" },
     { href: "/bienvenida", label: "Tus datos y tu actividad", hint: t?.kind === "personal" ? `CUIT ${formatCuit(t?.cuit)}` : "Qué querés hacer en Faro" },
     { href: "/ayuda", label: "Centro de ayuda", hint: "Artículos cortos para cada pantalla" },
+    { href: "/legal/terminos", label: "Términos y privacidad", hint: "Textos legales y lo que aceptaste" },
   ];
   return (
     <div className="grid gap-6 pb-10">
@@ -48,6 +51,7 @@ export default async function PersonalCuentaPage() {
         ))}
       </ul>
       <GuidePreference />
+      <AccountData status={sp.baja} />
     </div>
   );
 }

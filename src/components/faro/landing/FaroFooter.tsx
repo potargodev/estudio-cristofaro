@@ -57,9 +57,19 @@ export function FaroFooter() {
         </div>
         <div className="flex flex-col gap-3 border-t border-hair py-6 text-[13px] text-paper/55 sm:flex-row sm:justify-between">
           <p>© {new Date().getFullYear()} Faro</p>
-          <Link href="/privacidad" className="u-draw hover:text-paper">
-            Privacidad
-          </Link>
+          <span className="flex flex-wrap gap-x-5 gap-y-2">
+            {[
+              ["/legal/terminos", "Términos"],
+              ["/legal/privacidad", "Privacidad"],
+              ["/legal/flotas", "Flotas"],
+              ["/legal/red-de-estudios", "Red de estudios"],
+              ["/ayuda", "Ayuda"],
+            ].map(([href, label]) => (
+              <Link key={href} href={href} className="u-draw hover:text-paper">
+                {label}
+              </Link>
+            ))}
+          </span>
         </div>
       </div>
     </footer>

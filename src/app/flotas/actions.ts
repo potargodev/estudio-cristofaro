@@ -7,6 +7,7 @@ import { audit } from "@/lib/audit";
 import { requirePersonal } from "@/lib/auth";
 import { clientIp } from "@/lib/rate-limit";
 import * as fl from "@/modules/flotas/server";
+import { recordAcceptance } from "@/modules/legal/server";
 
 // Acciones de Flotas. Quién es sale SIEMPRE de la sesión (titular de una
 // cuenta personal); que pertenezca a la Flota y su rol lo valida el módulo.
@@ -46,6 +47,7 @@ export async function createFleetAction(fd: FormData) {
     async () => {
       const id = await fl.createFleet(m, { name: s(fd, "name"), description: s(fd, "description"), profile: s(fd, "profile"), informalAck: fd.get("informal") === "on" });
       await audit({ studioId: user.studioId, actor: user, action: "flota.creada", entityType: "flota", entityId: id });
+      await recordAcceptance(user, ["flotas"], clientIp(await headers()));
       return `/flotas/${id}`;
     },
     "Creaste la Flota. Ahora invitá a tu tripulación.",
@@ -60,6 +62,7 @@ export async function answerInvitationAction(fd: FormData) {
     async () => {
       const id = await fl.answerInvitation(m, s(fd, "member"), accept, s(fd, "profile"), fd.get("informal") === "on");
       await audit({ studioId: user.studioId, actor: user, action: accept ? "flota.unirse" : "flota.rechazar", entityType: "flota", entityId: id });
+      if (accept) await recordAcceptance(user, ["flotas"], clientIp(await headers()));
       return accept ? `/flotas/${id}` : "/flotas";
     },
     accept ? "Te sumaste a la Flota." : "Rechazaste la invitación.",

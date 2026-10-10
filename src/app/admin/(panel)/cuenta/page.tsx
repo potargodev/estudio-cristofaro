@@ -5,6 +5,7 @@ import { Avatar } from "@/components/admin/kit/Avatar";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { Panel } from "@/components/admin/kit/Panel";
 import { StatusBadge } from "@/components/admin/kit/StatusBadge";
+import { AccountData } from "@/components/app/AccountData";
 import { GuidePreference } from "@/components/app/GuidePreference";
 import { requireStaff } from "@/lib/auth";
 
@@ -12,7 +13,8 @@ export const metadata: Metadata = { title: "Mi cuenta" };
 
 const ROLE: Record<string, string> = { dueno: "Dueño", contador: "Contador", colaborador: "Colaborador", titular: "Titular" };
 
-export default async function CuentaPage() {
+export default async function CuentaPage({ searchParams }: { searchParams: Promise<{ baja?: string }> }) {
+  const sp = await searchParams;
   const user = await requireStaff();
   return (
     <div className="max-w-3xl">
@@ -59,6 +61,7 @@ export default async function CuentaPage() {
           <InstallPanel tone="light" />
         </Panel>
         <GuidePreference />
+        {user.role === "dueno" && <AccountData status={sp.baja} />}
       </div>
     </div>
   );

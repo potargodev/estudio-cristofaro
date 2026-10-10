@@ -12,6 +12,8 @@ import { mailLayout } from "./notify";
 import { getSiteUrl } from "./runtime-config";
 import { acceptInvitationsFor, hasAccessByEmail } from "./team";
 import { finalizePersonalTenant, pendingSignup, tenantFromSignup } from "./faro/tenants";
+import { BASE_DOCS } from "@/modules/legal/catalog";
+import { recordAcceptance } from "@/modules/legal/server";
 
 // Acceso a la plataforma:
 // - Estudio (admin y contador): email y contraseña + segundo factor (TOTP)
@@ -177,6 +179,7 @@ function createAuth() {
             const u = user as typeof user & { role?: string; studioId?: string };
             if (u.role !== "titular" || !u.studioId) return;
             await finalizePersonalTenant(u.studioId, u.id);
+            await recordAcceptance({ id: u.id, email: u.email, studioId: u.studioId }, BASE_DOCS);
             await audit({ studioId: u.studioId, actor: { id: u.id, email: u.email }, action: "faro.registro", entityType: "tenant", entityId: u.studioId, metadata: { via: "sin contraseña" } });
           },
         },

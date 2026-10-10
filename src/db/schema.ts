@@ -1925,3 +1925,22 @@ export const studio_template_validations = pgTable(
   },
   (t) => [unique("studio_template_validations_key").on(t.studio_id, t.industry_key, t.version)],
 );
+
+// ───────────────────────── Textos legales ─────────────────────────
+
+/** Aceptación de cada versión de un texto legal (docs/legal), por usuario */
+export const legal_acceptances = pgTable(
+  "legal_acceptances",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** terminos | privacidad | flotas | red-de-estudios */
+    document: text("document").notNull(),
+    version: text("version").notNull(),
+    ip: text("ip"),
+    accepted_at: timestamp("accepted_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("legal_acceptances_key").on(t.user_id, t.document, t.version)],
+);
