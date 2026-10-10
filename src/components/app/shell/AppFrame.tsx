@@ -7,7 +7,7 @@ import { GuideHost } from "@/components/app/Guide";
 import { LegalGate } from "@/components/app/LegalGate";
 import { Toaster } from "@/components/ui/sonner";
 import { getDb } from "@/db";
-import { approvals, leads, obligations, organization_modules, plan_requests, requests, studios } from "@/db/schema";
+import { approvals, leads, message_reports, obligations, organization_modules, plan_requests, requests, studios } from "@/db/schema";
 import { getCurrentUser, getMemberships, ORG_COOKIE, TENANT_OWNERS, type StaffUser } from "@/lib/auth";
 import { getEntitlements } from "@/lib/faro/entitlements";
 import { SITE_STUDIO_SLUG } from "@/lib/faro/tenants";
@@ -90,6 +90,8 @@ export async function AppFrame({ space: forced, children }: { space?: Space; chi
     const [[pr], red] = await Promise.all([db.select({ n: count() }).from(plan_requests).where(eq(plan_requests.status, "pendiente")), moderationCounts()]);
     badges.planRequests = pr?.n ?? 0;
     badges.verifications = red.licenses + red.reviews;
+    const [rep] = await db.select({ n: count() }).from(message_reports).where(eq(message_reports.status, "abierto"));
+    badges.reports = rep?.n ?? 0;
     spaceName = "Faro Manager";
     roleLabel = user.faroRole === "faro_owner" ? "Owner" : "Soporte";
   }

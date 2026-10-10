@@ -1,6 +1,7 @@
 import "server-only";
+import { unreadTotal } from "./server";
 
-/** Mensajes sin leer del usuario (lo completa el módulo Mensajes) */
-export async function unreadCount(_userId: string): Promise<number> {
-  return 0;
+/** Mensajes sin leer del usuario (badge del menú) */
+export async function unreadCount(userId: string) {
+  return unreadTotal(userId);
 }

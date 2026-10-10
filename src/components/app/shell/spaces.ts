@@ -46,7 +46,7 @@ export type ShellIcon =
   | "opiniones"
   | "pasos";
 
-export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "planRequests" | "verifications" | "portalRequests";
+export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
 
 export interface ShellItem {
   href: string;
@@ -70,6 +70,7 @@ export const BADGE_TEXT: Record<ShellBadge, string> = {
   approvals: "propuestas para aprobar",
   unread: "mensajes sin leer",
   copilot: "respuestas nuevas del Copiloto",
+  reports: "reportes por revisar",
   planRequests: "pedidos de plan",
   verifications: "matrículas y reseñas por revisar",
   portalRequests: "solicitudes abiertas",
@@ -197,6 +198,7 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
       items: [
         { href: "/faro-manager/auditoria", label: "Auditoría", icon: "auditoria" },
         { href: "/faro-manager/ayuda", label: "Opiniones de la ayuda", icon: "opiniones" },
+        { href: "/faro-manager/reportes", label: "Mensajes reportados", icon: "mensajes", badge: "reports" },
       ],
     },
     PERSONAL_GROUP,

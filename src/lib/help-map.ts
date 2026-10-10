@@ -25,6 +25,8 @@ const MAP: [string, string][] = [
   ["/grupos", "grupos-de-gastos/crear-un-grupo"],
   ["/bitacora", "bitacora/bitacora"],
   ["/copiloto", "copiloto/copiloto"],
+  ["/mensajes", "mensajes/mensajes"],
+  ["/primeros-pasos", "primeros-pasos/registro"],
   ["/flotas", "flotas/que-es-una-flota"],
   ["/red", "red-de-estudios/buscar-un-estudio"],
   ["/personal/plan", "primeros-pasos/planes"],

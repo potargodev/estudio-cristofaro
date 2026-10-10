@@ -48,6 +48,7 @@
     "server-only": "^0.0.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
+    "web-push": "^3.6.7",
     "write-excel-file": "^4.1.1",
     "zod": "^3.25.76"
   },
@@ -58,6 +59,7 @@
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
     "drizzle-kit": "^0.31.11",
     "esbuild": "^0.28.2",
     "tailwindcss": "^4.1.0",

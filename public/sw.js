@@ -1,4 +1,4 @@
-// Service worker de la app de Estudio Cristofaro.
+// Service worker de la app (Estudio Cristofaro y Faro).
 // - Archivos estáticos con hash (/_next/static), íconos y fotos: caché primero.
 // - Páginas: siempre red (datos privados al día); sin conexión, /offline.
 // - Nunca se guardan respuestas de /api, /admin, /portal ni nada autenticado.
@@ -47,6 +47,43 @@ self.addEventListener("fetch", (event) => {
       const res = await fetch(request);
       if (res.ok) cache.put(request, res.clone());
       return res;
+    }),
+  );
+});
+
+// Notificaciones push (Mensajes): título, texto y a dónde lleva al tocarla
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (e) {
+    data = { title: "Faro", body: event.data ? event.data.text() : "" };
+  }
+  const url = typeof data.url === "string" && data.url.startsWith("/") ? data.url : "/mensajes";
+  event.waitUntil(
+    self.registration.showNotification(data.title || "Faro", {
+      body: data.body || "Tenés un mensaje nuevo.",
+      icon: "/icons/faro-192.png",
+      badge: "/icons/badge-96.png",
+      tag: url,
+      renotify: true,
+      data: { url },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || "/mensajes";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) {
+        if (new URL(c.url).origin === self.location.origin && "focus" in c) {
+          c.navigate(url);
+          return c.focus();
+        }
+      }
+      return self.clients.openWindow(url);
     }),
   );
 });

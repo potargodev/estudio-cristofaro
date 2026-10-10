@@ -2165,3 +2165,124 @@ export const notifications = pgTable(
   },
   (t) => [index("notifications_user_idx").on(t.user_id, t.read_at, t.created_at)],
 );
+
+// ── Mensajes (chat interno, docs/faro-producto.md «Mensajes») ─────────────
+// Solo entre personas que comparten un espacio. El Faro Manager no ve los
+// mensajes, salvo uno reportado.
+
+export const conversationKind = pgEnum("conversation_kind", ["directo", "grupo", "gastos", "flota", "equipo"]);
+
+export const conversations = pgTable(
+  "conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    kind: conversationKind("kind").notNull(),
+    /** Grupo de chat y canal del equipo: nombre; directo, gastos y flota: se arma con el nombre del espacio o de la otra persona */
+    title: text("title"),
+    /** Canal interno del estudio */
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }),
+    expense_group_id: uuid("expense_group_id").references(() => expense_groups.id, { onDelete: "cascade" }),
+    fleet_id: uuid("fleet_id").references(() => fleets.id, { onDelete: "cascade" }),
+    /** Directo: los dos ids ordenados («a:b»), para no duplicar la conversación */
+    direct_key: text("direct_key"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    last_message_at: timestamp("last_message_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [
+    uniqueIndex("conversations_direct_idx").on(t.direct_key),
+    uniqueIndex("conversations_group_idx").on(t.expense_group_id),
+    uniqueIndex("conversations_fleet_idx").on(t.fleet_id),
+  ],
+);
+
+export const conversation_members = pgTable(
+  "conversation_members",
+  {
+    conversation_id: uuid("conversation_id")
+      .notNull()
+      .references(() => conversations.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("miembro"),
+    last_read_at: timestamp("last_read_at", { withTimezone: true }),
+    muted: boolean("muted").notNull().default(false),
+    /** Salió (o dejó de compartir el espacio): no ve mensajes nuevos */
+    left_at: timestamp("left_at", { withTimezone: true }),
+    joined_at: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.conversation_id, t.user_id] }), index("conversation_members_user_idx").on(t.user_id)],
+);
+
+export const chat_messages = pgTable(
+  "chat_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    conversation_id: uuid("conversation_id")
+      .notNull()
+      .references(() => conversations.id, { onDelete: "cascade" }),
+    author_id: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
+    body: text("body"),
+    reply_to: uuid("reply_to"),
+    attachment_path: text("attachment_path"),
+    attachment_name: text("attachment_name"),
+    attachment_mime: text("attachment_mime"),
+    attachment_size: integer("attachment_size"),
+    edited_at: timestamp("edited_at", { withTimezone: true }),
+    deleted_at: timestamp("deleted_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("chat_messages_conv_idx").on(t.conversation_id, t.created_at)],
+);
+
+export const user_blocks = pgTable(
+  "user_blocks",
+  {
+    blocker_id: uuid("blocker_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    blocked_id: uuid("blocked_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    created_at: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.blocker_id, t.blocked_id] })],
+);
+
+export const message_reports = pgTable(
+  "message_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    message_id: uuid("message_id")
+      .notNull()
+      .references(() => chat_messages.id, { onDelete: "cascade" }),
+    reporter_id: uuid("reporter_id").references(() => users.id, { onDelete: "set null" }),
+    reason: text("reason").notNull(),
+    detail: text("detail"),
+    /** Copia del mensaje al momento del reporte (lo único que ve el Faro Manager) */
+    snapshot: jsonb("snapshot").$type<{ body: string | null; author: string | null; attachment: string | null; at: string }>().notNull(),
+    status: text("status").notNull().default("abierto"),
+    resolution: text("resolution"),
+    resolved_by: uuid("resolved_by").references(() => users.id, { onDelete: "set null" }),
+    resolved_at: timestamp("resolved_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("message_reports_once_idx").on(t.message_id, t.reporter_id)],
+);
+
+/** Suscripciones de notificaciones push (PWA) */
+export const push_subscriptions = pgTable(
+  "push_subscriptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("push_subscriptions_endpoint_idx").on(t.endpoint), index("push_subscriptions_user_idx").on(t.user_id)],
+);

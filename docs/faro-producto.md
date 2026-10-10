@@ -331,6 +331,16 @@ Lo primero que ve cualquier usuario al entrar es **su Copiloto**: un chat estilo
 - **Proveedor de IA:** para personas y autónomos, Faro pone el modelo (clave de la plataforma en Faro Manager, con límite de uso por plan). Los estudios pueden usar su propia clave (§2.b).
 - **WhatsApp real** (número de Faro) llega en F9; el Copiloto en la app es el MVP.
 
+## 2.n Mensajes (chat interno entre personas)
+
+Un chat entre personas, distinto del Copiloto (que es con el agente). Es un módulo de todos los espacios, con badge de no leídos.
+- **Con quién:** solo entre personas que comparten un espacio: el mismo estudio; el estudio con los usuarios de sus organizaciones; la misma organización; el mismo grupo de gastos; la misma Flota. No hay búsqueda de usuarios de toda la plataforma. Se valida en el servidor en cada acción.
+- **Conversaciones:** directas (1:1) y grupales elegidas entre los contactos. Cada grupo de gastos y cada Flota tienen su conversación automática (entran y salen con el grupo). Los estudios pueden crear canales internos del equipo, solo con personas del estudio.
+- **Mensajes:** texto, emojis, adjuntos (por ruta autenticada), responder a un mensaje, editar o borrar los propios, leídos («Visto») y «escribiendo…».
+- **Tiempo real:** SSE con LISTEN/NOTIFY de Postgres y sondeo de respaldo. Avisos en la app (campanita) y push web de la PWA. Cada conversación se puede silenciar.
+- **Seguridad y moderación:** bloquear o reportar a una persona o un mensaje, con auditoría. Bloquear impide que te escriba y oculta sus mensajes en las conversaciones compartidas. El Faro Manager no ve los mensajes; solo la copia de un mensaje reportado, y puede dejarlo o borrarlo.
+- **Visual:** distinto del Copiloto (burbujas rosé propias, iniciales de cada persona y sin tarjetas de IA).
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |
