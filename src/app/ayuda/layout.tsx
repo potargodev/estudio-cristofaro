@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PublicShell } from "@/components/app/PublicShell";
+import { AppOrPublic } from "@/components/app/shell/AppOrPublic";
 
 export const metadata: Metadata = {
   title: { default: "Centro de ayuda · Faro", template: "%s · Ayuda de Faro" },
@@ -7,10 +7,12 @@ export const metadata: Metadata = {
 };
 
 /** Centro de ayuda público: se lee sin cuenta y también desde cada app */
+export const dynamic = "force-dynamic";
+
 export default function AyudaLayout({ children }: { children: React.ReactNode }) {
   return (
-    <PublicShell sub="Ayuda" home="/ayuda">
+    <AppOrPublic sub="Ayuda" home="/ayuda">
       {children}
-    </PublicShell>
+    </AppOrPublic>
   );
 }

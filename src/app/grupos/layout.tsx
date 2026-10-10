@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { GuideButton, GuideHost, HelpLink } from "@/components/app/Guide";
-import { guideBoot } from "@/modules/onboarding/server";
+import { AppFrame } from "@/components/app/shell/AppFrame";
+import { getCurrentUser } from "@/lib/auth";
+import { HelpLink } from "@/components/app/Guide";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
@@ -17,6 +18,15 @@ const PANEL: Record<string, string> = { "/admin": "Volver al estudio", "/portal"
 
 /** Grupos de gastos: mismo lugar para todos (estudio, autónomo, portal, empleados e invitados) */
 export default async function GastosLayout({ children }: { children: React.ReactNode }) {
+  // Con cuenta: dentro del marco de la app (menú, barra superior y selector de espacio)
+  const user = await getCurrentUser().catch(() => null);
+  if (user)
+    return (
+      <AppFrame>
+        <div className="mx-auto w-full max-w-3xl">{children}</div>
+      </AppFrame>
+    );
+  // Invitado sin cuenta (link mágico del grupo): pantalla simple, solo su grupo
   const actor = await getGastosActor();
   const home = actor ? homeOf(actor) : null;
   return (
@@ -33,7 +43,6 @@ export default async function GastosLayout({ children }: { children: React.React
               {PANEL[home] ?? "Volver"}
             </Link>
           )}
-          {actor && <GuideButton compact className="text-paper/75 hover:text-paper" />}
           <HelpLink compact className="text-paper/75 hover:text-paper" />
           <ThemeToggle className="text-paper/75 hover:text-paper" />
           {actor && (
@@ -52,7 +61,6 @@ export default async function GastosLayout({ children }: { children: React.React
         )}
       </header>
       <main className="mx-auto w-full max-w-3xl px-4 pb-32 pt-6 sm:px-6 sm:pt-8">{children}</main>
-      {actor && <GuideHost boot={await guideBoot()} />}
       <Toaster position="top-center" />
     </div>
   );

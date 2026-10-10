@@ -37,3 +37,11 @@ Desde la Guía también podés **Recorrer esta pantalla**: un recorrido corto qu
 ## Apagar los recorridos automáticos
 
 Los recorridos aparecen la primera vez que entrás a cada pantalla. Si no los querés ver, entrá a **Mi cuenta** y destildá **Mostrar los recorridos automáticos** (en el portal de clientes está en **Más**). También lo podés apagar desde el panel de la Guía. El botón **Guía** queda siempre, aunque los apagues.
+
+## El menú
+
+Todo Faro vive en el mismo marco: Copiloto, Bitácora, Grupos de gastos, Mensajes, Flotas, la Red y la Ayuda aparecen en el menú de cualquier espacio (tu cuenta personal, tu estudio, tu organización o el Faro Manager).
+
+- En la computadora, el botón de arriba del menú lo **colapsa**: pasa a una barra horizontal de íconos arriba (pasá el mouse para ver el nombre). El botón de la izquierda lo vuelve a expandir. Faro recuerda tu elección. Atajo: tecla **[**.
+- En el celular, la barra de abajo tiene los accesos de todos los días y **Más** abre el menú completo.
+- Si tenés más de un espacio (por ejemplo, tu estudio y el Faro Manager, o varias organizaciones), cambiás desde tu nombre, abajo del menú.

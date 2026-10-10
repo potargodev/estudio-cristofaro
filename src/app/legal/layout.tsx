@@ -1,9 +1,11 @@
-import { PublicShell } from "@/components/app/PublicShell";
+import { AppOrPublic } from "@/components/app/shell/AppOrPublic";
+
+export const dynamic = "force-dynamic";
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
-    <PublicShell sub="Legal" home="/legal/terminos">
+    <AppOrPublic sub="Legal" home="/legal/terminos">
       {children}
-    </PublicShell>
+    </AppOrPublic>
   );
 }

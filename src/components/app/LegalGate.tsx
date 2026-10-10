@@ -11,7 +11,7 @@ export async function LegalGate({ back }: { back: string }) {
   const pending = await pendingDocs(user.id);
   if (!pending.length) return null;
   return (
-    <div role="region" aria-label="Textos legales" className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-line bg-navy-soft px-4 py-2.5 text-[13px] text-ink sm:px-6 lg:px-8">
+    <div role="region" aria-label="Textos legales" className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[13px] text-ink">
       <span className="min-w-0 flex-1">
         Actualizamos{" "}
         {pending.map((k, i) => (

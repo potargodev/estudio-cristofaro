@@ -162,6 +162,13 @@
       "when": 1791659787961,
       "tag": "0022_aceptaciones_legales",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791661096299,
+      "tag": "0023_preferencias",
+      "breakpoints": true
     }
   ]
 }

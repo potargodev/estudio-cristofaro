@@ -1944,3 +1944,21 @@ export const legal_acceptances = pgTable(
   },
   (t) => [unique("legal_acceptances_key").on(t.user_id, t.document, t.version)],
 );
+
+/** Preferencias de cada usuario (barra lateral, Copiloto…): por usuario y en la base */
+export const user_preferences = pgTable("user_preferences", {
+  user_id: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  data: jsonb("data").$type<UserPrefs>().notNull().default({}),
+  updated_at: updatedAt(),
+});
+
+export interface UserPrefs {
+  /** expanded | collapsed (en escritorio, colapsado = barra horizontal de íconos) */
+  sidebar?: "expanded" | "collapsed";
+  /** Copiloto: registrar solo los movimientos personales (siempre con Deshacer) */
+  copilotAuto?: boolean;
+  /** Primeros pasos: el widget del Inicio está oculto */
+  hideFirstSteps?: boolean;
+}

@@ -62,8 +62,8 @@ export default async function PortalHome() {
         </MonthCard>
       )}
 
-      <div className="mt-4 grid gap-4 md:grid-cols-[1.4fr_1fr]">
-        <div className="grid content-start gap-4">
+      <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4">
           {show.obligations && (
             <Card>
               <div className="flex items-center justify-between gap-3">
@@ -101,7 +101,7 @@ export default async function PortalHome() {
           </Suspense>
         </div>
 
-        <div className="grid content-start gap-4">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4">
           <LeadContact lead={lead} team={staff.filter((t) => t.assignment !== "responsable")}>
             {lead && can(me.orgRole, "agenda.reservar") && (
               <Link

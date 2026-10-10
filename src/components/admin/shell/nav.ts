@@ -183,10 +183,3 @@ export function askFaroHref(pathname: string, search: URLSearchParams) {
   const ctx = org && uuid.test(org) ? `organizacion:${org}` : req && uuid.test(req) ? `solicitud:${req}` : null;
   return `/admin/asistente?nueva=1${ctx ? `&contexto=${ctx}` : ""}`;
 }
-
-export const sidebarStorageKey = (id: string) => `admin-sidebar:${id}`;
-
-/** Script previo al pintado: aplica el estado guardado del sidebar sin parpadeo */
-export function sidebarBootScript(userId: string) {
-  return `try{if(localStorage.getItem(${JSON.stringify(sidebarStorageKey(userId))})==="collapsed")document.documentElement.dataset.sidebar="collapsed"}catch(e){}`;
-}
