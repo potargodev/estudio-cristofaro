@@ -121,7 +121,9 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 | Pedir ayuda a un contador | ✓ | ✓ |
 | Precio | Gratis | $[precio] / mes |
 
-## 2.e Gastos compartidos (núcleo, para todos los tipos de usuario)
+## 2.e Vaquitas: gastos compartidos (núcleo, para todos los tipos de usuario)
+
+Cada grupo de gastos compartidos se llama **Vaquita** ("armá una vaquita"), como se dice en Argentina cuando un grupo junta plata para algo. Es libre, gratis y sin requisitos.
 
 Inspirado en Splitwise, pero conectado con la contabilidad: lo que se reparte también queda registrado donde corresponde.
 
@@ -231,6 +233,16 @@ Una **Flota** es un grupo informal de 3 a 20 personas que se juntan para consegu
 - **Contratación individual:** cada miembro acepta o no la propuesta elegida. El vínculo y la facturación son entre el estudio y cada persona, con la tarifa grupal. Al aceptar, queda como organización del estudio (con consentimiento explícito).
 - **Vigencia:** el precio grupal se mantiene mientras se cumpla el mínimo de miembros. Si no se cumple, el estudio avisa con 30 días de anticipación antes de pasar a su tarifa normal.
 - **Informalidad explícita:** una Flota no es una sociedad ni una entidad legal, no implica actividad, patrimonio ni responsabilidad compartida, y nunca se la llama "sociedad". Cada miembro mantiene su CUIT, sus obligaciones y su responsabilidad. Se muestra un aviso claro al crearla y al unirse.
+- **Gobierno de la Flota:**
+  - **Capitán:** quien la crea. Invita y quita miembros, publica el pedido de propuesta, edita el nombre y puede transferir el rol. Si se va, el rol pasa al miembro más antiguo, o la Flota vota.
+  - **Tripulantes:** el resto de los miembros. Pueden salir cuando quieran.
+- **Espacio de la Flota (compartido por todos sus miembros):**
+  - Nombre, imagen y descripción.
+  - Lista de miembros con nombre, perfil y estado (invitado, activo, aceptó la propuesta).
+  - Propuestas recibidas en una tabla comparativa, con votación no vinculante para elegir cuál considerar.
+  - Conversación interna y línea de tiempo.
+  - Todos ven quién pertenece a la Flota. Nadie ve las finanzas de nadie.
+- **Nombres:** libres, pero sin palabras que sugieran un tipo legal ("S.A.", "Sociedad Anónima", "SRL", "SAS", "Sociedad", "Cooperativa", "Asociación civil", "Fundación" y similares). Si alguien las usa, la app las rechaza con una explicación amable. El nombre siempre se muestra con la etiqueta "Flota · grupo informal".
 - **Privacidad:** los miembros solo ven el nombre, el perfil y el estado de cada uno respecto de la propuesta. Nunca sus finanzas.
 - **Para el estudio:** un bloque de clientes con perfiles similares, ideal para estandarizar trabajo. Los estudios fijan libremente sus precios.
 - **Para Faro:** activa la Red de estudios y trae clientes nuevos a los estudios en Rumbo y Horizonte.
