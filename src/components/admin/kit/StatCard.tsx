@@ -41,7 +41,7 @@ export function StatCard({
   return (
     <div className={cn("flex flex-col border bg-surface p-5", tone === "alert" ? "border-[#e7b4aa]" : "border-line")}>
       <div className="flex items-start justify-between gap-3">
-        <span className={cn("grid size-9 place-items-center border", tone === "alert" ? "border-[#e7b4aa] text-[#8f2a1c]" : "border-line text-gold-ink")}>
+        <span className={cn("grid size-9 place-items-center border", tone === "alert" ? "border-[#e7b4aa] text-[#8f2a1c]" : "border-line text-rose-deep")}>
           <Icon className="size-[18px]" strokeWidth={1.5} aria-hidden />
         </span>
         {spark && <Sparkline data={spark} className="h-7 w-24" />}

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 // tabulares y tooltip legible al pasar el mouse o con el foco del teclado.
 // Cada gráfico lleva además una tabla oculta con los datos para lectores.
 
-export const CHART_COLORS = ["#1c2235", "#9a7a3c", "#6b7a99", "#3f7f57", "#a57c6d"] as const;
+export const CHART_COLORS = ["#1c2235", "#a57c6d", "#6b7a99", "#3f7f57", "#7d5848"] as const;
 const fmt = new Intl.NumberFormat("es-AR");
 
 export interface Series {

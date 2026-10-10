@@ -120,7 +120,7 @@ export function CommandPalette({ open, onClose, isAdmin }: { open: boolean; onCl
                   onClick={() => go(h.href)}
                   className={cn("flex w-full items-center gap-3 px-4 py-2.5 text-left text-[14px]", i === active ? "bg-navy-soft" : "")}
                 >
-                  <Icon className="size-4 shrink-0 text-gold-ink" strokeWidth={1.5} aria-hidden />
+                  <Icon className="size-4 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-ink">{h.title}</span>
                     {h.detail && <span className="block truncate text-[13px] text-muted">{h.detail}</span>}

@@ -269,7 +269,7 @@ async function Attention({ studioId }: { studioId: string }) {
         <ul className="divide-y divide-line">
           {items.slice(0, 10).map((it) => (
             <li key={it.key} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3.5">
-              <it.icon className="size-[18px] shrink-0 text-gold-ink" strokeWidth={1.5} aria-hidden />
+              <it.icon className="size-[18px] shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
               <div className="min-w-0 basis-[calc(100%-2.25rem)] sm:basis-0 sm:flex-1">
                 <p className="truncate text-[14px] font-medium text-ink">{it.title}</p>
                 <p className="text-[13px] text-muted">{it.detail}</p>
@@ -348,7 +348,7 @@ async function Charts({ studioId }: { studioId: string }) {
           centerLabel="solicitudes"
           data={[
             { key: "abierta", label: "Abiertas", value: reqBy("abierta"), color: "#1c2235" },
-            { key: "en_curso", label: "En curso", value: reqBy("en_curso"), color: "#9a7a3c" },
+            { key: "en_curso", label: "En curso", value: reqBy("en_curso"), color: "#a57c6d" },
             { key: "resuelta", label: "Resueltas", value: reqBy("resuelta"), color: "#3f7f57" },
           ]}
         />

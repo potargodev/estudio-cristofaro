@@ -80,7 +80,7 @@ function Calendar({ rows, month }: { rows: ObligationRow[]; month: string }) {
           if (!inMonth && items.length === 0) return <li key={d} aria-hidden className="hidden min-h-28 border-b border-r border-line bg-paper/60 md:block" />;
           return (
             <li key={d} className={cn("min-h-28 border-b border-line p-2 md:border-r", !inMonth && "bg-paper/60", items.length === 0 && "hidden md:block")}>
-              <p className={cn("tabular mb-1.5 text-[12px]", d === today ? "font-semibold text-gold-ink" : "text-muted")}>
+              <p className={cn("tabular mb-1.5 text-[12px]", d === today ? "font-semibold text-rose-deep" : "text-muted")}>
                 <span className="md:hidden">{new Intl.DateTimeFormat("es-AR", { weekday: "long", timeZone: "UTC" }).format(new Date(`${d}T00:00:00Z`))} </span>
                 {Number(d.slice(8))}
                 {d === today && " · hoy"}

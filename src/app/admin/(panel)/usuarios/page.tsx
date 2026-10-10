@@ -8,6 +8,8 @@ import { users } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth";
 import { ROLES } from "@/lib/types";
 import { Input } from "@/components/ui/input";
+import { Avatar } from "@/components/admin/kit/Avatar";
+import { StatusBadge } from "@/components/admin/kit/StatusBadge";
 
 export const metadata: Metadata = { title: "Usuarios" };
 
@@ -46,11 +48,8 @@ export default async function UsuariosPage({
   const error = params.error ? (errors[params.error] ?? errors.guardar) : null;
 
   return (
-    <div className="max-w-4xl">
-      <AdminPageHeader title="Usuarios" />
-      <p className="mb-6 max-w-2xl text-muted">
-        Las personas del estudio que pueden entrar al backoffice. Los administradores además gestionan los usuarios.
-      </p>
+    <div className="max-w-5xl">
+      <AdminPageHeader title="Usuarios" description="Las personas del estudio que pueden entrar al backoffice. Los administradores además gestionan los usuarios y las integraciones." />
       {notice && (
         <Notice>{notices[notice]}</Notice>
       )}
@@ -60,13 +59,13 @@ export default async function UsuariosPage({
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-md border border-line bg-surface">
-        <table className="w-full min-w-[680px] text-left text-[15px]">
-          <thead className="border-b border-line bg-paper text-sm text-muted">
+      <div className="overflow-x-auto border border-line bg-surface">
+        <table className="w-full min-w-[680px] text-left text-[14px]">
+          <thead className="border-b border-line bg-paper text-[13px] text-muted">
             <tr>
-              <th className="px-4 py-2.5 font-medium">Nombre</th>
-              <th className="px-4 py-2.5 font-medium">Rol</th>
-              <th className="px-4 py-2.5 font-medium">Estado</th>
+              <th className="px-4 py-2.5 font-normal">Nombre</th>
+              <th className="px-4 py-2.5 font-normal">Rol</th>
+              <th className="px-4 py-2.5 font-normal">Estado</th>
               <th className="px-4 py-2.5 text-right font-medium">
                 <span className="sr-only">Acciones</span>
               </th>
@@ -78,11 +77,16 @@ export default async function UsuariosPage({
               return (
                 <tr key={u.id} className={u.active ? "" : "text-muted"}>
                   <td className="px-4 py-3">
-                    <span className="block font-medium">
-                      {u.name}
-                      {self && <span className="ml-1.5 text-sm font-normal text-muted">(vos)</span>}
+                    <span className="flex items-center gap-3">
+                      <Avatar name={u.name} />
+                      <span className="min-w-0">
+                        <span className="block font-medium text-ink">
+                          {u.name}
+                          {self && <span className="ml-1.5 text-[13px] font-normal text-muted">(vos)</span>}
+                        </span>
+                        <span className="block text-[13px] text-muted">{u.email}</span>
+                      </span>
                     </span>
-                    <span className="block text-sm text-muted">{u.email}</span>
                   </td>
                   <td className="px-4 py-3">
                     {self || u.role === "cliente" ? (
@@ -106,7 +110,9 @@ export default async function UsuariosPage({
                       </form>
                     )}
                   </td>
-                  <td className="px-4 py-3">{u.active ? "Activo" : "Desactivado"}</td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={u.active ? "activa" : "baja"} label={u.active ? "Activo" : "Desactivado"} />
+                  </td>
                   <td className="px-4 py-3 text-right">
                     {!self && (
                       <form action={setUserActive}>
@@ -135,8 +141,8 @@ export default async function UsuariosPage({
         </table>
       </div>
 
-      <h2 className="mb-3 mt-10 text-lg font-semibold">Agregar usuario</h2>
-      <form action={createStaffUser} className="grid gap-4 rounded-md border border-dashed border-line p-5 sm:grid-cols-2">
+      <h2 className="mb-3 mt-10 text-[20px] font-medium">Agregar usuario</h2>
+      <form action={createStaffUser} className="grid gap-4 border border-line bg-surface p-5 sm:grid-cols-2">
         <AdminField label="Nombre y apellido" htmlFor="name">
           <Input id="name" name="name" required autoComplete="off" />
         </AdminField>

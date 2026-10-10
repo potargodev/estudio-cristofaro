@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 export function PostForm({ post }: { post?: Pick<Post, "id" | "title" | "slug" | "excerpt" | "body" | "published"> }) {
   return (
     <>
-      <form action={savePost} className="grid gap-4 rounded-md border border-line bg-surface p-6">
+      <form action={savePost} className="grid gap-4 border border-line bg-surface p-6">
         {post && <input type="hidden" name="id" value={post.id} />}
         <AdminField label="Título" htmlFor="title">
           <Input id="title" name="title" required defaultValue={post?.title} />

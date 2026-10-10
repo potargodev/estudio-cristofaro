@@ -25,7 +25,7 @@ const TONES: Record<Tone, string> = {
   ok: "border-[#a9d1b5] bg-[#ecf6ef] text-[#1f5f36]",
   done: "border-[#b9c6d6] bg-[#eef2f7] text-[#29425f]",
   danger: "border-[#e7b4aa] bg-[#fbecea] text-[#8f2a1c]",
-  gold: "border-[#e0cc9c] bg-[#faf4e4] text-[#6e5214]",
+  gold: "border-[#e2cdc4] bg-[#f6efeb] text-[#6d4a3c]",
 };
 
 export type StatusKey =

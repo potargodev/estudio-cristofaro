@@ -6,6 +6,9 @@ import { getDb } from "@/db";
 import { posts as postsTable } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { adminButton } from "@/components/admin/styles";
+import { EmptyState } from "@/components/admin/kit/Panel";
+import { StatusBadge } from "@/components/admin/kit/StatusBadge";
+import { Newspaper } from "lucide-react";
 
 export const metadata: Metadata = { title: "Novedades" };
 
@@ -19,28 +22,25 @@ export default async function NovedadesAdminPage() {
 
   return (
     <>
-      <Link href="/admin/contenidos" className="text-sm text-rose-deep underline-offset-4 hover:underline">
-        Contenidos
-      </Link>
-      <div className="mt-2">
-        <AdminPageHeader title="Novedades">
-          <Link href="/admin/contenidos/novedades/nueva" className={adminButton.primary}>
-            Nueva novedad
-          </Link>
-        </AdminPageHeader>
-      </div>
-      <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+      <AdminPageHeader title="Novedades" description="Artículos cortos sobre vencimientos y cambios de ARCA que se publican en la web.">
+        <Link href="/admin/contenidos/novedades/nueva" className={adminButton.primary}>
+          Nueva novedad
+        </Link>
+      </AdminPageHeader>
+      <ul className="divide-y divide-line border border-line bg-surface">
         {posts.map((p) => (
           <li key={p.id}>
-            <Link href={`/admin/contenidos/novedades/${p.id}`} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
-              <span className="font-medium">{p.title}</span>
-              <span className={`shrink-0 rounded-[2px] px-2.5 py-0.5 text-xs ${p.published ? "bg-navy-soft text-navy-deep" : "bg-line/60 text-muted"}`}>
-                {p.published ? "Publicada" : "Borrador"}
-              </span>
+            <Link href={`/admin/contenidos/novedades/${p.id}`} className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-3 hover:bg-paper">
+              <span className="min-w-0 truncate text-[14px] font-medium text-ink">{p.title}</span>
+              <StatusBadge status={p.published ? "activa" : "pausada"} label={p.published ? "Publicada" : "Borrador"} />
             </Link>
           </li>
         ))}
-        {posts.length === 0 && <li className="px-4 py-8 text-center text-muted">Todavía no hay novedades. Escribí la primera.</li>}
+        {posts.length === 0 && (
+          <li>
+            <EmptyState icon={Newspaper} title="Todavía no hay novedades" text="Escribí la primera: aparece en la web apenas la publiques." action={{ href: "/admin/contenidos/novedades/nueva", label: "Nueva novedad" }} />
+          </li>
+        )}
       </ul>
     </>
   );

@@ -23,7 +23,7 @@ export default async function NuevaOrganizacionPage({ searchParams }: { searchPa
   const [plans, people] = await Promise.all([getServicePlans(staff.studioId), getStudioStaff(staff.studioId)]);
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/organizaciones" className="text-sm text-rose-deep underline-offset-4 hover:underline">
+      <Link href="/admin/organizaciones" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
         Organizaciones
       </Link>
       <div className="mt-2">
@@ -39,7 +39,7 @@ export default async function NuevaOrganizacionPage({ searchParams }: { searchPa
         </div>
       )}
       <form action={createOrganization} className="grid gap-6">
-        <fieldset className="grid gap-4 rounded-md border border-line bg-surface p-6 sm:grid-cols-2">
+        <fieldset className="grid gap-4 border border-line bg-surface p-6 sm:grid-cols-2">
           <legend className="px-1 font-semibold">Organización</legend>
           <AdminField label="Nombre de la organización" htmlFor="name" hint="Como la conocen en el estudio." className="sm:col-span-2">
             <Input id="name" name="name" required />
@@ -73,7 +73,7 @@ export default async function NuevaOrganizacionPage({ searchParams }: { searchPa
             <Textarea id="notes" name="notes" rows={3} />
           </AdminField>
         </fieldset>
-        <fieldset className="grid gap-4 rounded-md border border-line bg-surface p-6 sm:grid-cols-2">
+        <fieldset className="grid gap-4 border border-line bg-surface p-6 sm:grid-cols-2">
           <legend className="px-1 font-semibold">Primera razón social</legend>
           <LegalEntityFields k="alta" nameRequired={false} />
           <p className="text-sm text-muted sm:col-span-2">Si dejás la razón social vacía se usa el nombre de la organización.</p>

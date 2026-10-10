@@ -45,7 +45,7 @@ export default async function PreguntasAdminPage({ searchParams }: { searchParam
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/contenidos" className="text-sm text-rose-deep underline-offset-4 hover:underline">
+      <Link href="/admin/contenidos" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
         Contenidos
       </Link>
       <div className="mt-2">
@@ -62,7 +62,7 @@ export default async function PreguntasAdminPage({ searchParams }: { searchParam
 
       <div className="space-y-4">
         {faqs.map((f) => (
-          <div key={f.id} className="rounded-md border border-line bg-surface p-5">
+          <div key={f.id} className="border border-line bg-surface p-5">
             <form action={saveFaq} className="grid gap-3">
               <FaqFields faq={f} />
               <div className="flex gap-2">
@@ -79,8 +79,8 @@ export default async function PreguntasAdminPage({ searchParams }: { searchParam
         ))}
       </div>
 
-      <h2 className="mb-3 mt-10 text-lg font-semibold">Agregar pregunta</h2>
-      <form action={saveFaq} className="grid gap-3 rounded-md border border-dashed border-line p-5">
+      <h2 className="mb-3 mt-10 text-[18px] font-medium">Agregar pregunta</h2>
+      <form action={saveFaq} className="grid gap-3 border border-dashed border-line p-5">
         <FaqFields />
         <div>
           <SubmitButton>Agregar pregunta</SubmitButton>

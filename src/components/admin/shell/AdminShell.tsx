@@ -76,7 +76,7 @@ function Nav({
       {collapsed && tip && (
         <span role="tooltip" className="pointer-events-none fixed left-[84px] z-50 -translate-y-1/2 whitespace-nowrap border border-paper/15 bg-night px-2.5 py-1.5 text-[13px] text-paper" style={{ top: tip.top }}>
           {tip.label}
-          {tip.count > 0 && <span className="tabular ml-2 text-gold">{tip.count}</span>}
+          {tip.count > 0 && <span className="tabular ml-2 text-rose-light">{tip.count}</span>}
         </span>
       )}
       {NAV_GROUPS.filter((g) => !g.adminOnly || isAdmin).map((g) => (
@@ -105,14 +105,13 @@ function Nav({
                         active ? "bg-paper/[0.07] text-paper" : "text-paper/70 hover:bg-paper/[0.04] hover:text-paper",
                       )}
                     >
-                      {active && <span aria-hidden className="absolute inset-y-1.5 left-0 w-0.5 bg-gold" />}
                       <span className="relative shrink-0">
-                        <Icon className={cn("size-[18px]", active ? "text-gold" : "")} strokeWidth={1.5} aria-hidden />
-                        {collapsed && count > 0 && <span aria-hidden className="absolute -right-1 -top-1 size-2 bg-gold" />}
+                        <Icon className={cn("size-[18px]", active ? "text-rose-light" : "")} strokeWidth={1.5} aria-hidden />
+                        {collapsed && count > 0 && <span aria-hidden className="absolute -right-1 -top-1 size-2 bg-rose-light" />}
                       </span>
                       <span className={cn("flex-1 truncate transition-opacity duration-200", collapsed && "sr-only")}>{i.label}</span>
                       {count > 0 && (
-                        <span className={cn("tabular min-w-5 bg-gold px-1.5 text-center text-[12px] font-medium leading-5 text-night", collapsed && "sr-only")}>
+                        <span className={cn("tabular min-w-5 bg-rose-light px-1.5 text-center text-[12px] font-medium leading-5 text-night", collapsed && "sr-only")}>
                           {count}
                           <span className="sr-only"> {BADGE_LABEL[i.badge!]}</span>
                         </span>
@@ -232,11 +231,7 @@ export function AdminShell({
 
   const brand = (small: boolean) => (
     <Link href="/admin" className="flex items-center gap-3" aria-label="Estudio Cristofaro · Resumen">
-      <Sello className={cn("shrink-0 text-gold transition-[width,height] duration-200", small ? "size-8" : "size-10")} />
-      <span className={cn("leading-tight transition-opacity duration-200", small && "sr-only")}>
-        <span className="block font-display text-[17px] text-paper">Estudio Cristofaro</span>
-        <span className="block text-[12px] text-slate-light">Backoffice</span>
-      </span>
+      <Sello className={cn("shrink-0 text-rose-light transition-[width,height] duration-200", small ? "size-10" : "size-14")} />
     </Link>
   );
 
@@ -244,7 +239,7 @@ export function AdminShell({
     <div className="admin-shell min-h-dvh bg-paper text-ink">
       {/* Sidebar de escritorio */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col bg-night text-paper transition-[width] duration-200 ease-out lg:flex">
-        <div className={cn("flex h-16 items-center border-b border-paper/10", collapsed ? "justify-center px-0" : "px-5")}>{brand(collapsed)}</div>
+        <div className={cn("flex h-20 items-center border-b border-paper/10", collapsed ? "justify-center px-0" : "px-5")}>{brand(collapsed)}</div>
         <Nav collapsed={collapsed} isAdmin={isAdmin} badges={badges} />
         <div className="px-3 pb-2">
           <button

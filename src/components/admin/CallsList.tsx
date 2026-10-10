@@ -22,9 +22,9 @@ export async function CallsList({ studioId, where, upcoming = false, empty }: { 
     )
     .orderBy(upcoming ? asc(bookings.starts_at) : desc(bookings.starts_at))
     .limit(upcoming ? 6 : 20);
-  if (rows.length === 0) return <p className="rounded-md border border-dashed border-line p-4 text-sm text-muted">{empty}</p>;
+  if (rows.length === 0) return <p className="border border-dashed border-line p-4 text-sm text-muted">{empty}</p>;
   return (
-    <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+    <ul className="divide-y divide-line border border-line bg-surface">
       {rows.map(({ b, host }) => (
         <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
           <span className="min-w-0">
@@ -43,7 +43,7 @@ export async function CallsList({ studioId, where, upcoming = false, empty }: { 
               <Badge tone="warn">Próxima</Badge>
             )}
             {b.meet_url && b.status === "confirmada" && b.starts_at >= new Date() && (
-              <a href={b.meet_url} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-sm text-rose-deep hover:underline">
+              <a href={b.meet_url} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
                 <Video className="size-4" aria-hidden />
                 Meet
               </a>

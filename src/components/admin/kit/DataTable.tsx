@@ -230,7 +230,7 @@ export function DataTable({
                 type="submit"
                 className={cn(
                   "h-8 rounded-[2px] px-3 text-[13px] font-medium",
-                  b.tone === "secondary" ? "border border-paper/40 text-paper hover:border-paper" : "bg-gold text-night hover:bg-paper",
+                  b.tone === "secondary" ? "border border-paper/40 text-paper hover:border-paper" : "bg-rose-light text-night hover:bg-paper",
                 )}
               >
                 {b.label}

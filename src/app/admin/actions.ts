@@ -112,12 +112,14 @@ export async function signOut() {
 
 export async function moveLead(leadId: string, status: LeadStatus) {
   if (!LEAD_STATUSES.includes(status) || !UUID_RE.test(leadId)) return { ok: false };
-  const { studioId } = await requireStaff();
+  const staff = await requireStaff();
   const rows = await getDb()
     .update(leads)
     .set({ status })
-    .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)))
+    .where(and(eq(leads.id, leadId), eq(leads.studio_id, staff.studioId)))
     .returning({ id: leads.id });
+  if (rows.length)
+    await audit({ studioId: staff.studioId, actor: staff, action: "consultas.estado", entityType: "lead", entityId: leadId, metadata: { estado: status } });
   revalidatePath("/admin/consultas");
   revalidatePath("/admin");
   return { ok: rows.length > 0 };

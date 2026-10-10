@@ -79,7 +79,7 @@ export default async function TangoClientesPage({
 
   return (
     <div className="max-w-6xl">
-      <Link href="/admin/integraciones" className="text-sm text-rose-deep hover:underline">
+      <Link href="/admin/integraciones" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
         Integraciones
       </Link>
       <div className="mt-2">
@@ -120,11 +120,11 @@ export default async function TangoClientesPage({
       </form>
 
       {rows.length === 0 ? (
-        <p className="rounded-md border border-dashed border-line p-6 text-muted">
+        <p className="border border-dashed border-line p-6 text-muted">
           Todavía no hay clientes de Tango. Corré <code>node index.mjs sync</code> en la PC del conector.
         </p>
       ) : (
-        <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+        <ul className="divide-y divide-line border border-line bg-surface">
           {visible.map(({ record: r, data, linked, match }) => (
             <li key={r.id} id={r.id} className="grid scroll-mt-6 gap-3 px-4 py-3.5 lg:grid-cols-[1.3fr_1fr_1.2fr] lg:items-center">
               <div className="min-w-0">
@@ -138,7 +138,7 @@ export default async function TangoClientesPage({
                 {linked ? (
                   <span className="flex flex-wrap items-center gap-2">
                     <Badge tone="ok">Vinculado</Badge>
-                    <Link href={`/admin/organizaciones/${linked.org}`} className="text-rose-deep hover:underline">
+                    <Link href={`/admin/organizaciones/${linked.org}`} className="text-ink underline underline-offset-4 hover:text-rose-deep">
                       {linked.name}
                     </Link>
                   </span>

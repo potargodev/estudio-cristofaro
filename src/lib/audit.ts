@@ -84,6 +84,7 @@ export const AUDIT_LABELS: Record<string, string> = {
   "documento.eliminar": "Eliminó un documento",
   "vencimientos.importar": "Importó vencimientos",
   "vencimientos.estado": "Cambió el estado de un vencimiento",
+  "consultas.estado": "Movió una consulta de etapa",
   "tango.sincronizar": "Sincronización de Tango",
   "tango.vincular": "Vinculó un cliente de Tango",
   "tango.importar": "Importó un cliente de Tango",

@@ -32,7 +32,7 @@ export function LegalEntityFields({ le, k, nameRequired = true }: { le?: LegalEn
 
 export function OrganizationGeneralForm({ org }: { org: Organization }) {
   return (
-    <form action={updateOrganization} className="grid gap-4 rounded-md border border-line bg-surface p-6 sm:grid-cols-2">
+    <form action={updateOrganization} className="grid gap-4 border border-line bg-surface p-6 sm:grid-cols-2">
       <input type="hidden" name="id" value={org.id} />
       <AdminField label="Nombre de la organización" htmlFor="name" className="sm:col-span-2">
         <Input id="name" name="name" required defaultValue={org.name} />
@@ -72,12 +72,12 @@ export function LegalEntitiesSection({ orgId, entities, limitText }: { orgId: st
   return (
     <section className="space-y-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-semibold">Razones sociales</h2>
+        <h2 className="text-[18px] font-medium">Razones sociales</h2>
         <p className="text-sm text-muted">{limitText}</p>
       </div>
       <div className="space-y-2">
         {entities.map((le) => (
-          <details key={le.id} className="group rounded-md border border-line bg-surface">
+          <details key={le.id} className="group border border-line bg-surface">
             <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-4 py-3">
               <span className="min-w-0">
                 <span className="font-medium">{le.business_name}</span>
@@ -112,7 +112,7 @@ export function LegalEntitiesSection({ orgId, entities, limitText }: { orgId: st
           </details>
         ))}
       </div>
-      <details className="rounded-md border border-dashed border-line p-4">
+      <details className="border border-dashed border-line p-4">
         <summary className="cursor-pointer font-medium text-rose-deep">Agregar razón social</summary>
         <form action={saveLegalEntity} className="mt-3 grid gap-3 sm:grid-cols-2">
           <input type="hidden" name="organization_id" value={orgId} />

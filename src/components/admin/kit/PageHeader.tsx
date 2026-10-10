@@ -42,10 +42,10 @@ export function PageHeader({
               aria-current={t.active ? "page" : undefined}
               className={cn(
                 "-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-[14px] transition-colors",
-                t.active ? "border-gold-ink text-ink" : "border-transparent text-muted hover:text-ink",
+                t.active ? "border-rose-deep text-ink" : "border-transparent text-muted hover:text-ink",
               )}
             >
-              {t.icon && <t.icon className={cn("size-4", t.active ? "text-gold-ink" : "")} strokeWidth={1.5} aria-hidden />}
+              {t.icon && <t.icon className={cn("size-4", t.active ? "text-rose-deep" : "")} strokeWidth={1.5} aria-hidden />}
               {t.label}
               {!!t.count && <span className="tabular rounded-[2px] bg-navy-soft px-1.5 text-[12px] text-ink">{t.count}</span>}
             </Link>

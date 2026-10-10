@@ -21,7 +21,7 @@ export default async function NuevaConsultaPage({ searchParams }: { searchParams
           <Notice tone="error">{error === "nombre" ? "El nombre es obligatorio." : "No se pudo guardar. Probá de nuevo."}</Notice>
         </div>
       )}
-      <form action={createLead} className="grid gap-4 rounded-md border border-line bg-surface p-6 sm:grid-cols-2">
+      <form action={createLead} className="grid gap-4 border border-line bg-surface p-6 sm:grid-cols-2">
         <AdminField label="Nombre" htmlFor="name" className="sm:col-span-2">
           <Input id="name" name="name" required />
         </AdminField>

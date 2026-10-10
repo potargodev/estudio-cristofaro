@@ -5,6 +5,7 @@ import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, set
 import { isModuleAvailable } from "@/components/portal/modules/registry";
 import { deleteDocument, deleteObligation, replyRequest, saveObligation, uploadStudioDocument } from "@/app/admin/portal-actions";
 import { AdminField } from "@/components/admin/AdminField";
+import { StatusBadge } from "@/components/admin/kit/StatusBadge";
 import { adminButton } from "@/components/admin/styles";
 import { FormSelect, SubmitButton } from "@/components/admin/ui";
 import { Badge, obligationTone, requestTone } from "@/components/portal/ui";
@@ -71,10 +72,10 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
               aria-current={active === t.key ? "page" : undefined}
               className={cn(
                 "-mb-px inline-flex items-center gap-2 border-b-2 px-3 py-2.5 text-[14px] transition-colors",
-                active === t.key ? "border-gold-ink text-ink" : "border-transparent text-muted hover:text-ink",
+                active === t.key ? "border-rose-deep text-ink" : "border-transparent text-muted hover:text-ink",
               )}
             >
-              <t.icon className={cn("size-4", active === t.key && "text-gold-ink")} strokeWidth={1.5} aria-hidden />
+              <t.icon className={cn("size-4", active === t.key && "text-rose-deep")} strokeWidth={1.5} aria-hidden />
               {t.label}
               {!!counts[t.key] && <span className="tabular rounded-[2px] bg-navy-soft px-1.5 text-[12px] text-ink">{counts[t.key]}</span>}
             </Link>
@@ -150,9 +151,9 @@ export async function ObligationsTab({ orgId, studioId, entities }: { orgId: str
       </div>
 
       <div className="space-y-2">
-        {rows.length === 0 && <p className="rounded-md border border-dashed border-line p-5 text-muted">Todavía no hay vencimientos.</p>}
+        {rows.length === 0 && <p className="border border-dashed border-line p-5 text-muted">Todavía no hay vencimientos.</p>}
         {rows.map((o) => (
-          <details key={o.id} className="group rounded-md border border-line bg-surface">
+          <details key={o.id} className="group border border-line bg-surface">
             <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-4 py-3">
               <span>
                 <span className="font-medium">{o.tax}</span>
@@ -187,7 +188,7 @@ export async function ObligationsTab({ orgId, studioId, entities }: { orgId: str
         ))}
       </div>
 
-      <section className="rounded-md border border-dashed border-line p-5">
+      <section className="border border-dashed border-line p-5">
         <h2 className="mb-3 font-semibold">Cargar vencimiento</h2>
         <form action={saveObligation} className="grid gap-3">
           <input type="hidden" name="organization_id" value={orgId} />
@@ -207,9 +208,9 @@ const CATEGORY_OPTIONS = Object.entries(DOCUMENT_CATEGORIES)
   .map(([value, label]) => ({ value, label }));
 
 function DocList({ docs, orgId, highlightNew }: { docs: DocumentRow[]; orgId: string; highlightNew?: Set<string> }) {
-  if (docs.length === 0) return <p className="rounded-md border border-dashed border-line p-5 text-muted">Sin documentos.</p>;
+  if (docs.length === 0) return <p className="border border-dashed border-line p-5 text-muted">Sin documentos.</p>;
   return (
-    <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+    <ul className="divide-y divide-line border border-line bg-surface">
       {docs.map((d) => (
         <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
@@ -268,7 +269,7 @@ export async function DocumentsTab({
   }
   return (
     <div className="space-y-8">
-      <section className="rounded-md border border-line bg-surface p-5">
+      <section className="border border-line bg-surface p-5">
         <h2 className="font-semibold">Subir documento para la organización</h2>
         {error && (
           <p role="alert" className="mt-2 text-sm text-danger">
@@ -304,7 +305,7 @@ export async function DocumentsTab({
   );
 }
 
-const msgDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const msgDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 const REQUEST_STATUS_OPTIONS = Object.entries(REQUEST_STATUS).map(([value, label]) => ({ value, label }));
 
 /** Hilo de una solicitud con el formulario de respuesta (lo usan la ficha y /admin/solicitudes) */
@@ -312,10 +313,13 @@ export async function RequestThread({
   request: r,
   back,
   clientName,
+  meta,
 }: {
   request: typeof requests.$inferSelect;
   back: "ficha" | "solicitudes";
   clientName?: string;
+  /** Datos extra del encabezado (SLA, prioridad, responsable) */
+  meta?: React.ReactNode;
 }) {
   const messages = await getDb()
     .select({
@@ -328,50 +332,55 @@ export async function RequestThread({
       document_name: documents.name,
     })
     .from(request_messages)
+    .innerJoin(requests, and(eq(requests.id, request_messages.request_id), eq(requests.studio_id, r.studio_id)))
     .leftJoin(users, eq(users.id, request_messages.author_id))
     .leftJoin(documents, eq(documents.id, request_messages.document_id))
     .where(eq(request_messages.request_id, r.id))
     .orderBy(asc(request_messages.created_at));
   return (
-    <article id={r.id} className="scroll-mt-6 rounded-md border border-line bg-surface">
-      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-4 py-3">
-        <div>
-          <h3 className="font-semibold">{r.subject}</h3>
-          <p className="text-sm text-muted">
-            {clientName && (
-              <>
-                <Link href={`/admin/organizaciones/${r.organization_id}?tab=solicitudes#${r.id}`} className="text-rose-deep hover:underline">
-                  {clientName}
-                </Link>{" "}
-                ·{" "}
-              </>
-            )}
-            {REQUEST_TYPES[r.type]} · {msgDate.format(r.created_at)}
-          </p>
-        </div>
-        <Badge tone={requestTone(r.status)}>{REQUEST_STATUS[r.status]}</Badge>
-      </header>
-      <ol className="space-y-3 px-4 py-4">
-        {messages.map((m) => (
-          <li key={m.id} className={cn("rounded-md px-3 py-2.5", m.from_client ? "bg-paper" : "ml-6 bg-navy-soft")}>
-            <p className="text-xs text-muted">
-              {m.from_client ? (m.author ?? "Cliente") : `${m.author ?? "Estudio"} (estudio)`} · {msgDate.format(m.created_at)}
+    <article id={r.id} className="scroll-mt-20 border border-line bg-surface">
+      <header className="border-b border-line px-5 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-[16px] font-medium text-ink">{r.subject}</h3>
+            <p className="mt-0.5 text-[13px] text-muted">
+              {clientName && (
+                <>
+                  <Link href={`/admin/organizaciones/${r.organization_id}?tab=solicitudes#${r.id}`} className="text-ink underline-offset-4 hover:underline">
+                    {clientName}
+                  </Link>{" "}
+                  ·{" "}
+                </>
+              )}
+              {REQUEST_TYPES[r.type]} · {msgDate.format(r.created_at)}
             </p>
-            <p className="mt-1 whitespace-pre-line text-[15px] leading-relaxed">{m.body}</p>
+          </div>
+          <StatusBadge status={r.status} />
+        </div>
+        {meta && <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted">{meta}</div>}
+      </header>
+      <ol className="space-y-3 px-5 py-5">
+        {messages.map((m) => (
+          <li key={m.id} className={cn("max-w-[85%] border px-4 py-3", m.from_client ? "border-line bg-paper" : "ml-auto border-navy/15 bg-navy-soft")}>
+            <p className="text-[12px] text-muted">
+              {m.from_client ? (m.author ?? "Cliente") : `${m.author ?? "Estudio"} (estudio)`} · <span className="tabular">{msgDate.format(m.created_at)}</span>
+            </p>
+            <p className="mt-1 whitespace-pre-line text-[14px] leading-relaxed text-ink">{m.body}</p>
             {m.document_id && (
-              <a href={`/api/archivos/${m.document_id}`} className="mt-1.5 inline-flex items-center gap-1.5 text-sm text-rose-deep hover:underline">
-                <Paperclip className="size-4" aria-hidden />
+              <a href={`/api/archivos/${m.document_id}`} className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-ink underline underline-offset-4 hover:text-rose-deep">
+                <Paperclip className="size-4" strokeWidth={1.5} aria-hidden />
                 {m.document_name}
               </a>
             )}
           </li>
         ))}
+        {messages.length === 0 && <li className="text-[14px] text-muted">Sin mensajes.</li>}
       </ol>
-      <form action={replyRequest} className="grid gap-3 border-t border-line px-4 py-4 sm:grid-cols-[1fr_200px]">
+      <form action={replyRequest} className="grid gap-3 border-t border-line bg-paper/50 px-5 py-4 sm:grid-cols-[1fr_200px]">
         <input type="hidden" name="request_id" value={r.id} />
         <input type="hidden" name="back" value={back} />
         <AdminField label="Respuesta" htmlFor={`reply-${r.id}`} className="sm:col-span-2">
-          <Textarea id={`reply-${r.id}`} name="body" rows={3} />
+          <Textarea id={`reply-${r.id}`} name="body" rows={3} placeholder="Escribí la respuesta para el cliente…" />
         </AdminField>
         <AdminField label="Adjunto (opcional)" htmlFor={`file-${r.id}`}>
           <Input id={`file-${r.id}`} name="file" type="file" accept={ACCEPT_ATTR} className="h-auto py-1.5" />
@@ -399,7 +408,7 @@ export async function RequestsTab({ orgId, studioId }: { orgId: string; studioId
     .where(and(eq(requests.organization_id, orgId), eq(requests.studio_id, studioId)))
     .orderBy(asc(requests.status), desc(requests.updated_at));
   if (rows.length === 0)
-    return <p className="rounded-md border border-dashed border-line p-5 text-muted">La organización todavía no hizo solicitudes.</p>;
+    return <p className="border border-dashed border-line p-5 text-muted">La organización todavía no hizo solicitudes.</p>;
   return (
     <div className="space-y-4">
       {rows.map((r) => (
@@ -426,7 +435,7 @@ export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: s
             <Badge tone="warn">Sin responsable principal</Badge>
           </div>
         )}
-        <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+        <ul className="divide-y divide-line border border-line bg-surface">
           {team.length === 0 && <li className="px-4 py-5 text-muted">Todavía no hay nadie del estudio asignado.</li>}
           {team.map((t) => (
             <li key={t.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
@@ -464,7 +473,7 @@ export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: s
           ))}
         </ul>
       </section>
-      <section className="rounded-md border border-dashed border-line p-5">
+      <section className="border border-dashed border-line p-5">
         <h2 className="mb-3 font-semibold">Asignar a alguien del estudio</h2>
         <form action={assignStaff} className="grid gap-3">
           <input type="hidden" name="organization_id" value={orgId} />
@@ -518,15 +527,15 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
   ]);
   if (companies.length === 0 && records.length === 0) {
     return (
-      <div className="rounded-md border border-dashed border-line p-6 text-muted">
+      <div className="border border-dashed border-line p-6 text-muted">
         <p>Esta organización no está vinculada con Tango.</p>
         <p className="mt-2">
           Podés vincular sus razones sociales desde{" "}
-          <Link href="/admin/integraciones/tango/clientes" className="text-rose-deep hover:underline">
+          <Link href="/admin/integraciones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
             Clientes en Tango
           </Link>{" "}
           o asignarle una empresa de Tango en{" "}
-          <Link href="/admin/integraciones#empresas" className="text-rose-deep hover:underline">
+          <Link href="/admin/integraciones#empresas" className="text-ink underline underline-offset-4 hover:text-rose-deep">
             Integraciones
           </Link>
           . Sin Tango, todo funciona igual con importación de archivos.
@@ -539,7 +548,7 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
       {companies.length > 0 && (
         <section>
           <h2 className="mb-3 font-semibold">Empresas de Tango asignadas</h2>
-          <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+          <ul className="divide-y divide-line border border-line bg-surface">
             {companies.map((c) => (
               <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <span className="font-medium">
@@ -555,7 +564,7 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
       {records.length > 0 && (
         <section>
           <h2 className="mb-3 font-semibold">Clientes de Tango vinculados</h2>
-          <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+          <ul className="divide-y divide-line border border-line bg-surface">
             {records.map((r) => (
               <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <span>
@@ -582,7 +591,7 @@ function Meter({ label, used, max, extra }: { label: string; used: number; max: 
   const over = max != null && used > max;
   const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
   return (
-    <div className="rounded-md border border-line bg-surface p-4">
+    <div className="border border-line bg-surface p-4">
       <p className="text-sm text-muted">{label}</p>
       <p className={cn("mt-1 font-display text-3xl", over && "text-danger")}>
         {used}
@@ -610,7 +619,7 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
   return (
     <div className="space-y-8">
       <section className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-        <form action={setOrganizationPlan} className="rounded-md border border-line bg-surface p-5">
+        <form action={setOrganizationPlan} className="border border-line bg-surface p-5">
           <input type="hidden" name="organization_id" value={orgId} />
           <h2 className="font-semibold">Plan contratado</h2>
           <AdminField label="Plan" htmlFor="plan-select" className="mt-3">
@@ -652,7 +661,7 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
 
       <section>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-lg font-semibold">Módulos del catálogo</h2>
+          <h2 className="text-[18px] font-medium">Módulos del catálogo</h2>
           <p className="text-sm text-muted">Se activan sin tocar código. Los que todavía no tienen pantalla muestran “Próximamente” en el portal.</p>
         </div>
         <ul className="grid gap-3 md:grid-cols-2">
@@ -661,7 +670,7 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
             return (
               <li
                 key={m.key}
-                className={cn("flex flex-col justify-between gap-3 rounded-md border bg-surface p-4", on ? "border-rose/60" : "border-line")}
+                className={cn("flex flex-col justify-between gap-3 border bg-surface p-4", on ? "border-rose/60" : "border-line")}
               >
                 <div>
                   <p className="flex flex-wrap items-center gap-2 font-medium">
@@ -696,7 +705,7 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
         </ul>
       </section>
 
-      <section className="rounded-md border border-dashed border-line p-5">
+      <section className="border border-dashed border-line p-5">
         <h2 className="font-semibold">Excepción a los límites del plan</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
           Suma lugares por encima del plan sin cambiarlo (por ejemplo, una razón social más mientras se cotiza el upgrade). Queda registrada en la

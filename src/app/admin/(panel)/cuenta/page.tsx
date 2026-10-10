@@ -46,7 +46,7 @@ export default async function CuentaPage() {
               El estudio exige el segundo factor a todas las personas del equipo.
             </li>
             <li className="flex gap-2">
-              <KeyRound className="mt-0.5 size-4 shrink-0 text-gold-ink" aria-hidden />
+              <KeyRound className="mt-0.5 size-4 shrink-0 text-rose-deep" aria-hidden />
               ¿Perdiste el acceso o querés cambiar la contraseña? Pedile a un administrador que la resetee: vas a elegir una nueva al entrar y el 2FA
               sigue activo.
             </li>

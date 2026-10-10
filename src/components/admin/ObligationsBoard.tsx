@@ -183,7 +183,7 @@ export function ObligationsBoard({
               ))}
               <input type="hidden" name="status" value={status} />
               <input type="hidden" name="back" value={back} />
-              <button type="submit" className="h-8 rounded-[2px] bg-gold px-3 text-[13px] font-medium text-night hover:bg-paper">
+              <button type="submit" className="h-8 rounded-[2px] bg-rose-light px-3 text-[13px] font-medium text-night hover:bg-paper">
                 {label}
               </button>
             </form>

@@ -9,7 +9,7 @@ export default async function NuevaNovedadPage({ searchParams }: { searchParams:
   const { error } = await searchParams;
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/contenidos/novedades" className="text-sm text-rose-deep underline-offset-4 hover:underline">
+      <Link href="/admin/contenidos/novedades" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
         Novedades
       </Link>
       <div className="mt-2">

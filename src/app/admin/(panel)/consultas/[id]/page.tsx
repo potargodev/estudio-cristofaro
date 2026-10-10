@@ -56,7 +56,7 @@ export default async function ConsultaPage({
 
   return (
     <div className="max-w-5xl">
-      <Link href="/admin/consultas" className="text-sm text-rose-deep underline-offset-4 hover:underline">
+      <Link href="/admin/consultas" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
         Consultas
       </Link>
       <div className="mb-6 mt-2 flex flex-wrap items-start justify-between gap-4">
@@ -108,7 +108,7 @@ export default async function ConsultaPage({
       )}
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
-        <section className="rounded-md border border-line bg-surface p-6">
+        <section className="border border-line bg-surface p-6">
           <h2 className="font-semibold">Lo que nos contó</h2>
           <dl className="mt-4 space-y-3 text-[15px]">
             {[
@@ -146,7 +146,7 @@ export default async function ConsultaPage({
           </dl>
         </section>
 
-        <form action={updateLead} className="grid gap-4 rounded-md border border-line bg-surface p-6 sm:grid-cols-2">
+        <form action={updateLead} className="grid gap-4 border border-line bg-surface p-6 sm:grid-cols-2">
           <input type="hidden" name="id" value={lead.id} />
           <h2 className="font-semibold sm:col-span-2">Seguimiento</h2>
           <AdminField label="Estado" htmlFor="status">
@@ -194,7 +194,7 @@ export default async function ConsultaPage({
       </div>
 
       <section className="mt-10">
-        <h2 className="mb-3 text-lg font-semibold">Llamadas agendadas</h2>
+        <h2 className="mb-3 text-[18px] font-medium">Llamadas agendadas</h2>
         <CallsList studioId={studioId} where={eq(bookings.lead_id, lead.id)} empty="No agendó llamadas." />
       </section>
 

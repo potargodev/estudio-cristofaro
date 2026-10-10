@@ -185,7 +185,7 @@ export async function replyRequest(fd: FormData) {
     .from(requests)
     .where(and(eq(requests.id, requestId), eq(requests.studio_id, staff.studioId)));
   if (!req) redirect("/admin/solicitudes");
-  const back = s(fd, "back") === "solicitudes" ? "/admin/solicitudes" : fichaUrl(req.organization_id, "solicitudes");
+  const back = s(fd, "back") === "solicitudes" ? `/admin/solicitudes?id=${req.id}` : fichaUrl(req.organization_id, "solicitudes");
 
   const body = s(fd, "body");
   const status = s(fd, "status") as RequestStatus | null;

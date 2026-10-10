@@ -194,7 +194,7 @@ export default async function OrganizacionPage({
                 <p className="mt-1 text-[15px] text-muted">{lead ? `${lead.name} · ${lead.email}` : "Sin asignar."}</p>
                 <Link
                   href={`/admin/organizaciones/${org.id}?tab=equipo`}
-                  className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-gold-ink"
+                  className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep"
                 >
                   Gestionar equipo
                 </Link>
@@ -209,7 +209,7 @@ export default async function OrganizacionPage({
                 <div className="border border-line bg-surface p-5">
                   <h2 className="text-[16px] font-medium">Origen</h2>
                   <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
-                  <Link href={`/admin/consultas/${org.lead_id}`} className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-gold-ink">
+                  <Link href={`/admin/consultas/${org.lead_id}`} className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep">
                     Ver consulta original
                   </Link>
                 </div>

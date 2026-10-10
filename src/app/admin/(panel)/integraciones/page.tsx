@@ -59,14 +59,14 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
 
   return (
     <div className="max-w-5xl space-y-8">
-      <AdminPageHeader title="Integraciones" />
+      <AdminPageHeader title="Integraciones" description="Fuentes de datos externas. Todo lo que llega guarda origen, fecha de sincronización e ID externo; si Tango no está, se puede importar por archivo." />
       {guardado && <Notice>Cambios guardados.</Notice>}
       {error && <Notice tone="error">No se pudo guardar. Revisá los datos.</Notice>}
 
-      <section className="rounded-md border border-line bg-surface p-6">
+      <section className="border border-line bg-surface p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <h2 className="flex items-center gap-2 text-[18px] font-medium">
               Tango Gestión {state && <Badge tone={state.tone}>{state.label}</Badge>}
             </h2>
             <p className="mt-1 max-w-2xl text-[15px] text-muted">
@@ -101,7 +101,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
             <div>
               <dt className="text-sm text-muted">Clientes en Tango</dt>
               <dd>
-                <Link href="/admin/integraciones/tango/clientes" className="text-rose-deep hover:underline">
+                <Link href="/admin/integraciones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
                   {records.n} sincronizados
                 </Link>
               </dd>
@@ -127,14 +127,14 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
       {tango && (
         <>
           <section id="empresas">
-            <h2 className="text-lg font-semibold">Empresas de Tango</h2>
+            <h2 className="text-[18px] font-medium">Empresas de Tango</h2>
             <p className="mt-1 text-[15px] text-muted">
               Si el estudio usa una empresa de Tango por cada cliente, asigná cada empresa a su organización en la plataforma.
             </p>
             {companies.length === 0 ? (
-              <p className="mt-3 rounded-md border border-dashed border-line p-5 text-muted">Aparecen después de la primera prueba o sincronización del conector.</p>
+              <p className="mt-3 border border-dashed border-line p-5 text-muted">Aparecen después de la primera prueba o sincronización del conector.</p>
             ) : (
-              <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
+              <ul className="mt-3 divide-y divide-line border border-line bg-surface">
                 {companies.map((c) => (
                   <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                     <div>
@@ -165,13 +165,13 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold">Últimas sincronizaciones</h2>
+            <h2 className="text-[18px] font-medium">Últimas sincronizaciones</h2>
             {syncs.length === 0 ? (
-              <p className="mt-3 rounded-md border border-dashed border-line p-5 text-muted">
+              <p className="mt-3 border border-dashed border-line p-5 text-muted">
                 Todavía no hubo sincronizaciones. En la PC de Tango corré <code>node index.mjs test</code> y después <code>node index.mjs sync</code>.
               </p>
             ) : (
-              <div className="mt-3 overflow-x-auto rounded-md border border-line bg-surface">
+              <div className="mt-3 overflow-x-auto border border-line bg-surface">
                 <table className="w-full min-w-[640px] text-left text-sm">
                   <thead className="border-b border-line bg-paper text-muted">
                     <tr>
@@ -204,8 +204,8 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
             )}
           </section>
 
-          <section id="mapeo" className="rounded-md border border-line bg-surface p-6">
-            <h2 className="text-lg font-semibold">Mapeo de campos</h2>
+          <section id="mapeo" className="border border-line bg-surface p-6">
+            <h2 className="text-[18px] font-medium">Mapeo de campos</h2>
             <p className="mt-1 max-w-3xl text-[15px] text-muted">
               Nombres de campo que se buscan en el JSON de cada cliente de Tango, en orden y sin distinguir mayúsculas. Si un dato no aparece, agregá
               el nombre que trae su Tango. El JSON completo queda guardado, así que el cambio aplica también a lo ya sincronizado.

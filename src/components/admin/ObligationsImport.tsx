@@ -20,7 +20,7 @@ export function ObligationsImport() {
 
   return (
     <div className="space-y-6">
-      <form action={previewAction} className="flex flex-wrap items-end gap-3 rounded-md border border-line bg-surface p-5">
+      <form action={previewAction} className="flex flex-wrap items-end gap-3 border border-line bg-surface p-5">
         <div>
           <Label htmlFor="import-file" className="mb-1 text-sm">
             Archivo
@@ -38,7 +38,7 @@ export function ObligationsImport() {
       </form>
 
       {result.message && (
-        <p role="status" className={cn("rounded-md px-4 py-3", result.ok ? "bg-navy-soft text-navy-deep" : "bg-danger/10 text-danger")}>
+        <p role="status" className={cn("px-4 py-3", result.ok ? "bg-navy-soft text-navy-deep" : "bg-danger/10 text-danger")}>
           {result.message}
         </p>
       )}
@@ -57,7 +57,7 @@ export function ObligationsImport() {
               </Button>
             </form>
           </div>
-          <div className="overflow-x-auto rounded-md border border-line bg-surface">
+          <div className="overflow-x-auto border border-line bg-surface">
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="border-b border-line bg-paper text-muted">
                 <tr>
