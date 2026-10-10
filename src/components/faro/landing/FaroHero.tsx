@@ -3,10 +3,10 @@ import { MaskText } from "@/components/web/MaskText";
 import { Container, CtaLink, TextLink } from "@/components/web/ui";
 
 const TODAY = [
-  { label: "Vencimientos esta semana", value: 18, tone: "text-gold" },
-  { label: "Documentos nuevos de clientes", value: 42, tone: "text-paper" },
-  { label: "Solicitudes por responder", value: 7, tone: "text-rose-light" },
-  { label: "Propuestas de la IA para aprobar", value: 3, tone: "text-paper" },
+  { label: "Gastos que anotó el Vigía este mes", value: 42, tone: "text-gold" },
+  { label: "Grupos de gastos activos", value: 3, tone: "text-paper" },
+  { label: "Mensajes sin leer", value: 5, tone: "text-rose-light" },
+  { label: "Propuestas de la IA para aprobar", value: 2, tone: "text-paper" },
 ];
 
 /** Torre del faro en línea fina, con el foco encendido */
@@ -37,10 +37,10 @@ export function FaroHero() {
               Para personas, autónomos y estudios contables
             </p>
             <MaskText as="h1" className="display-hero mt-8 text-paper">
-              Tu gestión y tus finanzas, a la vista.
+              Hablale al Vigía. Tu plata, a la vista.
             </MaskText>
             <p className="mt-8 max-w-xl text-[17px] leading-relaxed text-paper/75">
-              Faro es una herramienta, no un estudio contable. Empezá gratis con Bitácora para tus finanzas personales; si sos autónomo, facturá y sabé cuánto pagar; si sos contador, gestioná tu cartera y conectá a tus clientes. Creada por contadores.
+              Contale tus gastos al Vigía con un audio, un texto o la foto del ticket: los anota en tu Bitácora, los divide con tus amigos en un grupo y te responde cuánto gastaste. Si sos autónomo, Faro Personal te ordena los números; si sos contador, gestionás tu cartera y tus clientes. Faro es una herramienta, no un estudio contable. Creada por contadores.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-6">
               <CtaLink tone="gold" href="/faro/registro?tipo=persona">Empezá gratis</CtaLink>
@@ -59,7 +59,7 @@ export function FaroHero() {
               <Lighthouse />
             </div>
             <div className="border border-hair-strong bg-navy-deep/80 p-6 backdrop-blur-sm">
-              <p className="text-[13px] text-paper/60">Hoy en tu estudio</p>
+              <p className="text-[13px] text-paper/60">Hoy en tu Faro</p>
               <ul className="mt-4 divide-y divide-hair">
                 {TODAY.map((t) => (
                   <li key={t.label} className="flex items-baseline justify-between gap-4 py-3">
@@ -73,7 +73,7 @@ export function FaroHero() {
           </div>
         </div>
         <ul className="mt-16 grid border-t border-hair text-[13px] text-paper/65 sm:grid-cols-3">
-          {["Bitácora gratis, la puerta de entrada", "IA que propone, una persona que aprueba", "Creada por contadores, para todos"].map((g, i) => (
+          {["Vigía y Bitácora gratis, desde el celular", "IA que propone, una persona que aprueba", "Creada por contadores, para todos"].map((g, i) => (
             <li key={g} className="flex items-center gap-3 border-b border-hair py-3 sm:border-b-0 sm:border-l sm:px-4 sm:first:border-l-0 sm:first:pl-0">
               <span className="tabular text-gold">0{i + 1}</span>
               {g}

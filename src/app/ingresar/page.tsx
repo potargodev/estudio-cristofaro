@@ -46,6 +46,9 @@ export default async function IngresarPage({ searchParams }: { searchParams: Pro
             Empezá gratis
           </Link>
           <p className="mt-3 text-[13px] text-paper/50">
+            <Link href="/faro" className="text-paper underline underline-offset-4 hover:text-rose-light">
+              ¿Qué es Faro?
+            </Link>{" "}
             ¿Sos autónomo o tenés un estudio?{" "}
             <Link href="/faro/registro" className="text-paper underline underline-offset-4 hover:text-rose-light">
               Elegí tu tipo de cuenta

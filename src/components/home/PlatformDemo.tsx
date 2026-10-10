@@ -426,6 +426,9 @@ export function PlatformDemo() {
               ))}
             </dl>
             <p className="mt-8 text-[13px] text-paper/60 lg:mt-auto">
+              <a href="/faro" className="mb-3 block text-paper/75 underline-offset-4 hover:text-paper hover:underline">
+                Con tecnología de Faro →
+              </a>
               Incluida en todos los planes.{" "}
               <a href="#planes" className="u-draw pb-0.5 text-paper">
                 Ver planes

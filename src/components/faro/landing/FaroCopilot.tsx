@@ -149,6 +149,7 @@ export function FaroCopilot() {
               <li>· Gratis para empezar, desde el teléfono.</li>
               <li>· Tu Bitácora es privada: no la ve nadie más.</li>
               <li>· La IA propone, vos confirmás.</li>
+              <li>· Mensajes con tu grupo, tu estudio o tu Flota, en tiempo real.</li>
             </ul>
             <CtaLink tone="gold" href="/faro/registro?tipo=persona" className="mt-9">
               Empezá gratis
