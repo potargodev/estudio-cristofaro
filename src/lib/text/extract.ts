@@ -5,7 +5,7 @@ import { readSheet } from "read-excel-file/node";
 // Texto de un archivo para la IA (herramienta leer_documento y adjuntos del
 // Asistente). Es una lectura básica: texto plano, CSV, planillas XLSX y PDF con
 // texto embebido. Las imágenes y los PDF escaneados quedan para la lectura
-// inteligente (F5).
+// inteligente.
 
 export const MAX_TEXT_CHARS = 40_000;
 
@@ -13,7 +13,7 @@ export type Extracted = { ok: true; text: string; truncated: boolean } | { ok: f
 
 function done(text: string): Extracted {
   const clean = text.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
-  if (!clean) return { ok: false, reason: "El archivo no tiene texto legible (puede ser un escaneo: la lectura inteligente llega en la F5)." };
+  if (!clean) return { ok: false, reason: "El archivo no tiene texto legible (puede ser un escaneo: la lectura inteligente llega más adelante)." };
   return { ok: true, text: clean.slice(0, MAX_TEXT_CHARS), truncated: clean.length > MAX_TEXT_CHARS };
 }
 

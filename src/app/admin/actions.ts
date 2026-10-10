@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { faqs, leads, posts, service_plans, sessions, users } from "@/db/schema";
 import { requireAdmin, requireStaff } from "@/lib/auth";
+import { takeAfterLogin } from "@/lib/after-login";
 import { audit, requestIp } from "@/lib/audit";
 import { AUTH_ERRORS, getAuth, type AuthErrorCode } from "@/lib/auth-server";
 import type { LeadStatus, UserRole } from "@/lib/types";
@@ -96,7 +97,7 @@ export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionSt
     if (e.status !== "UNAUTHORIZED" && e.status !== "BAD_REQUEST") console.error("[auth] Error al iniciar sesión", error);
     return { ok: false, message: "Email o contraseña incorrectos." };
   }
-  redirect(twoFactor ? "/admin/login/verificar" : "/admin");
+  redirect(twoFactor ? "/admin/login/verificar" : await takeAfterLogin());
 }
 
 export async function signOut() {

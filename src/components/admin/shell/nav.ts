@@ -48,6 +48,7 @@ export const NAV_GROUPS: { title: string; adminOnly?: boolean; items: NavItem[] 
     items: [
       { href: "/admin/asistente", label: "Asistente", icon: "asistente" },
       { href: "/admin/aprobaciones", label: "Aprobaciones", icon: "aprobaciones", badge: "approvals" },
+      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp" },
     ],
   },
   { title: "Sitio web", items: [{ href: "/admin/contenidos", label: "Contenidos", icon: "contenidos" }] },
@@ -57,7 +58,6 @@ export const NAV_GROUPS: { title: string; adminOnly?: boolean; items: NavItem[] 
     items: [
       { href: "/admin/usuarios", label: "Usuarios", icon: "usuarios", adminOnly: true },
       { href: "/admin/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true },
-      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp", adminOnly: true },
       { href: "/admin/ia/configuracion", label: "IA", icon: "ia", adminOnly: true },
     ],
   },

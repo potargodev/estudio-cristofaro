@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
+import { takeAfterLogin } from "@/lib/after-login";
 import { audit } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth";
 import { getAuth } from "@/lib/auth-server";
@@ -49,7 +50,7 @@ export async function verifySecondFactor(_prev: VerifyState, fd: FormData): Prom
       message: backup ? "Código de respaldo incorrecto o ya usado." : "Código incorrecto. Revisá la hora del teléfono y probá con el código nuevo.",
     };
   }
-  redirect("/admin");
+  redirect(await takeAfterLogin());
 }
 
 export interface SetupState {
