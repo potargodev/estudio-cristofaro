@@ -29,7 +29,7 @@ const notices: Record<string, string> = {
   activado: "Usuario reactivado.",
 };
 
-const STAFF_ROLES = ["admin", "contador"] as const;
+const STAFF_ROLES = ["admin", "contador", "colaborador"] as const;
 
 export default async function UsuariosPage({
   searchParams,
@@ -45,7 +45,7 @@ export default async function UsuariosPage({
     .orderBy(desc(users.active), asc(users.name));
 
   const notice = Object.keys(notices).find((k) => params[k]);
-  const error = params.error ? (errors[params.error] ?? errors.guardar) : null;
+  const error = params.error ? (params.error === "limite" && params.msg ? params.msg : (errors[params.error] ?? errors.guardar)) : null;
 
   return (
     <div className="max-w-5xl">

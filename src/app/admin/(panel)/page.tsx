@@ -44,7 +44,7 @@ function mondayOf(d: Date) {
 
 // ───────────── Indicadores ─────────────
 
-async function Stats({ studioId }: { studioId: string }) {
+async function Stats({ studioId, commercial }: { studioId: string; commercial: boolean }) {
   const db = getDb();
   const now = new Date();
   const monday = mondayOf(now);
@@ -137,7 +137,7 @@ async function Stats({ studioId }: { studioId: string }) {
         }
         href="/admin/solicitudes"
       />
-      <StatCard
+      {commercial && <StatCard
         icon={UserRound}
         label="Consultas nuevas del mes"
         value={thisMonth.length}
@@ -145,7 +145,7 @@ async function Stats({ studioId }: { studioId: string }) {
         hint={`Conversión ${thisMonth.length ? Math.round((won / thisMonth.length) * 100) : 0}%`}
         spark={leadSpark}
         href="/admin/consultas"
-      />
+      />}
     </div>
   );
 }
@@ -291,7 +291,7 @@ async function Attention({ studioId }: { studioId: string }) {
 
 // ───────────── Gráficos ─────────────
 
-async function Charts({ studioId }: { studioId: string }) {
+async function Charts({ studioId, commercial }: { studioId: string; commercial: boolean }) {
   const db = getDb();
   const now = new Date();
   const monday = mondayOf(now);
@@ -353,13 +353,13 @@ async function Charts({ studioId }: { studioId: string }) {
           ]}
         />
       </Panel>
-      <Panel title="Consultas por origen" icon={UserRound} className="xl:col-span-3" action={<span className="text-muted">Últimos 90 días</span>}>
+      {commercial && <Panel title="Consultas por origen" icon={UserRound} className="xl:col-span-3" action={<span className="text-muted">Últimos 90 días</span>}>
         {sources.length === 0 ? (
           <EmptyState icon={UserRound} title="Todavía no hay consultas" text="Cuando lleguen desde la web, WhatsApp o la agenda, las vas a ver acá." />
         ) : (
           <BarChart caption="Consultas por origen en los últimos 90 días" data={sources} series={[{ key: "consultas", label: "Consultas", color: "#1c2235" }]} height={180} />
         )}
-      </Panel>
+      </Panel>}
     </div>
   );
 }
@@ -456,7 +456,7 @@ export default async function AdminHome() {
       <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que pasa hoy en el estudio y lo que necesita tu atención." />
       <div className="grid gap-6">
         <Suspense fallback={<StatRowSkeleton />}>
-          <Stats studioId={user.studioId} />
+          <Stats studioId={user.studioId} commercial={user.role !== "colaborador"} />
         </Suspense>
         <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
           <Suspense fallback={<PanelSkeleton rows={6} />}>
@@ -472,7 +472,7 @@ export default async function AdminHome() {
           </div>
         </div>
         <Suspense fallback={<ChartSkeleton className="h-80" />}>
-          <Charts studioId={user.studioId} />
+          <Charts studioId={user.studioId} commercial={user.role !== "colaborador"} />
         </Suspense>
       </div>
     </>

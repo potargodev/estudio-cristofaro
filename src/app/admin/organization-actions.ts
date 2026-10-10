@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { leads, legal_entities, organization_modules, organization_staff, organizations, service_plans, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { requireStaff } from "@/lib/auth";
+import { organizationLimitError } from "@/lib/faro/entitlements";
+import { requireOperator } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { getModule, isModuleKey } from "@/lib/modules/catalog";
 import { checkLimit, getOrgLimits, studioOrganization } from "@/lib/organizations";
@@ -66,7 +67,7 @@ async function studioStaff(userId: string | null, studioId: string) {
   const [u] = await getDb()
     .select({ id: users.id })
     .from(users)
-    .where(and(eq(users.id, userId), eq(users.studioId, studioId), inArray(users.role, ["admin", "contador"]), eq(users.active, true)));
+    .where(and(eq(users.id, userId), eq(users.studioId, studioId), inArray(users.role, ["admin", "contador", "colaborador"]), eq(users.active, true)));
   return u?.id ?? null;
 }
 
@@ -80,9 +81,11 @@ async function studioPlan(planId: string | null, studioId: string) {
 }
 
 export async function createOrganization(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const name = s(fd, "name");
   if (!name) redirect("/admin/organizaciones/nueva?error=nombre");
+  const limit = await organizationLimitError(staff.studioId);
+  if (limit) redirect(`/admin/organizaciones/nueva?error=limite&msg=${encodeURIComponent(limit)}`);
   const plan = await studioPlan(s(fd, "service_plan_id"), staff.studioId);
   let created: { organizationId: string } | null = null;
   let code: string | undefined;
@@ -115,7 +118,7 @@ export async function createOrganization(fd: FormData) {
 }
 
 export async function updateOrganization(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const status = s(fd, "status") as OrganizationStatus | null;
@@ -156,7 +159,7 @@ export async function updateOrganization(fd: FormData) {
 // ───────────── razones sociales ─────────────
 
 export async function saveLegalEntity(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const id = s(fd, "id");
@@ -215,7 +218,7 @@ export async function saveLegalEntity(fd: FormData) {
 }
 
 export async function deleteLegalEntity(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const id = s(fd, "id");
@@ -248,7 +251,7 @@ export async function deleteLegalEntity(fd: FormData) {
 // ───────────── equipo del estudio ─────────────
 
 export async function assignStaff(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const userId = await studioStaff(s(fd, "user_id"), staff.studioId);
@@ -282,7 +285,7 @@ export async function assignStaff(fd: FormData) {
 }
 
 export async function removeStaff(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const userId = s(fd, "user_id");
@@ -316,7 +319,7 @@ const REGIME_BY_TYPE: Record<string, TaxRegime> = {
 
 /** "Convertir consulta en cliente": crea la organización y su razón social con los datos de la consulta */
 export async function convertLeadToOrganization(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const leadId = s(fd, "id");
   if (!leadId || !isUuid(leadId)) return;
   const db = getDb();
@@ -326,6 +329,8 @@ export async function convertLeadToOrganization(fd: FormData) {
     .where(and(eq(leads.id, leadId), eq(leads.studio_id, staff.studioId)));
   if (!lead) redirect("/admin/consultas");
   if (lead.organization_id) redirect(ficha(lead.organization_id));
+  const limit = await organizationLimitError(staff.studioId);
+  if (limit) redirect(`/admin/consultas/${lead.id}?error=${encodeURIComponent(limit)}`);
 
   let orgId: string | null = null;
   try {
@@ -366,7 +371,7 @@ export async function convertLeadToOrganization(fd: FormData) {
 // ───────────── plan, módulos y excepciones ─────────────
 
 export async function setOrganizationPlan(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const planId = s(fd, "service_plan_id");
@@ -396,7 +401,7 @@ export async function setOrganizationPlan(fd: FormData) {
 
 /** Activa o desactiva un módulo del catálogo (al activar, respeta el límite del plan) */
 export async function setOrganizationModule(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const key = s(fd, "module_key");
@@ -445,7 +450,7 @@ export async function setOrganizationModule(fd: FormData) {
 
 /** Excepción explícita a los límites del plan: requiere motivo y queda auditada */
 export async function setLimitOverrides(fd: FormData) {
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const org = await studioOrganization(s(fd, "organization_id"), staff.studioId);
   if (!org) redirect("/admin/organizaciones");
   const reason = s(fd, "reason");

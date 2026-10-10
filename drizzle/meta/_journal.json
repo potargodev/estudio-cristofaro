@@ -71,6 +71,13 @@
       "when": 1791639135298,
       "tag": "0009_f2_ia_mcp_conexiones",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791643424985,
+      "tag": "0010_f1_nucleo_faro",
+      "breakpoints": true
     }
   ]
 }

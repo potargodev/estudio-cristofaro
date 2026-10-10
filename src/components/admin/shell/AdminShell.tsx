@@ -20,6 +20,8 @@ import {
   ShieldCheck,
   Sparkles,
   Waypoints,
+  Compass,
+  Wallet,
   Search,
   UserRound,
   Users,
@@ -32,9 +34,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { RouteReveal } from "@/components/app/RouteReveal";
 import { cn } from "@/lib/utils";
 import { Avatar } from "../kit/Avatar";
+import { FaroLogo } from "../kit/FaroLogo";
 import { Sello } from "../kit/Sello";
 import { CommandPalette } from "./CommandPalette";
-import { askFaroHref, BADGE_LABEL, crumbs, NAV_GROUPS, primaryAction, sidebarStorageKey as storageKey, type BadgeKey, type NavIcon } from "./nav";
+import { askFaroHref, BADGE_LABEL, crumbs, primaryAction, sidebarStorageKey as storageKey, visibleGroups, type BadgeKey, type NavAccess, type NavIcon } from "./nav";
 
 const ICONS: Record<NavIcon, LucideIcon> = {
   resumen: LayoutDashboard,
@@ -50,6 +53,8 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   aprobaciones: ShieldCheck,
   mcp: Waypoints,
   ia: Sparkles,
+  faro: Compass,
+  gastos: Wallet,
 };
 
 /** Barra inferior del celular, como en una app: las cuatro secciones de todos los días y "Más" (abre el menú completo) */
@@ -103,7 +108,7 @@ function BottomBar({ badges, onMore, moreOpen }: { badges: Record<BadgeKey, numb
   );
 }
 
-const ROLE_LABEL: Record<string, string> = { admin: "Administrador", contador: "Contador" };
+const ROLE_LABEL: Record<string, string> = { admin: "Dueño", contador: "Contador", colaborador: "Colaborador" };
 
 export interface ShellUser {
   id: string;
@@ -114,12 +119,12 @@ export interface ShellUser {
 
 function Nav({
   collapsed,
-  isAdmin,
+  access,
   badges,
   onNavigate,
 }: {
   collapsed: boolean;
-  isAdmin: boolean;
+  access: NavAccess;
   badges: Record<BadgeKey, number>;
   onNavigate?: () => void;
 }) {
@@ -139,14 +144,13 @@ function Nav({
           {tip.count > 0 && <span className="tabular ml-2 text-rose-light">{tip.count}</span>}
         </span>
       )}
-      {NAV_GROUPS.filter((g) => !g.adminOnly || isAdmin).map((g) => (
+      {visibleGroups(access).map((g) => (
         <div key={g.title} className="mb-4">
           <p className={cn("mb-1 h-5 px-3 text-[12px] text-slate-light transition-opacity duration-200", collapsed && "opacity-0")} aria-hidden={collapsed}>
             {g.title}
           </p>
           <ul>
             {g.items
-              .filter((i) => !i.adminOnly || isAdmin)
               .map((i) => {
                 const active = i.exact ? pathname === i.href : pathname.startsWith(i.href);
                 const Icon = ICONS[i.icon];
@@ -240,13 +244,20 @@ function UserMenu({ user, collapsed, signOut }: { user: ShellUser; collapsed: bo
  */
 export function AdminShell({
   user,
-  isAdmin,
+  access,
   badges,
   signOut,
   children,
+  studioName,
+  assisted,
+  endAssisted,
 }: {
   user: ShellUser;
-  isAdmin: boolean;
+  access: NavAccess;
+  studioName: string;
+  /** Acceso asistido del equipo de Faro en curso */
+  assisted?: { studioName: string; expiresAt: string } | null;
+  endAssisted?: () => void | Promise<void>;
   badges: Record<BadgeKey, number>;
   signOut: () => void | Promise<void>;
   children: React.ReactNode;
@@ -286,14 +297,14 @@ export function AdminShell({
   }, [toggle]);
   useEffect(() => setDrawer(false), [pathname]);
 
-  const action = primaryAction(pathname);
+  const action = primaryAction(pathname, access.isOperator);
   const searchParams = useSearchParams();
   const askHref = askFaroHref(pathname, searchParams);
   const trail = crumbs(pathname);
 
   const brand = (small: boolean) => (
-    <Link href="/admin" className="flex items-center gap-3" aria-label="Estudio Cristofaro · Resumen">
-      <Sello className={cn("shrink-0 text-rose-light transition-[width,height] duration-200", small ? "size-10" : "size-14")} />
+    <Link href="/admin" className="flex min-w-0 items-center gap-3" aria-label={`Faro · ${studioName} · Resumen`}>
+      {small ? <Sello className="size-10 shrink-0 text-gold" title="Faro" /> : <FaroLogo sub={studioName} />}
     </Link>
   );
 
@@ -302,7 +313,7 @@ export function AdminShell({
       {/* Sidebar de escritorio */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[var(--sb)] flex-col bg-night text-paper transition-[width] duration-200 ease-out lg:flex">
         <div className={cn("flex h-20 items-center border-b border-paper/10", collapsed ? "justify-center px-0" : "px-5")}>{brand(collapsed)}</div>
-        <Nav collapsed={collapsed} isAdmin={isAdmin} badges={badges} />
+        <Nav collapsed={collapsed} access={access} badges={badges} />
         <div className="px-3 pb-2">
           <button
             type="button"
@@ -331,7 +342,7 @@ export function AdminShell({
                 <X className="size-5" aria-hidden />
               </button>
             </div>
-            <Nav collapsed={false} isAdmin={isAdmin} badges={badges} onNavigate={() => setDrawer(false)} />
+            <Nav collapsed={false} access={access} badges={badges} onNavigate={() => setDrawer(false)} />
             <UserMenu user={user} collapsed={false} signOut={signOut} />
           </aside>
         </div>
@@ -390,12 +401,27 @@ export function AdminShell({
             </Link>
           )}
         </header>
+        {assisted && (
+          <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2 text-[13px] text-[#7a5410] sm:px-6 lg:px-8">
+            <span>
+              <strong className="font-medium">Acceso asistido de Faro</strong> a {assisted.studioName} hasta{" "}
+              {new Date(assisted.expiresAt).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })}. Todo lo que hagas queda en la auditoría del estudio.
+            </span>
+            {endAssisted && (
+              <form action={endAssisted}>
+                <button type="submit" className="font-medium underline underline-offset-4">
+                  Terminar el acceso
+                </button>
+              </form>
+            )}
+          </div>
+        )}
         <main id="contenido" className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pb-8">
           <RouteReveal>{children}</RouteReveal>
         </main>
       </div>
       <BottomBar badges={badges} onMore={() => setDrawer(true)} moreOpen={drawer} />
-      <CommandPalette open={search} onClose={() => setSearch(false)} isAdmin={isAdmin} />
+      <CommandPalette open={search} onClose={() => setSearch(false)} access={access} />
     </div>
   );
 }

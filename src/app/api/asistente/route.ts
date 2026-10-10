@@ -7,6 +7,7 @@ import { assistantToolContext, assistantTools, loadMessages, ownConversation, re
 import { parseContextRefs, type ContextRef } from "@/lib/ai/context";
 import { budgetBlock, languageModel, recordUsage, resolveModel } from "@/lib/ai/models";
 import { staffForApi } from "@/lib/auth";
+import { aiCanAct } from "@/lib/faro/entitlements";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -98,6 +99,8 @@ export async function POST(request: Request) {
   ]);
 
   const ctx = assistantToolContext(user, conversation.id);
+  // Señal y Destello: la IA solo consulta (sin herramientas de escritura)
+  ctx.canWrite = await aiCanAct(user.studioId);
   const tools = await assistantTools(ctx);
   const convId = conversation.id;
   const result = streamText({

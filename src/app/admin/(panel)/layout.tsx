@@ -4,8 +4,10 @@ import { AdminShell } from "@/components/admin/shell/AdminShell";
 import { sidebarBootScript } from "@/components/admin/shell/nav";
 import { Toaster } from "@/components/ui/sonner";
 import { getDb, isDbConfigured } from "@/db";
-import { approvals, leads, obligations, requests } from "@/db/schema";
+import { approvals, leads, obligations, requests, studios } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
+import { SITE_STUDIO_SLUG } from "@/lib/faro/tenants";
+import { endAssistedAccess } from "@/app/faro-manager/actions";
 import { signOut } from "../actions";
 
 export const metadata: Metadata = {
@@ -33,7 +35,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const today = new Date().toISOString().slice(0, 10);
   const inAWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
   // Badges del menú: pendientes de cada bandeja (siempre del estudio de la sesión)
-  const [[req], [lead], [due], [appr]] = await Promise.all([
+  const [[req], [lead], [due], [appr], [studio]] = await Promise.all([
     db
       .select({ n: count() })
       .from(requests)
@@ -57,6 +59,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       .select({ n: count() })
       .from(approvals)
       .where(and(eq(approvals.studio_id, user.studioId), eq(approvals.status, "pendiente"), eq(approvals.level, "sensible"))),
+    db.select({ name: studios.name, slug: studios.slug }).from(studios).where(eq(studios.id, user.studioId)),
   ]);
 
   return (
@@ -64,7 +67,10 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       <script dangerouslySetInnerHTML={{ __html: sidebarBootScript(user.id) }} />
       <AdminShell
         user={{ id: user.id, name: user.name, email: user.email, role: user.role }}
-        isAdmin={user.role === "admin"}
+        access={{ isAdmin: user.role === "admin", isOperator: user.role !== "colaborador", hasSite: studio?.slug === SITE_STUDIO_SLUG(), isFaro: Boolean(user.faroRole) }}
+        studioName={studio?.name ?? "Estudio"}
+        assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}
+        endAssisted={endAssistedAccess}
         badges={{ requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0, approvals: appr?.n ?? 0 }}
         signOut={signOut}
       >

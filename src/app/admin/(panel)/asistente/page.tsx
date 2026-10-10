@@ -13,7 +13,7 @@ import { parseContextParam } from "@/lib/ai/context";
 import { getProviders, resolveModel } from "@/lib/ai/models";
 import { requireStaff } from "@/lib/auth";
 import { externalToolMeta } from "@/modules/connectors/mcp-externo/meta";
-import { maxLevel, TOOLS, toolAllowed } from "@/modules/tools";
+import { maxLevel, TOOLS, toolAllowed, type StaffRole } from "@/modules/tools";
 import { iaTabs } from "../ia/tabs";
 
 export const metadata: Metadata = { title: "Asistente" };
@@ -90,7 +90,7 @@ export default async function AsistentePage({ searchParams }: { searchParams: Pr
     current ? Promise.resolve([]) : resolveContext(user.studioId, parseContextParam(sp.contexto)),
   ]);
 
-  const role = user.role === "admin" ? "admin" : "contador";
+  const role = user.role as StaffRole;
   const toolMeta = Object.fromEntries(
     TOOLS.filter((t) => toolAllowed(t, { actor: { id: user.id, email: user.email, name: user.name, role }, modules: null })).map((t) => [t.name, { title: t.title, level: maxLevel(t) }]),
   );

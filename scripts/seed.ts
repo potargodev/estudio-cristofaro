@@ -11,7 +11,8 @@ import { faqs, plans, service_plans, studios, users } from "../src/db/schema";
 import { SERVICE_PLANS } from "../src/lib/service-plans";
 import { createUserWithPassword } from "../src/lib/users";
 
-const STUDIO = { slug: process.env.STUDIO_SLUG || "cristofaro", name: "Estudio Cristofaro & Asociados" };
+// Estudio Cristofaro es el cliente cero de Faro: plan Horizonte
+const STUDIO = { slug: process.env.STUDIO_SLUG || "cristofaro", name: "Estudio Cristofaro & Asociados", plan_key: "horizonte", created_via: "seed" };
 
 // Planes de referencia (completar price_label con los montos reales desde el backoffice)
 const PLANS = [
@@ -154,6 +155,11 @@ async function main() {
         if (password.length < 8) throw new Error("ADMIN_PASSWORD tiene que tener al menos 8 caracteres.");
         await createUserWithPassword(db, { studioId: studio.id, name: "Administrador", email, password, role: "admin" });
         console.log(`Usuario admin: ${email} creado.`);
+      }
+      // El admin del estudio cliente cero es owner del equipo de Faro (si no se configuró otro)
+      if (!process.env.FARO_OWNER_EMAIL || process.env.FARO_OWNER_EMAIL.trim().toLowerCase() === email) {
+        await db.update(users).set({ faroRole: "owner" }).where(eq(users.email, email));
+        console.log(`Faro Manager: ${email} es owner.`);
       }
     }
   } finally {

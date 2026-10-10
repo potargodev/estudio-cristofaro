@@ -24,7 +24,7 @@ export const conexionesTools = [
       "Datos traídos de las conexiones del estudio (Xubio, Tango, archivos de Holistor/Bejerman, Google Drive): clientes, comprobantes de venta y compra, asientos y archivos. Cada registro trae fuente, fecha de sincronización, ID externo, estado de validación y el registro original.",
     module: "conexiones",
     level: "lectura",
-    roles: ["admin", "contador"],
+    roles: ["admin", "contador", "colaborador"],
     input: z.object({
       fuente: z.string().max(30).optional().describe("xubio, tango, holistor, bejerman, generico, google_drive"),
       recurso: z.enum(RECURSOS).optional(),
@@ -118,7 +118,7 @@ export const conexionesTools = [
       "Totales de comprobantes de venta y compra sincronizados (Xubio u otras fuentes) por organización en un rango de fechas: cantidad e importe total de cada tipo.",
     module: "conexiones",
     level: "lectura",
-    roles: ["admin", "contador"],
+    roles: ["admin", "contador", "colaborador"],
     input: z.object({
       organizacion_id: uuid("ID de la organización"),
       desde: fecha.optional(),

@@ -32,7 +32,7 @@ export const vencimientosTools = [
       "Vencimientos impositivos de las organizaciones, ordenados por fecha. Se puede filtrar por organización, estado y rango de fechas (AAAA-MM-DD). Sin rango muestra desde hoy en adelante.",
     module: "vencimientos",
     level: "lectura",
-    roles: ["admin", "contador"],
+    roles: ["admin", "contador", "colaborador"],
     input: z.object({
       organizacion_id: uuid("ID de la organización").optional(),
       estados: z.array(z.enum(ESTADOS)).optional(),
@@ -84,7 +84,7 @@ export const vencimientosTools = [
     module: "vencimientos",
     input: crearInput,
     level: (i) => (i.importe != null || i.link_pago || i.avisar_al_cliente ? "sensible" : "escritura"),
-    roles: ["admin", "contador"],
+    roles: ["admin", "contador", "colaborador"],
     async organizationOf(input) {
       return input.organizacion_id;
     },

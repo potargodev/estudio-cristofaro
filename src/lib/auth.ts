@@ -4,10 +4,12 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/db";
-import { memberships, organization_modules, organizations } from "@/db/schema";
+import { users } from "@/db/schema";
+import { assisted_access, memberships, organization_modules, organizations, studios } from "@/db/schema";
 import { audit } from "./audit";
 import { getAuth } from "./auth-server";
 import { can, type OrgRole, type Permission } from "./permissions";
+import { homeFor, isStudioRole } from "./roles";
 import type { UserRole } from "./types";
 
 export interface StaffUser {
@@ -18,7 +20,15 @@ export interface StaffUser {
   studioId: string;
   mustChangePassword: boolean;
   twoFactorEnabled: boolean;
+  /** Equipo de Faro: owner | soporte */
+  faroRole: "owner" | "soporte" | null;
+  /** Acceso asistido vigente: el usuario de Faro opera dentro de otro tenant */
+  assisted: { id: string; studioName: string; expiresAt: Date; homeStudioId: string } | null;
+  /** Tenant suspendido por el Faro Manager */
+  tenantSuspended: boolean;
 }
+
+export const ASSISTED_COOKIE = "faro_asistido";
 
 /** Sesión válida del pedido actual (consulta la base) o null. */
 export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
@@ -31,7 +41,10 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
     mustChangePassword?: boolean;
   };
   if (!u.studioId || u.active === false) return null;
-  return {
+  const db = getDb();
+  const [row] = await db.select({ faroRole: users.faroRole, status: studios.status }).from(users).innerJoin(studios, eq(studios.id, users.studioId)).where(eq(users.id, u.id));
+  const faroRole = row?.faroRole === "owner" || row?.faroRole === "soporte" ? row.faroRole : null;
+  const base: StaffUser = {
     id: u.id,
     name: u.name,
     email: u.email,
@@ -39,7 +52,23 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
     studioId: u.studioId,
     mustChangePassword: Boolean(u.mustChangePassword),
     twoFactorEnabled: Boolean(u.twoFactorEnabled),
+    faroRole,
+    assisted: null,
+    tenantSuspended: row?.status === "suspendido",
   };
+  // Acceso asistido: solo el equipo de Faro, con 2FA, con un permiso vigente y propio
+  const grantId = (await cookies()).get(ASSISTED_COOKIE)?.value;
+  if (faroRole && base.twoFactorEnabled && grantId && /^[0-9a-f-]{36}$/i.test(grantId)) {
+    const [g] = await db
+      .select({ id: assisted_access.id, studioId: assisted_access.studio_id, expiresAt: assisted_access.expires_at, ended: assisted_access.ended_at, name: studios.name, status: studios.status })
+      .from(assisted_access)
+      .innerJoin(studios, eq(studios.id, assisted_access.studio_id))
+      .where(and(eq(assisted_access.id, grantId), eq(assisted_access.faro_user_id, u.id)));
+    if (g && !g.ended && g.expiresAt > new Date()) {
+      return { ...base, studioId: g.studioId, role: "admin", tenantSuspended: g.status === "suspendido", assisted: { id: g.id, studioName: g.name, expiresAt: g.expiresAt, homeStudioId: u.studioId } };
+    }
+  }
+  return base;
 });
 
 /**
@@ -50,13 +79,44 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
 export async function requireStaff(): Promise<StaffUser> {
   const user = await getCurrentUser();
   if (!user) redirect("/admin/login");
-  // Un cliente nunca entra al backoffice: va a su portal
-  if (user.role === "cliente") redirect("/portal");
-  if (user.role !== "admin" && user.role !== "contador") redirect("/admin/sin-acceso");
+  // Un cliente o un autónomo nunca entran al backoffice del estudio: van a su panel
+  if (user.role === "cliente" || user.role === "autonomo") redirect(homeFor(user.role));
+  if (!isStudioRole(user.role)) redirect("/admin/sin-acceso");
   // Contraseña temporal (reset-password): nada del backoffice hasta cambiarla
   if (user.mustChangePassword) redirect("/admin/cambiar-clave");
   // Segundo factor obligatorio para el estudio: hasta configurarlo, solo esa pantalla
   if (!user.twoFactorEnabled) redirect("/admin/seguridad");
+  // Tenant suspendido por Faro: nada del backoffice (salvo el acceso asistido)
+  if (user.tenantSuspended && !user.assisted) redirect("/admin/suspendido");
+  return user;
+}
+
+/** Dueño o contador: lo que el colaborador no hace (consultas comerciales, alta y edición de organizaciones) */
+export async function requireOperator(): Promise<StaffUser> {
+  const user = await requireStaff();
+  if (user.role === "colaborador") {
+    await audit({ studioId: user.studioId, actor: user, action: "permiso.denegado", result: "denegado", metadata: { rol: "colaborador" } });
+    redirect("/admin/sin-permiso");
+  }
+  return user;
+}
+
+/** Autónomo de Faro Personal en su panel */
+export async function requirePersonal(): Promise<StaffUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/ingresar");
+  if (user.role !== "autonomo") redirect(homeFor(user.role));
+  if (user.tenantSuspended) redirect("/personal/suspendido");
+  return user;
+}
+
+/** Equipo de Faro (Faro Manager): owner o soporte, con 2FA */
+export async function requireFaro(owner = false): Promise<StaffUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/admin/login");
+  if (!user.faroRole) redirect(homeFor(user.role));
+  if (!user.twoFactorEnabled) redirect("/admin/seguridad");
+  if (owner && user.faroRole !== "owner") redirect("/faro-manager");
   return user;
 }
 
@@ -117,7 +177,8 @@ export const getMemberships = cache(async (userId: string, studioId: string): Pr
 export const requireMember = cache(async (permission?: Permission): Promise<PortalUser> => {
   const user = await getCurrentUser();
   if (!user) redirect("/portal/login");
-  if (user.role !== "cliente") redirect("/admin");
+  if (user.role !== "cliente") redirect(homeFor(user.role));
+  if (user.tenantSuspended) redirect("/portal/sin-acceso");
   const list = await getMemberships(user.id, user.studioId);
   if (list.length === 0) redirect("/portal/sin-acceso");
   const wanted = (await cookies()).get(ORG_COOKIE)?.value;
@@ -153,7 +214,8 @@ export const requireMember = cache(async (permission?: Permission): Promise<Port
  */
 export async function staffForApi(): Promise<StaffUser | null> {
   const user = await getCurrentUser();
-  if (!user || (user.role !== "admin" && user.role !== "contador")) return null;
+  if (!user || !isStudioRole(user.role)) return null;
   if (user.mustChangePassword || !user.twoFactorEnabled) return null;
+  if (user.tenantSuspended && !user.assisted) return null;
   return user;
 }

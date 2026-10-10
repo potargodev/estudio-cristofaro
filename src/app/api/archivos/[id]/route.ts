@@ -6,6 +6,7 @@ import { getCurrentUser, getMemberships } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { isUuid } from "@/lib/ids";
 import { readStored } from "@/lib/uploads";
+import { isStudioRole } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     .where(and(eq(documents.id, id), eq(documents.studio_id, user.studioId)));
   if (!doc) return notFound();
 
-  let allowed = user.role === "admin" || user.role === "contador";
+  let allowed = isStudioRole(user.role) && (!user.tenantSuspended || Boolean(user.assisted));
   if (user.role === "cliente") {
     const membership = (await getMemberships(user.id, user.studioId)).find((m) => m.organizationId === doc.organization_id);
     if (membership && can(membership.role, "documentos.ver")) allowed = true;

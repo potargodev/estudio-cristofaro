@@ -5,7 +5,7 @@ import { getDb } from "@/db";
 import { ai_conversations, ai_messages, approvals, documents, organizations, requests } from "@/db/schema";
 import type { StaffUser } from "@/lib/auth";
 import { externalAssistantTools } from "@/modules/connectors/mcp-externo/tools";
-import { executeTool, inputJsonSchema, toolAllowed, TOOLS, type ToolContext, type ToolOutcome } from "@/modules/tools";
+import { executeTool, inputJsonSchema, toolAllowed, TOOLS, type StaffRole, type ToolContext, type ToolOutcome } from "@/modules/tools";
 import type { ContextItem, ContextRef } from "./context";
 
 // Piezas del Asistente: contexto de herramientas, prompt de sistema,
@@ -14,7 +14,7 @@ import type { ContextItem, ContextRef } from "./context";
 export function assistantToolContext(user: StaffUser, conversationId: string): ToolContext {
   return {
     studioId: user.studioId,
-    actor: { id: user.id, email: user.email, name: user.name, role: user.role === "admin" ? "admin" : "contador" },
+    actor: { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole },
     origin: "asistente",
     organizationIds: null,
     modules: null,
@@ -104,7 +104,7 @@ export function systemPrompt(user: StaffUser, studioName: string, context: Conte
         .map((c) => `- ${c.kind}: ${c.label}${c.hint ? ` (${c.hint})` : ""} · id ${c.id}`)
         .join("\n")}`
     : "";
-  return `Sos Faro, el asistente de gestión del ${studioName}, un estudio contable de Argentina. Hablás con ${user.name} (${user.role === "admin" ? "administrador" : "contador"} del estudio). Hoy es ${today}.
+  return `Sos Faro, el asistente de gestión del ${studioName}, un estudio contable de Argentina. Hablás con ${user.name} (${user.role === "admin" ? "dueño" : user.role} del estudio). Hoy es ${today}.
 
 Cómo trabajás:
 - Respondé en español rioplatense (voseo), claro y preciso, como un colega del estudio. Usá markdown: listas cortas y tablas cuando haya varios datos.

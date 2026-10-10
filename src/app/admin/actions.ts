@@ -6,9 +6,10 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { faqs, leads, posts, service_plans, sessions, users } from "@/db/schema";
-import { requireAdmin, requireStaff } from "@/lib/auth";
+import { requireAdmin, requireOperator, requireStaff } from "@/lib/auth";
 import { takeAfterLogin } from "@/lib/after-login";
 import { audit, requestIp } from "@/lib/audit";
+import { staffLimitError } from "@/lib/faro/entitlements";
 import { AUTH_ERRORS, getAuth, type AuthErrorCode } from "@/lib/auth-server";
 import type { LeadStatus, UserRole } from "@/lib/types";
 import { createUserWithPassword } from "@/lib/users";
@@ -57,7 +58,7 @@ function pgCode(error: unknown): string | undefined {
 }
 
 const LEAD_STATUSES: LeadStatus[] = ["nuevo", "contactado", "presupuesto", "ganado", "perdido"];
-const STAFF_ROLES: UserRole[] = ["admin", "contador"];
+const STAFF_ROLES: UserRole[] = ["admin", "contador", "colaborador"];
 
 function revalidateSite() {
   revalidatePath("/", "layout");
@@ -113,7 +114,7 @@ export async function signOut() {
 
 export async function moveLead(leadId: string, status: LeadStatus) {
   if (!LEAD_STATUSES.includes(status) || !UUID_RE.test(leadId)) return { ok: false };
-  const staff = await requireStaff();
+  const staff = await requireOperator();
   const rows = await getDb()
     .update(leads)
     .set({ status })
@@ -127,7 +128,7 @@ export async function moveLead(leadId: string, status: LeadStatus) {
 }
 
 export async function createLead(fd: FormData) {
-  const user = await requireStaff();
+  const user = await requireOperator();
   const name = s(fd, "name");
   if (!name) redirect("/admin/consultas/nueva?error=nombre");
   const source = s(fd, "source");
@@ -168,7 +169,7 @@ async function staffOfStudio(userId: string | null, studioId: string) {
 }
 
 export async function updateLead(fd: FormData) {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const leadId = id(fd);
   if (!leadId) return;
   const status = s(fd, "status") as LeadStatus | null;
@@ -196,7 +197,7 @@ export async function updateLead(fd: FormData) {
 }
 
 export async function deleteLead(fd: FormData) {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const leadId = id(fd);
   if (leadId)
     await getDb()
@@ -209,7 +210,7 @@ export async function deleteLead(fd: FormData) {
 // ───────────── novedades ─────────────
 
 export async function savePost(fd: FormData) {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const postId = id(fd);
   const title = s(fd, "title");
   if (!title) redirect(postId ? `/admin/contenidos/novedades/${postId}?error=titulo` : "/admin/contenidos/novedades/nueva?error=titulo");
@@ -258,7 +259,7 @@ export async function savePost(fd: FormData) {
 }
 
 export async function deletePost(fd: FormData) {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const postId = id(fd);
   if (postId)
     await getDb()
@@ -271,7 +272,7 @@ export async function deletePost(fd: FormData) {
 // ───────────── preguntas frecuentes ─────────────
 
 export async function saveFaq(fd: FormData) {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const faqId = id(fd);
   const question = s(fd, "question");
   const answer = s(fd, "answer");
@@ -294,7 +295,7 @@ export async function saveFaq(fd: FormData) {
 }
 
 export async function deleteFaq(fd: FormData) {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const faqId = id(fd);
   if (faqId)
     await getDb()
@@ -308,7 +309,7 @@ export async function deleteFaq(fd: FormData) {
 
 /** Precio publicado de un plan del brief (solo el texto que muestra la web) */
 export async function savePlanPrice(fd: FormData) {
-  const user = await requireStaff();
+  const user = await requireOperator();
   const planId = id(fd);
   if (!planId) redirect("/admin/contenidos/planes");
   const price = (s(fd, "price_label") ?? "").slice(0, 80) || null;
@@ -342,6 +343,8 @@ export async function createStaffUser(fd: FormData) {
   if (!name || !email || !password) redirect("/admin/usuarios?error=campos");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) redirect("/admin/usuarios?error=email");
   if (password.length < 8) redirect("/admin/usuarios?error=password");
+  const limit = await staffLimitError(admin.studioId);
+  if (limit) redirect(`/admin/usuarios?error=limite&msg=${encodeURIComponent(limit)}`);
 
   let result = "creado=1";
   try {

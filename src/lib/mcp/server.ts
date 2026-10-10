@@ -4,21 +4,21 @@ import { CallToolRequestSchema, ListToolsRequestSchema, type CallToolResult } fr
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { mcp_accesses, mcp_calls, type users } from "@/db/schema";
-import { executeTool, getTool, inputJsonSchema, maxLevel, TOOLS, toolAllowed, type ToolContext, type ToolModule } from "@/modules/tools";
+import { executeTool, getTool, inputJsonSchema, maxLevel, TOOLS, toolAllowed, type StaffRole, type ToolContext, type ToolModule } from "@/modules/tools";
 import type { McpAccess } from "./tokens";
 
 // Faro como servidor MCP: expone las herramientas del registro con los límites
 // del acceso (módulos, lectura/escritura y organizaciones) y el rol de quien
 // lo creó. Cada llamada queda en mcp_calls y en la auditoría (executeTool).
 
-export function mcpToolContext(access: McpAccess, user: typeof users.$inferSelect): ToolContext {
+export function mcpToolContext(access: McpAccess, user: typeof users.$inferSelect, planCanWrite = true): ToolContext {
   return {
     studioId: access.studio_id,
-    actor: { id: user.id, email: user.email, name: user.name, role: user.role === "admin" ? "admin" : "contador" },
+    actor: { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole },
     origin: "mcp",
     organizationIds: access.organization_ids ?? null,
     modules: access.modules.length ? (access.modules as ToolModule[]) : null,
-    canWrite: access.can_write,
+    canWrite: access.can_write && planCanWrite,
     mcpAccessId: access.id,
   };
 }
@@ -39,8 +39,8 @@ const LEVEL_HINT = {
   sensible: "Acción sensible: NO se ejecuta directo, crea una propuesta en la bandeja de Aprobaciones de Faro.",
 };
 
-export function createFaroMcpServer(access: McpAccess, user: typeof users.$inferSelect) {
-  const ctx = mcpToolContext(access, user);
+export function createFaroMcpServer(access: McpAccess, user: typeof users.$inferSelect, planCanWrite = true) {
+  const ctx = mcpToolContext(access, user, planCanWrite);
   const visible = TOOLS.filter((t) => toolAllowed(t, ctx) && (ctx.canWrite || maxLevel(t) === "lectura"));
   const server = new Server(
     { name: "faro", title: "Faro", version: "1.0.0" },

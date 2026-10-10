@@ -10,7 +10,7 @@ import { StatusBadge } from "@/components/admin/kit/StatusBadge";
 import { LeadBoard, type BoardLead } from "@/components/admin/LeadBoard";
 import { getDb } from "@/db";
 import { audit_log, leads } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 import { likeTerm } from "@/lib/search";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES } from "@/lib/types";
 
@@ -22,7 +22,7 @@ const shortDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "sho
 export default async function ConsultasPage({ searchParams }: { searchParams: Promise<{ q?: string; vista?: string }> }) {
   const { q, vista } = await searchParams;
   const view = vista === "tabla" ? "tabla" : "tablero";
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const db = getDb();
 
   const term = q ? likeTerm(q) : null;

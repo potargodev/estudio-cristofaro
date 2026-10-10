@@ -8,7 +8,7 @@ import type { z } from "zod/v4";
 
 export type ToolLevel = "lectura" | "escritura" | "sensible";
 export type ToolOrigin = "asistente" | "mcp" | "flujo";
-export type StaffRole = "admin" | "contador";
+export type StaffRole = "admin" | "contador" | "colaborador" | "autonomo";
 
 /** Módulos del registro (los alcances de MCP se eligen por módulo) */
 export const TOOL_MODULES = {

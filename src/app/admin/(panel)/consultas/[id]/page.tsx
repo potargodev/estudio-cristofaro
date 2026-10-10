@@ -9,7 +9,7 @@ import { SubmitButton, FormSelect } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { bookings, leads, users } from "@/db/schema";
 import { CallsList } from "@/components/admin/CallsList";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { site } from "@/lib/site";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES } from "@/lib/types";
@@ -35,7 +35,7 @@ export default async function ConsultaPage({
 }) {
   const { id } = await params;
   const { guardado, error } = await searchParams;
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   if (!isUuid(id)) notFound();
   const db = getDb();
 
@@ -47,7 +47,7 @@ export default async function ConsultaPage({
     db
       .select({ id: users.id, name: users.name, active: users.active })
       .from(users)
-      .where(and(eq(users.studioId, studioId), inArray(users.role, ["admin", "contador"])))
+      .where(and(eq(users.studioId, studioId), inArray(users.role, ["admin", "contador", "colaborador"])))
       .orderBy(asc(users.name)),
   ]);
   if (!lead) notFound();
@@ -103,7 +103,7 @@ export default async function ConsultaPage({
       )}
       {error && (
         <div className="mb-4">
-          <Notice tone="error">No se pudo convertir en cliente. Revisá que el CUIT no esté repetido.</Notice>
+          <Notice tone="error">{error.length > 20 ? error : "No se pudo convertir en cliente. Revisá que el CUIT no esté repetido."}</Notice>
         </div>
       )}
 

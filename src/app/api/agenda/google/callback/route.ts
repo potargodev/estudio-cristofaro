@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { audit } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth";
+import { isStudioRole } from "@/lib/roles";
 import { connectCalendar } from "@/lib/agenda/google";
 import { getSiteUrl } from "@/lib/runtime-config";
 
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const back = (q: string) => NextResponse.redirect(new URL(`/admin/agenda?tab=disponibilidad&${q}`, getSiteUrl()));
   const user = await getCurrentUser();
-  if (!user || (user.role !== "admin" && user.role !== "contador") || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
+  if (!user || !isStudioRole(user.role) || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
   const sp = request.nextUrl.searchParams;
   const state = request.cookies.get("agenda_oauth_state")?.value;
   const res = (r: NextResponse) => {

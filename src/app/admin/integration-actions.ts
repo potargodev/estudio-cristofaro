@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { integrations, legal_entities, tango_companies, tango_records } from "@/db/schema";
 import { audit } from "@/lib/audit";
+import { hasModule, organizationLimitError } from "@/lib/faro/entitlements";
 import { requireAdmin } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { studioOrganization } from "@/lib/organizations";
@@ -43,6 +44,8 @@ export interface KeyState {
 /** Activa Tango (si hace falta) y genera una clave nueva. La clave anterior deja de funcionar. */
 export async function generateTangoKey(_prev: KeyState, _fd: FormData): Promise<KeyState> {
   const admin = await requireAdmin();
+  // El conector local de Tango es de Rumbo en adelante (en Señal, Tango por archivos)
+  if (!(await hasModule(admin.studioId, "tango"))) return { ok: false, message: "El conector local de Tango está incluido desde el plan Rumbo. En Señal podés importar las exportaciones de Tango desde Conexiones → Archivos." };
   const { key, hash, prefix } = generateConnectorKey();
   const db = getDb();
   const current = await getTango(admin.studioId);
@@ -193,6 +196,8 @@ export async function importTangoClient(fd: FormData) {
   const record = await tangoClientRecord(s(fd, "record_id"), admin.studioId);
   if (!record) redirect(CLIENTS);
   const integration = await getTango(admin.studioId);
+  const limit = await organizationLimitError(admin.studioId);
+  if (limit) redirect(`${CLIENTS}?error=limite#${record.id}`);
   const data = describeClient(record.raw, getMapping(integration?.settings));
   const db = getDb();
   const name = data.name ?? `Cliente de Tango ${record.external_id}`;

@@ -6,7 +6,7 @@ import { LegalEntityFields } from "@/components/admin/OrganizationForms";
 import { FormSelect, SubmitButton } from "@/components/admin/ui";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 import { getServicePlans, getStudioStaff } from "@/lib/organizations";
 
 export const metadata: Metadata = { title: "Nueva organización" };
@@ -17,9 +17,9 @@ const ERRORS: Record<string, string> = {
   guardar: "No se pudo guardar. Probá de nuevo.",
 };
 
-export default async function NuevaOrganizacionPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { error } = await searchParams;
-  const staff = await requireStaff();
+export default async function NuevaOrganizacionPage({ searchParams }: { searchParams: Promise<{ error?: string; msg?: string }> }) {
+  const { error, msg } = await searchParams;
+  const staff = await requireOperator();
   const [plans, people] = await Promise.all([getServicePlans(staff.studioId), getStudioStaff(staff.studioId)]);
   return (
     <div className="max-w-3xl">
@@ -35,7 +35,7 @@ export default async function NuevaOrganizacionPage({ searchParams }: { searchPa
       </p>
       {error && (
         <div className="mb-4">
-          <Notice tone="error">{ERRORS[error] ?? ERRORS.guardar}</Notice>
+          <Notice tone="error">{error === "limite" && msg ? msg : (ERRORS[error] ?? ERRORS.guardar)}</Notice>
         </div>
       )}
       <form action={createOrganization} className="grid gap-6">

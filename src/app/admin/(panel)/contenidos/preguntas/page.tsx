@@ -6,7 +6,7 @@ import { AdminField, AdminPageHeader, Notice } from "@/components/admin/AdminFie
 import { SubmitButton, FormCheckbox } from "@/components/admin/ui";
 import { getDb } from "@/db";
 import { faqs as faqsTable } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 import type { Faq } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,7 +36,7 @@ function FaqFields({ faq }: { faq?: Faq }) {
 
 export default async function PreguntasAdminPage({ searchParams }: { searchParams: Promise<{ guardado?: string; error?: string }> }) {
   const { guardado, error } = await searchParams;
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const faqs: Faq[] = await getDb()
     .select()
     .from(faqsTable)

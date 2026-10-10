@@ -6,6 +6,7 @@ import { AccessChooser } from "@/components/auth/AccessChooser";
 import { isDbConfigured } from "@/db";
 import { getCurrentUser } from "@/lib/auth";
 import { AUTH_ERRORS, googleEnabled } from "@/lib/auth-server";
+import { homeFor } from "@/lib/roles";
 
 export const metadata: Metadata = { title: "Ingresar", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -25,7 +26,7 @@ function errorText(code?: string) {
 export default async function IngresarPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
   const user = isDbConfigured ? await getCurrentUser().catch(() => null) : null;
-  if (user) redirect(user.role === "cliente" ? "/portal" : "/admin");
+  if (user) redirect(homeFor(user.role));
   return (
     <main className="flex min-h-dvh flex-col bg-navy text-paper">
       <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(3rem+env(safe-area-inset-top))]">

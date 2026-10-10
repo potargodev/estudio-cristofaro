@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { getDb } from "@/db";
 import { posts as postsTable } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 import { adminButton } from "@/components/admin/styles";
 import { EmptyState } from "@/components/admin/kit/Panel";
 import { StatusBadge } from "@/components/admin/kit/StatusBadge";
@@ -13,7 +13,7 @@ import { Newspaper } from "lucide-react";
 export const metadata: Metadata = { title: "Novedades" };
 
 export default async function NovedadesAdminPage() {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const posts = await getDb()
     .select({ id: postsTable.id, title: postsTable.title, slug: postsTable.slug, published: postsTable.published })
     .from(postsTable)

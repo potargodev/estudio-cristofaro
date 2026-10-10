@@ -14,7 +14,9 @@ export type NavIcon =
   | "asistente"
   | "aprobaciones"
   | "mcp"
-  | "ia";
+  | "ia"
+  | "faro"
+  | "gastos";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -24,9 +26,30 @@ export interface NavItem {
   exact?: boolean;
   badge?: BadgeKey;
   adminOnly?: boolean;
+  /** Oculto para el colaborador */
+  operatorOnly?: boolean;
 }
 
-export const NAV_GROUPS: { title: string; adminOnly?: boolean; items: NavItem[] }[] = [
+interface NavGroup {
+  title: string;
+  adminOnly?: boolean;
+  operatorOnly?: boolean;
+  /** Solo el estudio dueño del sitio público (STUDIO_SLUG) */
+  siteOnly?: boolean;
+  /** Solo el equipo de Faro */
+  faroOnly?: boolean;
+  items: NavItem[];
+}
+
+/** Qué puede ver quien está en el panel (se calcula en el servidor) */
+export interface NavAccess {
+  isAdmin: boolean;
+  isOperator: boolean;
+  hasSite: boolean;
+  isFaro: boolean;
+}
+
+export const NAV_GROUPS: NavGroup[] = [
   { title: "General", items: [{ href: "/admin", label: "Resumen", icon: "resumen", exact: true }] },
   {
     title: "Clientes",
@@ -38,6 +61,7 @@ export const NAV_GROUPS: { title: string; adminOnly?: boolean; items: NavItem[] 
   },
   {
     title: "Comercial",
+    operatorOnly: true,
     items: [
       { href: "/admin/consultas", label: "Consultas", icon: "consultas", badge: "leads" },
       { href: "/admin/agenda", label: "Agenda", icon: "agenda" },
@@ -51,7 +75,7 @@ export const NAV_GROUPS: { title: string; adminOnly?: boolean; items: NavItem[] 
       { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp" },
     ],
   },
-  { title: "Sitio web", items: [{ href: "/admin/contenidos", label: "Contenidos", icon: "contenidos" }] },
+  { title: "Sitio web", siteOnly: true, operatorOnly: true, items: [{ href: "/admin/contenidos", label: "Contenidos", icon: "contenidos" }] },
   {
     title: "Configuración",
     adminOnly: true,
@@ -59,9 +83,17 @@ export const NAV_GROUPS: { title: string; adminOnly?: boolean; items: NavItem[] 
       { href: "/admin/usuarios", label: "Usuarios", icon: "usuarios", adminOnly: true },
       { href: "/admin/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true },
       { href: "/admin/ia/configuracion", label: "IA", icon: "ia", adminOnly: true },
+      { href: "/admin/plan", label: "Plan y módulos", icon: "faro", adminOnly: true },
     ],
   },
+  { title: "Faro", faroOnly: true, items: [{ href: "/faro-manager", label: "Faro Manager", icon: "faro" }] },
 ];
+
+export function visibleGroups(a: NavAccess) {
+  return NAV_GROUPS.filter((g) => (!g.adminOnly || a.isAdmin) && (!g.operatorOnly || a.isOperator) && (!g.siteOnly || a.hasSite) && (!g.faroOnly || a.isFaro))
+    .map((g) => ({ ...g, items: g.items.filter((i) => (!i.adminOnly || a.isAdmin) && (!i.operatorOnly || a.isOperator)) }))
+    .filter((g) => g.items.length);
+}
 
 export const BADGE_LABEL: Record<BadgeKey, string> = {
   requests: "solicitudes abiertas",
@@ -97,7 +129,8 @@ export function crumbs(pathname: string): { label: string; href?: string }[] {
 }
 
 /** Acción principal de la barra superior según la sección */
-export function primaryAction(pathname: string): { href: string; label: string } | null {
+export function primaryAction(pathname: string, isOperator = true): { href: string; label: string } | null {
+  if (!isOperator) return null;
   if (pathname === "/admin" || pathname === "/admin/consultas") return { href: "/admin/consultas/nueva", label: "Cargar consulta" };
   if (pathname === "/admin/organizaciones") return { href: "/admin/organizaciones/nueva", label: "Nueva organización" };
   if (pathname === "/admin/vencimientos") return { href: "/admin/vencimientos/importar", label: "Importar vencimientos" };

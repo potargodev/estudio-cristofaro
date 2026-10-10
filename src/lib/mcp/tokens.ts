@@ -2,7 +2,8 @@ import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import { and, eq, gt, isNull, or } from "drizzle-orm";
 import { getDb } from "@/db";
-import { mcp_accesses, mcp_tokens, users } from "@/db/schema";
+import { mcp_accesses, mcp_tokens, studios, users } from "@/db/schema";
+import { isStudioRole } from "@/lib/roles";
 
 // Tokens de los accesos MCP. Se muestran una sola vez; en la base queda el SHA-256.
 // - bearer: token fijo creado en /admin/mcp (vence con el acceso)
@@ -36,10 +37,11 @@ export async function accessForToken(token: string) {
   if (!/^faro_(mcp|at)_[\w-]{20,}$/.test(token)) return null;
   const now = new Date();
   const [row] = await getDb()
-    .select({ access: mcp_accesses, user: users, tokenId: mcp_tokens.id })
+    .select({ access: mcp_accesses, user: users, tokenId: mcp_tokens.id, tenantStatus: studios.status })
     .from(mcp_tokens)
     .innerJoin(mcp_accesses, eq(mcp_accesses.id, mcp_tokens.access_id))
     .innerJoin(users, eq(users.id, mcp_accesses.user_id))
+    .innerJoin(studios, eq(studios.id, mcp_accesses.studio_id))
     .where(
       and(
         eq(mcp_tokens.token_hash, hashToken(token)),
@@ -52,6 +54,6 @@ export async function accessForToken(token: string) {
     );
   if (!row) return null;
   const u = row.user;
-  if (!u.active || u.studioId !== row.access.studio_id || (u.role !== "admin" && u.role !== "contador")) return null;
+  if (!u.active || u.studioId !== row.access.studio_id || !isStudioRole(u.role) || row.tenantStatus === "suspendido") return null;
   return row;
 }

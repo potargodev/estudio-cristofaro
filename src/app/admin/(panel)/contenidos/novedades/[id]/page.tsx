@@ -6,7 +6,7 @@ import { AdminPageHeader, Notice } from "@/components/admin/AdminField";
 import { PostForm } from "@/components/admin/PostForm";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { adminButton } from "@/components/admin/styles";
 
@@ -21,7 +21,7 @@ export default async function EditarNovedadPage({
 }) {
   const { id } = await params;
   const { guardado, error } = await searchParams;
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   if (!isUuid(id)) notFound();
   const [post] = await getDb()
     .select()

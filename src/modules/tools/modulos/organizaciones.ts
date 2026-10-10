@@ -16,7 +16,7 @@ export const organizacionesTools = [
       "Busca organizaciones (empresas clientes) del estudio por nombre, razón social o CUIT. Sin texto devuelve las más recientes. Devuelve id, nombre, estado, riesgo y plan.",
     module: "organizaciones",
     level: "lectura",
-    roles: ["admin", "contador"],
+    roles: ["admin", "contador", "colaborador"],
     input: z.object({
       texto: z.string().max(120).optional().describe("Nombre, razón social o CUIT (con o sin guiones)"),
       estado: z.enum(["onboarding", "activa", "pausada", "baja"]).optional(),
@@ -69,7 +69,7 @@ export const organizacionesTools = [
       "Ficha de una organización: datos de contacto, razones sociales y CUIT, plan, módulos activos, equipo del estudio y conteos de vencimientos pendientes, solicitudes abiertas y documentos.",
     module: "organizaciones",
     level: "lectura",
-    roles: ["admin", "contador"],
+    roles: ["admin", "contador", "colaborador"],
     input: z.object({ organizacion_id: uuid("ID de la organización") }),
     async organizationOf(input) {
       return input.organizacion_id;

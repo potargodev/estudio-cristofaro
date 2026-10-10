@@ -55,6 +55,7 @@ const adminA = (await sql`select id from users where email = ${process.env.ADMIN
 await sql`update users set two_factor_enabled = true, must_change_password = false where id = ${adminA}`;
 const contadorA = await user(A, "contador@estudiocristofaro.com", "Carla Contadora", "contador");
 const adminB = await user(B, "admin@prueba-b.com", "Admin B", "admin");
+const colaboradorA = await user(A, "colaborador@estudiocristofaro.com", "Coco Colaborador", "colaborador");
 const norte = await org(A, "Agencia Norte SRL", "30711111119");
 const sur = await org(A, "Consultora Sur SAS", "30722222229");
 const ajena = await org(B, "Empresa Ajena SA", "30733333339");
@@ -63,11 +64,11 @@ const docOf = async (o) => (await sql`select id from documents where organizatio
 
 const out = {
   studios: { A, B },
-  users: { adminA, contadorA, adminB },
+  users: { adminA, contadorA, adminB, colaboradorA },
   orgs: { norte, sur, ajena },
   requests: { norte: await reqOf(norte), sur: await reqOf(sur), ajena: await reqOf(ajena) },
   documents: { norte: await docOf(norte), ajena: await docOf(ajena) },
-  cookies: { adminA: await session(adminA), contadorA: await session(contadorA), adminB: await session(adminB) },
+  cookies: { adminA: await session(adminA), contadorA: await session(contadorA), adminB: await session(adminB), colaboradorA: await session(colaboradorA) },
 };
 writeFileSync(new URL("./.salida.json", import.meta.url), JSON.stringify(out, null, 2));
 console.log(JSON.stringify(out, null, 2));

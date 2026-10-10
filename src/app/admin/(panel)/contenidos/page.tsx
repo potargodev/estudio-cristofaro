@@ -5,12 +5,12 @@ import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/AdminField";
 import { getDb } from "@/db";
 import { faqs, posts, service_plans } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Contenidos" };
 
 export default async function ContenidosPage() {
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const db = getDb();
   const [[postCount], [faqCount], [planCount]] = await Promise.all([
     db.select({ count: count() }).from(posts).where(eq(posts.studio_id, studioId)),

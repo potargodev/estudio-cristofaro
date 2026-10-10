@@ -7,7 +7,7 @@ import { SubmitButton } from "@/components/admin/ui";
 import { Input } from "@/components/ui/input";
 import { getDb } from "@/db";
 import { service_plans } from "@/db/schema";
-import { requireStaff } from "@/lib/auth";
+import { requireOperator } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Planes" };
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Planes" };
  */
 export default async function PlanesAdminPage({ searchParams }: { searchParams: Promise<{ guardado?: string }> }) {
   const { guardado } = await searchParams;
-  const { studioId } = await requireStaff();
+  const { studioId } = await requireOperator();
   const plans = await getDb()
     .select({ id: service_plans.id, name: service_plans.name, price: service_plans.price_label })
     .from(service_plans)

@@ -36,7 +36,10 @@ const updatedAt = () =>
 
 // ───────────────────────── Enums ─────────────────────────
 
-export const userRole = pgEnum("user_role", ["admin", "contador", "cliente"]);
+// admin = dueño del estudio; colaborador = equipo operativo; autonomo = Faro Personal
+export const userRole = pgEnum("user_role", ["admin", "contador", "cliente", "colaborador", "autonomo"]);
+export const tenantKind = pgEnum("tenant_kind", ["studio", "personal"]);
+export const tenantStatus = pgEnum("tenant_status", ["activo", "suspendido"]);
 export const leadStatus = pgEnum("lead_status", ["nuevo", "contactado", "presupuesto", "ganado", "perdido"]);
 export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro", "agenda"]);
 export const taxRegime = pgEnum("tax_regime", ["monotributo", "responsable_inscripto", "sociedad", "exento", "otro"]);
@@ -59,10 +62,20 @@ export const bookingOrigin = pgEnum("booking_origin", ["web", "portal", "estudio
 
 // ───────────────────────── Estudios ─────────────────────────
 
+// Tenant de Faro: un estudio contable (kind studio) o un autónomo de Faro
+// Personal (kind personal). El plan es una clave de src/lib/faro/plans.ts.
 export const studios = pgTable("studios", {
   id: uuid("id").primaryKey().defaultRandom(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
+  kind: tenantKind("kind").notNull().default("studio"),
+  plan_key: text("plan_key").notNull().default("senal"),
+  status: tenantStatus("status").notNull().default("activo"),
+  /** CUIT del autónomo (personal) o del estudio */
+  cuit: text("cuit"),
+  /** manual (Faro Manager) | registro (autoregistro) | seed */
+  created_via: text("created_via").notNull().default("manual"),
+  suspended_reason: text("suspended_reason"),
   created_at: createdAt(),
 });
 
@@ -88,6 +101,8 @@ export const users = pgTable(
     mustChangePassword: boolean("must_change_password").notNull().default(false),
     // Segundo factor (plugin twoFactor de Better Auth): obligatorio para el estudio
     twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
+    // Equipo de Faro (Faro Manager): owner | soporte. Null para el resto.
+    faroRole: text("faro_role"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
@@ -1063,4 +1078,42 @@ export const external_records = pgTable(
     index("external_records_org_idx").on(t.organization_id, t.resource),
     index("external_records_studio_idx").on(t.studio_id, t.source, t.resource),
   ],
+);
+
+// ───────────────────────── F1 · Núcleo Faro ─────────────────────────
+
+/** Módulos habilitados fuera del plan (o deshabilitados) por el Faro Manager, con vencimiento opcional */
+export const studio_module_overrides = pgTable(
+  "studio_module_overrides",
+  {
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    module_key: text("module_key").notNull(),
+    enabled: boolean("enabled").notNull().default(true),
+    expires_at: timestamp("expires_at", { withTimezone: true }),
+    reason: text("reason"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.studio_id, t.module_key] })],
+);
+
+/** Acceso asistido del equipo de Faro a un tenant: explícito, temporal y auditado */
+export const assisted_access = pgTable(
+  "assisted_access",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    faro_user_id: uuid("faro_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    reason: text("reason").notNull(),
+    expires_at: timestamp("expires_at", { withTimezone: true }).notNull(),
+    ended_at: timestamp("ended_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("assisted_access_user_idx").on(t.faro_user_id, t.expires_at)],
 );

@@ -1,4 +1,5 @@
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import { aiCanAct } from "@/lib/faro/entitlements";
 import { mcpUrls } from "@/lib/mcp/oauth-meta";
 import { createFaroMcpServer } from "@/lib/mcp/server";
 import { accessForToken } from "@/lib/mcp/tokens";
@@ -32,7 +33,7 @@ async function handle(request: Request) {
   if (!rateLimit(`mcp:${found.access.id}`, 120, 60_000)) {
     return Response.json({ jsonrpc: "2.0", error: { code: -32000, message: "Demasiadas llamadas: esperá un minuto." }, id: null }, { status: 429 });
   }
-  const server = createFaroMcpServer(found.access, found.user);
+  const server = createFaroMcpServer(found.access, found.user, await aiCanAct(found.access.studio_id));
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
   await server.connect(transport);
   return transport.handleRequest(request);

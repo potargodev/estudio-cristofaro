@@ -10,7 +10,7 @@ import type { ContextItem, ContextKind } from "@/lib/ai/context";
 import { audit } from "@/lib/audit";
 import { requireStaff } from "@/lib/auth";
 import { likeTerm } from "@/lib/search";
-import { decideApproval } from "@/modules/tools";
+import { decideApproval, type StaffRole } from "@/modules/tools";
 
 // Acciones del Asistente. Todo se valida contra la sesión: estudio y persona.
 
@@ -19,7 +19,7 @@ export async function decideInlineAction(approvalId: string, approve: boolean): 
   const user = await requireStaff();
   const r = await decideApproval(
     approvalId,
-    { id: user.id, email: user.email, name: user.name, role: user.role === "admin" ? "admin" : "contador", studioId: user.studioId },
+    { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole, studioId: user.studioId },
     approve ? { approve: true } : { approve: false, reason: "Cancelada en el Asistente" },
   );
   revalidatePath("/admin/aprobaciones");

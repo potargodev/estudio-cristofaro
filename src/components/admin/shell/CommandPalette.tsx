@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { adminSearch, type SearchHit } from "@/app/admin/search-actions";
 import { cn } from "@/lib/utils";
-import { NAV_GROUPS } from "./nav";
+import { visibleGroups, type NavAccess } from "./nav";
 
 const GROUP_ICON = { Organizaciones: Building2, "Razones sociales": FileText, Consultas: UserRound, Solicitudes: MessageSquare } as const;
 
@@ -14,7 +14,7 @@ const GROUP_ICON = { Organizaciones: Building2, "Razones sociales": FileText, Co
  * Sin texto, muestra accesos directos a las secciones. Flechas para moverse,
  * Enter para abrir y Escape para cerrar.
  */
-export function CommandPalette({ open, onClose, isAdmin }: { open: boolean; onClose: () => void; isAdmin: boolean }) {
+export function CommandPalette({ open, onClose, access }: { open: boolean; onClose: () => void; access: NavAccess }) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
@@ -46,10 +46,10 @@ export function CommandPalette({ open, onClose, isAdmin }: { open: boolean; onCl
 
   const sections = useMemo(
     () =>
-      NAV_GROUPS.filter((g) => !g.adminOnly || isAdmin)
+      visibleGroups(access)
         .flatMap((g) => g.items)
         .map((i) => ({ group: "Ir a", id: i.href, title: i.label, detail: "", href: i.href })),
-    [isAdmin],
+    [access],
   );
   const list = q.trim().length >= 2 ? hits : sections;
 
