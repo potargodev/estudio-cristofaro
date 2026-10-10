@@ -7,10 +7,10 @@ import { requireUser } from "@/modules/bitacora/session";
 import { getPlatformAi, isConfigured } from "@/modules/copilot/platform";
 import { history, markSeen, welcomeIfEmpty } from "@/modules/copilot/server";
 
-export const metadata: Metadata = { title: { absolute: "Copiloto · Faro" } };
+export const metadata: Metadata = { title: { absolute: "Vigía · Faro" } };
 
-/** Copiloto: la pantalla de inicio. El historial es del usuario de la sesión */
-export default async function CopilotoPage() {
+/** Vigía: la pantalla de inicio. El historial es del usuario de la sesión */
+export default async function VigíaPage() {
   const me = await requireUser();
   await welcomeIfEmpty(me);
   const [msgs, cats, prefs, ai] = await Promise.all([history(me.id), listCategories(me.id), getPrefs(me.id), getPlatformAi()]);

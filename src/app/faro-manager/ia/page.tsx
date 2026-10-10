@@ -28,12 +28,12 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
     <>
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader title="IA de la plataforma" description="El modelo que usa el Copiloto de las personas y los autónomos. La clave se guarda cifrada y nunca se vuelve a mostrar: solo sus últimos 4 caracteres." />
+      <PageHeader title="IA de la plataforma" description="El modelo que usa el Vigía de las personas y los autónomos. La clave se guarda cifrada y nunca se vuelve a mostrar: solo sus últimos 4 caracteres." />
 
       {!ready && (
         <div className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-[14px]">
           <KeyRound className="mt-0.5 size-5 shrink-0 text-rose-deep" aria-hidden />
-          <p>No hay clave cargada. El Copiloto funciona en <strong>modo básico</strong>: entiende frases simples de texto y avisa que la IA no está configurada.</p>
+          <p>No hay clave cargada. El Vigía funciona en <strong>modo básico</strong>: entiende frases simples de texto y avisa que la IA no está configurada.</p>
         </div>
       )}
       {p.cap_alerted_at && Date.now() - p.cap_alerted_at.getTime() < 48 * 3600_000 && (
@@ -191,7 +191,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
       {owner && p.key_hint && (
         <form action={forgetPlatformKeyAction} className="mt-3">
           <button type="submit" className="text-[13px] text-danger underline underline-offset-2">
-            Borrar la clave (el Copiloto vuelve al modo básico)
+            Borrar la clave (el Vigía vuelve al modo básico)
           </button>
         </form>
       )}

@@ -320,26 +320,26 @@ Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de e
 - El Asistente IA responde usando estos artículos y cita el artículo de donde sacó la respuesta.
 - Los artículos se actualizan en el mismo commit que cambia una función.
 
-## 2.m Copiloto (la puerta de entrada de la app)
+## 2.m Vigía (la puerta de entrada de la app)
 
-Lo primero que ve cualquier usuario al entrar es **su Copiloto**: un chat estilo WhatsApp con su agente. Es la forma principal de cargar información en Faro.
+Lo primero que ve cualquier usuario al entrar es **su Vigía**: un chat estilo WhatsApp con su agente. Es la forma principal de cargar información en Faro.
 - **Entradas:** texto, audio (mantener para hablar), foto, captura de pantalla, PDF. Desde el celular como app instalable (PWA).
-- **Decantación:** el Copiloto interpreta y lo convierte en registros del panel: gastos e ingresos de Bitácora, gastos de un grupo, recordatorios, documentos. Cada interpretación aparece como una tarjeta en el chat ("Gasto $3.500 · Kiosco · Comida · hoy") con **Confirmar**, **Editar** y **Deshacer**.
+- **Decantación:** el Vigía interpreta y lo convierte en registros del panel: gastos e ingresos de Bitácora, gastos de un grupo, recordatorios, documentos. Cada interpretación aparece como una tarjeta en el chat ("Gasto $3.500 · Kiosco · Comida · hoy") con **Confirmar**, **Editar** y **Deshacer**.
 - **Aprobación:** lo personal de Bitácora puede registrarse en un toque (o solo, si el usuario lo activa, siempre con Deshacer). Todo lo que afecta a otras personas (un gasto en un grupo) o es fiscal, de pagos o una comunicación sensible requiere confirmación explícita.
 - **Consultas:** "¿cuánto gasté en delivery este mes?", "¿cuánto le debo a Juan?" responden con datos reales del usuario y enlazan a la pantalla.
-- **Origen:** cada registro creado por el Copiloto guarda el mensaje original (texto, audio, imagen), la transcripción y la fecha, y se ve desde el registro.
+- **Origen:** cada registro creado por el Vigía guarda el mensaje original (texto, audio, imagen), la transcripción y la fecha, y se ve desde el registro.
 - **Proveedor de IA:** para personas y autónomos, Faro pone el modelo (clave de la plataforma en Faro Manager, con límite de uso por plan). Los estudios pueden usar su propia clave (§2.b).
-- **WhatsApp real** (número de Faro) llega en F9; el Copiloto en la app es el MVP.
+- **WhatsApp real** (número de Faro) llega en F9; el Vigía en la app es el MVP.
 
 ## 2.n Mensajes (chat interno entre personas)
 
-Un chat entre personas, distinto del Copiloto (que es con el agente). Es un módulo de todos los espacios, con badge de no leídos.
+Un chat entre personas, distinto del Vigía (que es con el agente). Es un módulo de todos los espacios, con badge de no leídos.
 - **Con quién:** solo entre personas que comparten un espacio: el mismo estudio; el estudio con los usuarios de sus organizaciones; la misma organización; el mismo grupo de gastos; la misma Flota. No hay búsqueda de usuarios de toda la plataforma. Se valida en el servidor en cada acción.
 - **Conversaciones:** directas (1:1) y grupales elegidas entre los contactos. Cada grupo de gastos y cada Flota tienen su conversación automática (entran y salen con el grupo). Los estudios pueden crear canales internos del equipo, solo con personas del estudio.
 - **Mensajes:** texto, emojis, adjuntos (por ruta autenticada), responder a un mensaje, editar o borrar los propios, leídos («Visto») y «escribiendo…».
 - **Tiempo real:** SSE con LISTEN/NOTIFY de Postgres y sondeo de respaldo. Avisos en la app (campanita) y push web de la PWA. Cada conversación se puede silenciar.
 - **Seguridad y moderación:** bloquear o reportar a una persona o un mensaje, con auditoría. Bloquear impide que te escriba y oculta sus mensajes en las conversaciones compartidas. El Faro Manager no ve los mensajes; solo la copia de un mensaje reportado, y puede dejarlo o borrarlo.
-- **Visual:** distinto del Copiloto (burbujas rosé propias, iniciales de cada persona y sin tarjetas de IA).
+- **Visual:** distinto del Vigía (burbujas rosé propias, iniciales de cada persona y sin tarjetas de IA).
 
 ## 3. Planes de Faro (para estudios)
 
@@ -378,7 +378,7 @@ Los precios son de referencia y se editan desde el Faro Manager (USD con convers
 
 ## 6. Hoja de ruta
 
-**Prioridad actual · MVP personal (antes de seguir con el resto):** Copiloto (§2.m) + Bitácora básica (gastos e ingresos diarios, categorías, tablero simple) + Grupos de gastos con amigos, operativos de punta a punta en staging, más la landing de Faro en `app.estudiocristofaro.com/faro`. Precios de personas y autónomos de referencia: Plus USD 4/mes, Pro USD 9/mes.
+**Prioridad actual · MVP personal (antes de seguir con el resto):** Vigía (§2.m) + Bitácora básica (gastos e ingresos diarios, categorías, tablero simple) + Grupos de gastos con amigos, operativos de punta a punta en staging, más la landing de Faro en `app.estudiocristofaro.com/faro`. Precios de personas y autónomos de referencia: Plus USD 4/mes, Pro USD 9/mes.
 1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Inicial), landing de Faro y mención de Faro en la web de Cristofaro.
 2. **F2 · IA, MCP y Conexiones:** configuración de IA multi-proveedor, Asistente con caja de contexto, servidor MCP por estudio, bandeja de aprobaciones, hub de conexiones (Xubio, Alegra y Google primero; Tango migrado al hub).
 3. **F3 · ARCA + Faro Personal:** web services de ARCA (homologación primero), facturación con PDF personalizado, situación y semáforo de monotributo, calendario personal y planes Gratis y Pro.

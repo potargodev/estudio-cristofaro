@@ -6,7 +6,7 @@ import { setPrefs } from "@/lib/prefs";
 import { parseAmount } from "@/modules/bitacora/catalog";
 import { confirmProposal, CopilotError, editGroupProposal, editMovementProposal, markSeen, processMessage, ownMessage, redoProposal, undoProposal } from "@/modules/copilot/server";
 
-// Acciones de las tarjetas del Copiloto. El usuario sale de la sesión y cada
+// Acciones de las tarjetas del Vigía. El usuario sale de la sesión y cada
 // función valida que la tarjeta sea suya.
 
 export interface CardState {
@@ -23,7 +23,7 @@ async function me() {
 async function run(fn: () => Promise<unknown>, ok: string): Promise<CardState> {
   try {
     await fn();
-    revalidatePath("/copiloto");
+    revalidatePath("/vigia");
     revalidatePath("/bitacora");
     return { ok: true, message: ok };
   } catch (e) {
@@ -78,13 +78,13 @@ export async function retryMessageAction(fd: FormData) {
   const u = await me();
   const m = await ownMessage(u.id, s(fd, "id"));
   if (m && (m.status === "error" || m.status === "pendiente")) await processMessage(m.id);
-  revalidatePath("/copiloto");
+  revalidatePath("/vigia");
 }
 
 export async function setAutoAction(fd: FormData) {
   const u = await me();
   await setPrefs(u.id, { copilotAuto: fd.get("auto") === "on" });
-  revalidatePath("/copiloto");
+  revalidatePath("/vigia");
 }
 
 export async function markSeenAction() {

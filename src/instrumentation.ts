@@ -3,7 +3,7 @@
 //   por ejemplo si se usa un cron externo contra /api/agenda/recordatorios).
 // - Grupos de gastos (recurrentes y recordatorios) cada hora (GASTOS_JOBS=off
 //   los apaga; cron externo: /api/gastos/cron).
-// - Copiloto (cola de mensajes pendientes y recordatorios) cada minuto
+// - Vigía (cola de mensajes pendientes y recordatorios) cada minuto
 //   (COPILOT_JOBS=off los apaga; cron externo: /api/copiloto/cron).
 
 export async function register() {

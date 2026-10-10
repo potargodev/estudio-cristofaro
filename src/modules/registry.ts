@@ -380,7 +380,7 @@ FARO_MODULES.push(
     name: "Bitácora",
     icon: "NotebookPen",
     core: true,
-    description: "Tus finanzas personales: gastos e ingresos del mes, por categoría, cargados con el Copiloto (texto, audio o foto) o a mano. Siempre privada.",
+    description: "Tus finanzas personales: gastos e ingresos del mes, por categoría, cargados con el Vigía (texto, audio o foto) o a mano. Siempre privada.",
     status: "disponible",
     minPlan: { studio: "inicial", persona: "persona_gratis", personal: "autonomo_gratis" },
     roles: [...ALL_STAFF, "titular"],

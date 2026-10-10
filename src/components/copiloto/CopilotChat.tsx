@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { confirmCardAction, editGroupCardAction, editMovementCardAction, redoCardAction, retryMessageAction, setAutoAction, undoCardAction, type CardState } from "@/app/copiloto/actions";
+import { confirmCardAction, editGroupCardAction, editMovementCardAction, redoCardAction, retryMessageAction, setAutoAction, undoCardAction, type CardState } from "@/app/vigia/actions";
 import { cn } from "@/lib/utils";
 
-// Copiloto: chat estilo WhatsApp con el agente (IA). Visualmente distinto de
+// Vigía: chat estilo WhatsApp con el agente (IA). Visualmente distinto de
 // Mensajes (personas): burbujas con el acento rosé y el ícono de varita.
 
 export interface ChatProposal {
@@ -393,12 +393,12 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
             <WandSparkles className="size-5" />
           </span>
           <div>
-            <h1 className="text-[18px] font-semibold leading-tight">Copiloto</h1>
+            <h1 className="text-[18px] font-semibold leading-tight">Vigía</h1>
             <p className="text-[12px] text-muted">Tu asistente con IA · registra y responde</p>
           </div>
         </div>
         <div className="relative">
-          <button type="button" onClick={() => setSettings((s) => !s)} aria-expanded={settings} aria-label="Ajustes del Copiloto" data-tour="copiloto-ajustes" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
+          <button type="button" onClick={() => setSettings((s) => !s)} aria-expanded={settings} aria-label="Ajustes del Vigía" data-tour="copiloto-ajustes" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <Settings2 className="size-4" aria-hidden />
           </button>
           {settings && (
@@ -419,7 +419,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
           La IA todavía no está configurada: por ahora solo leo texto y no puedo interpretar audios ni fotos.
         </p>
       )}
-      <ol aria-label="Conversación con el Copiloto" aria-live="polite" className="flex-1 space-y-3 pb-4">
+      <ol aria-label="Conversación con el Vigía" aria-live="polite" className="flex-1 space-y-3 pb-4">
         {list.map((m) => (
           <Bubble key={m.id} m={m} categories={categories} />
         ))}
@@ -467,7 +467,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
               <Camera className="size-5" aria-hidden />
             </button>
             <label htmlFor="copiloto-texto" className="sr-only">
-              Mensaje para el Copiloto
+              Mensaje para el Vigía
             </label>
             <textarea
               id="copiloto-texto"

@@ -37,7 +37,7 @@ export const CATEGORIES: { key: string; name: string; icon: string; text: string
   { key: "vencimientos", name: "Vencimientos", icon: "CalendarClock", text: "El calendario fiscal, con alertas." },
   { key: "documentos", name: "Documentos", icon: "FileText", text: "Subir, ordenar y encontrar." },
   { key: "solicitudes", name: "Solicitudes", icon: "Inbox", text: "Consultas y pedidos al estudio." },
-  { key: "copiloto", name: "Copiloto", icon: "Sparkles", text: "Tu asistente: texto, audio y fotos." },
+  { key: "vigia", name: "Vigía", icon: "Sparkles", text: "Tu asistente: texto, audio y fotos." },
   { key: "bitacora", name: "Bitácora", icon: "NotebookPen", text: "Tus gastos e ingresos del mes." },
   { key: "mensajes", name: "Mensajes", icon: "MessagesSquare", text: "Chatear con tu estudio, tus grupos y tus Flotas." },
   { key: "grupos-de-gastos", name: "Grupos de gastos", icon: "Wallet", text: "Dividir, saldar y rendir." },

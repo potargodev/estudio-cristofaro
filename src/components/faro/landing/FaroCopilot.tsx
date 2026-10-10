@@ -2,19 +2,19 @@ import { Check, Mic, NotebookPen, Paperclip, Undo2, Users, WandSparkles } from "
 import { Container, CtaLink, SectionIndex } from "@/components/web/ui";
 import { cn } from "@/lib/utils";
 
-// Copiloto, Bitácora y Grupos construidos en código con datos ficticios (sin
+// Vigía, Bitácora y Grupos construidos en código con datos ficticios (sin
 // capturas ni fotos). Entran con .faro-demo-in, que se apaga con reduced motion.
 
 const d = (n: number) => ({ "--d": n }) as React.CSSProperties;
 
 function Phone() {
   return (
-    <div className="faro-demo-in mx-auto w-full max-w-[320px] overflow-hidden rounded-[34px] border-[7px] border-[#0d1120] bg-[#f7f5f3] text-[#1b1e26] shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)]" style={d(0)} aria-label="Ejemplo del Copiloto en el teléfono (datos ficticios)" role="img">
+    <div className="faro-demo-in mx-auto w-full max-w-[320px] overflow-hidden rounded-[34px] border-[7px] border-[#0d1120] bg-[#f7f5f3] text-[#1b1e26] shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)]" style={d(0)} aria-label="Ejemplo del Vigía en el teléfono (datos ficticios)" role="img">
       <div className="flex items-center gap-2 bg-[#1c2235] px-4 pb-3 pt-4 text-[#f7f5f3]">
         <span className="grid size-7 place-items-center rounded-full bg-[#c9a596] text-[#1c2235]">
           <WandSparkles className="size-3.5" aria-hidden />
         </span>
-        <span className="text-[13px] font-medium">Copiloto</span>
+        <span className="text-[13px] font-medium">Vigía</span>
       </div>
       <div className="grid gap-2.5 px-3 py-4 text-[12.5px] leading-snug">
         <div className="faro-demo-in ml-auto flex max-w-[82%] items-center gap-2 rounded-[16px] rounded-br-[5px] bg-[#1c2235] px-3 py-2 text-[#f7f5f3]" style={d(200)}>
@@ -131,7 +131,7 @@ function GroupCard() {
   );
 }
 
-/** Para personas: el Copiloto anota, la Bitácora muestra, los Grupos dividen */
+/** Para personas: el Vigía anota, la Bitácora muestra, los Grupos dividen */
 export function FaroCopilot() {
   return (
     <section aria-labelledby="copiloto-titulo" className="bg-night py-24 lg:py-32">
@@ -143,7 +143,7 @@ export function FaroCopilot() {
               Contale tus gastos. Él los anota.
             </h2>
             <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-paper/75">
-              Mandale un audio, un texto o la foto del ticket al Copiloto. Te propone cada registro en una tarjeta para que lo confirmes, y tu Bitácora se arma sola: cuánto entró, cuánto salió y en qué se fue. Y si compartiste la cena, lo divide en tu grupo.
+              Mandale un audio, un texto o la foto del ticket al Vigía. Te propone cada registro en una tarjeta para que lo confirmes, y tu Bitácora se arma sola: cuánto entró, cuánto salió y en qué se fue. Y si compartiste la cena, lo divide en tu grupo.
             </p>
             <ul className="mt-6 grid gap-2 text-[15px] text-paper/80">
               <li>· Gratis para empezar, desde el teléfono.</li>

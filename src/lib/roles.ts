@@ -26,6 +26,6 @@ export const isTenantRole = (r: unknown): r is StudioRole | "titular" => isStudi
 /** Pantalla de inicio de cada tipo de usuario */
 export function homeFor(role: UserRole | string | null | undefined) {
   if (role === "cliente") return "/portal";
-  if (role === "titular") return "/copiloto";
+  if (role === "titular") return "/vigia";
   return "/admin";
 }

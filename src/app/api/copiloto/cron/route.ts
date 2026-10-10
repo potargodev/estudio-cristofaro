@@ -3,7 +3,7 @@ import { runCopilotJobs } from "@/modules/copilot/jobs";
 
 export const dynamic = "force-dynamic";
 
-/** Cola y recordatorios del Copiloto desde un cron externo (Authorization: Bearer <CRON_SECRET>) */
+/** Cola y recordatorios del Vigía desde un cron externo (Authorization: Bearer <CRON_SECRET>) */
 export async function POST(request: Request) {
   const secret = process.env.CRON_SECRET?.trim();
   const given = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";

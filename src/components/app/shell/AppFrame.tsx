@@ -23,7 +23,7 @@ import { AppShell, type ShellSpace } from "./AppShell";
 import { bottomFor, groupsFor, type Space, type SpaceInput } from "./spaces";
 
 const ROLE_LABEL: Record<string, string> = { dueno: "Dueño", contador: "Contador", colaborador: "Colaborador", titular: "Titular" };
-const HOME: Record<Space, string> = { studio: "/admin", personal: "/copiloto", portal: "/portal", faro: "/faro-manager" };
+const HOME: Record<Space, string> = { studio: "/admin", personal: "/vigia", portal: "/portal", faro: "/faro-manager" };
 
 /** Espacio por defecto de la sesión (las rutas compartidas, como /grupos o /bitacora, usan este) */
 export function homeSpace(user: StaffUser): Space {

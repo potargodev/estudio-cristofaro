@@ -28,7 +28,7 @@ Después de entrar, Faro te hace unas preguntas cortas para dejar todo listo. Lo
 
 - **Estudio:** el nombre del estudio, los rubros que atendés y por dónde seguir.
 - **Autónomo:** tus datos (con tu CUIT armamos tu calendario), tu rubro y por dónde seguir.
-- **Persona:** qué querés hacer primero: anotar tus gastos con el Copiloto, dividir gastos, encontrar un contador o armar una Flota. Al terminar, el **Copiloto** te saluda y te explica cómo usarlo: es tu pantalla de inicio.
+- **Persona:** qué querés hacer primero: anotar tus gastos con el Vigía, dividir gastos, encontrar un contador o armar una Flota. Al terminar, el **Vigía** te saluda y te explica cómo usarlo: es tu pantalla de inicio.
 
 ## 4. Primeros pasos y la Guía
 
@@ -44,7 +44,7 @@ La guía viene prendida en las cuentas nuevas. Si tu cuenta ya tenía un tiempo,
 
 ## El menú
 
-Todo Faro vive en el mismo marco: Copiloto, Bitácora, Grupos de gastos, Mensajes, Flotas, la Red y la Ayuda aparecen en el menú de cualquier espacio (tu cuenta personal, tu estudio, tu organización o el Faro Manager).
+Todo Faro vive en el mismo marco: Vigía, Bitácora, Grupos de gastos, Mensajes, Flotas, la Red y la Ayuda aparecen en el menú de cualquier espacio (tu cuenta personal, tu estudio, tu organización o el Faro Manager).
 
 - En la computadora, el botón de arriba del menú lo **colapsa**: pasa a una barra horizontal de íconos arriba (pasá el mouse para ver el nombre). El botón de la izquierda lo vuelve a expandir. Faro recuerda tu elección. Atajo: tecla **[**.
 - En el celular, la barra de abajo tiene los accesos de todos los días y **Más** abre el menú completo.
@@ -57,5 +57,5 @@ Faro se instala como una app, sin pasar por la tienda:
 - **Android (Chrome):** abrí Faro, tocá el menú **⋮** y elegí **Instalar app** (o **Agregar a la pantalla principal**).
 - **iPhone (Safari):** abrí Faro, tocá **Compartir** y elegí **Agregar a inicio**.
 
-La app abre directo en el **Copiloto**. Si mantenés apretado el ícono (en Android), tenés atajos al Copiloto, a la Bitácora y a tus Grupos.
+La app abre directo en el **Vigía**. Si mantenés apretado el ícono (en Android), tenés atajos al Vigía, a la Bitácora y a tus Grupos.
 

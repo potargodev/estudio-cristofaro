@@ -1,7 +1,7 @@
 import "server-only";
 import { deliverReminders, processQueue } from "./server";
 
-// Cola del Copiloto (mensajes en "pendiente" por cuota o error transitorio del
+// Cola del Vigía (mensajes en "pendiente" por cuota o error transitorio del
 // proveedor) y recordatorios vencidos. Nunca corren dos vueltas a la vez.
 
 let running = false;

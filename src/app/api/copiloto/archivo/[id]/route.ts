@@ -4,7 +4,7 @@ import { ownMessage } from "@/modules/copilot/server";
 
 export const dynamic = "force-dynamic";
 
-/** Archivo de un mensaje del Copiloto: solo para su dueño */
+/** Archivo de un mensaje del Vigía: solo para su dueño */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const me = await getCurrentUser();
   if (!me) return new Response("No autorizado", { status: 401 });

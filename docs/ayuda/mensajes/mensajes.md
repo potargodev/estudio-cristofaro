@@ -4,10 +4,10 @@ resumen: Escribile a quien comparte un espacio con vos, en privado o en grupo. C
 perfiles: [persona, autonomo, estudio, organizacion, empleado, flota]
 modulo: core
 actualizado: 2026-10-10
-relacionados: [grupos-de-gastos/invitar, copiloto/copiloto]
+relacionados: [grupos-de-gastos/invitar, vigia/vigia]
 ---
 
-**Mensajes** es el chat entre personas de Faro. No es el [Copiloto](/ayuda/copiloto/copiloto): acá hablás con gente, no con el asistente.
+**Mensajes** es el chat entre personas de Faro. No es el [Vigía](/ayuda/vigia/vigia): acá hablás con gente, no con el asistente.
 
 ## Con quién podés hablar
 

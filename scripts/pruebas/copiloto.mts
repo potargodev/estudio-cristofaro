@@ -1,4 +1,4 @@
-// Copiloto: modo básico sin IA, tarjetas (varias por mensaje), confirmar,
+// Vigía: modo básico sin IA, tarjetas (varias por mensaje), confirmar,
 // deshacer y rehacer, gasto de grupo siempre con confirmación, consultas,
 // audio, cola ante 429, límites y aislamiento forzando IDs.
 //   node mocks/openai/server.mjs &   (puerto 4010)

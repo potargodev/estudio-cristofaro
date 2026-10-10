@@ -10,7 +10,7 @@ import { deleteEntryAction, updateEntryAction } from "../actions";
 
 export const metadata: Metadata = { title: "Movimiento" };
 
-/** Editar un movimiento propio (y ver de qué mensaje del Copiloto salió) */
+/** Editar un movimiento propio (y ver de qué mensaje del Vigía salió) */
 export default async function EntryPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ mes?: string; error?: string }> }) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   const me = await requireUser();

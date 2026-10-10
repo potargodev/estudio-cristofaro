@@ -1,6 +1,6 @@
 import { parseAmount } from "@/modules/bitacora/catalog";
 
-// Modo básico del Copiloto (sin IA configurada): entiende frases simples de
+// Modo básico del Vigía (sin IA configurada): entiende frases simples de
 // texto como «5000 nafta y 3200 en el chino» o «ayer cobré 200k de sueldo».
 // Devuelve entradas con la forma de crear_movimiento; lo demás, a mano.
 

@@ -18,7 +18,7 @@ import { checkQuota, recordAlert, type Quota } from "./limits";
 import { costUsd, getPlatformAi, isConfigured, platformModel, transcribeAudio, type PlatformAi } from "./platform";
 import { consultarBitacora, consultarSaldos, isProposalTool, PROPOSAL_TOOLS, type ProposalTool } from "./tools";
 
-// Copiloto (docs/faro-producto.md §2.m). Todo opera como el usuario de la
+// Vigía (docs/faro-producto.md §2.m). Todo opera como el usuario de la
 // sesión: sus movimientos, sus grupos (memberOf en grupos de gastos) y su
 // historial. La IA propone; lo que afecta a otras personas (un gasto de
 // grupo) siempre pide confirmación. Cada registro guarda su mensaje de origen.
@@ -78,7 +78,7 @@ export async function ownMessage(userId: string, id: string) {
   return m ?? null;
 }
 
-/** Origen de un registro hecho por el Copiloto (solo del propio usuario) */
+/** Origen de un registro hecho por el Vigía (solo del propio usuario) */
 export async function originOf(userId: string, resultType: string, resultId: string) {
   if (!UUID.test(resultId)) return null;
   const [p] = await db()
@@ -108,7 +108,7 @@ async function contextFor(u: CopilotUser) {
 function systemPrompt(u: CopilotUser, ctx: Awaited<ReturnType<typeof contextFor>>) {
   const today = todayAR();
   const weekday = new Intl.DateTimeFormat("es-AR", { weekday: "long", timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
-  return `Sos el Copiloto de Faro de ${u.name}: un asistente de finanzas personales en un chat tipo WhatsApp. Hoy es ${weekday} ${today} (Argentina).
+  return `Sos el Vigía de Faro de ${u.name}: un asistente de finanzas personales en un chat tipo WhatsApp. Hoy es ${weekday} ${today} (Argentina).
 
 Qué hacés:
 - Convertís lo que la persona te cuenta (texto, audio transcripto, foto de ticket o factura, captura de transferencia o de Mercado Pago, PDF) en registros, llamando a las herramientas. Puede haber varios en un mensaje: "ayer 5000 de nafta y 3200 en el chino" son DOS crear_movimiento.
@@ -536,7 +536,7 @@ export async function processQueue(max = 20) {
   return { pending: pending.length, done };
 }
 
-/** Recordatorios vencidos → mensaje del Copiloto en el chat */
+/** Recordatorios vencidos → mensaje del Vigía en el chat */
 export async function deliverReminders(now = new Date()) {
   const due = await db()
     .select()
@@ -569,7 +569,7 @@ export async function welcomeIfEmpty(u: { id: string; name: string }) {
       user_id: u.id,
       role: "copiloto",
       status: "ok",
-      text: `¡Hola, ${first}! Soy tu Copiloto. Contame tus gastos como se los contarías a alguien y yo los anoto:\n\n- **Texto:** «ayer 5000 de nafta y 3200 en el chino»\n- **Audio:** mantené apretado el micrófono y hablá.\n- **Foto:** un ticket, una factura o la captura de una transferencia o de Mercado Pago.\n- **Grupos:** «pagué 48.000 de la cena con Juan y Ana».\n- **Preguntas:** «¿cuánto gasté en delivery este mes?» o «¿cuánto le debo a Juan?».\n\nCada cosa te la muestro en una tarjeta para que la confirmes, la edites o la deshagas.`,
+      text: `¡Hola, ${first}! Soy tu Vigía. Contame tus gastos como se los contarías a alguien y yo los anoto:\n\n- **Texto:** «ayer 5000 de nafta y 3200 en el chino»\n- **Audio:** mantené apretado el micrófono y hablá.\n- **Foto:** un ticket, una factura o la captura de una transferencia o de Mercado Pago.\n- **Grupos:** «pagué 48.000 de la cena con Juan y Ana».\n- **Preguntas:** «¿cuánto gasté en delivery este mes?» o «¿cuánto le debo a Juan?».\n\nCada cosa te la muestro en una tarjeta para que la confirmes, la edites o la deshagas.`,
     });
 }
 

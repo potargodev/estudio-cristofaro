@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Mensaje nuevo al Copiloto (texto y/o un archivo: audio, foto o PDF). Se
+ * Mensaje nuevo al Vigía (texto y/o un archivo: audio, foto o PDF). Se
  * guarda primero (nunca se pierde) y después se procesa; si no hay cuota,
  * queda pendiente en la cola.
  */

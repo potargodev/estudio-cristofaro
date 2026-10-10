@@ -24,7 +24,7 @@ const MAP: [string, string][] = [
   ["/portal", "documentos/subir-documentos"],
   ["/grupos", "grupos-de-gastos/crear-un-grupo"],
   ["/bitacora", "bitacora/bitacora"],
-  ["/copiloto", "copiloto/copiloto"],
+  ["/vigia", "vigia/vigia"],
   ["/mensajes", "mensajes/mensajes"],
   ["/primeros-pasos", "primeros-pasos/registro"],
   ["/flotas", "flotas/que-es-una-flota"],

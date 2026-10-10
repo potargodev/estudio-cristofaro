@@ -22,7 +22,7 @@ const dayLabel = (iso: string) => new Intl.DateTimeFormat("es-AR", { weekday: "l
 const initials = (n: string) => n.split(/\s+/).slice(0, 2).map((x) => x[0]?.toUpperCase() ?? "").join("");
 
 /**
- * Sala de una conversación. Distinta del Copiloto a propósito: burbujas rosé
+ * Sala de una conversación. Distinta del Vigía a propósito: burbujas rosé
  * para lo propio, iniciales de cada persona y sin tarjetas de IA. Tiempo real
  * por SSE (si se corta, sondeo cada 5 s).
  */

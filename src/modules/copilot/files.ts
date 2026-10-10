@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { readStored, uploadsDir } from "@/lib/uploads";
 
-// Archivos del Copiloto (audio, foto o captura y PDF): en UPLOADS_DIR, con
+// Archivos del Vigía (audio, foto o captura y PDF): en UPLOADS_DIR, con
 // nombre aleatorio, y se sirven solo por /api/copiloto/archivo/<mensaje>,
 // que verifica que el mensaje sea del usuario de la sesión.
 

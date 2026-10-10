@@ -16,7 +16,7 @@ export interface EntryDefaults {
   note?: string | null;
 }
 
-/** Formulario de un movimiento de Bitácora (cargar a mano, editar, o editar lo que propuso el Copiloto) */
+/** Formulario de un movimiento de Bitácora (cargar a mano, editar, o editar lo que propuso el Vigía) */
 export function EntryForm({
   action,
   categories,

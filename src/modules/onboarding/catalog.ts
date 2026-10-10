@@ -39,7 +39,7 @@ export const PROFILE_LABEL: Record<OnboardingProfile, string> = {
 /** Cada paso se marca solo cuando la persona hace la acción real (ver server.ts) */
 export const CHECKLISTS: Record<OnboardingProfile, ChecklistStep[]> = {
   persona: [
-    { key: "movimiento", title: "Cargá tu primer gasto en Bitácora", text: "Con el Copiloto («gasté 3500 en el kiosco») o a mano.", href: "/copiloto", help: "bitacora/bitacora" },
+    { key: "movimiento", title: "Cargá tu primer gasto en Bitácora", text: "Con el Vigía («gasté 3500 en el kiosco») o a mano.", href: "/vigia", help: "bitacora/bitacora" },
     { key: "grupo", title: "Creá tu primer grupo de gastos", text: "Un viaje, la casa o la oficina: dividí sin hacer cuentas.", href: "/grupos/nuevo", help: "grupos-de-gastos/crear-un-grupo" },
     { key: "gasto", title: "Cargá un gasto", text: "Con foto del ticket si querés. Faro calcula quién le debe a quién.", href: "/grupos", help: "grupos-de-gastos/cargar-gastos" },
     { key: "invitar", title: "Sumá a alguien al grupo", text: "Puede entrar sin crear cuenta, con un enlace.", href: "/grupos", help: "grupos-de-gastos/invitar" },
@@ -150,9 +150,9 @@ export const TOURS: Tour[] = [
   },
   {
     id: "copiloto",
-    path: "/copiloto",
+    path: "/vigia",
     steps: [
-      { title: "Tu Copiloto", text: "Contale tus gastos como se los contarías a alguien: él los anota en tu Bitácora." },
+      { title: "Tu Vigía", text: "Contale tus gastos como se los contarías a alguien: él los anota en tu Bitácora." },
       { target: t("copiloto-texto"), title: "Escribí", text: "«Ayer 5000 de nafta y 3200 en el chino». Puede haber varios en un mensaje." },
       { target: t("copiloto-mic"), title: "O hablá", text: "Mantené apretado el micrófono y soltalo para mandar el audio." },
       { target: t("copiloto-adjunto"), title: "Fotos y PDF", text: "Un ticket, una factura o la captura de una transferencia." },
@@ -164,7 +164,7 @@ export const TOURS: Tour[] = [
     path: "/bitacora",
     steps: [
       { title: "Tu Bitácora", text: "Lo que entró, lo que salió y lo que queda en el mes. Es privada." },
-      { target: t("bitacora-cargar"), title: "Cargá a mano", text: "Para cuando no querés hablar con el Copiloto." },
+      { target: t("bitacora-cargar"), title: "Cargá a mano", text: "Para cuando no querés hablar con el Vigía." },
       { target: t("bitacora-categorias"), title: "Tus categorías", text: "Cambiales el nombre, sumá nuevas o archivá las que no usás." },
     ],
   },

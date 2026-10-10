@@ -60,7 +60,7 @@ const num = (v) => {
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 const people = (s) => s.split(/\s*(?:,|\by\b)\s*/).map((n) => n.trim()).filter(Boolean).map(cap);
 
-/** Copiloto (§2.m): varias tool calls por mensaje, imágenes y consultas */
+/** Vigía (§2.m): varias tool calls por mensaje, imágenes y consultas */
 function copilot(body, last, q) {
   const parts = Array.isArray(last?.content) ? last.content : [];
   if (parts.some((p) => p.type === "image_url" || p.type === "file")) return { tools: [{ tool: "crear_movimiento", args: { tipo: "gasto", monto: 18450, descripcion: "Coto", categoria: "Supermercado", medio_pago: "debito" } }] };

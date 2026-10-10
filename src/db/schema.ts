@@ -1948,7 +1948,7 @@ export const legal_acceptances = pgTable(
   (t) => [unique("legal_acceptances_key").on(t.user_id, t.document, t.version)],
 );
 
-/** Preferencias de cada usuario (barra lateral, Copiloto…): por usuario y en la base */
+/** Preferencias de cada usuario (barra lateral, Vigía…): por usuario y en la base */
 export const user_preferences = pgTable("user_preferences", {
   user_id: uuid("user_id")
     .primaryKey()
@@ -1962,7 +1962,7 @@ export interface UserPrefs {
   guide?: boolean;
   /** expanded | collapsed (en escritorio, colapsado = barra horizontal de íconos) */
   sidebar?: "expanded" | "collapsed";
-  /** Copiloto: registrar solo los movimientos personales (siempre con Deshacer) */
+  /** Vigía: registrar solo los movimientos personales (siempre con Deshacer) */
   copilotAuto?: boolean;
   /** Primeros pasos: el widget del Inicio está oculto */
   hideFirstSteps?: boolean;
@@ -2011,7 +2011,7 @@ export const bitacora_entries = pgTable(
     note: text("note"),
     /** manual | copiloto */
     source: text("source").notNull().default("manual"),
-    /** Mensaje del Copiloto que lo originó (texto, audio o imagen, con transcripción y modelo) */
+    /** Mensaje del Vigía que lo originó (texto, audio o imagen, con transcripción y modelo) */
     copilot_message_id: uuid("copilot_message_id"),
     /** Borrado suave: Deshacer y la papelera */
     deleted_at: timestamp("deleted_at", { withTimezone: true }),
@@ -2021,7 +2021,7 @@ export const bitacora_entries = pgTable(
   (t) => [index("bitacora_entries_user_date_idx").on(t.user_id, t.date)],
 );
 
-// ───────────────────────── Copiloto (docs/faro-producto.md §2.m) ─────────────────────────
+// ───────────────────────── Vigía (docs/faro-producto.md §2.m) ─────────────────────────
 
 export const copilotRole = pgEnum("copilot_role", ["usuario", "copiloto"]);
 /** ok | procesando | pendiente (cola: esperando cuota) | error */
@@ -2063,7 +2063,7 @@ export const copilot_messages = pgTable(
 
 export const proposalStatus = pgEnum("proposal_status", ["propuesta", "confirmada", "deshecha", "descartada"]);
 
-/** Cada interpretación del Copiloto: una tarjeta con Confirmar, Editar y Deshacer */
+/** Cada interpretación del Vigía: una tarjeta con Confirmar, Editar y Deshacer */
 export const copilot_proposals = pgTable(
   "copilot_proposals",
   {
@@ -2071,7 +2071,7 @@ export const copilot_proposals = pgTable(
     user_id: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    /** Respuesta del Copiloto que la muestra */
+    /** Respuesta del Vigía que la muestra */
     message_id: uuid("message_id")
       .notNull()
       .references(() => copilot_messages.id, { onDelete: "cascade" }),
@@ -2113,7 +2113,7 @@ export const copilot_reminders = pgTable(
 );
 
 /**
- * IA de la plataforma (la que usa el Copiloto de personas y autónomos): una
+ * IA de la plataforma (la que usa el Vigía de personas y autónomos): una
  * sola fila. La clave se guarda cifrada con ENCRYPTION_KEY y nunca se muestra.
  */
 export const platform_ai = pgTable("platform_ai", {

@@ -41,7 +41,7 @@ export default async function IngresarPage({ searchParams }: { searchParams: Pro
         </div>
         <div className="mt-10 border-t border-paper/15 pt-6">
           <p className="text-[15px] text-paper">¿Primera vez en Faro?</p>
-          <p className="mt-1 text-[13px] leading-relaxed text-paper/60">Creá tu cuenta gratis con Google o con un enlace por mail, sin contraseña: anotá tus gastos con el Copiloto y dividilos con amigos.</p>
+          <p className="mt-1 text-[13px] leading-relaxed text-paper/60">Creá tu cuenta gratis con Google o con un enlace por mail, sin contraseña: anotá tus gastos con el Vigía y dividilos con amigos.</p>
           <Link href="/faro/registro?tipo=persona" className="mt-4 inline-flex h-12 w-full items-center justify-center border border-rose-light/60 text-[15px] text-paper transition-colors hover:bg-paper/10">
             Empezá gratis
           </Link>

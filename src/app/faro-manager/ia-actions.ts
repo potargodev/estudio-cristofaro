@@ -63,5 +63,5 @@ export async function forgetPlatformKeyAction() {
   await forgetPlatformKey(faro.id);
   await audit({ studioId: null, actor: faro, action: "faro.ia_clave_borrada", entityType: "ia_plataforma" });
   revalidatePath("/faro-manager/ia");
-  redirect("/faro-manager/ia?ok=Clave%20borrada.%20El%20Copiloto%20qued%C3%B3%20en%20modo%20solo%20texto");
+  redirect("/faro-manager/ia?ok=Clave%20borrada.%20El%20Vigía%20qued%C3%B3%20en%20modo%20solo%20texto");
 }

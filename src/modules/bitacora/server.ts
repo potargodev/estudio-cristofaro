@@ -40,7 +40,7 @@ async function ownCategory(userId: string, id: string | null | undefined) {
   return c;
 }
 
-/** Categoría por clave o nombre (la usa el Copiloto) */
+/** Categoría por clave o nombre (la usa el Vigía) */
 export async function categoryByHint(userId: string, hint: string | null | undefined, kind: "gasto" | "ingreso") {
   const cats = await listCategories(userId);
   const n = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -280,7 +280,7 @@ export async function exportCsv(userId: string, month: string, categoryId?: stri
   return `﻿${rows.map((r) => r.map(csvCell).join(",")).join("\n")}\n`;
 }
 
-/** Totales rápidos (los usa el Copiloto: "¿cuánto gasté en delivery este mes?") */
+/** Totales rápidos (los usa el Vigía: "¿cuánto gasté en delivery este mes?") */
 export async function spentInCategory(userId: string, month: string, categoryHint?: string | null) {
   const cat = categoryHint ? await categoryByHint(userId, categoryHint, "gasto") : null;
   const list = await movements(userId, month, cat?.id ?? null);

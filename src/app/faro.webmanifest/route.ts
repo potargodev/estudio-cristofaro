@@ -1,5 +1,5 @@
 // PWA de Faro (personas y autónomos): se instala desde /faro, /ingresar o las
-// pantallas personales (Copiloto, Bitácora, Grupos). La web y el portal de
+// pantallas personales (Vigía, Bitácora, Grupos). La web y el portal de
 // Estudio Cristofaro siguen con su propio manifest (src/app/manifest.ts).
 export const dynamic = "force-static";
 
@@ -10,10 +10,10 @@ export function GET() {
       id: "/faro-app",
       name: "Faro",
       short_name: "Faro",
-      description: "Anotá tus gastos hablando con el Copiloto, mirá tu Bitácora y dividí gastos con amigos.",
+      description: "Anotá tus gastos hablando con el Vigía, mirá tu Bitácora y dividí gastos con amigos.",
       lang: "es-AR",
       dir: "ltr",
-      start_url: "/copiloto?origen=app",
+      start_url: "/vigia?origen=app",
       scope: "/",
       display: "standalone",
       orientation: "portrait",
@@ -22,7 +22,7 @@ export function GET() {
       categories: ["finance", "productivity", "lifestyle"],
       icons: [icon("/icons/faro-192.png", "192x192"), icon("/icons/faro-512.png", "512x512"), icon("/icons/faro-maskable-512.png", "512x512", "maskable")],
       shortcuts: [
-        { name: "Copiloto", short_name: "Copiloto", description: "Anotar un gasto", url: "/copiloto?origen=atajo", icons: [{ src: "/icons/faro-copiloto-96.png", sizes: "96x96", type: "image/png" }] },
+        { name: "Vigía", short_name: "Vigía", description: "Anotar un gasto", url: "/vigia?origen=atajo", icons: [{ src: "/icons/faro-copiloto-96.png", sizes: "96x96", type: "image/png" }] },
         { name: "Bitácora", url: "/bitacora", icons: [{ src: "/icons/faro-192.png", sizes: "192x192", type: "image/png" }] },
         { name: "Grupos de gastos", short_name: "Grupos", url: "/grupos", icons: [{ src: "/icons/faro-192.png", sizes: "192x192", type: "image/png" }] },
       ],

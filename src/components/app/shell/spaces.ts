@@ -69,18 +69,18 @@ export const BADGE_TEXT: Record<ShellBadge, string> = {
   obligations: "vencimientos esta semana",
   approvals: "propuestas para aprobar",
   unread: "mensajes sin leer",
-  copilot: "respuestas nuevas del Copiloto",
+  copilot: "respuestas nuevas del Vigía",
   reports: "reportes por revisar",
   planRequests: "pedidos de plan",
   verifications: "matrículas y reseñas por revisar",
   portalRequests: "solicitudes abiertas",
 };
 
-/** Lo de cada persona, en todos los espacios: su Copiloto, su Bitácora, sus grupos y sus mensajes */
+/** Lo de cada persona, en todos los espacios: su Vigía, su Bitácora, sus grupos y sus mensajes */
 export const PERSONAL_GROUP: ShellGroup = {
   title: "Para vos",
   items: [
-    { href: "/copiloto", label: "Copiloto", icon: "copiloto", badge: "copilot" },
+    { href: "/vigia", label: "Vigía", icon: "copiloto", badge: "copilot" },
     { href: "/bitacora", label: "Bitácora", icon: "bitacora" },
     { href: "/grupos", label: "Grupos de gastos", icon: "gastos" },
     { href: "/mensajes", label: "Mensajes", icon: "mensajes", badge: "unread" },
@@ -138,7 +138,7 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
       {
         title: "Inicio",
         items: [
-          { href: "/copiloto", label: "Copiloto", icon: "copiloto", badge: "copilot" },
+          { href: "/vigia", label: "Vigía", icon: "copiloto", badge: "copilot" },
           { href: "/personal", label: "Mi panel", icon: "resumen", exact: true },
         ],
       },
@@ -211,9 +211,9 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
 export function bottomFor(x: SpaceInput, groups: ShellGroup[]): ShellItem[] {
   const all = groups.flatMap((g) => g.items);
   const pick = (...hrefs: string[]) => hrefs.map((h) => all.find((i) => i.href === h)).filter((i): i is ShellItem => !!i);
-  if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos", "/copiloto").slice(0, 4);
-  if (x.space === "personal") return pick("/copiloto", "/bitacora", "/grupos", "/mensajes");
-  if (x.space === "portal") return [...(x.portal?.main.slice(0, 2) ?? []).map((i) => all.find((a) => a.href === i.href)!).filter(Boolean), ...pick("/copiloto", "/mensajes")].slice(0, 4);
+  if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos", "/vigia").slice(0, 4);
+  if (x.space === "personal") return pick("/vigia", "/bitacora", "/grupos", "/mensajes");
+  if (x.space === "portal") return [...(x.portal?.main.slice(0, 2) ?? []).map((i) => all.find((a) => a.href === i.href)!).filter(Boolean), ...pick("/vigia", "/mensajes")].slice(0, 4);
   return pick("/faro-manager", "/faro-manager/tenants", "/faro-manager/pedidos", "/faro-manager/red");
 }
 

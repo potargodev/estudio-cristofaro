@@ -1,17 +1,17 @@
 ---
 titulo: Bitácora: tus gastos e ingresos del mes
-resumen: Cargá gastos e ingresos (a mano o con el Copiloto), mirá cuánto entró, salió y queda, y en qué se fue. Es privada.
+resumen: Cargá gastos e ingresos (a mano o con el Vigía), mirá cuánto entró, salió y queda, y en qué se fue. Es privada.
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: bitacora
 actualizado: 2026-10-10
-relacionados: [copiloto/copiloto, grupos-de-gastos/cargar-gastos, grupos-de-gastos/crear-un-grupo]
+relacionados: [vigia/vigia, grupos-de-gastos/cargar-gastos, grupos-de-gastos/crear-un-grupo]
 ---
 
 **Bitácora** es tu registro personal de plata. Es **privada**: no la ve nadie más, ni tu estudio, ni tu organización, ni otros integrantes de tus grupos.
 
 ## Cargar un movimiento
 
-- **Con el Copiloto** (lo más rápido): escribile o mandale un audio, como «ayer 5000 de nafta y 3200 en el chino», o una foto del ticket. Lo abrís desde **Copiloto** en el menú.
+- **Con el Vigía** (lo más rápido): escribile o mandale un audio, como «ayer 5000 de nafta y 3200 en el chino», o una foto del ticket. Lo abrís desde **Vigía** en el menú.
 - **A mano:** en **Bitácora**, abrí **Cargar a mano** y completá:
   - gasto o ingreso;
   - monto y moneda (pesos por defecto, o dólares);

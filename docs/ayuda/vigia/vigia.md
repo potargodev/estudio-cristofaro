@@ -1,5 +1,5 @@
 ---
-titulo: Copiloto: contale tus gastos y él los anota
+titulo: Vigía: contale tus gastos y él los anota
 resumen: Escribile, mandale un audio o una foto del ticket. Te propone el registro en una tarjeta para que lo confirmes, lo edites o lo deshagas.
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: copiloto
@@ -7,7 +7,7 @@ actualizado: 2026-10-10
 relacionados: [bitacora/bitacora, grupos-de-gastos/cargar-gastos]
 ---
 
-El **Copiloto** es un chat para anotar tus gastos e ingresos y preguntar por tu plata, como si se lo contaras a alguien. Lo abrís desde **Copiloto** en el menú (en el celular, es el primer botón de abajo).
+El **Vigía** es un chat para anotar tus gastos e ingresos y preguntar por tu plata, como si se lo contaras a alguien. Lo abrís desde **Vigía** en el menú (en el celular, es el primer botón de abajo).
 
 ## Qué le podés mandar
 
@@ -20,7 +20,7 @@ Los archivos quedan guardados de forma privada: solo vos los podés abrir.
 
 ## Las tarjetas
 
-Por cada cosa que entiende, el Copiloto te muestra una **tarjeta**:
+Por cada cosa que entiende, el Vigía te muestra una **tarjeta**:
 
 - **Confirmar:** lo registra.
 - **Editar:** cambiás el monto, la fecha, la categoría o la descripción antes de confirmar.
@@ -47,11 +47,11 @@ Responde con tus datos reales, corto, y con un enlace para ver el detalle.
 
 ## De dónde salió cada registro
 
-Cada movimiento que cargó el Copiloto guarda el mensaje original (y la transcripción si fue un audio), el modelo y la fecha. Lo ves al abrir el movimiento en **Bitácora**.
+Cada movimiento que cargó el Vigía guarda el mensaje original (y la transcripción si fue un audio), el modelo y la fecha. Lo ves al abrir el movimiento en **Bitácora**.
 
 ## Si la IA no está disponible
 
-- **Sin IA configurada:** el Copiloto entiende frases simples de texto (monto y en qué) y te avisa. Para lo demás, cargá a mano en **Bitácora**.
+- **Sin IA configurada:** el Vigía entiende frases simples de texto (monto y en qué) y te avisa. Para lo demás, cargá a mano en **Bitácora**.
 - **Mucha demanda:** el mensaje queda **pendiente** y se procesa solo apenas se pueda. No se pierde: te avisamos en el chat.
 - **Llegaste al límite de tu plan:** el chat te lo dice y podés seguir cargando a mano.
 

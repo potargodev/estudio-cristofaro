@@ -35,6 +35,10 @@ const nextConfig: NextConfig = {
       // Tango pasó al hub de Conexiones
       { source: "/admin/integraciones", destination: "/admin/conexiones/tango", permanent: true },
       { source: "/admin/integraciones/tango/clientes", destination: "/admin/conexiones/tango/clientes", permanent: true },
+      // El Copiloto pasó a llamarse Vigía
+      { source: "/copiloto", destination: "/vigia", permanent: true },
+      { source: "/copiloto/:path*", destination: "/vigia/:path*", permanent: true },
+      { source: "/ayuda/copiloto/copiloto", destination: "/ayuda/vigia/vigia", permanent: true },
       // Gastos compartidos pasó a llamarse Grupos de gastos (§2.e): los links viejos siguen andando
       { source: "/gastos", destination: "/grupos", permanent: true },
       { source: "/gastos/:path*", destination: "/grupos/:path*", permanent: true },

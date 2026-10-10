@@ -16,12 +16,12 @@ export interface Origin {
 const KIND: Record<string, string> = { texto: "Mensaje", audio: "Audio", imagen: "Foto", pdf: "PDF" };
 const when = (d: Date) => new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(d);
 
-/** De qué mensaje del Copiloto salió un registro: el original, la transcripción, el modelo y la fecha */
+/** De qué mensaje del Vigía salió un registro: el original, la transcripción, el modelo y la fecha */
 export function CopilotOrigin({ o }: { o: Origin }) {
   return (
     <section aria-labelledby="origen" className="rounded-lg border border-line bg-surface p-5">
       <h2 id="origen" className="flex items-center gap-2 text-[15px] font-semibold">
-        <WandSparkles className="size-4 text-rose-deep" aria-hidden /> Lo registró el Copiloto
+        <WandSparkles className="size-4 text-rose-deep" aria-hidden /> Lo registró el Vigía
       </h2>
       <dl className="mt-3 grid gap-2 text-[14px]">
         <div>
@@ -48,7 +48,7 @@ export function CopilotOrigin({ o }: { o: Origin }) {
           {when(o.createdAt)} · {o.model === "basico" ? "modo básico (sin IA)" : o.model ? `modelo ${o.model}` : "sin modelo"} · {o.auto ? "registrado solo" : "confirmado por vos"}
         </div>
       </dl>
-      <Link href={`/copiloto#m-${o.id}`} className="mt-3 inline-block text-[13px] underline underline-offset-2">
+      <Link href={`/vigia#m-${o.id}`} className="mt-3 inline-block text-[13px] underline underline-offset-2">
         Ver en el chat
       </Link>
     </section>

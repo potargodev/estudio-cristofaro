@@ -1,6 +1,6 @@
 ---
 titulo: Política de privacidad de Faro
-version: 2026-10-borrador-2
+version: 2026-10-borrador-3
 fecha: 2026-10-10
 ---
 
@@ -21,9 +21,9 @@ Para prestar el servicio, mantener la seguridad (incluida la auditoría), avisar
 
 ## 4. Inteligencia artificial y proveedores de IA
 
-- Cuando usás el asistente o el **Copiloto**, la información necesaria para responder (tu mensaje, la transcripción de un audio, la foto o el PDF que mandás y el contexto mínimo, como tus categorías o los nombres de tus grupos) se envía al **proveedor de IA** configurado, solo para procesar ese pedido.
+- Cuando usás el asistente o el **Vigía**, la información necesaria para responder (tu mensaje, la transcripción de un audio, la foto o el PDF que mandás y el contexto mínimo, como tus categorías o los nombres de tus grupos) se envía al **proveedor de IA** configurado, solo para procesar ese pedido.
 - Para personas y autónomos, Faro usa su propia cuenta en un proveedor (por defecto **Google Gemini**; como alternativa, **OpenAI** u otro compatible), con planes pagos en los que, según sus condiciones, los datos no se usan para entrenar modelos. Los estudios pueden usar su propia clave: en ese caso rigen también sus condiciones con ese proveedor.
-- Del Copiloto guardamos tu historial de chat, los archivos que mandaste, la transcripción, el modelo usado y la fecha, para que veas de dónde salió cada registro. El equipo de Faro ve solo cantidades de uso (mensajes, audios, tokens y costo), nunca el contenido.
+- Del Vigía guardamos tu historial de chat, los archivos que mandaste, la transcripción, el modelo usado y la fecha, para que veas de dónde salió cada registro. El equipo de Faro ve solo cantidades de uso (mensajes, audios, tokens y costo), nunca el contenido.
 - La IA propone y una persona aprueba lo sensible.
 
 ## 4 bis. Dónde están tus datos
@@ -51,7 +51,7 @@ Los archivos que subís se guardan fuera de la base de datos y solo se descargan
 
 ## 7. Tus derechos
 
-Podés acceder a tus datos, rectificarlos, actualizarlos y pedir su supresión (arts. 14 a 16, Ley 25.326). Desde **Mi cuenta** podés **descargar tus datos** (incluidos tu Bitácora, tu historial del Copiloto y los mensajes que mandaste) y **pedir la baja de la cuenta**: el equipo de Faro te confirma el pedido y, al cerrarla, se borran tu Bitácora, tu historial del Copiloto y tus archivos, salvo lo que la ley obligue a conservar. Los mensajes que mandaste a otras personas quedan en sus conversaciones sin tu nombre. El acceso es gratuito en intervalos no inferiores a seis meses, salvo interés legítimo. Respondemos dentro de los plazos legales (10 días corridos para el acceso y 5 días hábiles para rectificación o supresión). También podés pedir la **exportación** de tus datos y la **baja** de tu cuenta.
+Podés acceder a tus datos, rectificarlos, actualizarlos y pedir su supresión (arts. 14 a 16, Ley 25.326). Desde **Mi cuenta** podés **descargar tus datos** (incluidos tu Bitácora, tu historial del Vigía y los mensajes que mandaste) y **pedir la baja de la cuenta**: el equipo de Faro te confirma el pedido y, al cerrarla, se borran tu Bitácora, tu historial del Vigía y tus archivos, salvo lo que la ley obligue a conservar. Los mensajes que mandaste a otras personas quedan en sus conversaciones sin tu nombre. El acceso es gratuito en intervalos no inferiores a seis meses, salvo interés legítimo. Respondemos dentro de los plazos legales (10 días corridos para el acceso y 5 días hábiles para rectificación o supresión). También podés pedir la **exportación** de tus datos y la **baja** de tu cuenta.
 
 La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, órgano de control de la Ley 25.326, tiene la atribución de atender las denuncias y reclamos que interpongan quienes resulten afectados en sus derechos por incumplimiento de las normas vigentes en materia de protección de datos personales.
 

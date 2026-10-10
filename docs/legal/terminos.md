@@ -1,6 +1,6 @@
 ---
 titulo: Términos y condiciones de uso de Faro
-version: 2026-10-borrador-2
+version: 2026-10-borrador-3
 fecha: 2026-10-10
 ---
 
@@ -25,9 +25,9 @@ Cada estudio y cada profesional es el único responsable por su trabajo profesio
 
 Faro incluye un asistente de inteligencia artificial que **propone**. Nada fiscal, de pagos ni comunicaciones sensibles se ejecuta sin la aprobación expresa de una persona autorizada. Las respuestas de la IA pueden contener errores y **no constituyen asesoramiento profesional**: tienen que revisarlas quienes las usan. Las plantillas por rubro y los datos normativos marcados «a validar» son sugerencias que debe revisar un profesional.
 
-### Copiloto y Bitácora
+### Vigía y Bitácora
 
-El **Copiloto** interpreta lo que le escribís, decís (audio) o mandás (fotos, capturas, PDF) y te **propone** registros en tarjetas para que los confirmes, edites o deshagas. Podés elegir que tus movimientos personales se registren solos, siempre con la opción de deshacerlos. Lo que afecta a otras personas (por ejemplo, un gasto en un grupo) siempre te pide confirmación. Revisá lo que registra: puede equivocarse. Tu **Bitácora** es privada: no la ve tu estudio, ni tu organización, ni otros integrantes de tus grupos.
+El **Vigía** interpreta lo que le escribís, decís (audio) o mandás (fotos, capturas, PDF) y te **propone** registros en tarjetas para que los confirmes, edites o deshagas. Podés elegir que tus movimientos personales se registren solos, siempre con la opción de deshacerlos. Lo que afecta a otras personas (por ejemplo, un gasto en un grupo) siempre te pide confirmación. Revisá lo que registra: puede equivocarse. Tu **Bitácora** es privada: no la ve tu estudio, ni tu organización, ni otros integrantes de tus grupos.
 
 El uso de la IA de la plataforma tiene límites por plan (mensajes y audios por mes) que se informan en [/precios](/precios). Si se alcanza un límite o el proveedor no está disponible, podés seguir cargando a mano.
 

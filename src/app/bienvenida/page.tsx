@@ -39,7 +39,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
   const steps = kind === "persona" ? ["Qué querés hacer", "Listo"] : ["Tus datos", kind === "studio" ? "Rubros que atendés" : "Tu actividad", "Por dónde seguir"];
   let paso = Math.min(steps.length, Math.max(1, Number(sp.paso) || 1));
   if (kind === "persona") paso = Number(sp.paso) >= 3 ? 2 : 1;
-  const home = kind === "studio" ? "/admin" : kind === "persona" ? "/copiloto" : "/personal";
+  const home = kind === "studio" ? "/admin" : kind === "persona" ? "/vigia" : "/personal";
   const first = me.name.split(" ")[0];
   const finalStep = paso === steps.length;
 
@@ -147,7 +147,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                 <legend className="text-[17px] font-semibold">¿Qué querés hacer primero?</legend>
                 <div className="mt-4 grid gap-2">
                   {[
-                    { v: "copiloto", icon: WandSparkles, t: "Anotar mis gastos", d: "Contáselos al Copiloto por texto, audio o foto del ticket, y se arma tu Bitácora sola." },
+                    { v: "copiloto", icon: WandSparkles, t: "Anotar mis gastos", d: "Contáselos al Vigía por texto, audio o foto del ticket, y se arma tu Bitácora sola." },
                     { v: "grupos", icon: Wallet, t: "Dividir gastos", d: "Un viaje, la casa, la oficina: cada uno ve cuánto debe." },
                     { v: "red", icon: Handshake, t: "Encontrar un contador", d: "Compará estudios verificados de la Red, con reseñas de clientes reales." },
                     { v: "flotas", icon: Ship, t: "Armar una Flota", d: "Con 3 a 20 personas, pidan juntos una propuesta a un estudio. Cada uno paga lo suyo." },
@@ -187,7 +187,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                         { href: "/red", icon: Handshake, t: "Buscar un contador", d: "En la Red de estudios." },
                       ]
                     : [
-                        { href: "/copiloto", icon: WandSparkles, t: "Hablar con el Copiloto", d: "Contale tu primer gasto: «5000 de nafta»." },
+                        { href: "/vigia", icon: WandSparkles, t: "Hablar con el Vigía", d: "Contale tu primer gasto: «5000 de nafta»." },
                         { href: "/grupos/nuevo", icon: Wallet, t: "Crear un grupo de gastos", d: "Y sumar a quien quieras." },
                         { href: "/bitacora", icon: NotebookPen, t: "Ver mi Bitácora", d: "Lo que entra, lo que sale y en qué." },
                       ]

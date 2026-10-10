@@ -112,8 +112,8 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           Cargar a mano
           <span className="text-[13px] font-normal text-muted">
             o mandáselo al{" "}
-            <Link href="/copiloto" className="font-medium text-rose-deep underline underline-offset-4">
-              Copiloto
+            <Link href="/vigia" className="font-medium text-rose-deep underline underline-offset-4">
+              Vigía
             </Link>
           </span>
         </summary>
@@ -195,7 +195,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5 truncate text-[15px] text-ink">
                         {m.description}
-                        {m.source === "copiloto" && <WandSparkles className="size-3.5 shrink-0 text-rose-deep" aria-label="Cargado por el Copiloto" />}
+                        {m.source === "copiloto" && <WandSparkles className="size-3.5 shrink-0 text-rose-deep" aria-label="Cargado por el Vigía" />}
                       </span>
                       <span className="block truncate text-[12px] text-muted">
                         {m.source === "grupo" ? `Mi parte · ${m.group!.name}` : m.categoryName} · {day(m.date)}

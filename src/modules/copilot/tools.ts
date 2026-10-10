@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod/v4";
 
-// Herramientas del Copiloto (tool calls tipadas del AI SDK). Las de registro
+// Herramientas del Vigía (tool calls tipadas del AI SDK). Las de registro
 // no se ejecutan: se convierten en tarjetas (Confirmar, Editar, Deshacer).
 // Las de consulta sí se ejecutan con los datos reales del usuario.
 
