@@ -149,6 +149,14 @@ html:has(.site) {
   letter-spacing: -0.02em;
   font-size: clamp(2.75rem, 8.4vw, 9rem);
 }
+/* Titular del hero: un 28% más chico que .display para dejar ver la foto */
+.display-hero {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.4rem, 6vw, 6.4rem);
+}
 .display-md {
   font-family: var(--font-display);
   font-weight: 400;

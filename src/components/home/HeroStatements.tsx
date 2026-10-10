@@ -62,9 +62,9 @@ export function HeroStatements({ statements, interval }: { statements: string[];
   }
 
   return (
-    <div className="relative mt-5">
+    <div className="relative mt-6">
       <h1 className="sr-only">{statements[0]}</h1>
-      <div ref={stack} aria-hidden className="display grid max-w-[13ch] text-paper">
+      <div ref={stack} aria-hidden className="display-hero grid max-w-[17ch] text-paper lg:max-w-[22ch]">
         {statements.map((s, i) => (
           i === 0 ? (
             <MaskText key={s} as="p" intro className="[grid-area:1/1]" style={i === index ? undefined : { visibility: "hidden" }}>
