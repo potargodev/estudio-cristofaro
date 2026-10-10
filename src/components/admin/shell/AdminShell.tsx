@@ -18,6 +18,7 @@ import {
   Plus,
   Bot,
   Blocks,
+  Network,
   CircleHelp,
   Lock,
   ShieldCheck,
@@ -62,6 +63,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   gastos: Wallet,
   modulos: Blocks,
   ayuda: CircleHelp,
+  red: Network,
 };
 
 /** Barra inferior del celular, como en una app: las cuatro secciones de todos los días y "Más" (abre el menú completo) */

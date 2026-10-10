@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Network,
   MessageSquareText,
   ScrollText,
   Tags,
@@ -58,7 +59,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
       { href: "/faro-manager/plantillas", label: "Plantillas de industria", icon: Factory },
     ],
   },
-  // Red de estudios (matrículas y reseñas) y Textos legales se suman en sus etapas
+  { title: "Red", items: [{ href: "/faro-manager/red", label: "Red de estudios", icon: Network, badge: "verifications" }] },
   {
     title: "Plataforma",
     items: [

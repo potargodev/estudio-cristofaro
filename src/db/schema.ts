@@ -44,7 +44,7 @@ export const userRole = pgEnum("user_role", ["dueno", "contador", "cliente", "co
 export const tenantKind = pgEnum("tenant_kind", ["studio", "personal", "persona"]);
 export const tenantStatus = pgEnum("tenant_status", ["activo", "prueba", "suspendido"]);
 export const leadStatus = pgEnum("lead_status", ["nuevo", "contactado", "presupuesto", "ganado", "perdido"]);
-export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro", "agenda"]);
+export const leadSource = pgEnum("lead_source", ["diagnostico", "contacto", "whatsapp", "manual", "otro", "agenda", "red", "flota"]);
 export const taxRegime = pgEnum("tax_regime", ["monotributo", "responsable_inscripto", "sociedad", "exento", "otro"]);
 export const obligationStatus = pgEnum("obligation_status", ["pendiente", "en_proceso", "presentado", "pagado", "vencido"]);
 export const documentSource = pgEnum("document_source", ["estudio", "cliente"]);
@@ -1663,4 +1663,73 @@ export const help_feedback = pgTable(
     created_at: createdAt(),
   },
   (t) => [index("help_feedback_article_idx").on(t.article_id, t.created_at)],
+);
+
+// ───────────────────────── Red de estudios (docs/faro-producto.md §2.i) ─────────────────────────
+
+export const licenseStatus = pgEnum("license_status", ["sin_cargar", "pendiente", "verificada", "rechazada"]);
+export const reviewStatus = pgEnum("review_status", ["pendiente", "publicada", "rechazada"]);
+
+/**
+ * Ficha del estudio en la Red: opt-in (published) y solo visible con la
+ * matrícula verificada por Faro y el módulo red_estudios en el plan.
+ */
+export const directory_profiles = pgTable("directory_profiles", {
+  studio_id: uuid("studio_id")
+    .primaryKey()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  published: boolean("published").notNull().default(false),
+  accepting_clients: boolean("accepting_clients").notNull().default(true),
+  headline: text("headline"),
+  description: text("description"),
+  province: text("province"),
+  city: text("city"),
+  /** presencial | remoto | ambas */
+  modality: text("modality").notNull().default("ambas"),
+  services: text("services").array().notNull().default(sql`'{}'::text[]`),
+  industries: text("industries").array().notNull().default(sql`'{}'::text[]`),
+  languages: text("languages").array().notNull().default(sql`'{español}'::text[]`),
+  /** unipersonal | 2-5 | 6-15 | 16+ */
+  team_size: text("team_size"),
+  fee_range: text("fee_range"),
+  contact_email: text("contact_email"),
+  license_body: text("license_body"),
+  license_number: text("license_number"),
+  license_holder: text("license_holder"),
+  license_status: licenseStatus("license_status").notNull().default("sin_cargar"),
+  license_note: text("license_note"),
+  license_reviewed_by: uuid("license_reviewed_by").references(() => users.id, { onDelete: "set null" }),
+  license_reviewed_at: timestamp("license_reviewed_at", { withTimezone: true }),
+  published_at: timestamp("published_at", { withTimezone: true }),
+  created_at: createdAt(),
+  updated_at: updatedAt(),
+});
+
+/** Reseñas: solo de clientes reales (≥ 30 días en Faro), una por organización, moderadas, con respuesta pública */
+export const directory_reviews = pgTable(
+  "directory_reviews",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    author_user_id: uuid("author_user_id").references(() => users.id, { onDelete: "set null" }),
+    /** Cómo se muestra el autor (nombre de pila o "Cliente verificado") */
+    author_label: text("author_label").notNull(),
+    rating: integer("rating").notNull(),
+    body: text("body").notNull(),
+    status: reviewStatus("status").notNull().default("pendiente"),
+    moderation_note: text("moderation_note"),
+    moderated_by: uuid("moderated_by").references(() => users.id, { onDelete: "set null" }),
+    moderated_at: timestamp("moderated_at", { withTimezone: true }),
+    response: text("response"),
+    responded_by: uuid("responded_by").references(() => users.id, { onDelete: "set null" }),
+    responded_at: timestamp("responded_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [unique("directory_reviews_org_key").on(t.studio_id, t.organization_id), index("directory_reviews_studio_idx").on(t.studio_id, t.status)],
 );

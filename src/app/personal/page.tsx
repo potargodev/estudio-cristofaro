@@ -2,10 +2,6 @@ import { and, desc, eq, isNull, or } from "drizzle-orm";
 import { CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Wallet } from "lucide-react";
 import Link from "next/link";
 import { FirstSteps } from "@/components/app/FirstSteps";
-import { requestAccountant } from "./actions";
-import { Notice } from "@/components/admin/AdminField";
-import { SubmitButton } from "@/components/admin/ui";
-import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
 import { accounting_expenses, studios } from "@/db/schema";
 import { categoryName, formatMoney } from "@/modules/gastos/constants";
@@ -39,7 +35,6 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
   const first = me.name.split(" ")[0];
   return (
     <div className="grid gap-6 pb-10">
-      {sp.contador && <Notice>{sp.contador === "1" ? "Listo: un contador del Estudio Cristofaro te va a escribir." : "No pudimos mandar el pedido. Probá de nuevo."}</Notice>}
       <header>
         <p className="text-[13px] text-muted">
           {t?.kind === "persona" ? (sp.bienvenida ? "Te damos la bienvenida a Faro" : "Tu espacio en Faro") : sp.bienvenida ? "Te damos la bienvenida a Faro Personal" : "Faro Personal"} · plan {getPlan(t?.plan_key) ? planFullName(getPlan(t?.plan_key)!) : ""}
@@ -110,21 +105,16 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
         </ul>
       </section>
 
-      <section aria-labelledby="contador" className="border border-line bg-surface p-5">
-        <h2 id="contador" className="flex items-center gap-2 text-[17px] font-medium text-ink">
-          <LifeBuoy className="size-5 text-gold-ink" strokeWidth={1.5} aria-hidden /> Necesito un contador
-        </h2>
-        <p className="mt-1 text-[14px] text-muted">Te contacta un contador del Estudio Cristofaro, el primer estudio de Faro. Tus números no se comparten hasta que vos lo autorices.</p>
-        <form action={requestAccountant} className="mt-4 grid gap-3">
-          <label htmlFor="msg" className="sr-only">
-            Contanos qué necesitás
-          </label>
-          <Textarea id="msg" name="message" rows={3} maxLength={1500} placeholder="Contanos qué necesitás (opcional)" />
-          <div>
-            <SubmitButton pendingText="Enviando…">Pedir un contador</SubmitButton>
-          </div>
-        </form>
-      </section>
+      <Link href="/red" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
+        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
+          <LifeBuoy className="size-6" strokeWidth={1.5} aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[17px] font-medium text-ink">Necesito un contador</span>
+          <span className="block text-[14px] text-muted">Compará estudios de la Red: matrícula verificada, reseñas de clientes reales y un orden sin posiciones pagas. Tus números no se comparten hasta que vos lo autorices.</span>
+        </span>
+        <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Ver la Red</span>
+      </Link>
     </div>
   );
 }

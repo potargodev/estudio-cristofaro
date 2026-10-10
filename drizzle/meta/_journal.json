@@ -134,6 +134,13 @@
       "when": 1791657037006,
       "tag": "0018_ayuda",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791657916892,
+      "tag": "0019_red_de_estudios",
+      "breakpoints": true
     }
   ]
 }
