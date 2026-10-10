@@ -118,35 +118,44 @@ export function BarChart({
               <span key={t} className="border-t border-dashed border-line" />
             ))}
           </div>
-          <div className="absolute inset-x-0 bottom-0 top-0 flex">
-            {data.map((r, i) => (
-              <div
-                key={r.label}
-                tabIndex={0}
-                role="img"
-                aria-label={`${r.label}: ${series.map((s) => `${s.label} ${Number(r[s.key]) || 0}`).join(", ")}`}
-                onMouseEnter={() => setHover(i)}
-                onMouseLeave={() => setHover(null)}
-                onFocus={() => setHover(i)}
-                onBlur={() => setHover(null)}
-                className={cn("group relative flex flex-1 flex-col justify-end px-[12%] outline-none", hover === i && "bg-navy-soft/60")}
-              >
-                <div className={cn("flex flex-1 items-end gap-[2px] pb-6", stacked && "flex-col-reverse items-stretch justify-start")}>
-                  {series.map((s, k) => {
-                    const v = Number(r[s.key]) || 0;
-                    const pct = (v / max) * 100;
-                    return (
-                      <span
-                        key={s.key}
-                        className={cn(stacked ? "w-full" : "flex-1", highlight !== undefined && highlight !== i && "opacity-60")}
-                        style={{ background: s.color ?? CHART_COLORS[k], height: `${pct}%`, minHeight: v ? 2 : 0 }}
-                      />
-                    );
-                  })}
+          <div className="absolute inset-0 flex">
+            {data.map((r, i) => {
+              const plot = height - 24;
+              let acc = 0;
+              return (
+                <div
+                  key={r.label}
+                  tabIndex={0}
+                  role="img"
+                  aria-label={`${r.label}: ${series.map((s) => `${s.label} ${Number(r[s.key]) || 0}`).join(", ")}`}
+                  onMouseEnter={() => setHover(i)}
+                  onMouseLeave={() => setHover(null)}
+                  onFocus={() => setHover(i)}
+                  onBlur={() => setHover(null)}
+                  className={cn("relative min-w-0 flex-1 outline-none", hover === i && "bg-navy-soft/60")}
+                >
+                  <div className="absolute inset-x-[14%] bottom-6" style={{ height: plot }}>
+                    {series.map((s, k) => {
+                      const v = Number(r[s.key]) || 0;
+                      const h = Math.max(v ? 2 : 0, (v / max) * plot);
+                      const w = stacked ? 100 : 100 / series.length;
+                      const style: React.CSSProperties = stacked
+                        ? { left: 0, width: "100%", bottom: acc, height: h }
+                        : { left: `${k * w}%`, width: `calc(${w}% - 2px)`, bottom: 0, height: h };
+                      if (stacked) acc += h;
+                      return (
+                        <span
+                          key={s.key}
+                          className={cn("absolute", highlight !== undefined && highlight !== i && "opacity-60")}
+                          style={{ ...style, background: s.color ?? CHART_COLORS[k] }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <span className="tabular absolute inset-x-0 bottom-0 truncate text-center text-[12px] text-muted">{r.label}</span>
                 </div>
-                <span className="tabular absolute inset-x-0 bottom-0 truncate text-center text-[12px] text-muted">{r.label}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {hover !== null && <Tooltip row={data[hover]} series={series} x={((hover + 0.5) / n) * 100} y={8} />}
         </div>
