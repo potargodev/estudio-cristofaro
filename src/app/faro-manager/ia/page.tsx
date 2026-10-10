@@ -36,6 +36,14 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
           <p>No hay clave cargada. El Copiloto funciona en <strong>modo básico</strong>: entiende frases simples de texto y avisa que la IA no está configurada.</p>
         </div>
       )}
+      {p.cap_alerted_at && Date.now() - p.cap_alerted_at.getTime() < 48 * 3600_000 && (
+        <div role="status" className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-[14px]">
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-rose-deep" aria-hidden />
+          <p>
+            Última alerta de la IA: {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(p.cap_alerted_at)}. El detalle está en la <a href="/faro-manager/auditoria" className="underline underline-offset-2">auditoría</a>.
+          </p>
+        </div>
+      )}
       {p.free_tier && (
         <div role="alert" className="mb-5 flex gap-3 rounded-md border border-danger/40 bg-danger/5 p-4 text-[14px]">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-danger" aria-hidden />

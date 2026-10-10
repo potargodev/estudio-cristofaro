@@ -16,6 +16,7 @@ import { buildPortalNav } from "@/lib/portal-nav";
 import { getPrefs } from "@/lib/prefs";
 import { unseenCount } from "@/modules/copilot/server";
 import { unreadCount } from "@/modules/messages/unread";
+import { listNotices, unreadNotices } from "@/modules/notifications/server";
 import { guideBoot } from "@/modules/onboarding/server";
 import { moderationCounts } from "@/modules/red/server";
 import { AppShell, type ShellSpace } from "./AppShell";
@@ -92,7 +93,14 @@ export async function AppFrame({ space: forced, children }: { space?: Space; chi
     spaceName = "Faro Manager";
     roleLabel = user.faroRole === "faro_owner" ? "Owner" : "Soporte";
   }
-  [badges.unread, badges.copilot] = await Promise.all([unreadCount(user.id).catch(() => 0), unseenCount(user.id).catch(() => 0)]);
+  const [unreadMsgs, copilotNew, noticeList, noticeCount] = await Promise.all([
+    unreadCount(user.id).catch(() => 0),
+    unseenCount(user.id).catch(() => 0),
+    user.assisted ? [] : listNotices(user.id, 12).catch(() => []),
+    user.assisted ? 0 : unreadNotices(user.id).catch(() => 0),
+  ]);
+  badges.unread = unreadMsgs;
+  badges.copilot = copilotNew;
 
   // Espacios a los que puede entrar
   const spaces: ShellSpace[] = [];
@@ -128,6 +136,7 @@ export async function AppFrame({ space: forced, children }: { space?: Space; chi
         assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}
         endAssisted={endAssistedAccess}
         signOut={user.role === "cliente" ? portalSignOut : signOut}
+        notices={user.assisted ? undefined : { unread: noticeCount, items: noticeList.map((n) => ({ id: n.id, title: n.title, body: n.body, href: n.href, read: !!n.read_at, at: n.created_at.toISOString() })) }}
         switchOrg={user.role === "cliente" ? switchOrganization : undefined}
       >
         <LegalGate back={HOME[space]} />

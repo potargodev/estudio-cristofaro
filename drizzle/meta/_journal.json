@@ -183,6 +183,13 @@
       "when": 1791662924513,
       "tag": "0025_copiloto",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791665037005,
+      "tag": "0026_grupos_amigos",
+      "breakpoints": true
     }
   ]
 }

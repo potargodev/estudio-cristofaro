@@ -5,6 +5,7 @@ import { Notice } from "@/components/admin/AdminField";
 import { CategoryChart, MonthChart } from "@/components/gastos/Charts";
 import { BalanceLine, GroupDot } from "@/components/gastos/Money";
 import { CopyButton, InviteForm, MeForm, PartnerForm, RenewLinkForm, SettingsForm } from "@/components/gastos/forms";
+import { GroupLink } from "@/components/gastos/invite";
 import { cn } from "@/lib/utils";
 import { GROUP_TYPES, SETTLEMENT_METHODS, categoryName, formatMoney, type GroupType } from "@/modules/gastos/constants";
 import { requireGastos } from "@/modules/gastos/server/session";
@@ -20,7 +21,7 @@ const TABS = [
   { key: "integrantes", label: "Integrantes" },
 ] as const;
 
-const SAVED: Record<string, string> = { gasto: "Gasto guardado.", pago: "Pago registrado. Cuando la otra persona lo confirme, queda confirmado.", borrado: "Gasto borrado." };
+const SAVED: Record<string, string> = { gasto: "Gasto guardado.", pago: "Pago registrado. Cuando la otra persona lo confirme, queda confirmado.", borrado: "Gasto borrado.", cuenta: "Listo: el grupo quedó guardado en tu cuenta." };
 
 const when = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Argentina/Buenos_Aires" });
 const day = (d: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
@@ -64,6 +65,15 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
           </p>
         </div>
       </header>
+
+      {actor.kind === "guest" && (
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-gold/60 bg-rose-soft p-4 text-[14px]">
+          <p className="min-w-0 flex-1">Entrás sin cuenta, solo desde este teléfono. Creá tu cuenta gratis y el grupo queda guardado, con tu parte en tu Bitácora.</p>
+          <Link href="/grupos/reclamar" className="inline-flex h-10 items-center bg-navy px-4 text-paper hover:bg-navy-deep">
+            Crear mi cuenta
+          </Link>
+        </div>
+      )}
 
       <section aria-label="Tu saldo" className="mt-5 border border-line bg-surface p-5">
         <p className="text-[13px] text-muted">Tu saldo en este grupo</p>
@@ -336,7 +346,14 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
             </ul>
             {actor.kind === "user" && (
               <section>
-                <h2 className="mb-3 font-display text-2xl">Sumar a alguien</h2>
+                <h2 className="mb-1 font-display text-2xl">Invitar con el enlace del grupo</h2>
+                <p className="mb-3 text-[14px] text-muted">Lo mandás por WhatsApp al grupo de amigos y cada uno se suma solo.</p>
+                <GroupLink groupId={group.id} groupName={group.name} admin={me.role === "admin"} active={!!group.invite_token_hash} />
+              </section>
+            )}
+            {actor.kind === "user" && (
+              <section>
+                <h2 className="mb-3 font-display text-2xl">Sumar a alguien por nombre</h2>
                 <InviteForm groupId={group.id} />
               </section>
             )}
@@ -388,8 +405,14 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
             <SettingsForm groupId={group.id} name={group.name} simplify={group.simplify_debts} reminders={group.reminder_frequency} color={group.color} />
             <form action={archiveGroupAction} className="border-t border-line pt-6">
               <input type="hidden" name="group" value={group.id} />
-              <p className="mb-3 text-[14px] text-muted">Archivar el grupo lo saca de la lista de todos. Los datos quedan guardados.</p>
-              <button className="h-11 border border-danger/40 px-5 text-danger hover:bg-danger/5">Archivar grupo</button>
+              <h2 className="mb-1 font-display text-2xl">Cerrar el grupo</h2>
+              {Object.values(v.balances).some((b) => Object.values(b).some((x) => x !== 0)) ? (
+                <p className="mb-3 text-[14px] text-rose-deep">Todavía hay saldos pendientes. Si lo cerrás, nadie más puede cargar gastos ni registrar pagos: conviene saldar antes.</p>
+              ) : (
+                <p className="mb-3 text-[14px] text-muted">Están todos al día.</p>
+              )}
+              <p className="mb-3 text-[14px] text-muted">Cerrarlo lo saca de la lista de todos y apaga el enlace de invitación. Los datos quedan guardados y se pueden exportar antes.</p>
+              <button className="h-11 border border-danger/40 px-5 text-danger hover:bg-danger/5">Cerrar el grupo</button>
             </form>
           </div>
         )}
@@ -398,7 +421,10 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       <Link
         href={`/grupos/g/${group.id}/gasto`}
         aria-label="Agregar gasto"
-        className="fixed bottom-[calc(20px+env(safe-area-inset-bottom))] right-5 z-30 grid size-16 place-items-center rounded-full bg-navy text-paper shadow-[0_12px_30px_-10px_rgba(15,19,32,0.7)] hover:bg-navy-deep sm:hidden"
+        className={cn(
+          "fixed right-5 z-30 grid size-16 place-items-center rounded-full bg-navy text-paper shadow-[0_12px_30px_-10px_rgba(15,19,32,0.7)] hover:bg-navy-deep sm:hidden",
+          "bottom-[calc(var(--app-bottom,env(safe-area-inset-bottom))+20px)]",
+        )}
       >
         <Plus className="size-7" aria-hidden />
       </Link>

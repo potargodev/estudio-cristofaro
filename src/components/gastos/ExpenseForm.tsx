@@ -379,7 +379,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           {state.message}
         </p>
       )}
-      <div className="sticky bottom-0 -mx-4 border-t border-line bg-canvas/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
+      <div className="sticky bottom-[var(--app-bottom,0px)] -mx-4 border-t border-line bg-canvas/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
         <button type="submit" disabled={pending || !amount || !!preview.error || !!payerError} className="h-14 w-full bg-navy text-[17px] text-paper hover:bg-navy-deep disabled:opacity-50 sm:w-auto sm:px-10">
           {pending ? "Guardando…" : amount ? `Guardar ${formatMoney(amount, currency)}` : "Guardar gasto"}
         </button>

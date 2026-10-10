@@ -1392,11 +1392,14 @@ export const expense_groups = pgTable(
     reminder_frequency: text("reminder_frequency").notNull().default("semanal"),
     last_reminder_at: timestamp("last_reminder_at", { withTimezone: true }),
     created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    /** Enlace para sumarse al grupo (se comparte por WhatsApp o copiando): hash del token; null = apagado */
+    invite_token_hash: text("invite_token_hash"),
+    invite_created_at: timestamp("invite_created_at", { withTimezone: true }),
     archived_at: timestamp("archived_at", { withTimezone: true }),
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
-  (t) => [index("expense_groups_studio_idx").on(t.studio_id)],
+  (t) => [index("expense_groups_studio_idx").on(t.studio_id), uniqueIndex("expense_groups_invite_idx").on(t.invite_token_hash)],
 );
 
 /** Integrantes: usuarios de Faro o invitados sin cuenta (entran por link mágico solo a su grupo) */
@@ -2138,3 +2141,25 @@ export const platform_ai = pgTable("platform_ai", {
   updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
   updated_at: updatedAt(),
 });
+
+/**
+ * Avisos dentro de la app (campanita): un gasto que te cargaron, un pago, un
+ * mensaje. Son de una persona; nunca se muestran a otra.
+ */
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    body: text("body"),
+    href: text("href"),
+    ref_id: uuid("ref_id"),
+    read_at: timestamp("read_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("notifications_user_idx").on(t.user_id, t.read_at, t.created_at)],
+);

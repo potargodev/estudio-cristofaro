@@ -1,5 +1,6 @@
 "use client";
 
+import { NoticesBell, type Notice } from "./NoticesBell";
 import {
   ArrowLeftRight,
   Blocks,
@@ -133,6 +134,7 @@ export interface ShellProps {
   endAssisted?: () => void | Promise<void>;
   signOut: () => void | Promise<void>;
   switchOrg?: (fd: FormData) => void | Promise<void>;
+  notices?: { items: Notice[]; unread: number };
   children: React.ReactNode;
 }
 
@@ -473,6 +475,7 @@ export function AppShell(p: ShellProps) {
               <kbd className="hidden rounded border border-line px-1 text-[11px] sm:inline">⌘K</kbd>
             </button>
           )}
+          {p.notices && <NoticesBell items={p.notices.items} unread={p.notices.unread} className="rounded-md border border-line bg-surface text-ink hover:border-muted" />}
           <GuideButton className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
           <HelpLink compact className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
           <ThemeToggle className="hidden rounded-md border border-line bg-surface text-ink hover:border-muted sm:inline-flex" />
@@ -499,7 +502,7 @@ export function AppShell(p: ShellProps) {
             )}
           </div>
         )}
-        <main id="contenido" className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pb-10">
+        <main id="contenido" className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 [--app-bottom:calc(60px+env(safe-area-inset-bottom))] sm:px-6 sm:pt-8 lg:px-8 lg:pb-10 lg:[--app-bottom:0px]">
           <RouteReveal>{p.children}</RouteReveal>
         </main>
       </div>

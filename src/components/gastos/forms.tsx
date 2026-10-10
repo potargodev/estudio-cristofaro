@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, MessageCircle } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { commentAction, inviteAction, partnerMovementAction, renewLinkAction, updateGroupAction, updateMeAction, type FormState } from "@/app/grupos/actions";
@@ -53,7 +53,12 @@ function LinkBox({ link }: { link: string }) {
       <code className="break-all text-[13px]" data-testid="guest-link">
         {link}
       </code>
-      <CopyButton value={link} label="Copiar enlace" className="justify-self-start" />
+      <div className="flex flex-wrap gap-2">
+        <a href={`https://wa.me/?text=${encodeURIComponent(`Te sumé a un grupo de gastos en Faro. Entrá con este enlace: ${link}`)}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 bg-[#1f7a4d] px-3 text-[13px] text-white hover:bg-[#186540]">
+          <MessageCircle className="size-3.5" aria-hidden /> Mandar por WhatsApp
+        </a>
+        <CopyButton value={link} label="Copiar enlace" />
+      </div>
     </div>
   );
 }
@@ -75,7 +80,7 @@ export function InviteForm({ groupId }: { groupId: string }) {
           {pending ? "Sumando…" : "Sumar"}
         </button>
       </div>
-      <p className="text-[13px] text-muted">Si tiene cuenta en Faro lo ve en su panel. Si no, entra con un enlace personal que solo abre este grupo.</p>
+      <p className="text-[13px] text-muted">Te damos un enlace personal para mandarle por WhatsApp (el mail es opcional). Entra sin cuenta y, si quiere, después crea la suya y el grupo queda guardado.</p>
       <Message state={state} />
       {state.link && <LinkBox link={state.link} />}
     </form>

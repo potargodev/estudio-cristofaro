@@ -1,4 +1,5 @@
 import "server-only";
+import { createHmac } from "node:crypto";
 import { and, asc, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import {
@@ -28,7 +29,8 @@ import { checkUpload, storeUpload } from "@/lib/uploads";
 import { CATEGORIES, CURRENCIES, GROUP_COLORS, GROUP_TYPES, REMINDER_FREQUENCIES, formatMoney, todayAR, type GroupType } from "../constants";
 import { balancesInBase, computeBalances, directDebts, simplifyDebts, type LedgerExpense, type LedgerSettlement, type Transfer } from "../core/balances";
 import { SplitError, checkPayers, splitExpense, type SplitSpec } from "../core/split";
-import { auditActor, memberOf, newGuestToken, type GastosActor, type GroupRow, type MemberRow } from "./actor";
+import { notify } from "@/modules/notifications/server";
+import { auditActor, hashGuestToken, memberOf, newGuestToken, type GastosActor, type GroupRow, type MemberRow } from "./actor";
 import { fxRate } from "./fx";
 import { paymentLinks } from "./mercadopago";
 
@@ -36,6 +38,9 @@ import { paymentLinks } from "./mercadopago";
 export class GastosError extends Error {}
 
 const NOT_FOUND = "No encontramos ese grupo o no sos parte.";
+
+/** Usuario de otro tenant (un amigo con su propia cuenta): es integrante, pero la contabilidad del grupo no es suya */
+const isOutsider = (actor: GastosActor, group: GroupRow) => actor.kind === "user" && actor.studioId !== group.studio_id;
 
 async function need(actor: GastosActor, groupId: string) {
   const r = await memberOf(actor, groupId);
@@ -219,6 +224,114 @@ export async function renewGuestLink(actor: GastosActor, groupId: string, member
   return `${getSiteUrl()}/grupos/invitado/${token.token}`;
 }
 
+// ── Enlace del grupo e invitados que se crean cuenta ─────────────────────
+
+// El token del enlace no se guarda: se deriva con HMAC del grupo y la fecha en
+// que se generó (en la base queda solo su hash, para buscarlo). Renovar cambia la fecha.
+function inviteToken(groupId: string, at: Date) {
+  const secret = process.env.BETTER_AUTH_SECRET || process.env.ENCRYPTION_KEY;
+  if (!secret) throw new GastosError("Falta configurar el secreto del servidor.");
+  return createHmac("sha256", secret).update(`grupo-invitacion:${groupId}:${at.toISOString()}`).digest("base64url");
+}
+
+/** Enlace para sumarse al grupo (uno por grupo; lo ve cualquier integrante con cuenta). Renovarlo invalida el anterior */
+export async function groupInviteLink(actor: GastosActor, groupId: string, renew = false) {
+  const { group, me } = await need(actor, groupId);
+  userActor(actor);
+  if (renew && me.role !== "admin") throw new GastosError("Solo quien administra el grupo puede renovar el enlace.");
+  let at = group.invite_token_hash && group.invite_created_at && !renew ? group.invite_created_at : null;
+  if (!at) {
+    at = new Date();
+    await getDb().update(expense_groups).set({ invite_token_hash: hashGuestToken(inviteToken(group.id, at)), invite_created_at: at }).where(eq(expense_groups.id, group.id));
+    await groupAudit(actor, group, renew ? "gastos.enlace_renovar" : "gastos.enlace_crear", "grupo_gastos", group.id);
+  }
+  return `${getSiteUrl()}/grupos/unirse/${inviteToken(group.id, at)}`;
+}
+
+export async function disableGroupInvite(actor: GastosActor, groupId: string) {
+  const { group, me } = await need(actor, groupId);
+  if (me.role !== "admin") throw new GastosError("Solo quien administra el grupo puede apagar el enlace.");
+  await getDb().update(expense_groups).set({ invite_token_hash: null, invite_created_at: null }).where(eq(expense_groups.id, group.id));
+  await groupAudit(actor, group, "gastos.enlace_apagar", "grupo_gastos", group.id);
+}
+
+/** Vista pública mínima de una invitación (nombre del grupo y quién invita). Nunca datos de gastos */
+export async function inviteByToken(token: string) {
+  if (!token || token.length < 20 || token.length > 100) return null;
+  const [g] = await getDb()
+    .select({ id: expense_groups.id, name: expense_groups.name, studioId: expense_groups.studio_id, archived: expense_groups.archived_at, createdBy: expense_groups.created_by })
+    .from(expense_groups)
+    .where(eq(expense_groups.invite_token_hash, hashGuestToken(token)));
+  if (!g || g.archived) return null;
+  const [owner] = g.createdBy ? await getDb().select({ name: users.name }).from(users).where(eq(users.id, g.createdBy)) : [];
+  const [n] = await getDb().select({ n: sql<number>`count(*)::int` }).from(group_members).where(and(eq(group_members.group_id, g.id), eq(group_members.active, true)));
+  return { id: g.id, name: g.name, studioId: g.studioId, inviter: owner?.name ?? null, members: n?.n ?? 1 };
+}
+
+/** Un usuario con sesión se suma con el enlace del grupo (si ya es integrante, entra) */
+export async function joinWithInvite(actor: GastosActor, token: string) {
+  const u = userActor(actor);
+  const inv = await inviteByToken(token);
+  if (!inv) throw new GastosError("Ese enlace ya no sirve. Pedile uno nuevo a quien te invitó.");
+  const db = getDb();
+  const [already] = await db.select().from(group_members).where(and(eq(group_members.group_id, inv.id), eq(group_members.user_id, u.userId)));
+  if (already?.active) return { groupId: inv.id, joined: false };
+  const members = await activeMembers(inv.id);
+  if (members.length >= 50) throw new GastosError("El grupo llegó al máximo de 50 integrantes.");
+  const [group] = await db.select().from(expense_groups).where(eq(expense_groups.id, inv.id));
+  let memberId: string;
+  if (already) {
+    await db.update(group_members).set({ active: true, name: u.name }).where(eq(group_members.id, already.id));
+    memberId = already.id;
+  } else {
+    const [m] = await db.insert(group_members).values({ group_id: inv.id, user_id: u.userId, name: u.name, email: u.email.toLowerCase(), role: "miembro" }).returning({ id: group_members.id });
+    memberId = m.id;
+  }
+  await log(inv.id, memberId, "integrante", `${u.name} se sumó con el enlace del grupo`);
+  await groupAudit(actor, group, "gastos.unirse_enlace", "integrante_gastos", memberId);
+  const admins = members.filter((m) => m.role === "admin" && m.user_id);
+  await notify(admins.map((m) => m.user_id), { kind: "grupo", title: `${u.name} se sumó a ${group.name}`, href: `/grupos/g/${group.id}?tab=integrantes`, refId: group.id }).catch(() => undefined);
+  return { groupId: inv.id, joined: true };
+}
+
+/** Sumarse con el enlace del grupo sin crear cuenta: queda como invitado (devuelve su token personal) */
+export async function joinAsGuest(token: string, rawName: string) {
+  const inv = await inviteByToken(token);
+  if (!inv) throw new GastosError("Ese enlace ya no sirve. Pedile uno nuevo a quien te invitó.");
+  const name = rawName.trim().replace(/[\u0000-\u001f\u007f]/g, "").slice(0, 80);
+  if (name.length < 2) throw new GastosError("Escribí tu nombre.");
+  const members = await activeMembers(inv.id);
+  if (members.length >= 50) throw new GastosError("El grupo llegó al máximo de 50 integrantes.");
+  const t = newGuestToken();
+  const db = getDb();
+  const [m] = await db.insert(group_members).values({ group_id: inv.id, name, role: "miembro", guest_token_hash: t.hash }).returning({ id: group_members.id });
+  const [group] = await db.select().from(expense_groups).where(eq(expense_groups.id, inv.id));
+  await log(inv.id, m.id, "integrante", `${name} se sumó con el enlace del grupo, sin cuenta`);
+  await audit({ studioId: group.studio_id, organizationId: group.organization_id, actorLabel: `invitado: ${name}`, action: "gastos.unirse_enlace", entityType: "integrante_gastos", entityId: m.id, metadata: { grupo: group.id, sin_cuenta: true } });
+  return { groupId: inv.id, token: t.token };
+}
+
+/**
+ * Un invitado sin cuenta que después entra o se crea una cuenta: su lugar en
+ * el grupo (con sus gastos y saldos) pasa a su usuario. Necesita el link
+ * personal (la cookie del invitado) y la sesión a la vez.
+ */
+export async function claimGuest(actor: GastosActor, guestToken: string) {
+  const u = userActor(actor);
+  const db = getDb();
+  if (!guestToken || guestToken.length < 20 || guestToken.length > 100) throw new GastosError("Ese enlace ya no sirve.");
+  const [m] = await db.select().from(group_members).where(and(eq(group_members.guest_token_hash, hashGuestToken(guestToken)), eq(group_members.active, true)));
+  if (!m || m.user_id) throw new GastosError("Ese enlace ya no sirve.");
+  const [dup] = await db.select({ id: group_members.id }).from(group_members).where(and(eq(group_members.group_id, m.group_id), eq(group_members.user_id, u.userId), eq(group_members.active, true)));
+  if (dup) throw new GastosError("Ya sos parte de ese grupo con tu cuenta.");
+  const [group] = await db.select().from(expense_groups).where(eq(expense_groups.id, m.group_id));
+  if (!group || group.archived_at) throw new GastosError("El grupo está archivado.");
+  await db.update(group_members).set({ user_id: u.userId, guest_token_hash: null, email: m.email ?? u.email.toLowerCase() }).where(eq(group_members.id, m.id));
+  await log(group.id, m.id, "integrante", `${m.name} ahora entra con su cuenta de Faro`);
+  await groupAudit(actor, group, "gastos.invitado_reclamar", "integrante_gastos", m.id);
+  return group.id;
+}
+
 export async function updateMyMember(actor: GastosActor, groupId: string, input: { alias?: string; cvu?: string; optOut?: boolean; name?: string }) {
   const { group, me } = await need(actor, groupId);
   const set: Partial<MemberRow> = {};
@@ -340,6 +453,8 @@ export async function prepareExpense(group: GroupRow, members: MemberRow[], inpu
 
 export async function createExpense(actor: GastosActor, groupId: string, input: NewExpense, opts: { origin?: "web" | "asistente" | "recurrente" } = {}) {
   const { group, me } = await need(actor, groupId);
+  // La contabilidad del grupo es la del tenant que lo creó: quien no es de ese tenant no la toca
+  if (isOutsider(actor, group)) input = { ...input, isCompany: false, isDeductible: false };
   const members = await activeMembers(group.id);
   const p = await prepareExpense(group, members, input);
   let receipt: { name: string; storagePath: string; mimeType: string } | null = null;
@@ -383,6 +498,12 @@ export async function createExpense(actor: GastosActor, groupId: string, input: 
   await log(group.id, me.id, "gasto", `${payerNames.join(" y ")} pagó ${formatMoney(input.amount, p.currency)} · ${p.description}`, { expenseId: row.id });
   await syncAccounting(group, row);
   await groupAudit(actor, group, "gastos.gasto_crear", "gasto", row.id, { importe: input.amount, moneda: p.currency, metodo: input.split.method, origen: opts.origin ?? "web" });
+  // Aviso a quienes les tocó una parte (menos a quien lo cargó)
+  const affected = members.filter((m) => m.id !== me.id && m.user_id && (p.shares[m.id] ?? 0) > 0);
+  await notify(
+    affected.map((m) => m.user_id),
+    { kind: "gasto", title: `${me.name} cargó un gasto en ${group.name}`, body: `${p.description} · ${formatMoney(input.amount, p.currency)}`, href: `/grupos/g/${group.id}/gasto/${row.id}`, refId: row.id },
+  ).catch(() => undefined);
   return row;
 }
 
@@ -494,6 +615,14 @@ export async function recordSettlement(actor: GastosActor, groupId: string, inpu
     })
     .returning();
   await log(group.id, me.id, "pago", `${from.name} le pagó ${formatMoney(input.amount, input.currency)} a ${to.name}`, { settlementId: s.id });
+  const other = me.id === from.id ? to : me.id === to.id ? from : null;
+  await notify([other?.user_id, ...(other ? [] : [from.user_id, to.user_id])], {
+    kind: "pago",
+    title: `${from.name} le pagó ${formatMoney(input.amount, input.currency)} a ${to.name}`,
+    body: `En ${group.name}. Confirmalo en el grupo.`,
+    href: `/grupos/g/${group.id}?tab=saldos`,
+    refId: s.id,
+  }).catch(() => undefined);
   await groupAudit(actor, group, "gastos.pago_registrar", "pago_gastos", s.id, { importe: input.amount, moneda: input.currency, medio: input.method });
   return s;
 }
@@ -620,7 +749,7 @@ export async function listGroups(actor: GastosActor): Promise<GroupSummary[]> {
     .where(
       and(
         eq(group_members.active, true),
-        eq(expense_groups.studio_id, actor.studioId),
+        actor.kind === "user" ? undefined : eq(expense_groups.studio_id, actor.studioId),
         isNull(expense_groups.archived_at),
         actor.kind === "user" ? eq(group_members.user_id, actor.userId) : eq(group_members.id, actor.memberId),
       ),

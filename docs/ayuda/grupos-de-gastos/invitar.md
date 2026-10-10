@@ -1,32 +1,49 @@
 ---
 titulo: Cómo sumar personas a un grupo de gastos
-resumen: Sumá integrantes con cuenta de Faro o como invitados sin cuenta, con un enlace personal que solo abre ese grupo.
+resumen: Mandá el enlace del grupo por WhatsApp para que cada uno se sume solo (con Google, con un enlace por mail o sin cuenta), o sumá a alguien por nombre.
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: shared_expenses
 actualizado: 2026-10-10
 relacionados: [grupos-de-gastos/crear-un-grupo, grupos-de-gastos/cargar-gastos, primeros-pasos/registro]
 ---
 
-A un grupo de gastos podés sumar a cualquiera, tenga o no cuenta en Faro.
+A un grupo de gastos podés sumar a cualquiera, tenga o no cuenta en Faro. No hace falta el mail: todo se puede mandar por WhatsApp.
 
-## Sumar a alguien
+## Con el enlace del grupo (lo más fácil)
 
 1. Abrí el grupo y andá a **Integrantes**.
-2. En **Sumar a alguien**, escribí el **Nombre** y, si lo tenés, el **Email**.
-3. Confirmá.
+2. En **Invitar con el enlace del grupo**, tocá **Crear el enlace del grupo** (o **Ver el enlace del grupo** si ya existe).
+3. Tocá **Mandar por WhatsApp** (o **Copiar enlace**, o **Compartir** desde el celular) y pasalo al grupo de amigos.
+
+Quien abre el enlace ve el nombre del grupo y quién invita, y elige:
+
+- **Con mi cuenta:** entra con **Google** o con un **enlace por mail**. Si no tiene cuenta, se le crea una gratis (Personas · Gratis) en el momento, y vuelve directo al grupo para tocar **Sumarme**.
+- **Sin cuenta:** escribe su nombre y entra como invitado, solo a ese grupo y desde ese teléfono.
+
+Quien administra el grupo puede **Renovar** el enlace: el anterior deja de servir al instante. Conviene hacerlo si se compartió por error. Al cerrar el grupo, el enlace se apaga.
+
+## Por nombre
+
+1. En **Integrantes**, en **Sumar a alguien por nombre**, escribí el **Nombre** y, si lo tenés, el **Email**.
+2. Tocá **Sumar**. Te damos un **enlace personal** para esa persona: mandáselo con **Mandar por WhatsApp** o **Copiar enlace**.
 
 Puede sumar personas cualquier integrante que tenga cuenta en Faro; los invitados sin cuenta, no.
 
-- **Si tiene cuenta en Faro**, ve el grupo en su panel.
-- **Si no tiene cuenta**, queda como **invitado sin cuenta** y entra con un **enlace personal que solo abre este grupo**. Usá **Copiar enlace** y pasáselo por donde quieras.
+## Si entraste sin cuenta: guardá el grupo
 
-El invitado puede ver el grupo, sus gastos y sus saldos, pero nada más de Faro. Si un día quiere más, puede [crear su cuenta](/ayuda/primeros-pasos/registro).
+Arriba del grupo vas a ver **Crear mi cuenta**. Creala con Google o con un enlace por mail y tocá **Guardar en la cuenta**: tu lugar en el grupo, con tus gastos y saldos, pasa a tu cuenta. Desde ahí lo ves en cualquier dispositivo y tu parte se suma a tu [Bitácora](/ayuda/bitacora/bitacora).
+
+Si ya tenés cuenta y abrís un enlace personal, Faro te ofrece guardarlo en tu cuenta.
+
+## Avisos
+
+Cuando alguien carga un gasto en el que tenés una parte, o registra un pago con vos, te llega un **aviso** en la campanita de arriba. Tocalo para ir directo al gasto o al pago.
 
 ## Si el enlace no funciona
 
-Si ves "Ese enlace ya no sirve", puede que lo hayan renovado o que te hayan sacado del grupo. Pedile a quien te invitó un enlace nuevo.
+Si ves "Ese enlace ya no sirve", puede que lo hayan renovado, que te hayan sacado del grupo o que el grupo esté cerrado. Pedile a quien te invitó un enlace nuevo.
 
-Cualquier integrante con cuenta puede generar un **Nuevo enlace de acceso** para un invitado, desde **Integrantes**. El enlace anterior deja de funcionar al instante, así que conviene hacerlo si se compartió por error.
+Cualquier integrante con cuenta puede generar un **Nuevo enlace de acceso** para un invitado, desde **Integrantes**.
 
 ## Salir o sacar a alguien
 
@@ -38,4 +55,4 @@ Faro manda recordatorios amables de los saldos pendientes según lo que se confi
 
 ## Privacidad
 
-Cada integrante ve los gastos y saldos del grupo. Nadie ve tus otras finanzas, ni tus otros grupos.
+Cada integrante ve los gastos y saldos del grupo. Nadie ve tus otras finanzas, ni tus otros grupos, ni tu Bitácora. Si el grupo es de la cuenta de otra persona, su contabilidad es suya: lo que vos cargues no pasa a sus gastos de la empresa.

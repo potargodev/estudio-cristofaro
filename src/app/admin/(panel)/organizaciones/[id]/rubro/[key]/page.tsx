@@ -82,7 +82,7 @@ export default async function PreviewRubro({ params, searchParams }: { params: P
           );
         })}
       </div>
-      <form action={applyIndustryAction} className="sticky bottom-0 mt-6 flex flex-wrap items-center gap-3 border-t border-line bg-canvas/95 py-4 backdrop-blur">
+      <form action={applyIndustryAction} className="sticky bottom-[var(--app-bottom,0px)] mt-6 flex flex-wrap items-center gap-3 border-t border-line bg-canvas/95 py-4 backdrop-blur">
         <input type="hidden" name="organization" value={p.organization.id} />
         <input type="hidden" name="industry" value={p.template.clave} />
         <SubmitButton pendingText="Aplicando…">{fresh.length ? `Confirmar y crear ${fresh.length} ítems` : "Confirmar"}</SubmitButton>

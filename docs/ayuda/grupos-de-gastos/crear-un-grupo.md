@@ -22,7 +22,7 @@ No los confundas con las [Flotas](/ayuda/flotas/que-es-una-flota), que son para 
 7. Dejá tildado **Simplificar deudas** si querés que Faro calcule la menor cantidad de transferencias para quedar a mano. Lo podés cambiar después.
 8. Tocá **Crear grupo**.
 
-Después sumás a las personas, con cuenta de Faro o invitadas por un enlace. Ver [Cómo sumar personas](/ayuda/grupos-de-gastos/invitar).
+Después sumás a las personas: lo más fácil es mandar el **enlace del grupo** por WhatsApp. Ver [Cómo sumar personas](/ayuda/grupos-de-gastos/invitar).
 
 ## Grupos de socios
 
@@ -36,6 +36,6 @@ Si sos autónomo o miembro de una organización, podés conectar el grupo con **
 
 Dentro del grupo podés cambiar el nombre, el color, la simplificación de deudas y los **recordatorios de saldos pendientes**: sin recordatorios, cada semana, cada 15 días o cada mes.
 
-## Archivar
+## Cerrar el grupo
 
-Si el grupo ya no se usa, **Archivar grupo** lo saca de la lista de todos. Los datos quedan guardados.
+Cuando termina el viaje o el proyecto, quien administra el grupo lo cierra desde **Ajustes** → **Cerrar el grupo**. Si quedan saldos pendientes, Faro te avisa antes: conviene saldar primero. Al cerrarlo sale de la lista de todos, nadie puede cargar más gastos y el enlace de invitación deja de servir. Los datos quedan guardados (exportalos antes si los querés tener).

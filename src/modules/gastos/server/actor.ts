@@ -51,17 +51,19 @@ export type GroupRow = typeof expense_groups.$inferSelect;
 export type MemberRow = typeof group_members.$inferSelect;
 
 /**
- * El grupo y el integrante que es el actor, o null si no es integrante activo
- * (o el grupo es de otro tenant). Es la única forma de entrar a un grupo.
+ * El grupo y el integrante que es el actor, o null si no es integrante activo.
+ * Es la única forma de entrar a un grupo: la membresía activa es el permiso.
  */
 export async function memberOf(actor: GastosActor, groupId: string): Promise<{ group: GroupRow; me: MemberRow } | null> {
   if (!/^[0-9a-f-]{36}$/i.test(groupId)) return null;
   if (actor.kind === "guest" && actor.groupId !== groupId) return null;
   const db = getDb();
+  // Un usuario entra a cualquier grupo del que sea integrante (también de otro
+  // tenant: amigos con su propia cuenta); el invitado, solo al suyo y del tenant del grupo.
   const [group] = await db
     .select()
     .from(expense_groups)
-    .where(and(eq(expense_groups.id, groupId), eq(expense_groups.studio_id, actor.studioId)));
+    .where(actor.kind === "user" ? eq(expense_groups.id, groupId) : and(eq(expense_groups.id, groupId), eq(expense_groups.studio_id, actor.studioId)));
   if (!group) return null;
   const [me] = await db
     .select()
