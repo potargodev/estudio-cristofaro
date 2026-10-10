@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SettleForm } from "@/components/gastos/SettleForm";
-import { requireGastos } from "@/modules/gastos/server/actor";
+import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 
 export const metadata = { title: "Saldar" };

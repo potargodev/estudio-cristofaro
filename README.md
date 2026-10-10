@@ -135,7 +135,10 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 | `STUDIO_NOTIFY_EMAIL` | Dónde llegan los avisos de consultas nuevas |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Credenciales OAuth de Google para el login de clientes y la agenda (opcional: sin ellas no aparece el botón y la agenda funciona sin Google) |
 | `ENCRYPTION_KEY` | Clave para cifrar los tokens de Google Calendar: `openssl rand -base64 32`. No cambiarla después |
-| `CRON_SECRET` | Opcional: para disparar los recordatorios de la agenda desde un cron externo |
+| `CRON_SECRET` | Opcional: para disparar los recordatorios de la agenda (`/api/agenda/recordatorios`) y las tareas de gastos compartidos (`/api/gastos/cron`) desde un cron externo |
+| `FARO_HOSTS` / `FARO_CONTACT_EMAIL` | Opcional: dominios que muestran la landing de Faro en `/` y su email de contacto |
+| `FX_API_URL` | Opcional: API de cotizaciones para gastos en otra moneda (formato DolarApi; por defecto `https://dolarapi.com`). Sin respuesta, la cotización se carga a mano |
+| `GASTOS_JOBS` | Opcional: `off` apaga los gastos recurrentes y recordatorios internos (corren cada hora) |
 
 Si faltan las variables SMTP la web funciona igual, solo que no manda mails (las consultas se guardan en el backoffice). Usá el SMTP del proveedor donde está la casilla de `estudiocristofaro.com`: si se envía desde otro servidor, los mails caen en spam.
 
@@ -230,6 +233,13 @@ En desarrollo: `npm run reset-password -- persona@estudiocristofaro.com`.
 El conector se instala en la PC de la contadora donde corre Tango, no en Easypanel. Paso a paso en [`connector/README.md`](connector/README.md): Node 22, `config.json` bajado de **Conexiones → Tango**, `node index.mjs test`, `node index.mjs sync` y la tarea programada con `instalar-tarea.ps1`.
 
 Para desarrollar sin Tango: `node connector/mock/server.mjs` levanta un simulador de la API Delta en `http://localhost:17000` (token `11111111-2222-3333-4444-555555555555`, empresas 1 y 2, 30 clientes).
+
+### 9. Gastos compartidos
+
+- Rutas: `/gastos` (todos los paneles: estudio, autónomo, portal, empleados) e invitados sin cuenta por `/gastos/invitado/<token>` (el enlace solo abre su grupo).
+- Rendiciones de empleados en `/portal/rendiciones` (rol de organización **Empleado**); lo aprobado aparece en **Gastos de la empresa** del portal y en la pestaña **Gastos** de la ficha de la organización.
+- Mercado Pago está simulado (links de prueba); la integración real es de la F7.
+- Pruebas: `npm test` (reparto y deudas simplificadas), `npx tsx --conditions=react-server --env-file=.env.local scripts/pruebas/gastos.mts` (aislamiento) y `node --env-file=.env.local scripts/pruebas/gastos-ia.mjs` (Asistente). Cotizaciones de prueba: `node mocks/dolar/server.mjs` con `FX_API_URL=http://localhost:4040`.
 
 ### Actualizar
 

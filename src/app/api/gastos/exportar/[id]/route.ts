@@ -1,5 +1,6 @@
 import { audit } from "@/lib/audit";
-import { auditActor, getGastosActor } from "@/modules/gastos/server/actor";
+import { auditActor } from "@/modules/gastos/server/actor";
+import { getGastosActor } from "@/modules/gastos/server/session";
 import { toCsv, toPdf, toXlsx } from "@/modules/gastos/server/export";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 

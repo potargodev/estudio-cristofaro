@@ -1,14 +1,10 @@
 import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import { and, eq } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { cache } from "react";
 import { getDb } from "@/db";
 import { expense_groups, group_members } from "@/db/schema";
 import type { AuditEvent } from "@/lib/audit";
-import { getCurrentUser } from "@/lib/auth";
-import { homeFor, isStudioRole } from "@/lib/roles";
+import { homeFor } from "@/lib/roles";
 import type { UserRole } from "@/lib/types";
 
 // Quién usa gastos compartidos en este pedido. Siempre sale del servidor:
@@ -40,24 +36,6 @@ export async function guestByToken(token: string) {
     .where(and(eq(group_members.guest_token_hash, hashGuestToken(token)), eq(group_members.active, true)));
   return row && !row.archived ? row : null;
 }
-
-/** Actor del pedido actual o null (sin sesión válida ni invitación vigente) */
-export const getGastosActor = cache(async (): Promise<GastosActor | null> => {
-  const user = await getCurrentUser();
-  if (user) {
-    // El estudio entra con su seguridad completa (contraseña definitiva y 2FA)
-    if (isStudioRole(user.role) && (user.mustChangePassword || !user.twoFactorEnabled)) return null;
-    if (user.tenantSuspended && !user.assisted) return null;
-    // En acceso asistido el equipo de Faro no opera gastos de personas
-    if (user.assisted) return null;
-    return { kind: "user", studioId: user.studioId, userId: user.id, name: user.name, email: user.email, role: user.role };
-  }
-  const token = (await cookies()).get(GUEST_COOKIE)?.value;
-  if (!token) return null;
-  const g = await guestByToken(token);
-  if (!g) return null;
-  return { kind: "guest", studioId: g.studioId, memberId: g.memberId, groupId: g.groupId, name: g.name, email: g.email };
-});
 
 /** Para la auditoría: el usuario, o una etiqueta para el invitado */
 export function auditActor(actor: GastosActor): Pick<AuditEvent, "actor" | "actorLabel"> {
@@ -98,9 +76,3 @@ export async function memberOf(actor: GastosActor, groupId: string): Promise<{ g
   return me ? { group, me } : null;
 }
 
-/** Para las páginas de /gastos: actor o a la pantalla de ingreso */
-export async function requireGastos(): Promise<GastosActor> {
-  const a = await getGastosActor();
-  if (!a) redirect("/gastos/entrar");
-  return a;
-}

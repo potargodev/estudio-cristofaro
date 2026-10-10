@@ -59,16 +59,26 @@ const colaboradorA = await user(A, "colaborador@estudiocristofaro.com", "Coco Co
 const norte = await org(A, "Agencia Norte SRL", "30711111119");
 const sur = await org(A, "Consultora Sur SAS", "30722222229");
 const ajena = await org(B, "Empresa Ajena SA", "30733333339");
+// Portal de Agencia Norte: una dueña (administradora) y una empleada (solo gastos y rendiciones)
+async function member(userId, orgId, role) {
+  await sql`insert into memberships (studio_id, organization_id, user_id, role, status) values (${A}, ${orgId}, ${userId}, ${role}, 'activa')
+    on conflict do nothing`;
+  await sql`update memberships set role = ${role}, status = 'activa' where user_id = ${userId} and organization_id = ${orgId}`;
+}
+const duenaNorte = await user(A, "duena@agencianorte.com.ar", "Dana Dueña", "cliente");
+const empleadaNorte = await user(A, "empleada@agencianorte.com.ar", "Ema Empleada", "cliente");
+await member(duenaNorte, norte, "administrador");
+await member(empleadaNorte, norte, "empleado");
 const reqOf = async (o) => (await sql`select id from requests where organization_id = ${o} limit 1`)[0].id;
 const docOf = async (o) => (await sql`select id from documents where organization_id = ${o} limit 1`)[0].id;
 
 const out = {
   studios: { A, B },
-  users: { adminA, contadorA, adminB, colaboradorA },
+  users: { adminA, contadorA, adminB, colaboradorA, duenaNorte, empleadaNorte },
   orgs: { norte, sur, ajena },
   requests: { norte: await reqOf(norte), sur: await reqOf(sur), ajena: await reqOf(ajena) },
   documents: { norte: await docOf(norte), ajena: await docOf(ajena) },
-  cookies: { adminA: await session(adminA), contadorA: await session(contadorA), adminB: await session(adminB), colaboradorA: await session(colaboradorA) },
+  cookies: { adminA: await session(adminA), contadorA: await session(contadorA), adminB: await session(adminB), colaboradorA: await session(colaboradorA), duenaNorte: await session(duenaNorte), empleadaNorte: await session(empleadaNorte) },
 };
 writeFileSync(new URL("./.salida.json", import.meta.url), JSON.stringify(out, null, 2));
 console.log(JSON.stringify(out, null, 2));

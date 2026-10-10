@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExpenseForm } from "@/components/gastos/ExpenseForm";
-import { requireGastos } from "@/modules/gastos/server/actor";
+import { requireGastos } from "@/modules/gastos/server/session";
 import { receiptReadingAvailable } from "@/modules/gastos/server/receipt";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 

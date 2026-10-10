@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CommentForm } from "@/components/gastos/forms";
 import { CATEGORIES, FX_SOURCES, RECURRENCES, SPLIT_METHODS, formatMoney, type Category } from "@/modules/gastos/constants";
-import { requireGastos } from "@/modules/gastos/server/actor";
+import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 import { deleteExpenseAction, stopRecurrenceAction } from "../../../../actions";
 

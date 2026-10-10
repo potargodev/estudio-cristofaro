@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getGastosActor } from "@/modules/gastos/server/actor";
+import { getGastosActor } from "@/modules/gastos/server/session";
 
 export const metadata = { title: "Entrar" };
 

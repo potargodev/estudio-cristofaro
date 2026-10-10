@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { NewGroupForm } from "@/components/gastos/NewGroupForm";
-import { requireGastos } from "@/modules/gastos/server/actor";
+import { requireGastos } from "@/modules/gastos/server/session";
 import { contextOptions } from "@/modules/gastos/server/service";
 
 export const metadata = { title: "Nuevo grupo" };

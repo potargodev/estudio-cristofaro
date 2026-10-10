@@ -7,7 +7,8 @@ import { isUuid } from "@/lib/ids";
 import { can } from "@/lib/permissions";
 import { isStudioRole } from "@/lib/roles";
 import { readStored } from "@/lib/uploads";
-import { auditActor, getGastosActor, memberOf } from "@/modules/gastos/server/actor";
+import { auditActor, memberOf } from "@/modules/gastos/server/actor";
+import { getGastosActor } from "@/modules/gastos/server/session";
 
 export const dynamic = "force-dynamic";
 

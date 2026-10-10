@@ -75,16 +75,17 @@ export function DecideButtons({ id }: { id: string }) {
   return (
     <form action={action} className="grid gap-2">
       <input type="hidden" name="id" value={id} />
+      <input type="hidden" name="decision" value={rejecting ? "rechazar" : "aprobar"} />
       {rejecting && <input name="reason" required placeholder="Motivo del rechazo" aria-label="Motivo del rechazo" className={input} />}
       <div className="flex flex-wrap gap-2">
         {!rejecting && (
-          <button name="decision" value="aprobar" disabled={pending} className="h-10 bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">
+          <button disabled={pending} className="h-10 bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">
             Aprobar
           </button>
         )}
         {rejecting ? (
           <>
-            <button name="decision" value="rechazar" disabled={pending} className="h-10 bg-danger px-4 text-[14px] text-white">
+            <button disabled={pending} className="h-10 bg-danger px-4 text-[14px] text-white">
               Confirmar rechazo
             </button>
             <button type="button" onClick={() => setRejecting(false)} className="h-10 px-3 text-[14px] text-muted">

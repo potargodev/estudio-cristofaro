@@ -7,7 +7,7 @@ import { BalanceLine, GroupDot } from "@/components/gastos/Money";
 import { CopyButton, InviteForm, MeForm, PartnerForm, RenewLinkForm, SettingsForm } from "@/components/gastos/forms";
 import { cn } from "@/lib/utils";
 import { GROUP_TYPES, SETTLEMENT_METHODS, categoryName, formatMoney, type GroupType } from "@/modules/gastos/constants";
-import { requireGastos } from "@/modules/gastos/server/actor";
+import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 import { answerSettlementAction, archiveGroupAction, removeMemberAction, toggleSimplifyAction } from "../../actions";
 
@@ -106,16 +106,19 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
               <p className="min-w-0 flex-1 text-[14px]">
                 {s.created_by === me.id ? "Esperando que confirmen" : `${name(s.created_by)} informó`}: <strong>{name(s.from_member)}</strong> le pagó <strong className="tabular-nums">{formatMoney(s.amount, s.currency)}</strong> a <strong>{name(s.to_member)}</strong> ({SETTLEMENT_METHODS[s.method]}).
               </p>
-              <form action={answerSettlementAction} className="flex gap-2">
-                <input type="hidden" name="group" value={group.id} />
-                <input type="hidden" name="settlement" value={s.id} />
-                <button name="accept" value="1" className="h-10 bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">
-                  Confirmar
-                </button>
-                <button name="accept" value="0" className="h-10 border border-line px-4 text-[14px] hover:bg-navy-soft">
-                  Rechazar
-                </button>
-              </form>
+              <div className="flex gap-2">
+                {[
+                  ["1", "Confirmar", "h-10 bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep"],
+                  ["0", "Rechazar", "h-10 border border-line px-4 text-[14px] hover:bg-navy-soft"],
+                ].map(([accept, label, cls]) => (
+                  <form key={accept} action={answerSettlementAction}>
+                    <input type="hidden" name="group" value={group.id} />
+                    <input type="hidden" name="settlement" value={s.id} />
+                    <input type="hidden" name="accept" value={accept} />
+                    <button className={cls}>{label}</button>
+                  </form>
+                ))}
+              </div>
             </div>
           ))}
         </section>

@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { BalanceLine, GroupDot } from "@/components/gastos/Money";
 import { GROUP_TYPES, formatMoney, type GroupType } from "@/modules/gastos/constants";
-import { requireGastos } from "@/modules/gastos/server/actor";
+import { requireGastos } from "@/modules/gastos/server/session";
 import { listGroups } from "@/modules/gastos/server/service";
 
 export const metadata = { title: "Tus grupos" };

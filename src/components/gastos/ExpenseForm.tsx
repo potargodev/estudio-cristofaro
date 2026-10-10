@@ -129,7 +129,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
   const valueHint = method === "porcentaje" ? `${Object.values(values).reduce((s, v) => s + num(v), 0)}% de 100%` : method === "montos" ? `${formatMoney(Object.values(values).reduce((s, v) => s + (parseAmount(v) ?? 0), 0), currency)} de ${formatMoney(amount, currency)}` : "";
 
   return (
-    <form action={action} className="grid gap-7">
+    <form action={action} className="grid grid-cols-[minmax(0,1fr)] gap-7">
       <input type="hidden" name="group" value={groupId} />
       <input type="hidden" name="payload" value={payload} />
 
@@ -212,7 +212,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
       </label>
 
       {/* Quién pagó */}
-      <fieldset>
+      <fieldset className="min-w-0">
         <legend className="mb-2 text-[14px] font-medium">¿Quién pagó?</legend>
         {!multiPayer ? (
           <div className="flex flex-wrap gap-2">
@@ -239,7 +239,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
       </fieldset>
 
       {/* Cómo se divide */}
-      <fieldset>
+      <fieldset className="min-w-0">
         <legend className="mb-2 text-[14px] font-medium">¿Cómo se divide?</legend>
         <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
           {(Object.keys(SPLIT_METHODS) as SplitMethod[]).map((m) => (

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
 import { Toaster } from "@/components/ui/sonner";
-import { getGastosActor, homeOf } from "@/modules/gastos/server/actor";
+import { homeOf } from "@/modules/gastos/server/actor";
+import { getGastosActor } from "@/modules/gastos/server/session";
 import { gastosSignOut } from "./actions";
 
 export const metadata: Metadata = { title: { default: "Gastos compartidos", template: "%s · Gastos compartidos" }, robots: { index: false, follow: false } };
