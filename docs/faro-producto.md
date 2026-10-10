@@ -320,16 +320,32 @@ Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de e
 - El Asistente IA responde usando estos artículos y cita el artículo de donde sacó la respuesta.
 - Los artículos se actualizan en el mismo commit que cambia una función.
 
+## 2.m Copiloto (la puerta de entrada de la app)
+
+Lo primero que ve cualquier usuario al entrar es **su Copiloto**: un chat estilo WhatsApp con su agente. Es la forma principal de cargar información en Faro.
+- **Entradas:** texto, audio (mantener para hablar), foto, captura de pantalla, PDF. Desde el celular como app instalable (PWA).
+- **Decantación:** el Copiloto interpreta y lo convierte en registros del panel: gastos e ingresos de Bitácora, gastos de un grupo, recordatorios, documentos. Cada interpretación aparece como una tarjeta en el chat ("Gasto $3.500 · Kiosco · Comida · hoy") con **Confirmar**, **Editar** y **Deshacer**.
+- **Aprobación:** lo personal de Bitácora puede registrarse en un toque (o solo, si el usuario lo activa, siempre con Deshacer). Todo lo que afecta a otras personas (un gasto en un grupo) o es fiscal, de pagos o una comunicación sensible requiere confirmación explícita.
+- **Consultas:** "¿cuánto gasté en delivery este mes?", "¿cuánto le debo a Juan?" responden con datos reales del usuario y enlazan a la pantalla.
+- **Origen:** cada registro creado por el Copiloto guarda el mensaje original (texto, audio, imagen), la transcripción y la fecha, y se ve desde el registro.
+- **Proveedor de IA:** para personas y autónomos, Faro pone el modelo (clave de la plataforma en Faro Manager, con límite de uso por plan). Los estudios pueden usar su propia clave (§2.b).
+- **WhatsApp real** (número de Faro) llega en F9; el Copiloto en la app es el MVP.
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |
 |---|---|---|---|
 | Para quién | Contador independiente que arranca | Estudio chico en crecimiento | Estudio mediano que quiere automatizar |
+<<<<<<< Updated upstream
 | Precio de referencia | USD 49 / mes | USD 119 / mes | USD 249 / mes |
 | Organizaciones incluidas | Hasta 10 | Hasta 40 | Hasta 120 |
 | Organización extra | USD 2 / mes | USD 2 / mes | USD 2 / mes |
 | Prueba gratis | 30 días | 30 días | 30 días |
 | Red de estudios (aparecer en el directorio) | — | ✓ | ✓ |
+=======
+| Precio (referencia, editable en Faro Manager) | Gratis | USD 119 / mes | USD 249 / mes |
+| Organizaciones | Hasta 5 | Hasta 60 | Ilimitadas |
+>>>>>>> Stashed changes
 | Usuarios del estudio | 1 | Hasta 5 | Hasta 25 |
 | Núcleo | ✓ | ✓ | ✓ |
 | Asistente IA | Con clave propia, consultas | Con clave propia, consultas y acciones | Acciones avanzadas y agentes |
@@ -356,6 +372,8 @@ Los precios son de referencia y se editan desde el Faro Manager (USD con convers
 - Mientras tanto, en staging: landing de Faro en `/faro` y app en `app.estudiocristofaro.com`. Ruteo por host preparado para separar dominios sin tocar código.
 
 ## 6. Hoja de ruta
+
+**Prioridad actual · MVP personal (antes de seguir con el resto):** Copiloto (§2.m) + Bitácora básica (gastos e ingresos diarios, categorías, tablero simple) + Grupos de gastos con amigos, operativos de punta a punta en staging, más la landing de Faro en `app.estudiocristofaro.com/faro`. Precios de personas y autónomos de referencia: Plus USD 4/mes, Pro USD 9/mes.
 1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Inicial), landing de Faro y mención de Faro en la web de Cristofaro.
 2. **F2 · IA, MCP y Conexiones:** configuración de IA multi-proveedor, Asistente con caja de contexto, servidor MCP por estudio, bandeja de aprobaciones, hub de conexiones (Xubio, Alegra y Google primero; Tango migrado al hub).
 3. **F3 · ARCA + Faro Personal:** web services de ARCA (homologación primero), facturación con PDF personalizado, situación y semáforo de monotributo, calendario personal y planes Gratis y Pro.
