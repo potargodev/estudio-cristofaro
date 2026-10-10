@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { bookingByToken, cancelBooking, createBooking, rescheduleBooking } from "@/lib/agenda/bookings";
 import { findSlot, getHosts } from "@/lib/agenda/slots";
+import { fmtDateTime, fmtTime } from "@/lib/agenda/time";
 import { getStudioId } from "@/lib/data";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
@@ -14,6 +15,8 @@ export interface BookingState {
   ok: boolean;
   message?: string;
   errors?: Record<string, string>;
+  /** Agenda embebida (home): la confirmación vuelve acá en lugar de redirigir */
+  booking?: { when: string; until: string; email: string; meetUrl: string | null; ics: string; manage: string };
 }
 
 function s(fd: FormData, k: string) {
@@ -41,7 +44,7 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
   const slot = await findSlot(await getHosts(studioId, { publicOnly: true }), start);
   if (!slot)
     return { ok: false, message: "Ese horario se acaba de ocupar. Elegí otro, por favor.", errors: { start: "Ese horario ya no está libre." } };
-  const { token } = await createBooking({
+  const { token, booking } = await createBooking({
     studioId,
     hostId: slot.hostId,
     start: slot.start,
@@ -53,6 +56,13 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
     reason: s(fd, "reason"),
     origin: "web",
   });
+  if (fd.get("inline") === "1") {
+    const b = booking ?? (await bookingByToken(token));
+    return {
+      ok: true,
+      booking: { when: fmtDateTime(slot.start), until: fmtTime(slot.end), email: email!, meetUrl: b?.meet_url ?? null, ics: `/api/agenda/ics/${token}`, manage: `/agenda/gestionar/${token}` },
+    };
+  }
   redirect(`/agendar/confirmada?t=${token}`);
 }
 
