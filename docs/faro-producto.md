@@ -121,7 +121,9 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 | Pedir ayuda a un contador | ✓ | ✓ |
 | Precio | Gratis | $[precio] / mes |
 
-## 2.e Gastos compartidos (núcleo, para todos los tipos de usuario)
+## 2.e Grupos de gastos (núcleo, para todos los tipos de usuario)
+
+En la interfaz se llaman **Grupos de gastos**: libres, gratis y sin requisitos. No confundir con las Flotas (§2.j), que son para contratar un estudio en conjunto.
 
 Inspirado en Splitwise, pero conectado con la contabilidad: lo que se reparte también queda registrado donde corresponde.
 
@@ -220,6 +222,41 @@ Cuando un autónomo, una persona con Bitácora o una empresa busca un contador, 
 - **Para los estudios:** aparecer en la Red es opcional (opt-in desde su panel) y está incluido en Rumbo y Horizonte. Verificación de matrícula antes de publicarse.
 - **Reseñas:** solo de clientes reales del estudio en Faro, con moderación y derecho a respuesta.
 
+## 2.j Flotas (compra colectiva de servicios contables)
+
+> Barcos independientes que navegan juntos, guiados por el mismo faro.
+
+Una **Flota** es un grupo informal de 3 a 20 personas que se juntan para conseguir mejores condiciones con un estudio o contador de la Red. No reemplaza a los grupos de gastos compartidos (§2.e), que siguen libres y sin requisitos para cualquier usuario.
+
+- **Creación:** cualquier usuario (Bitácora incluida) crea la Flota e invita. Cada miembro declara su perfil: monotributista, responsable inscripto, en relación de dependencia o sin actividad.
+- **Pedido de propuesta grupal:** la Flota lo publica en la Red de estudios (§2.i), con la cantidad de miembros por perfil y la zona (sin datos personales). Los estudios ofertan un precio por miembro según su perfil (por ejemplo: monotributo, RI y un paquete para empleados con deducciones de Ganancias y Bienes Personales), con lo que incluye y un mínimo de miembros.
+- **Contratación individual:** cada miembro acepta o no la propuesta elegida. El vínculo y la facturación son entre el estudio y cada persona, con la tarifa grupal. Al aceptar, queda como organización del estudio (con consentimiento explícito).
+- **La propuesta grupal define:** servicios incluidos por perfil, precio mensual por miembro y perfil, frecuencia de pago (mensual por adelantado), mínimo de miembros, preaviso de baja (máximo 30 días, sin penalidades) y qué pasa si se baja del mínimo.
+- **Acuerdo individual:** cada tripulante que acepta firma digitalmente en Faro su propio "Acuerdo de servicio" con el estudio, con las condiciones de la propuesta. No hay contrato de la Flota ni pozo común.
+- **Pagos (nadie paga ni debe por otro):**
+  - Cada tripulante paga solo su abono, directamente al estudio.
+  - En Faro, por suscripción de Mercado Pago con débito automático a la cuenta del estudio (cuando esté la integración, F7), o por el medio que acuerde con el estudio, que lo registra.
+  - Cada tripulante ve en "Mis servicios" su estado de cuenta con el estudio: al día, próximo vencimiento o pendiente.
+- **Irse:**
+  - **Salir de la Flota** no rescinde el acuerdo con el estudio: lo mantiene con la tarifa grupal hasta el próximo cambio de condiciones, o lo da de baja.
+  - **Dar de baja el acuerdo:** se hace desde "Mis servicios", con el preaviso pactado. Antes de confirmar, Faro muestra la liquidación final: períodos pagados, si queda algo pendiente y la fecha de fin del servicio.
+  - No se puede quedar debiendo sin saberlo: si hay un saldo pendiente, se muestra en la baja y se puede pagar ahí mismo.
+- **Vigencia:** el precio grupal se mantiene mientras se cumpla el mínimo de miembros. Si no se cumple, el estudio avisa con 30 días de anticipación antes de pasar a su tarifa normal.
+- **Informalidad explícita:** una Flota no es una sociedad ni una entidad legal, no implica actividad, patrimonio ni responsabilidad compartida, y nunca se la llama "sociedad". Cada miembro mantiene su CUIT, sus obligaciones y su responsabilidad. Se muestra un aviso claro al crearla y al unirse.
+- **Gobierno de la Flota:**
+  - **Capitán:** quien la crea. Invita y quita miembros, publica el pedido de propuesta, edita el nombre y puede transferir el rol. Si se va, el rol pasa al miembro más antiguo, o la Flota vota.
+  - **Tripulantes:** el resto de los miembros. Pueden salir cuando quieran.
+- **Espacio de la Flota (compartido por todos sus miembros):**
+  - Nombre, imagen y descripción.
+  - Lista de miembros con nombre, perfil y estado (invitado, activo, aceptó la propuesta).
+  - Propuestas recibidas en una tabla comparativa, con votación no vinculante para elegir cuál considerar.
+  - Conversación interna y línea de tiempo.
+  - Todos ven quién pertenece a la Flota. Nadie ve las finanzas de nadie.
+- **Nombres:** libres, pero sin palabras que sugieran un tipo legal ("S.A.", "Sociedad Anónima", "SRL", "SAS", "Sociedad", "Cooperativa", "Asociación civil", "Fundación" y similares). Si alguien las usa, la app las rechaza con una explicación amable. El nombre siempre se muestra con la etiqueta "Flota · grupo informal".
+- **Privacidad:** los miembros solo ven el nombre, el perfil y el estado de cada uno respecto de la propuesta. Nunca sus finanzas.
+- **Para el estudio:** un bloque de clientes con perfiles similares, ideal para estandarizar trabajo. Los estudios fijan libremente sus precios.
+- **Para Faro:** activa la Red de estudios y trae clientes nuevos a los estudios en Rumbo y Horizonte.
+
 ## 2.h Mapa de roles y jerarquías
 
 | Nivel | Tipo de cuenta | Roles | Ve y gestiona |
@@ -231,6 +268,7 @@ Cuando un autónomo, una persona con Bitácora o una empresa busca un contador, 
 | Empleado | De una organización | empleado | Sus recibos, comunicaciones, rendiciones de gastos |
 | Persona | Cualquier usuario | titular | Su Bitácora y sus grupos de gastos compartidos |
 | Invitado | Sin cuenta | invitado | Solo el grupo de gastos al que fue invitado |
+| Flota | Grupo informal de personas | creador, miembro | Nombre, perfil y estado de cada miembro frente a la propuesta grupal; nunca sus finanzas |
 
 Una misma persona puede tener varias "puertas" a la vez (por ejemplo, contador en un estudio, empleado en otra organización y titular de su Bitácora). La app muestra un selector de espacio, y cada espacio tiene su propio aislamiento.
 
