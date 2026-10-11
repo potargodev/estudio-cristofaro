@@ -1886,6 +1886,10 @@ export const service_agreements = pgTable(
     group_price_until: date("group_price_until"),
     end_requested_at: timestamp("end_requested_at", { withTimezone: true }),
     ends_on: date("ends_on"),
+    // F7: débito automático individual (suscripción de Mercado Pago en la cuenta del estudio)
+    mp_preapproval_id: text("mp_preapproval_id"),
+    debit_status: text("debit_status"), // pendiente | autorizado | cancelado
+    debit_url: text("debit_url"),
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
@@ -2520,6 +2524,9 @@ export const invoices = pgTable(
     emailed_at: timestamp("emailed_at", { withTimezone: true }),
     notes: text("notes"),
     origin: text("origin").notNull().default("manual"), // manual | vigia | aprobacion | flujo
+    // F7: preferencia de Mercado Pago del link de pago (en la cuenta del emisor) y cobro
+    mp_preference_id: text("mp_preference_id"),
+    paid_at: timestamp("paid_at", { withTimezone: true }),
     created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
     authorized_by: uuid("authorized_by").references(() => users.id, { onDelete: "set null" }),
     authorized_at: timestamp("authorized_at", { withTimezone: true }),
@@ -2975,4 +2982,167 @@ export const bank_rules = pgTable(
     created_at: createdAt(),
   },
   (t) => [index("bank_rules_org_idx").on(t.studio_id, t.organization_id)],
+);
+
+// ───────────── F7 · Cobros (Mercado Pago, suscripciones de Faro, honorarios) ─────────────
+
+/**
+ * Cuenta de Mercado Pago que cobra: la de Faro (studio_id null, suscripciones)
+ * o la de un tenant (honorarios del estudio, débitos de flotas, links de las
+ * facturas de un autónomo). Credenciales cifradas con ENCRYPTION_KEY.
+ */
+export const mp_accounts = pgTable(
+  "mp_accounts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }),
+    access_token_enc: text("access_token_enc").notNull(),
+    public_key: text("public_key"),
+    webhook_secret_enc: text("webhook_secret_enc"),
+    mp_user_id: text("mp_user_id"),
+    nickname: text("nickname"),
+    status: text("status").notNull().default("sin_probar"), // sin_probar | ok | error
+    last_error: text("last_error"),
+    tested_at: timestamp("tested_at", { withTimezone: true }),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("mp_accounts_studio_idx").on(sql`coalesce(${t.studio_id}, '00000000-0000-0000-0000-000000000000'::uuid)`)],
+);
+
+/** Suscripción de un tenant a su plan de Faro (prueba, período pago, gracia y cancelación) */
+export const faro_subscriptions = pgTable("faro_subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .unique()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  plan_key: text("plan_key").notNull(),
+  interval: text("interval").notNull().default("mensual"), // mensual | anual
+  status: text("status").notNull().default("prueba"), // prueba | activa | morosa | suspendida | cancelada
+  amount: bigint("amount", { mode: "number" }).notNull().default(0), // centavos por período
+  currency: text("currency").notNull().default("ARS"),
+  trial_ends_at: timestamp("trial_ends_at", { withTimezone: true }),
+  current_period_start: timestamp("current_period_start", { withTimezone: true }),
+  current_period_end: timestamp("current_period_end", { withTimezone: true }),
+  past_due_since: timestamp("past_due_since", { withTimezone: true }),
+  cancel_at_period_end: boolean("cancel_at_period_end").notNull().default(false),
+  canceled_at: timestamp("canceled_at", { withTimezone: true }),
+  pending_plan_key: text("pending_plan_key"),
+  pending_interval: text("pending_interval"),
+  mp_preapproval_id: text("mp_preapproval_id"),
+  mp_status: text("mp_status"),
+  init_point: text("init_point"),
+  notices: jsonb("notices").$type<string[]>().notNull().default([]),
+  created_at: createdAt(),
+  updated_at: updatedAt(),
+});
+
+/** Cada pago informado por Mercado Pago, conciliado con lo que cobra (idempotente por ID de pago) */
+export const mp_payments = pgTable(
+  "mp_payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    account: text("account").notNull(), // faro | <studio_id>
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }),
+    kind: text("kind"), // sub | hon | flota | fac
+    ref_id: uuid("ref_id"),
+    mp_payment_id: text("mp_payment_id").notNull(),
+    status: text("status").notNull(),
+    status_detail: text("status_detail"),
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    applied: boolean("applied").notNull().default(false),
+    raw: jsonb("raw").$type<unknown>(),
+    synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("mp_payments_ext_idx").on(t.account, t.mp_payment_id), index("mp_payments_ref_idx").on(t.kind, t.ref_id)],
+);
+
+/** Registro de cada webhook recibido (firma, resultado), para auditoría e idempotencia */
+export const webhook_events = pgTable(
+  "webhook_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    provider: text("provider").notNull(),
+    account: text("account").notNull(),
+    topic: text("topic"),
+    data_id: text("data_id"),
+    request_id: text("request_id"),
+    signature_ok: boolean("signature_ok").notNull(),
+    result: text("result").notNull(), // procesado | repetido | rechazado | error | ignorado
+    error: text("error"),
+    raw: jsonb("raw").$type<unknown>(),
+    created_at: createdAt(),
+  },
+  (t) => [index("webhook_events_idx").on(t.provider, t.data_id)],
+);
+
+/** Configuración de la cobranza de honorarios del estudio */
+export const billing_settings = pgTable("billing_settings", {
+  studio_id: uuid("studio_id")
+    .primaryKey()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  /** Organización que representa al estudio para facturar por ARCA (con su CUIT y la delegación) */
+  issuer_organization_id: uuid("issuer_organization_id").references(() => organizations.id, { onDelete: "set null" }),
+  reminders: boolean("reminders").notNull().default(true),
+  due_day: integer("due_day").notNull().default(10),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** Abono mensual de una organización, con su ajuste periódico */
+export const fee_plans = pgTable(
+  "fee_plans",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    concept: text("concept").notNull(),
+    amount: bigint("amount", { mode: "number" }).notNull(), // centavos (base)
+    start_month: text("start_month").notNull(), // AAAA-MM
+    adjust_kind: text("adjust_kind").notNull().default("ninguno"), // ninguno | porcentaje | ipc
+    adjust_every: integer("adjust_every").notNull().default(3),
+    adjust_percent: numeric("adjust_percent", { precision: 6, scale: 2 }),
+    active: boolean("active").notNull().default(true),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("fee_plans_org_idx").on(t.studio_id, t.organization_id)],
+);
+
+/** Cargo del estado de cuenta de una organización (un período del abono o un cobro suelto) */
+export const fee_charges = pgTable(
+  "fee_charges",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    fee_plan_id: uuid("fee_plan_id").references(() => fee_plans.id, { onDelete: "set null" }),
+    period: text("period"), // AAAA-MM
+    concept: text("concept").notNull(),
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    due_date: date("due_date").notNull(),
+    status: text("status").notNull().default("pendiente"), // pendiente | pagado | anulado
+    paid_at: timestamp("paid_at", { withTimezone: true }),
+    paid_amount: bigint("paid_amount", { mode: "number" }),
+    payment_method: text("payment_method"), // mercadopago | transferencia | efectivo | otro
+    mp_preference_id: text("mp_preference_id"),
+    payment_url: text("payment_url"),
+    invoice_id: uuid("invoice_id"),
+    reminders_sent: jsonb("reminders_sent").$type<number[]>().notNull().default([]),
+    last_reminder_at: timestamp("last_reminder_at", { withTimezone: true }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("fee_charges_period_idx").on(t.fee_plan_id, t.period), index("fee_charges_org_idx").on(t.studio_id, t.organization_id, t.status)],
 );

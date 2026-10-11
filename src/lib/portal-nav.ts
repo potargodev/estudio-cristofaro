@@ -22,6 +22,7 @@ export interface PortalNavItem {
 export function empresaTabs(role: OrgRole, activeModules: string[]): PortalNavItem[] {
   const tabs: PortalNavItem[] = [];
   if (can(role, "finanzas.ver")) tabs.push({ href: "/portal/gastos-empresa", label: "Gastos de la empresa", icon: "gastos" });
+  if (can(role, "finanzas.ver")) tabs.push({ href: "/portal/estado-de-cuenta", label: "Estado de cuenta", icon: "gastos" });
   if (can(role, "gastos.rendir") || can(role, "finanzas.gestionar")) tabs.push({ href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" });
   for (const m of MODULES) {
     if (!activeModules.includes(m.key) || !can(role, m.permissions.view)) continue;

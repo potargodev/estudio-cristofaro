@@ -46,3 +46,9 @@ Podés pedirle «facturale 150.000 a Juan Pérez por diseño». El Vigía prepar
 
 - **Faro Personal Gratis:** 10 comprobantes autorizados por mes.
 - **Pro:** sin límite.
+
+## Cobrar la factura con Mercado Pago (autónomos)
+
+1. Conectá tu cuenta en **Facturación → Ajustes → Cobrar tus facturas con Mercado Pago** (access token y clave secreta de webhooks de tu aplicación de Mercado Pago).
+2. En una factura autorizada, tocá **Crear link de pago**. El link aparece en el PDF («Pagá en línea») y en el mail.
+3. Cuando el cliente paga, la factura queda marcada **Pagada** y te avisamos.

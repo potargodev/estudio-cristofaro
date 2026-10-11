@@ -8,6 +8,9 @@ import {
   emitAction,
   fetchSituationAction,
   noteFromInvoiceAction,
+  deletePersonalMpAction,
+  paymentLinkAction,
+  savePersonalMpAction,
   saveAdjustmentAction,
   saveCheckAction,
   saveCustomerAction,
@@ -18,6 +21,8 @@ import {
   syncPointsAction,
 } from "@/app/facturacion/actions";
 import { HeaderAction } from "@/components/admin/kit/HeaderAction";
+import { MpAccountForm } from "@/components/cobros/MpAccountForm";
+import { accountSummary, notificationUrl } from "@/modules/billing/mp";
 import { SubmitButton } from "@/components/admin/ui";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { cn } from "@/lib/utils";
@@ -300,6 +305,24 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
               <SubmitButton variant="secondary" pendingText="…">{share ? "Desactivar el link" : "Generar un link"}</SubmitButton>
             </form>
           </div>
+          {scope.kind === "personal" && t.kind === "factura" && (
+            <div className={cn(card, "grid gap-2 lg:col-span-2")}>
+              <p className="flex items-center gap-2 text-[15px] font-semibold">
+                <Link2 className="size-4" aria-hidden /> Cobrar con Mercado Pago
+                {inv.paid_at && <span className="rounded-md bg-[#e3efe6] px-2 py-0.5 text-[12px] font-medium text-[#24583a]">Pagada el {date(inv.paid_at.toISOString().slice(0, 10))}</span>}
+              </p>
+              {inv.payment_url ? (
+                <input readOnly value={inv.payment_url} className={cn(field, "text-[13px]")} aria-label="Link de pago" />
+              ) : (
+                <form action={paymentLinkAction} className="flex flex-wrap items-center gap-2">
+                  <ScopeFields scope={scope} />
+                  <input type="hidden" name="id" value={inv.id} />
+                  <SubmitButton variant="secondary" pendingText="…">Crear link de pago</SubmitButton>
+                  <span className="text-[13px] text-muted">Va en el PDF y en el mail. Necesitás tu cuenta de Mercado Pago conectada en Ajustes.</span>
+                </form>
+              )}
+            </div>
+          )}
           {t.kind === "factura" && (
             <div className={cn(card, "flex flex-wrap items-center gap-2 lg:col-span-2")}>
               <p className="mr-auto text-[14px] text-muted">¿Hay que corregirla? Se hace con una nota que ARCA asocia a esta factura.</p>
@@ -664,9 +687,15 @@ export async function ChecksView({ scope, sp, volver }: { scope: IssuerScope; sp
 // ───────────── Ajustes del emisor ─────────────
 
 export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; sp: SP; volver: string }) {
-  const [s, points] = await Promise.all([getSettings(scope), listPoints(scope)]);
+  const [s, points, mp] = await Promise.all([getSettings(scope), listPoints(scope), scope.kind === "personal" ? accountSummary(scope.studioId) : null]);
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      {scope.kind === "personal" && (
+        <section aria-label="Mercado Pago" className="grid gap-2 lg:col-span-2">
+          <p className="text-[15px] font-semibold">Cobrar tus facturas con Mercado Pago</p>
+          <MpAccountForm summary={mp} save={savePersonalMpAction} remove={deletePersonalMpAction} webhookUrl={notificationUrl(scope.studioId)} />
+        </section>
+      )}
       <form action={saveSettingsAction} encType="multipart/form-data" className={cn(card, "grid gap-3 sm:grid-cols-2")}>
         <ScopeFields scope={scope} volver={volver} />
         <div className="sm:col-span-2">

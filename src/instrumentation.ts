@@ -9,10 +9,12 @@
 //   (ARCA_JOBS=off los apaga).
 // - Bitácora (dólar MEP del día, fijos, fugas, avisos y resumen semanal del
 //   domingo) cada hora (BITACORA_JOBS=off los apaga).
+// - Cobros (suscripciones de Faro: pruebas, gracia y suspensión; honorarios:
+//   cargos del mes y recordatorios escalonados) cada hora (COBROS_JOBS=off).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
-  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout; __bitacoraTimer?: NodeJS.Timeout };
+  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout; __bitacoraTimer?: NodeJS.Timeout; __cobrosTimer?: NodeJS.Timeout };
 
   if (process.env.AGENDA_REMINDERS !== "off" && !g.__agendaTimer) {
     const { sendReminders } = await import("./lib/agenda/bookings");
@@ -77,5 +79,21 @@ export async function register() {
     g.__bitacoraTimer = setInterval(run, Number(process.env.BITACORA_JOBS_MS) || 60 * 60_000);
     g.__bitacoraTimer.unref?.();
     setTimeout(run, 60_000).unref?.();
+  }
+
+  if (process.env.COBROS_JOBS !== "off" && !g.__cobrosTimer) {
+    const [{ runSubscriptionJobs }, { runFeeJobs }] = await Promise.all([import("./modules/billing/subscriptions"), import("./modules/billing/fees")]);
+    const run = async () => {
+      try {
+        const subs = await runSubscriptionJobs();
+        const fees = await runFeeJobs();
+        if (subs || fees.charges || fees.reminders) console.info(`[cobros] ${subs} suscripciones cambiaron de estado, ${fees.charges} cargos, ${fees.reminders} recordatorios`);
+      } catch (error) {
+        console.error("[cobros] Tareas", (error as Error).message);
+      }
+    };
+    g.__cobrosTimer = setInterval(run, Number(process.env.COBROS_JOBS_MS) || 60 * 60_000);
+    g.__cobrosTimer.unref?.();
+    setTimeout(run, 90_000).unref?.();
   }
 }

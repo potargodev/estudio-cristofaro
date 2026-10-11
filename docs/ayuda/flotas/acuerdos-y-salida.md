@@ -17,7 +17,9 @@ Al aceptar, quedás como organización del estudio, con tu consentimiento explí
 
 - **Cada integrante paga solo su abono**, directo al estudio.
 - **No hay deuda solidaria:** si otro integrante no paga, no te afecta.
-- Pagás por el medio que acuerdes con el estudio, que lo registra en Faro (**Comercial → Perfil en la Red → Pedidos de Flotas → Registrar pago**). El débito automático por Mercado Pago llega más adelante.
+- Pagás por el medio que acuerdes con el estudio, que lo registra en Faro (**Comercial → Perfil en la Red → Pedidos de Flotas → Registrar pago**).
+- Si el estudio cobra con Mercado Pago, en **Mi estudio** podés **Adherir débito automático**: se debita **solo tu cuota**, todos los meses. Lo cancelás cuando quieras con **Cancelar el débito**.
+- Si tenés algo pendiente, tocá **Pagar** y lo pagás con Mercado Pago; queda registrado solo.
 - En **Mis servicios** ves tu estado de cuenta con el estudio: al día, próximo vencimiento o pendiente.
 
 ## Salir de la Flota
@@ -32,7 +34,7 @@ Salir de la Flota **no rescinde tu acuerdo** con el estudio. Podés:
 1. Entrá a **Mis servicios**.
 2. Pedí la baja con el **preaviso** que fija la propuesta (como máximo 30 días, sin penalidades).
 3. Antes de confirmar, Faro te muestra la **liquidación final individual**: los períodos pagados, si queda algo pendiente y la fecha de fin del servicio.
-4. Si hay un saldo pendiente, lo ves ahí y lo pagás directo al estudio (pedile que lo registre).
+4. Si hay un saldo pendiente (solo tu parte), lo ves ahí y lo pagás con **Pagar** (Mercado Pago) o directo al estudio. Al dar la baja se corta tu débito automático.
 5. Confirmá la baja: el servicio sigue hasta la fecha de fin y después el acuerdo queda finalizado.
 
 Nadie queda debiendo sin saberlo.

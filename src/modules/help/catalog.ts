@@ -42,6 +42,7 @@ export const CATEGORIES: { key: string; name: string; icon: string; text: string
   { key: "mensajes", name: "Mensajes", icon: "MessagesSquare", text: "Chatear con tu estudio, tus grupos y tus Flotas." },
   { key: "grupos-de-gastos", name: "Grupos de gastos", icon: "Wallet", text: "Dividir, saldar y rendir." },
   { key: "facturacion", name: "Facturación y ARCA", icon: "Receipt", text: "Facturas, monotributo, calendario y delegación." },
+  { key: "cobros", name: "Cobros y honorarios", icon: "HandCoins", text: "Abonos, links de pago y estado de cuenta." },
   { key: "ia", name: "IA y MCP", icon: "Sparkles", text: "El asistente y las aprobaciones." },
   { key: "conexiones", name: "Conexiones", icon: "Plug", text: "Tango, Xubio, Drive y archivos." },
   { key: "flotas", name: "Flotas", icon: "Ship", text: "Grupos informales que piden juntos." },

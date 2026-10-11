@@ -1,10 +1,13 @@
 import { and, count, eq, inArray } from "drizzle-orm";
-import { Check, Compass, CreditCard, Minus } from "lucide-react";
+import { Check, Compass, Minus } from "lucide-react";
 import { Notice } from "@/components/admin/AdminField";
 import { Panel } from "@/components/admin/kit/Panel";
 import { StatusBadge, Tag } from "@/components/admin/kit/StatusBadge";
 import { SubmitButton } from "@/components/admin/ui";
 import { requestPlanUpgrade } from "@/app/admin/plan-actions";
+import { choosePlanAction } from "@/app/suscripcion-actions";
+import { SubscriptionPanel } from "@/components/faro/SubscriptionPanel";
+import { accountSummary } from "@/modules/billing/mp";
 import { getDb } from "@/db";
 import { expense_groups, organizations, plan_requests, users } from "@/db/schema";
 import { getEntitlements, getPlans, limitUsage } from "@/lib/faro/entitlements";
@@ -40,7 +43,7 @@ const ars = (p: FaroPlan, usdArs: number) => (p.free || !p.priceUsd ? "Gratis" :
  * límites, comparación con precios en pesos y "Quiero mejorar mi plan" (queda
  * un pedido en el Faro Manager). Todo sale del tenant de la sesión.
  */
-export async function PlanBilling({ studioId, back, pedido }: { studioId: string; back: string; pedido?: string }) {
+export async function PlanBilling({ studioId, back, pedido, ok, error }: { studioId: string; back: string; pedido?: string; ok?: string; error?: string }) {
   const e = (await getEntitlements(studioId))!;
   const db = getDb();
   const [plans, usdArs, [orgs], [staff], [groups], pending, smartDocs, invoicesUsed] = await Promise.all([
@@ -54,6 +57,7 @@ export async function PlanBilling({ studioId, back, pedido }: { studioId: string
     limitUsage(studioId, "invoicesPerMonth"),
   ]);
   const kind = e.tenant.kind;
+  const online = !!(await accountSummary(null));
   const options = plans.filter((p) => p.kind === kind);
   const trialLeft = e.tenant.status === "prueba" && e.tenant.trial_ends_at ? Math.max(0, Math.ceil((e.tenant.trial_ends_at.getTime() - Date.now()) / 86400000)) : null;
   const overrideOf = new Map(e.overrides.map((o) => [o.module, o]));
@@ -61,6 +65,8 @@ export async function PlanBilling({ studioId, back, pedido }: { studioId: string
     <div className="grid gap-6 [&>*]:min-w-0">
       {pedido === "1" && <Notice>Listo: recibimos tu pedido. El equipo de Faro te escribe para activar el plan.</Notice>}
       {pedido === "error" && <Notice tone="error">No pudimos registrar el pedido. Elegí otro plan.</Notice>}
+      {ok && <Notice>{ok}</Notice>}
+      {error && <Notice tone="error">{error}</Notice>}
 
       <Panel title={`Plan ${e.plan.name}`} icon={Compass} action={<Tag>{ars(e.plan, usdArs)}</Tag>}>
         <p className="text-[15px] text-muted">
@@ -133,7 +139,20 @@ export async function PlanBilling({ studioId, back, pedido }: { studioId: string
                     ))}
                 </ul>
                 <div className="mt-auto pt-5">
-                  {upgrade &&
+                  {online && !current && (
+                    <div className="flex flex-wrap gap-2">
+                      {(p.free ? ["mensual"] : ["mensual", "anual"]).map((iv) => (
+                        <form key={iv} action={choosePlanAction}>
+                          <input type="hidden" name="plan" value={p.key} />
+                          <input type="hidden" name="interval" value={iv} />
+                          <SubmitButton variant={iv === "anual" ? "secondary" : "primary"} pendingText="…">
+                            {p.free ? `Pasar a ${p.name}` : iv === "anual" ? "Pagar anual" : "Elegir mensual"}
+                          </SubmitButton>
+                        </form>
+                      ))}
+                    </div>
+                  )}
+                  {!online && upgrade &&
                     (asked ? (
                       <p className="text-[13px] text-muted">Pedido enviado: te escribimos pronto.</p>
                     ) : (
@@ -174,11 +193,7 @@ export async function PlanBilling({ studioId, back, pedido }: { studioId: string
         </ul>
       </Panel>
 
-      <Panel title="Facturación" icon={CreditCard}>
-        <p className="text-[14px] text-muted">
-          El cobro en línea todavía no está activo: cuando pidas un plan pago, el equipo de Faro te contacta para activarlo y te manda la factura. Los precios se muestran en pesos con la conversión de referencia del día.
-        </p>
-      </Panel>
+      <SubscriptionPanel studioId={studioId} />
     </div>
   );
 }

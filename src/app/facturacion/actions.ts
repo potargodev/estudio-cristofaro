@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { getCurrentUser, type StaffUser } from "@/lib/auth";
 import { checkUpload, fileFromForm, storeUpload } from "@/lib/uploads";
 import { emailInvoice } from "@/modules/arca/mail";
+import { invoicePaymentLink } from "@/modules/billing/collect";
+import { BillingError, deleteAccount, saveAccount } from "@/modules/billing/mp";
 import {
   ArcaError,
   actorOf,
@@ -276,4 +278,39 @@ export async function saveCheckAction(fd: FormData) {
   await guard(path, () => saveCheck(scope, s(fd, "key"), { status: s(fd, "status"), finding: s(fd, "finding") || null, amount: Number.isFinite(amount) ? amount : null, everyDays: Number(s(fd, "every_days")) || 30 }, actorOf(u)));
   done(scope);
   back(path, { ok: "Chequeo guardado. Te lo recordamos cuando toque." });
+}
+
+/** Link de pago (Mercado Pago del autónomo) para un comprobante autorizado */
+export async function paymentLinkAction(fd: FormData) {
+  const u = await session();
+  const scope = await issuerFromForm(u, fd);
+  const id = s(fd, "id");
+  if (scope.kind !== "personal") back(`${scope.base}/${id}`, { error: "Los links de pago son para las facturas de Faro Personal." });
+  try {
+    await invoicePaymentLink(scope, actorOf(u), id);
+  } catch (e) {
+    if (e instanceof BillingError) back(`${scope.base}/${id}`, { error: e.message });
+    throw e;
+  }
+  done(scope);
+  back(`${scope.base}/${id}`, { ok: "Link de pago creado: ya está en el PDF y en el mail." });
+}
+
+export async function savePersonalMpAction(fd: FormData) {
+  const u = await session();
+  if (u.role !== "titular" || u.tenantKind !== "personal") back("/facturacion/ajustes", { error: "Solo el titular." });
+  try {
+    await saveAccount(u.studioId, u, { accessToken: s(fd, "access_token"), publicKey: s(fd, "public_key"), webhookSecret: s(fd, "webhook_secret") });
+  } catch (e) {
+    if (e instanceof BillingError) back("/facturacion/ajustes", { error: e.message });
+    throw e;
+  }
+  back("/facturacion/ajustes", { ok: "Cuenta de Mercado Pago conectada." });
+}
+
+export async function deletePersonalMpAction() {
+  const u = await session();
+  if (u.role !== "titular" || u.tenantKind !== "personal") back("/facturacion/ajustes", { error: "Solo el titular." });
+  await deleteAccount(u.studioId, u);
+  back("/facturacion/ajustes", { ok: "Cuenta desconectada." });
 }

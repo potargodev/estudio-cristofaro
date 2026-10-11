@@ -7,6 +7,7 @@ import { audit } from "@/lib/audit";
 import { requirePersonal } from "@/lib/auth";
 import { clientIp } from "@/lib/rate-limit";
 import * as fl from "@/modules/flotas/server";
+import { stopFleetDebit } from "@/modules/billing/collect";
 import { recordAcceptance } from "@/modules/legal/server";
 
 // Acciones de Flotas. Quién es sale SIEMPRE de la sesión (titular de una
@@ -192,6 +193,8 @@ export async function requestEndAction(fd: FormData) {
     "/flotas/servicios",
     async () => {
       const r = await fl.requestEnd(m, id);
+      // Con la baja se corta el débito automático; lo que quede se paga como saldo
+      if (r.agreement.mp_preapproval_id && r.agreement.debit_status !== "cancelado") await stopFleetDebit(m, id).catch(() => undefined);
       await audit({ studioId: user.studioId, actor: user, action: "flota.acuerdo_baja", entityType: "acuerdo", entityId: id, metadata: { fin: r.endsOn, pendiente: r.pendingAmount } });
       await audit({ studioId: r.agreement.studio_id, organizationId: r.agreement.organization_id, actor: user, action: "flota.acuerdo_baja", entityType: "acuerdo", entityId: id, metadata: { fin: r.endsOn } });
     },

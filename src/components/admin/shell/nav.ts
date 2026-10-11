@@ -25,7 +25,8 @@ export type NavIcon =
   | "rubros"
   | "comercial"
   | "configuracion"
-  | "seguridad";
+  | "seguridad"
+  | "honorarios";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -98,7 +99,10 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     title: "Negocio",
-    items: [{ href: "/admin/comercial", label: "Comercial", icon: "comercial", badge: "leads" }],
+    items: [
+      { href: "/admin/comercial", label: "Comercial", icon: "comercial", badge: "leads" },
+      { href: "/admin/honorarios", label: "Honorarios", icon: "honorarios", module: "billing", operatorOnly: true },
+    ],
   },
   {
     title: "Configuración",

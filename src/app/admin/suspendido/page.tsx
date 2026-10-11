@@ -7,11 +7,13 @@ import { studios } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { FARO } from "@/lib/faro/brand";
 import { signOut } from "../actions";
+import { PayToReactivate } from "@/components/faro/PayToReactivate";
 
 export const metadata = { title: "Cuenta suspendida", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
-export default async function SuspendidoPage() {
+export default async function SuspendidoPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const sp = await searchParams;
   const user = await getCurrentUser();
   if (!user) redirect("/admin/login");
   if (!user.tenantSuspended) redirect("/admin");
@@ -20,7 +22,8 @@ export default async function SuspendidoPage() {
     <AuthShell title="Cuenta suspendida" subtitle={`Faro · ${t?.name ?? ""}`}>
       <p className="text-[15px] leading-relaxed text-ink">El acceso a Faro de esta cuenta está suspendido. Tus datos están guardados y no se borró nada.</p>
       {t?.reason && <p className="mt-3 text-[14px] text-muted">Motivo: {t.reason}</p>}
-      <p className="mt-3 text-[14px] text-muted">Para reactivarla escribinos a {FARO.contactEmail()}.</p>
+      <PayToReactivate studioId={user.studioId} owner={user.role === "dueno"} error={sp.error} />
+      <p className="mt-3 text-[14px] text-muted">Por cualquier consulta escribinos a {FARO.contactEmail()}.</p>
       <form action={signOut} className="mt-6">
         <SubmitButton variant="secondary" pendingText="Saliendo…">
           Cerrar sesión

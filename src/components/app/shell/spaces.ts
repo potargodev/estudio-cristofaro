@@ -55,7 +55,8 @@ export type ShellIcon =
   | "empresa"
   | "catalogo"
   | "plataforma"
-  | "facturacion";
+  | "facturacion"
+  | "honorarios";
 
 export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
 
@@ -156,10 +157,10 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
       title: "",
       items: [
         { href: "/faro-manager", label: "Resumen", icon: "resumen", exact: true },
-        { href: "/faro-manager/tenants", label: "Tenants", icon: "tenants", badge: "planRequests", match: ["/faro-manager/pedidos", "/faro-manager/nuevo", "/faro-manager"] },
+        { href: "/faro-manager/tenants", label: "Tenants", icon: "tenants", badge: "planRequests", match: ["/faro-manager/pedidos", "/faro-manager/nuevo", "/faro-manager/suscripciones", "/faro-manager"] },
         { href: "/faro-manager/planes", label: "Catálogo", icon: "catalogo", match: ["/faro-manager/modulos", "/faro-manager/plantillas", "/faro-manager/ia", "/faro-manager/monotributo", "/faro-manager/indices"] },
         { href: "/faro-manager/red", label: "Red", icon: "red", badge: "verifications" },
-        { href: "/faro-manager/auditoria", label: "Plataforma", icon: "plataforma", badge: "reports", match: ["/faro-manager/ayuda", "/faro-manager/reportes", "/faro-manager/uso-ia", "/faro-manager/arca"] },
+        { href: "/faro-manager/auditoria", label: "Plataforma", icon: "plataforma", badge: "reports", match: ["/faro-manager/ayuda", "/faro-manager/reportes", "/faro-manager/uso-ia", "/faro-manager/arca", "/faro-manager/mercadopago"] },
       ],
     },
   ];
