@@ -341,6 +341,33 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 - **Seguridad y moderación:** bloquear o reportar a una persona o un mensaje, con auditoría. Bloquear impide que te escriba y oculta sus mensajes en las conversaciones compartidas. El Faro Manager no ve los mensajes; solo la copia de un mensaje reportado, y puede dejarlo o borrarlo.
 - **Visual:** distinto del Vigía (burbujas rosé propias, iniciales de cada persona y sin tarjetas de IA).
 
+## 2.o Arquitectura de navegación (esqueleto de la app)
+
+**Problema que resuelve:** el menú del estudio llegó a unos 25 ítems en 9 grupos, con trabajo diario, configuración, lo personal y la ayuda al mismo nivel. La app se siente gigante. Este esqueleto manda sobre cualquier pantalla o módulo nuevo.
+
+**Reglas:**
+1. **Un espacio a la vez.** El menú muestra solo lo del espacio activo (Personal, el estudio, una organización, Faro Manager). Se cambia con el selector de espacio, arriba del sidebar. Lo personal (Bitácora, Grupos) no aparece dentro del espacio del estudio ni de una organización.
+2. **Máximo 7 ítems principales por espacio** (9 cuando estén todos los módulos), en no más de 3 grupos. Un ítem entra al menú solo si se usa todas las semanas. Lo demás va como **pestaña** dentro de una sección, en **Configuración** o en el **menú de la cuenta**.
+3. **Las secciones crecen hacia adentro, no hacia el menú:** un módulo nuevo suma una pestaña o una tarjeta en una sección existente antes que un ítem nuevo.
+4. **Barra superior fija y igual en todos los espacios:** Vigía (botón destacado), Mensajes (con badge), avisos (campana), ayuda "?" y la cuenta (avatar).
+   - Mensajes y los avisos son globales: siguen a la persona en cualquier espacio.
+   - El "?" junta todo lo de ayuda: tour de esta pantalla, Primeros pasos, Centro de ayuda e interruptor de la Guía. La ayuda sale del sidebar.
+   - El menú de la cuenta tiene: Mi cuenta, Plan y facturación, Accesos MCP, tema claro/oscuro, cambiar de espacio y Salir.
+5. **Un solo Vigía.** Es la misma puerta en todos los espacios y sabe dónde estás. En Personal es el chat de tus finanzas. En el estudio es el asistente del estudio, con sus herramientas y su clave. Se abre como panel lateral desde la barra superior, sin perder la pantalla, o a pantalla completa en /vigia. Las **Aprobaciones** son una pestaña del Vigía ("Propuestas para aprobar"), con badge en el botón.
+6. **Configuración es una sola entrada**, con pestañas: Equipo y usuarios, Plan y módulos, Conexiones, IA, Rubros y plantillas, Sitio web, Seguridad.
+7. **Plantilla de pantalla única:** encabezado compacto (título de 28 a 32 px, una línea de contexto, una acción principal), pestañas debajo si la sección tiene varias vistas, y contenido. Los títulos gigantes quedan para las landings.
+8. **Celular:** barra inferior con 4 accesos del espacio y el Vigía al centro como botón destacado. Lo demás va en "Más".
+
+**Menú de cada espacio (hoy → con todos los módulos):**
+
+| Espacio | Menú principal | Pestañas y lugar de lo que hoy está suelto |
+|---|---|---|
+| **Personal** (persona y autónomo) | Inicio · Bitácora · Grupos · Contador · *(F3)* Facturación | Contador = Red de estudios + Flotas + "mi estudio" si tiene uno. Inicio = resumen del mes con el Vigía arriba. Facturación (autónomo): comprobantes, ARCA, monotributo. |
+| **Estudio** | **Operación:** Inicio · Organizaciones · Vencimientos · Solicitudes · *(F9)* Tareas. **Negocio:** Comercial · *(F7)* Honorarios. Abajo, fijo: Configuración | Comercial = Consultas + Agenda + Perfil en la Red. Organizaciones = ficha con pestañas (resumen, vencimientos, documentos, solicitudes, *F5* sueldos, *F3* ARCA, conexiones). Contenidos del sitio y Rubros → Configuración. *F4* Flujos → pestaña "Automatizaciones" del Vigía. *F6* Lectura inteligente → dentro de Documentos. |
+| **Organización** (portal) | Inicio · Vencimientos · Documentos · Solicitudes · Empresa | Empresa = gastos de la empresa, rendiciones, módulos activos (*F5* sueldos y equipo, *F7* pagos). Agendar llamada y Reseñar al estudio → Inicio (tarjeta del estudio). Mi equipo → Configuración de la organización. |
+| **Empleado** (portal) | Inicio · Mis recibos *(F5)* · Rendiciones · Grupos | Todo lo demás, oculto. |
+| **Faro Manager** | Resumen · Tenants · Catálogo · Red · Plataforma | Tenants = lista + pedidos de plan + alta manual. Catálogo = planes y precios, módulos, plantillas, IA de la plataforma. Plataforma = auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA. |
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |
@@ -377,6 +404,8 @@ Los precios son de referencia y se editan desde el Faro Manager (USD con convers
 - Mientras tanto, en staging: landing de Faro en `/faro` y app en `app.estudiocristofaro.com`. Ruteo por host preparado para separar dominios sin tocar código.
 
 ## 6. Hoja de ruta
+
+**Orden de trabajo acordado (octubre 2026):** MVP personal (hecho) → **esqueleto de navegación (§2.o)** → F3 ARCA + Faro Personal → F8 Bitácora completa → F6 Lectura inteligente → F7 Cobros → F5 Empleados → F4 Flujos → F9 → **pulido final de experiencia** (espaciados, densidad, ritmo visual y microinteracciones, sobre la app completa). Cada módulo nuevo entra respetando §2.o.
 
 **Prioridad actual · MVP personal (antes de seguir con el resto):** Vigía (§2.m) + Bitácora básica (gastos e ingresos diarios, categorías, tablero simple) + Grupos de gastos con amigos, operativos de punta a punta en staging, más la landing de Faro en `app.estudiocristofaro.com/faro`. Precios de personas y autónomos de referencia: Plus USD 4/mes, Pro USD 9/mes.
 1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Inicial), landing de Faro y mención de Faro en la web de Cristofaro.
