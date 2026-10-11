@@ -300,12 +300,12 @@ Una misma persona puede tener varias "puertas" a la vez (por ejemplo, contador e
 | Personas · Plus | 4 |
 | Autónomos · Gratis | 0 |
 | Autónomos · Pro | 9 |
-| Estudios · Inicial (hasta 10 organizaciones) | 49 |
+| Estudios · Inicial (hasta 5 organizaciones, 1 usuario; límites a confirmar) | 0 (gratis) |
 | Estudios · Profesional (hasta 40) | 119 |
 | Estudios · Avanzado (hasta 120) | 249 |
 | Organización extra (estudios) | 2 |
 
-Prueba gratis de 30 días en los planes pagos. Pago anual: 2 meses de regalo. Son valores de referencia: el Faro Manager los ajusta sin tocar código.
+Prueba gratis de 30 días en los planes pagos. Pago anual: 2 meses de regalo. Son valores de referencia: el Faro Manager los ajusta sin tocar código. **Inicial es gratis** (decisión de modelo de negocio, `docs/principios-producto.md` §20): es la puerta de entrada del contador independiente; para sumar más organizaciones o usuarios se pasa a Profesional.
 
 Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de estudios, Flotas, Grupos de gastos). Todo lo demás se nombra por lo que es.
 
@@ -375,10 +375,10 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |
 |---|---|---|---|
 | Para quién | Contador independiente que arranca | Estudio chico en crecimiento | Estudio mediano que quiere automatizar |
-| Precio de referencia | USD 49 / mes | USD 119 / mes | USD 249 / mes |
-| Organizaciones incluidas | Hasta 10 | Hasta 40 | Hasta 120 |
-| Organización extra | USD 2 / mes | USD 2 / mes | USD 2 / mes |
-| Prueba gratis | 30 días | 30 días | 30 días |
+| Precio de referencia | Gratis | USD 119 / mes | USD 249 / mes |
+| Organizaciones incluidas | Hasta 5 (a confirmar) | Hasta 40 | Hasta 120 |
+| Organización extra | — (se pasa a Profesional) | USD 2 / mes | USD 2 / mes |
+| Prueba gratis | No aplica (es gratis) | 30 días | 30 días |
 | Red de estudios (aparecer en el directorio) | — | ✓ | ✓ |
 | Usuarios del estudio | 1 | Hasta 5 | Hasta 25 |
 | Núcleo | ✓ | ✓ | ✓ |

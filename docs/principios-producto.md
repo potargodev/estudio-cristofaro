@@ -248,7 +248,36 @@ Las personas sueltas, que llegan por la Bitácora y el registro compartido, se d
 - **La persona no paga, o casi.** La Bitácora y el registro compartido son gratis. La persona es el volumen y la puerta de entrada, no la fuente de ingresos: si se le cobra, no entra, y se pierde la masa que hace atractivo el sistema para los estudios. Como mucho, más adelante, un plan Plus barato y opcional con funciones extra.
 - **El autónomo está en el medio:** gratis para arrancar y un plan Pro accesible cuando ya factura en serio.
 - **En una frase:** la plata grande viene de los estudios; las personas entran gratis y generan el volumen.
-- **Pendiente de ajuste:** hoy `docs/faro-producto.md` (§2.k y §3) y la app tienen el plan Inicial a USD 49 por mes con hasta 10 organizaciones. Con esta decisión, Inicial pasa a ser **gratis** (la puerta del contador independiente), así que hay que redefinir sus límites y actualizar los precios en el documento y en Faro Manager.
+- **Cuadro de planes vigente** (precios de referencia en USD por mes, editables en Faro Manager):
+
+  | Para | Planes |
+  |---|---|
+  | Estudios | Inicial **gratis** (hasta 5 organizaciones y 1 usuario, límites a confirmar) · Profesional USD 119 · Avanzado USD 249 |
+  | Personas | Gratis · Plus USD 4 |
+  | Autónomos | Gratis · Pro USD 9 |
+
+  Ya está actualizado en `docs/faro-producto.md` (§2.k y §3). **Falta aplicarlo en la app:** hoy el plan Inicial del código y de Faro Manager sigue en USD 49, con 10 organizaciones y prueba de 30 días.
+- **Sigue abierto:** si Faro le cobra una comisión al estudio por los clientes que le llegan desde la Red Contable.
+
+## 21. Primer paso al mercado
+
+El primer movimiento real para arrancar con Estudio Cristofaro, en orden:
+
+1. **Reunión con los contadores de Cristofaro** para mostrarles Faro funcionando y que lo sientan suyo. Son socios fundadores: tienen que estar convencidos.
+2. **Conectar su Tango** para que vean su propia cartera ordenada dentro de Faro. Es el momento "ajá", con sus datos reales.
+3. **Elegir 2 o 3 clientes de confianza y ordenados**, y conectarlos de verdad. No toda la cartera: pocos, para probar sin romper nada.
+4. **Que esos clientes usen lo básico** (Bitácora y registro compartido) y que el contador opere sobre sus datos. Dejarlo correr unas semanas.
+5. **Juntar lo aprendido** del uso real y recién ahí sumar más clientes y salir a buscar el segundo estudio.
+
+**En una frase:** Cristofaro adentro, su Tango conectado y 2 o 3 clientes reales probando. Chico, controlado y real.
+
+**Antes de la reunión hay que tener:**
+- staging revisado;
+- la IA cargada en Faro Manager;
+- los mails saliendo (SMTP);
+- el plan Inicial gratis aplicado en la app.
+
+El registro compartido (§18) y la conexión con el contador (§4 a §8) todavía no están construidos. Si se quieren mostrar en la reunión, hay que construirlos antes.
 
 ---
 
@@ -263,7 +292,7 @@ El resto de los puntos de este documento quedaron cerrados.
 
 ## Temas pendientes de charlar
 
-Se anotan para no perderlos. Sigue abierto el primer paso concreto al mercado (4).
+Se anotan para no perderlos. Los puntos 2, 3 y 4 ya están resueltos; sigue abierto cerrar los escalones 1 y 4 (punto 1) y la comisión por clientes de la Red Contable (§20).
 
 1. **El recorrido completo en cuatro escalones**:
    - persona;
@@ -272,6 +301,6 @@ Se anotan para no perderlos. Sigue abierto el primer paso concreto al mercado (4
    - el estudio puertas adentro.
 
    Falta cerrar el **escalón 1** (cómo se engancha y crece la persona) y el **escalón 4** (cómo vive todo esto el estudio desde su lado).
-2. ~~**Modelo de negocio**~~ **Resuelto en §20:** paga el estudio; las personas entran gratis; el autónomo, gratis al arrancar y Pro cuando factura. (Queda abierto si se cobra una comisión por clientes derivados desde la Red Contable.)
+2. ~~**Modelo de negocio**~~ **Resuelto en §20:** paga el estudio; las personas entran gratis; el autónomo, gratis al arrancar y Pro cuando factura. (Queda abierto si se cobra una comisión por clientes derivados desde la Red Contable; ver §20.)
 3. ~~**Los primeros usuarios (el huevo y la gallina)**~~ **Resuelto en §19:** se arranca por los estudios, con Estudio Cristofaro como fundador.
-4. **Primer paso real al mercado:** qué se lanza primero, sin querer abrir todos los frentes a la vez.
+4. ~~**Primer paso real al mercado**~~ **Resuelto en §21:** Cristofaro adentro, su Tango conectado y 2 o 3 clientes reales probando.
