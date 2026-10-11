@@ -56,7 +56,8 @@ export type ShellIcon =
   | "catalogo"
   | "plataforma"
   | "facturacion"
-  | "honorarios";
+  | "honorarios"
+  | "tareas";
 
 export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
 

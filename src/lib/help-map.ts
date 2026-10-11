@@ -13,6 +13,7 @@ const MAP: [string, string][] = [
   ["/faro-manager/indices", "bitacora/bitacora"],
   ["/admin/organizaciones/nueva", "organizaciones/rubros"],
   ["/admin/honorarios", "cobros/honorarios"],
+  ["/admin/tareas", "organizaciones/tareas"],
   ["/portal/estado-de-cuenta", "cobros/estado-de-cuenta"],
   ["/portal/recibos", "empleados/recibos-de-sueldo"],
   ["/portal/comunicados", "empleados/comunicados"],

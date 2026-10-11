@@ -26,7 +26,8 @@ export type NavIcon =
   | "comercial"
   | "configuracion"
   | "seguridad"
-  | "honorarios";
+  | "honorarios"
+  | "tareas";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -39,6 +40,8 @@ export interface NavItem {
   adminOnly?: boolean;
   /** Oculto para el colaborador */
   operatorOnly?: boolean;
+  /** Si el módulo no está en el plan, el ítem no aparece (se ofrece en Plan y módulos) */
+  hideWhenLocked?: boolean;
   /** Solo el estudio dueño del sitio público (STUDIO_SLUG) */
   siteOnly?: boolean;
   /** También en la cuenta personal (titular) */
@@ -95,13 +98,14 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/organizaciones", label: "Organizaciones", icon: "organizaciones", module: "core" },
       { href: "/admin/vencimientos", label: "Vencimientos", icon: "vencimientos", badge: "obligations" },
       { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
+      { href: "/admin/tareas", label: "Tareas", icon: "tareas", module: "crm", hideWhenLocked: true },
     ],
   },
   {
     title: "Negocio",
     items: [
       { href: "/admin/comercial", label: "Comercial", icon: "comercial", badge: "leads" },
-      { href: "/admin/honorarios", label: "Honorarios", icon: "honorarios", module: "billing", operatorOnly: true },
+      { href: "/admin/honorarios", label: "Honorarios", icon: "honorarios", module: "billing", operatorOnly: true, hideWhenLocked: true },
     ],
   },
   {
@@ -131,6 +135,7 @@ export function visibleGroups(a: NavAccess) {
     ...g,
     items: g.items.filter((i) => {
       if (!allowed(i, a)) return false;
+      if (i.hideWhenLocked && !itemEnabled(i, a)) return false;
       // Comercial entra si tiene alguna pestaña (el colaborador ve la Agenda)
       if (i.href === "/admin/comercial") return visibleTabs(COMERCIAL_TABS, a).length > 0;
       return true;

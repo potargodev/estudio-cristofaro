@@ -13,7 +13,8 @@
 //   cargos del mes y recordatorios escalonados) y recordatorios de firma de
 //   recibos, cada hora (COBROS_JOBS=off).
 // - Flujos: motor de la cola cada minuto y escaneo de eventos por tiempo
-//   (vencimientos, monotributo, recibos sin firmar) cada hora (FLOWS_JOBS=off).
+//   (vencimientos, monotributo, recibos sin firmar) cada hora, más las tareas
+//   de cada vencimiento (FLOWS_JOBS=off).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
@@ -113,8 +114,10 @@ export async function register() {
         .catch((error) => console.error("[flujos] Motor", (error as Error).message));
     g.__flowsTimer = setInterval(run, Number(process.env.FLOWS_JOBS_MS) || 60_000);
     g.__flowsTimer.unref?.();
+    const { syncObligationTasks } = await import("./modules/crm/server");
     const scan = () => {
       recoverStuck().catch(() => undefined);
+      syncObligationTasks().catch((error) => console.error("[tareas] Vencimientos", (error as Error).message));
       runFlowScans().catch((error) => console.error("[flujos] Escaneo", (error as Error).message));
     };
     g.__flowScanTimer = setInterval(scan, 60 * 60_000);
