@@ -168,11 +168,24 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
   - el costo de la API.
 - Tango sigue siendo una fuente intercambiable (CLAUDE.md): todo tiene que funcionar también con importación y exportación de archivos.
 
+## 15. Red Contable: un marketplace de doble mano
+
+**Nombre provisorio: "Red Contable"** (reemplaza a "Red de estudios"; falta confirmarlo). Funciona como Zonaprop, para los dos lados a la vez:
+
+- **Para la persona o el autónomo:** un marketplace de contadores y estudios. Entra, compara perfiles y especialidades y elige a quién contactar.
+- **Para el estudio o el contador:** un listado donde puede **salir a buscar clientes**, en vez de esperar a que le toquen la puerta. Ve tres tipos de candidatos: personas, empresas y **Flotas**. Las Flotas son lo más atractivo: un grupo entero buscando estudio, muchos clientes de una vez.
+- **Aparecer es una decisión activa y controlada.** Nadie entra al listado por estar dado de alta: entrás solo si activás **"Disponible, busco contador"** y mostrás lo que quieras (rubro, tamaño, zona), sin nombre ni apellido. Funciona como un portal de empleo: el estudio te ve, le interesás, te contacta y, cuando aceptás, se muestran tus datos y empieza la admisión (§7).
+- **Resuelve el huevo y la gallina:** las dos puntas se buscan entre sí dentro de la misma plataforma.
+- Lo que ya existe se mantiene: ranking neutral sin posiciones pagas, matrícula verificada y reseñas solo de clientes reales (la exposición pública de las calificaciones sigue abierta, ver (a)).
+- **Observación:** si en el futuro se suman servicios que no son estrictamente contables (laboral, legal), "Contable" puede quedar corto.
+
 ---
 
 ## Decisiones abiertas
 
 - **(a) Exposición pública de las calificaciones.** Falta definir cuánto de las calificaciones (durante la relación y al cierre) se muestra públicamente como reputación del estudio en la Red. Hay que equilibrar el poder del cliente con no espantar a los estudios de la Red. No se implementa ningún cambio sobre esto hasta decidirlo.
+- **(b) Nombre de la Red Contable.** "Red Contable" es provisorio. Criterio del usuario: claro y descriptivo (que se entienda al toque, como Zonaprop), sin copiar "Zona".
+- **(c) Terminología interna.** Faro es la marca, pero los nombres de adentro tienen que ser claros y directos, no metáforas náuticas que obliguen a aprender un idioma nuevo. Falta decidir si se renombran los nombres actuales (Bitácora, Vigía, Flotas). No se cambian hasta decidirlo.
 
 El resto de los puntos de este documento quedaron cerrados.
 
