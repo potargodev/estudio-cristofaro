@@ -1,4 +1,5 @@
 import "server-only";
+import { emitEvent } from "@/modules/flows/events";
 import { and, asc, desc, eq, inArray, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { billing_settings, fee_charges, fee_plans, ipc_series, legal_entities, memberships, organizations, studios, users } from "@/db/schema";
@@ -98,6 +99,7 @@ export async function generateCharges(studioId: string, period: string, actor?: 
       .onConflictDoNothing()
       .returning({ id: fee_charges.id });
     n += r.length;
+    if (r[0]) await emitEvent(studioId, "honorarios.cargo_generado", { cargo_id: r[0].id, organizacion_id: p.organization_id, importe: amount / 100, vence: `${period}-${String(settings.due_day).padStart(2, "0")}` }, r[0].id);
   }
   if (n && actor) await audit({ studioId, actor, action: "honorarios.cargos", entityType: "honorarios", metadata: { periodo: period, cargos: n } });
   return n;
@@ -248,6 +250,7 @@ export async function applyFeePayment(studioId: string, chargeId: string, p: MpP
   if (p.status !== "approved") return "ignorado";
   if (c.status === "pagado") return "repetido";
   await db().update(fee_charges).set({ status: "pagado", paid_at: new Date(), paid_amount: Math.round(p.transaction_amount * 100), payment_method: "mercadopago" }).where(eq(fee_charges.id, c.id));
+  await emitEvent(studioId, "honorarios.pagado", { cargo_id: c.id, organizacion_id: c.organization_id, importe: p.transaction_amount }, c.id);
   await audit({ studioId, organizationId: c.organization_id, actorLabel: "Mercado Pago", action: "honorarios.pagado", entityType: "cargo", entityId: c.id, metadata: { pago: p.id, importe: p.transaction_amount } });
   const staff = await db().select({ id: users.id }).from(users).where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador"]), eq(users.active, true)));
   const [org] = await db().select({ name: organizations.name }).from(organizations).where(eq(organizations.id, c.organization_id));

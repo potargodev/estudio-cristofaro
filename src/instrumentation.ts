@@ -12,10 +12,12 @@
 // - Cobros (suscripciones de Faro: pruebas, gracia y suspensión; honorarios:
 //   cargos del mes y recordatorios escalonados) y recordatorios de firma de
 //   recibos, cada hora (COBROS_JOBS=off).
+// - Flujos: motor de la cola cada minuto y escaneo de eventos por tiempo
+//   (vencimientos, monotributo, recibos sin firmar) cada hora (FLOWS_JOBS=off).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
-  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout; __bitacoraTimer?: NodeJS.Timeout; __cobrosTimer?: NodeJS.Timeout };
+  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout; __bitacoraTimer?: NodeJS.Timeout; __cobrosTimer?: NodeJS.Timeout; __flowsTimer?: NodeJS.Timeout; __flowScanTimer?: NodeJS.Timeout };
 
   if (process.env.AGENDA_REMINDERS !== "off" && !g.__agendaTimer) {
     const { sendReminders } = await import("./lib/agenda/bookings");
@@ -99,5 +101,24 @@ export async function register() {
     g.__cobrosTimer = setInterval(run, Number(process.env.COBROS_JOBS_MS) || 60 * 60_000);
     g.__cobrosTimer.unref?.();
     setTimeout(run, 90_000).unref?.();
+  }
+
+  if (process.env.FLOWS_JOBS !== "off" && !g.__flowsTimer) {
+    const [{ runFlowWorker, recoverStuck }, { runFlowScans }] = await Promise.all([import("./modules/flows/engine"), import("./modules/flows/scans")]);
+    const run = () =>
+      runFlowWorker()
+        .then((r) => {
+          if (r.created || r.ran) console.info(`[flujos] ${r.created} corridas nuevas, ${r.ran} ejecutadas`);
+        })
+        .catch((error) => console.error("[flujos] Motor", (error as Error).message));
+    g.__flowsTimer = setInterval(run, Number(process.env.FLOWS_JOBS_MS) || 60_000);
+    g.__flowsTimer.unref?.();
+    const scan = () => {
+      recoverStuck().catch(() => undefined);
+      runFlowScans().catch((error) => console.error("[flujos] Escaneo", (error as Error).message));
+    };
+    g.__flowScanTimer = setInterval(scan, 60 * 60_000);
+    g.__flowScanTimer.unref?.();
+    setTimeout(scan, 120_000).unref?.();
   }
 }

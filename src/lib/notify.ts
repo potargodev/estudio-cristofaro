@@ -27,7 +27,7 @@ ${cta ? `<p style="margin:20px 0"><a href="${cta.href}" style="background:#1c223
  * Emails de los miembros activos de una organización del estudio que tienen el
  * permiso para ver lo que se avisa (RRHH no recibe avisos de vencimientos, etc.).
  */
-async function memberEmails(studioId: string, organizationId: string, permission: Permission) {
+export async function memberEmails(studioId: string, organizationId: string, permission: Permission) {
   const rows = await getDb()
     .select({ email: users.email, role: memberships.role })
     .from(memberships)

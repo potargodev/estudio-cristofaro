@@ -1,4 +1,5 @@
 import "server-only";
+import { emitEvent } from "@/modules/flows/events";
 import { and, asc, desc, eq, inArray, isNotNull, sql } from "drizzle-orm";
 import { PDFDocument } from "pdf-lib";
 import { getDb } from "@/db";
@@ -109,6 +110,7 @@ export async function saveEmployee(s: PayrollScope, actor: Actor, i: EmployeeInp
   } else {
     const [row] = await db().insert(employees).values({ ...v, studio_id: s.studioId, organization_id: s.organizationId }).returning({ id: employees.id });
     empId = row.id;
+    await emitEvent(s.studioId, "empleado.alta", { empleado_id: empId, organizacion_id: s.organizationId, nombre: `${v.first_name} ${v.last_name}`.trim() }, empId);
     await event(s, empId, "alta", `Alta${v.position ? ` como ${v.position}` : ""}${v.start_date ? ` desde el ${v.start_date.split("-").reverse().join("/")}` : ""}`, actor, v.start_date ?? day(), requestId);
   }
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: id ? "empleado.editado" : "empleado.alta", entityType: "empleado", entityId: empId, metadata: { por_el_estudio: s.fromStudio } });
@@ -122,6 +124,7 @@ export async function terminateEmployee(s: PayrollScope, actor: Actor, id: strin
   if (!cur.e.active) throw new PayrollError("Ya está dado de baja.");
   const d = isDate(date) ?? day();
   await db().update(employees).set({ active: false, end_date: d, end_reason: reason.trim().slice(0, 200) || null }).where(eq(employees.id, cur.e.id));
+  await emitEvent(s.studioId, "empleado.baja", { empleado_id: cur.e.id, organizacion_id: s.organizationId, nombre: `${cur.e.first_name} ${cur.e.last_name}`.trim() }, cur.e.id);
   await event(s, cur.e.id, "baja", `Baja${reason.trim() ? `: ${reason.trim()}` : ""}`, actor, d, requestId);
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "empleado.baja", entityType: "empleado", entityId: cur.e.id, metadata: { fecha: d } });
 }
@@ -309,6 +312,7 @@ export async function signPayslip(me: { id: string; name: string; email: string;
   if (hash !== p.sha256) throw new PayrollError("El archivo del recibo cambió desde que se publicó. Avisale a tu empleador.");
   const rec: SignatureRecord = { decision, reason: decision === "no_conforme" ? reason!.trim().slice(0, 500) : null, at: new Date().toISOString(), ip, userAgent: userAgent?.slice(0, 300) ?? null, documentHash: hash, signerId: me.id, signerName: me.name };
   await db().update(payslips).set({ status: decision, decision, reason: rec.reason, signed_at: new Date(rec.at), sign_ip: ip, sign_user_agent: rec.userAgent, sign_device: deviceOf(userAgent), seal: seal(rec), viewed_at: p.viewed_at ?? new Date() }).where(eq(payslips.id, p.id));
+  await emitEvent(me.studioId, "recibo.firmado", { recibo_id: p.id, organizacion_id: me.organizationId, decision, periodo: p.period }, p.id);
   await audit({ studioId: me.studioId, organizationId: me.organizationId, actor: me, action: "recibo.firmado", entityType: "recibo", entityId: p.id, ip: ip ?? undefined, metadata: { decision, periodo: p.period, hash } });
   if (decision === "no_conforme") {
     const managers = await db().select({ id: users.id, role: memberships.role }).from(memberships).innerJoin(users, eq(users.id, memberships.user_id)).where(and(eq(memberships.organization_id, me.organizationId), eq(memberships.status, "activa")));

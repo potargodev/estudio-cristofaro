@@ -3312,3 +3312,122 @@ export const announcement_reads = pgTable(
   },
   (t) => [primaryKey({ columns: [t.announcement_id, t.employee_id] })],
 );
+
+// ───────────── F4 · Flujos (automatizaciones) ─────────────
+
+/** Flujo: disparador + grafo del canvas (nodos y conexiones), con su estado */
+export const flows = pgTable(
+  "flows",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description"),
+    status: text("status").notNull().default("borrador"), // borrador | activo | pausado
+    trigger_type: text("trigger_type").notNull(), // evento | horario | webhook | vigia
+    trigger_event: text("trigger_event"),
+    graph: jsonb("graph").$type<Record<string, unknown>>().notNull(),
+    template_key: text("template_key"),
+    webhook_token: text("webhook_token"),
+    next_run_at: timestamp("next_run_at", { withTimezone: true }),
+    version: integer("version").notNull().default(1),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    last_run_at: timestamp("last_run_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("flows_studio_idx").on(t.studio_id, t.status), index("flows_event_idx").on(t.trigger_event, t.status), uniqueIndex("flows_webhook_idx").on(t.webhook_token)],
+);
+
+/** Corrida de un flujo (cola en Postgres): estado, contexto, reintentos e idempotencia */
+export const flow_runs = pgTable(
+  "flow_runs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    flow_id: uuid("flow_id")
+      .notNull()
+      .references(() => flows.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    idempotency_key: text("idempotency_key").notNull(),
+    status: text("status").notNull().default("pendiente"), // pendiente | en_curso | esperando | completada | error | cancelada | rechazada
+    source: text("source").notNull(), // evento | horario | webhook | vigia | prueba
+    context: jsonb("context").$type<Record<string, unknown>>().notNull(),
+    cursor: jsonb("cursor").$type<string[]>().notNull().default([]), // nodos por ejecutar
+    attempts: integer("attempts").notNull().default(0),
+    next_attempt_at: timestamp("next_attempt_at", { withTimezone: true }).notNull().defaultNow(),
+    waiting_approval_id: uuid("waiting_approval_id"),
+    error: text("error"),
+    started_at: timestamp("started_at", { withTimezone: true }),
+    finished_at: timestamp("finished_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("flow_runs_idem_idx").on(t.flow_id, t.idempotency_key), index("flow_runs_queue_idx").on(t.status, t.next_attempt_at)],
+);
+
+/** Registro de cada paso de una corrida */
+export const flow_steps = pgTable(
+  "flow_steps",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    run_id: uuid("run_id")
+      .notNull()
+      .references(() => flow_runs.id, { onDelete: "cascade" }),
+    node_id: text("node_id").notNull(),
+    kind: text("kind").notNull(),
+    status: text("status").notNull(), // ok | error | esperando | saltado | rechazado
+    attempt: integer("attempt").notNull().default(1),
+    input: jsonb("input").$type<unknown>(),
+    output: jsonb("output").$type<unknown>(),
+    error: text("error"),
+    started_at: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+    finished_at: timestamp("finished_at", { withTimezone: true }),
+  },
+  (t) => [index("flow_steps_run_idx").on(t.run_id, t.started_at)],
+);
+
+/** Eventos que emiten los módulos (cola para los flujos), sin duplicados por clave */
+export const flow_events = pgTable(
+  "flow_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    organization_id: uuid("organization_id"),
+    payload: jsonb("payload").$type<Record<string, unknown>>().notNull(),
+    dedupe_key: text("dedupe_key").notNull(),
+    processed_at: timestamp("processed_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("flow_events_dedupe_idx").on(t.studio_id, t.dedupe_key), index("flow_events_pending_idx").on(t.processed_at)],
+);
+
+/** Tareas del equipo del estudio (las crean los flujos; la vista de cartera llega en F9) */
+export const tasks = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    detail: text("detail"),
+    status: text("status").notNull().default("pendiente"), // pendiente | en_curso | hecha
+    due_date: date("due_date"),
+    assignee_id: uuid("assignee_id").references(() => users.id, { onDelete: "set null" }),
+    source: text("source").notNull().default("manual"), // manual | flujo | obligacion
+    source_ref: text("source_ref"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    completed_at: timestamp("completed_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("tasks_studio_idx").on(t.studio_id, t.status, t.due_date), uniqueIndex("tasks_source_idx").on(t.studio_id, t.source, t.source_ref)],
+);

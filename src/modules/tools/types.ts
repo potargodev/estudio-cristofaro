@@ -27,6 +27,7 @@ export const TOOL_MODULES = {
   conciliacion: "Conciliación bancaria",
   cobros: "Honorarios y cobros",
   empleados: "Empleados y recibos",
+  flujos: "Flujos (automatizaciones)",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 

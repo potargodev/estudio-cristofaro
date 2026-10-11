@@ -1,6 +1,7 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
+import { emitEvent } from "@/modules/flows/events";
 import { revalidatePath } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -189,6 +190,7 @@ export async function createRequest(fd: FormData) {
   const documentId = file ? await saveAttachment(file, me) : null;
   await db.insert(request_messages).values({ request_id: req.id, author_id: me.id, from_client: true, body, document_id: documentId });
   await notifyStudio({ kind: "solicitud", organizationId: me.organizationId, organizationName: me.organizationName, subject, message: body });
+  await emitEvent(me.studioId, "solicitud.creada", { solicitud_id: req.id, organizacion_id: me.organizationId, tipo: type, asunto: subject }, req.id);
   revalidatePath("/portal", "layout");
   revalidatePath("/admin");
   revalidatePath("/admin/solicitudes");

@@ -6,6 +6,7 @@ import { approvals } from "@/db/schema";
 import type { StaffUser } from "@/lib/auth";
 import type { Space } from "@/components/app/shell/spaces";
 import { ApprovalsInbox } from "./ApprovalsInbox";
+import { FlowsTab } from "@/components/flujos/FlowsTab";
 import { PersonalVigia } from "./PersonalVigia";
 import { SPACE_PARAM } from "./space-param";
 import { StudioAssistant } from "./StudioAssistant";
@@ -19,8 +20,6 @@ import { StudioAssistant } from "./StudioAssistant";
 // - Cuenta personal: suma su Asistente con su propia clave y sus propuestas.
 // Todo sale de la sesión; el espacio pedido se valida antes de llegar acá.
 
-/** Flujos (F4): la pestaña "Automatizaciones" queda reservada */
-const AUTOMATIZACIONES_LISTA = false;
 
 export type VigiaTab = "conversacion" | "asistente" | "propuestas" | "automatizaciones";
 
@@ -38,7 +37,8 @@ export async function VigiaView({ user, space, sp, base }: { user: StaffUser; sp
       { key: "asistente", label: space === "studio" ? "Asistente" : "Asistente con tu clave", icon: <Bot strokeWidth={1.5} aria-hidden /> },
       { key: "propuestas", label: "Propuestas para aprobar", icon: <ShieldCheck strokeWidth={1.5} aria-hidden />, count: pending?.n ?? 0 },
     );
-    if (AUTOMATIZACIONES_LISTA) tabs.push({ key: "automatizaciones", label: "Automatizaciones", icon: <Workflow strokeWidth={1.5} aria-hidden /> });
+    // Flujos (F4): solo en el estudio, para dueños y contadores
+    if (space === "studio" && ["dueno", "contador"].includes(user.role)) tabs.push({ key: "automatizaciones", label: "Automatizaciones", icon: <Workflow strokeWidth={1.5} aria-hidden /> });
   }
   const tab = tabs.find((t) => t.key === sp.tab)?.key ?? tabs[0].key;
   const q = (k: VigiaTab) => new URLSearchParams(base === "/admin/vigia" ? { tab: k } : { espacio: SPACE_PARAM[space], tab: k }).toString();
@@ -58,6 +58,7 @@ export async function VigiaView({ user, space, sp, base }: { user: StaffUser; sp
         {tab === "conversacion" && <PersonalVigia user={user} embedded={embedded} />}
         {tab === "asistente" && <StudioAssistant user={user} sp={sp} basePath={href("asistente")} embedded={embedded} />}
         {tab === "propuestas" && <ApprovalsInbox user={user} sp={sp} back={back} embedded={embedded} />}
+        {tab === "automatizaciones" && <FlowsTab user={user} sp={sp} />}
       </div>
     </div>
   );

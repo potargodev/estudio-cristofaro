@@ -2,7 +2,7 @@ import "server-only";
 import { and, count, eq, gt, gte, inArray, isNotNull, isNull, or } from "drizzle-orm";
 import { cache } from "react";
 import { getDb } from "@/db";
-import { faro_module_releases, faro_plans, invoices, organizations, smart_documents, studios, tenant_modules, users } from "@/db/schema";
+import { faro_module_releases, faro_plans, flows, invoices, organizations, smart_documents, studios, tenant_modules, users } from "@/db/schema";
 import { FARO_MODULES, getFaroModule, type FaroModuleKey, type ModuleStatus } from "@/modules/registry";
 import { PLANS, type AiLevel, type FaroPlan, type PlanLimits, type TenantKind } from "./plans";
 
@@ -146,6 +146,10 @@ export async function limitUsage(studioId: string, key: LimitKey): Promise<numbe
       .select({ n: count() })
       .from(users)
       .where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true)));
+    return n;
+  }
+  if (key === "flows") {
+    const [{ n }] = await db.select({ n: count() }).from(flows).where(and(eq(flows.studio_id, studioId), eq(flows.status, "activo")));
     return n;
   }
   if (key === "smartDocsPerMonth") {

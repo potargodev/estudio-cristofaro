@@ -1,4 +1,5 @@
 import "server-only";
+import { emitEvent } from "@/modules/flows/events";
 import { and, asc, desc, eq, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { bank_movements, bank_rules, bank_statements, invoices, smart_documents } from "@/db/schema";
@@ -121,6 +122,7 @@ export async function importStatement(s: RecScope, actor: Actor, file: File, ban
     .returning({ id: bank_movements.id });
   await db().update(bank_statements).set({ total: inserted.length, duplicates: parsed.length - inserted.length }).where(eq(bank_statements.id, st.id));
   await refresh(s);
+  await emitEvent(s.studioId, "conciliacion.extracto_importado", { extracto_id: st.id, organizacion_id: s.organizationId, movimientos: inserted.length }, st.id);
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "conciliacion.extracto", entityType: "extracto", entityId: st.id, metadata: { banco: st.bank, movimientos: inserted.length, repetidos: parsed.length - inserted.length } });
   return { ...st, total: inserted.length, duplicates: parsed.length - inserted.length };
 }

@@ -1,4 +1,5 @@
 import "server-only";
+import { emitEvent } from "@/modules/flows/events";
 import { createHash } from "node:crypto";
 import { generateText } from "ai";
 import { and, desc, eq, gte, inArray, isNotNull, isNull, ne, sql } from "drizzle-orm";
@@ -157,6 +158,7 @@ async function process(s: DocScope, row: SmartDoc, actor: Actor, data: Uint8Arra
     .set({ ...usage, status: "para_confirmar", kind: parsed.tipo_documento, extracted: parsed as unknown as Record<string, unknown>, confidence: String(overallConfidence(parsed)), low_fields: lowFields(parsed), validation: v as unknown as Record<string, unknown>, fingerprint: fp, duplicate_of: dup?.id ?? null, account: suggestAccount(parsed, history), error: null })
     .where(eq(smart_documents.id, row.id))
     .returning();
+  if (s.scope !== "bitacora") await emitEvent(s.studioId, "documento.leido", { documento_id: row.id, organizacion_id: s.organizationId, emisor: parsed.razon_social_emisor, total: parsed.total, tipo: parsed.tipo_documento, repetido: !!dup }, row.id);
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.leido", entityType: "documento_leido", entityId: row.id, metadata: { archivo: row.file_name, modelo: ai.model, duplicado: !!dup, costo_usd: ai.cost } });
   return u;
 }
@@ -295,6 +297,7 @@ export async function confirmDoc(s: DocScope, actor: Actor, id: string, edited: 
     .update(smart_documents)
     .set({ status: "confirmado", extracted: edited as unknown as Record<string, unknown>, validation: v as unknown as Record<string, unknown>, fingerprint: fingerprint(edited), low_fields: [], account: account.slice(0, 60), confirmed_by: actor.id, confirmed_at: new Date(), target_id: targetId })
     .where(eq(smart_documents.id, d.id));
+  if (s.scope !== "bitacora") await emitEvent(s.studioId, "documento.confirmado", { documento_id: d.id, organizacion_id: s.organizationId, emisor: edited.razon_social_emisor, total: edited.total, cuenta: account }, d.id);
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.confirmado", entityType: "documento_leido", entityId: d.id, metadata: { total: edited.total, cuenta: account, cuit: edited.cuit_emisor } });
 }
 

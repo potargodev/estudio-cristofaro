@@ -155,13 +155,14 @@ export const FARO_MODULES: FaroModule[] = [
     key: "flows",
     name: "Flujos",
     icon: "Workflow",
-    description: "Canvas visual con disparadores, condiciones y acciones, con plantillas listas para usar.",
-    status: "proximamente",
+    description: "Canvas visual con disparadores (eventos de los módulos, horario, webhook o pedido al Vigía), condiciones y acciones (herramientas, avisos, mails, tareas, solicitudes, aprobaciones y esperas), con motor en cola, reintentos y registro de cada corrida. Plantillas listas.",
+    status: "disponible",
     minPlan: { studio: "inicial" },
     roles: ["dueno", "contador"],
-    nav: [],
+    // §2.o: pestaña «Automatizaciones» del Vigía
+    nav: [{ href: "/admin/vigia?tab=automatizaciones", label: "Vigía → Automatizaciones" }],
     events: [],
-    tools: [],
+    tools: ["listar_flujos", "ejecutar_flujo", "proponer_flujo", "continuar_flujo", "recordar_vencimiento", "pedir_documentacion", "enviar_resumen_mensual"],
     limit: "flows",
   },
   {

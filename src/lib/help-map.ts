@@ -27,6 +27,7 @@ const MAP: [string, string][] = [
   ["/admin/configuracion/equipo", "organizaciones/roles"],
   ["/admin/vencimientos", "vencimientos/calendario"],
   ["/admin/solicitudes", "solicitudes/solicitudes"],
+  ["/admin/vigia/flujos", "vigia/flujos"],
   ["/admin/vigia", "ia/ia-y-aprobaciones"],
   ["/admin/ia", "ia/ia-y-aprobaciones"],
   ["/admin/mcp", "ia/mcp"],

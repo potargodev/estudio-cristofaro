@@ -1,4 +1,5 @@
 import "server-only";
+import { emitEvent } from "@/modules/flows/events";
 import { randomBytes } from "node:crypto";
 import { and, asc, count, desc, eq, gte, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db";
@@ -541,6 +542,7 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
     if (res.approved && res.cae) {
       const r = await finish({ status: "autorizada", cae: res.cae, cae_due: fromArcaDate(res.caeDue ?? ""), observations: res.observations, raw_request: { xml: res.request }, raw_response: { xml: res.raw }, authorized_by: actor.id, authorized_at: new Date(), public_token: randomBytes(18).toString("base64url"), error: null });
       await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.emitida", entityType: "factura", entityId: inv.id, metadata: { tipo: CBTE_TYPES[inv.cbte_type].label, numero: number, cae: res.cae, total: Number(inv.total), origen: origin, ambiente: cred.env } });
+      await emitEvent(scope.studioId, "factura.emitida", { factura_id: inv.id, organizacion_id: scope.organizationId, total: Number(inv.total), cliente: inv.customer_name, tipo: CBTE_TYPES[inv.cbte_type].label }, inv.id);
       return r;
     }
     const detail = [...res.errors, ...res.observations].map((o) => `${o.code}: ${o.msg}`).join(" · ") || "ARCA rechazó el comprobante.";
