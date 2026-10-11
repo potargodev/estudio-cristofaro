@@ -159,3 +159,20 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Nada nuevo. Con la cuenta real de Mercado Pago, revisar en el Faro Manager → Auditoría que los débitos de Inicial quedaron cancelados (`debito_pendiente_de_cancelar` = false).
+
+## Principios · Etapa 2 · Principio madre y escudo de responsabilidad (octubre 2026)
+
+**Qué quedó**
+- **Textos:** el semáforo habla de hechos («Según lo que cargaste, facturaste el 82 % del tope…»), sin «Vas bien», «te toca» ni «te corresponde»; chequeos sin «Todo en orden»; simulación de pase a RI como dato; landings de Faro (/faro, Faro Personal, planes, onboarding) sin «sin ser contador» ni «te acompaña sin contador»; mails del calendario con el pie del escudo; «Esto no reemplaza el criterio de un contador» al pie de Facturación y en las sugerencias.
+- **Vigía:** regla del escudo (§1 y §1.a) en los prompts del Vigía personal y del Asistente (estudio y autónomo); capa fija antes del modelo: tarea de matriculado → no la acompaña, explica y ofrece sumar un contador (auditado); pregunta de criterio → responde con datos y agrega el pie con el link a la Red. La herramienta del semáforo devuelve el aviso.
+- **§1.b:** lista de tareas que requieren un matriculado (tabla `professional_tasks` sobre los valores de `src/modules/escudo/catalog.ts`), editable en **Faro Manager → Catálogo → Escudo**, marcada «a validar por un contador».
+- **§1.c:** reglas de derivación (`derivation_rules`) con umbrales «a validar»: monotributo al 80 % o exclusión, primer empleado, facturación al exterior, más de una actividad, simulación de pase a RI, preguntas al Vigía con criterio profesional (y la changa, que usa la etapa 7). Sugerencias por persona (`derivation_suggestions`) en Inicio y Facturación, con «Ahora no» (vuelve a los días de la regla) y «Sumar un contador» → la Red con el contexto armado y el pedido de propuesta precargado.
+- Ayuda: nuevo `primeros-pasos/faro-y-tu-contador`; actualizados `facturacion/semaforo-monotributo`, `facturacion/calendario-y-chequeos` y `vigia/vigia`.
+
+**Qué se probó**
+- `principios-servidor.mts 2` (30/30): textos del semáforo, detección de tareas y de preguntas de criterio, Faro Manager (alta, validación con matrícula, umbral, auditoría), sugerencias (descartar, no volver antes de tiempo, volver después, ajenas forzando el ID), Vigía con el proveedor de prueba: «¿estoy bien con ARCA?», «¿me van a multar?», «¿me conviene pasar a responsable inscripto?» y «certificación de ingresos», con el escudo en el prompt.
+- `principios-navegador.mjs 2` (16/16, 390 px y escritorio, claro y oscuro): sugerencia en Inicio, «Ahora no», Red con contexto, derivación ajena sin datos, semáforo, chequeos, pie del escudo y Faro Manager → Escudo. Se arregló un scroll horizontal previo de Inicio a 390 px.
+- Regresión: `npm test` (86), `copiloto.mts` (36/36).
+
+**Qué falta configurar**
+- Que un contador (Estudio Cristofaro) valide la lista de tareas y los umbrales en Faro Manager → Catálogo → Escudo (ver pendientes).

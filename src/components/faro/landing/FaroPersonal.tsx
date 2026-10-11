@@ -4,14 +4,14 @@ import { Container, CtaLink, SectionIndex } from "@/components/web/ui";
 import { plansFor, priceLabel } from "@/lib/faro/plans";
 import { Reveal } from "./Reveal";
 
-// docs/faro-producto.md §2.c: Faro Personal para autónomos sin contador
+// docs/faro-producto.md §2.c: Faro Personal para autónomos en autogestión (principios §1 y §2)
 
 const FEATURES = [
   { icon: FileText, title: "Facturación con tu logo", text: "Facturas A, B, C y E con ARCA, con tu logo y tus colores, y link de pago.", soon: true },
-  { icon: Gauge, title: "Semáforo de monotributo", text: "Cuánto podés facturar sin pasarte, aviso de recategorización y alerta de exclusión.", soon: true },
+  { icon: Gauge, title: "Semáforo de monotributo", text: "Cuánto facturaste contra el tope según lo que cargaste, aviso de recategorización y alerta de exclusión.", soon: true },
   { icon: ShieldCheck, title: "Tu situación con ARCA", text: "Constancia y padrón por web service oficial. Lo que no tiene servicio, con chequeos guiados.", soon: true },
   { icon: CalendarClock, title: "Calendario de vencimientos", text: "Monotributo, IIBB, autónomos, IVA y Ganancias según tu CUIT, con alertas.", soon: true },
-  { icon: LifeBuoy, title: "Necesito un contador", text: "Cuando crezcas, invitás a un estudio de Faro a acompañarte sin cambiar de herramienta.", soon: false },
+  { icon: LifeBuoy, title: "Necesito un contador", text: "Faro no reemplaza el criterio de un contador: cuando quieras tranquilidad de verdad, sumás uno de la Red sin cambiar de herramienta.", soon: false },
 ];
 
 export function FaroPersonal() {
@@ -28,7 +28,7 @@ export function FaroPersonal() {
               ¿Sos autónomo y llevás tus números solo?
             </SplitHeading>
             <p className="mt-8 max-w-lg text-[16px] leading-relaxed text-muted">
-              Faro te dice qué tenés que hacer, cuándo y cuánto, en palabras simples. Para monotributistas y responsables inscriptos que arrancan o que prefieren no depender de nadie.
+              Faro te ordena los números y te muestra qué vence, cuándo y cuánto, en palabras simples. Para monotributistas y responsables inscriptos que arrancan en autogestión. Lo profesional queda para un contador matriculado, y Faro te lo acerca cuando lo necesitás.
             </p>
             <Reveal as="ul" className="mt-10 divide-y divide-line border-y border-line">
               {FEATURES.map((f) => (
@@ -56,7 +56,7 @@ export function FaroPersonal() {
                 </div>
                 <p className="mt-2 flex justify-between text-[12px] text-paper/60">
                   <span>Categoría D · 64% del tope</span>
-                  <span className="text-gold">Verde</span>
+                  <span className="text-gold">Según lo cargado</span>
                 </p>
                 <ul className="mt-5 divide-y divide-hair border-y border-hair text-[13px]">
                   <li className="flex justify-between py-2.5">

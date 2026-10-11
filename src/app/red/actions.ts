@@ -7,6 +7,7 @@ import { studios } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { RedError, requestProposal } from "@/modules/red/server";
+import { markSuggestionSent } from "@/modules/escudo/server";
 
 export interface ProposalState {
   ok: boolean;
@@ -52,5 +53,6 @@ async function send(fd: FormData): Promise<ProposalState> {
     if (e instanceof RedError) return { ok: false, message: e.message };
     throw e;
   }
+  if (user && !user.assisted && v(fd, "derivacion")) await markSuggestionSent(user.id, v(fd, "derivacion"));
   return { ok: true, message: "Listo: le mandamos tu pedido al estudio. Te va a escribir a tu mail." };
 }

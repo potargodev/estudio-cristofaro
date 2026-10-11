@@ -3594,3 +3594,55 @@ export const whatsapp_messages = pgTable(
   },
   (t) => [uniqueIndex("whatsapp_messages_external_idx").on(t.external_id), index("whatsapp_messages_studio_idx").on(t.studio_id, t.created_at)],
 );
+
+// ───────────────────────── Escudo de responsabilidad (principios §1.b y §1.c) ─────────────────────────
+
+/** Tareas que requieren un contador matriculado: Faro no las acompaña y deriva. Valores por defecto en src/modules/escudo/catalog.ts */
+export const professional_tasks = pgTable("professional_tasks", {
+  key: text("key").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull().default(""),
+  keywords: text("keywords").array().notNull().default(sql`'{}'::text[]`),
+  active: boolean("active").notNull().default(true),
+  /** a_validar | validada (por un contador: nombre y matrícula en validated_by) */
+  validation: text("validation").notNull().default("a_validar"),
+  validated_by: text("validated_by"),
+  position: integer("position").notNull().default(0),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** Reglas del disparador de derivación (umbrales «a validar» por un contador) */
+export const derivation_rules = pgTable("derivation_rules", {
+  key: text("key").primaryKey(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  need: text("need").notNull(),
+  threshold: numeric("threshold", { precision: 14, scale: 4 }),
+  snooze_days: integer("snooze_days").notNull().default(30),
+  active: boolean("active").notNull().default(true),
+  validation: text("validation").notNull().default("a_validar"),
+  validated_by: text("validated_by"),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** Sugerencia de sumar un contador para una persona: descartable, vuelve después de snooze_days */
+export const derivation_suggestions = pgTable(
+  "derivation_suggestions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rule_key: text("rule_key").notNull(),
+    /** Qué necesita y por qué (datos del momento): lo que llega a la Red */
+    context: jsonb("context").$type<{ need: string; why: string; data?: Record<string, unknown> }>().notNull(),
+    status: text("status").notNull().default("activa"), // activa | descartada | enviada
+    snoozed_until: timestamp("snoozed_until", { withTimezone: true }),
+    triggered_at: timestamp("triggered_at", { withTimezone: true }).notNull().defaultNow(),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("derivation_suggestions_user_rule_idx").on(t.user_id, t.rule_key)],
+);

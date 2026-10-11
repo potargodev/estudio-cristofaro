@@ -7,6 +7,7 @@ import { accounting_expenses, studios } from "@/db/schema";
 import { categoryName, formatMoney } from "@/modules/gastos/constants";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { VigiaPrompt } from "@/components/copiloto/VigiaPrompt";
+import { Derivaciones } from "@/components/escudo/Derivaciones";
 import { money, monthLabel, monthOf } from "@/modules/bitacora/catalog";
 import { monthSummary } from "@/modules/bitacora/server";
 import { listInsights } from "@/modules/bitacora/recurring";
@@ -52,10 +53,12 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
     ? "Tu espacio personal: tu Bitácora y tus grupos. Es privado."
     : `${t?.kind === "persona" ? (sp.bienvenida ? "Te damos la bienvenida a Faro" : "Tu espacio en Faro") : sp.bienvenida ? "Te damos la bienvenida a Faro Personal" : "Faro Personal"} · plan ${getPlan(t?.plan_key) ? planFullName(getPlan(t?.plan_key)!) : ""}${t?.kind !== "persona" ? ` · CUIT ${cuitFmt(t?.cuit ?? null)}` : ""}`;
   return (
-    <div className="grid gap-6 pb-10">
+    <div className="grid gap-6 pb-10 [&>*]:min-w-0">
       <PageHeader title={`Hola, ${first}.`} description={context} className="mb-0" />
 
       <VigiaPrompt />
+
+      {titular && <Derivaciones me={me} volver="/personal" />}
 
       <Insights items={insights} volver="/personal" />
 

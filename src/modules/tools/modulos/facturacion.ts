@@ -1,4 +1,5 @@
 import "server-only";
+import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { z } from "zod/v4";
 import { fullNumber, money } from "@/modules/arca/calc";
 import { CBTE_TYPES } from "@/modules/arca/config";
@@ -111,7 +112,7 @@ export const facturacionTools = [
       if (input.organizacion_id) await ctx.organization(input.organizacion_id);
       const scope = await wrap(() => issuerForTool(ctx.studioId, ctx.actor.role, input.organizacion_id));
       const s = await semaforoFor(scope);
-      return { semaforo: s.light, mensaje: s.message, facturado_12_meses: s.income12m, categoria: s.category, tope: s.cap, falta: s.remaining, categoria_sugerida: s.suggested, proxima_recategorizacion: s.nextRecategorization, escala: s.scale.status === "validada" ? "validada" : "a validar" };
+      return { semaforo: s.light, mensaje: s.message, facturado_12_meses: s.income12m, categoria: s.category, tope: s.cap, falta: s.remaining, categoria_sugerida: s.suggested, proxima_recategorizacion: s.nextRecategorization, escala: s.scale.status === "validada" ? "validada" : "a validar", aviso: `Datos según lo cargado, no una revisión profesional. ${NO_REEMPLAZA}` };
     },
   }),
   defineTool({

@@ -6,7 +6,7 @@ import { requestProposalAction, type ProposalState } from "@/app/red/actions";
 
 const field = "mt-1 h-10 w-full rounded-md border border-line bg-canvas px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
 
-export function ProposalForm({ studio, name, email }: { studio: string; name: string; email: string }) {
+export function ProposalForm({ studio, name, email, derivacion }: { studio: string; name: string; email: string; derivacion?: { id: string; message: string } }) {
   const [state, action, pending] = useActionState<ProposalState, FormData>(requestProposalAction, { ok: false });
   if (state.ok)
     return (
@@ -17,6 +17,7 @@ export function ProposalForm({ studio, name, email }: { studio: string; name: st
   return (
     <form key={state.message ?? "form"} action={action} className="mt-4 grid gap-3 text-[13px] text-muted">
       <input type="hidden" name="studio" value={studio} />
+      {derivacion && <input type="hidden" name="derivacion" value={derivacion.id} />}
       <div aria-hidden className="absolute -left-[9999px]">
         <input name="empresa_web" tabIndex={-1} autoComplete="off" />
       </div>
@@ -46,7 +47,7 @@ export function ProposalForm({ studio, name, email }: { studio: string; name: st
       </label>
       <label>
         ¿Qué necesitás?
-        <textarea name="message" defaultValue={state.values?.message} rows={4} maxLength={2000} className={`${field} h-auto py-2`} />
+        <textarea name="message" defaultValue={state.values?.message ?? derivacion?.message} rows={derivacion ? 6 : 4} maxLength={2000} className={`${field} h-auto py-2`} />
       </label>
       <label className="flex items-start gap-2 text-[13px]">
         <input type="checkbox" name="consent" required defaultChecked={state.values?.consent === "on"} className="mt-0.5 size-4 accent-navy" />

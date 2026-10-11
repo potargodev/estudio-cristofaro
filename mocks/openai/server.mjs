@@ -210,7 +210,7 @@ createServer(async (req, res) => {
   for await (const c of req) raw += c;
   const body = JSON.parse(raw || "{}");
   const d = decide(body);
-  log.push({ at: new Date().toISOString(), tools: (body.tools ?? []).map((t) => t.function?.name), last: body.messages?.at(-1), decision: d });
+  log.push({ at: new Date().toISOString(), tools: (body.tools ?? []).map((t) => t.function?.name), last: body.messages?.at(-1), decision: d, system: text(body.messages?.find((m) => m.role === "system")).slice(0, 20000) });
   const id = `chatcmpl-${Date.now()}`;
   const base = { id, object: "chat.completion.chunk", created: Math.floor(Date.now() / 1000), model: body.model };
   if (!body.stream) {

@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { guided_checks, obligations, studios, users } from "@/db/schema";
 import { esc, sendMail } from "@/lib/email";
 import { mailLayout } from "@/lib/notify";
+import { FISCAL_FOOTNOTE } from "@/modules/escudo/catalog";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { notify } from "@/modules/notifications/server";
 import { checkByKey } from "./checks";
@@ -36,7 +37,7 @@ export async function runArcaJobs() {
     const [claimed] = await db.update(obligations).set({ reminded_at: new Date() }).where(eq(obligations.id, o.id)).returning({ id: obligations.id });
     if (!claimed || !u) continue;
     await notify([u.id], { kind: "fiscal", title: `Vence ${o.tax} el ${fmt(o.due_date)}`, body: o.notes, href: "/facturacion/calendario", refId: o.id });
-    await sendMail({ to: u.email, subject: `Vence ${o.tax} el ${fmt(o.due_date)}`, html: mailLayout(`Vence ${o.tax}`, `<p>Hola, ${esc(u.name.split(" ")[0] ?? "")}:</p><p>El <strong>${fmt(o.due_date)}</strong> vence <strong>${esc(o.tax)}</strong> (período ${esc(o.period)}). ${esc(o.notes ?? "")}</p>`, { href: `${getSiteUrl()}/facturacion/calendario`, label: "Ver mi calendario" }, "Faro") });
+    await sendMail({ to: u.email, subject: `Vence ${o.tax} el ${fmt(o.due_date)}`, html: mailLayout(`Vence ${o.tax}`, `<p>Hola, ${esc(u.name.split(" ")[0] ?? "")}:</p><p>El <strong>${fmt(o.due_date)}</strong> vence <strong>${esc(o.tax)}</strong> (período ${esc(o.period)}). ${esc(o.notes ?? "")}</p><p style="color:#5a6176;font-size:13px">${FISCAL_FOOTNOTE}</p>`, { href: `${getSiteUrl()}/facturacion/calendario`, label: "Ver mi calendario" }, "Faro") });
     avisos++;
   }
   const checks = await checksDue();

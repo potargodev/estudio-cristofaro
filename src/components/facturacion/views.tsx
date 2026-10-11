@@ -424,7 +424,7 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
 // ───────────── Semáforo de monotributo ─────────────
 
 const LIGHT = {
-  verde: { label: "Vas bien", dot: "bg-[#2f8a55]" },
+  verde: { label: "Lejos del tope", dot: "bg-[#2f8a55]" },
   amarillo: { label: "Te acercás al tope", dot: "bg-[#d6a32a]" },
   rojo: { label: "Muy cerca del tope", dot: "bg-[#c4482f]" },
   excluido: { label: "Riesgo de exclusión", dot: "bg-[#8f2a1c]" },
@@ -463,9 +463,9 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           ["Últimos 12 meses", fmt(s.income12m)],
-          ["Te falta", s.remaining != null ? fmt(Math.max(0, s.remaining)) : "—"],
-          ["Por lo facturado te toca", s.suggested ?? (s.excluded ? "Fuera de escala" : "—")],
-          ["Si seguís así (12 meses)", fmt(s.projection12m)],
+          ["Margen hasta el tope", s.remaining != null ? fmt(Math.max(0, s.remaining)) : "—"],
+          ["Categoría que coincide con lo facturado", s.suggested ?? (s.excluded ? "Fuera de escala" : "—")],
+          ["Proyección a 12 meses", fmt(s.projection12m)],
         ].map(([k, v]) => (
           <div key={k} className={card}>
             <dt className="text-[13px] text-muted">{k}</dt>
@@ -513,7 +513,7 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
         <h2 id="ri" className="text-[15px] font-semibold">
           ¿Y si pasás a responsable inscripto?
         </h2>
-        <p className="mt-1 text-[14px] text-muted">Simulación educativa con la alícuota general (21%), sobre lo que facturás. No reemplaza el consejo de un contador.</p>
+        <p className="mt-1 text-[14px] text-muted">Simulación educativa con la alícuota general (21 %), sobre lo que cargaste. Es un dato, no una recomendación: el pase a responsable inscripto lo decide un contador matriculado con vos.</p>
         <form method="get" className="mt-3 flex flex-wrap items-end gap-2">
           <label>
             <span className={lbl}>Compras con IVA en 12 meses (opcional)</span>
@@ -537,7 +537,7 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
             <dd className="num text-[18px]">{fmt(sim.ivaMonthly)}</dd>
           </div>
         </dl>
-        <p className="mt-2 text-[13px] text-muted">Además pagarías Ganancias y aportes de autónomos. ¿Querés que alguien lo mire con vos? Buscá un estudio en la <Link href="/red" className="underline underline-offset-4">Red de estudios</Link>.</p>
+        <p className="mt-2 text-[13px] text-muted">Además se suman Ganancias y aportes de autónomos. Esto no reemplaza el criterio de un contador: <Link href="/red?necesito=simulacion_ri" className="underline underline-offset-4">sumá uno desde la Red de estudios</Link>.</p>
       </section>
     </div>
   );
@@ -634,13 +634,13 @@ export async function ChecksView({ scope, sp, volver }: { scope: IssuerScope; sp
   return (
     <div className="grid gap-4">
       <Feedback sp={sp} />
-      <p className="text-[14px] text-muted">Para esto ARCA no tiene un servicio oficial que Faro pueda consultar. Te decimos qué mirar y dónde; anotás lo que ves y te lo recordamos.</p>
+      <p className="text-[14px] text-muted">Para esto ARCA no tiene un servicio oficial que Faro pueda consultar. Te decimos qué mirar y dónde; anotás lo que ves y te lo recordamos. Lo que anotás es tu lectura, no una revisión profesional.</p>
       {list.map((c) => (
         <details key={c.key} className={card} open={!c.state}>
           <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2">
             <span className="text-[15px] font-semibold">{c.title}</span>
             <span className={cn("text-[13px]", c.state?.status === "con_novedades" ? "text-[#8f2a1c]" : c.state?.status === "ok" ? "text-[#1f6b3d]" : "text-muted")}>
-              {c.state?.status === "ok" ? `Todo en orden · ${c.state.checked_at?.toLocaleDateString("es-AR")}` : c.state?.status === "con_novedades" ? "Con novedades" : "Sin revisar"}
+              {c.state?.status === "ok" ? `Sin novedades según lo que viste · ${c.state.checked_at?.toLocaleDateString("es-AR")}` : c.state?.status === "con_novedades" ? "Con novedades" : "Sin revisar"}
             </span>
           </summary>
           <p className="mt-2 text-[14px] text-muted">{c.why}</p>
@@ -658,7 +658,7 @@ export async function ChecksView({ scope, sp, volver }: { scope: IssuerScope; sp
             <label>
               <span className={lbl}>¿Qué viste?</span>
               <select name="status" defaultValue={c.state?.status ?? "ok"} className={field}>
-                <option value="ok">Todo en orden</option>
+                <option value="ok">No vi nada para resolver</option>
                 <option value="con_novedades">Hay algo para resolver</option>
               </select>
             </label>

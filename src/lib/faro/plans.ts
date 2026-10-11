@@ -89,7 +89,7 @@ export const PLANS: FaroPlan[] = [
     key: "autonomo_gratis",
     kind: "personal",
     name: "Gratis",
-    tagline: "Para llevar tus números sin ser contador.",
+    tagline: "Para llevar tus números ordenados.",
     forWhom: "Autónomo que arranca",
     priceUsd: 0,
     extraOrgUsd: null,

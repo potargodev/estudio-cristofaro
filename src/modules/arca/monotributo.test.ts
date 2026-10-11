@@ -28,7 +28,7 @@ test("amarillo y rojo por cercanía al tope", () => {
 test("pasarse sugiere la categoría siguiente", () => {
   const s = semaforo({ byMonth: { "2026-09": 21000000 }, category: "D", scale, today });
   assert.equal(s.suggested, "E");
-  assert.match(s.message, /Te pasaste/);
+  assert.match(s.message, /superaste el tope/);
 });
 
 test("exclusión por encima de la K", () => {

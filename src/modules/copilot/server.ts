@@ -1,4 +1,6 @@
 import "server-only";
+import { asksForCriteria, criteriaFootnote, professionalReply, SHIELD_PROMPT } from "@/modules/escudo/catalog";
+import { professionalTaskIn, suggest } from "@/modules/escudo/server";
 import { generateText, jsonSchema, stepCountIs, tool, type ModelMessage, type ToolSet } from "ai";
 import { and, asc, desc, eq, gte, inArray, lt, sql } from "drizzle-orm";
 import { z } from "zod/v4";
@@ -120,7 +122,10 @@ Qué hacés:
 - Si algo es ambiguo (falta el monto, no sabés en qué grupo), NO llames herramientas: preguntá UNA sola cosa, corta.
 - Nunca inventes montos, personas ni grupos.
 - Coach (si la persona pide consejos, cómo ahorrar o en qué le conviene poner la plata): usá coach_finanzas, que te da sus números reales (sobres, fijos, fugas y metas). Explicá y sugerí hábitos. Podés comparar alternativas generales de ahorro (plazo fijo, fondos money market, dólar MEP) solo con fines educativos y sin recomendar una en particular. Nunca des una recomendación de inversión personalizada: es una actividad regulada por la CNV. Si la persona quiere asesoramiento, derivala a un asesor matriculado de la Red de estudios ([Buscar un asesor](/red?servicio=asesoramiento_financiero)).
-- Respondé en español rioplatense (voseo), muy breve: una línea como "Listo, te dejé 2 gastos para confirmar." Las tarjetas muestran el detalle.`;
+- Respondé en español rioplatense (voseo), muy breve: una línea como "Listo, te dejé 2 gastos para confirmar." Las tarjetas muestran el detalle.
+
+${SHIELD_PROMPT}
+- Para sumar un contador: [Buscar un contador en la Red](/red).`;
 }
 
 // ── Propuestas: armar la tarjeta ────────────────────────────────────
@@ -456,16 +461,45 @@ async function saveProposals(u: CopilotUser, sourceId: string, replyId: string, 
   }
 }
 
+/**
+ * Escudo de responsabilidad (principios §1.a, §1.b y §1.c), antes del modelo:
+ * si el mensaje toca una tarea que requiere un matriculado, el Vigía no la
+ * acompaña (respuesta fija con la derivación); si pide criterio profesional
+ * ("¿estoy bien con ARCA?"), el modelo responde con datos y se agrega el pie
+ * del escudo. En los dos casos queda la sugerencia de sumar un contador.
+ */
+async function shieldFor(u: CopilotUser, m: typeof copilot_messages.$inferSelect, text: string, opts: { fromQueue?: boolean }): Promise<{ replyId: string } | { footnote: string } | null> {
+  if (!text.trim()) return null;
+  const task = await professionalTaskIn(text);
+  if (task) {
+    const sg = await suggest(u.id, "vigia_criterio", `Le preguntaste al Vigía por ${task.title.toLowerCase()}, que requiere un profesional matriculado.`, { tarea: task.key, mensaje: text.slice(0, 280) });
+    await db().update(copilot_messages).set({ status: "ok", processed_at: new Date(), model: "escudo" }).where(eq(copilot_messages.id, m.id));
+    await audit({ studioId: u.studioId, actor: u, action: "escudo.tarea_matriculado", entityType: "mensaje_vigia", entityId: m.id, metadata: { tarea: task.key } });
+    return { replyId: await reply(u.id, m.id, professionalReply(task, sg ? `/red?derivacion=${sg.id}` : "/red"), { model: "escudo", unseen: !!opts.fromQueue }) };
+  }
+  if (asksForCriteria(text)) {
+    const sg = await suggest(u.id, "vigia_criterio", "Le preguntaste al Vigía algo que necesita el criterio de un profesional.", { mensaje: text.slice(0, 280) });
+    return { footnote: criteriaFootnote(sg ? `/red?derivacion=${sg.id}` : "/red") };
+  }
+  return null;
+}
+
 export async function processMessage(messageId: string, opts: { fromQueue?: boolean } = {}): Promise<ProcessResult> {
   const [m] = await db().select().from(copilot_messages).where(eq(copilot_messages.id, messageId));
   if (!m || m.role !== "usuario" || m.status === "ok") return { status: "ok" };
   const u = await loadUser(m.user_id);
   if (!u) return { status: "error" };
+  let shield = await shieldFor(u, m, [m.text, m.transcript].filter(Boolean).join("\n"), opts);
+  if (shield && "replyId" in shield) return { status: "ok", replyId: shield.replyId };
   const p = await getPlatformAi();
   if (!isConfigured(p)) {
     await db().update(copilot_messages).set({ status: "ok", processed_at: new Date(), model: "basico" }).where(eq(copilot_messages.id, m.id));
     // Modo básico: solo texto con frases simples (monto + en qué), sin IA
     const found = m.kind === "texto" && m.text ? parseBasic(m.text, todayAR()) : [];
+    if (shield && "footnote" in shield) {
+      const replyId = await reply(u.id, m.id, `No puedo decirte si tu situación está bien: Faro muestra datos según lo que cargaste ([Facturación](/facturacion) y [Bitácora](/bitacora)), no hace una revisión profesional.${shield.footnote}`);
+      return { status: "sin_ia", replyId };
+    }
     if (!found.length) {
       const replyId = await reply(u.id, m.id, m.kind === "texto" ? "La IA de Faro todavía no está configurada, así que por ahora entiendo frases simples como «5000 nafta y 3200 en el chino». Para lo demás, cargalo a mano en [Bitácora](/bitacora?cargar=1)." : "La IA de Faro todavía no está configurada: por ahora solo leo texto simple (monto y en qué). Cargá este gasto a mano en [Bitácora](/bitacora?cargar=1).");
       return { status: "sin_ia", replyId };
@@ -494,6 +528,10 @@ export async function processMessage(messageId: string, opts: { fromQueue?: bool
       tokensOut += t.tokensOut;
       await db().update(copilot_messages).set({ transcript: t.text }).where(eq(copilot_messages.id, m.id));
       userText = [userText, t.text].filter(Boolean).join("\n");
+      // El escudo también mira lo que se dijo en el audio
+      const heard = await shieldFor(u, m, t.text, opts);
+      if (heard && "replyId" in heard) return { status: "ok", replyId: heard.replyId };
+      if (heard) shield = heard;
     } else if (m.transcript) userText = [userText, m.transcript].filter(Boolean).join("\n");
 
     // 2. Historial reciente (texto) y el mensaje actual (con imagen o PDF si hay)
@@ -522,7 +560,8 @@ export async function processMessage(messageId: string, opts: { fromQueue?: bool
     // 3. Tarjetas a partir de las tool calls de registro
     const calls = result.steps.flatMap((s) => s.toolCalls).filter((c) => isProposalTool(c.toolName));
     const { prepared, questions } = await prepare(u, calls);
-    const text = questions.length ? questions[0] : result.text.trim() || (prepared.length ? (prepared.length === 1 ? "Te dejé esto para confirmar:" : `Te dejé ${prepared.length} registros para confirmar:`) : "No encontré nada para registrar. ¿Me contás qué gastaste o qué querés saber?");
+    const base = questions.length ? questions[0] : result.text.trim() || (prepared.length ? (prepared.length === 1 ? "Te dejé esto para confirmar:" : `Te dejé ${prepared.length} registros para confirmar:`) : "No encontré nada para registrar. ¿Me contás qué gastaste o qué querés saber?");
+    const text = shield && "footnote" in shield ? `${base}${shield.footnote}` : base;
     const cost = costUsd(p, tokensIn, tokensOut);
     await db()
       .update(copilot_messages)

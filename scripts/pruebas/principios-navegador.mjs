@@ -74,6 +74,54 @@ if (stage("1")) {
   check("Faro Manager: Inicial gratis sin prueba ni extra", await seen(fm, "Plan gratis: sin prueba, sin débito ni organizaciones extra."));
 }
 
+// ─── Etapa 2 · Escudo de responsabilidad ───
+if (stage("2")) {
+  const T = d.users.titular;
+  await sql`delete from derivation_suggestions where user_id = ${T}`;
+  await sql`insert into derivation_suggestions (user_id, rule_key, context) values (${T}, 'facturacion_exterior', ${sql.json({ need: "Facturación al exterior y cobro de divisas", why: "Según lo que cargaste, tenés 1 comprobante E (exportación)." })})`;
+  for (const dark of [false, true]) {
+    const p = await as(d.cookies.titular, { dark, width: dark ? 1280 : 390 });
+    await p.goto(`${BASE}/personal`);
+    check(`Inicio (${dark ? "oscuro" : "claro, 390 px"}): sugerencia amable de sumar un contador`, (await seen(p, "Empezaste a facturar al exterior")) && (await seen(p, "Esto no reemplaza el criterio de un contador")));
+    check(`Inicio (${dark ? "oscuro" : "claro"}): sin scroll horizontal`, await noHScroll(p));
+  }
+  const p = await as(d.cookies.titular);
+  await p.goto(`${BASE}/personal`);
+  await p.getByRole("button", { name: "Ahora no" }).first().click();
+  await p.waitForLoadState("networkidle");
+  check("«Ahora no»: la sugerencia se esconde", !(await p.evaluate(() => document.body.innerText.includes("Empezaste a facturar al exterior"))));
+  const [sg] = await sql`select status, snoozed_until from derivation_suggestions where user_id = ${T} and rule_key = 'facturacion_exterior'`;
+  check("y vuelve más adelante (snooze guardado)", sg.status === "descartada" && sg.snoozed_until > new Date());
+  await sql`update derivation_suggestions set status = 'activa', snoozed_until = null where user_id = ${T}`;
+  await p.goto(`${BASE}/personal`);
+  await p.getByRole("link", { name: "Sumar un contador" }).first().click();
+  check("«Sumar un contador» lleva a la Red con el contexto armado", (await seen(p, "Lo que necesitás: Facturación al exterior")) && p.url().includes("/red?derivacion="));
+  // Una sugerencia ajena forzando el ID no muestra nada
+  const [other] = await sql`select id from derivation_suggestions where user_id = ${T}`;
+  const b = await as(d.cookies.adminB);
+  await b.goto(`${BASE}/red?derivacion=${other.id}`);
+  check("Red con una derivación ajena: no muestra el contexto", !(await b.evaluate(() => document.body.innerText.includes("Lo que necesitás"))));
+  await p.goto(`${BASE}/facturacion/monotributo?compras=100000`);
+  check("Monotributo: hechos «Según lo que cargaste» y la simulación como dato", (await seen(p, "Es un dato, no una recomendación")) && !(await p.evaluate(() => document.body.innerText.includes("Vas bien"))));
+  check("Facturación: «Esto no reemplaza el criterio de un contador» al pie", await seen(p, "no revisa ni valida tu situación"));
+  check("usar la simulación crea la sugerencia de pase a RI", (await sql`select count(*)::int n from derivation_suggestions where user_id = ${T} and rule_key = 'simulacion_ri'`)[0].n === 1);
+  await p.goto(`${BASE}/facturacion/chequeos`);
+  check("Chequeos: sin «Todo en orden»", (await seen(p, "no una revisión profesional")) && !(await p.evaluate(() => document.body.innerText.includes("Todo en orden"))));
+  const [owner] = await sql`update users set two_factor_enabled = true where faro_role = 'faro_owner' returning id`;
+  const fm = await as(await cookieFor(owner.id), { width: 1280, dark: true });
+  await fm.goto(`${BASE}/faro-manager/escudo`);
+  check("Faro Manager → Escudo: tareas y reglas «a validar por un contador»", (await seen(fm, "Tareas que requieren un matriculado")) && (await seen(fm, "Disparador de derivación")) && (await fm.getByText("A validar por un contador").count()) >= 6);
+  const form = fm.locator("#regla-monotributo_tope");
+  await form.getByLabel(/Umbral/).fill("0,85");
+  await form.getByRole("button", { name: "Guardar" }).click();
+  check("Faro Manager: umbral guardado", (await seen(fm, "Regla guardada")) && Number((await sql`select threshold from derivation_rules where key = 'monotributo_tope'`)[0]?.threshold) === 0.85);
+  await sql`delete from derivation_rules where key = 'monotributo_tope'`;
+  await sql`delete from derivation_suggestions where user_id = ${T}`;
+  const pub = await as(null);
+  await pub.goto(`${BASE}/faro`);
+  check("/faro: sin «sin ser contador» ni «sin contador»", !(await pub.evaluate(() => /sin ser contador|acompaña sin contador/i.test(document.body.innerText))));
+}
+
 check("sin errores de JavaScript", errors.length === 0, errors.slice(0, 3).join(" | "));
 await browser.close();
 await sql.end();

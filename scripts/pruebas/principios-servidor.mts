@@ -77,6 +77,99 @@ if (stage("1")) {
   }
 }
 
+// ─── Etapa 2 · Escudo de responsabilidad (§1, §1.a, §1.b, §1.c) ───
+if (stage("2")) {
+  const cat = await import("../../src/modules/escudo/catalog.ts");
+  const es = await import("../../src/modules/escudo/server.ts");
+  const { semaforo } = await import("../../src/modules/arca/monotributo.ts");
+  const { createTenant } = await import("../../src/lib/faro/tenants.ts");
+  const c = await import("../../src/modules/copilot/server.ts");
+  const { savePlatformAi } = await import("../../src/modules/copilot/platform.ts");
+
+  // Textos: hechos, nunca validaciones
+  const scale = [{ letter: "A", maxIncome: 1000 }, { letter: "B", maxIncome: 2000 }];
+  const month = new Date().toISOString().slice(0, 7);
+  const s1 = semaforo({ byMonth: { [month]: 820 }, category: "A", scale: scale as never });
+  check("semáforo: «Según lo que cargaste… el 82 % del tope»", s1.message.startsWith("Según lo que cargaste") && s1.message.includes("82 %"), s1.message);
+  const s2 = semaforo({ byMonth: { [month]: 5000 }, category: "A", scale: scale as never });
+  check("semáforo: exclusión deriva a un matriculado, sin «hablá cuanto antes»", s2.excluded && /contador matriculado/.test(s2.message));
+  for (const m of [s1.message, s2.message]) check("semáforo: no dice que está bien ni en regla", !/est[aá]s bien|en regla|vas bien|te corresponde/i.test(m));
+
+  // Detección de tareas de matriculado y preguntas de criterio
+  check("tarea de matriculado: «certificación de ingresos»", cat.matchProfessionalTask("necesito una certificación de ingresos para alquilar")?.key === "certificacion");
+  check("tarea de matriculado: «¿me conviene pasar a responsable inscripto?»", cat.matchProfessionalTask("¿Me conviene pasar a responsable inscripto?")?.key === "planificacion_fiscal");
+  check("criterio: «¿estoy bien con ARCA?»", cat.asksForCriteria("¿Estoy bien con ARCA?") && !cat.matchProfessionalTask("¿Estoy bien con ARCA?"));
+  check("criterio: «¿me van a multar?»", cat.asksForCriteria("che, ¿me van a multar?"));
+  check("un gasto común no dispara nada", !cat.asksForCriteria("5000 de nafta") && !cat.matchProfessionalTask("5000 de nafta"));
+
+  // Persona de prueba
+  const email = `escudo-${Date.now()}@prueba.local`;
+  const r = await createTenant({ kind: "persona", name: "Escu Do", owner: { name: "Escu Do", email, password: "clave-larga-123" }, via: "manual" });
+  if (!r.ok) throw new Error(r.message);
+  const U = r.userId;
+
+  // Faro Manager: tarea nueva y umbral editado (auditados)
+  const faro = { id: d.users.adminA, email: "owner@faro.test" };
+  await es.saveProfessionalTask(faro, { key: "sucesiones", title: "Sucesiones", description: "", keywords: "sucesión, sucesion de mi papa", active: true, validation: "a_validar", validatedBy: null });
+  check("Faro Manager: tarea nueva detectada", (await es.professionalTaskIn("tengo que hacer la sucesión de mi papá"))?.key === "sucesiones");
+  let threw = false;
+  try {
+    await es.saveProfessionalTask(faro, { key: "x_y", title: "Algo", description: "", keywords: "algo", active: true, validation: "validada", validatedBy: "" });
+  } catch (e) {
+    threw = e instanceof es.EscudoError;
+  }
+  check("Faro Manager: validada exige el contador que la validó", threw);
+  await es.saveDerivationRule(faro, "monotributo_tope", { title: "Monotributo cerca del tope", message: "Mensaje", need: "Revisar categoría", threshold: 0.75, snoozeDays: 10, active: true, validation: "a_validar", validatedBy: null });
+  check("Faro Manager: umbral editado (a validar)", (await es.ruleOf("monotributo_tope")).threshold === 0.75);
+  check("Faro Manager: cambios auditados", (await sql`select count(*)::int n from audit_log where action in ('faro.escudo_tarea','faro.escudo_regla') and created_at > now() - interval '1 minute'`)[0].n >= 2);
+  await sql`delete from professional_tasks where key = 'sucesiones'`;
+  await sql`delete from derivation_rules where key = 'monotributo_tope'`;
+
+  // Sugerencia: aparece, se descarta, no vuelve antes de tiempo y vuelve después
+  const sg = await es.suggest(U, "primer_empleado", "Cargaste tu primer empleado.");
+  check("sugerencia creada y visible", !!sg && (await es.activeSuggestions(U)).some((x) => x.id === sg!.id));
+  check("descartar una sugerencia ajena (forzando el ID): no pasa nada", !(await es.dismissSuggestion(d.users.titular, sg!.id)) && (await es.activeSuggestions(U)).length === 1);
+  check("contexto de una sugerencia ajena: null", (await es.ownSuggestion(d.users.titular, sg!.id)) === null);
+  await es.dismissSuggestion(U, sg!.id);
+  check("descartada: se esconde", (await es.activeSuggestions(U)).length === 0);
+  await es.suggest(U, "primer_empleado", "Sigue el empleado.");
+  check("la condición sigue, pero antes de tiempo no vuelve", (await es.activeSuggestions(U)).length === 0);
+  await sql`update derivation_suggestions set snoozed_until = now() - interval '1 minute' where id = ${sg!.id}`;
+  await es.suggest(U, "primer_empleado", "Sigue el empleado.");
+  check("pasados los días de la regla, vuelve a aparecer", (await es.activeSuggestions(U)).some((x) => x.id === sg!.id));
+  check("contexto armado para la Red", es.contextMessage((await es.ownSuggestion(U, sg!.id))!).includes("Qué necesito: Alta y liquidación del primer empleado"));
+
+  // Vigía: preguntas trampa (con el proveedor de prueba en :4010)
+  const [savedAi] = await sql`select * from platform_ai where id = 'default'`;
+  await savePlatformAi(d.users.adminA, { provider: "openai_compatible", apiKey: "clave-de-prueba", baseUrl: process.env.MOCK_OPENAI_URL ?? "http://localhost:4010/v1", modelPrimary: "faro-mock", modelFallback: null, transcription: "openai", freeTier: false, limits: {}, dailyCap: null, monthlyCap: null, priceIn: 0.1, priceOut: 0.4 } as never);
+  const say = async (text: string) => {
+    const [m] = await sql`insert into copilot_messages (user_id, role, kind, text, status) values (${U}, 'usuario', 'texto', ${text}, 'procesando') returning id`;
+    const res = await c.processMessage(m.id);
+    const [rep] = res.replyId ? await sql`select text, model from copilot_messages where id = ${res.replyId}` : [null];
+    return rep as { text: string; model: string } | null;
+  };
+  await fetch("http://localhost:4010/__reset", { method: "POST" }).catch(() => undefined);
+  const q1 = await say("¿Estoy bien con ARCA?");
+  check("Vigía «¿estoy bien con ARCA?»: no valida y recuerda el escudo", !!q1 && q1.text.includes("Esto no reemplaza el criterio de un contador") && !/est[aá]s bien|en regla/i.test(q1.text.replace("No puedo decirte si tu situación está bien", "")), q1?.text);
+  const log = await fetch("http://localhost:4010/__log").then((x) => x.json()).catch(() => []);
+  const sys = JSON.stringify(log.at?.(-1) ?? log);
+  check("el prompt del Vigía lleva el escudo de responsabilidad", sys.includes("Escudo de responsabilidad") && sys.includes("NUNCA dice que algo está bien"));
+  const q2 = await say("¿Me van a multar?");
+  check("Vigía «¿me van a multar?»: no predice y deriva con contexto", !!q2 && q2.text.includes("[sumar un contador](/red?derivacion="), q2?.text);
+  const q3 = await say("¿Me conviene pasar a responsable inscripto?");
+  check("Vigía «¿me conviene pasar a responsable inscripto?»: no la acompaña, explica que requiere un matriculado", !!q3 && q3.model === "escudo" && q3.text.includes("profesional matriculado") && q3.text.includes("/red?derivacion="), q3?.text);
+  const q4 = await say("necesito una certificación de ingresos");
+  check("Vigía «certificación de ingresos»: deriva", !!q4 && q4.model === "escudo");
+  check("pregunta de criterio → sugerencia «vigia_criterio» activa", (await es.activeSuggestions(U)).some((x) => x.rule_key === "vigia_criterio"));
+  check("tarea de matriculado auditada", (await sql`select count(*)::int n from audit_log where actor_id = ${U} and action = 'escudo.tarea_matriculado'`)[0].n === 2);
+  const q5 = await say("ayer 5000 de nafta");
+  check("un gasto común sigue igual (sin pie del escudo)", !!q5 && !q5.text.includes("no reemplaza"));
+  if (savedAi) await sql`update platform_ai set ${sql(savedAi)} where id = 'default'`;
+  else await sql`delete from platform_ai where id = 'default'`;
+  await sql`delete from studios where id = ${r.studioId}`;
+  await sql`delete from users where id = ${U}`;
+}
+
 console.log(fails ? `\n${fails} fallas` : "\nTodo bien");
 await sql.end();
 process.exit(fails ? 1 : 0);

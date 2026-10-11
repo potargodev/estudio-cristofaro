@@ -143,3 +143,9 @@ Los cobros, recordatorios y avisos de suscripción salen por mail: sin SMTP solo
 ## Red de estudios (F9)
 
 - **Agenda pública:** para que aparezca «Agendar llamada» con horarios, el estudio tiene que activar su disponibilidad pública en Comercial → Agenda; si no, la ficha ofrece pedir propuesta.
+
+## Escudo de responsabilidad (principios §1.b y §1.c)
+
+**Qué falta:** que un contador matriculado valide la lista de tareas que requieren un matriculado y los umbrales del disparador de derivación (80 % del tope, primer empleado, comprobantes E, actividades, monto de la changa).
+**Quién:** Estudio Cristofaro (cliente cero), con el owner de Faro.
+**Paso a paso:** Faro Manager → Catálogo → **Escudo**. Revisar cada tarea (título y frases que la identifican) y cada regla (texto y umbral), y marcarlas «Validada por un contador» con nombre y matrícula. Hasta entonces se muestran «a validar».

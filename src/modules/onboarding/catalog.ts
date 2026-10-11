@@ -136,7 +136,7 @@ export const TOURS: Tour[] = [
     id: "personal-inicio",
     path: "/personal",
     steps: [
-      { title: "Tu espacio en Faro", text: "Tus números, sin ser contador. Arrancá por los grupos de gastos." },
+      { title: "Tu espacio en Faro", text: "Tus números, ordenados. Arrancá por los grupos de gastos." },
       { target: t("grupos"), title: "Grupos de gastos", text: "Dividí con amigos, socios o clientes. Lo de tu actividad queda listo para la contabilidad." },
       { target: t("vigia"), title: "Tu Vigía", text: "Contale tus gastos como se los contarías a alguien: se abre al costado, sin salir de la pantalla." },
       { target: t("ayuda"), title: "Tus primeros pasos", text: "Desde el «?» ves qué te falta. Cada paso se marca solo cuando lo hacés." },

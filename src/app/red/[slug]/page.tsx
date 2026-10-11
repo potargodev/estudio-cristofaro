@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProposalForm } from "@/components/red/ProposalForm";
 import { getCurrentUser } from "@/lib/auth";
+import { contextMessage, ownSuggestion } from "@/modules/escudo/server";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { labelOf, MODALITIES, RED_SERVICES, responseLabel, TEAM_SIZES } from "@/modules/red/catalog";
 import { publicProfile } from "@/modules/red/server";
@@ -18,10 +19,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 const month = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" });
 
-export default async function EstudioRedPage({ params }: { params: Params }) {
+export default async function EstudioRedPage({ params, searchParams }: { params: Params; searchParams: Promise<Record<string, string | undefined>> }) {
   const x = await publicProfile((await params).slug);
   if (!x) notFound();
   const user = await getCurrentUser().catch(() => null);
+  const derivacion = user ? await ownSuggestion(user.id, (await searchParams).derivacion) : null;
   const facts = [
     { icon: BadgeCheck, text: `Matrícula verificada · ${x.p.license_body}` },
     { icon: MapPin, text: `${[x.p.city, x.p.province].filter(Boolean).join(", ")} · ${labelOf(MODALITIES, x.p.modality)}` },
@@ -113,7 +115,7 @@ export default async function EstudioRedPage({ params }: { params: Params }) {
           {x.p.accepting_clients ? (
             <>
               <p className="mt-1 text-[14px] text-muted">El estudio te responde por mail. Solo compartimos lo que cargás acá, con tu consentimiento.</p>
-              <ProposalForm studio={x.slug} name={user?.name ?? ""} email={user?.email ?? ""} />
+              <ProposalForm studio={x.slug} name={user?.name ?? ""} email={user?.email ?? ""} derivacion={derivacion ? { id: derivacion.id, message: contextMessage(derivacion) } : undefined} />
             </>
           ) : (
             <p className="mt-1 text-[14px] text-muted">Este estudio no está tomando clientes nuevos por ahora.</p>

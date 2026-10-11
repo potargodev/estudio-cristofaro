@@ -253,6 +253,13 @@
       "when": 1791747300161,
       "tag": "0035_inicial_gratis",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1791748149922,
+      "tag": "0036_escudo_responsabilidad",
+      "breakpoints": true
     }
   ]
 }

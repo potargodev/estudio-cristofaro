@@ -21,4 +21,4 @@ Las fechas salen de la terminación de tu CUIT y pasan al día hábil siguiente 
 
 ## Chequeos guiados
 
-Hay cosas que ARCA no ofrece por un servicio oficial que Faro pueda consultar: la **deuda** de monotributo o autónomos, los **saldos** de IVA y Ganancias, las **intimaciones y multas** del Domicilio Fiscal Electrónico. Faro no inventa ese dato: en **Facturación → Chequeos** te explica qué mirar, con el paso a paso y el link a ARCA. Anotás lo que viste (todo en orden o algo para resolver, con el monto) y te lo recordamos cada tanto.
+Hay cosas que ARCA no ofrece por un servicio oficial que Faro pueda consultar: la **deuda** de monotributo o autónomos, los **saldos** de IVA y Ganancias, las **intimaciones y multas** del Domicilio Fiscal Electrónico. Faro no inventa ese dato: en **Facturación → Chequeos** te explica qué mirar, con el paso a paso y el link a ARCA. Anotás lo que viste (no viste nada para resolver, o hay algo, con el monto) y te lo recordamos cada tanto. Lo que anotás es tu lectura, no una revisión profesional: esto no reemplaza el criterio de un contador.

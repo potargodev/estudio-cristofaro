@@ -41,7 +41,7 @@ const TYPES: { key: Key; label: string; icon: typeof Building2; benefit: string;
     key: "autonomos",
     label: "Autónomos",
     icon: UserRound,
-    benefit: "Facturar, saber cuánto pagar y no pasarte de categoría, sin ser contador.",
+    benefit: "Facturar, ver cuánto pagar y cuánto margen te queda en tu categoría. Y cuando quieras tranquilidad de verdad, sumar un contador.",
     features: ["Facturas con tu logo y link de pago", "Semáforo de monotributo y recategorización", "Tus vencimientos con el importe", "Un contador de la Red de estudios cuando lo necesites"],
     cta: { href: "/faro/registro?tipo=personal", label: "Empezar gratis" },
     note: "Facturación y semáforo, próximamente",
@@ -124,10 +124,10 @@ function Demo({ k }: { k: Key }) {
           <div className="h-2.5 bg-gold" style={{ width: "72%" }} />
         </div>
         <p className="mt-2 flex justify-between text-[12px] text-paper/60">
-          <span>Facturaste el 72% del tope anual</span>
-          <span className="text-gold">Vas bien</span>
+          <span>Según lo que cargaste, facturaste el 72 % del tope</span>
+          <span className="text-gold">Margen</span>
         </p>
-        <Row a="Podés facturar sin pasarte" b="$ 4.180.000" tone="font-display text-[18px] text-paper" d={160} />
+        <Row a="Hasta el tope quedan" b="$ 4.180.000" tone="font-display text-[18px] text-paper" d={160} />
         <Row a="Próximo vencimiento" b="Monotributo · 20/10" d={240} />
       </>
     );
@@ -174,7 +174,7 @@ export function FaroForWhom() {
             </SplitHeading>
           </div>
           <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
-            Empezás gratis con tus finanzas. Si sos autónomo, Faro te acompaña sin contador; si sos contador, gestionás tu cartera y conectás a tus clientes y a sus empleados.
+            Empezás gratis con tus finanzas. Si sos autónomo, Faro te ordena los números y te conecta con un contador cuando lo necesitás; si sos contador, gestionás tu cartera y conectás a tus clientes y a sus empleados.
           </p>
         </div>
         <div className="mt-14 grid gap-8 lg:grid-cols-12">

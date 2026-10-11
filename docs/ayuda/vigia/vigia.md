@@ -58,3 +58,7 @@ Cada movimiento que cargó el Vigía guarda el mensaje original (y la transcripc
 ## Privacidad
 
 Tu chat es privado. Para entender tus mensajes, Faro los manda a un proveedor de IA (por ejemplo, Google Gemini) solo para procesarlos. El equipo de Faro ve cuánto se usa (cantidad de mensajes y costo), nunca lo que escribís.
+
+## Lo que el Vigía no hace
+
+El Vigía te muestra datos y prepara borradores; nunca te dice que tu situación «está bien» o «en regla». Si le preguntás algo que pide criterio profesional, te responde con tus datos y te recuerda que **esto no reemplaza el criterio de un contador**. Para tareas que la ley reserva a un contador matriculado (declaraciones juradas complejas, certificaciones, balances, planificación fiscal), no te acompaña a hacerlas: te ofrece sumar un contador. Ver [Faro y tu contador](/ayuda/primeros-pasos/faro-y-tu-contador).

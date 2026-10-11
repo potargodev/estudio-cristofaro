@@ -6,6 +6,8 @@ import { FILE_TEMPLATES, INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { markStep } from "@/modules/onboarding/server";
 import { labelOf, MODALITIES, RED_SERVICES, responseLabel, TEAM_SIZES } from "@/modules/red/catalog";
 import { publicDirectory } from "@/modules/red/server";
+import { getCurrentUser } from "@/lib/auth";
+import { getDerivationRules, ownSuggestion } from "@/modules/escudo/server";
 import { StudiosMap } from "@/components/red/StudiosMap";
 import { SectionTabs } from "@/components/app/SectionTabs";
 
@@ -30,10 +32,22 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
     if (v === "mapa") q.set("vista", "mapa");
     return `/red${q.size ? `?${q}` : ""}`;
   };
-  const [list] = await Promise.all([publicDirectory(filters), markStep("red").catch(() => undefined)]);
+  const [list, user] = await Promise.all([publicDirectory(filters), getCurrentUser().catch(() => null), markStep("red").catch(() => undefined)]);
+  // Derivación (§1.c): la persona llega con el contexto armado (solo el propio, validado en el servidor)
+  const derivacion = user ? await ownSuggestion(user.id, sp.derivacion) : null;
+  const necesito = !derivacion && sp.necesito ? (await getDerivationRules()).find((r) => r.key === sp.necesito) : undefined;
+  const q = derivacion ? `?derivacion=${derivacion.id}` : "";
   return (
     <>
       <PageHeader title="Encontrá tu estudio contable" description="Estudios y contadores que trabajan con Faro, con la matrícula verificada y reseñas de clientes reales. Nadie paga por aparecer primero." className="mb-0" />
+
+      {(derivacion || necesito) && (
+        <section aria-label="Lo que necesitás" data-contexto className="mt-6 rounded-md border border-rose/40 bg-rose-soft p-4 text-[14px] text-ink">
+          <p className="font-medium">Lo que necesitás: {derivacion ? derivacion.context.need : necesito!.need}</p>
+          {derivacion && <p className="mt-1 text-muted">Por qué: {derivacion.context.why}</p>}
+          <p className="mt-2 text-[13px] text-muted">Elegí un estudio y pedile una propuesta: {derivacion ? "le llega este contexto armado, sin que lo tengas que explicar de nuevo." : "contale esto en el pedido."} Faro es una herramienta; el criterio y la responsabilidad profesional son del contador.</p>
+        </section>
+      )}
 
       <form method="get" className="mt-8 grid gap-3 rounded-lg border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-6" role="search" aria-label="Filtrar estudios">
         <label className="text-[13px] text-muted lg:col-span-2">
@@ -107,7 +121,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
       <ul className="mt-4 grid gap-4 md:grid-cols-2">
         {list.map((x) => (
           <li key={x.studioId}>
-            <Link href={`/red/${x.slug}`} className="block h-full rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
+            <Link href={`/red/${x.slug}${q}`} className="block h-full rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
               <div className="flex items-start gap-3">
                 <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-md bg-navy font-display text-[22px] text-gold">
                   {x.name.charAt(0)}

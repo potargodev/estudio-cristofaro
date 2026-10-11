@@ -43,7 +43,7 @@ export function deadlines(p: TaxProfileInput, from = new Date(), months = 6): De
     const period = `${y}-${pad(m)}`;
     if (p.regime === "monotributo") {
       out.push({ tax: "Monotributo", period, dueDate: businessDay(y, m, 20), note: "Cuota mensual (impositivo, jubilación y obra social)." });
-      if (m === 2 || m === 8) out.push({ tax: "Recategorización de monotributo", period: m === 2 ? `${y - 1}-12` : `${y}-06`, dueDate: businessDay(y, m, 5), note: "Revisá tu categoría con lo facturado en los últimos 12 meses (el semáforo te dice cuál te corresponde)." });
+      if (m === 2 || m === 8) out.push({ tax: "Recategorización de monotributo", period: m === 2 ? `${y - 1}-12` : `${y}-06`, dueDate: businessDay(y, m, 5), note: "Revisá tu categoría con lo facturado en los últimos 12 meses (el semáforo muestra cuál coincide con lo que cargaste)." });
     } else {
       out.push({ tax: "IVA", period: prevPeriod, dueDate: businessDay(y, m, dayByCuit(p.cuit, [18, 19, 20, 21, 22])), note: "Declaración jurada y pago del mes anterior." });
       if (m === 6) out.push({ tax: "Ganancias y Bienes Personales (DDJJ anual)", period: `${y - 1}`, dueDate: businessDay(y, m, dayByCuit(p.cuit, [11, 11, 12, 12, 13])), note: "Declaraciones juradas anuales de personas humanas." });
