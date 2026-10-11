@@ -30,6 +30,19 @@ const subscribe = (l: () => void) => {
 const useGuide = () => useSyncExternalStore(subscribe, () => state, () => state);
 const START_TOUR = "faro:tour";
 
+/** Estado de la guía para el menú "?" de la barra superior */
+export const useGuideState = useGuide;
+
+/** Prende o apaga la guía (queda guardado en la base) */
+export async function toggleGuide() {
+  const disabled = !state.disabled;
+  setState({ disabled });
+  await setGuideDisabledAction(disabled, window.location.pathname);
+}
+
+/** Muestra el tour de la pantalla actual */
+export const startTour = () => window.dispatchEvent(new Event(START_TOUR));
+
 /** Botón «Guía»: menú con el interruptor, el tour de esta pantalla y los primeros pasos */
 export function GuideButton({ className, compact }: { className?: string; compact?: boolean }) {
   const g = useGuide();
