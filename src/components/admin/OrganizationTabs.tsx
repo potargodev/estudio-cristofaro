@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
+import { Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
 import Link from "next/link";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
@@ -21,8 +21,11 @@ import {
   requests,
   tango_companies,
   tango_records,
+  smart_documents,
   users,
 } from "@/db/schema";
+import { readExistingAction } from "@/app/lectura-actions";
+import { hasModule } from "@/lib/faro/entitlements";
 import { MODULES } from "@/lib/modules/catalog";
 import { getOrgLimits, getOrgStaff, getServicePlans, getStudioStaff } from "@/lib/organizations";
 import { formatCuit } from "@/lib/types";
@@ -55,6 +58,7 @@ export const ORG_TABS = [
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare },
   { key: "integraciones", label: "Integraciones", icon: PlugZap },
   { key: "arca", label: "ARCA", icon: Landmark },
+  { key: "conciliacion", label: "Conciliación", icon: Scale },
   { key: "gastos", label: "Gastos", icon: Wallet },
   { key: "actividad", label: "Actividad", icon: Activity },
 ] as const;
@@ -76,6 +80,7 @@ const MAIN_TABS: { key: string; label: string; icon: (typeof ORG_TABS)[number]["
   { key: "documentos", label: "Documentos", icon: FileText, href: "documentos", keys: ["documentos"] },
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare, href: "solicitudes", keys: ["solicitudes"] },
   { key: "arca", label: "ARCA", icon: Landmark, href: "arca", keys: ["arca"] },
+  { key: "conciliacion", label: "Conciliación", icon: Scale, href: "conciliacion", keys: ["conciliacion"] },
   // F5: { key: "sueldos", label: "Sueldos", … }
   { key: "conexiones", label: "Conexiones", icon: PlugZap, href: "integraciones", keys: ["integraciones"] },
 ];
@@ -250,7 +255,7 @@ const CATEGORY_OPTIONS = Object.entries(DOCUMENT_CATEGORIES)
   .filter(([v]) => v !== "solicitud")
   .map(([value, label]) => ({ value, label }));
 
-function DocList({ docs, orgId, highlightNew }: { docs: DocumentRow[]; orgId: string; highlightNew?: Set<string> }) {
+function DocList({ docs, orgId, highlightNew, readable, read }: { docs: DocumentRow[]; orgId: string; highlightNew?: Set<string>; readable?: boolean; read?: Map<string, string> }) {
   if (docs.length === 0) return <p className="border border-dashed border-line p-5 text-muted">Sin documentos.</p>;
   return (
     <ul className="divide-y divide-line border border-line bg-surface">
@@ -269,6 +274,20 @@ function DocList({ docs, orgId, highlightNew }: { docs: DocumentRow[]; orgId: st
               {categoryLabel(d.category)} · {periodLabel(d.period)} · {dateFmt.format(d.created_at)} · {formatBytes(d.size_bytes)}
             </p>
           </div>
+          <div className="flex flex-wrap items-center gap-2">
+          {readable && read?.has(d.id) ? (
+            <Link href={`/admin/organizaciones/${orgId}/lectura/${read.get(d.id)}`} className="text-[13px] text-navy underline">
+              Ver lectura
+            </Link>
+          ) : readable && ["application/pdf", "image/jpeg", "image/png"].includes(d.mime_type ?? "") ? (
+            <form action={readExistingAction}>
+              <input type="hidden" name="org" value={orgId} />
+              <input type="hidden" name="document" value={d.id} />
+              <SubmitButton variant="secondary" pendingText="Leyendo…">
+                Leer con IA
+              </SubmitButton>
+            </form>
+          ) : null}
           <form action={deleteDocument}>
             <input type="hidden" name="id" value={d.id} />
             <input type="hidden" name="organization_id" value={orgId} />
@@ -276,6 +295,7 @@ function DocList({ docs, orgId, highlightNew }: { docs: DocumentRow[]; orgId: st
               Eliminar
             </SubmitButton>
           </form>
+          </div>
         </li>
       ))}
     </ul>
@@ -310,8 +330,24 @@ export async function DocumentsTab({
         and(eq(documents.organization_id, orgId), eq(documents.studio_id, studioId), eq(documents.source, "cliente"), isNull(documents.reviewed_at)),
       );
   }
+  const [smart, readable] = await Promise.all([
+    db.select({ id: smart_documents.id, doc: smart_documents.document_id, status: smart_documents.status }).from(smart_documents).where(and(eq(smart_documents.studio_id, studioId), eq(smart_documents.organization_id, orgId), eq(smart_documents.scope, "organizacion"))),
+    hasModule(studioId, "smart_docs"),
+  ]);
+  const read = new Map(smart.filter((x) => x.doc && x.status !== "descartado").map((x) => [x.doc!, x.id]));
+  const pending = smart.filter((x) => x.status === "para_confirmar").length;
   return (
     <div className="space-y-8">
+      <Link href={`/admin/organizaciones/${orgId}/lectura`} className="flex items-center justify-between gap-3 border border-line bg-surface p-5 hover:border-muted">
+        <span className="flex items-start gap-3">
+          <ScanText className="mt-0.5 size-5 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
+          <span>
+            <span className="block font-semibold">Lectura inteligente</span>
+            <span className="block text-sm text-muted">{readable ? (pending ? `${pending} documento${pending === 1 ? "" : "s"} para confirmar.` : "Facturas, tickets y extractos leídos con IA, para confirmar y exportar.") : "No incluida en el plan."}</span>
+          </span>
+        </span>
+        <span aria-hidden>→</span>
+      </Link>
       <section className="border border-line bg-surface p-5">
         <h2 className="font-semibold">Subir documento para la organización</h2>
         {error && (
@@ -338,11 +374,11 @@ export async function DocumentsTab({
       </section>
       <section>
         <h2 className="mb-3 font-semibold">Subidos por la organización</h2>
-        <DocList docs={fromClient} orgId={orgId} highlightNew={unseen} />
+        <DocList docs={fromClient} orgId={orgId} highlightNew={unseen} readable={readable} read={read} />
       </section>
       <section>
         <h2 className="mb-3 font-semibold">Subidos por el estudio</h2>
-        <DocList docs={docs.filter((d) => d.source === "estudio")} orgId={orgId} />
+        <DocList docs={docs.filter((d) => d.source === "estudio")} orgId={orgId} readable={readable} read={read} />
       </section>
     </div>
   );

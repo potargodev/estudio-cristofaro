@@ -22,7 +22,7 @@ export default async function BitacoraLayout({ children }: { children: React.Rea
             { href: "/bitacora/presupuesto", label: "Sobres", icon: Gauge },
             { href: "/bitacora/fijos", label: "Fijos", icon: Repeat },
             { href: "/bitacora/metas", label: "Metas", icon: Target },
-            { href: "/bitacora/importar", label: "Importar", icon: Download },
+            { href: "/bitacora/importar", label: "Importar", icon: Download, match: ["/bitacora/tickets"] },
             { href: "/bitacora/conexiones", label: "Conexiones", icon: Plug },
             { href: "/bitacora/compartida", label: "Hogar", icon: Users },
           ]}

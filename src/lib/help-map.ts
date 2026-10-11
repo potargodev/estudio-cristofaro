@@ -1,6 +1,7 @@
 // Botón "?" contextual: qué artículo del centro de ayuda corresponde a cada
 // pantalla. El primer prefijo que coincide gana (de lo más específico a lo general).
 const MAP: [string, string][] = [
+  ["/facturacion/recibidos", "documentos/lectura-inteligente"],
   ["/facturacion/monotributo", "facturacion/semaforo-monotributo"],
   ["/facturacion/calendario", "facturacion/calendario-y-chequeos"],
   ["/facturacion/chequeos", "facturacion/calendario-y-chequeos"],
@@ -11,6 +12,7 @@ const MAP: [string, string][] = [
   ["/faro-manager/monotributo", "facturacion/semaforo-monotributo"],
   ["/faro-manager/indices", "bitacora/bitacora"],
   ["/admin/organizaciones/nueva", "organizaciones/rubros"],
+  ["/bitacora/tickets", "documentos/lectura-inteligente"],
   ["/admin/configuracion/rubros", "organizaciones/rubros"],
   ["/admin/organizaciones", "organizaciones/invitaciones"],
   ["/admin/configuracion/equipo", "organizaciones/roles"],
@@ -48,7 +50,16 @@ const MAP: [string, string][] = [
   ["/faro-manager", "primeros-pasos/planes"],
 ];
 
+// Rutas con un ID en el medio (subpantallas de la ficha de una organización)
+const PATTERNS: [RegExp, string][] = [
+  [/^\/admin\/organizaciones\/[^/]+\/lectura/, "documentos/lectura-inteligente"],
+  [/^\/admin\/organizaciones\/[^/]+\/conciliacion/, "documentos/conciliacion-bancaria"],
+  [/^\/admin\/organizaciones\/[^/]+\/arca/, "facturacion/emitir-facturas"],
+];
+
 export function helpFor(pathname: string): string {
+  const pattern = PATTERNS.find(([r]) => r.test(pathname));
+  if (pattern) return `/ayuda/${pattern[1]}`;
   const hit = MAP.find(([p]) => pathname === p || pathname.startsWith(`${p}/`));
   return hit ? `/ayuda/${hit[1]}` : "/ayuda";
 }

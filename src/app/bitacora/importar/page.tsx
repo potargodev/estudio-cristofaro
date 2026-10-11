@@ -45,6 +45,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           )}
         </div>
       </form>
+      <Link href="/bitacora/tickets" className="flex items-center justify-between gap-2 rounded-md border border-line bg-surface p-4 text-[14px] hover:border-muted">
+        <span>
+          <span className="font-medium">Foto de un ticket o una factura</span>
+          <span className="block text-[13px] text-muted">Faro la lee, te muestra los datos y la cargás como gasto con un toque.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </Link>
       {list.length > 0 && (
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
           {list.map((i) => (

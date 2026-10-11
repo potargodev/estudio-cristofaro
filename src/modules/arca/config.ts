@@ -6,23 +6,25 @@
 
 export type ArcaEnv = "homologacion" | "produccion";
 
-export const ARCA_ENVS: Record<ArcaEnv, { label: string; wsaa: string; wsfe: string; padron: string }> = {
+export const ARCA_ENVS: Record<ArcaEnv, { label: string; wsaa: string; wsfe: string; padron: string; wscdc: string }> = {
   homologacion: {
     label: "Homologación (pruebas)",
     wsaa: "https://wsaahomo.afip.gov.ar/ws/services/LoginCms",
     wsfe: "https://wswhomo.afip.gov.ar/wsfev1/service.asmx",
     padron: "https://awshomo.afip.gov.ar/sr-padron/webservices/personaServiceA5",
+    wscdc: "https://wswhomo.afip.gov.ar/WSCDC/service.asmx",
   },
   produccion: {
     label: "Producción",
     wsaa: "https://wsaa.afip.gov.ar/ws/services/LoginCms",
     wsfe: "https://servicios1.afip.gov.ar/wsfev1/service.asmx",
     padron: "https://aws.afip.gov.ar/sr-padron/webservices/personaServiceA5",
+    wscdc: "https://servicios1.afip.gov.ar/WSCDC/service.asmx",
   },
 };
 
 /** Servicios del WSAA que usa Faro */
-export const ARCA_SERVICES = { wsfe: "wsfe", padron: "ws_sr_constancia_inscripcion" } as const;
+export const ARCA_SERVICES = { wsfe: "wsfe", padron: "ws_sr_constancia_inscripcion", wscdc: "wscdc" } as const;
 export type ArcaService = (typeof ARCA_SERVICES)[keyof typeof ARCA_SERVICES];
 
 export function arcaUrls(env: ArcaEnv) {
@@ -31,11 +33,12 @@ export function arcaUrls(env: ArcaEnv) {
     wsaa: process.env.ARCA_WSAA_URL || base.wsaa,
     wsfe: process.env.ARCA_WSFE_URL || base.wsfe,
     padron: process.env.ARCA_PADRON_URL || base.padron,
+    wscdc: process.env.ARCA_WSCDC_URL || base.wscdc,
   };
 }
 
 /** ¿Apunta al simulador? (se muestra en el Faro Manager) */
-export const usingMock = () => [process.env.ARCA_WSAA_URL, process.env.ARCA_WSFE_URL, process.env.ARCA_PADRON_URL].some((u) => !!u && /localhost|127\.0\.0\.1|mock/.test(u));
+export const usingMock = () => [process.env.ARCA_WSAA_URL, process.env.ARCA_WSFE_URL, process.env.ARCA_PADRON_URL, process.env.ARCA_WSCDC_URL].some((u) => !!u && /localhost|127\.0\.0\.1|mock/.test(u));
 
 /** Tipos de comprobante (FEParamGetTiposCbte) que emite Faro */
 export const CBTE_TYPES: Record<number, { label: string; short: string; letter: "A" | "B" | "C" | "E"; kind: "factura" | "nota_debito" | "nota_credito" }> = {

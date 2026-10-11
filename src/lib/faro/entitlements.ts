@@ -1,8 +1,8 @@
 import "server-only";
-import { and, count, eq, gt, gte, inArray, isNull, or } from "drizzle-orm";
+import { and, count, eq, gt, gte, inArray, isNotNull, isNull, or } from "drizzle-orm";
 import { cache } from "react";
 import { getDb } from "@/db";
-import { faro_module_releases, faro_plans, invoices, organizations, studios, tenant_modules, users } from "@/db/schema";
+import { faro_module_releases, faro_plans, invoices, organizations, smart_documents, studios, tenant_modules, users } from "@/db/schema";
 import { FARO_MODULES, getFaroModule, type FaroModuleKey, type ModuleStatus } from "@/modules/registry";
 import { PLANS, type AiLevel, type FaroPlan, type PlanLimits, type TenantKind } from "./plans";
 
@@ -146,6 +146,16 @@ export async function limitUsage(studioId: string, key: LimitKey): Promise<numbe
       .select({ n: count() })
       .from(users)
       .where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true)));
+    return n;
+  }
+  if (key === "smartDocsPerMonth") {
+    // Documentos leídos con IA en el mes (sin contar los repetidos que no se mandaron al modelo)
+    const ar = new Date(Date.now() - 3 * 3600_000);
+    const first = new Date(Date.UTC(ar.getUTCFullYear(), ar.getUTCMonth(), 1, 3));
+    const [{ n }] = await db
+      .select({ n: count() })
+      .from(smart_documents)
+      .where(and(eq(smart_documents.studio_id, studioId), gte(smart_documents.created_at, first), isNotNull(smart_documents.model)));
     return n;
   }
   if (key === "invoicesPerMonth") {

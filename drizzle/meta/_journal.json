@@ -211,6 +211,13 @@
       "when": 1791707291630,
       "tag": "0029_bitacora_completa",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1791709376456,
+      "tag": "0030_lectura_conciliacion",
+      "breakpoints": true
     }
   ]
 }

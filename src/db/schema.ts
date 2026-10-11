@@ -2839,3 +2839,140 @@ export const bitacora_shares = pgTable(
   },
   (t) => [uniqueIndex("bitacora_shares_token_idx").on(t.token), index("bitacora_shares_member_idx").on(t.member_id)],
 );
+
+// ───────────── F6 · Lectura inteligente (smart_docs) y conciliación (bank_rec) ─────────────
+
+/**
+ * Documento leído por la IA: lo extraído (tipado), confianza por campo,
+ * validaciones, huella para duplicados y el registro original de la
+ * respuesta del modelo. Nada cuenta hasta que una persona lo confirma.
+ * scope: organizacion (estudio o portal) · personal (autónomo) · bitacora (ticket personal)
+ */
+export const smart_documents = pgTable(
+  "smart_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    owner_user_id: uuid("owner_user_id").references(() => users.id, { onDelete: "cascade" }),
+    scope: text("scope").notNull().default("organizacion"),
+    document_id: uuid("document_id").references(() => documents.id, { onDelete: "set null" }),
+    storage_path: text("storage_path").notNull(),
+    file_name: text("file_name").notNull(),
+    mime_type: text("mime_type").notNull(),
+    size_bytes: integer("size_bytes").notNull(),
+    sha256: text("sha256").notNull(),
+    source: text("source").notNull().default("subida"), // subida | documentos | portal | vigia
+    kind: text("kind"), // factura | ticket | nota_credito | nota_debito | extracto | otro
+    status: text("status").notNull().default("leyendo"), // leyendo | para_confirmar | confirmado | descartado | error
+    extracted: jsonb("extracted").$type<Record<string, unknown>>(),
+    confidence: numeric("confidence", { precision: 4, scale: 3 }),
+    low_fields: jsonb("low_fields").$type<string[]>().notNull().default([]),
+    validation: jsonb("validation").$type<Record<string, unknown>>(),
+    fingerprint: text("fingerprint"),
+    duplicate_of: uuid("duplicate_of"),
+    account: text("account"),
+    provider: text("provider"),
+    model: text("model"),
+    input_tokens: integer("input_tokens"),
+    output_tokens: integer("output_tokens"),
+    cost_usd: numeric("cost_usd", { precision: 12, scale: 6 }),
+    raw: jsonb("raw").$type<unknown>(),
+    error: text("error"),
+    synced_at: timestamp("synced_at", { withTimezone: true }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    confirmed_by: uuid("confirmed_by").references(() => users.id, { onDelete: "set null" }),
+    confirmed_at: timestamp("confirmed_at", { withTimezone: true }),
+    exported_at: timestamp("exported_at", { withTimezone: true }),
+    target_id: uuid("target_id"), // gasto contable o movimiento de Bitácora creado al confirmar
+    created_at: createdAt(),
+  },
+  (t) => [
+    index("smart_documents_org_idx").on(t.studio_id, t.organization_id, t.status),
+    index("smart_documents_owner_idx").on(t.owner_user_id, t.status),
+    index("smart_documents_fp_idx").on(t.studio_id, t.fingerprint),
+  ],
+);
+
+/** Extracto bancario importado (archivo original y mapeo) */
+export const bank_statements = pgTable(
+  "bank_statements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    bank: text("bank").notNull(),
+    account_label: text("account_label"),
+    file_name: text("file_name").notNull(),
+    source: text("source").notNull().default("csv"), // csv | pdf
+    period_from: date("period_from"),
+    period_to: date("period_to"),
+    mapping: jsonb("mapping").$type<Record<string, unknown>>(),
+    rows: jsonb("rows").$type<string[][]>().notNull().default([]),
+    total: integer("total").notNull().default(0),
+    duplicates: integer("duplicates").notNull().default(0),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("bank_statements_org_idx").on(t.organization_id, t.created_at)],
+);
+
+/** Movimiento del extracto con su clase, su estado y el comprobante con el que cruza */
+export const bank_movements = pgTable(
+  "bank_movements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    statement_id: uuid("statement_id")
+      .notNull()
+      .references(() => bank_statements.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    date: date("date").notNull(),
+    description: text("description").notNull(),
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    cls: text("cls").notNull(), // cobro | pago | comision | impuesto | transferencia
+    status: text("status").notNull().default("sin_conciliar"), // sin_conciliar | sugerido | conciliado | sin_factura | ignorado
+    match_type: text("match_type"), // factura_emitida | comprobante_recibido
+    match_id: uuid("match_id"),
+    match_score: numeric("match_score", { precision: 4, scale: 2 }),
+    match_reasons: jsonb("match_reasons").$type<string[]>(),
+    rule_id: uuid("rule_id"),
+    note: text("note"),
+    external_id: text("external_id").notNull(),
+    raw: jsonb("raw").$type<unknown>(),
+    synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+    confirmed_by: uuid("confirmed_by").references(() => users.id, { onDelete: "set null" }),
+    confirmed_at: timestamp("confirmed_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("bank_movements_ext_idx").on(t.organization_id, t.external_id), index("bank_movements_stmt_idx").on(t.statement_id, t.date)],
+);
+
+/** Regla guardada: si la descripción contiene el texto, se clasifica sola */
+export const bank_rules = pgTable(
+  "bank_rules",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    pattern: text("pattern").notNull(),
+    sign: text("sign").notNull().default("ambos"), // debito | credito | ambos
+    action: text("action").notNull(), // comision | impuesto | ignorar | sin_factura
+    label: text("label").notNull(),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("bank_rules_org_idx").on(t.studio_id, t.organization_id)],
+);

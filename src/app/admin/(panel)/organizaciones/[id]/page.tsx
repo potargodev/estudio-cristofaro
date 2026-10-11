@@ -15,6 +15,7 @@ import {
 } from "@/app/admin/member-actions";
 import { ActivityTimeline } from "@/components/admin/ActivityTimeline";
 import { ArcaOrgTab } from "@/components/facturacion/ArcaOrgTab";
+import { BankRecTab } from "@/components/conciliacion/views";
 import { OrgExpensesTab } from "@/components/admin/OrgExpensesTab";
 import { OrgIndustryTab } from "@/components/admin/OrgIndustryTab";
 import { Notice } from "@/components/admin/AdminField";
@@ -254,6 +255,7 @@ export default async function OrganizacionPage({
         )}
         {tab === "actividad" && <ActivityTimeline orgId={org.id} studioId={studioId} before={sp.antes} />}
         {tab === "arca" && <ArcaOrgTab me={me} orgId={org.id} sp={sp} />}
+        {tab === "conciliacion" && <BankRecTab me={me} orgId={org.id} sp={sp} />}
       </div>
       {tab === "plan" && <PlanTab orgId={org.id} studioId={studioId} planId={org.service_plan_id} />}
     </div>

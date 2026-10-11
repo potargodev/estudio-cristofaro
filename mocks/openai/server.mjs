@@ -84,6 +84,21 @@ function copilot(body, last, q) {
 }
 
 /** Decide la próxima respuesta: { text } o { tool, args } (o { tools } con varias) */
+// Lectura inteligente (F6): devuelve el JSON tipado según el nombre del
+// archivo que viene en el pedido ("archivo: edenor.pdf", "ticket", "dudoso", "roto")
+function extraction(q) {
+  const file = (q.match(/archivo:\s*(\S+)/) ?? [])[1] ?? "";
+  const base = { tipo_documento: "factura", cuit_receptor: null, moneda: "ARS", no_gravado: null, exento: null, percepciones: [], cae: null, vencimiento_cae: null };
+  const today = new Date().toISOString().slice(0, 10);
+  if (file.includes("roto")) return "No pude leer el documento.";
+  if (file.includes("ticket"))
+    return JSON.stringify({ ...base, tipo_documento: "ticket", cuit_emisor: "30500010912", razon_social_emisor: "Supermercado Día", letra: "B", codigo_comprobante: 6, punto_venta: 12, numero: 99881, fecha: today, neto_gravado: 10000, iva: [{ alicuota: 21, importe: 2100 }], total: 12100, confianza: { cuit_emisor: 0.9, fecha: 0.95, total: 0.97, numero: 0.85 } });
+  if (file.includes("dudoso"))
+    return JSON.stringify({ ...base, cuit_emisor: "30711111112", razon_social_emisor: "Proveedor Dudoso SRL", letra: "A", codigo_comprobante: 1, punto_venta: 3, numero: 120, fecha: today, neto_gravado: 50000, iva: [{ alicuota: 21, importe: 10500 }], total: 70000, cae: "123", confianza: { cuit_emisor: 0.55, fecha: 0.9, total: 0.6, numero: 0.7 } });
+  const n = Number((file.match(/(\d+)/) ?? [])[1] ?? 45);
+  return JSON.stringify({ ...base, cuit_emisor: "30711111111", razon_social_emisor: "Edenor S.A.", letra: "A", codigo_comprobante: 1, punto_venta: 2, numero: n, fecha: today, neto_gravado: 100000, iva: [{ alicuota: 21, importe: 21000 }], percepciones: [{ concepto: "Percepción IIBB", importe: 3000 }], total: 124000, cae: "75123456789012", vencimiento_cae: today, confianza: { cuit_emisor: 0.98, fecha: 0.96, total: 0.99, numero: 0.95, cae: 0.9 } });
+}
+
 function decide(body) {
   const msgs = body.messages ?? [];
   const system = msgs.filter((m) => m.role === "system").map(text).join("\n");
@@ -95,6 +110,7 @@ function decide(body) {
     return { text: summarize(parsed) };
   }
   const q = text(last).toLowerCase();
+  if (q.includes("lectura_inteligente")) return { text: extraction(q) };
   if (tools.has("crear_movimiento")) return copilot(body, last, q);
   const want = (tool, args) => (tools.has(tool) ? { tool, args } : { text: `No tengo disponible la herramienta \`${tool}\` con tus permisos.` });
   if (/confirm[eé]|cancel[eé]/.test(q)) return { text: "Perfecto, ya quedó registrado." };

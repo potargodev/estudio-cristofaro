@@ -51,6 +51,10 @@ const PERSONAS = {
       ],
     },
   },
+  "30711111111": {
+    datosGenerales: { razonSocial: "EDENOR S.A.", tipoPersona: "JURIDICA", estadoClave: "ACTIVO", domicilioFiscal: { direccion: "AV DEL LIBERTADOR 6363", localidad: "CABA", descripcionProvincia: "CIUDAD AUTONOMA BUENOS AIRES" } },
+    datosRegimenGeneral: { actividad: { idActividad: "351320", descripcionActividad: "DISTRIBUCION DE ENERGIA ELECTRICA", orden: "1" }, impuesto: { idImpuesto: "30", descripcionImpuesto: "IVA", periodo: "199201" } },
+  },
   "30722222229": {
     datosGenerales: { razonSocial: "CONSULTORA SUR SAS", tipoPersona: "JURIDICA", estadoClave: "ACTIVO" },
     datosRegimenGeneral: { actividad: { idActividad: "702092", descripcionActividad: "SERVICIOS DE ASESORAMIENTO EMPRESARIAL", orden: "1" }, impuesto: { idImpuesto: "30", descripcionImpuesto: "IVA", periodo: "202001" } },
@@ -78,7 +82,7 @@ function loginCms(body) {
     return fault("ns1:cms.bad", `CMS inválido: ${e.message}`);
   }
   const service = tag(tra, "service");
-  if (!["wsfe", "ws_sr_constancia_inscripcion"].includes(service)) return fault("ns1:coe.notAuthorized", `Servicio no autorizado: ${service}`);
+  if (!["wsfe", "ws_sr_constancia_inscripcion", "wscdc"].includes(service)) return fault("ns1:coe.notAuthorized", `Servicio no autorizado: ${service}`);
   const token = randomBytes(24).toString("base64");
   const sign = randomBytes(16).toString("base64");
   const exp = new Date(Date.now() + 12 * 3600_000);
@@ -165,6 +169,20 @@ function wsfe(op, body) {
   return fault("soap:Client", `Operación desconocida: ${op}`);
 }
 
+// WSCDC · ComprobanteConstatar: aprueba los CAE emitidos por este simulador
+// y los que empiezan con 75 (los de las lecturas de prueba); rechaza el resto.
+function wscdc(body) {
+  const token = tag(body, "Token");
+  const t = tickets.get(token);
+  if (!t || t.exp < new Date() || t.service !== "wscdc") return fault("soap:Server", "No autorizado: token vencido o inválido");
+  stats.wscdc = (stats.wscdc ?? 0) + 1;
+  const cae = tag(body, "CodAutorizacion") ?? "";
+  const known = [...comps.values()].some((c) => String(c.CodAutorizacion ?? "") === cae);
+  const ok = /^\d{14}$/.test(cae) && (known || cae.startsWith("75"));
+  const obs = ok ? "" : `<Observaciones><Obs><Code>21</Code><Msg>No existe un comprobante con esos datos</Msg></Obs></Observaciones>`;
+  return env(`<ComprobanteConstatarResponse xmlns="http://servicios1.afip.gob.ar/wscdc/"><ComprobanteConstatarResult><CmpResp><CbteModo>CAE</CbteModo><CodAutorizacion>${esc(cae)}</CodAutorizacion></CmpResp><Resultado>${ok ? "A" : "R"}</Resultado>${obs}<FchProceso>${new Date().toISOString().slice(0, 10).replace(/-/g, "")}</FchProceso></ComprobanteConstatarResult></ComprobanteConstatarResponse>`);
+}
+
 function padron(body) {
   const token = tag(body, "token");
   const t = tickets.get(token);
@@ -211,5 +229,6 @@ createServer(async (req, res) => {
     return send(200, out);
   }
   if (url.pathname.includes("personaServiceA5")) return send(200, padron(body));
+  if (url.pathname.toLowerCase().includes("wscdc")) return send(200, wscdc(body));
   send(404, "no encontrado", "text/plain");
 }).listen(PORT, () => console.log(`Simulador de ARCA en http://localhost:${PORT}`));

@@ -7,7 +7,7 @@ import { SubmitButton } from "@/components/admin/ui";
 import { requestPlanUpgrade } from "@/app/admin/plan-actions";
 import { getDb } from "@/db";
 import { expense_groups, organizations, plan_requests, users } from "@/db/schema";
-import { getEntitlements, getPlans } from "@/lib/faro/entitlements";
+import { getEntitlements, getPlans, limitUsage } from "@/lib/faro/entitlements";
 import { AI_LEVEL_LABEL, ANNUAL_FREE_MONTHS, annualUsd, formatArs, formatUsd, type FaroPlan } from "@/lib/faro/plans";
 import { getUsdArs } from "@/lib/faro/pricing";
 import { cn } from "@/lib/utils";
@@ -43,13 +43,15 @@ const ars = (p: FaroPlan, usdArs: number) => (p.free || !p.priceUsd ? "Gratis" :
 export async function PlanBilling({ studioId, back, pedido }: { studioId: string; back: string; pedido?: string }) {
   const e = (await getEntitlements(studioId))!;
   const db = getDb();
-  const [plans, usdArs, [orgs], [staff], [groups], pending] = await Promise.all([
+  const [plans, usdArs, [orgs], [staff], [groups], pending, smartDocs, invoicesUsed] = await Promise.all([
     getPlans(),
     getUsdArs(),
     db.select({ n: count() }).from(organizations).where(and(eq(organizations.studio_id, studioId), inArray(organizations.status, ["onboarding", "activa", "pausada"]))),
     db.select({ n: count() }).from(users).where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true))),
     db.select({ n: count() }).from(expense_groups).where(eq(expense_groups.studio_id, studioId)),
     db.select({ to: plan_requests.to_plan }).from(plan_requests).where(and(eq(plan_requests.studio_id, studioId), eq(plan_requests.status, "pendiente"))),
+    limitUsage(studioId, "smartDocsPerMonth"),
+    limitUsage(studioId, "invoicesPerMonth"),
   ]);
   const kind = e.tenant.kind;
   const options = plans.filter((p) => p.kind === kind);
@@ -74,13 +76,13 @@ export async function PlanBilling({ studioId, back, pedido }: { studioId: string
             <>
               <Usage label="Organizaciones" used={orgs.n} max={e.limits.organizations} />
               <Usage label="Personas del estudio" used={staff.n} max={e.limits.staffUsers} />
-              <Usage label="Lectura inteligente por mes" used={0} max={e.limits.smartDocsPerMonth} />
+              <Usage label="Lectura inteligente por mes" used={smartDocs} max={e.limits.smartDocsPerMonth} />
             </>
           ) : (
             <>
               <Usage label="Grupos de gastos" used={groups.n} max={null} />
-              {kind === "personal" && <Usage label="Comprobantes por mes" used={0} max={e.limits.invoicesPerMonth} />}
-              <Usage label="Lectura inteligente por mes" used={0} max={e.limits.smartDocsPerMonth} />
+              {kind === "personal" && <Usage label="Comprobantes por mes" used={invoicesUsed} max={e.limits.invoicesPerMonth} />}
+              <Usage label="Lectura inteligente por mes" used={smartDocs} max={e.limits.smartDocsPerMonth} />
             </>
           )}
         </div>
