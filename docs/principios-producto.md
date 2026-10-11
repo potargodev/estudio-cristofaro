@@ -114,6 +114,33 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
 - **Al finalizar:** una calificación de cierre.
 - **Pendiente de definición:** cuánto de esto se expone públicamente como reputación del estudio (ver "Decisiones abiertas").
 
+## 10. Separación de cajas: personal y negocio
+
+- El usuario arranca con su **billetera personal** en la Bitácora: los gastos de todos los días.
+- Apenas tiene una actividad, por chica que sea, puede (y Faro lo invita a) abrir una **caja del negocio**, separada de la personal. Son dos cajas distintas, nunca una sola mezclada.
+- Ejemplo: la licencia de un software de trabajo o una carpeta para la oficina van a la caja del negocio, no entre el súper y la salida del fin de semana. Si se cargan en la personal, Faro sugiere moverlas.
+- Cuando conecta un contador, le da acceso **solo a la caja del negocio**. Lo personal nunca se expone, salvo que el usuario lo active (refuerza §4 y §5).
+
+## 11. Sueldo del dueño
+
+- La gente no separa su plata de la del negocio, así que nunca sabe si gana o pierde.
+- Faro empuja al usuario a **ponerse un sueldo**: el negocio le "paga" una cifra a la persona, y esa es la única plata que cruza de la caja del negocio a la billetera personal. Todo lo demás queda en el negocio.
+- Así el usuario ve de verdad cómo se reparte su dinero y deja de tratar la plata del negocio como propia.
+- Faro puede sugerir una cifra a partir de los números del negocio, siempre como dato y nunca como recomendación profesional (§1.a).
+
+## 12. El usuario en relación de dependencia
+
+- También es un usuario objetivo y es la **base ancha de la pirámide**: masa crítica barata y en volumen.
+- No factura ni necesita contador. Entra por la Bitácora (ordenar su sueldo y sus gastos) y se queda por los Grupos de gastos.
+- Muchos tienen una changa o un trabajo freelance al costado: son el candidato perfecto para pasar del escalón 1 al 2.
+
+## 13. La changa en zona gris
+
+- Caso típico: alguien en relación de dependencia que hace una changa o un freelance por fuera del sueldo.
+- Faro le registra ese ingreso en la caja del negocio aunque todavía no lo facture, le muestra la foto real ("esto ya es una actividad") y, cuando crece, lo empuja a anotarse en el monotributo **con un contador** (disparador de §1.c).
+- **Dato de contexto (a confirmar por un contador):** en Argentina se puede estar en relación de dependencia y ser monotributista al mismo tiempo por una actividad independiente. En ese caso no se paga el componente previsional del monotributo, porque ya se aporta por el empleo, y se paga el impositivo.
+- Si la changa es de verdad independiente y no un empleo encubierto lo evalúa el contador, no Faro.
+
 ---
 
 ## Decisiones abiertas
