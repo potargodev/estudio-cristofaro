@@ -118,8 +118,8 @@ export interface SpaceInput {
   isFaro?: boolean;
 }
 
-/** Facturación del autónomo (F3): el lugar queda reservado en el menú personal */
-const FACTURACION_LISTA = false;
+/** Facturación del autónomo (F3): comprobantes, ARCA y monotributo */
+const FACTURACION_LISTA = true;
 
 /** Grupos del menú del espacio */
 export function groupsFor(x: SpaceInput): ShellGroup[] {
@@ -157,9 +157,9 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
       items: [
         { href: "/faro-manager", label: "Resumen", icon: "resumen", exact: true },
         { href: "/faro-manager/tenants", label: "Tenants", icon: "tenants", badge: "planRequests", match: ["/faro-manager/pedidos", "/faro-manager/nuevo", "/faro-manager"] },
-        { href: "/faro-manager/planes", label: "Catálogo", icon: "catalogo", match: ["/faro-manager/modulos", "/faro-manager/plantillas", "/faro-manager/ia"] },
+        { href: "/faro-manager/planes", label: "Catálogo", icon: "catalogo", match: ["/faro-manager/modulos", "/faro-manager/plantillas", "/faro-manager/ia", "/faro-manager/monotributo"] },
         { href: "/faro-manager/red", label: "Red", icon: "red", badge: "verifications" },
-        { href: "/faro-manager/auditoria", label: "Plataforma", icon: "plataforma", badge: "reports", match: ["/faro-manager/ayuda", "/faro-manager/reportes", "/faro-manager/uso-ia"] },
+        { href: "/faro-manager/auditoria", label: "Plataforma", icon: "plataforma", badge: "reports", match: ["/faro-manager/ayuda", "/faro-manager/reportes", "/faro-manager/uso-ia", "/faro-manager/arca"] },
       ],
     },
   ];

@@ -5,10 +5,12 @@
 //   los apaga; cron externo: /api/gastos/cron).
 // - Vigía (cola de mensajes pendientes y recordatorios) cada minuto
 //   (COPILOT_JOBS=off los apaga; cron externo: /api/copiloto/cron).
+// - Faro Personal (avisos del calendario y chequeos guiados) cada hora
+//   (ARCA_JOBS=off los apaga).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
-  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout };
+  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout };
 
   if (process.env.AGENDA_REMINDERS !== "off" && !g.__agendaTimer) {
     const { sendReminders } = await import("./lib/agenda/bookings");
@@ -47,5 +49,18 @@ export async function register() {
     g.__copilotTimer = setInterval(run, Number(process.env.COPILOT_JOBS_MS) || 60_000);
     g.__copilotTimer.unref?.();
     setTimeout(run, 40_000).unref?.();
+  }
+
+  if (process.env.ARCA_JOBS !== "off" && !g.__arcaTimer) {
+    const { runArcaJobs } = await import("./modules/arca/jobs");
+    const run = () =>
+      runArcaJobs()
+        .then((r) => {
+          if (r.avisos || r.chequeos) console.info(`[arca] ${r.avisos} avisos del calendario, ${r.chequeos} chequeos guiados`);
+        })
+        .catch((error) => console.error("[arca] Tareas", (error as Error).message));
+    g.__arcaTimer = setInterval(run, Number(process.env.ARCA_JOBS_MS) || 60 * 60_000);
+    g.__arcaTimer.unref?.();
+    setTimeout(run, 50_000).unref?.();
   }
 }

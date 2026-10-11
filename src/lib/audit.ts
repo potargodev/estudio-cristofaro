@@ -57,6 +57,22 @@ export async function audit(e: AuditEvent): Promise<void> {
 
 /** Nombres legibles de las acciones para la línea de tiempo */
 export const AUDIT_LABELS: Record<string, string> = {
+  "factura.borrador": "Preparó un borrador de comprobante",
+  "factura.emitida": "Emitió un comprobante en ARCA",
+  "factura.enviada": "Envió un comprobante por mail",
+  "factura.link": "Generó el link de un comprobante",
+  "factura.link_revocado": "Desactivó el link de un comprobante",
+  "factura.borrar_borrador": "Eliminó un borrador de comprobante",
+  "facturacion.datos": "Editó los datos de facturación",
+  "facturacion.perfil_fiscal": "Editó el perfil fiscal",
+  "arca.consulta_padron": "Consultó la constancia de inscripción en ARCA",
+  "arca.puntos_venta": "Trajo los puntos de venta de ARCA",
+  "arca.chequeo_guiado": "Registró un chequeo guiado",
+  "faro.arca_certificado": "Cargó el certificado de ARCA de Faro",
+  "faro.arca_certificado_borrado": "Eliminó el certificado de ARCA de Faro",
+  "faro.arca_ambiente": "Cambió el ambiente de ARCA",
+  "faro.monotributo_escala": "Cargó una escala de monotributo",
+  "faro.monotributo_escala_borrada": "Eliminó una escala de monotributo",
   "sesion.iniciar": "Inició sesión",
   "sesion.rechazada": "Intento de acceso rechazado",
   "organizacion.crear": "Creó la organización",

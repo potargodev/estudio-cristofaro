@@ -6,6 +6,7 @@ import { conexionesTools } from "./modulos/conexiones";
 import { consultasTools } from "./modulos/consultas";
 import { documentosTools } from "./modulos/documentos";
 import { estudioTools } from "./modulos/estudio";
+import { facturacionTools } from "./modulos/facturacion";
 import { gastosTools } from "./modulos/gastos";
 import { industriasTools } from "./modulos/industrias";
 import { organizacionesTools } from "./modulos/organizaciones";
@@ -27,6 +28,7 @@ export const TOOLS: ToolDefinition[] = [
   ...gastosTools,
   ...industriasTools,
   ...ayudaTools,
+  ...facturacionTools,
 ];
 
 const BY_NAME = new Map(TOOLS.map((t) => [t.name, t]));

@@ -23,6 +23,7 @@ export const TOOL_MODULES = {
   gastos: "Grupos de gastos",
   industrias: "Ecosistemas por industria",
   ayuda: "Centro de ayuda",
+  facturacion: "Facturación y ARCA",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 
