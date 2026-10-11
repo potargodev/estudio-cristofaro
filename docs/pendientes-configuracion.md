@@ -103,3 +103,43 @@ Los cobros, recordatorios y avisos de suscripción salen por mail: sin SMTP solo
 - **Motor:** corre solo dentro del contenedor cada minuto (`FLOWS_JOBS`, no hace falta nada). Si se prefiere un cron externo, `POST /api/flujos/cron` con `Authorization: Bearer <CRON_SECRET>` (cargar `CRON_SECRET` en Easypanel); `?escaneo=1` también corre los eventos por tiempo.
 - **Webhooks entrantes:** la URL de cada flujo aparece al activarlo; compartirla solo con el sistema que la usa (el token es la llave).
 - **SMTP** para los mails de los flujos.
+
+## WhatsApp (F9)
+
+### Verificación de Meta y número de Faro — prioridad alta
+**Qué falta:** cuenta de WhatsApp Business verificada por Meta, número de teléfono propio de Faro y plantillas aprobadas.
+**Quién:** el equipo de Faro (owner), con el Business Manager de la empresa.
+**Paso a paso:**
+1. En https://business.facebook.com crear (o usar) el portfolio comercial de Faro y completar la **verificación de la empresa** (documentación legal y dominio).
+2. En https://developers.facebook.com crear una app tipo «Empresa» y agregarle el producto **WhatsApp**; asociar la cuenta de WhatsApp Business (WABA) y registrar el número de Faro (no puede estar usado en la app de WhatsApp).
+3. Crear un **usuario del sistema** con permisos `whatsapp_business_messaging` y `whatsapp_business_management` y generar un **token permanente**.
+4. Crear y mandar a aprobar las plantillas (idioma español Argentina `es_AR`): `faro_codigo` (autenticación: «Tu código de Faro es {{1}}. Vence en 10 minutos.»), `faro_respuesta_solicitud` («Hola {{1}}: el estudio respondió tu solicitud «{{2}}». Entrá a tu portal para verla.») y `faro_aviso_general` («Hola {{1}}: {{2}}»), las dos últimas de utilidad.
+5. En Faro Manager → Plataforma → WhatsApp cargar Phone number ID, WABA ID, número visible, token y **secreto de la app** (Configuración básica de la app) y tocar **Sincronizar plantillas**.
+6. En la app de Meta → WhatsApp → Configuración: webhook `https://app.estudiocristofaro.com/api/whatsapp/webhook` con el token de verificación que muestra Faro Manager, suscripto a `messages`.
+7. En Easypanel: `WHATSAPP_API_URL=https://graph.facebook.com/v21.0` (es el valor por defecto; en pruebas apunta al simulador).
+8. Probar con un número propio: verificar desde el portal (Mi cuenta → WhatsApp), mandar un texto y una foto.
+
+### Número propio de un estudio
+**Quién:** el dueño del estudio (plan Avanzado). Los mismos pasos 1 a 4 en su propio Business Manager y la carga en Configuración → Avanzado → WhatsApp (el webhook y el token de verificación aparecen ahí).
+
+## Marca blanca (F9)
+
+### Dominio propio de cada estudio
+**Qué falta:** que la app atienda el dominio del estudio con HTTPS.
+**Quién:** el equipo de Faro, cuando un estudio verifica su dominio.
+**Paso a paso:**
+1. En Easypanel cargar `APP_HOSTS` con los hosts propios de la app separados por coma (`app.estudiocristofaro.com,estudiocristofaro.com,www.estudiocristofaro.com`). Sin esta variable, el ruteo por dominio propio queda apagado (la marca se ve igual en el portal).
+2. Cuando el estudio vea «Verificado» en Configuración → Avanzado, agregar su dominio al servicio `web` en Easypanel (Domains) para que emita el certificado de Let's Encrypt.
+3. Probar `https://<dominio>/`: tiene que mostrar el ingreso al portal con la marca del estudio y «Con tecnología de Faro».
+
+**Mejora futura:** sesión completa en el dominio propio (hoy el cliente pide el enlace ahí y entra al portal en el dominio de Faro) y Google desde ese dominio (requiere una redirect por dominio en Google Cloud).
+
+## Consultas con IA e Indicadores (F9)
+
+- **Modelo de redacción:** cada estudio elige en Configuración → IA el modelo de la tarea «Redacción de borradores»; si no tiene proveedor, se usa la IA de la plataforma (Faro Manager → Catálogo → IA), que hay que configurar en producción.
+- **Revisión de los textos:** conviene que un contador del estudio cliente cero revise las primeras respuestas aprobadas para ajustar el prompt (`src/modules/ai-consults/core.ts`).
+- **Indicadores:** no requieren configuración; las ventas de una organización salen de lo facturado en ARCA desde Faro, así que conviene importar lo que facture por otro sistema.
+
+## Red de estudios (F9)
+
+- **Agenda pública:** para que aparezca «Agendar llamada» con horarios, el estudio tiene que activar su disponibilidad pública en Comercial → Agenda; si no, la ficha ofrece pedir propuesta.

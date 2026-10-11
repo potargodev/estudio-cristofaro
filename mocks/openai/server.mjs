@@ -103,8 +103,8 @@ function extraction(q) {
 function consult(q) {
   const laboral = q.includes("tema: laboral");
   return laboral
-    ? "Hola. Sobre tu consulta: el aguinaldo (SAC) se paga en dos cuotas, la primera hasta el 30 de junio y la segunda hasta el 18 de diciembre, y equivale al 50% de la mejor remuneración mensual del semestre. Si el empleado trabajó menos tiempo, se calcula en proporción. Cualquier duda, te ayudamos con la liquidación."
-    : "Hola. Sobre tu consulta: si sos monotributista, la recategorización es semestral (enero y julio) y se hace con los ingresos de los últimos 12 meses. Si te pasás del tope de tu categoría tenés que subir; si superás el máximo de la escala, pasás al régimen general. Revisamos tus números y te confirmamos la categoría que corresponde.";
+    ? "Gracias por tu consulta. El aguinaldo (SAC) se paga en dos cuotas, la primera hasta el 30 de junio y la segunda hasta el 18 de diciembre, y equivale al 50% de la mejor remuneración mensual del semestre. Si el empleado trabajó menos tiempo, se calcula en proporción. Cualquier duda, te ayudamos con la liquidación."
+    : "Gracias por tu consulta. Si sos monotributista, la recategorización es semestral (enero y julio) y se hace con los ingresos de los últimos 12 meses. Si te pasás del tope de tu categoría tenés que subir; si superás el máximo de la escala, pasás al régimen general. Revisamos tus números y te confirmamos la categoría que corresponde.";
 }
 
 function decide(body) {
