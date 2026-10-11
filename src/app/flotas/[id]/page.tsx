@@ -55,7 +55,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         </span>
         <div className="min-w-0">
           <FleetLabel />
-          <h1 className="mt-1 font-display text-[32px] leading-tight sm:text-[42px]">{x.fleet.name}</h1>
+          <h1 className="mt-1 font-display text-[28px] leading-tight text-ink sm:text-[32px]">{x.fleet.name}</h1>
           {x.fleet.description && <p className="text-[15px] text-muted">{x.fleet.description}</p>}
         </div>
       </div>

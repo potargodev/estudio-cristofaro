@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { and, eq } from "drizzle-orm";
 import { ChevronRight, Ship } from "lucide-react";
 import type { Metadata } from "next";
@@ -45,11 +46,7 @@ export default async function FlotasPage({ searchParams }: { searchParams: Promi
   return (
     <>
       <Feedback ok={sp.ok} error={sp.error} />
-      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-rose-deep">Flotas</p>
-      <h1 className="mt-2 font-display text-[36px] leading-tight sm:text-[48px]">Naveguen juntos.</h1>
-      <p className="mt-2 max-w-2xl text-[16px] text-muted">
-        Entre {FLEET_MIN} y {FLEET_MAX} personas piden juntas una propuesta a los estudios de la Red y consiguen mejores condiciones. Cada uno firma su propio acuerdo y paga solo lo suyo.
-      </p>
+      <PageHeader title="Flotas" description={`Naveguen juntos: entre ${FLEET_MIN} y ${FLEET_MAX} personas piden juntas una propuesta a los estudios de la Red y consiguen mejores condiciones. Cada uno firma su propio acuerdo y paga solo lo suyo.`} className="mb-0" />
       <p className="mt-3">
         <Link href="/flotas/servicios" className="text-[14px] font-medium underline underline-offset-4">
           Mis servicios

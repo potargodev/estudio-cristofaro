@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { ArrowRight, Check, CircleHelp } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -16,11 +17,7 @@ export default async function FirstStepsPage() {
   const current = g.steps.findIndex((s) => !s.done);
   return (
     <div className="grid gap-6 pb-10">
-      <header>
-        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-rose-deep">{g.profileLabel}</p>
-        <h1 className="mt-1 font-display text-[clamp(2rem,6vw,2.6rem)] leading-tight">Primeros pasos</h1>
-        <p className="mt-1 text-[15px] text-muted">Se marcan solos cuando hacés cada cosa: no hay que tildar nada.</p>
-      </header>
+      <PageHeader eyebrow={g.profileLabel} title="Primeros pasos" description="Se marcan solos cuando hacés cada cosa: no hay que tildar nada." className="mb-0" />
 
       <section aria-label="Progreso" className="rounded-md border border-line bg-surface p-4">
         <div className="flex items-baseline justify-between gap-3">

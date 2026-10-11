@@ -28,7 +28,7 @@ export default async function AcuerdoPage({ params, searchParams }: { params: Pr
       <Link href={`/flotas/${x.fleet.id}`} className="text-[13px] text-muted hover:text-ink">
         ← {x.fleet.name}
       </Link>
-      <h1 className="mt-3 font-display text-[32px] leading-tight sm:text-[42px]">Acuerdo de servicio con {x.studio}</h1>
+      <h1 className="mt-3 font-display text-[28px] leading-tight text-ink sm:text-[32px]">Acuerdo de servicio con {x.studio}</h1>
       <p className="mt-2 text-[15px] text-muted">
         Es un acuerdo <strong className="font-semibold text-ink">individual</strong> entre vos y el estudio. La Flota no firma nada ni tiene un pozo común.
       </p>

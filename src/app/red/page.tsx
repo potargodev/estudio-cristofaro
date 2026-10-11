@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { BadgeCheck, Clock, MapPin, Star } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -24,9 +25,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
   const [list] = await Promise.all([publicDirectory(filters), markStep("red").catch(() => undefined)]);
   return (
     <>
-      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-rose-deep">Red de estudios</p>
-      <h1 className="mt-2 font-display text-[40px] leading-tight sm:text-[56px]">Encontrá tu estudio contable.</h1>
-      <p className="mt-2 max-w-2xl text-[16px] text-muted">Estudios y contadores que trabajan con Faro, con la matrícula verificada y reseñas de clientes reales. Nadie paga por aparecer primero.</p>
+      <PageHeader title="Encontrá tu estudio contable" description="Estudios y contadores que trabajan con Faro, con la matrícula verificada y reseñas de clientes reales. Nadie paga por aparecer primero." className="mb-0" />
 
       <form method="get" className="mt-8 grid gap-3 rounded-lg border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-6" role="search" aria-label="Filtrar estudios">
         <label className="text-[13px] text-muted lg:col-span-2">

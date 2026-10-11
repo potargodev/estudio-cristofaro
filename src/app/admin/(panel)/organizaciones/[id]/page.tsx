@@ -136,7 +136,7 @@ export default async function OrganizacionPage({
       <header className="mb-6 flex flex-wrap items-start gap-4">
         <Avatar name={org.name} size="lg" />
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[40px] sm:leading-none">{org.name}</h1>
+          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{org.name}</h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted">
             <StatusBadge status={org.status} />
             {limits.planName ? <Tag>{limits.planName}</Tag> : <span>Sin plan</span>}

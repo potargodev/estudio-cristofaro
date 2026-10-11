@@ -27,7 +27,7 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
   if (!inv)
     return (
       <div className="mx-auto max-w-md pt-6">
-        <h1 className="font-display text-4xl leading-tight">Ese enlace ya no sirve</h1>
+        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Ese enlace ya no sirve</h1>
         <p className="mt-3 text-muted">Puede que lo hayan renovado o que el grupo esté cerrado. Pedile a quien te invitó un enlace nuevo.</p>
         <Link href="/grupos" className="mt-6 inline-flex h-11 items-center rounded-md bg-navy px-5 text-paper">
           Ir a mis grupos
@@ -43,7 +43,7 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
           <Users className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <p className="mt-4 text-[13px] text-muted">{inv.inviter ? `${inv.inviter} te invita a` : "Te invitan a"}</p>
-        <h1 className="font-display text-[clamp(2rem,8vw,2.6rem)] leading-tight">{inv.name}</h1>
+        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{inv.name}</h1>
         <p className="mt-1 text-[14px] text-muted">
           {inv.members} {inv.members === 1 ? "integrante" : "integrantes"} · un grupo de gastos de Faro: quién pagó qué y cuánto debe cada uno.
         </p>

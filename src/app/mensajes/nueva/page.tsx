@@ -16,7 +16,7 @@ export default async function NuevaPage({ searchParams }: { searchParams: Promis
       <Link href="/mensajes" className="text-[13px] text-muted hover:text-ink">
         ← Mensajes
       </Link>
-      <h1 className="font-display text-[clamp(1.8rem,6vw,2.4rem)] leading-tight">Nueva conversación</h1>
+      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Nueva conversación</h1>
       {sp.error && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-[14px] text-danger">
           {sp.error.slice(0, 200)}

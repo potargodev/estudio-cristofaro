@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SubmitButton } from "@/components/admin/ui";
@@ -31,8 +32,7 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
   return (
     <>
       <Feedback ok={sp.ok} error={sp.error} />
-      <h1 className="font-display text-[34px] leading-tight sm:text-[44px]">Mis servicios</h1>
-      <p className="mt-2 text-[15px] text-muted">Tus acuerdos con estudios y tu estado de cuenta con cada uno. Solo lo ves vos.</p>
+      <PageHeader title="Mi estudio" description="Tus acuerdos con estudios y tu estado de cuenta con cada uno. Solo lo ves vos." className="mb-0" />
       {list.length === 0 ? (
         <p className="mt-6 text-[15px] text-muted">
           Todavía no tenés acuerdos.{" "}

@@ -1,3 +1,5 @@
+import { HeaderAction } from "@/components/admin/kit/HeaderAction";
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { BalanceLine, GroupDot } from "@/components/gastos/Money";
@@ -22,18 +24,12 @@ export default async function GastosHome() {
 
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-[clamp(2.1rem,6vw,3rem)] leading-none">Grupos de gastos</h1>
-          <p className="mt-2 text-muted">{actor.kind === "guest" ? `Hola, ${actor.name}. Este es el grupo al que te invitaron.` : "Quién pagó qué, cuánto debe cada uno y cómo saldarlo."}</p>
-        </div>
-        {actor.kind === "user" && (
-          <Link href="/grupos/nuevo" data-tour="grupo-nuevo" className="inline-flex h-11 items-center gap-2 bg-navy px-4 text-paper hover:bg-navy-deep">
-            <Plus className="size-4" aria-hidden />
-            Nuevo grupo
-          </Link>
-        )}
-      </div>
+      <PageHeader
+        title="Grupos de gastos"
+        description={actor.kind === "guest" ? `Hola, ${actor.name}. Este es el grupo al que te invitaron.` : "Quién pagó qué, cuánto debe cada uno y cómo saldarlo."}
+        actions={actor.kind === "user" ? <HeaderAction href="/grupos/nuevo" label="Nuevo grupo" tour="grupo-nuevo" /> : undefined}
+        className="mb-0"
+      />
 
       <section aria-label="Tu saldo total" className="mt-6 grid gap-3 sm:grid-cols-2">
         <div className="border border-line bg-surface p-5">

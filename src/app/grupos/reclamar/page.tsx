@@ -18,7 +18,7 @@ export default async function ClaimPage({ searchParams }: { searchParams: Promis
   if (!g)
     return (
       <div className="mx-auto max-w-md pt-6">
-        <h1 className="font-display text-4xl leading-tight">No hay un grupo para guardar</h1>
+        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">No hay un grupo para guardar</h1>
         <p className="mt-3 text-muted">Abrí primero el enlace personal que te pasaron y después volvé acá.</p>
         <Link href="/grupos" className="mt-6 inline-flex h-11 items-center rounded-md bg-navy px-5 text-paper">
           Ir a mis grupos
@@ -28,7 +28,7 @@ export default async function ClaimPage({ searchParams }: { searchParams: Promis
   return (
     <div className="mx-auto grid max-w-md gap-6 pt-2">
       <header>
-        <h1 className="font-display text-[clamp(2rem,8vw,2.6rem)] leading-tight">Guardá el grupo en tu cuenta</h1>
+        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Guardá el grupo en tu cuenta</h1>
         <p className="mt-2 text-muted">Entrás como {g.name}. Con una cuenta, ves el grupo desde cualquier dispositivo y tus gastos se suman a tu Bitácora.</p>
       </header>
       {sp.error && (

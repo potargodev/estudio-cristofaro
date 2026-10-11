@@ -10,7 +10,7 @@ export default async function SinPermisoPage() {
   const me = await requireMember();
   return (
     <Card className="mx-auto max-w-lg text-center">
-      <h1 className="font-display text-3xl">Esta sección no está habilitada para tu rol</h1>
+      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Esta sección no está habilitada para tu rol</h1>
       <p className="mt-3 leading-relaxed text-muted">
         En {me.organizationName} tenés el rol <strong>{ORG_ROLE_LABELS[me.orgRole]}</strong>. Si necesitás acceder, pedíselo a quien administra tu
         organización en la plataforma.

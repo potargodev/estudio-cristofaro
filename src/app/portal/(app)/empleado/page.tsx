@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { FileSignature, Megaphone, ReceiptText, Wallet } from "lucide-react";
 import { markStep } from "@/modules/onboarding/server";
 import type { Metadata } from "next";
@@ -20,12 +21,7 @@ export default async function EmpleadoHome() {
   ];
   return (
     <>
-      <p className="text-[13px] font-medium text-muted">
-        {me.organizationName}
-        {me.employee.position && ` · ${me.employee.position}`}
-      </p>
-      <h1 className="mt-1 font-display text-[clamp(2.2rem,5vw,3.2rem)] leading-none">Hola, {me.employee.firstName}</h1>
-      <p className="mt-2.5 text-[16px] text-muted">Tu espacio en la empresa.</p>
+      <PageHeader title={`Hola, ${me.employee.firstName}`} description={`Tu espacio en la empresa · ${me.organizationName}${me.employee.position ? ` · ${me.employee.position}` : ""}`} className="mb-0" />
       <ul className="mt-8 grid gap-4 sm:grid-cols-2">
         {cards.map((c) => (
           <li key={c.href}>

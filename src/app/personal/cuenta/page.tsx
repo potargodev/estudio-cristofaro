@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { eq } from "drizzle-orm";
 import { ChevronRight, Mail, UserRound } from "lucide-react";
 import type { Metadata } from "next";
@@ -26,9 +27,7 @@ export default async function PersonalCuentaPage({ searchParams }: { searchParam
   ];
   return (
     <div className="grid gap-6 pb-10">
-      <header>
-        <h1 className="font-display text-[34px] leading-tight text-ink sm:text-[44px]">Mi cuenta</h1>
-      </header>
+      <PageHeader title="Mi cuenta" description="Tus datos, tu plan, tu configuración y la ayuda." className="mb-0" />
       <section className="rounded-lg border border-line bg-surface p-5">
         <h2 className="flex items-center gap-2 text-[17px] font-semibold text-ink">
           <UserRound className="size-5 text-rose-deep" strokeWidth={1.5} aria-hidden /> {me.name}

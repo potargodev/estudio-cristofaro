@@ -35,7 +35,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
       <p className="mt-4 text-[13px] text-muted">
         {CATEGORIES[e.category as Category] ?? "Otros"} · {date}
       </p>
-      <h1 className="mt-1 font-display text-4xl leading-tight">{e.description}</h1>
+      <h1 className="mt-1 font-display text-[28px] leading-tight text-ink sm:text-[32px]">{e.description}</h1>
       <p className="mt-2 num text-[44px] leading-none">{formatMoney(e.amount, e.currency)}</p>
       {e.fx_rate && (
         <p className="mt-2 text-[14px] text-muted">

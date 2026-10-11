@@ -1,3 +1,5 @@
+import { HeaderAction } from "@/components/admin/kit/HeaderAction";
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { BellOff, Hash, MessagesSquare, Plus, Ship, User, Users, Wallet } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -25,15 +27,7 @@ export default async function MensajesPage() {
   const [list, blocked] = await Promise.all([listConversations(me), blockedList(me)]);
   return (
     <div className="grid gap-5 pb-10">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-display text-[clamp(2rem,6vw,2.6rem)] leading-tight">Mensajes</h1>
-          <p className="mt-1 text-[14px] text-muted">Con las personas de tu estudio, tu organización, tus grupos de gastos y tus Flotas.</p>
-        </div>
-        <Link href="/mensajes/nueva" className="inline-flex h-10 items-center gap-1.5 rounded-md bg-navy px-4 text-[14px] font-medium text-paper hover:bg-night">
-          <Plus className="size-4" aria-hidden /> Nueva conversación
-        </Link>
-      </header>
+      <PageHeader title="Mensajes" description="Con las personas de tu estudio, tu organización, tus grupos de gastos y tus Flotas." actions={<HeaderAction href="/mensajes/nueva" label="Nueva conversación" />} className="mb-0" />
 
       {list.length === 0 ? (
         <div className="rounded-md border border-dashed border-line bg-surface p-8 text-center">

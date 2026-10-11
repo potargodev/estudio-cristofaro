@@ -19,7 +19,7 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
       <Link href="/bitacora" className="text-[13px] text-muted hover:text-ink">
         ← Bitácora
       </Link>
-      <h1 className="font-display text-[32px] leading-tight">Categorías</h1>
+      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Categorías</h1>
       {sp.ok && <p role="status" className="rounded-md bg-navy-soft px-4 py-2.5 text-[14px]">{sp.ok}</p>}
       {sp.error && <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-[14px] text-danger">{sp.error}</p>}
       <ul className="divide-y divide-line rounded-lg border border-line bg-surface">

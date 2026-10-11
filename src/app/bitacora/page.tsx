@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronRight, Download, Settings2, Users, WandSparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -64,12 +65,11 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           {sp.error}
         </p>
       )}
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-rose-deep">Bitácora</p>
-          <h1 className="mt-1 font-display text-[34px] leading-tight sm:text-[42px]">Tu plata, a la vista.</h1>
-          <p className="text-[14px] text-muted">Privada: solo la ves vos.</p>
-        </div>
+      <PageHeader
+        title="Bitácora"
+        description="Tu plata, a la vista. Privada: solo la ves vos."
+        className="mb-0"
+        actions={
         <div className="flex items-center gap-1">
           <Link href={q({ mes: prevMonth(month) })} aria-label="Mes anterior" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <ChevronLeft className="size-4" aria-hidden />
@@ -79,7 +79,8 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
             <ChevronRight className="size-4" aria-hidden />
           </Link>
         </div>
-      </header>
+      }
+      />
 
       <section aria-label="Resumen del mes" className="grid grid-cols-3 gap-2 sm:gap-3">
         {[

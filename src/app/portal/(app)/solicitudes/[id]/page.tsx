@@ -45,7 +45,7 @@ export default async function SolicitudPage({
       </Link>
       <div className="mb-6 mt-2 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl">{r.subject}</h1>
+          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{r.subject}</h1>
           <p className="mt-1 text-sm text-muted">{REQUEST_TYPES[r.type]}</p>
         </div>
         <Badge tone={requestTone(r.status)}>{REQUEST_STATUS[r.status]}</Badge>

@@ -29,7 +29,7 @@ export default async function Saldar({ params, searchParams }: { params: Promise
       <Link href={`/grupos/g/${v.group.id}?tab=saldos`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
         ← {v.group.name}
       </Link>
-      <h1 className="mb-2 mt-3 font-display text-4xl leading-none">Saldar</h1>
+      <h1 className="mb-2 mt-3 font-display text-[28px] leading-tight text-ink sm:text-[32px]">Saldar</h1>
       <p className="mb-6 text-muted">Registrá un pago. Queda informado y se confirma cuando la otra persona lo acepta.</p>
       <SettleForm
         groupId={v.group.id}

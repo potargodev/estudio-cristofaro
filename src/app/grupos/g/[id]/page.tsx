@@ -57,7 +57,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       <header className="mt-4 flex items-start gap-4">
         <GroupDot color={group.color} name={group.name} size="lg" />
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-[clamp(1.9rem,6vw,2.7rem)] leading-[1.05]">{group.name}</h1>
+          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{group.name}</h1>
           <p className="mt-1 text-[14px] text-muted">
             {GROUP_TYPES[group.type as GroupType]} · {v.members.length} {v.members.length === 1 ? "persona" : "personas"} · en {group.base_currency}
             {v.organizationName && <> · Contabilidad de {v.organizationName}</>}

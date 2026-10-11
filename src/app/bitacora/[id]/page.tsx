@@ -29,7 +29,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
       <Link href={`/bitacora?mes=${mes}`} className="text-[13px] text-muted hover:text-ink">
         ← Bitácora
       </Link>
-      <h1 className="font-display text-[32px] leading-tight">{e.kind === "ingreso" ? "Ingreso" : "Gasto"}</h1>
+      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{e.kind === "ingreso" ? "Ingreso" : "Gasto"}</h1>
       {sp.error && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-[14px] text-danger">
           {sp.error}

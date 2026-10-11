@@ -14,7 +14,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
   const { invitacion } = await searchParams;
   return (
     <div className="mx-auto max-w-md pt-6">
-      <h1 className="font-display text-4xl leading-tight">Grupos de gastos</h1>
+      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Grupos de gastos</h1>
       <p className="mt-3 text-muted">Para ver tus grupos, entrá con tu cuenta. Si te invitaron sin cuenta, abrí el enlace que te pasaron.</p>
       {invitacion && MESSAGES[invitacion] && <p role="alert" className="mt-5 border-l-2 border-rose bg-rose-soft px-4 py-3 text-[14px] text-rose-deep">{MESSAGES[invitacion]}</p>}
       <div className="mt-8 grid gap-3">
