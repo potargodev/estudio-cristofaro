@@ -165,14 +165,14 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
   ];
 }
 
-/** Barra inferior del celular (4 accesos + "Más") */
+/** Barra inferior del celular: 3 accesos del espacio, el Vigía al centro y "Más" (§2.o, regla 8) */
 export function bottomFor(x: SpaceInput, groups: ShellGroup[]): ShellItem[] {
   const all = groups.flatMap((g) => g.items);
   const pick = (...hrefs: string[]) => hrefs.map((h) => all.find((i) => i.href === h)).filter((i): i is ShellItem => !!i);
-  if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos", "/admin/solicitudes").slice(0, 4);
-  if (x.space === "personal") return pick("/personal", "/bitacora", "/grupos", "/red");
-  if (x.space === "portal") return all.slice(0, 4);
-  return pick("/faro-manager", "/faro-manager/tenants", "/faro-manager/red", "/faro-manager/auditoria");
+  if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos");
+  if (x.space === "personal") return pick("/personal", "/bitacora", "/grupos");
+  if (x.space === "portal") return all.filter((i) => i.href !== "/portal/solicitudes" || all.length <= 3).slice(0, 3);
+  return pick("/faro-manager", "/faro-manager/tenants", "/faro-manager/red");
 }
 
 const hit = (pathname: string, href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));

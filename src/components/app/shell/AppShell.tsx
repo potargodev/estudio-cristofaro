@@ -31,7 +31,6 @@ import {
   LayoutDashboard,
   Lock,
   LogOut,
-  Menu,
   MessageSquareText,
   MessagesSquare,
   MoreHorizontal,
@@ -433,9 +432,6 @@ export function AppShell(p: ShellProps) {
 
       <div className={pad}>
         <header className={cn("sticky z-30 flex h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8", collapsed ? "top-0 lg:top-[var(--header-h)]" : "top-0")}>
-          <button type="button" onClick={() => setDrawer(true)} aria-label="Abrir menú" className="grid size-9 place-items-center rounded-md border border-line lg:hidden">
-            <Menu className="size-5" aria-hidden />
-          </button>
           <nav aria-label="Ubicación" className="min-w-0 flex-1">
             <ol className="flex min-w-0 items-center gap-1.5 text-[13px] text-muted">
               {trail.map((c, i) => (
@@ -504,8 +500,28 @@ export function AppShell(p: ShellProps) {
 
       {/* Celular: barra inferior */}
       <nav aria-label="Secciones principales" className="keep-dark fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper lg:hidden">
-        <ul className="grid grid-cols-5">
-          {p.bottom.map((i) => {
+        <ul className="grid grid-cols-5 items-end">
+          {[...p.bottom.slice(0, 2), null, ...p.bottom.slice(2, 3)].map((i) => {
+            // Al centro, el Vigía como botón destacado (§2.o, regla 8)
+            if (!i)
+              return (
+                <li key="vigia" className="flex justify-center">
+                  <a
+                    href="/vigia"
+                    onClick={(e) => {
+                      if (openVigia()) e.preventDefault();
+                    }}
+                    aria-label={`Vigía${vigiaCount ? ` · ${vigiaCount} ${BADGE_TEXT[p.vigiaBadge]}` : ""}`}
+                    className="relative -mt-5 mb-1 flex flex-col items-center gap-1 text-[11px] text-paper"
+                  >
+                    <span className="grid size-[52px] place-items-center rounded-full bg-gold text-night shadow-[0_8px_24px_-8px_rgba(0,0,0,0.6)] ring-4 ring-night motion-safe:transition-transform motion-safe:active:scale-95">
+                      <WandSparkles className="size-6" strokeWidth={1.6} aria-hidden />
+                    </span>
+                    {vigiaCount > 0 && <span aria-hidden className="num absolute right-0 top-0 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-[10px] font-semibold leading-[18px] text-night ring-2 ring-night">{vigiaCount}</span>}
+                    Vigía
+                  </a>
+                </li>
+              );
             const Icon = ICONS[i.icon];
             const on = isActive(i, active);
             const n = i.badge ? (p.badges[i.badge] ?? 0) : 0;
@@ -527,7 +543,7 @@ export function AppShell(p: ShellProps) {
             );
           })}
           <li>
-            <button type="button" onClick={() => setDrawer(true)} aria-expanded={drawer} className="flex w-full flex-col items-center gap-1 pb-2 pt-2.5 text-[11px] text-paper/60">
+            <button type="button" onClick={() => setDrawer(true)} aria-expanded={drawer} aria-label="Más: el menú completo y tus espacios" className={cn("flex w-full flex-col items-center gap-1 pb-2 pt-2.5 text-[11px]", drawer ? "text-paper" : "text-paper/60")}>
               <MoreHorizontal className="size-[22px]" strokeWidth={1.5} aria-hidden />
               Más
             </button>

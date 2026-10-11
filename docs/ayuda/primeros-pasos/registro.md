@@ -50,7 +50,7 @@ El menú muestra **un espacio a la vez** (Personal, tu estudio, tu organización
 La **barra de arriba** es igual en todos los espacios: el **Vigía**, **Mensajes**, los avisos (la campanita), la ayuda (**?**) y tu cuenta (tu foto o tus iniciales).
 
 - En la computadora, el botón de arriba del menú lo **colapsa**: pasa a una barra horizontal de íconos arriba (pasá el mouse para ver el nombre). El botón de la izquierda lo vuelve a expandir. Faro recuerda tu elección. Atajo: tecla **[**.
-- En el celular, la barra de abajo tiene los accesos de todos los días y **Más** abre el menú completo.
+- En el celular, la barra de abajo tiene tres accesos de todos los días, el **Vigía** al centro y **Más**, que abre el menú completo con el selector de espacio.
 - Si tenés más de un espacio (por ejemplo, tu estudio y tu espacio Personal, o varias organizaciones), cambiás desde el selector de arriba del menú o desde **Cambiar de espacio**, en el menú de tu cuenta.
 
 ## Instalar Faro en el teléfono

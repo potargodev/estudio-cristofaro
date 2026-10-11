@@ -25,6 +25,14 @@ Faro junta varias cosas en una sola cuenta: tus finanzas personales, el estudio 
 
 Arriba del menú está el **selector de espacio**: muestra el nombre y el tipo del espacio en el que estás. Tocalo y elegí otro; el cambio es de un toque. En el celular, el selector está arriba del menú **Más**.
 
+## En el celular
+
+La barra de abajo tiene tres accesos del espacio, el **Vigía** al centro y **Más** (el resto del menú y tus espacios):
+
+- **Personal:** Inicio, Bitácora, Vigía, Grupos y Más.
+- **Estudio:** Inicio, Organizaciones, Vigía, Vencimientos y Más.
+- **Organización:** Inicio, Vencimientos, Vigía, Documentos y Más.
+
 Faro **recuerda el último espacio que usaste**: la próxima vez que entres, arrancás ahí.
 
 Las pantallas que son de todos los espacios (Mensajes, la Ayuda) se abren en el espacio en el que estabas.
