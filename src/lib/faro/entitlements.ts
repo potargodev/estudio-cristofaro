@@ -1,8 +1,8 @@
 import "server-only";
-import { and, count, eq, gt, inArray, isNull, or } from "drizzle-orm";
+import { and, count, eq, gt, gte, inArray, isNull, or } from "drizzle-orm";
 import { cache } from "react";
 import { getDb } from "@/db";
-import { faro_module_releases, faro_plans, organizations, studios, tenant_modules, users } from "@/db/schema";
+import { faro_module_releases, faro_plans, invoices, organizations, studios, tenant_modules, users } from "@/db/schema";
 import { FARO_MODULES, getFaroModule, type FaroModuleKey, type ModuleStatus } from "@/modules/registry";
 import { PLANS, type AiLevel, type FaroPlan, type PlanLimits, type TenantKind } from "./plans";
 
@@ -146,6 +146,16 @@ export async function limitUsage(studioId: string, key: LimitKey): Promise<numbe
       .select({ n: count() })
       .from(users)
       .where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador", "colaborador"]), eq(users.active, true)));
+    return n;
+  }
+  if (key === "invoicesPerMonth") {
+    // Comprobantes autorizados en el mes calendario (hora de Buenos Aires)
+    const ar = new Date(Date.now() - 3 * 3600_000);
+    const first = new Date(Date.UTC(ar.getUTCFullYear(), ar.getUTCMonth(), 1, 3));
+    const [{ n }] = await db
+      .select({ n: count() })
+      .from(invoices)
+      .where(and(eq(invoices.studio_id, studioId), eq(invoices.status, "autorizada"), gte(invoices.authorized_at, first)));
     return n;
   }
   return 0;

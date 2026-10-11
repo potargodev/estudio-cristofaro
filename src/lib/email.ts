@@ -100,7 +100,7 @@ export async function sendMail({
   subject: string;
   html: string;
   replyTo?: string;
-  attachments?: { filename: string; content: string; contentType?: string }[];
+  attachments?: { filename: string; content: string; contentType?: string; encoding?: string }[];
 }): Promise<boolean> {
   const transport = getTransport();
   const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);

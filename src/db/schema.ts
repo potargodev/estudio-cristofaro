@@ -561,6 +561,9 @@ export const obligations = pgTable(
     payment_url: text("payment_url"), // link de pago o VEP (opcional)
     assigned_to: uuid("assigned_to").references(() => users.id, { onDelete: "set null" }),
     notes: text("notes"),
+    /** manual | calendario_personal | importacion | tango */
+    source: text("source"),
+    reminded_at: timestamp("reminded_at", { withTimezone: true }),
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
@@ -2287,4 +2290,323 @@ export const push_subscriptions = pgTable(
     created_at: createdAt(),
   },
   (t) => [uniqueIndex("push_subscriptions_endpoint_idx").on(t.endpoint), index("push_subscriptions_user_idx").on(t.user_id)],
+);
+
+// ───────────────────────── ARCA y facturación (F3 · docs/faro-producto.md §2.c) ─────────────────────────
+// Siempre por los web services oficiales (WSAA, WSFEv1, constancia de
+// inscripción), con el certificado de la CUIT que opera Faro y la delegación
+// de cada contribuyente. Todo lo que llega de ARCA guarda fuente, fecha,
+// ID externo, estado de validación y el registro original.
+
+/** Certificado y clave privada de la CUIT operadora de Faro, por ambiente (cifrados con ENCRYPTION_KEY) */
+export const arca_credentials = pgTable(
+  "arca_credentials",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    environment: text("environment").notNull(), // homologacion | produccion
+    cuit: text("cuit").notNull(),
+    cert_enc: text("cert_enc").notNull(),
+    key_enc: text("key_enc").notNull(),
+    cert_subject: text("cert_subject"),
+    cert_not_after: timestamp("cert_not_after", { withTimezone: true }),
+    last_test_at: timestamp("last_test_at", { withTimezone: true }),
+    last_test_ok: boolean("last_test_ok"),
+    last_test_detail: text("last_test_detail"),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("arca_credentials_env_idx").on(t.environment)],
+);
+
+/** Tickets de acceso del WSAA (válidos ~12 h): se reusan hasta su vencimiento */
+export const arca_tickets = pgTable(
+  "arca_tickets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    environment: text("environment").notNull(),
+    service: text("service").notNull(),
+    cuit: text("cuit").notNull(),
+    token: text("token").notNull(),
+    sign: text("sign").notNull(),
+    expires_at: timestamp("expires_at", { withTimezone: true }).notNull(),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("arca_tickets_service_idx").on(t.environment, t.service, t.cuit)],
+);
+
+/** Situación de un contribuyente según ARCA (constancia de inscripción), con el registro original */
+export const arca_taxpayers = pgTable(
+  "arca_taxpayers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit").notNull(),
+    source: text("source").notNull(), // ws_sr_constancia_inscripcion | manual
+    environment: text("environment"),
+    external_id: text("external_id"),
+    validation: text("validation").notNull().default("validado"), // validado | error | a_revisar
+    data: jsonb("data").$type<Record<string, unknown>>().notNull(),
+    raw: jsonb("raw").$type<unknown>(),
+    error: text("error"),
+    fetched_at: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
+    fetched_by: uuid("fetched_by").references(() => users.id, { onDelete: "set null" }),
+  },
+  (t) => [index("arca_taxpayers_cuit_idx").on(t.studio_id, t.cuit, t.fetched_at)],
+);
+
+/** Datos de facturación de un emisor (autónomo u organización): marca del PDF y contacto */
+export const invoice_settings = pgTable(
+  "invoice_settings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit").notNull(),
+    business_name: text("business_name").notNull(),
+    iva_condition: text("iva_condition").notNull().default("monotributo"), // monotributo | responsable_inscripto | exento
+    address: text("address"),
+    activity_start: date("activity_start"),
+    iibb: text("iibb"),
+    logo_path: text("logo_path"),
+    color: text("color").default("#1c2235"),
+    email: text("email"),
+    phone: text("phone"),
+    website: text("website"),
+    footer: text("footer"),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("invoice_settings_org_cuit_idx").on(t.organization_id, t.cuit)],
+);
+
+/** Puntos de venta habilitados para web services (los trae ARCA) */
+export const invoice_points = pgTable(
+  "invoice_points",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit").notNull(),
+    number: integer("number").notNull(),
+    kind: text("kind"),
+    blocked: boolean("blocked").notNull().default(false),
+    source: text("source").notNull().default("wsfe"),
+    synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("invoice_points_unique_idx").on(t.organization_id, t.cuit, t.number)],
+);
+
+/** Clientes frecuentes del emisor */
+export const invoice_customers = pgTable(
+  "invoice_customers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    doc_type: integer("doc_type").notNull().default(80), // 80 CUIT · 86 CUIL · 96 DNI · 99 consumidor final
+    doc_number: text("doc_number").notNull().default("0"),
+    name: text("name").notNull(),
+    iva_condition: text("iva_condition").notNull().default("consumidor_final"),
+    email: text("email"),
+    address: text("address"),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("invoice_customers_org_idx").on(t.organization_id)],
+);
+
+/** Productos y servicios frecuentes */
+export const invoice_products = pgTable(
+  "invoice_products",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    description: text("description").notNull(),
+    unit_price: numeric("unit_price", { precision: 14, scale: 2 }).notNull(),
+    iva_rate: numeric("iva_rate", { precision: 5, scale: 2 }), // null = no corresponde (factura C)
+    created_at: createdAt(),
+  },
+  (t) => [index("invoice_products_org_idx").on(t.organization_id)],
+);
+
+export interface InvoiceItem {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  /** Alícuota de IVA (21, 10.5, 27, 5, 2.5, 0); null en comprobantes C */
+  ivaRate: number | null;
+}
+
+/** Comprobantes electrónicos (borradores y autorizados por ARCA) */
+export const invoices = pgTable(
+  "invoices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit").notNull(),
+    environment: text("environment").notNull(),
+    point_of_sale: integer("point_of_sale").notNull(),
+    cbte_type: integer("cbte_type").notNull(),
+    number: bigint("number", { mode: "number" }),
+    issue_date: date("issue_date").notNull(),
+    concept: integer("concept").notNull().default(2), // 1 productos · 2 servicios · 3 ambos
+    service_from: date("service_from"),
+    service_to: date("service_to"),
+    payment_due: date("payment_due"),
+    customer_id: uuid("customer_id").references((): AnyPgColumn => invoice_customers.id, { onDelete: "set null" }),
+    customer_doc_type: integer("customer_doc_type").notNull(),
+    customer_doc_number: text("customer_doc_number").notNull(),
+    customer_name: text("customer_name").notNull(),
+    customer_iva_condition: text("customer_iva_condition").notNull(),
+    customer_email: text("customer_email"),
+    customer_address: text("customer_address"),
+    currency: text("currency").notNull().default("PES"),
+    exchange_rate: numeric("exchange_rate", { precision: 14, scale: 6 }).notNull().default("1"),
+    items: jsonb("items").$type<InvoiceItem[]>().notNull(),
+    net: numeric("net", { precision: 14, scale: 2 }).notNull(),
+    iva: numeric("iva", { precision: 14, scale: 2 }).notNull().default("0"),
+    exempt: numeric("exempt", { precision: 14, scale: 2 }).notNull().default("0"),
+    total: numeric("total", { precision: 14, scale: 2 }).notNull(),
+    iva_breakdown: jsonb("iva_breakdown").$type<{ rate: number; base: number; amount: number }[]>().notNull().default([]),
+    associated_invoice_id: uuid("associated_invoice_id").references((): AnyPgColumn => invoices.id, { onDelete: "set null" }),
+    status: text("status").notNull().default("borrador"), // borrador | autorizando | autorizada | rechazada | error
+    cae: text("cae"),
+    cae_due: date("cae_due"),
+    observations: jsonb("observations").$type<{ code: number; msg: string }[]>(),
+    error: text("error"),
+    /** Pedido y respuesta originales de ARCA */
+    raw_request: jsonb("raw_request").$type<unknown>(),
+    raw_response: jsonb("raw_response").$type<unknown>(),
+    public_token: text("public_token"),
+    payment_url: text("payment_url"),
+    emailed_at: timestamp("emailed_at", { withTimezone: true }),
+    notes: text("notes"),
+    origin: text("origin").notNull().default("manual"), // manual | vigia | aprobacion | flujo
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    authorized_by: uuid("authorized_by").references(() => users.id, { onDelete: "set null" }),
+    authorized_at: timestamp("authorized_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [
+    index("invoices_org_idx").on(t.organization_id, t.issue_date),
+    uniqueIndex("invoices_number_idx").on(t.cuit, t.environment, t.point_of_sale, t.cbte_type, t.number),
+    uniqueIndex("invoices_token_idx").on(t.public_token),
+  ],
+);
+
+/** Escalas de monotributo versionadas por vigencia (las mantiene el Faro Manager) */
+export const monotributo_scales = pgTable(
+  "monotributo_scales",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    valid_from: date("valid_from").notNull(),
+    status: text("status").notNull().default("a_validar"), // a_validar | validada
+    source: text("source").notNull(),
+    notes: text("notes"),
+    categories: jsonb("categories")
+      .$type<{ letter: string; maxIncome: number; maxSurfaceM2: number | null; maxEnergyKw: number | null; maxRent: number | null; feeServices: number | null; feeGoods: number | null; servicesAllowed: boolean }[]>()
+      .notNull(),
+    validated_by: uuid("validated_by").references(() => users.id, { onDelete: "set null" }),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("monotributo_scales_from_idx").on(t.valid_from)],
+);
+
+/** Facturación fuera de Faro (meses anteriores u otro facturador) para el semáforo */
+export const income_adjustments = pgTable(
+  "income_adjustments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    month: text("month").notNull(), // AAAA-MM
+    amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
+    note: text("note"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("income_adjustments_month_idx").on(t.organization_id, t.month)],
+);
+
+/** Perfil fiscal para el calendario personal (régimen y jurisdicción) */
+export const tax_profiles = pgTable(
+  "tax_profiles",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit").notNull(),
+    regime: text("regime").notNull().default("monotributo"), // monotributo | responsable_inscripto
+    category: text("category"),
+    iibb: text("iibb").notNull().default("simplificado"), // simplificado | local | convenio | exento
+    jurisdiction: text("jurisdiction"),
+    autonomos: boolean("autonomos").notNull().default(false),
+    alerts_email: boolean("alerts_email").notNull().default(true),
+    alert_days: integer("alert_days").notNull().default(3),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("tax_profiles_org_idx").on(t.organization_id)],
+);
+
+/** Chequeos guiados de lo que ARCA no ofrece por web service (deuda, multas, intimaciones) */
+export const guided_checks = pgTable(
+  "guided_checks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references((): AnyPgColumn => organizations.id, { onDelete: "cascade" }),
+    check_key: text("check_key").notNull(),
+    status: text("status").notNull().default("sin_revisar"), // sin_revisar | ok | con_novedades
+    finding: text("finding"),
+    amount: numeric("amount", { precision: 14, scale: 2 }),
+    checked_at: timestamp("checked_at", { withTimezone: true }),
+    checked_by: uuid("checked_by").references(() => users.id, { onDelete: "set null" }),
+    every_days: integer("every_days").notNull().default(30),
+    next_reminder_at: timestamp("next_reminder_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("guided_checks_unique_idx").on(t.organization_id, t.check_key)],
 );

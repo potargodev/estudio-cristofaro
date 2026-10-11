@@ -7,7 +7,7 @@ import { notifications } from "@/db/schema";
 // toda lectura y toda marca filtra por el usuario de la sesión.
 
 export interface NewNotice {
-  kind: "gasto" | "pago" | "grupo" | "mensaje";
+  kind: "gasto" | "pago" | "grupo" | "mensaje" | "fiscal" | "aviso";
   title: string;
   body?: string | null;
   href?: string | null;
