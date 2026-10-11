@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { cn } from "@/lib/utils";
 
 // Piezas visuales del portal (server components).
@@ -27,16 +28,9 @@ export function Card({ className, children }: { className?: string; children: Re
   return <section className={cn("rounded-md border border-line bg-surface p-5", className)}>{children}</section>;
 }
 
-export function PageTitle({ title, intro, children }: { title: string; intro?: string; children?: React.ReactNode }) {
-  return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
-      <div>
-        <h1 className="font-display text-[clamp(2.2rem,3.8vw,3.2rem)] leading-none text-ink">{title}</h1>
-        {intro && <p className="mt-2.5 max-w-xl text-[16px] text-muted">{intro}</p>}
-      </div>
-      {children}
-    </div>
-  );
+/** Encabezado de las pantallas del portal: el mismo PageHeader de toda la app */
+export function PageTitle({ title, intro, children, level }: { title: string; intro?: string; children?: React.ReactNode; level?: 1 | 2 }) {
+  return <PageHeader title={title} description={intro} actions={children} level={level} />;
 }
 
 export type EmptyArt = "calendario" | "carpeta" | "charla" | "general";

@@ -1,5 +1,6 @@
 import { FirstSteps } from "@/components/app/FirstSteps";
-import { ArrowRight, Download } from "lucide-react";
+import { PageHeader } from "@/components/admin/kit/PageHeader";
+import { ArrowRight, CalendarDays, Download, Star } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge, Card, Empty, obligationTone, requestTone } from "@/components/portal/ui";
@@ -34,13 +35,13 @@ export default async function PortalHome() {
   );
   const lead = staff.find((t) => t.assignment === "responsable") ?? null;
   const today = todayISO();
+  const canReview = me.orgRole === "administrador" || me.orgRole === "direccion";
   // Saluda por el nombre solo si el usuario tiene uno propio (no la razón social)
   const first = me.name && me.name !== me.organizationName ? me.name.split(" ")[0] : "";
 
   return (
     <>
-      <h1 className="font-display text-3xl sm:text-4xl">Hola{first ? `, ${first}` : ""}</h1>
-      <p className="mt-2 text-muted">Lo que viene, lo último que te mandamos y tus consultas abiertas.</p>
+      <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que viene, lo último que te mandamos y tus consultas abiertas." className="mb-0" />
       <FirstSteps className="mt-6" />
 
       {(month.obligations || month.documents || month.requests) && (
@@ -102,14 +103,23 @@ export default async function PortalHome() {
         </div>
 
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4">
+          {/* Tarjeta del estudio: agendar una llamada y reseñarlo (antes, ítems del menú) */}
           <LeadContact lead={lead} team={staff.filter((t) => t.assignment !== "responsable")}>
-            {lead && can(me.orgRole, "agenda.reservar") && (
-              <Link
-                href="/portal/agendar"
-                className="mt-4 inline-flex h-10 items-center rounded-md bg-navy px-4 text-[15px] font-medium text-paper transition-colors hover:bg-navy-deep"
-              >
-                Agendar una llamada
-              </Link>
+            {(can(me.orgRole, "agenda.reservar") || canReview) && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {can(me.orgRole, "agenda.reservar") && (
+                  <Link href="/portal/agendar" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-[15px] font-medium text-paper transition-colors hover:bg-navy-deep">
+                    <CalendarDays className="size-4" aria-hidden />
+                    Agendar una llamada
+                  </Link>
+                )}
+                {canReview && (
+                  <Link href="/portal/resena" className="inline-flex h-10 items-center gap-2 rounded-md border border-line bg-surface px-4 text-[15px] font-medium text-ink transition-colors hover:border-muted">
+                    <Star className="size-4" aria-hidden />
+                    Reseñar al estudio
+                  </Link>
+                )}
+              </div>
             )}
           </LeadContact>
           {show.documents && (

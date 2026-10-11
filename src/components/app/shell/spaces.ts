@@ -105,12 +105,13 @@ const PORTAL_ICON: Record<string, ShellIcon> = {
   ayuda: "ayuda",
   resena: "resena",
   mas: "modulos",
+  empresa: "empresa",
 };
 
 export interface SpaceInput {
   space: Space;
   studio?: NavAccess;
-  portal?: { main: PortalNavItem[]; extra: PortalNavItem[] };
+  portal?: { main: PortalNavItem[]; empresa: PortalNavItem[] };
   /** Espacio personal: titular de una cuenta personal (persona o autónomo) */
   personal?: { titular: boolean; autonomo: boolean };
   faroOwner?: boolean;
@@ -146,11 +147,8 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
     return [{ title: "", items }];
   }
   if (x.space === "portal" && x.portal) {
-    const conv = (i: PortalNavItem): ShellItem => ({ href: i.href, label: i.label, icon: PORTAL_ICON[i.icon] ?? "modulos", exact: i.exact, badge: i.href === "/portal/solicitudes" ? "portalRequests" : undefined });
-    return [
-      { title: "Tu organización", items: x.portal.main.map(conv) },
-      { title: "Más", items: x.portal.extra.filter((i) => i.href !== "/ayuda" && i.href !== "/grupos").map(conv) },
-    ].filter((g) => g.items.length);
+    const conv = (i: PortalNavItem): ShellItem => ({ href: i.href, label: i.label, icon: PORTAL_ICON[i.icon] ?? "modulos", exact: i.exact, match: i.match, badge: i.href === "/portal/solicitudes" ? "portalRequests" : undefined });
+    return [{ title: "", items: x.portal.main.map(conv) }].filter((g) => g.items.length);
   }
   // Faro Manager
   return [

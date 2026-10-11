@@ -1,3 +1,4 @@
+import { EmpresaHeader } from "@/components/portal/EmpresaTabs";
 import { Blocks } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -22,19 +23,28 @@ export default async function ModuloPage({ params }: { params: Promise<{ key: st
   if (!me.modules.includes(mod.key)) notFound();
   if (!can(me.orgRole, mod.permissions.view)) redirect("/portal/sin-permiso");
   const Screen = MODULE_SCREENS[mod.key];
-  if (Screen) return <Screen me={me} path={path} />;
+  if (Screen)
+    return (
+      <>
+        <EmpresaHeader me={me} />
+        <Screen me={me} path={path} />
+      </>
+    );
   return (
+    <>
+    <EmpresaHeader me={me} />
     <Card className="mx-auto max-w-xl text-center">
       <span className="mx-auto grid size-14 place-items-center bg-rose-soft text-rose-deep">
         <Blocks className="size-7" aria-hidden />
       </span>
       <p className="mt-4 text-sm font-medium uppercase tracking-wider text-rose-deep">Próximamente</p>
-      <h1 className="mt-1 font-display text-3xl">{mod.name}</h1>
+      <h2 className="mt-1 font-display text-[24px]">{mod.name}</h2>
       <p className="mt-3 leading-relaxed text-muted">{mod.description}</p>
       <p className="mt-3 text-sm text-muted">El módulo ya está habilitado para {me.organizationName}. Te avisamos cuando esté listo para usar.</p>
       <Link href="/portal" className="link-underline mt-6 inline-block text-rose-deep">
         Volver al inicio
       </Link>
     </Card>
+    </>
   );
 }

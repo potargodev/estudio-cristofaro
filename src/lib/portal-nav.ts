@@ -2,62 +2,51 @@ import { MODULES, moduleHref } from "./modules/catalog";
 import { can, canSeeRequests, type OrgRole } from "./permissions";
 
 // Navegación del portal según el rol del miembro y los módulos activos de su
-// organización. Es solo presentación: cada página vuelve a validar el permiso
-// en el servidor.
+// organización (docs/faro-producto.md §2.o). Organización: Inicio ·
+// Vencimientos · Documentos · Solicitudes · Empresa. Empleado: Inicio ·
+// Rendiciones · Grupos. Es solo presentación: cada página vuelve a validar
+// el permiso en el servidor.
 
-export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas" | "gastos" | "rendiciones" | "ayuda" | "resena";
+export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas" | "gastos" | "rendiciones" | "ayuda" | "resena" | "empresa";
 
 export interface PortalNavItem {
   href: string;
   label: string;
   icon: PortalIcon;
   exact?: boolean;
+  /** Otras rutas que también lo marcan activo (las pestañas de Empresa) */
+  match?: string[];
+}
+
+/** Pestañas de Empresa: gastos de la empresa, rendiciones y los módulos activos */
+export function empresaTabs(role: OrgRole, activeModules: string[]): PortalNavItem[] {
+  const tabs: PortalNavItem[] = [];
+  if (can(role, "finanzas.ver")) tabs.push({ href: "/portal/gastos-empresa", label: "Gastos de la empresa", icon: "gastos" });
+  if (can(role, "gastos.rendir") || can(role, "finanzas.gestionar")) tabs.push({ href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" });
+  for (const m of MODULES) {
+    if (!activeModules.includes(m.key) || !can(role, m.permissions.view)) continue;
+    for (const item of m.nav) tabs.push({ href: moduleHref(m.key, item.path), label: item.label, icon: "modulo" });
+  }
+  return tabs;
 }
 
 export function buildPortalNav(role: OrgRole, activeModules: string[]) {
-  // El empleado tiene su propio inicio (/portal/empleado): grupos de gastos y sus rendiciones
-  const main: PortalNavItem[] = can(role, "inicio.ver")
-    ? [{ href: "/portal", label: "Inicio", icon: "inicio", exact: true }]
-    : role === "empleado"
-      ? [{ href: "/portal/empleado", label: "Inicio", icon: "inicio", exact: true }]
-      : [];
-  if (can(role, "vencimientos.ver"))
-    main.push({
-      href: "/portal/vencimientos",
-      label: "Vencimientos",
-      icon: "vencimientos",
-    });
-  if (can(role, "documentos.ver"))
-    main.push({
-      href: "/portal/documentos",
-      label: "Documentos",
-      icon: "documentos",
-    });
-  if (canSeeRequests(role))
-    main.push({
-      href: "/portal/solicitudes",
-      label: "Solicitudes",
-      icon: "solicitudes",
-    });
-
-  const extra: PortalNavItem[] = [];
-  const rendiciones: PortalNavItem = { href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" };
-  if (role === "empleado") main.push(rendiciones, { href: "/grupos", label: "Grupos de gastos", icon: "gastos" });
-  else if (can(role, "gastos.rendir") || can(role, "finanzas.gestionar")) extra.push(rendiciones);
-  if (can(role, "finanzas.ver")) extra.push({ href: "/portal/gastos-empresa", label: "Gastos de la empresa", icon: "gastos" });
-  if (role !== "empleado") extra.push({ href: "/grupos", label: "Grupos de gastos", icon: "gastos" });
-  for (const m of MODULES) {
-    if (!activeModules.includes(m.key) || !can(role, m.permissions.view)) continue;
-    for (const item of m.nav)
-      extra.push({
-        href: moduleHref(m.key, item.path),
-        label: item.label,
-        icon: "modulo",
-      });
-  }
-  if (can(role, "agenda.reservar")) extra.push({ href: "/portal/agendar", label: "Agendar llamada", icon: "agenda" });
-  if (can(role, "equipo.gestionar")) extra.push({ href: "/portal/equipo", label: "Mi equipo", icon: "equipo" });
-  if (role === "administrador" || role === "direccion") extra.push({ href: "/portal/resena", label: "Reseñar al estudio", icon: "resena" });
-  extra.push({ href: "/ayuda", label: "Ayuda", icon: "ayuda" });
-  return { main, extra };
+  // El empleado tiene su propio inicio (/portal/empleado): sus rendiciones y sus grupos de gastos
+  if (role === "empleado")
+    return {
+      main: [
+        { href: "/portal/empleado", label: "Inicio", icon: "inicio", exact: true },
+        { href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" },
+        // F5: { href: "/portal/recibos", label: "Mis recibos", icon: "documentos" },
+        { href: "/grupos", label: "Grupos", icon: "gastos" },
+      ] satisfies PortalNavItem[],
+      empresa: [] as PortalNavItem[],
+    };
+  const main: PortalNavItem[] = can(role, "inicio.ver") ? [{ href: "/portal", label: "Inicio", icon: "inicio", exact: true }] : [];
+  if (can(role, "vencimientos.ver")) main.push({ href: "/portal/vencimientos", label: "Vencimientos", icon: "vencimientos" });
+  if (can(role, "documentos.ver")) main.push({ href: "/portal/documentos", label: "Documentos", icon: "documentos" });
+  if (canSeeRequests(role)) main.push({ href: "/portal/solicitudes", label: "Solicitudes", icon: "solicitudes" });
+  const empresa = empresaTabs(role, activeModules);
+  if (empresa.length) main.push({ href: "/portal/empresa", label: "Empresa", icon: "empresa", match: [...empresa.map((t) => t.href.split("?")[0]), "/portal/modulos", "/portal/empresa"] });
+  return { main, empresa };
 }

@@ -32,12 +32,12 @@ En **Tus rendiciones** ves el estado de cada una. Cuando la revisan, te llega un
 
 Aprueban quienes tienen permiso para gestionar finanzas: **Administrador**, **Dirección** y **Administración**. Cuando alguien carga una rendición, les llega un mail.
 
-1. En el portal, entrá a **Rendiciones**.
+1. En el portal, entrá a **Empresa → Rendiciones**.
 2. Revisá el ticket y los datos.
 3. **Aprobá** o **rechazá**. Al rechazar, podés escribir el motivo.
 4. Cuando devuelvas la plata, marcala como **reintegrada**. Solo se reintegra una rendición aprobada.
 
-Lo aprobado pasa a **Gastos de la empresa**, con su comprobante, y lo ve el estudio en **Resumen → Gastos**, en la ficha de la organización. Cada paso queda en la auditoría.
+Lo aprobado pasa a **Empresa → Gastos de la empresa**, con su comprobante, y lo ve el estudio en **Resumen → Gastos**, en la ficha de la organización. Cada paso queda en la auditoría.
 
 ## Quién puede rendir
 

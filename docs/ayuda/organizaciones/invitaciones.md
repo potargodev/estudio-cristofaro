@@ -20,7 +20,7 @@ Desde ahí mismo podés reenviar una invitación, revocarla, cambiar el rol de u
 
 ## Si sos el Administrador de la organización
 
-1. En el portal, entrá a **Mi equipo**.
+1. En el portal, abrí el menú de tu cuenta (tus iniciales, arriba a la derecha) y entrá a **Mi equipo**.
 2. Invitá con el email y el rol. Nunca podés dar un rol superior al tuyo.
 
 Solo el **Administrador** gestiona el equipo. Si es el único administrador, primero hay que designar otro antes de quitarle el acceso.

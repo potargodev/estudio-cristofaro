@@ -3,7 +3,7 @@ titulo: Reseñas de estudios en la Red
 resumen: Quién puede dejar una reseña, cómo responde el estudio, cómo modera Faro y por qué el ranking es neutral.
 perfiles: [persona, autonomo, organizacion, estudio]
 modulo: red_estudios
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [red-de-estudios/buscar-un-estudio, red-de-estudios/perfil-del-estudio]
 ---
 
@@ -13,7 +13,7 @@ Las reseñas ayudan a elegir estudio con información real. Por eso tienen regla
 
 - **Solo clientes reales del estudio en Faro.** No se puede reseñar a un estudio con el que no trabajaste.
 - La organización tiene que llevar **al menos 30 días** trabajando con el estudio en Faro.
-- **Una reseña por organización.** La deja quien la administra o dirige (roles Administrador o Dirección), desde el portal, en **Más → Reseñar al estudio**.
+- **Una reseña por organización.** La deja quien la administra o dirige (roles Administrador o Dirección), desde el **Inicio** del portal, en la tarjeta del estudio: **Reseñar al estudio**.
 - Se publica con el **nombre de pila** de quien la escribe y la marca «cliente verificado».
 
 ## Qué conviene contar

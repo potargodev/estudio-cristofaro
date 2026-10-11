@@ -80,7 +80,7 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
       badges.portalRequests = open?.n ?? 0;
       spaceName = current.organizationName;
       roleLabel = ORG_ROLE_LABELS[current.role];
-    } else input.portal = { main: [], extra: [] };
+    } else input.portal = { main: [], empresa: [] };
     studioBrand = studio?.name ?? null;
   } else {
     const [[pr], red] = await Promise.all([db.select({ n: count() }).from(plan_requests).where(eq(plan_requests.status, "pendiente")), moderationCounts()]);

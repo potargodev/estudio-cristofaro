@@ -1,3 +1,4 @@
+import { EmpresaHeader } from "@/components/portal/EmpresaTabs";
 import type { Metadata } from "next";
 import { Card, Empty, PageTitle } from "@/components/portal/ui";
 import { requireMember } from "@/lib/auth";
@@ -15,7 +16,8 @@ export default async function GastosEmpresaPage() {
   for (const r of rows) totals[r.currency] = (totals[r.currency] ?? 0) + r.amount;
   return (
     <>
-      <PageTitle title="Gastos de la empresa" intro="Rendiciones aprobadas y grupos de gastos marcados como de la empresa o deducibles, con su comprobante. Tu estudio también los ve." />
+      <EmpresaHeader me={me} />
+      <PageTitle level={2} title="Gastos de la empresa" intro="Rendiciones aprobadas y grupos de gastos marcados como de la empresa o deducibles, con su comprobante. Tu estudio también los ve." />
       <div className="mb-6 flex flex-wrap gap-3">
         {Object.entries(totals).map(([c, v]) => (
           <Card key={c} className="min-w-48">

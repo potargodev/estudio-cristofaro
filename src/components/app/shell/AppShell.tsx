@@ -336,7 +336,9 @@ export function AppShell(p: ShellProps) {
   useEffect(() => setDrawer(false), [pathname]);
 
   const vigiaCount = p.badges[p.vigiaBadge] ?? 0;
-  const trail = active ? [{ label: p.groups.find((g) => g.items.some((i) => i.href === active.href))?.title ?? "" }, { label: active.label, href: active.href }] : [{ label: p.spaceName }];
+  // Ubicación: espacio › sección (el grupo no se repite si se llama igual o no tiene título)
+  const group = active ? p.groups.find((g) => g.items.some((i) => i.href === active.href))?.title : "";
+  const trail: { label: string; href?: string }[] = active ? [...(group && group !== active.label ? [{ label: group }] : [{ label: p.spaceName }]), { label: active.label, href: active.href }] : [{ label: p.spaceName }];
 
   const brand = (small: boolean) => (
     <Link href={p.home} className="flex min-w-0 items-center gap-3" aria-label={`${p.spaceName} · Inicio`}>
