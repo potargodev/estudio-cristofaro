@@ -10,7 +10,8 @@
 // - Bitácora (dólar MEP del día, fijos, fugas, avisos y resumen semanal del
 //   domingo) cada hora (BITACORA_JOBS=off los apaga).
 // - Cobros (suscripciones de Faro: pruebas, gracia y suspensión; honorarios:
-//   cargos del mes y recordatorios escalonados) cada hora (COBROS_JOBS=off).
+//   cargos del mes y recordatorios escalonados) y recordatorios de firma de
+//   recibos, cada hora (COBROS_JOBS=off).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
@@ -83,8 +84,11 @@ export async function register() {
 
   if (process.env.COBROS_JOBS !== "off" && !g.__cobrosTimer) {
     const [{ runSubscriptionJobs }, { runFeeJobs }] = await Promise.all([import("./modules/billing/subscriptions"), import("./modules/billing/fees")]);
+    const { runPayrollJobs } = await import("./modules/payroll/server");
     const run = async () => {
       try {
+        const firmas = await runPayrollJobs();
+        if (firmas) console.info(`[recibos] ${firmas} recordatorios de firma`);
         const subs = await runSubscriptionJobs();
         const fees = await runFeeJobs();
         if (subs || fees.charges || fees.reminders) console.info(`[cobros] ${subs} suscripciones cambiaron de estado, ${fees.charges} cargos, ${fees.reminders} recordatorios`);

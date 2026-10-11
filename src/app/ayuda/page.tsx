@@ -1,4 +1,4 @@
-import { Building2, CalendarClock, Compass, FileText, HandCoins, Handshake, Inbox, MessagesSquare, NotebookPen, Plug, Receipt, Ship, Sparkles, Wallet, type LucideIcon } from "lucide-react";
+import { Building2, CalendarClock, Compass, FileText, HandCoins, Handshake, IdCard, Inbox, MessagesSquare, NotebookPen, Plug, Receipt, Ship, Sparkles, Wallet, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HelpSearch } from "@/components/help/HelpSearch";
@@ -7,7 +7,7 @@ import { ARTICLES, articleUrl, CATEGORIES, categoryName, PROFILE_LABELS, type He
 
 export const metadata: Metadata = { title: "Centro de ayuda" };
 
-const ICONS: Record<string, LucideIcon> = { Building2, CalendarClock, Compass, FileText, HandCoins, Handshake, Inbox, MessagesSquare, NotebookPen, Plug, Receipt, Ship, Sparkles, Wallet };
+const ICONS: Record<string, LucideIcon> = { Building2, CalendarClock, Compass, FileText, HandCoins, Handshake, IdCard, Inbox, MessagesSquare, NotebookPen, Plug, Receipt, Ship, Sparkles, Wallet };
 const norm = (s: string) =>
   s
     .normalize("NFD")

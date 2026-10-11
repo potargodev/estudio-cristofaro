@@ -36,9 +36,9 @@ export function buildPortalNav(role: OrgRole, activeModules: string[]) {
   if (role === "empleado")
     return {
       main: [
-        { href: "/portal/empleado", label: "Inicio", icon: "inicio", exact: true },
+        { href: "/portal/empleado", label: "Inicio", icon: "inicio", exact: true, match: ["/portal/comunicados"] },
+        { href: "/portal/recibos", label: "Mis recibos", icon: "documentos" },
         { href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" },
-        // F5: { href: "/portal/recibos", label: "Mis recibos", icon: "documentos" },
         { href: "/grupos", label: "Grupos", icon: "gastos" },
       ] satisfies PortalNavItem[],
       empresa: [] as PortalNavItem[],

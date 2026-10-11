@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
+import { BadgeCheck, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
 import Link from "next/link";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
@@ -59,6 +59,7 @@ export const ORG_TABS = [
   { key: "integraciones", label: "Integraciones", icon: PlugZap },
   { key: "arca", label: "ARCA", icon: Landmark },
   { key: "conciliacion", label: "Conciliación", icon: Scale },
+  { key: "sueldos", label: "Sueldos", icon: BadgeCheck },
   { key: "gastos", label: "Gastos", icon: Wallet },
   { key: "actividad", label: "Actividad", icon: Activity },
 ] as const;
@@ -81,7 +82,7 @@ const MAIN_TABS: { key: string; label: string; icon: (typeof ORG_TABS)[number]["
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare, href: "solicitudes", keys: ["solicitudes"] },
   { key: "arca", label: "ARCA", icon: Landmark, href: "arca", keys: ["arca"] },
   { key: "conciliacion", label: "Conciliación", icon: Scale, href: "conciliacion", keys: ["conciliacion"] },
-  // F5: { key: "sueldos", label: "Sueldos", … }
+  { key: "sueldos", label: "Sueldos", icon: BadgeCheck, href: "sueldos", keys: ["sueldos"] },
   { key: "conexiones", label: "Conexiones", icon: PlugZap, href: "integraciones", keys: ["integraciones"] },
 ];
 

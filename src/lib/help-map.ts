@@ -14,6 +14,11 @@ const MAP: [string, string][] = [
   ["/admin/organizaciones/nueva", "organizaciones/rubros"],
   ["/admin/honorarios", "cobros/honorarios"],
   ["/portal/estado-de-cuenta", "cobros/estado-de-cuenta"],
+  ["/portal/recibos", "empleados/recibos-de-sueldo"],
+  ["/portal/comunicados", "empleados/comunicados"],
+  ["/portal/modulos/sueldos/recibos", "empleados/recibos-de-sueldo"],
+  ["/portal/modulos/sueldos/comunicados", "empleados/comunicados"],
+  ["/portal/modulos/sueldos", "empleados/legajo-y-novedades"],
   ["/faro-manager/suscripciones", "primeros-pasos/planes"],
   ["/faro-manager/mercadopago", "cobros/honorarios"],
   ["/bitacora/tickets", "documentos/lectura-inteligente"],
@@ -59,6 +64,9 @@ const PATTERNS: [RegExp, string][] = [
   [/^\/admin\/organizaciones\/[^/]+\/lectura/, "documentos/lectura-inteligente"],
   [/^\/admin\/organizaciones\/[^/]+\/conciliacion/, "documentos/conciliacion-bancaria"],
   [/^\/admin\/organizaciones\/[^/]+\/arca/, "facturacion/emitir-facturas"],
+  [/^\/admin\/organizaciones\/[^/]+\/sueldos\/recibos/, "empleados/recibos-de-sueldo"],
+  [/^\/admin\/organizaciones\/[^/]+\/sueldos\/comunicados/, "empleados/comunicados"],
+  [/^\/admin\/organizaciones\/[^/]+\/sueldos/, "empleados/legajo-y-novedades"],
 ];
 
 export function helpFor(pathname: string): string {

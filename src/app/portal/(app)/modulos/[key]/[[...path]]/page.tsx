@@ -15,8 +15,8 @@ export const metadata: Metadata = { title: "Módulo" };
  * Portada de cada módulo. Valida en el servidor que el módulo exista, esté
  * activo en la organización y que el rol tenga permiso para verlo.
  */
-export default async function ModuloPage({ params }: { params: Promise<{ key: string; path?: string[] }> }) {
-  const { key, path = [] } = await params;
+export default async function ModuloPage({ params, searchParams }: { params: Promise<{ key: string; path?: string[] }>; searchParams: Promise<Record<string, string | undefined>> }) {
+  const [{ key, path = [] }, sp] = await Promise.all([params, searchParams]);
   const mod = getModule(key);
   if (!mod) notFound();
   const me = await requireMember();
@@ -27,7 +27,7 @@ export default async function ModuloPage({ params }: { params: Promise<{ key: st
     return (
       <>
         <EmpresaHeader me={me} />
-        <Screen me={me} path={path} />
+        <Screen me={me} path={path} sp={sp} />
       </>
     );
   return (

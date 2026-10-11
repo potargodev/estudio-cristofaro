@@ -407,6 +407,17 @@ export const employees = pgTable(
     start_date: date("start_date"),
     active: boolean("active").notNull().default(true),
     user_id: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    // F5: legajo
+    dni: text("dni"),
+    birth_date: date("birth_date"),
+    phone: text("phone"),
+    address: text("address"),
+    area: text("area"), // grupo para comunicados (Administración, Ventas…)
+    contract_type: text("contract_type"),
+    agreement: text("agreement"), // convenio colectivo
+    end_date: date("end_date"),
+    end_reason: text("end_reason"),
+    notes: text("notes"),
     created_at: createdAt(),
   },
   (t) => [
@@ -614,6 +625,8 @@ export const requests = pgTable(
     legal_entity_id: uuid("legal_entity_id").references((): AnyPgColumn => legal_entities.id, { onDelete: "set null" }),
     type: requestType("type").notNull().default("consulta"),
     subject: text("subject").notNull(),
+    /** F5: novedad de personal tipificada (alta, baja, licencia, horas extra) con sus datos */
+    data: jsonb("data").$type<Record<string, unknown>>(),
     status: requestStatus("status").notNull().default("abierta"),
     created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
     created_at: createdAt(),
@@ -3145,4 +3158,157 @@ export const fee_charges = pgTable(
     created_at: createdAt(),
   },
   (t) => [uniqueIndex("fee_charges_period_idx").on(t.fee_plan_id, t.period), index("fee_charges_org_idx").on(t.studio_id, t.organization_id, t.status)],
+);
+
+// ───────────── F5 · Empleados (legajo, recibos con firma, comunicación interna) ─────────────
+
+/** Documentos del legajo de un empleado (DNI, alta temprana, contrato, certificados) */
+export const employee_documents = pgTable(
+  "employee_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    employee_id: uuid("employee_id")
+      .notNull()
+      .references(() => employees.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull().default("otro"), // dni | alta | contrato | certificado | baja | otro
+    name: text("name").notNull(),
+    storage_path: text("storage_path").notNull(),
+    mime_type: text("mime_type").notNull(),
+    size_bytes: integer("size_bytes").notNull(),
+    uploaded_by: uuid("uploaded_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("employee_documents_emp_idx").on(t.employee_id)],
+);
+
+/** Historial del legajo: altas, bajas, cambios, licencias y notas */
+export const employee_events = pgTable(
+  "employee_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    employee_id: uuid("employee_id")
+      .notNull()
+      .references(() => employees.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(), // alta | baja | cambio | licencia | horas_extra | documento | nota
+    date: date("date").notNull(),
+    detail: text("detail").notNull(),
+    request_id: uuid("request_id"),
+    actor_id: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("employee_events_emp_idx").on(t.employee_id, t.date)],
+);
+
+/** Lote de recibos de un período (PDFs individuales o uno único dividido por CUIL) */
+export const payslip_batches = pgTable(
+  "payslip_batches",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    period: text("period").notNull(), // AAAA-MM
+    mode: text("mode").notNull(), // individual | unico
+    file_name: text("file_name"),
+    status: text("status").notNull().default("revision"), // revision | publicado
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    published_at: timestamp("published_at", { withTimezone: true }),
+    published_by: uuid("published_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("payslip_batches_org_idx").on(t.organization_id, t.period)],
+);
+
+/** Recibo de un empleado con su firma (conforme / no conforme) y la constancia */
+export const payslips = pgTable(
+  "payslips",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    batch_id: uuid("batch_id")
+      .notNull()
+      .references(() => payslip_batches.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    employee_id: uuid("employee_id").references(() => employees.id, { onDelete: "set null" }),
+    cuil: text("cuil"),
+    period: text("period").notNull(),
+    file_name: text("file_name").notNull(),
+    storage_path: text("storage_path").notNull(),
+    size_bytes: integer("size_bytes").notNull(),
+    sha256: text("sha256").notNull(),
+    pages: jsonb("pages").$type<number[]>(),
+    match: text("match"), // auto | manual
+    status: text("status").notNull().default("sin_asignar"), // sin_asignar | asignado | publicado | conforme | no_conforme
+    published_at: timestamp("published_at", { withTimezone: true }),
+    viewed_at: timestamp("viewed_at", { withTimezone: true }),
+    signed_at: timestamp("signed_at", { withTimezone: true }),
+    decision: text("decision"),
+    reason: text("reason"),
+    sign_ip: text("sign_ip"),
+    sign_user_agent: text("sign_user_agent"),
+    sign_device: text("sign_device"),
+    seal: text("seal"),
+    reminders_sent: jsonb("reminders_sent").$type<number[]>().notNull().default([]),
+    created_at: createdAt(),
+  },
+  (t) => [index("payslips_batch_idx").on(t.batch_id), index("payslips_emp_idx").on(t.employee_id, t.period)],
+);
+
+/** Comunicado interno de la organización (o del estudio en su nombre) */
+export const announcements = pgTable(
+  "announcements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    area: text("area"), // null = todos
+    attachments: jsonb("attachments").$type<{ name: string; path: string; mime: string; size: number }[]>().notNull().default([]),
+    require_ack: boolean("require_ack").notNull().default(true),
+    from_studio: boolean("from_studio").notNull().default(false),
+    author_id: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("announcements_org_idx").on(t.organization_id, t.created_at)],
+);
+
+/** Destinatarios de un comunicado: cuándo lo leyó y cuándo confirmó la lectura */
+export const announcement_reads = pgTable(
+  "announcement_reads",
+  {
+    announcement_id: uuid("announcement_id")
+      .notNull()
+      .references(() => announcements.id, { onDelete: "cascade" }),
+    employee_id: uuid("employee_id")
+      .notNull()
+      .references(() => employees.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    read_at: timestamp("read_at", { withTimezone: true }),
+    ack_at: timestamp("ack_at", { withTimezone: true }),
+  },
+  (t) => [primaryKey({ columns: [t.announcement_id, t.employee_id] })],
 );

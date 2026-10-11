@@ -228,6 +228,67 @@
   "text": "Documentos es el lugar donde el estudio y la organización se pasan archivos, sin mails sueltos ni chats perdidos. Para el cliente Subir un comprobante 1. En tu portal, entrá a Documentos . 2. En Subir un comprobante , elegí el archivo. 3. Elegí el Tipo : Comprobantes, Recibos de sueldo, Constancias u Otro. 4. Si corresponde, elegí el Período mes y año . 5. Tocá Subir archivo . Al estudio le llega un aviso. Se aceptan PDF, JPG, PNG o XLSX de hasta 10 MB . Ver y descargar Los documentos se ordenan por período y, adentro, por categoría. Cada uno dice si lo subiste vos o es del estudio . Tocá el archivo para descargarlo. Pueden ver documentos el Administrador, Dirección, Administración y Consulta. Subir, solo Administrador, Dirección y Administración. Para el estudio 1. Abrí la organización y andá a la pestaña Documentos . 2. En Subir documento para la organización , elegí el archivo, la categoría, el período y la razón social. 3. Tocá Subir y avisar al cliente : le llega un mail. Abajo ves por separado lo subido por la organización y lo subido por el estudio . En la ficha, el contador de Documentos sin revisar te muestra lo nuevo del cliente. Categorías Comprobantes, Constancias, Declaraciones juradas, Recibos de sueldo, VEP y boletas de pago, Balances e informes, Adjuntos de solicitudes y Otro. Tus archivos son privados Los archivos no tienen un enlace público. Solo se descargan entrando a Faro, y cada descarga verifica que tengas permiso. Solo los ven el estudio y los miembros de esa organización con permiso para ver documentos. Si alguien sin permiso intenta abrir un archivo, no ve nada y el intento queda registrado. Toda descarga queda en la auditoría. Próximamente Con Google Drive en beta cada organización puede tener una carpeta: lo que el cliente sube ahí entra a sus documentos en Faro. Ver Conexiones /ayuda/conexiones/conexiones ."
  },
  {
+  "id": "empleados/comunicados",
+  "categoria": "empleados",
+  "slug": "comunicados",
+  "titulo": "Comunicados internos",
+  "resumen": "Mandá avisos a todo el personal o a un área, con adjuntos y confirmación de lectura, y mirá quién lo leyó.",
+  "perfiles": [
+   "estudio",
+   "organizacion",
+   "empleado"
+  ],
+  "modulo": "comms",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "empleados/legajo-y-novedades",
+   "empleados/recibos-de-sueldo",
+   "mensajes/mensajes"
+  ],
+  "body": "## Enviar un comunicado\n\nEn **Sueldos → Comunicados** (el estudio puede mandarlo en nombre de la organización):\n\n1. Escribí el **título** y el **texto**.\n2. Elegí **para quién**: todos o un **área** (la del legajo de cada empleado).\n3. Sumá **adjuntos** si hace falta (hasta 5).\n4. Dejá marcada **Pedir confirmación de lectura** si necesitás que cada persona confirme.\n\nCada empleado recibe un mail y un aviso en la campanita. En el comunicado ves, por persona, si está **sin leer**, **leído** o **confirmado** (con fecha y hora).\n\n## Para el empleado\n\nLos comunicados aparecen arriba en tu **Inicio**. Al abrirlo queda leído; si lo piden, tocá **Leí y entendí**.\n\nSi le pedís al Vigía que publique un comunicado, queda en **Aprobaciones** hasta que una persona lo aprueba.",
+  "text": "Enviar un comunicado En Sueldos → Comunicados el estudio puede mandarlo en nombre de la organización : 1. Escribí el título y el texto . 2. Elegí para quién : todos o un área la del legajo de cada empleado . 3. Sumá adjuntos si hace falta hasta 5 . 4. Dejá marcada Pedir confirmación de lectura si necesitás que cada persona confirme. Cada empleado recibe un mail y un aviso en la campanita. En el comunicado ves, por persona, si está sin leer , leído o confirmado con fecha y hora . Para el empleado Los comunicados aparecen arriba en tu Inicio . Al abrirlo queda leído; si lo piden, tocá Leí y entendí . Si le pedís al Vigía que publique un comunicado, queda en Aprobaciones hasta que una persona lo aprueba."
+ },
+ {
+  "id": "empleados/legajo-y-novedades",
+  "categoria": "empleados",
+  "slug": "legajo-y-novedades",
+  "titulo": "Legajo de empleados y novedades de personal",
+  "resumen": "El legajo de cada empleado (datos, documentos, altas, bajas e historial) y cómo la organización informa altas, bajas, licencias y horas extra al estudio.",
+  "perfiles": [
+   "estudio",
+   "organizacion"
+  ],
+  "modulo": "employees",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "empleados/recibos-de-sueldo",
+   "empleados/comunicados",
+   "solicitudes/solicitudes"
+  ],
+  "body": "**Dónde está**\n\n- **Estudio:** ficha de la organización → pestaña **Sueldos** (plan Profesional o Avanzado).\n- **Organización:** portal → **Empresa → Sueldos y empleados**, si el estudio activó el módulo para tu organización. Lo ven quienes tienen permiso de sueldos (Administrador, Dirección, Administración o RRHH); lo administran quienes pueden gestionarlos.\n\n## Legajo\n\n- **Dar de alta un empleado:** nombre, apellido, CUIL (se valida el dígito verificador), DNI, mail, teléfono, puesto, **área** (sirve para mandar comunicados por grupo), fecha de ingreso, contratación, convenio, domicilio y notas.\n- En la ficha de cada empleado: **documentos** (DNI, alta temprana, contrato, certificados), sus **recibos**, el **historial** (alta, cambios de puesto o área, licencias, horas extra, notas) y **Dar de baja** con fecha y motivo.\n- El mail del empleado es el que recibe los avisos; si además tiene cuenta en el portal (rol Empleado), ve sus recibos y comunicados.\n\n## Novedades de personal\n\nDesde **Sueldos y empleados → Novedades**, la organización informa al estudio:\n\n- **Alta** (nombre, CUIL, puesto y fecha),\n- **Baja** (empleado, fecha y motivo),\n- **Licencia** (desde, hasta y motivo),\n- **Horas extra** (cantidad y detalle).\n\nCada novedad llega al estudio como una **solicitud de personal** con sus datos. El estudio la responde como cualquier solicitud y, con **Aplicar al legajo**, crea el empleado, registra la baja o suma la licencia u horas al historial.",
+  "text": "Dónde está Estudio: ficha de la organización → pestaña Sueldos plan Profesional o Avanzado . Organización: portal → Empresa → Sueldos y empleados , si el estudio activó el módulo para tu organización. Lo ven quienes tienen permiso de sueldos Administrador, Dirección, Administración o RRHH ; lo administran quienes pueden gestionarlos. Legajo Dar de alta un empleado: nombre, apellido, CUIL se valida el dígito verificador , DNI, mail, teléfono, puesto, área sirve para mandar comunicados por grupo , fecha de ingreso, contratación, convenio, domicilio y notas. En la ficha de cada empleado: documentos DNI, alta temprana, contrato, certificados , sus recibos , el historial alta, cambios de puesto o área, licencias, horas extra, notas y Dar de baja con fecha y motivo. El mail del empleado es el que recibe los avisos; si además tiene cuenta en el portal rol Empleado , ve sus recibos y comunicados. Novedades de personal Desde Sueldos y empleados → Novedades , la organización informa al estudio: Alta nombre, CUIL, puesto y fecha , Baja empleado, fecha y motivo , Licencia desde, hasta y motivo , Horas extra cantidad y detalle . Cada novedad llega al estudio como una solicitud de personal con sus datos. El estudio la responde como cualquier solicitud y, con Aplicar al legajo , crea el empleado, registra la baja o suma la licencia u horas al historial."
+ },
+ {
+  "id": "empleados/recibos-de-sueldo",
+  "categoria": "empleados",
+  "slug": "recibos-de-sueldo",
+  "titulo": "Recibos de sueldo con firma",
+  "resumen": "Cargá los recibos de todo el personal de una vez (un PDF por persona o uno único que se divide por CUIL), publicalos y seguí quién firmó conforme o no conforme.",
+  "perfiles": [
+   "estudio",
+   "organizacion",
+   "empleado"
+  ],
+  "modulo": "payroll",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "empleados/legajo-y-novedades",
+   "empleados/comunicados"
+  ],
+  "body": "## Cargar y publicar (estudio u organización)\n\n1. En **Sueldos → Recibos**, elegí el **período** y subí los PDF:\n   - **un PDF por empleado**, con el CUIL en el nombre del archivo (por ejemplo `20304050609_2026-09.pdf`) o adentro del recibo; o\n   - **un PDF único** con todos los recibos: Faro lo **divide por CUIL** (si un recibo ocupa dos hojas, quedan juntas).\n2. Cada recibo se **asigna solo** al empleado del legajo con ese CUIL. Los que no coinciden quedan **Sin asignar**: elegí el empleado a mano.\n3. Revisá y tocá **Publicar y avisar**. Cada empleado recibe un mail y un aviso en la campanita.\n4. En el lote ves el estado de cada persona: **Falta firmar**, **Firmado conforme** o **Firmado no conforme** (con el motivo), con la fecha y hora, la IP, el dispositivo, la huella (hash) del PDF y el sello de la firma.\n5. **Recordar a los que no firmaron** manda un recordatorio. Además, Faro lo recuerda solo a los 3, 7 y 14 días de publicado.\n\n## Mis recibos (empleado)\n\nEn el portal, **Mis recibos**:\n\n1. Abrí el recibo con **Ver el recibo (PDF)**.\n2. Marcá **Revisé el recibo** y tocá **Firmar conforme**.\n3. Si algo no está bien, escribí el **motivo** y tocá **Firmar no conforme**: tu empleador se entera en el momento.\n\nAl firmar se guarda la fecha y hora, tu IP, el dispositivo y la huella del documento: si alguien cambiara el PDF después, la firma no coincidiría.",
+  "text": "Cargar y publicar estudio u organización 1. En Sueldos → Recibos , elegí el período y subí los PDF: un PDF por empleado , con el CUIL en el nombre del archivo por ejemplo 20304050609 2026 09.pdf o adentro del recibo; o un PDF único con todos los recibos: Faro lo divide por CUIL si un recibo ocupa dos hojas, quedan juntas . 2. Cada recibo se asigna solo al empleado del legajo con ese CUIL. Los que no coinciden quedan Sin asignar : elegí el empleado a mano. 3. Revisá y tocá Publicar y avisar . Cada empleado recibe un mail y un aviso en la campanita. 4. En el lote ves el estado de cada persona: Falta firmar , Firmado conforme o Firmado no conforme con el motivo , con la fecha y hora, la IP, el dispositivo, la huella hash del PDF y el sello de la firma. 5. Recordar a los que no firmaron manda un recordatorio. Además, Faro lo recuerda solo a los 3, 7 y 14 días de publicado. Mis recibos empleado En el portal, Mis recibos : 1. Abrí el recibo con Ver el recibo PDF . 2. Marcá Revisé el recibo y tocá Firmar conforme . 3. Si algo no está bien, escribí el motivo y tocá Firmar no conforme : tu empleador se entera en el momento. Al firmar se guarda la fecha y hora, tu IP, el dispositivo y la huella del documento: si alguien cambiara el PDF después, la firma no coincidiría."
+ },
+ {
   "id": "facturacion/calendario-y-chequeos",
   "categoria": "facturacion",
   "slug": "calendario-y-chequeos",
