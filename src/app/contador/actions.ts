@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requirePersonal } from "@/lib/auth";
+import { answerContact, SeekerError, setSeeker } from "@/modules/red/seekers";
 import { acceptInvitation, answerInfo, closingCheck, ConexionError, decideAction, declineInvitation, openDispute, postDisputeMessage, rate, requestConnection, resolveDispute, setAutonomy, setScopes, setWeekly, signAsUser, startClosing } from "@/modules/conexiones/server";
 
 // Conexión con un contador, del lado de la persona. Todo sale de la sesión:
@@ -98,4 +99,39 @@ async function rateOne(fd: FormData, skip: boolean) {
   const me = await requirePersonal();
   const kind = s(fd, "kind") === "cierre" ? "cierre" : "periodica";
   await run(() => rate(me, s(fd, "id"), kind, { score: Number(s(fd, "score")), comment: s(fd, "comment"), skip }), skip ? "Listo, te volvemos a preguntar más adelante." : "¡Gracias! Tu opinión queda guardada.");
+}
+
+// ── Red Contable: «Disponible, busco contador» ───────────────────────
+
+const seekerInput = (fd: FormData) => ({ kind: s(fd, "kind"), industry: s(fd, "industry") || null, size: s(fd, "size") || null, province: s(fd, "province") || null, city: s(fd, "city") || null, needs: fd.getAll("needs").map(String), note: s(fd, "note") || null });
+
+export async function seekerAction(fd: FormData) {
+  const me = await requirePersonal();
+  const active = fd.get("active") === "on";
+  try {
+    await setSeeker(me, active, seekerInput(fd));
+  } catch (e) {
+    if (e instanceof SeekerError) go({ error: e.message });
+    throw e;
+  }
+  revalidatePath("/contador");
+  go({ ok: active ? "Listo: los estudios de la Red Contable te ven sin tu nombre ni tus datos. Vos decidís a quién responder." : "Ya no aparecés en el listado." });
+}
+
+export async function answerContactAction(fd: FormData) {
+  return answerOne(fd, true);
+}
+export async function rejectContactAction(fd: FormData) {
+  return answerOne(fd, false);
+}
+async function answerOne(fd: FormData, accept: boolean) {
+  const me = await requirePersonal();
+  try {
+    await answerContact(me, s(fd, "id"), accept);
+  } catch (e) {
+    if (e instanceof SeekerError) go({ error: e.message });
+    throw e;
+  }
+  revalidatePath("/contador");
+  go({ ok: accept ? "Aceptaste: el estudio ya ve tus datos y empieza su admisión." : "Listo, no aceptaste." });
 }

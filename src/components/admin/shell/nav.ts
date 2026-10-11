@@ -79,6 +79,8 @@ export const COMERCIAL_TABS: NavItem[] = [
   // Conexión con un contador (principios §7): solicitudes, invitaciones, admisión y calificaciones
   { href: "/admin/comercial/conexiones", label: "Conexiones", icon: "usuarios", operatorOnly: true },
   { href: "/admin/comercial/red", label: "Perfil en la Red", icon: "red", operatorOnly: true, module: "red_estudios" },
+  // Red Contable de doble mano (principios §15): el estudio sale a buscar clientes
+  { href: "/admin/comercial/buscar-clientes", label: "Buscar clientes", icon: "consultas", operatorOnly: true, module: "red_estudios" },
 ];
 
 /** Pestañas de Configuración (una sola entrada del menú, regla 6) */

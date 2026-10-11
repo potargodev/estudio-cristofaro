@@ -11,7 +11,7 @@ import { getDerivationRules, ownSuggestion } from "@/modules/escudo/server";
 import { StudiosMap } from "@/components/red/StudiosMap";
 import { SectionTabs } from "@/components/app/SectionTabs";
 
-export const metadata: Metadata = { title: "Red de estudios", description: "Directorio neutral de estudios contables que usan Faro: matrícula verificada, reseñas de clientes reales y orden sin posiciones pagas." };
+export const metadata: Metadata = { title: "Red Contable", description: "Directorio neutral de estudios contables que usan Faro: matrícula verificada, reseñas de clientes reales y orden sin posiciones pagas." };
 export const dynamic = "force-dynamic";
 
 const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
@@ -100,7 +100,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
           <button type="submit" className="h-10 rounded-md bg-navy px-5 text-[14px] font-medium text-paper hover:bg-night">
             Buscar
           </button>
-          <Link href="/red" className="h-10 px-3 text-[14px] leading-10 text-muted underline-offset-4 hover:underline">
+          <Link href="/red-contable" className="h-10 px-3 text-[14px] leading-10 text-muted underline-offset-4 hover:underline">
             Limpiar
           </Link>
         </div>
@@ -108,7 +108,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
 
       <p className="mt-6 text-[14px] text-muted">
         {list.length === 0 ? "No encontramos estudios con esos filtros." : `${list.length} ${list.length === 1 ? "estudio" : "estudios"}`} · Ordenados por reseñas, tiempo de respuesta medido en Faro, cupo y coincidencia con tu búsqueda.{" "}
-        <Link href="/ayuda/red-de-estudios/resenas" className="underline underline-offset-4">
+        <Link href="/ayuda/red-contable/resenas" className="underline underline-offset-4">
           Cómo ordenamos
         </Link>
       </p>
@@ -121,7 +121,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
       <ul className="mt-4 grid gap-4 md:grid-cols-2">
         {list.map((x) => (
           <li key={x.studioId}>
-            <Link href={`/red/${x.slug}${q}`} className="block h-full rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
+            <Link href={`/red-contable/${x.slug}${q}`} className="block h-full rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
               <div className="flex items-start gap-3">
                 <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-md bg-navy font-display text-[22px] text-gold">
                   {x.name.charAt(0)}
@@ -162,7 +162,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
         <h2 className="text-[16px] font-semibold text-ink">¿Sos de un estudio?</h2>
         <p className="mt-1">
           Sumarte a la Red es opcional y está incluido en los planes Profesional y Avanzado. Verificamos la matrícula antes de publicar.{" "}
-          <Link href="/ayuda/red-de-estudios/perfil-del-estudio" className="underline underline-offset-4">
+          <Link href="/ayuda/red-contable/perfil-del-estudio" className="underline underline-offset-4">
             Cómo sumarte
           </Link>
         </p>

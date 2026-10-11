@@ -14,7 +14,7 @@ export const ayudaTools = [
     name: "buscar_ayuda",
     title: "Buscar en el centro de ayuda",
     description:
-      "Busca artículos del centro de ayuda de Faro (cómo usar la plataforma: registro, planes, invitaciones, roles, vencimientos, documentos, solicitudes, grupos de gastos, IA y aprobaciones, MCP, conexiones, Flotas, Red de estudios). Usala para cualquier pregunta de uso y citá el artículo con su enlace.",
+      "Busca artículos del centro de ayuda de Faro (cómo usar la plataforma: registro, planes, invitaciones, roles, vencimientos, documentos, solicitudes, grupos de gastos, IA y aprobaciones, MCP, conexiones, Flotas, Red Contable). Usala para cualquier pregunta de uso y citá el artículo con su enlace.",
     module: "ayuda",
     level: "lectura",
     roles: ROLES,

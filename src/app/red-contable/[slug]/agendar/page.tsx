@@ -12,7 +12,7 @@ import { publicProfile } from "@/modules/red/server";
 
 type Params = Promise<{ slug: string }>;
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Agendar llamada · Red de estudios", robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: "Agendar llamada · Red Contable", robots: { index: false, follow: true } };
 
 /** "Agendar llamada" desde la ficha de la Red: la agenda pública del estudio elegido */
 export default async function AgendarRedPage({ params, searchParams }: { params: Params; searchParams: Promise<{ t?: string }> }) {
@@ -20,7 +20,7 @@ export default async function AgendarRedPage({ params, searchParams }: { params:
   const x = await publicProfile(slug);
   if (!x) notFound();
   const back = (
-    <Link href={`/red/${x.slug}`} className="text-[13px] text-muted hover:text-ink">
+    <Link href={`/red-contable/${x.slug}`} className="text-[13px] text-muted hover:text-ink">
       ← {x.name}
     </Link>
   );

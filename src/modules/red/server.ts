@@ -10,7 +10,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { MODALITIES, RED_SERVICES, TEAM_SIZES } from "./catalog";
 
-// Red de estudios (docs/faro-producto.md §2.i). Directorio neutral: solo
+// Red Contable (docs/faro-producto.md §2.i). Directorio neutral: solo
 // estudios que se sumaron (opt-in), con la matrícula verificada por Faro y el
 // módulo red_estudios en su plan. El orden sale de criterios objetivos y nunca
 // de un pago. Las reseñas son de clientes reales (≥ 30 días en Faro), una por
@@ -29,7 +29,7 @@ export async function getProfile(studioId: string) {
 
 /** ¿Por qué no está visible? (null = visible en la Red) */
 export async function visibilityIssue(studioId: string, p: Profile | null): Promise<string | null> {
-  if (!(await hasModule(studioId, "red_estudios"))) return "La Red de estudios está incluida en los planes Profesional y Avanzado.";
+  if (!(await hasModule(studioId, "red_estudios"))) return "La Red Contable está incluida en los planes Profesional y Avanzado.";
   if (!p || !p.published) return "Todavía no publicaste la ficha.";
   if (p.license_status !== "verificada") return p.license_status === "rechazada" ? "La matrícula no pudo verificarse: revisá los datos y volvé a enviarla." : "Falta que Faro verifique la matrícula.";
   return null;
@@ -90,7 +90,7 @@ export async function saveProfile(studioId: string, input: ProfileInput) {
 export async function setPublished(studioId: string, published: boolean) {
   const p = await getProfile(studioId);
   if (!p) throw new RedError("Primero completá la ficha.");
-  if (published && !(await hasModule(studioId, "red_estudios"))) throw new RedError("La Red de estudios está incluida en los planes Profesional y Avanzado.");
+  if (published && !(await hasModule(studioId, "red_estudios"))) throw new RedError("La Red Contable está incluida en los planes Profesional y Avanzado.");
   if (published && (!p.city || !p.services.length)) throw new RedError("Completá al menos la localidad y un servicio antes de publicar.");
   await getDb()
     .update(directory_profiles)
@@ -279,7 +279,7 @@ export async function requestProposal(input: { studioId: string; name: string; e
       contributor_type: input.profile || null,
       message: input.message.slice(0, 2000) || null,
       source: input.fleetId ? "flota" : "red",
-      notes: input.userId ? `Usuario de Faro (${input.userId}). Llegó desde la Red de estudios con consentimiento para compartir estos datos.` : "Llegó desde la Red de estudios con consentimiento para compartir estos datos.",
+      notes: input.userId ? `Usuario de Faro (${input.userId}). Llegó desde la Red Contable con consentimiento para compartir estos datos.` : "Llegó desde la Red Contable con consentimiento para compartir estos datos.",
     })
     .returning({ id: leads.id });
   await audit({ studioId: input.studioId, actor: input.userId ? { id: input.userId, email: input.email } : undefined, actorLabel: input.userId ? undefined : input.email, action: "red.pedido_propuesta", entityType: "consulta", entityId: lead.id, metadata: { flota: input.fleetId ?? null } });
@@ -292,7 +292,7 @@ export async function requestProposal(input: { studioId: string; name: string; e
       subject: `Nuevo pedido de propuesta desde la Red: ${input.name}`,
       html: mailLayout(
         "Pedido de propuesta",
-        `<p><strong>${esc(input.name)}</strong> (${esc(input.email)}) pidió una propuesta desde la Red de estudios de Faro.</p>${input.message ? `<p>${esc(input.message.slice(0, 600))}</p>` : ""}`,
+        `<p><strong>${esc(input.name)}</strong> (${esc(input.email)}) pidió una propuesta desde la Red Contable de Faro.</p>${input.message ? `<p>${esc(input.message.slice(0, 600))}</p>` : ""}`,
         { href: `${getSiteUrl()}/admin/comercial/consultas/${lead.id}`, label: "Ver la consulta" },
         "Faro",
       ),

@@ -4,7 +4,7 @@ resumen: Autogestión o gestión profesional, conexión por permiso (no copia), 
 perfiles: [persona, autonomo]
 modulo: core
 actualizado: 2026-10-11
-relacionados: [red-de-estudios/buscar-un-estudio, primeros-pasos/faro-y-tu-contador, bitacora/mis-cajas]
+relacionados: [red-contable/buscar-un-estudio, primeros-pasos/faro-y-tu-contador, bitacora/mis-cajas]
 ---
 
 ## En qué modo estás

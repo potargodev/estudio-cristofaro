@@ -4,7 +4,7 @@ export const FARO_NAV = [
   { href: "/faro#personal", label: "Faro Personal" },
   { href: "/faro#pantallas", label: "Así se ve" },
   { href: "/faro#rubros", label: "Rubros" },
-  { href: "/red", label: "Red de estudios" },
+  { href: "/red-contable", label: "Red Contable" },
   { href: "/faro#ia", label: "IA y conexiones" },
   { href: "/precios", label: "Precios" },
 ];

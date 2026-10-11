@@ -23,7 +23,12 @@ import {
   transferCaptainAction,
   updateFleetAction,
   voteAction,
+  fleetSeekerAction,
+  fleetContactAction,
+  fleetRejectContactAction,
 } from "../actions";
+import { SeekerForm } from "@/components/red/SeekerForm";
+import { fleetSeeker, myContacts } from "@/modules/red/seekers";
 
 export const metadata: Metadata = { title: "Flota" };
 
@@ -43,6 +48,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
     throw e;
   }
   const isCaptain = x.me.role === "capitan";
+  const [seeker, fleetContacts] = isCaptain ? await Promise.all([fleetSeeker(x.fleet.id), myContacts(u.id).then((l) => l.filter((c) => c.fleetId === x.fleet.id))]) : [null, []];
   await markStep("flota_ver", `/flotas/${x.fleet.id}`).catch(() => undefined);
   const active = x.members.filter((m) => m.status === "activo");
   const hidden = <input type="hidden" name="fleet" value={x.fleet.id} />;
@@ -108,6 +114,34 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
             </li>
           ))}
         </ul>
+        {isCaptain && (
+          <section aria-labelledby="red-disponible" className="mt-4 rounded-lg border border-line bg-surface p-4">
+            <p id="red-disponible" className="text-[15px] font-semibold">
+              Que los estudios encuentren a la Flota
+            </p>
+            {fleetContacts.filter((c) => c.c.status === "pendiente").map((c) => (
+              <form key={c.c.id} action={fleetContactAction} className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-md border border-rose/40 bg-rose-soft px-3 py-2 text-[14px]">
+                {hidden}
+                <input type="hidden" name="id" value={c.c.id} />
+                <span>
+                  <a href={`/red-contable/${c.slug}`} className="font-medium underline underline-offset-4">
+                    {c.studio}
+                  </a>{" "}
+                  quiere hacerles una propuesta.
+                </span>
+                <span className="flex gap-2">
+                  <button className="h-9 rounded-md bg-navy px-3 text-[13px] text-paper">Aceptar</button>
+                  <button formAction={fleetRejectContactAction} className="h-9 rounded-md border border-line px-3 text-[13px]">
+                    No, gracias
+                  </button>
+                </span>
+              </form>
+            ))}
+            <div className="mt-3">
+              <SeekerForm action={fleetSeekerAction} seeker={seeker} fleet hidden={{ fleet: x.fleet.id }} />
+            </div>
+          </section>
+        )}
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {isCaptain && (
             <form action={inviteAction} className="rounded-lg border border-line bg-surface p-4">
@@ -155,7 +189,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         {x.fleet.request_status === "publicado" ? (
           <div className="mt-3 rounded-lg border border-line bg-surface p-4 text-[14px]">
             <p>
-              Publicado en la Red de estudios{x.fleet.request_zone ? ` · zona ${x.fleet.request_zone}` : ""}. Los estudios ven cuántos son por perfil y la zona, sin datos personales.
+              Publicado en la Red Contable{x.fleet.request_zone ? ` · zona ${x.fleet.request_zone}` : ""}. Los estudios ven cuántos son por perfil y la zona, sin datos personales.
             </p>
             {isCaptain && (
               <form action={closeRequestAction} className="mt-3">
@@ -225,7 +259,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                   {x.proposals.map(({ p, studio, slug, votes, myVote }) => (
                     <tr key={p.id}>
                       <th scope="row" className="px-4 py-3 font-medium">
-                        <Link href={`/red/${slug}`} className="hover:underline">
+                        <Link href={`/red-contable/${slug}`} className="hover:underline">
                           {studio}
                         </Link>
                       </th>

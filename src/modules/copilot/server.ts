@@ -128,11 +128,11 @@ Qué hacés:
 - Si algo es ambiguo (falta el monto, no sabés en qué grupo), NO llames herramientas: preguntá UNA sola cosa, corta.
 - Nunca inventes montos, personas ni grupos.
 - "¿Qué hizo mi contador?", "¿tengo contador?": usá consultar_contador y respondé con el dato y el enlace.
-- Coach (si la persona pide consejos, cómo ahorrar o en qué le conviene poner la plata): usá coach_finanzas, que te da sus números reales (sobres, fijos, fugas y metas). Explicá y sugerí hábitos. Podés comparar alternativas generales de ahorro (plazo fijo, fondos money market, dólar MEP) solo con fines educativos y sin recomendar una en particular. Nunca des una recomendación de inversión personalizada: es una actividad regulada por la CNV. Si la persona quiere asesoramiento, derivala a un asesor matriculado de la Red de estudios ([Buscar un asesor](/red?servicio=asesoramiento_financiero)).
+- Coach (si la persona pide consejos, cómo ahorrar o en qué le conviene poner la plata): usá coach_finanzas, que te da sus números reales (sobres, fijos, fugas y metas). Explicá y sugerí hábitos. Podés comparar alternativas generales de ahorro (plazo fijo, fondos money market, dólar MEP) solo con fines educativos y sin recomendar una en particular. Nunca des una recomendación de inversión personalizada: es una actividad regulada por la CNV. Si la persona quiere asesoramiento, derivala a un asesor matriculado de la Red Contable ([Buscar un asesor](/red-contable?servicio=asesoramiento_financiero)).
 - Respondé en español rioplatense (voseo), muy breve: una línea como "Listo, te dejé 2 gastos para confirmar." Las tarjetas muestran el detalle.
 
 ${SHIELD_PROMPT}
-- Para sumar un contador: [Buscar un contador en la Red](/red).`;
+- Para sumar un contador: [Buscar un contador en la Red](/red-contable).`;
 }
 
 // ── Propuestas: armar la tarjeta ────────────────────────────────────
@@ -423,7 +423,7 @@ function queryTools(u: CopilotUser): ToolSet {
             "Dólar MEP: se compra con bonos en un broker o en el home banking; protege del tipo de cambio, no de la inflación en dólares.",
           ],
           aviso_legal: "Información general con fines educativos. No es una recomendación de inversión personalizada (actividad regulada por la CNV).",
-          asesor: "/red?servicio=asesoramiento_financiero",
+          asesor: "/red-contable?servicio=asesoramiento_financiero",
           enlaces: { sobres: "/bitacora/presupuesto", fijos: "/bitacora/fijos", metas: "/bitacora/metas" },
         };
       },
@@ -549,11 +549,11 @@ async function shieldFor(u: CopilotUser, m: typeof copilot_messages.$inferSelect
     const sg = await suggest(u.id, "vigia_criterio", `Le preguntaste al Vigía por ${task.title.toLowerCase()}, que requiere un profesional matriculado.`, { tarea: task.key, mensaje: text.slice(0, 280) });
     await db().update(copilot_messages).set({ status: "ok", processed_at: new Date(), model: "escudo" }).where(eq(copilot_messages.id, m.id));
     await audit({ studioId: u.studioId, actor: u, action: "escudo.tarea_matriculado", entityType: "mensaje_vigia", entityId: m.id, metadata: { tarea: task.key } });
-    return { replyId: await reply(u.id, m.id, professionalReply(task, sg ? `/red?derivacion=${sg.id}` : "/red"), { model: "escudo", unseen: !!opts.fromQueue }) };
+    return { replyId: await reply(u.id, m.id, professionalReply(task, sg ? `/red-contable?derivacion=${sg.id}` : "/red-contable"), { model: "escudo", unseen: !!opts.fromQueue }) };
   }
   if (asksForCriteria(text)) {
     const sg = await suggest(u.id, "vigia_criterio", "Le preguntaste al Vigía algo que necesita el criterio de un profesional.", { mensaje: text.slice(0, 280) });
-    return { footnote: criteriaFootnote(sg ? `/red?derivacion=${sg.id}` : "/red") };
+    return { footnote: criteriaFootnote(sg ? `/red-contable?derivacion=${sg.id}` : "/red-contable") };
   }
   return null;
 }

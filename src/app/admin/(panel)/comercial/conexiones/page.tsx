@@ -79,7 +79,7 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
           </section>
         );
       })}
-      {list.length === 0 && <p className="text-[14px] text-muted">Todavía no hay conexiones. Llegan desde la Red de estudios o invitando a tus clientes.</p>}
+      {list.length === 0 && <p className="text-[14px] text-muted">Todavía no hay conexiones. Llegan desde la Red Contable o invitando a tus clientes.</p>}
 
       <section aria-labelledby="calificaciones" className="rounded-lg border border-line bg-surface p-5">
         <h3 id="calificaciones" className="flex items-center gap-2 text-[16px] font-semibold">

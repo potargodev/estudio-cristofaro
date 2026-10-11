@@ -13,6 +13,10 @@ function moved(from: string, to: string) {
 
 export const NAV_REDIRECTS: { source: string; destination: string }[] = [
   // Espacio personal: "Contador" (/contador) junta tu conexión con un estudio, la Red y Flotas
+  // La Red de estudios pasa a llamarse Red Contable (principios §15)
+  ...moved("/red", "/red-contable"),
+  // (las categorías de la ayuda no tienen página propia: solo se redirigen los artículos)
+  { source: "/ayuda/red-de-estudios/:path*", destination: "/ayuda/red-contable/:path*" },
   // Un solo Vigía: el Asistente y las Aprobaciones son pestañas del Vigía del estudio
   { source: "/admin/asistente", destination: "/admin/vigia?tab=asistente" },
   { source: "/admin/aprobaciones", destination: "/admin/vigia?tab=propuestas" },

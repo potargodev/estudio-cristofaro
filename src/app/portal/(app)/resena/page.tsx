@@ -11,7 +11,7 @@ import { submitReviewAction } from "../../review-actions";
 
 export const metadata: Metadata = { title: "Reseñar al estudio" };
 
-/** Reseña de la organización a su estudio (Red de estudios). Todo sale de la sesión */
+/** Reseña de la organización a su estudio (Red Contable). Todo sale de la sesión */
 export default async function ResenaPage({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string }> }) {
   const sp = await searchParams;
   const me = await requireMember();
@@ -32,7 +32,7 @@ export default async function ResenaPage({ searchParams }: { searchParams: Promi
         </p>
       )}
       {!inRed ? (
-        <p className="text-[15px] text-muted">Tu estudio todavía no está en la Red de estudios de Faro, así que por ahora no se pueden dejar reseñas.</p>
+        <p className="text-[15px] text-muted">Tu estudio todavía no está en la Red Contable de Faro, así que por ahora no se pueden dejar reseñas.</p>
       ) : !e.ok ? (
         <div className="rounded-lg border border-line bg-surface p-5 text-[15px]">
           <p>{e.reason}</p>
@@ -40,7 +40,7 @@ export default async function ResenaPage({ searchParams }: { searchParams: Promi
             <p className="mt-2 text-[14px] text-muted">
               Estado: {e.review.status === "publicada" ? "publicada" : e.review.status === "pendiente" ? "en moderación" : "no publicada"}.{" "}
               {e.review.status === "publicada" && st && (
-                <Link href={`/red/${st.slug}`} className="underline underline-offset-4">
+                <Link href={`/red-contable/${st.slug}`} className="underline underline-offset-4">
                   Verla en la Red
                 </Link>
               )}
@@ -66,7 +66,7 @@ export default async function ResenaPage({ searchParams }: { searchParams: Promi
           </label>
           <p className="text-[13px] text-muted">
             Una reseña por organización. El estudio puede responderla públicamente.{" "}
-            <Link href="/ayuda/red-de-estudios/resenas" className="underline underline-offset-4">
+            <Link href="/ayuda/red-contable/resenas" className="underline underline-offset-4">
               Reglas de las reseñas
             </Link>
           </p>

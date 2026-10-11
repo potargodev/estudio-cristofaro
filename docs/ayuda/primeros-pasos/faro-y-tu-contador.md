@@ -4,7 +4,7 @@ resumen: Qué hace Faro y qué no, las tareas que solo puede hacer un contador m
 perfiles: [persona, autonomo, estudio]
 modulo: core
 actualizado: 2026-10-11
-relacionados: [facturacion/semaforo-monotributo, red-de-estudios/buscar-un-estudio, vigia/vigia]
+relacionados: [facturacion/semaforo-monotributo, red-contable/buscar-un-estudio, vigia/vigia]
 ---
 
 **Faro ayuda a hacer y a ordenar, pero nunca dice que algo está bien.** Factura, registra, te muestra el semáforo del monotributo y te avisa de los vencimientos. Lo que ves son **datos según lo que cargaste**, no una revisión de tu situación.
@@ -40,5 +40,5 @@ Cuando tu cuenta pasa de «administrar un par de facturas» a algo más, Faro te
 
 Los umbrales están **a validar por un contador**.
 
-- **Sumar un contador** te lleva a la **Red de estudios** con el contexto armado: qué necesitás y por qué. Al pedir una propuesta, ese texto ya viene escrito y lo podés editar.
+- **Sumar un contador** te lleva a la **Red Contable** con el contexto armado: qué necesitás y por qué. Al pedir una propuesta, ese texto ya viene escrito y lo podés editar.
 - **Ahora no** la esconde. Si la situación sigue, vuelve a aparecer más adelante (por ejemplo, a los 30 días).

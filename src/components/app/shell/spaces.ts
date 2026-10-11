@@ -146,8 +146,8 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
       { href: "/bitacora", label: "Bitácora", icon: "bitacora" },
       { href: "/grupos", label: "Grupos", icon: "gastos" },
     ];
-    // Contador: Red de estudios, Flotas y "mi estudio" (solo cuentas personales)
-    if (x.personal?.titular) items.push({ href: "/contador", label: "Contador", icon: "contador", match: ["/flotas", "/red"] });
+    // Contador: Red Contable, Flotas y "mi estudio" (solo cuentas personales)
+    if (x.personal?.titular) items.push({ href: "/contador", label: "Contador", icon: "contador", match: ["/flotas", "/red-contable"] });
     if (x.personal?.autonomo && FACTURACION_LISTA) items.push({ href: "/facturacion", label: "Facturación", icon: "facturacion" });
     return [{ title: "", items }];
   }

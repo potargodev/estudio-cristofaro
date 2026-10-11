@@ -8,7 +8,7 @@ import { directory_profiles, directory_reviews } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { requireFaro } from "@/lib/auth";
 
-// Faro Manager · Red de estudios: verificación manual de matrículas y
+// Faro Manager · Red Contable: verificación manual de matrículas y
 // moderación de reseñas. Todo queda en la auditoría del estudio afectado.
 
 const s = (fd: FormData, k: string) => {

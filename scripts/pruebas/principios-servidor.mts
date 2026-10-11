@@ -155,9 +155,9 @@ if (stage("2")) {
   const sys = JSON.stringify(log.at?.(-1) ?? log);
   check("el prompt del Vigía lleva el escudo de responsabilidad", sys.includes("Escudo de responsabilidad") && sys.includes("NUNCA dice que algo está bien"));
   const q2 = await say("¿Me van a multar?");
-  check("Vigía «¿me van a multar?»: no predice y deriva con contexto", !!q2 && q2.text.includes("[sumar un contador](/red?derivacion="), q2?.text);
+  check("Vigía «¿me van a multar?»: no predice y deriva con contexto", !!q2 && q2.text.includes("[sumar un contador](/red-contable?derivacion="), q2?.text);
   const q3 = await say("¿Me conviene pasar a responsable inscripto?");
-  check("Vigía «¿me conviene pasar a responsable inscripto?»: no la acompaña, explica que requiere un matriculado", !!q3 && q3.model === "escudo" && q3.text.includes("profesional matriculado") && q3.text.includes("/red?derivacion="), q3?.text);
+  check("Vigía «¿me conviene pasar a responsable inscripto?»: no la acompaña, explica que requiere un matriculado", !!q3 && q3.model === "escudo" && q3.text.includes("profesional matriculado") && q3.text.includes("/red-contable?derivacion="), q3?.text);
   const q4 = await say("necesito una certificación de ingresos");
   check("Vigía «certificación de ingresos»: deriva", !!q4 && q4.model === "escudo");
   check("pregunta de criterio → sugerencia «vigia_criterio» activa", (await es.activeSuggestions(U)).some((x) => x.rule_key === "vigia_criterio"));
@@ -542,6 +542,58 @@ if (stage("5")) {
   check("migración de Flotas: cada acuerdo vigente tiene su conexión", (await sql`select count(*)::int n from service_agreements a where a.status = 'activo' and a.profile <> 'conexion' and not exists (select 1 from account_connections c where c.agreement_id = a.id)`)[0].n === 0);
   await sql`delete from studios where id = ${L.studioId}`;
   await sql`delete from users where id = ${L.id}`;
+}
+
+// ─── Etapa 6 · Red Contable de doble mano (§15) ───
+if (stage("6")) {
+  const sk = await import("../../src/modules/red/seekers.ts");
+  const { createTenant } = await import("../../src/lib/faro/tenants.ts");
+  const ts = Date.now();
+  const r = await createTenant({ kind: "persona", name: "Bruno Busca", owner: { name: "Bruno Busca", email: `bruno-${ts}@prueba.local`, password: "clave-larga-123" }, via: "manual" });
+  if (!r.ok) throw new Error(r.message);
+  const P = { id: r.userId, studioId: r.studioId, name: "Bruno Busca", email: `bruno-${ts}@prueba.local`, role: "titular", tenantKind: "persona" };
+  const A = d.studios.A;
+  const staffA = { id: d.users.adminA, name: "Admin A", email: "a@ejemplo.com", studioId: A, role: "dueno", tenantKind: "studio" };
+  const staffB = { id: d.users.adminB, name: "Admin B", email: "b@ejemplo.com", studioId: d.studios.B, role: "dueno", tenantKind: "studio" };
+  const [{ plan_key }] = await sql`select plan_key from studios where id = ${A}`;
+  await sql`update studios set plan_key = 'profesional' where id = ${A}`;
+  await sql`insert into directory_profiles (studio_id, published, license_status) values (${A}, true, 'verificada') on conflict (studio_id) do update set published = true, license_status = 'verificada'`;
+  await sql`update studios set plan_key = 'inicial' where id = ${d.studios.B}`;
+  const err = (fn: () => Promise<unknown>) => fn().then(() => false, (e) => e instanceof sk.SeekerError);
+
+  check("nota sin datos personales (mail, teléfono y CUIT se borran)", !/@|1155667788|20-30405060-7/.test(sk.scrubNote("escribime a yo@mail.com o al 11 5566 7788, CUIT 20-30405060-7")));
+  await sk.setSeeker(P, false, { kind: "autonomo", industry: "servicios-profesionales", province: "Santa Fe", needs: ["monotributo"] });
+  let res = await sk.searchSeekers(staffA, {});
+  check("apagado: no aparece en el listado", !res.list.some((x) => x.note === "Arranco"));
+  await sk.setSeeker(P, true, { kind: "autonomo", size: "solo", province: "Santa Fe", city: "Rosario", needs: ["monotributo", "facturacion"], note: "Arranco con diseño, mail bruno@x.com" });
+  res = await sk.searchSeekers(staffA, { provincia: "Santa Fe" });
+  const mine = res.list.find((x) => x.zone === "Rosario, Santa Fe" && x.kindLabel === "Autónomo");
+  check("activado: aparece con lo que eligió mostrar", !!mine && mine.needs.includes("Monotributo"));
+  check("listado anónimo: sin nombre ni contacto", !!mine && !JSON.stringify(mine).includes("Bruno") && !JSON.stringify(mine).includes("@") );
+  check("filtro por necesidad", (await sk.searchSeekers(staffA, { necesidad: "auditoria" })).list.every((x) => x.id !== mine?.id));
+  check("un estudio sin la ficha publicada no busca", !!(await sk.searchSeekers(staffB, {})).issue && (await err(() => sk.contactSeeker(staffB, mine!.id, "hola"))));
+  await sk.contactSeeker(staffA, mine!.id, "Te podemos ayudar con el monotributo");
+  check("contactar dos veces: no", await err(() => sk.contactSeeker(staffA, mine!.id, "otra vez")));
+  check("antes de aceptar, el estudio no ve sus datos", (await sk.acceptedContacts(staffA)).every((x) => x.name !== "Bruno Busca"));
+  const [contact] = await sk.myContacts(P.id);
+  check("la persona ve quién la contactó", contact?.studio != null && contact.c.status === "pendiente");
+  check("otra persona no responde por ella (forzando el ID)", await err(() => sk.answerContact({ ...P, id: d.users.titular } as never, contact.c.id, true)));
+  const connId = await sk.answerContact(P, contact.c.id, true);
+  const [conn] = await sql`select status, initiated_by, studio_id from account_connections where id = ${connId}`;
+  check("al aceptar empieza la admisión", conn?.status === "admision" && conn.studio_id === A && conn.initiated_by === "estudio");
+  check("y recién ahí el estudio ve su nombre y su mail", (await sk.acceptedContacts(staffA)).some((x) => x.name === "Bruno Busca" && x.email === P.email));
+  check("auditado", (await sql`select count(*)::int n from audit_log where actor_id = ${P.id} and action in ('red.disponible', 'red.contacto_aceptado')`)[0].n >= 2);
+  // Flotas: lo decide el Capitán
+  const [fleet] = await sql`insert into fleets (name, created_by) values ('Flota de prueba', ${P.id}) returning id`.catch(async () => sql`insert into fleets (name) values ('Flota de prueba') returning id`);
+  await sql`insert into fleet_members (fleet_id, user_id, name, email, role, status) values (${fleet.id}, ${P.id}, 'Bruno', ${P.email}, 'capitan', 'activo')`.catch(() => undefined);
+  const other = { ...P, id: d.users.titular };
+  check("un tripulante o alguien de afuera no activa la Flota", await err(() => sk.setFleetSeeker(other as never, fleet.id, true, { kind: "flota" })));
+  await sk.setFleetSeeker(P, fleet.id, true, { kind: "flota", province: "Córdoba", needs: ["monotributo"] });
+  check("la Flota aparece como Flota, sin nombre", (await sk.searchSeekers(staffA, { tipo: "flota" })).list.some((x) => x.kind === "flota" && !JSON.stringify(x).includes("Flota de prueba")));
+  await sql`delete from fleets where id = ${fleet.id}`;
+  await sql`update studios set plan_key = ${plan_key} where id = ${A}`;
+  await sql`delete from studios where id = ${P.studioId}`;
+  await sql`delete from users where id = ${P.id}`;
 }
 
 console.log(fails ? `\n${fails} fallas` : "\nTodo bien");

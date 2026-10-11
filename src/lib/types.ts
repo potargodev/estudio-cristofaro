@@ -64,7 +64,7 @@ export const LEAD_SOURCES: Record<LeadSource, string> = {
   manual: "Carga manual",
   otro: "Otro",
   agenda: "Agenda online",
-  red: "Red de estudios",
+  red: "Red Contable",
   flota: "Flota (pedido grupal)",
 };
 

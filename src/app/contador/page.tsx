@@ -5,11 +5,13 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import { ModeBadge } from "@/components/conexiones/ModeBadge";
+import { SeekerForm } from "@/components/red/SeekerForm";
+import { myContacts, mySeeker } from "@/modules/red/seekers";
 import { requirePersonal } from "@/lib/auth";
 import { money } from "@/modules/bitacora/catalog";
 import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { actionsFor, AUTONOMY_LABEL, connectionHistory, currentConnection, disputeMessages, READONLY_DAYS, STATUS_LABEL, surveyDue } from "@/modules/conexiones/server";
-import { acceptInvitationAction, answerInfoAction, autonomyAction, closingClearAction, declineAction, approveActionAction, rejectActionAction, disputeAction, disputeMessageAction, rateAction, skipRatingAction, resolveDisputeAction, scopesAction, signAction, startClosingAction, weeklyAction } from "./actions";
+import { acceptInvitationAction, answerInfoAction, autonomyAction, closingClearAction, declineAction, approveActionAction, rejectActionAction, disputeAction, disputeMessageAction, rateAction, skipRatingAction, seekerAction, answerContactAction, rejectContactAction, resolveDisputeAction, scopesAction, signAction, startClosingAction, weeklyAction } from "./actions";
 
 export const metadata: Metadata = { title: { absolute: "Contador · Faro" } };
 
@@ -71,7 +73,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const me = await requirePersonal();
   const titular = me.role === "titular";
-  const [c, history, survey] = await Promise.all([currentConnection(me.id), connectionHistory(me.id), surveyDue(me.id)]);
+  const [c, history, survey, seeker, contacts] = await Promise.all([currentConnection(me.id), connectionHistory(me.id), surveyDue(me.id), mySeeker(me.id), myContacts(me.id)]);
   const [actions, messages] = c && ["activa", "en_cierre", "en_disputa", "cerrada"].includes(c.status) ? await Promise.all([actionsFor(me.id, c.id, { status: sp.estado, from: sp.desde, to: sp.hasta }), disputeMessages(c.id)]) : [[], []];
   const proposals = actions.filter((a) => a.status === "propuesta");
   return (
@@ -121,8 +123,8 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
             Faro te ordena y te deja hacer lo básico, pero no da fe de nada: el único que puede hacerlo es un contador matriculado. {NO_REEMPLAZA}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/red" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-[14px] text-paper hover:bg-night">
-              <Search className="size-4" aria-hidden /> Buscar en la Red de estudios
+            <Link href="/red-contable" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-[14px] text-paper hover:bg-night">
+              <Search className="size-4" aria-hidden /> Buscar en la Red Contable
             </Link>
             <Link href="/flotas" className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-[14px] hover:border-muted">
               <Ship className="size-4" aria-hidden /> Flotas
@@ -156,7 +158,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
                 <p className="rounded-md border border-line bg-navy-soft px-4 py-2.5">
                   Te pidió una entrevista{c.interview_note ? `: «${c.interview_note}»` : ""}.{" "}
                   {c.studioSlug && (
-                    <Link href={`/red/${c.studioSlug}/agendar`} className="underline underline-offset-4">
+                    <Link href={`/red-contable/${c.studioSlug}/agendar`} className="underline underline-offset-4">
                       Elegí un horario en su agenda
                     </Link>
                   )}
@@ -412,6 +414,47 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
         </section>
       )}
 
+      {contacts.some((x) => x.c.status === "pendiente" && !x.fleetId) && (
+        <section aria-labelledby="contactos" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
+          <h2 id="contactos" className="text-[16px] font-semibold">
+            Estudios que quieren ser tu contador
+          </h2>
+          <ul className="mt-2 divide-y divide-line">
+            {contacts
+              .filter((x) => x.c.status === "pendiente" && !x.fleetId)
+              .map((x) => (
+                <li key={x.c.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-[14px]" data-contacto>
+                  <span className="min-w-0">
+                    <Link href={`/red-contable/${x.slug}`} className="font-medium underline underline-offset-4">
+                      {x.studio}
+                    </Link>
+                    {x.c.message && <span className="block text-muted">«{x.c.message}»</span>}
+                  </span>
+                  <form action={answerContactAction} className="flex gap-2">
+                    <input type="hidden" name="id" value={x.c.id} />
+                    <button className="h-10 rounded-md bg-navy px-3 text-[14px] text-paper hover:bg-night">Aceptar</button>
+                    <button formAction={rejectContactAction} className="h-10 rounded-md border border-line px-3 text-[14px] hover:border-muted">
+                      No, gracias
+                    </button>
+                  </form>
+                </li>
+              ))}
+          </ul>
+          <p className="mt-2 text-[13px] text-muted">Al aceptar, el estudio ve tu nombre y tus datos y empieza su admisión. Hasta entonces no sabe quién sos.</p>
+        </section>
+      )}
+
+      {titular && (!c || !["activa", "en_cierre", "en_disputa"].includes(c.status)) && (
+        <section aria-labelledby="disponible" className={card}>
+          <h2 id="disponible" className="text-[16px] font-semibold">
+            Que los estudios te encuentren
+          </h2>
+          <div className="mt-3">
+            <SeekerForm action={seekerAction} seeker={seeker} />
+          </div>
+        </section>
+      )}
+
       {history.length > 0 && (
         <section aria-labelledby="historial" className={card}>
           <h2 id="historial" className="text-[16px] font-semibold">
@@ -430,7 +473,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
       {titular && !c && (
         <p className="text-[13px] text-muted">
           Para conectar, elegí un estudio en la{" "}
-          <Link href="/red" className="underline underline-offset-4">
+          <Link href="/red-contable" className="underline underline-offset-4">
             Red
           </Link>{" "}
           y tocá «Conectar mi cuenta», o esperá la invitación de tu estudio.

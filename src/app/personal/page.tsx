@@ -182,7 +182,7 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
         <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
       </Link>
 
-      <Link href="/red" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
+      <Link href="/red-contable" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
         <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
           <LifeBuoy className="size-6" strokeWidth={1.5} aria-hidden />
         </span>

@@ -537,7 +537,7 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
             <dd className="num text-[18px]">{fmt(sim.ivaMonthly)}</dd>
           </div>
         </dl>
-        <p className="mt-2 text-[13px] text-muted">Además se suman Ganancias y aportes de autónomos. Esto no reemplaza el criterio de un contador: <Link href="/red?necesito=simulacion_ri" className="underline underline-offset-4">sumá uno desde la Red de estudios</Link>.</p>
+        <p className="mt-2 text-[13px] text-muted">Además se suman Ganancias y aportes de autónomos. Esto no reemplaza el criterio de un contador: <Link href="/red-contable?necesito=simulacion_ri" className="underline underline-offset-4">sumá uno desde la Red Contable</Link>.</p>
       </section>
     </div>
   );

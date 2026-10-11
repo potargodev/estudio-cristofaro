@@ -239,3 +239,20 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - SMTP para los avisos por mail (en la app ya llegan). Revisar con un abogado los textos de las políticas de la conexión (ver pendientes).
+
+## Principios · Etapa 6 · Red Contable de doble mano (octubre 2026)
+
+**Qué quedó**
+- **Red Contable** en toda la interfaz y la ayuda; la ruta pública pasa a `/red-contable` y las viejas (`/red`, `/red/<estudio>`, `/ayuda/red-de-estudios/*`) redirigen.
+- **«Disponible, busco contador»** (migración `0041`): personas, autónomos y empresas desde Personal → Contador; Flotas desde la Flota (Capitán). Eligen qué mostrar (tipo, rubro, tamaño, zona, qué necesitan y una nota sin datos personales); nunca nombre ni contacto.
+- **Buscar clientes** (Comercial, estudios con ficha verificada): listado anónimo con filtros y «Contactar». La persona acepta o rechaza; recién al aceptar el estudio ve sus datos y empieza la admisión (etapa 5).
+- Se mantienen el ranking neutral sin posiciones pagas, la matrícula verificada y las reseñas actuales. Sin comisión por clientes.
+- Ayuda: `red-contable/buscar-un-estudio` y `red-contable/perfil-del-estudio`.
+
+**Qué se probó**
+- `principios-servidor.mts 6` (15/15): limpieza de la nota, apagado/encendido, listado anónimo, filtros, estudio sin ficha no busca, contacto único, aceptación ajena forzando el ID, admisión al aceptar, datos recién después, auditoría y Flotas (solo el Capitán, sin nombre).
+- `principios-navegador.mjs 6` (13/13): redirecciones de rutas viejas, interruptor, listado anónimo, contactar, aceptar y ver los datos, 390 px y oscuro.
+- Regresión: etapas 1 a 5, `red.mts` (15/15), `verificar-redirecciones.mts`.
+
+**Qué falta configurar**
+- Nada. Si se confirma el nombre definitivo de la Red (decisión abierta b), cambiar textos y la ruta pública.

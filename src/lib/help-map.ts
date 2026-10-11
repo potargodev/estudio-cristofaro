@@ -2,8 +2,9 @@
 // pantalla. El primer prefijo que coincide gana (de lo más específico a lo general).
 const MAP: [string, string][] = [
   ["/cajas", "bitacora/mis-cajas"],
-  ["/contador", "red-de-estudios/conectar-un-contador"],
+  ["/contador", "red-contable/conectar-un-contador"],
   ["/admin/comercial/conexiones", "organizaciones/cuentas-conectadas"],
+  ["/admin/comercial/buscar-clientes", "red-contable/perfil-del-estudio"],
   ["/admin/organizaciones/cuenta", "organizaciones/cuentas-conectadas"],
   ["/faro-manager/escudo", "primeros-pasos/faro-y-tu-contador"],
   ["/facturacion/recibidos", "documentos/lectura-inteligente"],
@@ -43,7 +44,7 @@ const MAP: [string, string][] = [
   ["/admin/configuracion/conexiones", "conexiones/conexiones"],
   ["/admin/configuracion/plan", "primeros-pasos/planes"],
   ["/admin/configuracion/modulos", "primeros-pasos/planes"],
-  ["/admin/comercial/red", "red-de-estudios/perfil-del-estudio"],
+  ["/admin/comercial/red", "red-contable/perfil-del-estudio"],
   ["/admin", "primeros-pasos/primeros-pasos-estudio"],
   ["/portal/documentos", "documentos/subir-documentos"],
   ["/portal/vencimientos", "vencimientos/calendario"],
@@ -63,7 +64,7 @@ const MAP: [string, string][] = [
   ["/mensajes", "mensajes/mensajes"],
   ["/primeros-pasos", "primeros-pasos/registro"],
   ["/flotas", "flotas/que-es-una-flota"],
-  ["/red", "red-de-estudios/buscar-un-estudio"],
+  ["/red-contable", "red-contable/buscar-un-estudio"],
   ["/personal/plan", "primeros-pasos/planes"],
   ["/personal", "primeros-pasos/registro"],
   ["/faro-manager", "primeros-pasos/planes"],

@@ -95,11 +95,11 @@ if (stage("2")) {
   await sql`update derivation_suggestions set status = 'activa', snoozed_until = null where user_id = ${T}`;
   await p.goto(`${BASE}/personal`);
   await p.getByRole("link", { name: "Sumar un contador" }).first().click();
-  check("«Sumar un contador» lleva a la Red con el contexto armado", (await seen(p, "Lo que necesitás: Facturación al exterior")) && p.url().includes("/red?derivacion="));
+  check("«Sumar un contador» lleva a la Red con el contexto armado", (await seen(p, "Lo que necesitás: Facturación al exterior")) && p.url().includes("/red-contable?derivacion="));
   // Una sugerencia ajena forzando el ID no muestra nada
   const [other] = await sql`select id from derivation_suggestions where user_id = ${T}`;
   const b = await as(d.cookies.adminB);
-  await b.goto(`${BASE}/red?derivacion=${other.id}`);
+  await b.goto(`${BASE}/red-contable?derivacion=${other.id}`);
   check("Red con una derivación ajena: no muestra el contexto", !(await b.evaluate(() => document.body.innerText.includes("Lo que necesitás"))));
   await p.goto(`${BASE}/facturacion/monotributo?compras=100000`);
   check("Monotributo: hechos «Según lo que cargaste» y la simulación como dato", (await seen(p, "Es un dato, no una recomendación")) && !(await p.evaluate(() => document.body.innerText.includes("Vas bien"))));
@@ -236,7 +236,7 @@ if (stage("5")) {
   const t = await as(d.cookies.titular);
   await t.goto(`${BASE}/personal`);
   check("Personal: indicador «Autogestión»", (await seen(t, "Autogestión")) && (await t.locator('[data-modo="autogestion"]').count()) === 1);
-  await t.goto(`${BASE}/red/${slug}`);
+  await t.goto(`${BASE}/red-contable/${slug}`);
   check("Red: «Conectar mi cuenta» (conexión, no copia; personal apagado)", (await seen(t, "Conectar mi cuenta")) && !(await t.locator('[data-conectar] input[name="personal"]').isChecked()));
   await t.locator("[data-conectar] textarea[name=message]").fill("Necesito contador para el monotributo");
   await t.getByRole("button", { name: "Pedir la conexión" }).click();
@@ -322,6 +322,52 @@ if (stage("5")) {
     await v.goto(`${BASE}/contador`);
     check(`Contador (${dark ? "oscuro, escritorio" : "claro, 390 px"}): sin scroll horizontal`, (await seen(v, "Relaciones anteriores")) && (await noHScroll(v)));
   }
+  await sql`update studios set plan_key = ${plan_key} where id = ${A}`;
+}
+
+// ─── Etapa 6 · Red Contable de doble mano ───
+if (stage("6")) {
+  const T = d.users.titular;
+  const A = d.studios.A;
+  const [{ slug, plan_key }] = await sql`select slug, plan_key from studios where id = ${A}`;
+  await sql`update studios set plan_key = 'profesional' where id = ${A}`;
+  await sql`insert into directory_profiles (studio_id, published, license_status, accepting_clients) values (${A}, true, 'verificada', true) on conflict (studio_id) do update set published = true, license_status = 'verificada'`;
+  await sql`delete from account_connections where user_id = ${T}`;
+  await sql`delete from seeker_profiles where user_id = ${T}`;
+  const pub = await as(null);
+  const r1 = await pub.goto(`${BASE}/red`);
+  check("ruta vieja /red redirige a /red-contable", pub.url().endsWith("/red-contable") && r1.status() === 200);
+  check("la interfaz dice «Red Contable»", (await pub.title()).includes("Red Contable") || (await seen(pub, "Red Contable")));
+  await pub.goto(`${BASE}/red/${slug}`);
+  check("la ficha vieja también redirige", pub.url().includes(`/red-contable/${slug}`));
+  await pub.goto(`${BASE}/ayuda/red-de-estudios/buscar-un-estudio`);
+  check("la ayuda vieja redirige", pub.url().includes("/ayuda/red-contable/buscar-un-estudio") && (await seen(pub, "Disponible, busco contador")));
+  const t = await as(d.cookies.titular);
+  await t.goto(`${BASE}/contador`);
+  await t.getByLabel("Disponible, busco contador").check();
+  await t.locator("select[name=province]").selectOption("Santa Fe");
+  await t.locator('input[name=needs][value="monotributo"]').check();
+  await t.locator("input[name=note]").fill("Arranco a facturar, mail yo@mail.com");
+  await t.getByRole("button", { name: "Guardar", exact: true }).last().click();
+  check("«Disponible, busco contador» activado", await seen(t, "te ven sin tu nombre ni tus datos"));
+  const a = await as(d.cookies.adminA, { width: 1280 });
+  await a.goto(`${BASE}/admin/comercial/buscar-clientes?provincia=Santa+Fe`);
+  const [tu] = await sql`select name, email from users where id = ${T}`;
+  check("Buscar clientes: listado anónimo (sin nombre ni mail)", (await seen(a, "Necesita: Monotributo")) && !(await a.evaluate((n) => document.body.innerText.includes(n), tu.name)) && !(await a.evaluate(() => document.body.innerText.includes("yo@mail.com"))));
+  await a.locator("[data-buscando]").filter({ hasText: "Necesita: Monotributo" }).first().getByRole("button", { name: "Contactar" }).click();
+  check("el estudio contacta", await seen(a, "Contacto enviado"));
+  await t.goto(`${BASE}/contador`);
+  check("la persona ve qué estudio la contactó", (await t.locator("[data-contacto]").count()) === 1);
+  await t.getByRole("button", { name: "Aceptar", exact: true }).click();
+  check("acepta: empieza la admisión", (await seen(t, "empieza su admisión")) && (await seen(t, "En admisión")));
+  await a.goto(`${BASE}/admin/comercial/buscar-clientes`);
+  check("recién ahora el estudio ve su nombre y su mail", (await seen(a, "Aceptaron tu contacto")) && (await a.evaluate((e) => document.body.innerText.includes(e), tu.email)));
+  for (const dark of [false, true]) {
+    const v = await as(d.cookies.adminA, { dark, width: dark ? 1280 : 390 });
+    await v.goto(`${BASE}/admin/comercial/buscar-clientes`);
+    check(`Buscar clientes (${dark ? "oscuro" : "claro, 390 px"}): sin scroll horizontal`, (await seen(v, "Buscar clientes")) && (await noHScroll(v)));
+  }
+  await sql`delete from account_connections where user_id = ${T}`;
   await sql`update studios set plan_key = ${plan_key} where id = ${A}`;
 }
 

@@ -47,7 +47,7 @@ export const CATEGORIES: { key: string; name: string; icon: string; text: string
   { key: "ia", name: "IA y MCP", icon: "Sparkles", text: "El asistente y las aprobaciones." },
   { key: "conexiones", name: "Conexiones", icon: "Plug", text: "Tango, Xubio, Drive y archivos." },
   { key: "flotas", name: "Flotas", icon: "Ship", text: "Grupos informales que piden juntos." },
-  { key: "red-de-estudios", name: "Red de estudios", icon: "Handshake", text: "Encontrar y elegir un estudio." },
+  { key: "red-contable", name: "Red Contable", icon: "Handshake", text: "Encontrar y elegir un estudio." },
 ];
 
 export const categoryName = (k: string) => CATEGORIES.find((c) => c.key === k)?.name ?? k;

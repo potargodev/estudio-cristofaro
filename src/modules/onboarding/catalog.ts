@@ -43,14 +43,14 @@ export const CHECKLISTS: Record<OnboardingProfile, ChecklistStep[]> = {
     { key: "grupo", title: "Creá tu primer grupo de gastos", text: "Un viaje, la casa o la oficina: dividí sin hacer cuentas.", href: "/grupos/nuevo", help: "grupos-de-gastos/crear-un-grupo" },
     { key: "gasto", title: "Cargá un gasto", text: "Con foto del ticket si querés. Faro calcula quién le debe a quién.", href: "/grupos", help: "grupos-de-gastos/cargar-gastos" },
     { key: "invitar", title: "Sumá a alguien al grupo", text: "Puede entrar sin crear cuenta, con un enlace.", href: "/grupos", help: "grupos-de-gastos/invitar" },
-    { key: "red", title: "Mirá la Red de estudios", text: "Si algún día necesitás un contador, compará estudios verificados.", href: "/red", help: "red-de-estudios/buscar-un-estudio" },
+    { key: "red", title: "Mirá la Red Contable", text: "Si algún día necesitás un contador, compará estudios verificados.", href: "/red-contable", help: "red-contable/buscar-un-estudio" },
   ],
   autonomo: [
     { key: "datos", title: "Confirmá tu CUIT y régimen", text: "Con eso armamos tu calendario de vencimientos.", href: "/personal", help: "primeros-pasos/registro" },
     { key: "grupo", title: "Creá un grupo de gastos", text: "Con socios o clientes. Lo deducible queda marcado para tu contabilidad.", href: "/grupos/nuevo", help: "grupos-de-gastos/crear-un-grupo" },
     { key: "gasto_actividad", title: "Marcá un gasto de tu actividad", text: "Al cargar un gasto, tildá «es de mi actividad» o «deducible».", href: "/grupos", help: "grupos-de-gastos/cargar-gastos" },
     { key: "asistente", title: "Probá el asistente", text: "Preguntale por tus gastos o tus vencimientos.", href: "/admin/vigia?tab=asistente", help: "ia/ia-y-aprobaciones" },
-    { key: "red", title: "Conocé la Red de estudios", text: "Para cuando quieras que un contador lleve tus números.", href: "/red", help: "red-de-estudios/buscar-un-estudio" },
+    { key: "red", title: "Conocé la Red Contable", text: "Para cuando quieras que un contador lleve tus números.", href: "/red-contable", help: "red-contable/buscar-un-estudio" },
   ],
   estudio_dueno: [
     { key: "seguridad", title: "Activá el segundo factor", text: "Es obligatorio en el estudio: manejan datos de clientes.", href: "/admin/seguridad", help: "primeros-pasos/registro" },

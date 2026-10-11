@@ -16,7 +16,7 @@ import { LICENSE_STATUS_LABEL, MODALITIES, PROVINCES, RED_SERVICES, TEAM_SIZES }
 import { getProfile, visibilityIssue } from "@/modules/red/server";
 import { publishRedAction, respondReviewAction, saveRedProfileAction } from "@/app/admin/red-actions";
 
-export const metadata: Metadata = { title: "Red de estudios" };
+export const metadata: Metadata = { title: "Red Contable" };
 
 const field = "mt-1.5 h-10 w-full rounded-md border border-line bg-surface px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
 const label = "text-[13px] font-medium text-muted";
@@ -47,7 +47,7 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
     <div className="max-w-5xl">
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader level={2} title="Red de estudios" description="Tu ficha en el directorio neutral de Faro. Aparecer es opcional; el orden sale solo de criterios objetivos (reseñas, tiempo de respuesta, cupo y coincidencia con lo que se busca), nunca de un pago." />
+      <PageHeader level={2} title="Red Contable" description="Tu ficha en el directorio neutral de Faro. Aparecer es opcional; el orden sale solo de criterios objetivos (reseñas, tiempo de respuesta, cupo y coincidencia con lo que se busca), nunca de un pago." />
       <div className="grid gap-6 [&>*]:min-w-0">
         <Panel
           title="Estado de la ficha"
@@ -61,7 +61,7 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
                 Pedidos de Flotas
               </Link>
               {!issue && studio && (
-                <Link href={`/red/${studio.slug}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+                <Link href={`/red-contable/${studio.slug}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
                   <Eye className="size-4" aria-hidden /> Ver ficha pública
                 </Link>
               )}

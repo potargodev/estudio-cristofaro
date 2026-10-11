@@ -109,7 +109,7 @@ export function FaroCase() {
             <p>
               Faro se construyó con el Estudio Cristofaro, un estudio contable de Argentina que lo usa todos los días: su cartera, los vencimientos de cada cliente, el portal donde los clientes suben comprobantes y hacen consultas, y el asistente que prepara borradores que siempre revisa un contador.
             </p>
-            <p>En la Red de estudios aparece como uno más, sin prioridad: el orden es el mismo para todos.</p>
+            <p>En la Red Contable aparece como uno más, sin prioridad: el orden es el mismo para todos.</p>
             <ul className="grid gap-px overflow-hidden rounded-lg bg-hair sm:grid-cols-3">
               {[
                 ["Portal", "para cada cliente y su equipo"],
@@ -130,7 +130,7 @@ export function FaroCase() {
 }
 
 const FAQ = [
-  { q: "¿Faro es un estudio contable?", a: "No. Faro es una herramienta. Si necesitás un contador, la Red de estudios te muestra estudios verificados para que elijas vos." },
+  { q: "¿Faro es un estudio contable?", a: "No. Faro es una herramienta. Si necesitás un contador, la Red Contable te muestra estudios verificados para que elijas vos." },
   { q: "¿Es gratis?", a: "Sí para personas y autónomos que arrancan, y para el contador que empieza: el plan Inicial de estudios es gratis (hasta 5 organizaciones). Profesional y Avanzado tienen 30 días de prueba y, pagando el año, 2 meses de regalo." },
   { q: "¿La IA hace cosas sola?", a: "La IA propone y una persona aprueba. Nada fiscal, de pagos ni comunicaciones sensibles se ejecuta sin aprobación." },
   { q: "¿Mis datos están seguros?", a: "Cada estudio, organización y persona está aislado y se valida en el servidor. Los estudios entran con segundo factor obligatorio y todo lo sensible queda auditado." },

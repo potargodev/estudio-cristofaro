@@ -4,7 +4,7 @@ resumen: Qué planes hay para personas, autónomos y estudios, cuánto cuestan, 
 perfiles: [persona, autonomo, estudio]
 modulo: core
 actualizado: 2026-10-11
-relacionados: [primeros-pasos/registro, primeros-pasos/primeros-pasos-estudio, red-de-estudios/perfil-del-estudio]
+relacionados: [primeros-pasos/registro, primeros-pasos/primeros-pasos-estudio, red-contable/perfil-del-estudio]
 ---
 
 Los precios son **de referencia en dólares**; en la app los ves **en pesos**, con la conversión que carga el equipo de Faro.
@@ -35,7 +35,7 @@ Los precios son **de referencia en dólares**; en la app los ves **en pesos**, c
 - **Inicial es gratis de verdad:** sin prueba, sin tarjeta y sin débito. No tiene organizaciones extra: para sumar más organizaciones o personas del equipo, pasás a Profesional.
 - **Organización extra (Profesional y Avanzado):** USD 2 por mes cada una, por encima de las incluidas.
 - En Inicial la IA hace consultas; en Profesional, consultas y acciones con aprobación; en Avanzado, acciones avanzadas y agentes.
-- Profesional y Avanzado incluyen aparecer en la [Red de estudios](/ayuda/red-de-estudios/perfil-del-estudio).
+- Profesional y Avanzado incluyen aparecer en la [Red Contable](/ayuda/red-contable/perfil-del-estudio).
 
 ## Prueba gratis y pago anual
 

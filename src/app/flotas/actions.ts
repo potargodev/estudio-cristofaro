@@ -9,6 +9,7 @@ import { clientIp } from "@/lib/rate-limit";
 import * as fl from "@/modules/flotas/server";
 import { stopFleetDebit } from "@/modules/billing/collect";
 import { recordAcceptance } from "@/modules/legal/server";
+import { answerContact, SeekerError, setFleetSeeker } from "@/modules/red/seekers";
 
 // Acciones de Flotas. Quién es sale SIEMPRE de la sesión (titular de una
 // cuenta personal); que pertenezca a la Flota y su rol lo valida el módulo.
@@ -149,7 +150,7 @@ export async function publishRequestAction(fd: FormData) {
       await fl.publishRequest(m, s(fd, "fleet"), s(fd, "zone"), fd.getAll("services").map(String), s(fd, "message"));
       await audit({ studioId: user.studioId, actor: user, action: "flota.pedido", entityType: "flota", entityId: s(fd, "fleet") });
     },
-    "Publicaste el pedido en la Red de estudios.",
+    "Publicaste el pedido en la Red Contable.",
   );
 }
 
@@ -200,4 +201,38 @@ export async function requestEndAction(fd: FormData) {
     },
     "Pediste la baja. El servicio sigue hasta la fecha de fin.",
   );
+}
+
+/** Red Contable (§15): el Capitán activa «Disponible, busco contador» para la Flota */
+export async function fleetSeekerAction(fd: FormData) {
+  const { user } = await me();
+  const back = fleetPath(fd);
+  const active = fd.get("active") === "on";
+  try {
+    await setFleetSeeker(user, s(fd, "fleet"), active, { kind: "flota", industry: s(fd, "industry") || null, province: s(fd, "province") || null, city: s(fd, "city") || null, needs: fd.getAll("needs").map(String), note: s(fd, "note") || null });
+  } catch (e) {
+    if (e instanceof SeekerError) redirect(`${back}?error=${encodeURIComponent(e.message)}`);
+    throw e;
+  }
+  revalidatePath(back);
+  redirect(`${back}?ok=${encodeURIComponent(active ? "La Flota aparece en la Red Contable, sin nombres ni datos." : "La Flota ya no aparece en el listado.")}`);
+}
+
+export async function fleetContactAction(fd: FormData) {
+  return fleetAnswer(fd, true);
+}
+export async function fleetRejectContactAction(fd: FormData) {
+  return fleetAnswer(fd, false);
+}
+async function fleetAnswer(fd: FormData, accept: boolean) {
+  const { user } = await me();
+  const back = fleetPath(fd);
+  try {
+    await answerContact(user, s(fd, "id"), accept);
+  } catch (e) {
+    if (e instanceof SeekerError) redirect(`${back}?error=${encodeURIComponent(e.message)}`);
+    throw e;
+  }
+  revalidatePath(back);
+  redirect(`${back}?ok=${encodeURIComponent(accept ? "Aceptaste: el estudio ve el nombre de la Flota y del Capitán y puede mandar su propuesta." : "Listo, no aceptaste.")}`);
 }

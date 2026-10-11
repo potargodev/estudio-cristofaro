@@ -184,7 +184,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                     ? [
                         { href: "/personal", icon: Building2, t: "Ir a mi panel", d: "Tu CUIT, tus gastos y lo que viene." },
                         { href: "/grupos/nuevo", icon: Wallet, t: "Crear un grupo de gastos", d: "Con socios o clientes." },
-                        { href: "/red", icon: Handshake, t: "Buscar un contador", d: "En la Red de estudios." },
+                        { href: "/red-contable", icon: Handshake, t: "Buscar un contador", d: "En la Red Contable." },
                       ]
                     : [
                         { href: "/vigia", icon: WandSparkles, t: "Hablar con el Vigía", d: "Contale tu primer gasto: «5000 de nafta»." },

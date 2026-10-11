@@ -127,7 +127,7 @@ function RedScreen() {
     { n: "Estudio Paraná", z: "Paraná, Entre Ríos · presencial", r: "4,6", c: 31, h: "Responde en 1 día" },
   ];
   return (
-    <Frame title="Red de estudios · orden neutral">
+    <Frame title="Red Contable · orden neutral">
       <div className="p-4 sm:p-5">
         <div className="flex flex-wrap gap-2 text-[11px]">
           {["Zona: Rosario", "Rubro: Gastronomía", "Servicio: Monotributo"].map((f) => (

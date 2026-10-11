@@ -18,7 +18,7 @@ export default async function MasPage() {
     whatsapp && { href: "/portal/whatsapp", label: "WhatsApp", hint: "Avisos del estudio y comprobantes por WhatsApp" },
     can(me.orgRole, "equipo.gestionar") && { href: "/portal/equipo", label: "Mi equipo", hint: "Quién entra al portal de la organización y con qué rol" },
     can(me.orgRole, "agenda.reservar") && { href: "/portal/agendar", label: "Agendar una llamada", hint: "Con tu contador, en los horarios del estudio" },
-    (me.orgRole === "administrador" || me.orgRole === "direccion") && { href: "/portal/resena", label: "Reseñar al estudio", hint: "Tu opinión en la Red de estudios" },
+    (me.orgRole === "administrador" || me.orgRole === "direccion") && { href: "/portal/resena", label: "Reseñar al estudio", hint: "Tu opinión en la Red Contable" },
     { href: "/legal/terminos", label: "Términos y privacidad", hint: "Textos legales y lo que aceptaste" },
   ].filter((l): l is { href: string; label: string; hint: string } => !!l);
   return (

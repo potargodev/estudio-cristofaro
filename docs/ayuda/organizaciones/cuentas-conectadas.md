@@ -4,14 +4,14 @@ resumen: Personas y autónomos que conectan su cuenta con el estudio: admisión,
 perfiles: [estudio]
 modulo: core
 actualizado: 2026-10-11
-relacionados: [red-de-estudios/perfil-del-estudio, organizaciones/invitaciones]
+relacionados: [red-contable/perfil-del-estudio, organizaciones/invitaciones]
 ---
 
 Una **cuenta conectada** es una persona o un autónomo que usa Faro y te dio permiso para trabajar sobre su cuenta. No se copia nada a tu estudio: ves sus datos **en vivo**, con el mismo formato para cualquier estudio.
 
 ## De dónde llegan
 
-- **Desde la Red de estudios:** la persona toca **Conectar mi cuenta** en tu ficha.
+- **Desde la Red Contable:** la persona toca **Conectar mi cuenta** en tu ficha.
 - **Invitándola:** en **Comercial → Conexiones**, escribí su mail (tiene que tener su cuenta de Faro, que es gratis).
 - Los acuerdos de **Flotas** vigentes ya pasaron a este modelo.
 

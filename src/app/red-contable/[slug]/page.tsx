@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const p = await publicProfile((await params).slug);
-  return p ? { title: `${p.name} · Red de estudios`, description: p.p.headline ?? undefined } : { title: "Estudio no encontrado" };
+  return p ? { title: `${p.name} · Red Contable`, description: p.p.headline ?? undefined } : { title: "Estudio no encontrado" };
 }
 
 const month = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" });
@@ -41,8 +41,8 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0">
-        <Link href="/red" className="text-[13px] text-muted hover:text-ink">
-          ← Red de estudios
+        <Link href="/red-contable" className="text-[13px] text-muted hover:text-ink">
+          ← Red Contable
         </Link>
         <div className="mt-4 flex items-start gap-4">
           <span aria-hidden className="grid size-16 shrink-0 place-items-center rounded-lg bg-navy font-display text-[30px] text-gold">
@@ -162,7 +162,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           </div>
         )}
         {x.p.accepting_clients && (
-          <Link href={`/red/${x.slug}/agendar`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface text-[15px] font-medium text-ink hover:border-navy">
+          <Link href={`/red-contable/${x.slug}/agendar`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface text-[15px] font-medium text-ink hover:border-navy">
             <CalendarClock className="size-4" aria-hidden /> Agendar llamada
           </Link>
         )}

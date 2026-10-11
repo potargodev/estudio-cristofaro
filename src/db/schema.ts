@@ -1684,7 +1684,7 @@ export const help_feedback = pgTable(
   (t) => [index("help_feedback_article_idx").on(t.article_id, t.created_at)],
 );
 
-// ───────────────────────── Red de estudios (docs/faro-producto.md §2.i) ─────────────────────────
+// ───────────────────────── Red Contable (docs/faro-producto.md §2.i) ─────────────────────────
 
 export const licenseStatus = pgEnum("license_status", ["sin_cargar", "pendiente", "verificada", "rechazada"]);
 export const reviewStatus = pgEnum("review_status", ["pendiente", "publicada", "rechazada"]);
@@ -3937,3 +3937,54 @@ export const connection_ratings = pgTable("connection_ratings", {
   skipped: boolean("skipped").notNull().default(false),
   created_at: createdAt(),
 });
+
+// ───────────────────────── Red Contable de doble mano (principios §15) ─────────────────────────
+
+/**
+ * «Disponible, busco contador»: aparecer es una decisión activa. Se muestra
+ * solo lo que la persona eligió (rubro, tamaño, zona, qué necesita), sin
+ * nombre ni datos de contacto. kind: persona | autonomo | empresa | flota.
+ */
+export const seeker_profiles = pgTable(
+  "seeker_profiles",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    kind: text("kind").notNull(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    fleet_id: uuid("fleet_id").references(() => fleets.id, { onDelete: "cascade" }),
+    active: boolean("active").notNull().default(false),
+    industry: text("industry"),
+    size: text("size"),
+    province: text("province"),
+    city: text("city"),
+    needs: text("needs").array().notNull().default(sql`'{}'::text[]`),
+    note: text("note"),
+    activated_at: timestamp("activated_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("seeker_profiles_user_idx").on(t.user_id).where(sql`${t.fleet_id} is null`), uniqueIndex("seeker_profiles_fleet_idx").on(t.fleet_id)],
+);
+
+/** Un estudio contacta a alguien del listado: recién si acepta se muestran sus datos y empieza la admisión */
+export const seeker_contacts = pgTable(
+  "seeker_contacts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    seeker_id: uuid("seeker_id")
+      .notNull()
+      .references(() => seeker_profiles.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    contacted_by: uuid("contacted_by").references(() => users.id, { onDelete: "set null" }),
+    message: text("message"),
+    status: text("status").notNull().default("pendiente"), // pendiente | aceptado | rechazado
+    decided_at: timestamp("decided_at", { withTimezone: true }),
+    connection_id: uuid("connection_id"),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("seeker_contacts_seeker_studio_idx").on(t.seeker_id, t.studio_id)],
+);

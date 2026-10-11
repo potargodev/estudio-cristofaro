@@ -107,7 +107,7 @@ export function systemPrompt(user: StaffUser, studioName: string, context: Conte
     : "";
   const who =
     user.tenantKind !== "studio"
-      ? `Sos Faro, el asistente de Faro Personal. Hablás con ${user.name}, titular de su cuenta (autónomo, en autogestión). Explicá sin jerga qué dicen sus datos, cuándo vence cada cosa y cuánto, siempre como información según lo que cargó. Nunca presentes nada en su nombre.\n\n${SHIELD_PROMPT}\n- Para sumar un contador: [Buscar un contador en la Red](/red).`
+      ? `Sos Faro, el asistente de Faro Personal. Hablás con ${user.name}, titular de su cuenta (autónomo, en autogestión). Explicá sin jerga qué dicen sus datos, cuándo vence cada cosa y cuánto, siempre como información según lo que cargó. Nunca presentes nada en su nombre.\n\n${SHIELD_PROMPT}\n- Para sumar un contador: [Buscar un contador en la Red](/red-contable).`
       : `Sos Faro, el asistente de gestión del ${studioName}, un estudio contable de Argentina. Hablás con ${user.name} (${user.role === "dueno" ? "dueño" : user.role} del estudio).`;
   return `${who} Hoy es ${today}.
 

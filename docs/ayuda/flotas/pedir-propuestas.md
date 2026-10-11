@@ -1,10 +1,10 @@
 ---
 titulo: Cómo pedir y comparar propuestas con tu Flota
-resumen: El Capitán publica el pedido en la Red de estudios, los estudios ofertan un precio por integrante y la Flota compara antes de que cada uno decida.
+resumen: El Capitán publica el pedido en la Red Contable, los estudios ofertan un precio por integrante y la Flota compara antes de que cada uno decida.
 perfiles: [persona, autonomo, flota, estudio]
 modulo: flotas
 actualizado: 2026-10-11
-relacionados: [flotas/que-es-una-flota, flotas/acuerdos-y-salida, red-de-estudios/buscar-un-estudio]
+relacionados: [flotas/que-es-una-flota, flotas/acuerdos-y-salida, red-contable/buscar-un-estudio]
 ---
 
 ## 1. Armá la tripulación
@@ -13,7 +13,7 @@ Una Flota necesita entre **3 y 20 integrantes**. El Capitán los invita y cada u
 
 ## 2. Publicá el pedido
 
-Con al menos 3 integrantes activos, el Capitán completa en **Pedido de propuesta** la zona, los servicios que necesitan y un mensaje sin datos personales, y lo publica en la [Red de estudios](/ayuda/red-de-estudios/buscar-un-estudio). El pedido muestra **la cantidad de integrantes por perfil y la zona, sin datos personales**.
+Con al menos 3 integrantes activos, el Capitán completa en **Pedido de propuesta** la zona, los servicios que necesitan y un mensaje sin datos personales, y lo publica en la [Red Contable](/ayuda/red-contable/buscar-un-estudio). El pedido muestra **la cantidad de integrantes por perfil y la zona, sin datos personales**.
 
 ## 3. Los estudios ofertan
 
@@ -38,4 +38,4 @@ Con la propuesta elegida, **cada integrante acepta o no**, por su cuenta. Nadie 
 
 ## Para el estudio
 
-Una Flota es un bloque de clientes con perfiles parecidos, ideal para estandarizar el trabajo. Los pedidos llegan a **Comercial → Perfil en la Red → Pedidos de Flotas**, donde cargás el precio por perfil, qué incluye, el mínimo y el preaviso, y podés actualizar tu propuesta. Recibir pedidos requiere tener la ficha visible en la Red (planes Profesional y Avanzado). Ver [El perfil del estudio en la Red](/ayuda/red-de-estudios/perfil-del-estudio).
+Una Flota es un bloque de clientes con perfiles parecidos, ideal para estandarizar el trabajo. Los pedidos llegan a **Comercial → Perfil en la Red → Pedidos de Flotas**, donde cargás el precio por perfil, qué incluye, el mínimo y el preaviso, y podés actualizar tu propuesta. Recibir pedidos requiere tener la ficha visible en la Red (planes Profesional y Avanzado). Ver [El perfil del estudio en la Red](/ayuda/red-contable/perfil-del-estudio).

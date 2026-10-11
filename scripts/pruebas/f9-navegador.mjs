@@ -1,4 +1,4 @@
-// F9 en el navegador: Red de estudios (mapa y «Agendar llamada» de punta a
+// F9 en el navegador: Red Contable (mapa y «Agendar llamada» de punta a
 // punta), consulta con IA desde el portal → revisión y aprobación en el
 // estudio → respuesta en el portal, indicadores (pestañas y permisos), marca
 // blanca (colores en el portal, ingreso por dominio propio y ruteo por host),
@@ -46,13 +46,13 @@ const errors = [];
 const seen = async (p, text, timeout = 20000) => p.waitForFunction((t) => document.body.innerText.includes(t), text, { timeout }).then(() => true, () => false);
 const overflow = (p) => p.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
 
-// ── Red de estudios ──
+// ── Red Contable ──
 const pub = await as(null, { width: 390 });
-await pub.goto(`${BASE}/red?vista=mapa`);
-check("Red: vista de mapa con el estudio en su provincia", (await pub.locator(`svg a[href="/red/${slug}"]`).count()) === 1 && (await seen(pub, "Santa Fe")));
-check("Red: la pestaña Lista conserva la vista", (await pub.getByRole("link", { name: "Lista" }).getAttribute("href")) === "/red");
+await pub.goto(`${BASE}/red-contable?vista=mapa`);
+check("Red: vista de mapa con el estudio en su provincia", (await pub.locator(`svg a[href="/red-contable/${slug}"]`).count()) === 1 && (await seen(pub, "Santa Fe")));
+check("Red: la pestaña Lista conserva la vista", (await pub.getByRole("link", { name: "Lista" }).getAttribute("href")) === "/red-contable");
 check("Red (mobile): sin scroll horizontal", !(await overflow(pub)));
-await pub.goto(`${BASE}/red/${slug}`);
+await pub.goto(`${BASE}/red-contable/${slug}`);
 await pub.getByRole("link", { name: "Agendar llamada" }).click();
 await pub.waitForURL(/\/agendar$/);
 await pub.locator('[role="radiogroup"][aria-label="Día"] [role="radio"]').first().click();
@@ -63,7 +63,7 @@ await pub.getByRole("button", { name: "Confirmar llamada" }).click();
 check("Red: llamada agendada con el estudio elegido", await seen(pub, "Tu llamada está confirmada"));
 const [bk] = await sql`select b.studio_id, b.reason, l.id as lead from bookings b left join leads l on l.id = b.lead_id where b.email = 'red-prueba@ejemplo.com'`;
 check("Red: la reserva y el contacto quedan en ese estudio, con el origen", bk?.studio_id === A && bk.reason?.startsWith("Desde la Red") && !!bk.lead);
-await pub.goto(`${BASE}/red/no-existe/agendar`);
+await pub.goto(`${BASE}/red-contable/no-existe/agendar`);
 check("Red: un estudio inexistente no tiene agenda", (await pub.content()).includes("404") || (await seen(pub, "no existe", 4000)));
 
 // ── Consulta con IA: portal → estudio → portal ──

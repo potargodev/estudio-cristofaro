@@ -288,6 +288,13 @@
       "when": 1791751270621,
       "tag": "0040_conexion_contador",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1791753047906,
+      "tag": "0041_red_contable",
+      "breakpoints": true
     }
   ]
 }

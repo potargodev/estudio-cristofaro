@@ -25,4 +25,4 @@ En **Bitácora → Metas** creás una meta (un viaje, un fondo de emergencia u o
 
 ## El coach del Vigía
 
-Preguntale al Vigía «¿cómo puedo ahorrar más?» o «¿qué hago con mi aguinaldo?»: mira tus sobres, fijos, fugas y metas y te sugiere hábitos con tus números. Puede explicarte en general cómo funcionan un plazo fijo, un fondo money market o el dólar MEP, pero **no te recomienda inversiones**: eso es asesoramiento financiero, regulado por la CNV. Para eso te deriva a un asesor matriculado de la [Red de estudios](/red?servicio=asesoramiento_financiero).
+Preguntale al Vigía «¿cómo puedo ahorrar más?» o «¿qué hago con mi aguinaldo?»: mira tus sobres, fijos, fugas y metas y te sugiere hábitos con tus números. Puede explicarte en general cómo funcionan un plazo fijo, un fondo money market o el dólar MEP, pero **no te recomienda inversiones**: eso es asesoramiento financiero, regulado por la CNV. Para eso te deriva a un asesor matriculado de la [Red Contable](/red-contable?servicio=asesoramiento_financiero).

@@ -4,12 +4,12 @@ resumen: Una Flota es un grupo informal de 3 a 20 personas que piden juntas una 
 perfiles: [persona, autonomo, flota]
 modulo: flotas
 actualizado: 2026-10-10
-relacionados: [flotas/pedir-propuestas, flotas/acuerdos-y-salida, red-de-estudios/buscar-un-estudio]
+relacionados: [flotas/pedir-propuestas, flotas/acuerdos-y-salida, red-contable/buscar-un-estudio]
 ---
 
 Entrá desde tu panel personal a **Flotas**. Ahí creás una, respondés invitaciones y ves **Mis servicios**.
 
-Una **Flota** es un grupo de **3 a 20 personas** que se juntan para conseguir mejores condiciones con un estudio o contador de la [Red de estudios](/ayuda/red-de-estudios/buscar-un-estudio). Barcos independientes que navegan juntos, guiados por el mismo faro.
+Una **Flota** es un grupo de **3 a 20 personas** que se juntan para conseguir mejores condiciones con un estudio o contador de la [Red Contable](/ayuda/red-contable/buscar-un-estudio). Barcos independientes que navegan juntos, guiados por el mismo faro.
 
 ## Es un grupo informal, no una sociedad
 

@@ -1,4 +1,4 @@
-// Red de estudios: aislamiento forzando IDs en el servidor (reseñas,
+// Red Contable: aislamiento forzando IDs en el servidor (reseñas,
 // respuestas, pedidos de propuesta) y orden neutral. Correr después de /tmp/pw/red.mjs
 // o solo (arma su estado):
 //   npx tsx --conditions=react-server --env-file=.env.local scripts/pruebas/red.mts

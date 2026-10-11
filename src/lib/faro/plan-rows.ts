@@ -15,7 +15,7 @@ export const STUDIO_ROWS: [string, string, string, string][] = [
   ["Usuarios del estudio", "1", lim("profesional", "staffUsers"), lim("avanzado", "staffUsers")],
   ["Organización extra", "— (se pasa a Profesional)", "USD 2 / mes", "USD 2 / mes"],
   ["Precio", "Gratis, sin prueba ni débito", "30 días de prueba", "30 días de prueba"],
-  ["Aparecer en la Red de estudios", "—", "✓", "✓"],
+  ["Aparecer en la Red Contable", "—", "✓", "✓"],
   ["Núcleo: portal, vencimientos, documentos, solicitudes y agenda", "✓", "✓", "✓"],
   ["Grupos de gastos", "✓", "✓", "✓"],
   ["Asistente IA", "Con clave propia, consultas", "Consultas y acciones con aprobación", "Acciones avanzadas y agentes"],
@@ -34,7 +34,7 @@ export const PERSONA_ROWS: [string, string, string][] = [
   ["Bitácora: tus finanzas personales", "Captura por audio limitada al mes", "Captura ilimitada, mails y Mercado Pago"],
   ["Grupos de gastos", "✓", "✓"],
   ["Flotas: contratar un estudio en grupo", "✓", "✓"],
-  ["Red de estudios: encontrar un contador", "✓", "✓"],
+  ["Red Contable: encontrar un contador", "✓", "✓"],
   ["WhatsApp, coach y metas", "—", "✓"],
   ["Asistente IA", "Consultas", "Consultas y acciones con aprobación"],
 ];
@@ -47,5 +47,5 @@ export const PERSONAL_ROWS: [string, string, string][] = [
   ["Ingresos y gastos", "Básico", "Con lectura inteligente de comprobantes"],
   ["Grupos de gastos", "✓", "✓"],
   ["Asistente IA", "Consultas", "Consultas y acciones con aprobación"],
-  ["Encontrar un contador en la Red de estudios", "✓", "✓"],
+  ["Encontrar un contador en la Red Contable", "✓", "✓"],
 ];

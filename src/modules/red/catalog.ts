@@ -1,4 +1,4 @@
-// Red de estudios: listas cerradas de la ficha (sin base de datos; las usan el
+// Red Contable: listas cerradas de la ficha (sin base de datos; las usan el
 // directorio público, los filtros y el editor del estudio).
 
 export const MODALITIES = [

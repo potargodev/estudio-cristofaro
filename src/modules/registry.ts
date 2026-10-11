@@ -369,7 +369,7 @@ export const FARO_MODULES: FaroModule[] = [
   },
 ];
 
-// Módulos sumados en la etapa de Red de estudios, Flotas y Bitácora
+// Módulos sumados en la etapa de Red Contable, Flotas y Bitácora
 FARO_MODULES.push(
   {
     key: "flotas",
@@ -386,13 +386,13 @@ FARO_MODULES.push(
   },
   {
     key: "red_estudios",
-    name: "Red de estudios",
+    name: "Red Contable",
     icon: "Network",
     description: "Aparecé en el directorio neutral de estudios de Faro, recibí pedidos de propuesta y reseñas de clientes verificados.",
     status: "disponible",
     minPlan: { studio: "profesional" },
     roles: ["dueno", "contador"],
-    nav: [{ href: "/admin/comercial/red", label: "Red de estudios" }],
+    nav: [{ href: "/admin/comercial/red", label: "Red Contable" }],
     events: ["red.pedido_propuesta", "red.resena"],
     tools: [],
   },

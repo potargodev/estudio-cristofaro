@@ -4,7 +4,7 @@ resumen: Quién puede dejar una reseña, cómo responde el estudio, cómo modera
 perfiles: [persona, autonomo, organizacion, estudio]
 modulo: red_estudios
 actualizado: 2026-10-11
-relacionados: [red-de-estudios/buscar-un-estudio, red-de-estudios/perfil-del-estudio]
+relacionados: [red-contable/buscar-un-estudio, red-contable/perfil-del-estudio]
 ---
 
 Las reseñas ayudan a elegir estudio con información real. Por eso tienen reglas claras.

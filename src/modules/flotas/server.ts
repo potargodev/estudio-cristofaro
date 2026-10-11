@@ -209,7 +209,7 @@ export async function publishRequest(me: Me, fleetId: string, zone: string, serv
     .update(fleets)
     .set({ request_status: "publicado", request_zone: zone.trim().slice(0, 80) || null, request_services: services.slice(0, 10), request_message: message.trim().slice(0, 1000) || null, request_published_at: new Date() })
     .where(eq(fleets.id, fleetId));
-  await event(fleetId, `${me.name} publicó el pedido de propuesta en la Red de estudios.`, me);
+  await event(fleetId, `${me.name} publicó el pedido de propuesta en la Red Contable.`, me);
 }
 
 export async function closeRequest(me: Me, fleetId: string) {
@@ -328,7 +328,7 @@ export async function signAgreement(me: Me, proposalId: string, signedName: stri
   if (dup) throw new FleetError("Ya tenés un acuerdo vigente por esta Flota.");
   const [org] = await db()
     .insert(organizations)
-    .values({ studio_id: x.p.studio_id, name: me.name, status: "onboarding", contact_name: me.name, email: me.email, notes: `Llegó por la Flota «${x.fleet.name}» (Red de estudios), con su consentimiento.` })
+    .values({ studio_id: x.p.studio_id, name: me.name, status: "onboarding", contact_name: me.name, email: me.email, notes: `Llegó por la Flota «${x.fleet.name}» (Red Contable), con su consentimiento.` })
     .returning({ id: organizations.id });
   const [a] = await db()
     .insert(service_agreements)

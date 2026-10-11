@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { requestProposalAction, type ProposalState } from "@/app/red/actions";
+import { requestProposalAction, type ProposalState } from "@/app/red-contable/actions";
 
 const field = "mt-1 h-10 w-full rounded-md border border-line bg-canvas px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
 

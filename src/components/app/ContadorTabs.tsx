@@ -19,7 +19,7 @@ export async function ContadorTabs() {
       label="Contador"
       className="mb-6"
       tabs={[
-        { href: "/red", label: "Red de estudios", icon: <Network strokeWidth={1.5} aria-hidden /> },
+        { href: "/red-contable", label: "Red Contable", icon: <Network strokeWidth={1.5} aria-hidden /> },
         { href: "/flotas", label: "Flotas", icon: <Ship strokeWidth={1.5} aria-hidden /> },
         ...((mine?.n ?? 0) > 0 ? [{ href: "/flotas/servicios", label: "Mi estudio", icon: <Store strokeWidth={1.5} aria-hidden /> }] : []),
       ]}

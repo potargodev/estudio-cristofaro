@@ -26,7 +26,7 @@ export async function Derivaciones({ me, volver, max = 2 }: { me: Me; volver: st
               {s.context.why} {NO_REEMPLAZA}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link href={`/red?derivacion=${s.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-[14px] font-medium text-paper hover:bg-night">
+              <Link href={`/red-contable?derivacion=${s.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-[14px] font-medium text-paper hover:bg-night">
                 Sumar un contador
               </Link>
               <form action={dismissSuggestionAction}>
@@ -49,7 +49,7 @@ export function NoReemplaza({ className = "" }: { className?: string }) {
   return (
     <p className={`text-[13px] text-muted ${className}`}>
       Faro te muestra datos según lo que cargaste; no revisa ni valida tu situación. {NO_REEMPLAZA}{" "}
-      <Link href="/red" className="underline underline-offset-4">
+      <Link href="/red-contable" className="underline underline-offset-4">
         Buscar un contador
       </Link>
     </p>

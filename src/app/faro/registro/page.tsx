@@ -7,7 +7,7 @@ import { getPlan } from "@/lib/faro/plans";
 export const metadata: Metadata = { title: "Crear una cuenta" };
 
 const PERKS = [
-  "Personas: gratis, con grupos de gastos, Flotas y la Red de estudios (Bitácora, muy pronto)",
+  "Personas: gratis, con grupos de gastos, Flotas y la Red Contable (Bitácora, muy pronto)",
   "Autónomos: gratis, con tu panel y, muy pronto, facturación y semáforo de monotributo",
   "Estudios: Inicial gratis, hasta 5 organizaciones y 1 usuario",
   "Asistente IA con tu propia clave y grupos de gastos incluidos",

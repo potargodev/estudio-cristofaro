@@ -56,7 +56,7 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
     email: email!,
     phone: s(fd, "phone"),
     company: s(fd, "company"),
-    reason: red ? `Desde la Red de estudios${s(fd, "reason") ? `: ${s(fd, "reason")}` : ""}` : s(fd, "reason"),
+    reason: red ? `Desde la Red Contable${s(fd, "reason") ? `: ${s(fd, "reason")}` : ""}` : s(fd, "reason"),
     origin: "web",
   });
   if (fd.get("inline") === "1") {
@@ -66,7 +66,7 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
       booking: { when: fmtDateTime(slot.start), until: fmtTime(slot.end), email: email!, meetUrl: b?.meet_url ?? null, ics: `/api/agenda/ics/${token}`, manage: `/agenda/gestionar/${token}` },
     };
   }
-  redirect(red ? `/red/${encodeURIComponent(red)}/agendar?t=${token}` : `/agendar/confirmada?t=${token}`);
+  redirect(red ? `/red-contable/${encodeURIComponent(red)}/agendar?t=${token}` : `/agendar/confirmada?t=${token}`);
 }
 
 export async function rescheduleCall(_prev: BookingState, fd: FormData): Promise<BookingState> {

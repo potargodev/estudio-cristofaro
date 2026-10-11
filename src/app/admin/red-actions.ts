@@ -8,7 +8,7 @@ import { requireModule } from "@/lib/faro/require-module";
 import { recordAcceptance } from "@/modules/legal/server";
 import { RedError, respondReview, saveProfile, setPublished } from "@/modules/red/server";
 
-// Ficha del estudio en la Red de estudios. El estudio sale de la sesión; la
+// Ficha del estudio en la Red Contable. El estudio sale de la sesión; la
 // edita el dueño, las respuestas a reseñas también el contador.
 
 const s = (fd: FormData, k: string) => {

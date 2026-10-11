@@ -44,7 +44,7 @@ export function StudiosMap({ items }: { items: MapStudio[] }) {
         <path d={path(MAINLAND)} className="fill-navy-soft stroke-line" strokeWidth={1.5} />
         <path d={path(FUEGO)} className="fill-navy-soft stroke-line" strokeWidth={1.5} />
         {pins.map((p) => (
-          <Link key={p.studioId} href={`/red/${p.slug}`} aria-label={`${p.name}, ${p.prov}`}>
+          <Link key={p.studioId} href={`/red-contable/${p.slug}`} aria-label={`${p.name}, ${p.prov}`}>
             <title>{`${p.name} · ${p.prov}`}</title>
             <circle cx={p.cx} cy={p.cy} r={7} className="fill-rose-deep stroke-surface hover:fill-navy" strokeWidth={2} />
           </Link>
@@ -61,7 +61,7 @@ export function StudiosMap({ items }: { items: MapStudio[] }) {
                 </p>
                 <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[14px]">
                   {list.map((x) => (
-                    <Link key={x.studioId} href={`/red/${x.slug}`} className="text-ink underline-offset-4 hover:underline">
+                    <Link key={x.studioId} href={`/red-contable/${x.slug}`} className="text-ink underline-offset-4 hover:underline">
                       {x.name}
                     </Link>
                   ))}
@@ -75,7 +75,7 @@ export function StudiosMap({ items }: { items: MapStudio[] }) {
             {unplaced.map((x, i) => (
               <span key={x.studioId}>
                 {i > 0 && ", "}
-                <Link href={`/red/${x.slug}`} className="underline underline-offset-4">
+                <Link href={`/red-contable/${x.slug}`} className="underline underline-offset-4">
                   {x.name}
                 </Link>
               </span>

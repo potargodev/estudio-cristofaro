@@ -6,7 +6,7 @@ import { homeFor } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
 /**
- * Marco de las páginas públicas de la app (Centro de ayuda, Red de estudios,
+ * Marco de las páginas públicas de la app (Centro de ayuda, Red Contable,
  * textos legales): mismas superficies y tema que la app, se leen sin cuenta y
  * con sesión ofrecen volver al espacio propio.
  */
@@ -54,8 +54,8 @@ export async function PublicShell({ sub, home: homeHref, children, wide = false 
           <Link href="/ayuda" className="hover:text-ink">
             Ayuda
           </Link>
-          <Link href="/red" className="hover:text-ink">
-            Red de estudios
+          <Link href="/red-contable" className="hover:text-ink">
+            Red Contable
           </Link>
           <Link href="/legal/terminos" className="hover:text-ink">
             Términos

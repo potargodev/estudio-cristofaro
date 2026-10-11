@@ -10,7 +10,7 @@ import { requireFaro } from "@/lib/auth";
 import { LICENSE_STATUS_LABEL } from "@/modules/red/catalog";
 import { moderateReviewAction, reviewLicenseAction } from "../red-actions";
 
-export const metadata: Metadata = { title: "Red de estudios" };
+export const metadata: Metadata = { title: "Red Contable" };
 
 const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 const input = "h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px]";
@@ -39,7 +39,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
     <>
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader title="Red de estudios" description="Verificación manual de matrículas antes de publicar y moderación de reseñas. El orden del directorio no se toca desde acá: es neutral." />
+      <PageHeader title="Red Contable" description="Verificación manual de matrículas antes de publicar y moderación de reseñas. El orden del directorio no se toca desde acá: es neutral." />
 
       <section aria-labelledby="matriculas" className="mb-8">
         <h2 id="matriculas" className="text-[17px] font-semibold">
@@ -140,7 +140,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
                       {name}
                     </Link>
                     {p.published && p.license_status === "verificada" && (
-                      <Link href={`/red/${slug}`} className="ml-2 text-[12px] text-muted underline">
+                      <Link href={`/red-contable/${slug}`} className="ml-2 text-[12px] text-muted underline">
                         ver
                       </Link>
                     )}

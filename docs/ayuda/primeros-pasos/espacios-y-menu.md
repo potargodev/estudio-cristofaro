@@ -11,7 +11,7 @@ Faro junta varias cosas en una sola cuenta: tus finanzas personales, el estudio 
 
 ## Los espacios
 
-- **Personal:** lo tuyo y de nadie más. **Inicio** (el resumen del mes), **Bitácora**, **Grupos** y, si tenés una cuenta personal, **Contador** (la Red de estudios, tus Flotas y tu estudio, si contrataste uno).
+- **Personal:** lo tuyo y de nadie más. **Inicio** (el resumen del mes), **Bitácora**, **Grupos** y, si tenés una cuenta personal, **Contador** (la Red Contable, tus Flotas y tu estudio, si contrataste uno).
 - **Estudio:** el trabajo del estudio con sus organizaciones. Lo ve el equipo del estudio.
   - **Operación:** Inicio, Organizaciones, Vencimientos y Solicitudes.
   - **Negocio:** Comercial, con las pestañas Consultas, Agenda y Perfil en la Red.
@@ -53,5 +53,5 @@ La acción principal de cada pantalla (por ejemplo, **Nueva organización**) est
 
 - La **Ayuda** y la **Guía** salieron del menú: están en el **?** de arriba.
 - **Mensajes** pasó a la barra de arriba.
-- En el estudio, **Consultas**, **Agenda** y **Red de estudios** pasaron a **Comercial**; **Usuarios**, **Plan y facturación**, **Módulos**, **Conexiones**, **IA**, **Rubros** y **Contenidos** pasaron a **Configuración**; **Asistente** y **Aprobaciones**, al **Vigía**; **Accesos MCP**, al menú de tu cuenta. Los enlaces viejos te llevan solos al lugar nuevo.
+- En el estudio, **Consultas**, **Agenda** y **Red Contable** pasaron a **Comercial**; **Usuarios**, **Plan y facturación**, **Módulos**, **Conexiones**, **IA**, **Rubros** y **Contenidos** pasaron a **Configuración**; **Asistente** y **Aprobaciones**, al **Vigía**; **Accesos MCP**, al menú de tu cuenta. Los enlaces viejos te llevan solos al lugar nuevo.
 - Lo personal (Bitácora y Grupos) ya no aparece dentro del menú del estudio ni de la organización: está en tu espacio **Personal**. Nada se borró: todo cambió de lugar.
