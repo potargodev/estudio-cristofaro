@@ -97,3 +97,9 @@ Los cobros, recordatorios y avisos de suscripción salen por mail: sin SMTP solo
 - **Invitar a los empleados al portal** con el rol Empleado (Mi equipo): sin cuenta reciben los avisos por mail, pero para firmar necesitan entrar.
 - **Validación legal de la firma:** revisar con el estudio (cliente cero) el texto de conformidad y, si alguna organización lo exige, registrar la plataforma ante la autoridad laboral de su jurisdicción.
 - **SMTP:** los avisos de recibos y comunicados salen por mail.
+
+## Flujos (F4)
+
+- **Motor:** corre solo dentro del contenedor cada minuto (`FLOWS_JOBS`, no hace falta nada). Si se prefiere un cron externo, `POST /api/flujos/cron` con `Authorization: Bearer <CRON_SECRET>` (cargar `CRON_SECRET` en Easypanel); `?escaneo=1` también corre los eventos por tiempo.
+- **Webhooks entrantes:** la URL de cada flujo aparece al activarlo; compartirla solo con el sistema que la usa (el token es la llave).
+- **SMTP** para los mails de los flujos.

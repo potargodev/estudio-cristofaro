@@ -384,7 +384,8 @@ export async function runFlowWorker(now = new Date()) {
     update flow_runs set status = 'en_curso', started_at = coalesce(started_at, now())
     where id in (
       select id from flow_runs
-      where (status = 'pendiente' or (status = 'esperando' and waiting_approval_id is null)) and next_attempt_at <= ${now}
+      where (status = 'pendiente' or (status = 'esperando' and waiting_approval_id is null)) and next_attempt_at <= ${now.toISOString()}::timestamptz
+        and flow_id not in (select id from flows where status = 'pausado')
       order by next_attempt_at limit 25 for update skip locked
     ) returning id`);
   const ids = (claimed as unknown as { id: string }[]).map((r) => r.id);

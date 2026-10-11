@@ -106,3 +106,20 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Activar el módulo por organización, invitar a los empleados y validar el texto de conformidad (ver pendientes).
+
+## F4 · Flujos (octubre 2026)
+
+**Qué quedó**
+- **Canvas** (@xyflow/react) en **Vigía → Automatizaciones** (§2.o): disparador (evento de un módulo, horario, webhook entrante o pedido al Vigía), condiciones con salidas «sí» y «no» (también con datos vivos), acciones (herramientas registradas —una vez o por cada organización—, aviso o mail al equipo, tarea, solicitud), pedir aprobación y esperar. Panel de edición, validación al guardar y al activar.
+- **Motor** (`src/modules/flows/engine.ts`): cola en Postgres con `SKIP LOCKED`, reintentos (1, 5 y 30 minutos), idempotencia por corrida y por paso, registro de cada paso (`flow_steps`), pausa y reanudación, espera de aprobaciones (sigue si se aprueba, termina si se rechaza), recuperación de corridas trabadas y ruta de cron.
+- **Eventos** emitidos por los módulos (factura emitida, documento leído y confirmado, solicitud creada, cargo generado y pagado, recibo firmado, extracto importado, alta y baja de empleado) y por tiempo (vencimiento en 3 días, monotributo al 80 %, recibos sin firmar a los 7 días).
+- **Plantillas**: recordar vencimientos, pedir documentación faltante, avisar por recibo no firmado, resumen mensual al cliente, cobro con recordatorios y alerta de monotributo; con las herramientas nuevas `recordar_vencimiento`, `pedir_documentacion` y `enviar_resumen_mensual` (sensibles).
+- **Vigía**: `proponer_flujo` (borrador desde una frase), `ejecutar_flujo`, `listar_flujos`. **Límite** de flujos activos por plan (contado de verdad). Webhook entrante con token, límite de pedidos e idempotencia. Tabla `tasks` lista para F9. Artículo de ayuda nuevo.
+
+**Qué se probó**
+- `npm test` (77): validación (ciclos, conexiones, herramientas), recorrido, condiciones, interpolación, horarios en hora de Buenos Aires, reintentos, plantillas válidas y frase → borrador.
+- `scripts/pruebas/flujos-navegador.mjs` (29/29): frase → borrador → activo, plantilla de cobro de punta a punta (evento → Aprobaciones → espera → condición con dato vivo → rechazo), flujo armado en el canvas con webhook e idempotencia, pausa y reanudación, registro de corridas, aislamiento y permisos, y auditoría.
+- `scripts/pruebas/flujos-servidor.mts` (20/20): reintentos y error final, error permanente, idempotencia por paso, eventos sin duplicados, tarea con organización ajena, escaneo de vencimientos, límite del plan, validación, aislamiento y herramientas del Vigía.
+
+**Qué falta configurar**
+- Opcional: cron externo con `CRON_SECRET`; SMTP (ver pendientes).
