@@ -33,6 +33,7 @@ Acordado en octubre de 2026.
 - El usuario crece ordenado desde que es una persona común. El día que suma un contador, le entrega su historia completa, limpia y lista para trabajar.
 - El contador no recibe "el cliente que le sacaron", sino un cliente ya ordenado, y se ahorra la peor parte del trabajo: ordenar el pasado.
 - Faro no le roba clientes al contador: **se los prepara y se los trae** por la Red de estudios.
+- **Comunicación hacia los contadores:** ningún texto de Faro (landing, publicidad, ayuda, Vigía) puede sugerir que una persona "ya no necesita contador". El límite de la autogestión (§1 y §2) se comunica como una virtud del producto. Es el mismo mensaje que tranquiliza al contador: Faro no opina, no valida y no invade su trabajo.
 
 ## 4. El dato es del usuario (conexión, no copia)
 
@@ -86,3 +87,18 @@ Acordado en octubre de 2026.
 - **(a) Exposición pública de las calificaciones.** Falta definir cuánto de las calificaciones (durante la relación y al cierre) se muestra públicamente como reputación del estudio en la Red. Hay que equilibrar el poder del cliente con no espantar a los estudios de la Red. No se implementa ningún cambio sobre esto hasta decidirlo.
 
 El resto de los puntos de este documento quedaron cerrados.
+
+## Temas pendientes de charlar
+
+Se anotan para no perderlos. Todavía no hay decisiones tomadas:
+
+1. **El recorrido completo en cuatro escalones**:
+   - persona;
+   - autónomo;
+   - el salto al contador (resuelto en §4 a §8);
+   - el estudio puertas adentro.
+
+   Falta cerrar el **escalón 1** (cómo se engancha y crece la persona) y el **escalón 4** (cómo vive todo esto el estudio desde su lado).
+2. **Modelo de negocio:** cómo gana plata Faro y quién paga qué (personas, autónomos, estudios, comisión o no por clientes derivados desde la Red).
+3. **Los primeros usuarios (el huevo y la gallina):** sin estudios no hay a quién derivar, y sin personas no hay clientes que derivar. ¿Por qué lado se arranca?
+4. **Primer paso real al mercado:** qué se lanza primero, sin querer abrir todos los frentes a la vez.
