@@ -99,6 +99,14 @@ function extraction(q) {
   return JSON.stringify({ ...base, cuit_emisor: "30711111111", razon_social_emisor: "Edenor S.A.", letra: "A", codigo_comprobante: 1, punto_venta: 2, numero: n, fecha: today, neto_gravado: 100000, iva: [{ alicuota: 21, importe: 21000 }], percepciones: [{ concepto: "Percepción IIBB", importe: 3000 }], total: 124000, cae: "75123456789012", vencimiento_cae: today, confianza: { cuit_emisor: 0.98, fecha: 0.96, total: 0.99, numero: 0.95, cae: 0.9 } });
 }
 
+// Consultas laborales y fiscales (ai_consults): borrador de respuesta para que el estudio lo revise
+function consult(q) {
+  const laboral = q.includes("tema: laboral");
+  return laboral
+    ? "Hola. Sobre tu consulta: el aguinaldo (SAC) se paga en dos cuotas, la primera hasta el 30 de junio y la segunda hasta el 18 de diciembre, y equivale al 50% de la mejor remuneración mensual del semestre. Si el empleado trabajó menos tiempo, se calcula en proporción. Cualquier duda, te ayudamos con la liquidación."
+    : "Hola. Sobre tu consulta: si sos monotributista, la recategorización es semestral (enero y julio) y se hace con los ingresos de los últimos 12 meses. Si te pasás del tope de tu categoría tenés que subir; si superás el máximo de la escala, pasás al régimen general. Revisamos tus números y te confirmamos la categoría que corresponde.";
+}
+
 function decide(body) {
   const msgs = body.messages ?? [];
   const system = msgs.filter((m) => m.role === "system").map(text).join("\n");
@@ -111,6 +119,7 @@ function decide(body) {
   }
   const q = text(last).toLowerCase();
   if (q.includes("lectura_inteligente")) return { text: extraction(q) };
+  if (q.includes("consulta_ia")) return { text: consult(q) };
   if (tools.has("crear_movimiento")) return copilot(body, last, q);
   const want = (tool, args) => (tools.has(tool) ? { tool, args } : { text: `No tengo disponible la herramienta \`${tool}\` con tus permisos.` });
   if (/confirm[eé]|cancel[eé]/.test(q)) return { text: "Perfecto, ya quedó registrado." };

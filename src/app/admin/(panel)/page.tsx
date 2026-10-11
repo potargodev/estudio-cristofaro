@@ -19,6 +19,10 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { BarChart, DonutChart } from "@/components/admin/kit/Charts";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
+import { SectionTabs } from "@/components/app/SectionTabs";
+import { InsightsLocked, StudioInsights } from "@/components/insights/InsightsViews";
+import { insightsEnabled } from "@/modules/insights/server";
+import { ChartLine, Sun } from "lucide-react";
 import { FirstSteps } from "@/components/app/FirstSteps";
 import { EmptyState, Panel, PanelLink } from "@/components/admin/kit/Panel";
 import { ChartSkeleton, PanelSkeleton, StatRowSkeleton } from "@/components/admin/kit/Skeletons";
@@ -450,12 +454,30 @@ async function RecentActivity({ studioId }: { studioId: string }) {
   );
 }
 
-export default async function AdminHome() {
+export default async function AdminHome({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const user = await requireStaff();
+  const sp = await searchParams;
   const first = user.name ? user.name.split(" ")[0] : "";
+  // Indicadores (insights, F9): pestaña de Inicio para dueños y contadores (§2.o)
+  const canInsights = user.role === "dueno" || user.role === "contador";
+  const tab = canInsights && sp.tab === "indicadores" ? "indicadores" : "hoy";
   return (
     <>
       <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que pasa hoy en el estudio y lo que necesita tu atención." actions={user.role !== "colaborador" ? <HeaderAction href="/admin/comercial/consultas/nueva" label="Cargar consulta" /> : undefined} />
+      {canInsights && (
+        <SectionTabs
+          label="Vistas de Inicio"
+          className="mb-6"
+          tabs={[
+            { href: "/admin", label: "Hoy", icon: <Sun strokeWidth={1.5} aria-hidden />, active: tab === "hoy" },
+            { href: "/admin?tab=indicadores", label: "Indicadores", icon: <ChartLine strokeWidth={1.5} aria-hidden />, active: tab === "indicadores" },
+          ]}
+        />
+      )}
+      {tab === "indicadores" ? (
+        <Suspense fallback={<ChartSkeleton className="h-80" />}>{(await insightsEnabled(user.studioId)) ? <StudioInsights studioId={user.studioId} /> : <InsightsLocked />}</Suspense>
+      ) : (
+      <>
       <FirstSteps className="mb-6" />
       <div className="grid gap-6">
         <Suspense fallback={<StatRowSkeleton />}>
@@ -478,6 +500,8 @@ export default async function AdminHome() {
           <Charts studioId={user.studioId} commercial={user.role !== "colaborador"} />
         </Suspense>
       </div>
+      </>
+      )}
     </>
   );
 }

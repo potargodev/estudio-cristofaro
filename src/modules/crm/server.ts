@@ -5,6 +5,7 @@ import { obligations, organization_staff, organizations, tasks, users } from "@/
 import { audit } from "@/lib/audit";
 import { hasModule } from "@/lib/faro/entitlements";
 import { notify } from "@/modules/notifications/server";
+import { emitEvent } from "@/modules/flows/events";
 
 // Cartera y tareas (módulo crm, ítem Tareas del grupo Operación): el trabajo
 // del equipo por cliente, con responsables, estados y vencimientos. Las
@@ -64,7 +65,7 @@ async function checkRefs(studioId: string, orgId: string | null, assigneeId: str
   }
 }
 
-export async function createTask(studioId: string, actor: Actor, i: { title: string; detail: string | null; organizationId: string | null; assigneeId: string | null; dueDate: string | null }) {
+export async function createTask(studioId: string, actor: Actor, i: { title: string; detail: string | null; organizationId: string | null; assigneeId: string | null; dueDate: string | null }, opts: { emit?: boolean } = {}) {
   if (!(await crmEnabled(studioId))) throw new TaskError("Las tareas vienen con el plan Profesional.");
   if (!i.title.trim()) throw new TaskError("Poné qué hay que hacer.");
   await checkRefs(studioId, i.organizationId, i.assigneeId);
@@ -74,6 +75,8 @@ export async function createTask(studioId: string, actor: Actor, i: { title: str
     .returning();
   if (t.assignee_id && t.assignee_id !== actor.id) await notify([t.assignee_id], { kind: "aviso", title: `Te asignaron: ${t.title}`, href: "/admin/tareas" });
   await audit({ studioId, organizationId: t.organization_id, actor, action: "tarea.creada", entityType: "tarea", entityId: t.id });
+  // Las que crea un flujo no disparan flujos (evita ciclos)
+  if (opts.emit !== false) await emitEvent(studioId, "tarea.creada", { tarea_id: t.id, organizacion_id: t.organization_id, titulo: t.title, vence: t.due_date }, t.id);
   return t;
 }
 

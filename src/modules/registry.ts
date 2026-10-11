@@ -252,7 +252,7 @@ export const FARO_MODULES: FaroModule[] = [
     roles: ALL_STAFF,
     // §2.o: ítem Tareas del grupo Operación
     nav: [{ href: "/admin/tareas", label: "Tareas" }],
-    events: ["tarea.creada", "tarea.vencida"],
+    events: ["tarea.creada"],
     tools: ["listar_tareas", "crear_tarea"],
   },
   {
@@ -300,25 +300,30 @@ export const FARO_MODULES: FaroModule[] = [
     key: "ai_consults",
     name: "Consultas laborales y fiscales con IA",
     icon: "MessagesSquare",
-    description: "Los clientes consultan; la IA prepara la respuesta y el estudio la aprueba.",
-    status: "proximamente",
+    description: "Los clientes hacen consultas laborales o impositivas desde el portal; la IA prepara la respuesta y una persona del estudio la revisa y la aprueba antes de enviarla.",
+    status: "disponible",
     minPlan: { studio: "profesional" },
     roles: ALL_STAFF,
-    nav: [],
-    events: [],
-    tools: [],
+    // §2.o: dentro de Solicitudes (filtro "Respuestas de la IA para revisar"); en el portal, al crear una solicitud
+    nav: [{ href: "/admin/solicitudes?ia=1", label: "Solicitudes → Respuestas de la IA" }],
+    events: ["consulta_ia.preparada"],
+    tools: ["listar_consultas_ia", "preparar_respuesta_consulta", "enviar_respuesta_consulta"],
   },
   {
     key: "insights",
     name: "Indicadores",
     icon: "ChartLine",
-    description: "Tableros financieros y de gestión por organización y del estudio.",
-    status: "proximamente",
+    description: "Tableros financieros y de gestión del estudio y de cada organización: facturación, cobranza de honorarios, vencimientos a término, solicitudes y tareas.",
+    status: "disponible",
     minPlan: { studio: "avanzado" },
     roles: ["dueno", "contador"],
-    nav: [],
+    // §2.o: pestaña Indicadores de Inicio y de Resumen en la ficha de la organización
+    nav: [
+      { href: "/admin?tab=indicadores", label: "Inicio → Indicadores" },
+      { href: "/admin/organizaciones", label: "Organizaciones → Resumen → Indicadores" },
+    ],
     events: [],
-    tools: [],
+    tools: ["indicadores_estudio", "indicadores_organizacion"],
   },
   {
     key: "whatsapp",

@@ -12,6 +12,8 @@ import { organization_staff, organizations, request_messages, requests, users } 
 import { requireStaff } from "@/lib/auth";
 import { REQUEST_TYPES } from "@/lib/portal-types";
 import { cn } from "@/lib/utils";
+import { ConsultPanel } from "@/components/consultas/ConsultPanel";
+import { consultForRequest, pendingConsults } from "@/modules/ai-consults/server";
 
 export const metadata: Metadata = { title: "Solicitudes" };
 
@@ -64,6 +66,8 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
   const estado = sp.estado === "resueltas" || sp.estado === "todas" ? sp.estado : "abiertas";
   const prioridad = sp.prioridad === "alta" || sp.prioridad === "media" || sp.prioridad === "baja" ? sp.prioridad : null;
   const resp = sp.resp === "sin" || isUuid(sp.resp) ? sp.resp! : null;
+  // Consultas con IA para revisar (ai_consults)
+  const ia = sp.ia === "1";
   const now = Date.now();
 
   const statusWhere =
@@ -107,13 +111,16 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
       return b.request.updated_at.getTime() - a.request.updated_at.getTime();
     });
   const owners = [...new Map(items.filter((i) => i.ownerId).map((i) => [i.ownerId!, i.owner ?? "—"])).entries()].sort((a, b) => a[1].localeCompare(b[1], "es"));
-  const visible = items.filter((i) => (!prioridad || i.s.priority === prioridad) && (!resp || (resp === "sin" ? !i.ownerId : i.ownerId === resp)));
+  const toReview = new Set((await pendingConsults(studioId)).map((p) => p.c.request_id));
+  const visible = items.filter((i) => (!prioridad || i.s.priority === prioridad) && (!resp || (resp === "sin" ? !i.ownerId : i.ownerId === resp)) && (!ia || toReview.has(i.request.id)));
   const selected = visible.find((i) => i.request.id === sp.id) ?? items.find((i) => i.request.id === sp.id) ?? visible[0] ?? null;
   const overdue = items.filter((i) => i.s.waiting && i.s.remaining! < 0).length;
+  const consult = selected ? await consultForRequest(studioId, selected.request.id) : null;
+  const reviewer = consult?.reviewed_by ? (await db.select({ name: users.name }).from(users).where(and(eq(users.id, consult.reviewed_by), eq(users.studioId, studioId))))[0]?.name : null;
 
   const href = (patch: Record<string, string | null>) => {
     const q = new URLSearchParams();
-    const base: Record<string, string | null> = { estado: estado === "abiertas" ? null : estado, prioridad, resp, org: isUuid(sp.org) ? sp.org! : null, ...patch };
+    const base: Record<string, string | null> = { estado: estado === "abiertas" ? null : estado, prioridad, resp, ia: ia ? "1" : null, org: isUuid(sp.org) ? sp.org! : null, ...patch };
     for (const [k, v] of Object.entries(base)) if (v) q.set(k, v);
     const s = q.toString();
     return `/admin/solicitudes${s ? `?${s}` : ""}`;
@@ -128,6 +135,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
         description={`Lo que pidieron los clientes desde el portal. Objetivo: primera respuesta en menos de ${SLA_HOURS} h. Al responder, al cliente le llega un aviso por mail.`}
       />
       {sp.guardado && <Notice>Respuesta guardada.</Notice>}
+      {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && (
         <div className="mb-4">
           <Notice tone="error">{sp.error}</Notice>
@@ -155,6 +163,13 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
                 {overdue > 0 && estado !== "resueltas" && <span className="ml-2 font-medium text-[#8f2a1c]">{overdue} fuera de término</span>}
               </span>
             </div>
+            {toReview.size > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Consultas con IA">
+                <Link href={href({ ia: ia ? null : "1" })} aria-current={ia ? "true" : undefined} className={chip(ia)}>
+                  Respuestas de la IA para revisar · <span className="tabular ml-1">{toReview.size}</span>
+                </Link>
+              </div>
+            )}
             {estado !== "resueltas" && (
               <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Prioridad">
                 <span className="mr-1 text-[13px] text-muted">Prioridad</span>
@@ -231,6 +246,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
               <ArrowLeft className="size-4" strokeWidth={1.5} aria-hidden /> Volver a la bandeja
             </Link>
           )}
+          {selected && consult && <ConsultPanel c={consult} reviewer={reviewer} volver={href({ id: selected.request.id })} />}
           {selected ? (
             <RequestThread
               key={selected.request.id}

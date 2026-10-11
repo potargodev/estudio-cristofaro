@@ -8,6 +8,8 @@ import { requireMember } from "@/lib/auth";
 import { can, canCreateRequests } from "@/lib/permissions";
 import { REQUEST_TYPES } from "@/lib/portal-types";
 import { createRequest } from "../../../actions";
+import { CONSULT_TOPICS } from "@/modules/ai-consults/core";
+import { consultsAvailable } from "@/modules/ai-consults/server";
 
 export const metadata: Metadata = { title: "Nueva solicitud" };
 
@@ -19,6 +21,7 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
   // RRHH solo crea solicitudes de personal
   const types = Object.entries(REQUEST_TYPES).filter(([v]) => can(me.orgRole, "solicitudes.crear") || v === "empleado");
   const { error } = await searchParams;
+  const consults = can(me.orgRole, "solicitudes.crear") && (await consultsAvailable(me.studioId));
   return (
     <>
       <Link href="/portal/solicitudes" className="link-underline text-sm text-rose-deep">
@@ -46,6 +49,22 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
               ))}
             </select>
           </div>
+          {consults && (
+            <div>
+              <label htmlFor="tema" className="block text-sm font-medium">
+                Tema de la consulta (opcional)
+              </label>
+              <select id="tema" name="tema" defaultValue="" className={`${field} h-11`}>
+                <option value="">General</option>
+                {Object.entries(CONSULT_TOPICS).map(([v, l]) => (
+                  <option key={v} value={v}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-[13px] text-muted">Si es una consulta laboral o impositiva, el estudio te contesta más rápido: la IA prepara la respuesta y una persona del estudio la revisa antes de enviártela.</p>
+            </div>
+          )}
           <div>
             <label htmlFor="subject" className="block text-sm font-medium">
               Asunto

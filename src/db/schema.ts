@@ -3431,3 +3431,166 @@ export const tasks = pgTable(
   },
   (t) => [index("tasks_studio_idx").on(t.studio_id, t.status, t.due_date), uniqueIndex("tasks_source_idx").on(t.studio_id, t.source, t.source_ref)],
 );
+
+// ───────────────────────── F9: consultas con IA, marca blanca y WhatsApp ─────────────────────────
+
+/**
+ * Consultas laborales y fiscales (ai_consults): el cliente consulta desde el
+ * portal (una solicitud de tipo consulta), la IA prepara el borrador y una
+ * persona del estudio lo revisa y lo aprueba antes de que salga.
+ */
+export const ai_consults = pgTable(
+  "ai_consults",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    request_id: uuid("request_id")
+      .notNull()
+      .references(() => requests.id, { onDelete: "cascade" }),
+    topic: text("topic").notNull(), // laboral | fiscal
+    question: text("question").notNull(),
+    status: text("status").notNull().default("generando"), // generando | borrador | aprobada | descartada | error
+    draft: text("draft"),
+    final_body: text("final_body"),
+    edited: boolean("edited").notNull().default(false),
+    error: text("error"),
+    model: text("model"),
+    provider: text("provider"),
+    input_tokens: integer("input_tokens"),
+    output_tokens: integer("output_tokens"),
+    cost_usd: numeric("cost_usd", { precision: 10, scale: 5 }),
+    reviewed_by: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+    reviewed_at: timestamp("reviewed_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("ai_consults_request_idx").on(t.request_id), index("ai_consults_studio_idx").on(t.studio_id, t.status)],
+);
+
+/** Marca blanca del portal (plan Avanzado): logo, colores y dominio propio del estudio */
+export const studio_branding = pgTable("studio_branding", {
+  studio_id: uuid("studio_id")
+    .primaryKey()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  enabled: boolean("enabled").notNull().default(false),
+  display_name: text("display_name"),
+  logo_path: text("logo_path"),
+  logo_mime: text("logo_mime"),
+  primary_color: text("primary_color"),
+  accent_color: text("accent_color"),
+  /** Host en minúsculas, sin puerto (ej.: portal.estudio.com.ar) */
+  custom_domain: text("custom_domain").unique(),
+  domain_status: text("domain_status").notNull().default("sin_dominio"), // sin_dominio | pendiente | verificado
+  domain_token: text("domain_token"),
+  domain_checked_at: timestamp("domain_checked_at", { withTimezone: true }),
+  domain_verified_at: timestamp("domain_verified_at", { withTimezone: true }),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/**
+ * Números de WhatsApp Business Cloud API. studio_id null = el número de Faro
+ * (Faro Manager), que los estudios pueden usar compartido; con studio_id, el
+ * número propio del estudio. Token y secreto de la app, cifrados.
+ */
+export const whatsapp_accounts = pgTable("whatsapp_accounts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studio_id: uuid("studio_id")
+    .unique()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  mode: text("mode").notNull().default("propio"), // propio | compartido (usa el número de Faro)
+  phone_number_id: text("phone_number_id"),
+  waba_id: text("waba_id"),
+  display_phone: text("display_phone"),
+  access_token_enc: text("access_token_enc"),
+  app_secret_enc: text("app_secret_enc"),
+  verify_token: text("verify_token"),
+  status: text("status").notNull().default("activa"), // activa | pausada
+  last_error: text("last_error"),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+  updated_at: updatedAt(),
+});
+
+/** Plantillas aprobadas por Meta (se sincronizan desde la cuenta) */
+export const whatsapp_templates = pgTable(
+  "whatsapp_templates",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    account_id: uuid("account_id")
+      .notNull()
+      .references(() => whatsapp_accounts.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    language: text("language").notNull().default("es_AR"),
+    category: text("category"),
+    body: text("body").notNull(),
+    params: integer("params").notNull().default(0),
+    status: text("status").notNull(), // APPROVED | PENDING | REJECTED
+    external_id: text("external_id"),
+    synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+    raw: jsonb("raw"),
+  },
+  (t) => [uniqueIndex("whatsapp_templates_name_idx").on(t.account_id, t.name, t.language)],
+);
+
+/** Números de los clientes verificados con un código (consentimiento para avisos) */
+export const whatsapp_contacts = pgTable(
+  "whatsapp_contacts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** Solo dígitos, con código de país (5491122334455) */
+    phone: text("phone").notNull(),
+    code_hash: text("code_hash"),
+    code_expires_at: timestamp("code_expires_at", { withTimezone: true }),
+    attempts: integer("attempts").notNull().default(0),
+    verified_at: timestamp("verified_at", { withTimezone: true }),
+    opt_in_avisos: boolean("opt_in_avisos").notNull().default(true),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("whatsapp_contacts_user_idx").on(t.organization_id, t.user_id), index("whatsapp_contacts_phone_idx").on(t.phone)],
+);
+
+/** Mensajes enviados y recibidos: fuente, ID externo, fecha, validación y registro original */
+export const whatsapp_messages = pgTable(
+  "whatsapp_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+    account_id: uuid("account_id").references(() => whatsapp_accounts.id, { onDelete: "set null" }),
+    direction: text("direction").notNull(), // saliente | entrante
+    phone: text("phone").notNull(),
+    kind: text("kind").notNull(), // plantilla | texto | imagen | documento | otro
+    template: text("template"),
+    body: text("body"),
+    media_path: text("media_path"),
+    media_mime: text("media_mime"),
+    status: text("status").notNull(), // enviado | entregado | leido | fallido | recibido | sin_contacto
+    error: text("error"),
+    /** A qué quedó vinculado: solicitud, lectura inteligente, consulta al Vigía */
+    entity_type: text("entity_type"),
+    entity_id: uuid("entity_id"),
+    source: text("source").notNull().default("whatsapp"),
+    external_id: text("external_id"),
+    validation: text("validation").notNull().default("sin_validar"), // sin_validar | firma_ok | firma_invalida
+    raw: jsonb("raw"),
+    synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("whatsapp_messages_external_idx").on(t.external_id), index("whatsapp_messages_studio_idx").on(t.studio_id, t.created_at)],
+);

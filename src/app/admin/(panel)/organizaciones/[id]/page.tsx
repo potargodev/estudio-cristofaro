@@ -4,6 +4,8 @@ import { CalendarClock, FileText, MessagesSquare, RefreshCw, UserRound, Users } 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { InsightsLocked, OrgInsights } from "@/components/insights/InsightsViews";
+import { insightsEnabled } from "@/modules/insights/server";
 import {
   staffApproveInvitation,
   staffChangeRole,
@@ -254,6 +256,7 @@ export default async function OrganizacionPage({
             }}
           />
         )}
+        {tab === "indicadores" && (me.role === "colaborador" ? <p className="text-muted">Los indicadores los ven los dueños y contadores del estudio.</p> : (await insightsEnabled(studioId)) ? <OrgInsights studioId={studioId} orgId={org.id} /> : <InsightsLocked />)}
         {tab === "actividad" && <ActivityTimeline orgId={org.id} studioId={studioId} before={sp.antes} />}
         {tab === "arca" && <ArcaOrgTab me={me} orgId={org.id} sp={sp} />}
         {tab === "conciliacion" && <BankRecTab me={me} orgId={org.id} sp={sp} />}

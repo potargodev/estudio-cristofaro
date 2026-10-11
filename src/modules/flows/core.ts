@@ -59,6 +59,9 @@ export const EVENTS: Record<string, { label: string; campos: string[] }> = {
   "conciliacion.extracto_importado": { label: "Se importó un extracto bancario", campos: ["extracto_id", "organizacion_id", "movimientos"] },
   "empleado.alta": { label: "Se dio de alta un empleado", campos: ["empleado_id", "organizacion_id", "nombre"] },
   "empleado.baja": { label: "Se dio de baja un empleado", campos: ["empleado_id", "organizacion_id", "nombre"] },
+  "tarea.creada": { label: "Alguien del equipo creó una tarea", campos: ["tarea_id", "organizacion_id", "titulo", "vence"] },
+  "consulta_ia.preparada": { label: "La IA preparó la respuesta a una consulta", campos: ["consulta_id", "solicitud_id", "organizacion_id", "tema"] },
+  "whatsapp.recibido": { label: "Llegó un mensaje por WhatsApp", campos: ["mensaje_id", "organizacion_id", "tipo", "texto"] },
 };
 
 // ───────────── Validación ─────────────

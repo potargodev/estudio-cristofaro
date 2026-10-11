@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { BadgeCheck, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
+import { BadgeCheck, ChartLine, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
 import Link from "next/link";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
@@ -62,6 +62,7 @@ export const ORG_TABS = [
   { key: "sueldos", label: "Sueldos", icon: BadgeCheck },
   { key: "gastos", label: "Gastos", icon: Wallet },
   { key: "actividad", label: "Actividad", icon: Activity },
+  { key: "indicadores", label: "Indicadores", icon: ChartLine },
 ] as const;
 
 export type OrgTabKey = (typeof ORG_TABS)[number]["key"];
@@ -76,7 +77,7 @@ export const LEGACY_TABS: Record<string, OrgTabKey> = { datos: "general", portal
  * listo para sumar Sueldos (F5) y ARCA (F3) como pestañas principales.
  */
 const MAIN_TABS: { key: string; label: string; icon: (typeof ORG_TABS)[number]["icon"]; href: OrgTabKey; keys: OrgTabKey[] }[] = [
-  { key: "resumen", label: "Resumen", icon: Building2, href: "general", keys: ["general", "rubro", "plan", "miembros", "equipo", "gastos", "actividad"] },
+  { key: "resumen", label: "Resumen", icon: Building2, href: "general", keys: ["general", "rubro", "plan", "miembros", "equipo", "gastos", "actividad", "indicadores"] },
   { key: "vencimientos", label: "Vencimientos", icon: CalendarClock, href: "vencimientos", keys: ["vencimientos"] },
   { key: "documentos", label: "Documentos", icon: FileText, href: "documentos", keys: ["documentos"] },
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare, href: "solicitudes", keys: ["solicitudes"] },

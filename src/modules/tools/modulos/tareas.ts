@@ -39,7 +39,7 @@ export const tareasTools = [
     async handler(input, ctx) {
       if (input.organizacion_id) await ctx.organization(input.organizacion_id);
       try {
-        const t = await createTask(ctx.studioId, ctx.actor, { title: input.titulo, detail: input.detalle ?? null, organizationId: input.organizacion_id ?? null, assigneeId: ctx.actor.id, dueDate: input.vence ?? null });
+        const t = await createTask(ctx.studioId, ctx.actor, { title: input.titulo, detail: input.detalle ?? null, organizationId: input.organizacion_id ?? null, assigneeId: ctx.actor.id, dueDate: input.vence ?? null }, { emit: ctx.origin !== "flujo" });
         return { tarea: t.id, enlace: "/admin/tareas" };
       } catch (e) {
         if (e instanceof TaskError) throw new ToolError(e.message, "error");

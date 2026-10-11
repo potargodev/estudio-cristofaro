@@ -29,6 +29,9 @@ export const TOOL_MODULES = {
   empleados: "Empleados y recibos",
   flujos: "Flujos (automatizaciones)",
   tareas: "Tareas del equipo",
+  consultas_ia: "Consultas con IA",
+  whatsapp: "WhatsApp",
+  indicadores: "Indicadores",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 

@@ -5,6 +5,9 @@ import { emitEvent } from "@/modules/flows/events";
 import { revalidatePath } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { isTopic } from "@/modules/ai-consults/core";
+import { openConsult } from "@/modules/ai-consults/server";
 import { getDb } from "@/db";
 import { documents, request_messages, requests } from "@/db/schema";
 import { ORG_COOKIE, getCurrentUser, getMemberships, requireMember } from "@/lib/auth";
@@ -176,14 +179,19 @@ export async function createRequest(fd: FormData) {
     const check = await checkUpload(file);
     if (!check.ok) redirect(`/portal/solicitudes/nueva?error=${encodeURIComponent(check.error)}`);
   }
+  const finalType = type && type in REQUEST_TYPES ? type : "consulta";
+  // Consulta laboral o fiscal: la IA prepara el borrador y el estudio lo revisa (ai_consults)
+  const tema = s(fd, "tema");
+  const topic = finalType === "consulta" && isTopic(tema) ? tema : null;
   const db = getDb();
   const [req] = await db
     .insert(requests)
     .values({
       studio_id: me.studioId,
       organization_id: me.organizationId,
-      type: type && type in REQUEST_TYPES ? type : "consulta",
+      type: finalType,
       subject,
+      data: topic ? { tema: topic } : null,
       created_by: me.id,
     })
     .returning({ id: requests.id });
@@ -191,6 +199,11 @@ export async function createRequest(fd: FormData) {
   await db.insert(request_messages).values({ request_id: req.id, author_id: me.id, from_client: true, body, document_id: documentId });
   await notifyStudio({ kind: "solicitud", organizationId: me.organizationId, organizationName: me.organizationName, subject, message: body });
   await emitEvent(me.studioId, "solicitud.creada", { solicitud_id: req.id, organizacion_id: me.organizationId, tipo: type, asunto: subject }, req.id);
+  if (topic) {
+    const { studioId, organizationId } = me;
+    // Después de responder al cliente: el borrador no lo demora
+    after(() => openConsult(studioId, organizationId, req.id, topic, body).catch((e) => console.error("[consultas] borrador", (e as Error).message)));
+  }
   revalidatePath("/portal", "layout");
   revalidatePath("/admin");
   revalidatePath("/admin/solicitudes");

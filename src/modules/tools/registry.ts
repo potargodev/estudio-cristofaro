@@ -12,6 +12,8 @@ import { cobrosTools } from "./modulos/cobros";
 import { empleadosTools } from "./modulos/empleados";
 import { flujosTools } from "./modulos/flujos";
 import { tareasTools } from "./modulos/tareas";
+import { consultasIaTools } from "./modulos/consultas-ia";
+import { indicadoresTools } from "./modulos/indicadores";
 import { gastosTools } from "./modulos/gastos";
 import { industriasTools } from "./modulos/industrias";
 import { organizacionesTools } from "./modulos/organizaciones";
@@ -39,6 +41,8 @@ export const TOOLS: ToolDefinition[] = [
   ...empleadosTools,
   ...flujosTools,
   ...tareasTools,
+  ...consultasIaTools,
+  ...indicadoresTools,
 ];
 
 const BY_NAME = new Map(TOOLS.map((t) => [t.name, t]));
