@@ -3,19 +3,20 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { requestProposalAction, type ProposalState } from "@/app/red-contable/actions";
+import { fieldClass } from "@/components/ds/primitives";
 
-const field = "mt-1 h-10 w-full rounded-md border border-line bg-canvas px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
+const field = `mt-1 ${fieldClass}`;
 
 export function ProposalForm({ studio, name, email, derivacion }: { studio: string; name: string; email: string; derivacion?: { id: string; message: string } }) {
   const [state, action, pending] = useActionState<ProposalState, FormData>(requestProposalAction, { ok: false });
   if (state.ok)
     return (
-      <p role="status" className="mt-4 rounded-md border border-line bg-navy-soft px-3 py-3 text-[14px]">
+      <p role="status" className="mt-4 rounded-md border border-line bg-navy-soft px-3 py-3 text-ui">
         {state.message}
       </p>
     );
   return (
-    <form key={state.message ?? "form"} action={action} className="mt-4 grid gap-3 text-[13px] text-muted">
+    <form key={state.message ?? "form"} action={action} className="mt-4 grid gap-3 text-meta text-muted">
       <input type="hidden" name="studio" value={studio} />
       {derivacion && <input type="hidden" name="derivacion" value={derivacion.id} />}
       <div aria-hidden className="absolute -left-[9999px]">
@@ -49,7 +50,7 @@ export function ProposalForm({ studio, name, email, derivacion }: { studio: stri
         ¿Qué necesitás?
         <textarea name="message" defaultValue={state.values?.message ?? derivacion?.message} rows={derivacion ? 6 : 4} maxLength={2000} className={`${field} h-auto py-2`} />
       </label>
-      <label className="flex items-start gap-2 text-[13px]">
+      <label className="flex items-start gap-2 text-meta">
         <input type="checkbox" name="consent" required defaultChecked={state.values?.consent === "on"} className="mt-0.5 size-4 accent-navy" />
         <span>
           Acepto compartir estos datos con el estudio para que me haga una propuesta. Lo puedo revocar cuando quiera (
@@ -60,11 +61,11 @@ export function ProposalForm({ studio, name, email, derivacion }: { studio: stri
         </span>
       </label>
       {state.message && (
-        <p role="alert" className="text-[14px] text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}
-      <button type="submit" disabled={pending} className="h-11 rounded-md bg-navy px-5 text-[15px] font-medium text-paper hover:bg-night disabled:opacity-60">
+      <button type="submit" disabled={pending} className="h-11 rounded-md bg-navy px-5 text-body font-medium text-paper hover:bg-night disabled:opacity-60">
         {pending ? "Enviando…" : "Pedir propuesta"}
       </button>
     </form>

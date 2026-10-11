@@ -20,7 +20,7 @@ type Row = { label: string } & Record<string, number | string>;
 
 function Legend({ series }: { series: Series[] }) {
   return (
-    <ul className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-muted">
+    <ul className="flex flex-wrap gap-x-4 gap-y-1 text-meta text-muted">
       {series.map((s, i) => (
         <li key={s.key} className="flex items-center gap-1.5">
           <span className="size-2.5" style={{ background: s.color ?? CHART_COLORS[i] }} aria-hidden />
@@ -62,7 +62,7 @@ function DataTable({ caption, rows, series }: { caption: string; rows: Row[]; se
 function Tooltip({ row, series, x, y }: { row: Row; series: Series[]; x: number; y: number }) {
   return (
     <div
-      className="pointer-events-none absolute z-10 min-w-36 -translate-x-1/2 -translate-y-full border border-line bg-surface px-3 py-2 text-[13px] shadow-[0_8px_20px_-10px_rgba(20,24,38,0.35)]"
+      className="pointer-events-none absolute z-10 min-w-36 -translate-x-1/2 -translate-y-full border border-line bg-surface px-3 py-2 text-meta shadow-[0_8px_20px_-10px_rgba(20,24,38,0.35)]"
       style={{ left: `${x}%`, top: y }}
     >
       <p className="font-medium text-ink">{row.label}</p>
@@ -105,7 +105,7 @@ export function BarChart({
     <figure className="relative">
       <figcaption className="sr-only">{caption}</figcaption>
       <div className="relative flex" style={{ height }}>
-        <div className="tabular flex w-8 shrink-0 flex-col justify-between pb-6 text-right text-[12px] text-muted" aria-hidden>
+        <div className="tabular flex w-8 shrink-0 flex-col justify-between pb-6 text-right text-caption text-muted" aria-hidden>
           {[...ticks].reverse().map((t) => (
             <span key={t} className="-translate-y-1/2 leading-none">
               {t}
@@ -152,7 +152,7 @@ export function BarChart({
                       );
                     })}
                   </div>
-                  <span className="tabular absolute inset-x-0 bottom-0 truncate text-center text-[12px] text-muted">{r.label}</span>
+                  <span className="tabular absolute inset-x-0 bottom-0 truncate text-center text-caption text-muted">{r.label}</span>
                 </div>
               );
             })}
@@ -182,7 +182,7 @@ export function LineChart({ data, series, caption, height = 200 }: { data: Row[]
     <figure className="relative">
       <figcaption className="sr-only">{caption}</figcaption>
       <div className="relative ml-10 pb-6" style={{ height }}>
-        <div className="tabular absolute -left-10 bottom-6 top-0 flex w-8 flex-col justify-between text-right text-[12px] text-muted" aria-hidden>
+        <div className="tabular absolute -left-10 bottom-6 top-0 flex w-8 flex-col justify-between text-right text-caption text-muted" aria-hidden>
           <span className="-translate-y-1/2">{max}</span>
           <span className="translate-y-1/2">0</span>
         </div>
@@ -215,7 +215,7 @@ export function LineChart({ data, series, caption, height = 200 }: { data: Row[]
               onBlur={() => setHover(null)}
               className="relative flex-1 outline-none"
             >
-              <span className="tabular absolute inset-x-0 bottom-0 truncate text-center text-[12px] text-muted">{r.label}</span>
+              <span className="tabular absolute inset-x-0 bottom-0 truncate text-center text-caption text-muted">{r.label}</span>
             </div>
           ))}
         </div>
@@ -271,10 +271,10 @@ export function DonutChart({
         </svg>
         <div className="absolute inset-0 grid place-content-center text-center">
           <span className="tabular num text-[28px] leading-none text-ink">{hover !== null ? data[hover].value : total}</span>
-          <span className="mt-1 text-[12px] text-muted">{hover !== null ? data[hover].label : centerLabel}</span>
+          <span className="mt-1 text-caption text-muted">{hover !== null ? data[hover].label : centerLabel}</span>
         </div>
       </div>
-      <ul className="min-w-40 flex-1 text-[14px]">
+      <ul className="min-w-40 flex-1 text-ui">
         {data.map((d, i) => (
           <li
             key={d.key}
@@ -291,7 +291,7 @@ export function DonutChart({
             </span>
             <span className="tabular text-muted">
               {d.value}
-              {total > 0 && <span className="ml-2 text-[12px]">{Math.round((d.value / total) * 100)}%</span>}
+              {total > 0 && <span className="ml-2 text-caption">{Math.round((d.value / total) * 100)}%</span>}
             </span>
           </li>
         ))}

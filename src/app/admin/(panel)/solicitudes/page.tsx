@@ -49,7 +49,7 @@ function SlaChip({ s }: { s: ReturnType<typeof sla> }) {
   return (
     <span
       className={cn(
-        "tabular inline-flex items-center gap-1 text-[12px]",
+        "tabular inline-flex items-center gap-1 text-caption",
         !s.waiting ? "text-muted" : s.remaining! < 0 ? "font-medium text-[#8f2a1c]" : s.priority === "alta" ? "font-medium text-[#7a5a12]" : "text-ink",
       )}
     >
@@ -126,7 +126,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
     return `/admin/solicitudes${s ? `?${s}` : ""}`;
   };
   const chip = (on: boolean) =>
-    cn("inline-flex h-7 items-center rounded-md border px-2.5 text-[13px] transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted");
+    cn("inline-flex h-7 items-center rounded-md border px-2.5 text-meta transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted");
 
   return (
     <>
@@ -158,7 +158,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
                   {l}
                 </Link>
               ))}
-              <span className="tabular ml-auto text-[13px] text-muted">
+              <span className="tabular ml-auto text-meta text-muted">
                 {visible.length}
                 {overdue > 0 && estado !== "resueltas" && <span className="ml-2 font-medium text-[#8f2a1c]">{overdue} fuera de término</span>}
               </span>
@@ -172,7 +172,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
             )}
             {estado !== "resueltas" && (
               <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Prioridad">
-                <span className="mr-1 text-[13px] text-muted">Prioridad</span>
+                <span className="mr-1 text-meta text-muted">Prioridad</span>
                 {(["alta", "media", "baja"] as const).map((p) => (
                   <Link key={p} href={href({ prioridad: prioridad === p ? null : p })} aria-current={prioridad === p ? "true" : undefined} className={chip(prioridad === p)}>
                     {p[0].toUpperCase() + p.slice(1)}
@@ -182,7 +182,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
             )}
             {owners.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Responsable">
-                <span className="mr-1 text-[13px] text-muted">Responsable</span>
+                <span className="mr-1 text-meta text-muted">Responsable</span>
                 {owners.map(([id, name]) => (
                   <Link key={id} href={href({ resp: resp === id ? null : id })} aria-current={resp === id ? "true" : undefined} className={chip(resp === id)}>
                     {name}
@@ -213,19 +213,19 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
                     >
                       <span className="flex items-start justify-between gap-3">
                         <span className="min-w-0">
-                          <span className="block truncate text-[14px] font-medium text-ink">{i.request.subject}</span>
-                          <span className="block truncate text-[13px] text-muted">
+                          <span className="block truncate text-ui font-medium text-ink">{i.request.subject}</span>
+                          <span className="block truncate text-meta text-muted">
                             {i.clientName} · {REQUEST_TYPES[i.request.type]}
                           </span>
                         </span>
-                        <span className="tabular shrink-0 text-[12px] text-muted">{shortDate.format(i.request.updated_at)}</span>
+                        <span className="tabular shrink-0 text-caption text-muted">{shortDate.format(i.request.updated_at)}</span>
                       </span>
-                      {i.last && <span className="mt-1 line-clamp-1 text-[13px] text-muted">{i.last.from_client ? "" : "Vos: "}{i.last.body}</span>}
+                      {i.last && <span className="mt-1 line-clamp-1 text-meta text-muted">{i.last.from_client ? "" : "Vos: "}{i.last.body}</span>}
                       <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                         <StatusBadge status={i.request.status} />
                         <SlaChip s={i.s} />
                         {i.s.waiting && i.s.priority !== "baja" && (
-                          <span className={cn("inline-flex items-center gap-1 text-[12px]", PRIORITY[i.s.priority].className)}>
+                          <span className={cn("inline-flex items-center gap-1 text-caption", PRIORITY[i.s.priority].className)}>
                             <Flag className="size-3.5" strokeWidth={1.5} aria-hidden />
                             {PRIORITY[i.s.priority].label}
                           </span>
@@ -242,7 +242,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
         {/* Conversación */}
         <div className={cn("min-w-0", !sp.id && "hidden lg:block")}>
           {sp.id && (
-            <Link href={href({})} className="mb-3 inline-flex items-center gap-1.5 text-[14px] text-ink underline-offset-4 hover:underline lg:hidden">
+            <Link href={href({})} className="mb-3 inline-flex items-center gap-1.5 text-ui text-ink underline-offset-4 hover:underline lg:hidden">
               <ArrowLeft className="size-4" strokeWidth={1.5} aria-hidden /> Volver a la bandeja
             </Link>
           )}
@@ -256,15 +256,15 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
               meta={
                 <>
                   <SlaChip s={selected.s} />
-                  <span className={cn("inline-flex items-center gap-1 text-[12px]", PRIORITY[selected.s.priority].className)}>
+                  <span className={cn("inline-flex items-center gap-1 text-caption", PRIORITY[selected.s.priority].className)}>
                     <Flag className="size-3.5" strokeWidth={1.5} aria-hidden />
                     {PRIORITY[selected.s.priority].label}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[12px]">
+                  <span className="inline-flex items-center gap-1 text-caption">
                     <UserRound className="size-3.5" strokeWidth={1.5} aria-hidden />
                     {selected.owner ?? "Sin responsable"}
                   </span>
-                  <span className="tabular text-[12px]">{selected.count === 1 ? "1 mensaje" : `${selected.count} mensajes`}</span>
+                  <span className="tabular text-caption">{selected.count === 1 ? "1 mensaje" : `${selected.count} mensajes`}</span>
                 </>
               }
             />

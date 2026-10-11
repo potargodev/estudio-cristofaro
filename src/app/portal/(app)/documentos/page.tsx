@@ -44,21 +44,21 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
         <Card className="mb-8">
           <h2 className="font-semibold">Subir un comprobante</h2>
           {error && (
-            <p role="alert" className="mt-2 text-sm text-danger">
+            <p role="alert" className="mt-2 text-ui text-danger">
               {error === "archivo" ? "Elegí un archivo." : error}
             </p>
           )}
           <form action={uploadClientDocument} className="mt-4 grid gap-4 sm:grid-cols-[1.4fr_1fr_1fr]">
             <FileField id="file" label="Archivo" required />
             <div>
-              <label htmlFor="category" className="block text-sm font-medium">
+              <label htmlFor="category" className="block text-ui font-medium">
                 Tipo
               </label>
               <select
                 id="category"
                 name="category"
                 defaultValue="comprobantes"
-                className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-[15px]"
+                className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-body"
               >
                 <option value="comprobantes">Comprobantes</option>
                 <option value="recibos">Recibos de sueldo</option>
@@ -67,14 +67,14 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
               </select>
             </div>
             <div>
-              <label htmlFor="period" className="block text-sm font-medium">
+              <label htmlFor="period" className="block text-ui font-medium">
                 Período
               </label>
               <input
                 id="period"
                 name="period"
                 type="month"
-                className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-[15px]"
+                className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-body"
               />
             </div>
             <div className="sm:col-span-3">
@@ -87,11 +87,11 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
       {docs.length === 0 && <Empty art="carpeta">Todavía no hay documentos.</Empty>}
       {periods.map((p) => (
         <section key={p || "sin"} className="mb-8">
-          <h2 className="mb-3 text-lg font-semibold first-letter:uppercase">{periodLabel(p || null)}</h2>
+          <h2 className="mb-3 text-title font-semibold first-letter:uppercase">{periodLabel(p || null)}</h2>
           <div className="space-y-4">
             {[...byPeriod.get(p)!.entries()].map(([cat, items]) => (
               <div key={cat}>
-                <h3 className="mb-2 text-sm font-medium text-muted">{categoryLabel(cat)}</h3>
+                <h3 className="mb-2 text-ui font-medium text-muted">{categoryLabel(cat)}</h3>
                 <ul className="divide-y divide-line rounded-md border border-line bg-surface">
                   {items.map((d) => (
                     <li key={d.id}>
@@ -101,7 +101,7 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
                       >
                         <span className="min-w-0">
                           <span className="block truncate font-medium">{d.name}</span>
-                          <span className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted">
+                          <span className="mt-0.5 flex flex-wrap items-center gap-2 text-ui text-muted">
                             {dateFmt.format(d.created_at)} · {formatBytes(d.size_bytes)}
                             <Badge tone={d.source === "cliente" ? "neutral" : "warn"}>
                               {d.source === "cliente" ? "Subido por vos" : "Del estudio"}

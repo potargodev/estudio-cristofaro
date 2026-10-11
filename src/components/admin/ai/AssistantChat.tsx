@@ -70,13 +70,13 @@ function readAsDataUrl(file: File) {
 
 function Markdown({ text }: { text: string }) {
   return (
-    <div className="faro-md text-[15px] leading-relaxed text-ink [overflow-wrap:anywhere]">
+    <div className="faro-md text-body leading-relaxed text-ink [overflow-wrap:anywhere]">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
           table: ({ children }) => (
             <div className="my-3 overflow-x-auto border border-line">
-              <table className="w-full min-w-max border-collapse text-left text-[14px]">{children}</table>
+              <table className="w-full min-w-max border-collapse text-left text-ui">{children}</table>
             </div>
           ),
           th: ({ children }) => <th className="border-b border-line bg-canvas px-3 py-2 font-medium">{children}</th>,
@@ -86,14 +86,14 @@ function Markdown({ text }: { text: string }) {
               {children}
             </a>
           ),
-          code: ({ children }) => <code className="bg-navy-soft px-1 font-mono text-[13px]">{children}</code>,
-          pre: ({ children }) => <pre className="my-3 overflow-x-auto bg-navy-soft p-3 font-mono text-[13px]">{children}</pre>,
+          code: ({ children }) => <code className="bg-navy-soft px-1 font-mono text-meta">{children}</code>,
+          pre: ({ children }) => <pre className="my-3 overflow-x-auto bg-navy-soft p-3 font-mono text-meta">{children}</pre>,
           ul: ({ children }) => <ul className="my-2 list-disc space-y-1 pl-5">{children}</ul>,
           ol: ({ children }) => <ol className="my-2 list-decimal space-y-1 pl-5">{children}</ol>,
           p: ({ children }) => <p className="my-2 first:mt-0 last:mb-0">{children}</p>,
-          h1: ({ children }) => <h3 className="mb-2 mt-4 text-[17px] font-semibold">{children}</h3>,
-          h2: ({ children }) => <h3 className="mb-2 mt-4 text-[16px] font-semibold">{children}</h3>,
-          h3: ({ children }) => <h4 className="mb-1 mt-3 text-[15px] font-semibold">{children}</h4>,
+          h1: ({ children }) => <h3 className="mb-2 mt-4 text-title font-semibold">{children}</h3>,
+          h2: ({ children }) => <h3 className="mb-2 mt-4 text-lead font-semibold">{children}</h3>,
+          h3: ({ children }) => <h4 className="mb-1 mt-3 text-body font-semibold">{children}</h4>,
         }}
       >
         {text}
@@ -108,7 +108,7 @@ type ToolPart = Extract<UIMessage["parts"][number], { toolCallId: string }>;
 
 function Json({ value }: { value: unknown }) {
   const text = JSON.stringify(value, null, 2) ?? "";
-  return <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words bg-canvas p-2 font-mono text-[12px] leading-snug text-ink/80">{text.length > 6000 ? `${text.slice(0, 6000)}…` : text}</pre>;
+  return <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-words bg-canvas p-2 font-mono text-caption leading-snug text-ink/80">{text.length > 6000 ? `${text.slice(0, 6000)}…` : text}</pre>;
 }
 
 function ToolCard({
@@ -138,7 +138,7 @@ function ToolCard({
 
   return (
     <div className={cn("my-2 border bg-surface", sentToApproval ? "border-[#e2cdc4]" : needsConfirm ? "border-[#e3cf9f]" : "border-line")}>
-      <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px]">
+      <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="flex w-full items-center gap-2 px-3 py-2 text-left text-meta">
         {running ? (
           <Loader2 className="size-4 shrink-0 animate-spin text-muted motion-reduce:animate-none" aria-hidden />
         ) : (
@@ -168,7 +168,7 @@ function ToolCard({
         <ChevronDown className={cn("size-4 shrink-0 text-muted transition-transform motion-reduce:transition-none", open && "rotate-180")} aria-hidden />
       </button>
       {open && (
-        <div className="grid gap-2 border-t border-line px-3 py-2 text-[12px]">
+        <div className="grid gap-2 border-t border-line px-3 py-2 text-caption">
           <div>
             <p className="mb-1 font-medium text-muted">Qué consultó</p>
             <Json value={(part as { input?: unknown }).input} />
@@ -183,7 +183,7 @@ function ToolCard({
         </div>
       )}
       {needsConfirm && output?.aprobacion_id && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-line bg-[#fbf5e6] px-3 py-2 text-[13px]">
+        <div className="flex flex-wrap items-center gap-2 border-t border-line bg-[#fbf5e6] px-3 py-2 text-meta">
           <p className="min-w-0 flex-1 text-ink [overflow-wrap:anywhere]">{output.resumen}</p>
           {!status || status === "pendiente" ? (
             <>
@@ -191,7 +191,7 @@ function ToolCard({
                 type="button"
                 disabled={busy}
                 onClick={() => onDecide(output.aprobacion_id!, false, output.resumen ?? "")}
-                className="h-8 border border-line bg-surface px-3 text-[13px] hover:border-muted disabled:opacity-50"
+                className="h-8 border border-line bg-surface px-3 text-meta hover:border-muted disabled:opacity-50"
               >
                 Cancelar
               </button>
@@ -199,19 +199,19 @@ function ToolCard({
                 type="button"
                 disabled={busy}
                 onClick={() => onDecide(output.aprobacion_id!, true, output.resumen ?? "")}
-                className="inline-flex h-8 items-center gap-1.5 bg-navy px-3 text-[13px] font-medium text-paper hover:bg-navy-deep disabled:opacity-50"
+                className="inline-flex h-8 items-center gap-1.5 bg-navy px-3 text-meta font-medium text-paper hover:bg-navy-deep disabled:opacity-50"
               >
                 <Check className="size-4" aria-hidden />
                 Confirmar
               </button>
             </>
           ) : (
-            <span className="text-[13px] font-medium text-ink">{status === "ejecutada" ? "Confirmada y ejecutada" : status === "error" ? "Falló al ejecutar" : "Cancelada"}</span>
+            <span className="text-meta font-medium text-ink">{status === "ejecutada" ? "Confirmada y ejecutada" : status === "error" ? "Falló al ejecutar" : "Cancelada"}</span>
           )}
         </div>
       )}
       {sentToApproval && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-line bg-[#f6efeb] px-3 py-2 text-[13px]">
+        <div className="flex flex-wrap items-center gap-2 border-t border-line bg-[#f6efeb] px-3 py-2 text-meta">
           <ShieldCheck className="size-4 text-[#6d4a3c]" strokeWidth={1.5} aria-hidden />
           <p className="min-w-0 flex-1 text-ink [overflow-wrap:anywhere]">
             <strong className="font-medium">Enviado a aprobación.</strong> {output?.resumen}
@@ -237,7 +237,7 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
     return () => clearTimeout(t);
   }, [kind, q]);
   return (
-    <div role="dialog" aria-label="Adjuntar contexto" className="absolute bottom-full left-0 z-20 mb-2 w-[min(420px,calc(100vw-2rem))] border border-line bg-surface shadow-lg">
+    <div role="dialog" aria-label="Adjuntar contexto" className="absolute bottom-full left-0 z-20 mb-2 w-[min(420px,calc(100vw-2rem))] border border-line bg-surface shadow-overlay">
       <div className="flex items-center gap-1 border-b border-line p-1.5">
         {(Object.keys(CONTEXT_LABEL) as ContextKind[]).map((k) => {
           const Icon = KIND_ICON[k];
@@ -247,14 +247,14 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
               type="button"
               onClick={() => setKind(k)}
               aria-pressed={kind === k}
-              className={cn("inline-flex h-8 items-center gap-1.5 px-2.5 text-[13px]", kind === k ? "bg-navy-soft text-ink" : "text-muted hover:text-ink")}
+              className={cn("inline-flex h-8 items-center gap-1.5 px-2.5 text-meta", kind === k ? "bg-navy-soft text-ink" : "text-muted hover:text-ink")}
             >
               <Icon className="size-4" strokeWidth={1.5} aria-hidden />
               {CONTEXT_LABEL[k]}
             </button>
           );
         })}
-        <button type="button" onClick={onFile} className="inline-flex h-8 items-center gap-1.5 px-2.5 text-[13px] text-muted hover:text-ink">
+        <button type="button" onClick={onFile} className="inline-flex h-8 items-center gap-1.5 px-2.5 text-meta text-muted hover:text-ink">
           <Paperclip className="size-4" strokeWidth={1.5} aria-hidden />
           Archivo
         </button>
@@ -268,18 +268,18 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={`Buscar ${CONTEXT_LABEL[kind].toLowerCase()}…`}
-          className="h-9 w-full border border-line bg-canvas px-2 text-[14px] outline-none focus:border-muted"
+          className="h-9 w-full border border-line bg-canvas px-2 text-ui outline-none focus:border-muted"
         />
         <ul className="mt-2 max-h-60 overflow-y-auto">
           {items.map((it) => (
             <li key={it.id}>
               <button type="button" onClick={() => onPick(it)} className="flex w-full flex-col items-start px-2 py-1.5 text-left hover:bg-canvas">
-                <span className="text-[14px] text-ink">{it.label}</span>
-                {it.hint && <span className="text-[12px] text-muted">{it.hint}</span>}
+                <span className="text-ui text-ink">{it.label}</span>
+                {it.hint && <span className="text-caption text-muted">{it.hint}</span>}
               </button>
             </li>
           ))}
-          {!pending && items.length === 0 && <li className="px-2 py-3 text-[13px] text-muted">Sin resultados.</li>}
+          {!pending && items.length === 0 && <li className="px-2 py-3 text-meta text-muted">Sin resultados.</li>}
         </ul>
       </div>
     </div>
@@ -435,12 +435,12 @@ export function AssistantChat({
         className={cn(
           "absolute inset-y-0 left-0 z-30 w-72 shrink-0 flex-col border-r border-line bg-canvas",
           !embedded && "lg:static lg:flex",
-          history ? "flex shadow-xl" : "hidden",
+          history ? "flex shadow-overlay" : "hidden",
         )}
         aria-label="Conversaciones"
       >
         <div className="flex items-center gap-2 border-b border-line p-3">
-          <Link href={`${basePath}&nueva=1`} className="inline-flex h-9 flex-1 items-center justify-center gap-2 bg-navy text-[14px] font-medium text-paper hover:bg-navy-deep">
+          <Link href={`${basePath}&nueva=1`} className="inline-flex h-9 flex-1 items-center justify-center gap-2 bg-navy text-ui font-medium text-paper hover:bg-navy-deep">
             <MessageSquarePlus className="size-4" aria-hidden />
             Conversación nueva
           </Link>
@@ -449,13 +449,13 @@ export function AssistantChat({
           </button>
         </div>
         <ul className="flex-1 overflow-y-auto p-2">
-          {conversations.length === 0 && <li className="px-2 py-3 text-[13px] text-muted">Tus conversaciones van a aparecer acá.</li>}
+          {conversations.length === 0 && <li className="px-2 py-3 text-meta text-muted">Tus conversaciones van a aparecer acá.</li>}
           {conversations.map((c) => (
             <li key={c.id} className="group flex items-center">
               <Link
                 href={`${basePath}&c=${c.id}`}
                 aria-current={c.id === conversationId ? "page" : undefined}
-                className={cn("min-w-0 flex-1 truncate px-2 py-2 text-[14px]", c.id === conversationId ? "bg-navy-soft text-ink" : "text-ink/80 hover:bg-surface")}
+                className={cn("min-w-0 flex-1 truncate px-2 py-2 text-ui", c.id === conversationId ? "bg-navy-soft text-ink" : "text-ink/80 hover:bg-surface")}
               >
                 {c.title}
               </Link>
@@ -474,10 +474,10 @@ export function AssistantChat({
       {/* Chat */}
       <section className="relative flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-line px-3 py-2 sm:px-4">
-          <button type="button" onClick={() => setHistory(true)} className={cn("inline-flex h-8 items-center gap-1.5 border border-line px-2 text-[13px]", !embedded && "lg:hidden")} aria-label="Ver conversaciones">
+          <button type="button" onClick={() => setHistory(true)} className={cn("inline-flex h-8 items-center gap-1.5 border border-line px-2 text-meta", !embedded && "lg:hidden")} aria-label="Ver conversaciones">
             <History className="size-4" aria-hidden />
           </button>
-          <p className="flex min-w-0 flex-1 items-center gap-2 text-[14px] font-medium text-ink">
+          <p className="flex min-w-0 flex-1 items-center gap-2 text-ui font-medium text-ink">
             <Bot className="size-4 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
             <span className="truncate">{conversations.find((c) => c.id === conversationId)?.title ?? "Faro · Asistente"}</span>
           </p>
@@ -489,7 +489,7 @@ export function AssistantChat({
             value={model}
             onChange={(e) => setModel(e.target.value)}
             disabled={noModels}
-            className="h-8 max-w-[45%] truncate border border-line bg-surface px-2 text-[13px] text-ink"
+            className="h-8 max-w-[45%] truncate border border-line bg-surface px-2 text-meta text-ink"
           >
             {models.map((m) => (
               <option key={m.value} value={m.value}>
@@ -503,10 +503,10 @@ export function AssistantChat({
           {messages.length === 0 && (
             <div className="mx-auto max-w-2xl pt-6 text-center sm:pt-12">
               <p className="font-display text-[32px] leading-tight text-ink sm:text-[40px]">¿En qué te ayudo?</p>
-              <p className="mt-2 text-[15px] text-muted">Consulto organizaciones, vencimientos, documentos, solicitudes, agenda y conexiones. Lo sensible pasa siempre por tu aprobación.</p>
+              <p className="mt-2 text-body text-muted">Consulto organizaciones, vencimientos, documentos, solicitudes, agenda y conexiones. Lo sensible pasa siempre por tu aprobación.</p>
               <div className="mt-6 grid gap-2 sm:grid-cols-2">
                 {SUGGESTIONS.map((s) => (
-                  <button key={s} type="button" onClick={() => submit(s)} disabled={noModels} className="border border-line bg-canvas px-3 py-3 text-left text-[14px] text-ink hover:border-muted disabled:opacity-50">
+                  <button key={s} type="button" onClick={() => submit(s)} disabled={noModels} className="border border-line bg-canvas px-3 py-3 text-left text-ui text-ink hover:border-muted disabled:opacity-50">
                     {s}
                   </button>
                 ))}
@@ -519,7 +519,7 @@ export function AssistantChat({
               if (m.role === "user") {
                 if (meta.kind) {
                   return (
-                    <p key={m.id} className="flex items-center justify-end gap-1.5 text-[13px] text-muted">
+                    <p key={m.id} className="flex items-center justify-end gap-1.5 text-meta text-muted">
                       <Check className="size-3.5" aria-hidden />
                       {meta.kind === "confirmacion" ? "Confirmaste" : "Cancelaste"}: {meta.summary}
                     </p>
@@ -527,14 +527,14 @@ export function AssistantChat({
                 }
                 return (
                   <div key={m.id} className="ml-auto max-w-[85%]">
-                    <div className="bg-navy px-4 py-2.5 text-[15px] leading-relaxed text-paper">
+                    <div className="bg-navy px-4 py-2.5 text-body leading-relaxed text-paper">
                       {m.parts.map((p, i) =>
                         p.type === "text" ? (
                           <p key={i} className="whitespace-pre-wrap [overflow-wrap:anywhere]">
                             {p.text}
                           </p>
                         ) : p.type === "file" ? (
-                          <p key={i} className="mt-1 inline-flex items-center gap-1 text-[13px] text-paper/80">
+                          <p key={i} className="mt-1 inline-flex items-center gap-1 text-meta text-paper/80">
                             <Paperclip className="size-3.5" aria-hidden />
                             {p.filename ?? "archivo"}
                           </p>
@@ -542,7 +542,7 @@ export function AssistantChat({
                       )}
                     </div>
                     {!!meta.context?.length && (
-                      <p className="mt-1 text-right text-[12px] text-muted">Con contexto: {meta.context.length === 1 ? "1 elemento" : `${meta.context.length} elementos`}</p>
+                      <p className="mt-1 text-right text-caption text-muted">Con contexto: {meta.context.length === 1 ? "1 elemento" : `${meta.context.length} elementos`}</p>
                     )}
                   </div>
                 );
@@ -566,13 +566,13 @@ export function AssistantChat({
               );
             })}
             {status === "submitted" && (
-              <p className="flex items-center gap-2 pl-10 text-[14px] text-muted">
+              <p className="flex items-center gap-2 pl-10 text-ui text-muted">
                 <Loader2 className="size-4 animate-spin motion-reduce:animate-none" aria-hidden />
                 Pensando…
               </p>
             )}
             {error && (
-              <div role="alert" className="border border-danger/30 bg-danger/5 px-3 py-2 text-[14px] text-danger">
+              <div role="alert" className="border border-danger/30 bg-danger/5 px-3 py-2 text-ui text-danger">
                 {error.message || "No se pudo completar la respuesta."}
               </div>
             )}
@@ -603,7 +603,7 @@ export function AssistantChat({
               />
             )}
             {mention && mentionMatches.length > 0 && (
-              <ul role="listbox" aria-label="Organizaciones" className="absolute bottom-full left-0 z-20 mb-2 w-72 border border-line bg-surface shadow-lg">
+              <ul role="listbox" aria-label="Organizaciones" className="absolute bottom-full left-0 z-20 mb-2 w-72 border border-line bg-surface shadow-overlay">
                 {mentionMatches.map((o) => (
                   <li key={o.id}>
                     <button
@@ -614,7 +614,7 @@ export function AssistantChat({
                         e.preventDefault();
                         pickMention(o);
                       }}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-[14px] hover:bg-canvas"
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-ui hover:bg-canvas"
                     >
                       <Building2 className="size-4 text-muted" strokeWidth={1.5} aria-hidden />
                       {o.name}
@@ -629,7 +629,7 @@ export function AssistantChat({
                   {chips.map((c) => {
                     const Icon = KIND_ICON[c.kind];
                     return (
-                      <span key={`${c.kind}:${c.id}`} className="inline-flex max-w-full items-center gap-1 border border-line bg-surface py-0.5 pl-1.5 pr-0.5 text-[12px] text-ink">
+                      <span key={`${c.kind}:${c.id}`} className="inline-flex max-w-full items-center gap-1 border border-line bg-surface py-0.5 pl-1.5 pr-0.5 text-caption text-ink">
                         <Icon className="size-3.5 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
                         <span className="truncate">{c.label}</span>
                         <button type="button" aria-label={`Quitar ${c.label}`} onClick={() => setChips((x) => x.filter((y) => y !== c))} className="grid size-5 place-items-center text-muted hover:text-ink">
@@ -639,7 +639,7 @@ export function AssistantChat({
                     );
                   })}
                   {files.map((f) => (
-                    <span key={f.filename} className="inline-flex items-center gap-1 border border-line bg-surface py-0.5 pl-1.5 pr-0.5 text-[12px] text-ink">
+                    <span key={f.filename} className="inline-flex items-center gap-1 border border-line bg-surface py-0.5 pl-1.5 pr-0.5 text-caption text-ink">
                       {f.url ? <Paperclip className="size-3.5 text-rose-deep" aria-hidden /> : <Loader2 className="size-3.5 animate-spin" aria-hidden />}
                       {f.filename}
                       <button type="button" aria-label={`Quitar ${f.filename}`} onClick={() => setFiles((x) => x.filter((y) => y !== f))} className="grid size-5 place-items-center text-muted hover:text-ink">
@@ -668,7 +668,7 @@ export function AssistantChat({
                   if (e.key === "Escape") setMention(null);
                 }}
                 placeholder={noModels ? "Configurá un proveedor de IA para empezar" : "Preguntale a Faro… (@ para mencionar una organización)"}
-                className="block max-h-48 min-h-[56px] w-full resize-none bg-transparent px-3 py-2.5 text-[15px] text-ink outline-none placeholder:text-muted"
+                className="block max-h-48 min-h-[56px] w-full resize-none bg-transparent px-3 py-2.5 text-body text-ink outline-none placeholder:text-muted"
               />
               <div className="flex items-center gap-1 px-2 pb-2">
                 <button type="button" onClick={() => setPicker((v) => !v)} aria-label="Adjuntar contexto" aria-expanded={picker} className="grid size-8 place-items-center text-muted hover:text-ink">
@@ -690,7 +690,7 @@ export function AssistantChat({
                   <Paperclip className="size-4" aria-hidden />
                 </button>
                 <input ref={fileInput} type="file" multiple accept={FILE_ACCEPT} className="hidden" onChange={(e) => onFiles(e.target.files).then(() => (e.target.value = ""))} />
-                {fileError && <span className="ml-1 text-[12px] text-danger">{fileError}</span>}
+                {fileError && <span className="ml-1 text-caption text-danger">{fileError}</span>}
                 <span className="flex-1" />
                 {busy ? (
                   <button type="button" onClick={() => stop()} aria-label="Detener" className="grid size-9 place-items-center bg-ink text-paper">
@@ -703,7 +703,7 @@ export function AssistantChat({
                 )}
               </div>
             </div>
-            <p className="mt-1.5 text-center text-[11px] text-muted">Faro puede equivocarse: revisá los datos importantes. Lo sensible siempre pasa por Aprobaciones.</p>
+            <p className="mt-1.5 text-center text-micro text-muted">Faro puede equivocarse: revisá los datos importantes. Lo sensible siempre pasa por Aprobaciones.</p>
           </div>
         </form>
       </section>

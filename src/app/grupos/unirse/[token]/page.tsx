@@ -42,9 +42,9 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
         <span className="grid size-12 place-items-center rounded-md bg-navy text-gold">
           <Users className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
-        <p className="mt-4 text-[13px] text-muted">{inv.inviter ? `${inv.inviter} te invita a` : "Te invitan a"}</p>
+        <p className="mt-4 text-meta text-muted">{inv.inviter ? `${inv.inviter} te invita a` : "Te invitan a"}</p>
         <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{inv.name}</h1>
-        <p className="mt-1 text-[14px] text-muted">
+        <p className="mt-1 text-ui text-muted">
           {inv.members} {inv.members === 1 ? "integrante" : "integrantes"} · un grupo de gastos de Faro: quién pagó qué y cuánto debe cada uno.
         </p>
       </header>
@@ -52,12 +52,12 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
         <form action={joinGroupAction} className="grid gap-3">
           <input type="hidden" name="token" value={token} />
           {error && (
-            <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-[14px] text-danger">
+            <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-ui text-danger">
               {error}
             </p>
           )}
           <button className="inline-flex h-12 items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Sumarme como {actor.name}</button>
-          <p className="text-[13px] text-muted">El grupo va a aparecer en tus Grupos de gastos. Tu Bitácora sigue siendo privada: ahí solo se suma tu parte.</p>
+          <p className="text-meta text-muted">El grupo va a aparecer en tus Grupos de gastos. Tu Bitácora sigue siendo privada: ahí solo se suma tu parte.</p>
         </form>
       ) : (
         <JoinChoices token={token} google={googleEnabled()} next={`/grupos/unirse/${token}`} error={error} />

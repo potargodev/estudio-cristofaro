@@ -34,6 +34,8 @@
   --color-gold-ink: #7d5848;
 
   --color-danger: #a33a2a;
+  /* Placeholders con contraste AA (4,9:1 sobre blanco) */
+  --color-placeholder: #6b7184;
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   /* Títulos y números grandes: Gilda Display */
@@ -81,10 +83,35 @@
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
+  /* ── Sistema único (DESIGN.md) ──────────────────────────────────────
+     Escala tipográfica: un tamaño por papel. Nada de text-[Npx] sueltos. */
+  --text-micro: 11px; /* contadores, marcas mínimas (piso legible) */
+  --text-micro--line-height: 1.35;
+  --text-caption: 12px; /* fechas, ayudas de campo, pies */
+  --text-caption--line-height: 1.4;
+  --text-meta: 13px; /* datos secundarios de una fila o tarjeta */
+  --text-meta--line-height: 1.45;
+  --text-ui: 14px; /* texto de la app: tablas, listas, controles */
+  --text-ui--line-height: 1.5;
+  --text-body: 15px; /* párrafos y descripciones */
+  --text-body--line-height: 1.55;
+  --text-lead: 16px; /* texto destacado, campos en el celular */
+  --text-lead--line-height: 1.5;
+  --text-title: 18px; /* título de bloque o tarjeta (h2/h3) */
+  --text-title--line-height: 1.3;
+  --text-section: 20px; /* título de sección dentro de una pantalla */
+  --text-section--line-height: 1.25;
+  --text-headline: 24px; /* números de resumen, títulos de diálogo */
+  --text-headline--line-height: 1.2;
+  --text-metric: 32px; /* el número de una tarjeta de indicador */
+  --text-metric--line-height: 1.05;
+
   /* Sombras con tinte azul noche (nunca gris neutro) */
   --shadow-brand-sm: 0 6px 16px -10px rgba(28, 34, 53, 0.35);
   --shadow-brand: 0 18px 40px -24px rgba(28, 34, 53, 0.45);
   --shadow-brand-lg: 0 34px 70px -30px rgba(20, 24, 38, 0.6), 0 12px 24px -16px rgba(28, 34, 53, 0.35);
+  /* La única sombra de la app: lo que flota (menús, popovers, diálogos, hojas) */
+  --shadow-overlay: 0 18px 40px -18px rgba(20, 24, 38, 0.5), 0 2px 8px -2px rgba(20, 24, 38, 0.18);
 }
 
 /* ───────────── Web pública: dirección "Precisión" ───────────── */
@@ -761,6 +788,9 @@ body {
   /* Una sola altura y un solo borde para el bloque del logo del sidebar, la
      barra superior y la barra horizontal colapsada: la línea es continua */
   --header-h: 64px;
+  /* Anchos de contenido: tableros y tablas a lo ancho; formularios y lectura angostos */
+  --content-max: 1280px;
+  --content-narrow: 768px;
   --app-top: var(--header-h);
   --shell-line: #dddbdf;
   --color-ink: #141826;
@@ -769,16 +799,130 @@ body {
   --color-card-foreground: #141826;
   --color-popover-foreground: #141826;
   --color-muted-foreground: #4b5266;
+  /* Un solo radio en la app: 6 px (controles, tarjetas, paneles y menús).
+     lg queda como alias; xl+ solo para hojas y diálogos. */
   --radius: 6px;
   --radius-xs: 3px;
   --radius-sm: 4px;
   --radius-md: 6px;
-  --radius-lg: 8px;
+  --radius-lg: 6px;
   --radius-xl: 10px;
   --radius-2xl: 12px;
   --radius-3xl: 16px;
   background-color: var(--color-canvas);
   color: var(--color-ink);
+}
+/* Controles (en toda la app y en la web): 44 px en el celular (objetivo
+   táctil, y 16 px de texto para que iOS no agrande la pantalla), 36 px desde 640 px */
+:root {
+  --control-h: 44px;
+  --control-h-sm: 36px;
+  --control-text: 16px;
+}
+@media (min-width: 640px) {
+  :root {
+    --control-h: 36px;
+    --control-h-sm: 32px;
+    --control-text: 14px;
+  }
+}
+
+/* Campos de toda la app: misma altura, borde, radio, texto y foco, estén
+   hechos con <Input> o a mano. Va fuera de las capas a propósito: le gana a
+   las utilidades sueltas (h-8, h-10, text-[15px]…) que dejaban cada pantalla
+   distinta. Para un caso especial: data-free en el campo. */
+.app-ui :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="hidden"], [type="color"], [type="submit"], [type="button"]), select):not([data-free], .bg-night *, .keep-dark *, .sr-only) {
+  height: var(--control-h);
+  min-height: 0;
+  font-size: var(--control-text);
+  border-radius: var(--radius-md);
+}
+.app-ui textarea:not([data-free], .bg-night *, .keep-dark *) {
+  font-size: var(--control-text);
+  border-radius: var(--radius-md);
+}
+.app-ui :is(input, select, textarea):not([data-free], [type="checkbox"], [type="radio"], [type="range"])::placeholder {
+  /* 4,9:1 sobre blanco y 5,7:1 sobre la superficie oscura */
+  color: var(--color-placeholder);
+  opacity: 1;
+}
+.app-ui :is(input, select, textarea):not([data-free], [type="checkbox"], [type="radio"], [type="range"]):focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 1px;
+}
+.app-ui input[type="file"]:not([data-free]) {
+  font-size: var(--text-ui);
+}
+.app-ui input[type="file"]:not([data-free])::file-selector-button {
+  height: var(--control-h-sm);
+  margin-right: 0.75rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.app-ui :is(input[type="checkbox"], input[type="radio"]):not([data-free]) {
+  accent-color: var(--color-navy);
+  width: 1rem;
+  height: 1rem;
+}
+:root[data-theme="dark"] .app-ui :is(input[type="checkbox"], input[type="radio"]):not([data-free]) {
+  accent-color: var(--color-gold);
+}
+
+/* Contenido de la pantalla: un ancho para tableros y tablas, otro para
+   formularios y lectura. Siempre alineado con el encabezado (a la izquierda). */
+.app-ui .page {
+  width: 100%;
+  max-width: var(--content-max);
+}
+.app-ui .page-narrow {
+  width: 100%;
+  max-width: var(--content-narrow);
+}
+
+/* Texto seleccionado y números de tablas con la marca */
+.app-ui ::selection {
+  background: rgb(201 165 150 / 0.35);
+}
+.app-ui table {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* Tablas: cabecera y celdas comunes (las utilidades de cada tabla mandan) */
+@layer components {
+  /* Un hijo de grilla nunca se estira más que su columna: una tabla ancha
+     scrollea dentro de su contenedor en vez de empujar la página en el celular */
+  .app-ui :where(main) :where(.grid > *, .overflow-x-auto) {
+    min-width: 0;
+  }
+  /* Lo absoluto de adentro (textos sr-only, menús) no escapa del contenedor
+     con scroll ni estira la página */
+  .app-ui :where(.overflow-x-auto, .overflow-auto, .ds-table) {
+    position: relative;
+  }
+  .app-ui :where(main) :where(table) :where(thead th) {
+    padding: 0.625rem 1rem;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--color-muted);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .app-ui :where(main) :where(table) :where(tbody td) {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+  }
+  .app-ui :where(.ds-table) :where(thead) {
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .app-ui :where(.ds-table) :where(tbody tr + tr) {
+    border-top: 1px solid var(--color-line);
+  }
 }
 .app-ui .keep-dark,
 .app-ui .bg-night {
@@ -821,6 +965,7 @@ body {
   --color-border: #283044;
   --color-input: #2f374d;
   --color-ring: #c9a596;
+  --color-placeholder: #8c93a8;
 }
 /* Texto e íconos en azul noche: en oscuro pasan a un azul claro legible */
 :root[data-theme="dark"] .app-ui :not(.keep-dark, .keep-dark *, .bg-night, .bg-night *).text-navy {

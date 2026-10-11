@@ -18,7 +18,7 @@ export function Hero() {
         <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1360px] flex-col px-5 pb-8 pt-[calc(4rem+44vw)] sm:px-8 md:pt-28 lg:px-12 lg:pb-10 lg:pt-32">
           {/* Arriba: titular, centrado en el espacio libre; nunca pasa la mitad de la pantalla */}
           <div className="pb-10 md:my-auto md:py-10 lg:w-1/2 lg:py-14">
-            <p data-intro="fade" className="text-[14px] text-paper/70">
+            <p data-intro="fade" className="text-ui text-paper/70">
               Estudio contable para PyMEs de servicios en CABA y GBA
             </p>
             <HeroStatements statements={HERO_STATEMENTS} interval={HERO_INTERVAL} />
@@ -27,18 +27,18 @@ export function Hero() {
           <div>
             <div data-intro="line" className="h-px origin-left bg-hair-strong" />
             <div className="grid gap-6 pt-7 lg:grid-cols-12 lg:items-center lg:gap-8">
-              <p data-intro="fade" className="max-w-lg text-[16px] leading-relaxed text-paper/80 lg:col-span-6">
+              <p data-intro="fade" className="max-w-lg text-lead leading-relaxed text-paper/80 lg:col-span-6">
                 Impuestos, contabilidad y sueldos resueltos por un equipo con nombre y apellido, y una plataforma donde ves qué está hecho, qué
                 tenés que pagar y qué viene después.
               </p>
               <div data-intro="fade" className="flex flex-wrap items-center gap-6 lg:col-span-6 lg:justify-end">
                 <CtaLink href={SCHEDULE_HREF}>Agendar 20 minutos con el estudio</CtaLink>
-                <TextLink href="#plataforma" className="text-[15px] text-paper">
+                <TextLink href="#plataforma" className="text-body text-paper">
                   Ver la plataforma
                 </TextLink>
               </div>
             </div>
-            <ul data-intro="fade" className="mt-8 grid border-t border-hair text-[13px] text-paper/65 sm:grid-cols-3">
+            <ul data-intro="fade" className="mt-8 grid border-t border-hair text-meta text-paper/65 sm:grid-cols-3">
               {GUARANTEES.map((g, i) => (
                 <li key={g} className="flex items-center gap-3 border-b border-hair py-3 sm:border-b-0 sm:border-l sm:px-4 sm:first:border-l-0 sm:first:pl-0">
                   <span className="tabular text-rose-light">0{i + 1}</span>

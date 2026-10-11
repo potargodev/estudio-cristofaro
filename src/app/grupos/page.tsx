@@ -33,19 +33,19 @@ export default async function GastosHome() {
 
       <section aria-label="Tu saldo total" className="mt-6 grid gap-3 sm:grid-cols-2">
         <div className="border border-line bg-surface p-5">
-          <p className="text-[13px] text-muted">Te deben</p>
+          <p className="text-meta text-muted">Te deben</p>
           <p className="mt-1 num text-3xl text-[#24583a]">{currencies.length ? currencies.filter((c) => totals[c].owed).map((c) => formatMoney(totals[c].owed, c)).join(" · ") || formatMoney(0) : formatMoney(0)}</p>
         </div>
         <div className="border border-line bg-surface p-5">
-          <p className="text-[13px] text-muted">Debés</p>
+          <p className="text-meta text-muted">Debés</p>
           <p className="mt-1 num text-3xl text-rose-deep">{currencies.length ? currencies.filter((c) => totals[c].owe).map((c) => formatMoney(totals[c].owe, c)).join(" · ") || formatMoney(0) : formatMoney(0)}</p>
         </div>
       </section>
 
-      <h2 className="mt-10 text-[13px] font-medium uppercase tracking-[0.14em] text-muted">Tus grupos</h2>
+      <h2 className="mt-10 text-meta font-medium uppercase tracking-[0.14em] text-muted">Tus grupos</h2>
       {groups.length === 0 ? (
         <div className="mt-4 border border-dashed border-line bg-surface px-6 py-12 text-center">
-          <p className="font-display text-2xl">Todavía no tenés grupos</p>
+          <p className="font-display text-headline">Todavía no tenés grupos</p>
           <p className="mx-auto mt-2 max-w-sm text-muted">Armá uno para un viaje, la oficina, un proyecto o tus socios, y sumá a las personas (aunque no tengan cuenta).</p>
           {actor.kind === "user" && (
             <Link href="/grupos/nuevo" className="mt-6 inline-flex h-11 items-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep">
@@ -63,12 +63,12 @@ export default async function GastosHome() {
                 <Link href={`/grupos/g/${g.id}`} className="flex items-center gap-4 px-1 py-4 transition-colors hover:bg-navy-soft/50">
                   <GroupDot color={g.color} name={g.name} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[16px] font-medium">{g.name}</span>
-                    <span className="block text-[13px] text-muted">
+                    <span className="block truncate text-lead font-medium">{g.name}</span>
+                    <span className="block text-meta text-muted">
                       {GROUP_TYPES[g.type as GroupType] ?? g.type} · {g.members} {g.members === 1 ? "persona" : "personas"}
                     </span>
                   </span>
-                  <span className="text-right text-[14px]">
+                  <span className="text-right text-ui">
                     {curs.length === 0 ? (
                       <BalanceLine cents={0} currency={g.baseCurrency} />
                     ) : (

@@ -36,25 +36,25 @@ function ChatDemo() {
   }, []);
   return (
     <div ref={ref} className="border border-hair-strong bg-navy-deep p-5" aria-label="Ejemplo de conversación con el Asistente" role="img">
-      <p className="flex items-center gap-2 border-b border-hair pb-3 text-[13px] text-paper/70">
+      <p className="flex items-center gap-2 border-b border-hair pb-3 text-meta text-paper/70">
         <Bot className="size-4 text-gold" strokeWidth={1.5} aria-hidden /> Faro · Asistente
       </p>
       <div className="mt-4 grid min-h-[300px] content-start gap-3">
         {SCRIPT.slice(0, Math.min(n, SCRIPT.length)).map((m, i) =>
           m.k === "user" ? (
-            <p key={i} className="faro-demo-in ml-auto max-w-[85%] bg-paper/10 px-3 py-2 text-[14px] text-paper">
+            <p key={i} className="faro-demo-in ml-auto max-w-[85%] bg-paper/10 px-3 py-2 text-ui text-paper">
               {m.t}
             </p>
           ) : m.k === "tool" ? (
-            <p key={i} className="faro-demo-in flex items-center gap-2 border border-hair px-3 py-1.5 text-[12px] text-paper/60">
+            <p key={i} className="faro-demo-in flex items-center gap-2 border border-hair px-3 py-1.5 text-caption text-paper/60">
               <Wrench className="size-3.5 text-gold" strokeWidth={1.5} aria-hidden /> {m.t}
             </p>
           ) : m.k === "approval" ? (
-            <p key={i} className="faro-demo-in flex items-start gap-2 border border-gold/40 bg-gold/10 px-3 py-2 text-[13px] text-paper">
+            <p key={i} className="faro-demo-in flex items-start gap-2 border border-gold/40 bg-gold/10 px-3 py-2 text-meta text-paper">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-gold" strokeWidth={1.5} aria-hidden /> {m.t}
             </p>
           ) : (
-            <p key={i} className="faro-demo-in max-w-[90%] text-[14px] leading-relaxed text-paper/85">
+            <p key={i} className="faro-demo-in max-w-[90%] text-ui leading-relaxed text-paper/85">
               {m.t}
             </p>
           ),
@@ -76,7 +76,7 @@ export function FaroAi() {
             <SplitHeading id="ia-titulo" className="display-md mt-8 text-paper">
               La IA propone. Vos aprobás.
             </SplitHeading>
-            <ul className="mt-10 divide-y divide-hair border-y border-hair text-[15px] text-paper/75">
+            <ul className="mt-10 divide-y divide-hair border-y border-hair text-body text-paper/75">
               <li className="py-4">Tu propia IA en todos los planes: Anthropic, OpenAI, Google, OpenRouter, Azure o un modelo local. La clave queda cifrada.</li>
               <li className="py-4">Faro como servidor MCP: operá el estudio desde Claude, ChatGPT o Claude Code, con alcances y vencimiento.</li>
               <li className="py-4">Nada fiscal, de pagos ni comunicaciones a clientes se ejecuta sin una persona.</li>
@@ -87,20 +87,20 @@ export function FaroAi() {
           </div>
         </div>
         <div className="mt-16">
-          <p className="text-[13px] text-paper/60">Conexiones</p>
+          <p className="text-meta text-paper/60">Conexiones</p>
           <ul className="mt-4 flex flex-wrap gap-2">
             {live.map((c) => (
-              <li key={c.key} className="flex items-center gap-2 border border-hair-strong px-3 py-2 text-[14px] text-paper">
-                <span aria-hidden className="grid size-6 place-items-center text-[11px] font-semibold" style={{ background: c.logo.bg, color: c.logo.fg }}>
+              <li key={c.key} className="flex items-center gap-2 border border-hair-strong px-3 py-2 text-ui text-paper">
+                <span aria-hidden className="grid size-6 place-items-center text-micro font-semibold" style={{ background: c.logo.bg, color: c.logo.fg }}>
                   {c.logo.text}
                 </span>
                 {c.name.split(" (")[0]}
-                <span className="text-[12px] text-paper/50">· {VIA_LABEL[c.via]}</span>
+                <span className="text-caption text-paper/50">· {VIA_LABEL[c.via]}</span>
               </li>
             ))}
             {soon.map((c) => (
-              <li key={c.key} className="flex items-center gap-2 border border-hair px-3 py-2 text-[14px] text-paper/50">
-                {c.name} <span className="text-[12px]">· próximamente</span>
+              <li key={c.key} className="flex items-center gap-2 border border-hair px-3 py-2 text-ui text-paper/50">
+                {c.name} <span className="text-caption">· próximamente</span>
               </li>
             ))}
           </ul>

@@ -50,7 +50,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
     <>
       {sp.guardado && SAVED[sp.guardado] && <Notice>{SAVED[sp.guardado]}</Notice>}
       {sp.error && <Notice tone="error">{sp.error.slice(0, 200)}</Notice>}
-      <Link href="/grupos" className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+      <Link href="/grupos" className="text-ui text-rose-deep underline-offset-4 hover:underline">
         ← Tus grupos
       </Link>
 
@@ -58,7 +58,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
         <GroupDot color={group.color} name={group.name} size="lg" />
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{group.name}</h1>
-          <p className="mt-1 text-[14px] text-muted">
+          <p className="mt-1 text-ui text-muted">
             {GROUP_TYPES[group.type as GroupType]} · {v.members.length} {v.members.length === 1 ? "persona" : "personas"} · en {group.base_currency}
             {v.organizationName && <> · Contabilidad de {v.organizationName}</>}
             {group.context_tenant && <> · Conectado a tus gastos de la actividad</>}
@@ -67,7 +67,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       </header>
 
       {actor.kind === "guest" && (
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-gold/60 bg-rose-soft p-4 text-[14px]">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-gold/60 bg-rose-soft p-4 text-ui">
           <p className="min-w-0 flex-1">Entrás sin cuenta, solo desde este teléfono. Creá tu cuenta gratis y el grupo queda guardado, con tu parte en tu Bitácora.</p>
           <Link href="/grupos/reclamar" className="inline-flex h-10 items-center bg-navy px-4 text-paper hover:bg-navy-deep">
             Crear mi cuenta
@@ -76,12 +76,12 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       )}
 
       <section aria-label="Tu saldo" className="mt-5 border border-line bg-surface p-5">
-        <p className="text-[13px] text-muted">Tu saldo en este grupo</p>
+        <p className="text-meta text-muted">Tu saldo en este grupo</p>
         <p className="mt-1 num text-[30px] leading-tight">
           {myCurrencies.length === 0 ? <span className="text-muted">Estás al día</span> : myCurrencies.map(([cur, b]) => <BalanceLine key={cur} cents={b[me.id]} currency={cur} className="block" />)}
         </p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:flex">
-          <Link href={`/grupos/g/${group.id}/gasto`} className="col-span-2 inline-flex h-14 items-center justify-center gap-2 bg-navy px-6 text-[17px] text-paper hover:bg-navy-deep sm:h-12 sm:text-[16px]">
+          <Link href={`/grupos/g/${group.id}/gasto`} className="col-span-2 inline-flex h-14 items-center justify-center gap-2 bg-navy px-6 text-title text-paper hover:bg-navy-deep sm:h-12 sm:text-lead">
             <Plus className="size-5" aria-hidden />
             Agregar gasto
           </Link>
@@ -94,13 +94,13 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
               <Download className="size-4" aria-hidden />
               Exportar
             </summary>
-            <div className="absolute right-0 z-10 mt-1 grid min-w-44 border border-line bg-surface py-1 shadow-lg">
+            <div className="absolute right-0 z-10 mt-1 grid min-w-44 border border-line bg-surface py-1 shadow-overlay">
               {[
                 ["csv", "CSV"],
                 ["xlsx", "Excel (XLSX)"],
                 ["pdf", "Resumen en PDF"],
               ].map(([f, l]) => (
-                <a key={f} href={`/api/gastos/exportar/${group.id}?formato=${f}`} className="px-4 py-2.5 text-[14px] hover:bg-navy-soft">
+                <a key={f} href={`/api/gastos/exportar/${group.id}?formato=${f}`} className="px-4 py-2.5 text-ui hover:bg-navy-soft">
                   {l}
                 </a>
               ))}
@@ -113,13 +113,13 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
         <section aria-label="Pagos para confirmar" className="mt-4 grid gap-2">
           {pendingForMe.map((s) => (
             <div key={s.id} className="flex flex-wrap items-center gap-3 border border-gold/60 bg-rose-soft p-4">
-              <p className="min-w-0 flex-1 text-[14px]">
+              <p className="min-w-0 flex-1 text-ui">
                 {s.created_by === me.id ? "Esperando que confirmen" : `${name(s.created_by)} informó`}: <strong>{name(s.from_member)}</strong> le pagó <strong className="tabular-nums">{formatMoney(s.amount, s.currency)}</strong> a <strong>{name(s.to_member)}</strong> ({SETTLEMENT_METHODS[s.method]}).
               </p>
               <div className="flex gap-2">
                 {[
-                  ["1", "Confirmar", "h-10 bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep"],
-                  ["0", "Rechazar", "h-10 border border-line px-4 text-[14px] hover:bg-navy-soft"],
+                  ["1", "Confirmar", "h-10 bg-navy px-4 text-ui text-paper hover:bg-navy-deep"],
+                  ["0", "Rechazar", "h-10 border border-line px-4 text-ui hover:bg-navy-soft"],
                 ].map(([accept, label, cls]) => (
                   <form key={accept} action={answerSettlementAction}>
                     <input type="hidden" name="group" value={group.id} />
@@ -138,7 +138,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
         <ul className="flex min-w-max gap-1">
           {tabs.map((t) => (
             <li key={t.key}>
-              <Link href={href(t.key)} aria-current={tab === t.key ? "page" : undefined} className={cn("block border-b-2 px-3 py-3 text-[15px]", tab === t.key ? "border-navy font-medium text-ink" : "border-transparent text-muted hover:text-ink")}>
+              <Link href={href(t.key)} aria-current={tab === t.key ? "page" : undefined} className={cn("block border-b-2 px-3 py-3 text-body", tab === t.key ? "border-navy font-medium text-ink" : "border-transparent text-muted hover:text-ink")}>
                 {t.label}
               </Link>
             </li>
@@ -151,7 +151,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
           <>
             {v.expenses.length === 0 && v.activity.length <= 1 && (
               <div className="border border-dashed border-line bg-surface px-6 py-10 text-center">
-                <p className="font-display text-2xl">{sp.nuevo ? "¡Listo el grupo!" : "Sin gastos todavía"}</p>
+                <p className="font-display text-headline">{sp.nuevo ? "¡Listo el grupo!" : "Sin gastos todavía"}</p>
                 <p className="mx-auto mt-2 max-w-sm text-muted">Sumá a las personas en Integrantes y cargá el primer gasto.</p>
               </div>
             )}
@@ -162,8 +162,8 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                   <>
                     <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", a.kind.startsWith("pago") ? "bg-gold" : a.kind === "gasto" ? "bg-navy" : "bg-line")} aria-hidden />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[15px]">{a.text}</span>
-                      <span className="block text-[12px] text-muted">
+                      <span className="block text-body">{a.text}</span>
+                      <span className="block text-caption text-muted">
                         {when.format(a.created_at)}
                         {e && (
                           <>
@@ -199,10 +199,10 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
             {Object.keys(v.balances).length === 0 && <p className="text-muted">Todos están al día.</p>}
             {Object.entries(v.balances).map(([cur, per]) => (
               <section key={cur} aria-label={`Saldos en ${cur}`}>
-                <h2 className="font-display text-2xl">Saldos en {cur}</h2>
+                <h2 className="font-display text-headline">Saldos en {cur}</h2>
                 <ul className="mt-3 divide-y divide-line border-y border-line">
                   {v.members.map((m) => (
-                    <li key={m.id} className="flex items-center justify-between gap-3 py-3 text-[15px]">
+                    <li key={m.id} className="flex items-center justify-between gap-3 py-3 text-body">
                       <span>
                         {m.name}
                         {m.id === me.id && <span className="text-muted"> (vos)</span>}
@@ -211,17 +211,17 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                     </li>
                   ))}
                 </ul>
-                <h3 className="mt-6 text-[13px] font-medium uppercase tracking-[0.14em] text-muted">{group.simplify_debts ? "Para quedar a mano (deudas simplificadas)" : "Deudas directas"}</h3>
+                <h3 className="mt-6 text-meta font-medium uppercase tracking-[0.14em] text-muted">{group.simplify_debts ? "Para quedar a mano (deudas simplificadas)" : "Deudas directas"}</h3>
                 <ul className="mt-2 grid gap-2">
                   {v.transfers[cur].map((t, i) => {
                     const to = v.members.find((m) => m.id === t.to);
                     const canSettle = t.from === me.id || t.to === me.id || me.role === "admin";
                     return (
                       <li key={i} className="flex flex-wrap items-center gap-3 border border-line bg-surface p-4" data-testid="transfer">
-                        <p className="min-w-0 flex-1 text-[15px]">
+                        <p className="min-w-0 flex-1 text-body">
                           <strong>{name(t.from)}</strong> le debe <strong className="tabular-nums">{formatMoney(t.amount, cur)}</strong> a <strong>{name(t.to)}</strong>
                           {(to?.alias || to?.cvu) && (
-                            <span className="mt-1 flex flex-wrap items-center gap-2 text-[13px] text-muted">
+                            <span className="mt-1 flex flex-wrap items-center gap-2 text-meta text-muted">
                               {to.alias && (
                                 <>
                                   Alias <code className="text-ink">{to.alias}</code>
@@ -238,7 +238,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                           )}
                         </p>
                         {canSettle && (
-                          <Link href={`/grupos/g/${group.id}/saldar?from=${t.from}&to=${t.to}&monto=${t.amount}&moneda=${cur}`} className="inline-flex h-10 items-center bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">
+                          <Link href={`/grupos/g/${group.id}/saldar?from=${t.from}&to=${t.to}&monto=${t.amount}&moneda=${cur}`} className="inline-flex h-10 items-center bg-navy px-4 text-ui text-paper hover:bg-navy-deep">
                             Saldar
                           </Link>
                         )}
@@ -251,9 +251,9 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
             ))}
             {Object.keys(v.balances).length > 1 && (
               <section className="border border-line bg-surface p-5">
-                <h2 className="font-display text-xl">Todo pasado a {group.base_currency}</h2>
+                <h2 className="font-display text-section">Todo pasado a {group.base_currency}</h2>
                 {v.baseTransfers ? (
-                  <ul className="mt-3 grid gap-1.5 text-[15px]">
+                  <ul className="mt-3 grid gap-1.5 text-body">
                     {v.baseTransfers.map((t, i) => (
                       <li key={i}>
                         {name(t.from)} → {name(t.to)}: <strong className="tabular-nums">{formatMoney(t.amount, group.base_currency)}</strong>
@@ -262,23 +262,23 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                     {v.baseTransfers.length === 0 && <li className="text-muted">Quedan a mano.</li>}
                   </ul>
                 ) : (
-                  <p className="mt-2 text-[14px] text-muted">Hay {v.inBase.unconverted} gasto(s) en otra moneda sin cotización: no se pueden pasar a {group.base_currency}.</p>
+                  <p className="mt-2 text-ui text-muted">Hay {v.inBase.unconverted} gasto(s) en otra moneda sin cotización: no se pueden pasar a {group.base_currency}.</p>
                 )}
-                <p className="mt-2 text-[13px] text-muted">Con la cotización guardada en cada gasto.</p>
+                <p className="mt-2 text-meta text-muted">Con la cotización guardada en cada gasto.</p>
               </section>
             )}
             {me.role === "admin" && (
-              <form action={toggleSimplifyAction} className="text-[14px]">
+              <form action={toggleSimplifyAction} className="text-ui">
                 <input type="hidden" name="group" value={group.id} />
                 <input type="hidden" name="simplify" value={group.simplify_debts ? "0" : "1"} />
                 <button className="text-rose-deep underline-offset-4 hover:underline">{group.simplify_debts ? "Ver deudas directas (sin simplificar)" : "Simplificar deudas"}</button>
               </form>
             )}
             <section>
-              <h2 className="text-[13px] font-medium uppercase tracking-[0.14em] text-muted">Pagos registrados</h2>
+              <h2 className="text-meta font-medium uppercase tracking-[0.14em] text-muted">Pagos registrados</h2>
               <ul className="mt-2 divide-y divide-line border-y border-line">
                 {v.settlements.map((s) => (
-                  <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-[14px]">
+                  <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-ui">
                     <span>
                       {name(s.from_member)} → {name(s.to_member)} · {SETTLEMENT_METHODS[s.method]}
                       {s.receipt_path && (
@@ -293,7 +293,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                       )}
                     </span>
                     <span className="tabular-nums">
-                      {formatMoney(s.amount, s.currency)} <span className={cn("ml-2 text-[12px]", s.status === "confirmado" ? "text-[#24583a]" : "text-muted")}>{s.status === "confirmado" ? "Confirmado" : "Informado"}</span>
+                      {formatMoney(s.amount, s.currency)} <span className={cn("ml-2 text-caption", s.status === "confirmado" ? "text-[#24583a]" : "text-muted")}>{s.status === "confirmado" ? "Confirmado" : "Informado"}</span>
                     </span>
                   </li>
                 ))}
@@ -306,14 +306,14 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
         {tab === "graficos" && (
           <div className="grid gap-10">
             <section>
-              <h2 className="mb-4 font-display text-2xl">Por categoría</h2>
+              <h2 className="mb-4 font-display text-headline">Por categoría</h2>
               <CategoryChart data={v.byCategory} currency={group.base_currency} />
             </section>
             <section>
-              <h2 className="mb-4 font-display text-2xl">Por mes</h2>
+              <h2 className="mb-4 font-display text-headline">Por mes</h2>
               <MonthChart data={v.byMonth} currency={group.base_currency} />
             </section>
-            <p className="text-[13px] text-muted">En {group.base_currency}. Los gastos en otra moneda sin cotización no se cuentan.</p>
+            <p className="text-meta text-muted">En {group.base_currency}. Los gastos en otra moneda sin cotización no se cuentan.</p>
           </div>
         )}
 
@@ -323,10 +323,10 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
               {v.members.map((m) => (
                 <li key={m.id} className="grid gap-2 py-3.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[15px]">
+                    <span className="text-body">
                       {m.name}
                       {m.id === me.id && <span className="text-muted"> (vos)</span>}
-                      <span className="ml-2 text-[12px] text-muted">
+                      <span className="ml-2 text-caption text-muted">
                         {m.role === "admin" ? "Administra" : "Integrante"}
                         {m.guest && " · invitado sin cuenta"}
                         {m.email && ` · ${m.email}`}
@@ -336,7 +336,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                       <form action={removeMemberAction}>
                         <input type="hidden" name="group" value={group.id} />
                         <input type="hidden" name="member" value={m.id} />
-                        <button className="text-[13px] text-muted underline-offset-4 hover:text-danger hover:underline">{m.id === me.id ? "Salir del grupo" : "Sacar"}</button>
+                        <button className="text-meta text-muted underline-offset-4 hover:text-danger hover:underline">{m.id === me.id ? "Salir del grupo" : "Sacar"}</button>
                       </form>
                     )}
                   </div>
@@ -346,19 +346,19 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
             </ul>
             {actor.kind === "user" && (
               <section>
-                <h2 className="mb-1 font-display text-2xl">Invitar con el enlace del grupo</h2>
-                <p className="mb-3 text-[14px] text-muted">Lo mandás por WhatsApp al grupo de amigos y cada uno se suma solo.</p>
+                <h2 className="mb-1 font-display text-headline">Invitar con el enlace del grupo</h2>
+                <p className="mb-3 text-ui text-muted">Lo mandás por WhatsApp al grupo de amigos y cada uno se suma solo.</p>
                 <GroupLink groupId={group.id} groupName={group.name} admin={me.role === "admin"} active={!!group.invite_token_hash} />
               </section>
             )}
             {actor.kind === "user" && (
               <section>
-                <h2 className="mb-3 font-display text-2xl">Sumar a alguien por nombre</h2>
+                <h2 className="mb-3 font-display text-headline">Sumar a alguien por nombre</h2>
                 <InviteForm groupId={group.id} />
               </section>
             )}
             <section>
-              <h2 className="mb-3 font-display text-2xl">Tus datos para cobrar</h2>
+              <h2 className="mb-3 font-display text-headline">Tus datos para cobrar</h2>
               <MeForm groupId={group.id} alias={me.payment_alias} cvu={me.payment_cvu} optOut={me.reminders_opt_out} />
             </section>
           </div>
@@ -369,10 +369,10 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
             {Object.keys(v.partners).length === 0 && <p className="text-muted">Todavía no hay aportes ni retiros.</p>}
             {Object.entries(v.partners).map(([cur, per]) => (
               <section key={cur}>
-                <h2 className="font-display text-2xl">Saldo por socio en {cur}</h2>
+                <h2 className="font-display text-headline">Saldo por socio en {cur}</h2>
                 <ul className="mt-3 divide-y divide-line border-y border-line">
                   {v.members.map((m) => (
-                    <li key={m.id} className="flex justify-between py-3 text-[15px]">
+                    <li key={m.id} className="flex justify-between py-3 text-body">
                       <span>{m.name}</span>
                       <span className={cn("tabular-nums", (per[m.id] ?? 0) < 0 ? "text-rose-deep" : "")}>{formatMoney(per[m.id] ?? 0, cur, { signed: true })}</span>
                     </li>
@@ -381,11 +381,11 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
               </section>
             ))}
             <section>
-              <h2 className="mb-3 font-display text-2xl">Registrar aporte o retiro</h2>
+              <h2 className="mb-3 font-display text-headline">Registrar aporte o retiro</h2>
               <PartnerForm groupId={group.id} members={v.members.map((m) => ({ id: m.id, name: m.name }))} currency={group.base_currency} />
             </section>
             {v.movements.length > 0 && (
-              <ul className="divide-y divide-line border-y border-line text-[14px]">
+              <ul className="divide-y divide-line border-y border-line text-ui">
                 {v.movements.map((m) => (
                   <li key={m.id} className="flex justify-between gap-3 py-2.5">
                     <span>
@@ -405,13 +405,13 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
             <SettingsForm groupId={group.id} name={group.name} simplify={group.simplify_debts} reminders={group.reminder_frequency} color={group.color} />
             <form action={archiveGroupAction} className="border-t border-line pt-6">
               <input type="hidden" name="group" value={group.id} />
-              <h2 className="mb-1 font-display text-2xl">Cerrar el grupo</h2>
+              <h2 className="mb-1 font-display text-headline">Cerrar el grupo</h2>
               {Object.values(v.balances).some((b) => Object.values(b).some((x) => x !== 0)) ? (
-                <p className="mb-3 text-[14px] text-rose-deep">Todavía hay saldos pendientes. Si lo cerrás, nadie más puede cargar gastos ni registrar pagos: conviene saldar antes.</p>
+                <p className="mb-3 text-ui text-rose-deep">Todavía hay saldos pendientes. Si lo cerrás, nadie más puede cargar gastos ni registrar pagos: conviene saldar antes.</p>
               ) : (
-                <p className="mb-3 text-[14px] text-muted">Están todos al día.</p>
+                <p className="mb-3 text-ui text-muted">Están todos al día.</p>
               )}
-              <p className="mb-3 text-[14px] text-muted">Cerrarlo lo saca de la lista de todos y apaga el enlace de invitación. Los datos quedan guardados y se pueden exportar antes.</p>
+              <p className="mb-3 text-ui text-muted">Cerrarlo lo saca de la lista de todos y apaga el enlace de invitación. Los datos quedan guardados y se pueden exportar antes.</p>
               <button className="h-11 border border-danger/40 px-5 text-danger hover:bg-danger/5">Cerrar el grupo</button>
             </form>
           </div>

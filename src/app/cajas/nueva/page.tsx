@@ -17,7 +17,7 @@ export default async function NuevaCajaPage({ searchParams }: { searchParams: Pr
   const sp = await searchParams;
   return (
     <div className="grid gap-6 pb-10 [&>*]:min-w-0">
-      <Link href="/cajas" className="text-[13px] text-muted hover:text-ink">
+      <Link href="/cajas" className="text-meta text-muted hover:text-ink">
         ← Mis cajas
       </Link>
       <PageHeader title="¿Con quién la compartís?" description="Elegí para qué es y listo: trae sus categorías y su desglose. Después invitás a los demás con un enlace o por WhatsApp." className="mb-0" />
@@ -34,20 +34,20 @@ export default async function NuevaCajaPage({ searchParams }: { searchParams: Pr
                     <span className="grid size-10 place-items-center rounded-md bg-navy text-gold" aria-hidden>
                       <Icon className="size-5" />
                     </span>
-                    <span className="text-[17px] font-medium text-ink">{t.name}</span>
+                    <span className="text-title font-medium text-ink">{t.name}</span>
                   </span>
-                  <span className="text-[14px] text-muted">{t.description}</span>
-                  <span className="text-[13px] text-muted">
+                  <span className="text-ui text-muted">{t.description}</span>
+                  <span className="text-meta text-muted">
                     <strong className="font-medium text-ink">Quiénes:</strong> {t.who}
                   </span>
-                  <span className="text-[13px] text-muted">{t.categories.filter((c) => c.kind !== "ahorro").map((c) => c.name).join(" · ")}</span>
+                  <span className="text-meta text-muted">{t.categories.filter((c) => c.kind !== "ahorro").map((c) => c.name).join(" · ")}</span>
                 </button>
               </form>
             </li>
           );
         })}
       </ul>
-      <p className="text-[13px] text-muted">
+      <p className="text-meta text-muted">
         No es un grupo de gastos: es llevar la cuenta juntos. Cada uno carga lo que pone y lo que ahorra, y elige si solo queda registrado o si se divide. Para dividir gastos de un viaje o una salida puntual, también tenés{" "}
         <Link href="/grupos" className="underline underline-offset-4">
           Grupos de gastos

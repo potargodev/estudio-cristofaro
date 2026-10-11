@@ -14,7 +14,7 @@ export function BalanceLine({ cents, currency, className, who = "te" }: { cents:
 }
 
 export function GroupDot({ color, name, size = "md" }: { color: string; name: string; size?: "sm" | "md" | "lg" }) {
-  const s = size === "lg" ? "size-14 text-2xl" : size === "sm" ? "size-8 text-sm" : "size-11 text-lg";
+  const s = size === "lg" ? "size-14 text-headline" : size === "sm" ? "size-8 text-ui" : "size-11 text-title";
   return (
     <span aria-hidden className={cn("grid shrink-0 place-items-center rounded-full font-display text-night", s)} style={{ background: color }}>
       {name.trim().charAt(0).toUpperCase()}

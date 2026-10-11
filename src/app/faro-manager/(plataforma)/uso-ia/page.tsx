@@ -53,19 +53,19 @@ export default async function UsoIaPage() {
           { k: "Tokens", v: n(total?.tokens ?? 0) },
         ].map((x) => (
           <div key={x.k} className="rounded-md border border-line bg-surface p-4">
-            <dt className="text-[13px] text-muted">{x.k}</dt>
-            <dd className="num mt-1 text-[22px] text-ink">{x.v}</dd>
+            <dt className="text-meta text-muted">{x.k}</dt>
+            <dd className="num mt-1 text-headline text-ink">{x.v}</dd>
           </div>
         ))}
       </dl>
       <section aria-labelledby="por-tenant" className="rounded-md border border-line bg-surface">
-        <h3 id="por-tenant" className="border-b border-line px-4 py-3 text-[15px] font-semibold">
+        <h3 id="por-tenant" className="border-b border-line px-4 py-3 text-body font-semibold">
           Por tenant
         </h3>
         {byTenant.length === 0 ? (
-          <p className="px-4 py-4 text-[14px] text-muted">Todavía no hubo uso este mes.</p>
+          <p className="px-4 py-4 text-ui text-muted">Todavía no hubo uso este mes.</p>
         ) : (
-          <ul className="divide-y divide-line text-[14px]">
+          <ul className="divide-y divide-line text-ui">
             {byTenant.map((t) => (
               <li key={t.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
                 <Link href={`/faro-manager/${t.id}`} className="min-w-0 truncate text-ink underline-offset-4 hover:underline">
@@ -80,13 +80,13 @@ export default async function UsoIaPage() {
         )}
       </section>
       <section aria-labelledby="por-modelo" className="rounded-md border border-line bg-surface">
-        <h3 id="por-modelo" className="border-b border-line px-4 py-3 text-[15px] font-semibold">
+        <h3 id="por-modelo" className="border-b border-line px-4 py-3 text-body font-semibold">
           Por modelo
         </h3>
         {byModel.length === 0 ? (
-          <p className="px-4 py-4 text-[14px] text-muted">Todavía no hubo uso este mes.</p>
+          <p className="px-4 py-4 text-ui text-muted">Todavía no hubo uso este mes.</p>
         ) : (
-          <ul className="divide-y divide-line text-[14px]">
+          <ul className="divide-y divide-line text-ui">
             {byModel.map((m) => (
               <li key={`${m.provider}-${m.model}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
                 <span className="min-w-0 truncate text-ink">

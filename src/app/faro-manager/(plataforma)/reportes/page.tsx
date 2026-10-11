@@ -21,28 +21,28 @@ export default async function ReportesPage({ searchParams }: { searchParams: Pro
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
       <PageHeader level={2} title="Mensajes reportados" description="Solo ves el mensaje que alguien reportó, tal como estaba al reportarlo. Las conversaciones son privadas: no se pueden abrir desde acá." />
-      <p className="mb-4 text-[14px]">
+      <p className="mb-4 text-ui">
         <Link href={all ? "/faro-manager/reportes" : "/faro-manager/reportes?ver=todos"} className="underline underline-offset-4">
           {all ? "Ver solo los abiertos" : "Ver también los revisados"}
         </Link>
       </p>
       {rows.length === 0 ? (
-        <p className="rounded-md border border-dashed border-line bg-surface p-6 text-center text-[14px] text-muted">No hay reportes {all ? "" : "abiertos"}.</p>
+        <p className="rounded-md border border-dashed border-line bg-surface p-6 text-center text-ui text-muted">No hay reportes {all ? "" : "abiertos"}.</p>
       ) : (
         <ul className="grid gap-3">
           {rows.map(({ r, reporter }) => (
             <li key={r.id} className="rounded-md border border-line bg-surface p-4">
-              <div className="flex flex-wrap items-baseline justify-between gap-2 text-[13px] text-muted">
+              <div className="flex flex-wrap items-baseline justify-between gap-2 text-meta text-muted">
                 <span>
                   {REPORT_REASONS[r.reason as keyof typeof REPORT_REASONS] ?? r.reason} · reportó {reporter ?? "alguien"} · {when(r.created_at)}
                 </span>
                 <span>{r.status === "abierto" ? "Abierto" : `Revisado: ${r.resolution === "borrar" ? "mensaje borrado" : "sin acción"}`}</span>
               </div>
-              <p className="mt-2 text-[13px] text-muted">
+              <p className="mt-2 text-meta text-muted">
                 De {r.snapshot.author ?? "un usuario"} · {when(r.snapshot.at)}
               </p>
-              <blockquote className="mt-1 whitespace-pre-wrap rounded-md bg-canvas px-3 py-2 text-[15px]">{r.snapshot.body ?? (r.snapshot.attachment ? `Archivo: ${r.snapshot.attachment}` : "—")}</blockquote>
-              {r.detail && <p className="mt-2 text-[13px]">Comentario: {r.detail}</p>}
+              <blockquote className="mt-1 whitespace-pre-wrap rounded-md bg-canvas px-3 py-2 text-body">{r.snapshot.body ?? (r.snapshot.attachment ? `Archivo: ${r.snapshot.attachment}` : "—")}</blockquote>
+              {r.detail && <p className="mt-2 text-meta">Comentario: {r.detail}</p>}
               {r.status === "abierto" && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {[
@@ -52,7 +52,7 @@ export default async function ReportesPage({ searchParams }: { searchParams: Pro
                     <form key={a} action={resolveReportAction}>
                       <input type="hidden" name="report" value={r.id} />
                       <input type="hidden" name="accion" value={a} />
-                      <button className={`h-9 rounded-md px-3 text-[13px] ${cls}`}>{l}</button>
+                      <button className={`h-9 rounded-md px-3 text-meta ${cls}`}>{l}</button>
                     </form>
                   ))}
                 </div>

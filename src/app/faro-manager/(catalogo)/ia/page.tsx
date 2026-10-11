@@ -9,11 +9,12 @@ import { cn } from "@/lib/utils";
 import { platformSpend, usageByUser } from "@/modules/copilot/limits";
 import { getPlatformAi, isConfigured, limitsFor, PLATFORM_PROVIDERS } from "@/modules/copilot/platform";
 import { forgetPlatformKeyAction, savePlatformAiAction } from "@/app/faro-manager/ia-actions";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "IA de la plataforma" };
 
-const input = "h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px]";
-const label = "grid gap-1 text-[13px] text-muted";
+const input = fieldClass;
+const label = "grid gap-1 text-meta text-muted";
 const usd = (n: number) => `USD ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
 const int = (n: number) => n.toLocaleString("es-AR");
 
@@ -31,13 +32,13 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
       <PageHeader level={2} title="IA de la plataforma" description="El modelo que usa el Vigía de las personas y los autónomos. La clave se guarda cifrada y nunca se vuelve a mostrar: solo sus últimos 4 caracteres." />
 
       {!ready && (
-        <div className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-[14px]">
+        <div className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-ui">
           <KeyRound className="mt-0.5 size-5 shrink-0 text-rose-deep" aria-hidden />
           <p>No hay clave cargada. El Vigía funciona en <strong>modo básico</strong>: entiende frases simples de texto y avisa que la IA no está configurada.</p>
         </div>
       )}
       {p.cap_alerted_at && Date.now() - p.cap_alerted_at.getTime() < 48 * 3600_000 && (
-        <div role="status" className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-[14px]">
+        <div role="status" className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-ui">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-rose-deep" aria-hidden />
           <p>
             Última alerta de la IA: {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(p.cap_alerted_at)}. El detalle está en la <a href="/faro-manager/auditoria" className="underline underline-offset-2">auditoría</a>.
@@ -45,7 +46,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
         </div>
       )}
       {p.free_tier && (
-        <div role="alert" className="mb-5 flex gap-3 rounded-md border border-danger/40 bg-danger/5 p-4 text-[14px]">
+        <div role="alert" className="mb-5 flex gap-3 rounded-md border border-danger/40 bg-danger/5 p-4 text-ui">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-danger" aria-hidden />
           <p>
             <strong>La clave es del plan gratis del proveedor.</strong> Tiene cuotas bajas y, en algunos proveedores, los datos se pueden usar para entrenar modelos. Sirve para probar, no para datos reales de usuarios: cargá una clave de un proyecto con facturación activa.
@@ -61,16 +62,16 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
           ["Mensajes del mes", int(spend.monthMessages), "de usuarios"],
         ].map(([t, v, s]) => (
           <div key={t} className="rounded-md border border-line bg-surface p-4">
-            <p className="text-[12px] text-muted">{t}</p>
+            <p className="text-caption text-muted">{t}</p>
             <p className="num text-[26px]">{v}</p>
-            <p className="text-[12px] text-muted">{s}</p>
+            <p className="text-caption text-muted">{s}</p>
           </div>
         ))}
       </section>
 
       <form action={savePlatformAiAction} className="grid grid-cols-[minmax(0,1fr)] gap-5">
         <section className="rounded-md border border-line bg-surface p-5">
-          <h2 className="text-[17px] font-semibold">Proveedor y clave</h2>
+          <h2 className="text-title font-semibold">Proveedor y clave</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <label className={label}>
               Proveedor
@@ -98,15 +99,15 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
               Modelo de respaldo (si el principal falla o no tiene cuota)
               <input name="model_fallback" defaultValue={p.model_fallback ?? ""} disabled={!owner} className={input} />
             </label>
-            <label className="flex items-center gap-2 text-[14px] sm:col-span-2">
+            <label className="flex items-center gap-2 text-ui sm:col-span-2">
               <input type="checkbox" name="free_tier" defaultChecked={p.free_tier} disabled={!owner} className="size-4 accent-navy" /> Es una clave del plan gratis del proveedor
             </label>
           </div>
         </section>
 
         <section className="rounded-md border border-line bg-surface p-5">
-          <h2 className="text-[17px] font-semibold">Audios</h2>
-          <p className="text-[14px] text-muted">Con Gemini, el mismo modelo entiende el audio. La alternativa es un modelo de transcripción de OpenAI (Whisper o similar).</p>
+          <h2 className="text-title font-semibold">Audios</h2>
+          <p className="text-ui text-muted">Con Gemini, el mismo modelo entiende el audio. La alternativa es un modelo de transcripción de OpenAI (Whisper o similar).</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             <label className={label}>
               Transcripción
@@ -127,8 +128,8 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
         </section>
 
         <section className="rounded-md border border-line bg-surface p-5">
-          <h2 className="text-[17px] font-semibold">Costos y topes</h2>
-          <p className="text-[14px] text-muted">El costo estimado sale de los tokens × estos precios. Con un tope alcanzado, la IA se pausa para los planes gratis y sigue para los pagos, y el equipo de Faro recibe un aviso.</p>
+          <h2 className="text-title font-semibold">Costos y topes</h2>
+          <p className="text-ui text-muted">El costo estimado sale de los tokens × estos precios. Con un tope alcanzado, la IA se pausa para los planes gratis y sigue para los pagos, y el equipo de Faro recibe un aviso.</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-4">
             <label className={label}>
               USD por millón de tokens de entrada
@@ -150,11 +151,11 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
         </section>
 
         <section className="rounded-md border border-line bg-surface p-5">
-          <h2 className="text-[17px] font-semibold">Límites por plan (por usuario y por mes)</h2>
-          <p className="text-[14px] text-muted">Vacío = sin límite. Al llegar, el chat lo avisa y ofrece cargar a mano.</p>
+          <h2 className="text-title font-semibold">Límites por plan (por usuario y por mes)</h2>
+          <p className="text-ui text-muted">Vacío = sin límite. Al llegar, el chat lo avisa y ofrece cargar a mano.</p>
           <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[520px] text-left text-[13px]">
-              <thead className="text-[12px] text-muted">
+            <table className="w-full min-w-[520px] text-left text-meta">
+              <thead className="text-caption text-muted">
                 <tr>
                   <th className="py-2 font-medium">Plan</th>
                   <th className="py-2 font-medium">Mensajes</th>
@@ -190,7 +191,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
 
       {owner && p.key_hint && (
         <form action={forgetPlatformKeyAction} className="mt-3">
-          <button type="submit" className="text-[13px] text-danger underline underline-offset-2">
+          <button type="submit" className="text-meta text-danger underline underline-offset-2">
             Borrar la clave (el Vigía vuelve al modo básico)
           </button>
         </form>
@@ -198,10 +199,10 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
 
       <section className="mt-8">
         <h2 className="font-display text-[28px]">Consumo del mes por usuario</h2>
-        <p className="mb-3 text-[14px] text-muted">Solo cantidades: el Faro Manager no ve el contenido de los chats.</p>
+        <p className="mb-3 text-ui text-muted">Solo cantidades: el Faro Manager no ve el contenido de los chats.</p>
         <div className="overflow-x-auto rounded-md border border-line bg-surface">
-          <table className="w-full min-w-[720px] text-left text-[13px]">
-            <thead className="border-b border-line text-[12px] text-muted">
+          <table className="w-full min-w-[720px] text-left text-meta">
+            <thead className="border-b border-line text-caption text-muted">
               <tr>
                 {["Usuario", "Plan", "Mensajes", "Audios", "Imágenes", "Tokens entrada", "Tokens salida", "Costo estimado"].map((h) => (
                   <th key={h} className="px-3 py-2 font-medium">

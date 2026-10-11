@@ -31,7 +31,7 @@ export function FaroHero() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <p className="flex items-center gap-3 text-[13px] text-paper/65">
+            <p className="flex items-center gap-3 text-meta text-paper/65">
               <span className="tabular text-gold">Faro</span>
               <span aria-hidden className="h-px w-8 bg-hair-strong" />
               Para personas, autónomos y estudios contables
@@ -39,12 +39,12 @@ export function FaroHero() {
             <MaskText as="h1" className="display-hero mt-8 text-paper">
               Hablale al Vigía. Tu plata, a la vista.
             </MaskText>
-            <p className="mt-8 max-w-xl text-[17px] leading-relaxed text-paper/75">
+            <p className="mt-8 max-w-xl text-title leading-relaxed text-paper/75">
               Contale tus gastos al Vigía con un audio, un texto o la foto del ticket: los anota en tu Bitácora, los divide con tus amigos en un grupo y te responde cuánto gastaste. Si sos autónomo, Faro Personal te ordena los números; si sos contador, gestionás tu cartera y tus clientes. Faro es una herramienta, no un estudio contable. Creada por contadores.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-6">
               <CtaLink tone="gold" href="/faro/registro?tipo=persona">Empezá gratis</CtaLink>
-              <TextLink href="/faro/registro?tipo=studio" className="text-[15px] text-paper">
+              <TextLink href="/faro/registro?tipo=studio" className="text-body text-paper">
                 Soy estudio contable
               </TextLink>
             </div>
@@ -59,20 +59,20 @@ export function FaroHero() {
               <Lighthouse />
             </div>
             <div className="border border-hair-strong bg-navy-deep/80 p-6 backdrop-blur-sm">
-              <p className="text-[13px] text-paper/60">Hoy en tu Faro</p>
+              <p className="text-meta text-paper/60">Hoy en tu Faro</p>
               <ul className="mt-4 divide-y divide-hair">
                 {TODAY.map((t) => (
                   <li key={t.label} className="flex items-baseline justify-between gap-4 py-3">
-                    <span className="text-[14px] text-paper/75">{t.label}</span>
+                    <span className="text-ui text-paper/75">{t.label}</span>
                     <Counter value={t.value} className={`num text-[34px] leading-none ${t.tone}`} />
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 text-[12px] text-paper/50">Ejemplo ilustrativo</p>
+              <p className="mt-4 text-caption text-paper/50">Ejemplo ilustrativo</p>
             </div>
           </div>
         </div>
-        <ul className="mt-16 grid border-t border-hair text-[13px] text-paper/65 sm:grid-cols-3">
+        <ul className="mt-16 grid border-t border-hair text-meta text-paper/65 sm:grid-cols-3">
           {["Vigía y Bitácora gratis, desde el celular", "IA que propone, una persona que aprueba", "Creada por contadores, para todos"].map((g, i) => (
             <li key={g} className="flex items-center gap-3 border-b border-hair py-3 sm:border-b-0 sm:border-l sm:px-4 sm:first:border-l-0 sm:first:pl-0">
               <span className="tabular text-gold">0{i + 1}</span>

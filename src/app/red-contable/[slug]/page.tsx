@@ -41,7 +41,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0">
-        <Link href="/red-contable" className="text-[13px] text-muted hover:text-ink">
+        <Link href="/red-contable" className="text-meta text-muted hover:text-ink">
           ← Red Contable
         </Link>
         <div className="mt-4 flex items-start gap-4">
@@ -50,22 +50,22 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           </span>
           <div>
             <h1 className="font-display text-[34px] leading-tight sm:text-[44px]">{x.name}</h1>
-            {x.p.headline && <p className="mt-1 text-[16px] text-muted">{x.p.headline}</p>}
+            {x.p.headline && <p className="mt-1 text-lead text-muted">{x.p.headline}</p>}
           </div>
         </div>
-        <ul className="mt-6 grid gap-2 text-[14px] sm:grid-cols-2">
+        <ul className="mt-6 grid gap-2 text-ui sm:grid-cols-2">
           {facts.map((f) => (
             <li key={f.text} className="flex items-start gap-2">
               <f.icon className="mt-0.5 size-4 shrink-0 text-rose-deep" aria-hidden /> {f.text}
             </li>
           ))}
         </ul>
-        {x.p.description && <p className="mt-6 whitespace-pre-line text-[15px] leading-relaxed">{x.p.description}</p>}
+        {x.p.description && <p className="mt-6 whitespace-pre-line text-body leading-relaxed">{x.p.description}</p>}
         <section className="mt-8">
-          <h2 className="text-[17px] font-semibold">Servicios</h2>
+          <h2 className="text-title font-semibold">Servicios</h2>
           <p className="mt-2 flex flex-wrap gap-2">
             {x.p.services.map((s) => (
-              <span key={s} className="rounded-md border border-line bg-surface px-2.5 py-1 text-[13px]">
+              <span key={s} className="rounded-md border border-line bg-surface px-2.5 py-1 text-meta">
                 {labelOf(RED_SERVICES, s)}
               </span>
             ))}
@@ -73,10 +73,10 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
         </section>
         {x.p.industries.length > 0 && (
           <section className="mt-6">
-            <h2 className="text-[17px] font-semibold">Rubros</h2>
+            <h2 className="text-title font-semibold">Rubros</h2>
             <p className="mt-2 flex flex-wrap gap-2">
               {x.p.industries.map((s) => (
-                <span key={s} className="rounded-md border border-line bg-surface px-2.5 py-1 text-[13px]">
+                <span key={s} className="rounded-md border border-line bg-surface px-2.5 py-1 text-meta">
                   {INDUSTRY_NAMES[s] ?? s}
                 </span>
               ))}
@@ -84,27 +84,27 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           </section>
         )}
         <section className="mt-10" aria-labelledby="resenas">
-          <h2 id="resenas" className="text-[17px] font-semibold">
+          <h2 id="resenas" className="text-title font-semibold">
             Reseñas de clientes verificados
           </h2>
-          <p className="mt-1 text-[13px] text-muted">Solo pueden reseñar organizaciones que trabajan con el estudio en Faro hace al menos 30 días, una vez cada una. Faro las modera.</p>
+          <p className="mt-1 text-meta text-muted">Solo pueden reseñar organizaciones que trabajan con el estudio en Faro hace al menos 30 días, una vez cada una. Faro las modera.</p>
           {x.reviews.length === 0 ? (
-            <p className="mt-4 text-[14px] text-muted">Todavía no hay reseñas.</p>
+            <p className="mt-4 text-ui text-muted">Todavía no hay reseñas.</p>
           ) : (
             <ul className="mt-4 grid gap-3">
               {x.reviews.map((r) => (
                 <li key={r.id} className="rounded-lg border border-line bg-surface p-4">
-                  <p className="text-[13px] text-muted">
-                    <span className="text-[15px] text-ink" aria-label={`${r.rating} de 5`}>
+                  <p className="text-meta text-muted">
+                    <span className="text-body text-ink" aria-label={`${r.rating} de 5`}>
                       {"★".repeat(r.rating)}
                       <span className="text-line">{"★".repeat(5 - r.rating)}</span>
                     </span>{" "}
                     · {r.author_label} · cliente verificado · {month.format(r.created_at)}
                   </p>
-                  <p className="mt-1.5 text-[14px]">{r.body}</p>
+                  <p className="mt-1.5 text-ui">{r.body}</p>
                   {r.response && (
-                    <div className="mt-3 rounded-md border-l-4 border-rose-light bg-canvas px-3 py-2 text-[14px]">
-                      <p className="text-[12px] font-medium text-muted">Respuesta del estudio</p>
+                    <div className="mt-3 rounded-md border-l-4 border-rose-light bg-canvas px-3 py-2 text-ui">
+                      <p className="text-caption font-medium text-muted">Respuesta del estudio</p>
                       <p className="mt-0.5">{r.response}</p>
                     </div>
                   )}
@@ -116,21 +116,21 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
       </div>
       <aside className="lg:sticky lg:top-20 lg:self-start">
         <div className="rounded-lg border border-line bg-surface p-5">
-          <h2 className="text-[18px] font-semibold">Pedir propuesta</h2>
+          <h2 className="text-title font-semibold">Pedir propuesta</h2>
           {x.p.accepting_clients ? (
             <>
-              <p className="mt-1 text-[14px] text-muted">El estudio te responde por mail. Solo compartimos lo que cargás acá, con tu consentimiento.</p>
+              <p className="mt-1 text-ui text-muted">El estudio te responde por mail. Solo compartimos lo que cargás acá, con tu consentimiento.</p>
               <ProposalForm studio={x.slug} name={user?.name ?? ""} email={user?.email ?? ""} derivacion={derivacion ? { id: derivacion.id, message: contextMessage(derivacion) } : undefined} />
             </>
           ) : (
-            <p className="mt-1 text-[14px] text-muted">Este estudio no está tomando clientes nuevos por ahora.</p>
+            <p className="mt-1 text-ui text-muted">Este estudio no está tomando clientes nuevos por ahora.</p>
           )}
         </div>
         {x.p.accepting_clients && canConnect && (
           <div className="mt-3 rounded-lg border border-line bg-surface p-5" data-conectar>
-            <h2 className="text-[18px] font-semibold">Conectar mi cuenta</h2>
+            <h2 className="text-title font-semibold">Conectar mi cuenta</h2>
             {pending ? (
-              <p className="mt-1 text-[14px] text-muted">
+              <p className="mt-1 text-ui text-muted">
                 Ya tenés una conexión en curso. Mirala en{" "}
                 <Link href="/contador" className="underline underline-offset-4">
                   Contador
@@ -138,9 +138,9 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
                 .
               </p>
             ) : (
-              <form action={requestConnectionAction} className="mt-2 grid gap-2 text-[14px]">
+              <form action={requestConnectionAction} className="mt-2 grid gap-2 text-ui">
                 <input type="hidden" name="studio" value={x.slug} />
-                <p className="text-[13px] text-muted">El estudio no se lleva una copia: se conecta a tu cuenta con un permiso que podés revocar. Ve tu caja de negocio y lo fiscal; lo personal, solo si lo activás. Antes hace su admisión.</p>
+                <p className="text-meta text-muted">El estudio no se lleva una copia: se conecta a tu cuenta con un permiso que podés revocar. Ve tu caja de negocio y lo fiscal; lo personal, solo si lo activás. Antes hace su admisión.</p>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" name="personal" className="size-4 accent-navy" /> Compartir también mis cajas personales
                 </label>
@@ -150,11 +150,11 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
                 <label className="flex items-center gap-2">
                   <input type="radio" name="autonomy" value="proponer" className="size-4 accent-navy" /> Proponer y aprobar
                 </label>
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   ¿Qué necesitás?
-                  <textarea name="message" rows={3} maxLength={2000} defaultValue={derivacion ? contextMessage(derivacion) : ""} className="mt-1 block w-full rounded-md border border-line bg-canvas px-3 py-2 text-[14px] text-ink" />
+                  <textarea name="message" rows={3} maxLength={2000} defaultValue={derivacion ? contextMessage(derivacion) : ""} className="mt-1 block w-full rounded-md border border-line bg-canvas px-3 py-2 text-ui text-ink" />
                 </label>
-                <button type="submit" className="h-11 rounded-md bg-navy px-5 text-[15px] font-medium text-paper hover:bg-night">
+                <button type="submit" className="h-11 rounded-md bg-navy px-5 text-body font-medium text-paper hover:bg-night">
                   Pedir la conexión
                 </button>
               </form>
@@ -162,7 +162,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           </div>
         )}
         {x.p.accepting_clients && (
-          <Link href={`/red-contable/${x.slug}/agendar`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface text-[15px] font-medium text-ink hover:border-navy">
+          <Link href={`/red-contable/${x.slug}/agendar`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface text-body font-medium text-ink hover:border-navy">
             <CalendarClock className="size-4" aria-hidden /> Agendar llamada
           </Link>
         )}

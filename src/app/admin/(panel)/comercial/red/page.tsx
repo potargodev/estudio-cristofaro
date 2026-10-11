@@ -15,11 +15,12 @@ import { FILE_TEMPLATES } from "@/modules/industries/catalog";
 import { LICENSE_STATUS_LABEL, MODALITIES, PROVINCES, RED_SERVICES, TEAM_SIZES } from "@/modules/red/catalog";
 import { getProfile, visibilityIssue } from "@/modules/red/server";
 import { publishRedAction, respondReviewAction, saveRedProfileAction } from "@/app/admin/red-actions";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Red Contable" };
 
-const field = "mt-1.5 h-10 w-full rounded-md border border-line bg-surface px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
-const label = "text-[13px] font-medium text-muted";
+const field = `mt-1 ${fieldClass}`;
+const label = "text-meta font-medium text-muted";
 const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 
 const LICENSE_TONE = { sin_cargar: "pendiente", pendiente: "en_proceso", verificada: "activa", rechazada: "vencido" } as const;
@@ -54,14 +55,14 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
           icon={Network}
           action={issue ? <StatusBadge status="pendiente" label="No visible" /> : <StatusBadge status="activa" label="Visible en la Red" />}
         >
-          <div className="flex flex-wrap items-center justify-between gap-4 text-[14px]">
+          <div className="flex flex-wrap items-center justify-between gap-4 text-ui">
             <p className="max-w-xl text-muted">{issue ?? "Tu ficha aparece en la Red. Los pedidos de propuesta llegan a Consultas."}</p>
             <div className="flex flex-wrap items-center gap-2">
-              <Link href="/admin/comercial/red/flotas" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+              <Link href="/admin/comercial/red/flotas" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
                 Pedidos de Flotas
               </Link>
               {!issue && studio && (
-                <Link href={`/red-contable/${studio.slug}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+                <Link href={`/red-contable/${studio.slug}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
                   <Eye className="size-4" aria-hidden /> Ver ficha pública
                 </Link>
               )}
@@ -77,8 +78,8 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
 
         <form action={saveRedProfileAction} className="grid gap-6">
           <Panel title="Matrícula" icon={BadgeCheck} action={<StatusBadge status={LICENSE_TONE[p?.license_status ?? "sin_cargar"]} label={LICENSE_STATUS_LABEL[p?.license_status ?? "sin_cargar"]} />}>
-            <p className="text-[14px] text-muted">Faro la verifica a mano antes de publicar la ficha. Si cambiás estos datos, se vuelve a verificar.</p>
-            {p?.license_status === "rechazada" && p.license_note && <p className="mt-2 rounded-md border border-danger/30 bg-danger/10 px-3 py-2 text-[14px] text-danger">Motivo: {p.license_note}</p>}
+            <p className="text-ui text-muted">Faro la verifica a mano antes de publicar la ficha. Si cambiás estos datos, se vuelve a verificar.</p>
+            {p?.license_status === "rechazada" && p.license_note && <p className="mt-2 rounded-md border border-danger/30 bg-danger/10 px-3 py-2 text-ui text-danger">Motivo: {p.license_note}</p>}
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               <label className={label}>
                 Consejo profesional
@@ -151,25 +152,25 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
                 Mail para pedidos de propuesta (opcional)
                 <input name="contact_email" type="email" defaultValue={p?.contact_email ?? ""} disabled={!owner} className={field} />
               </label>
-              <label className="flex items-center gap-2 self-end pb-2 text-[14px]">
+              <label className="flex items-center gap-2 self-end pb-2 text-ui">
                 <input type="checkbox" name="accepting" defaultChecked={p?.accepting_clients ?? true} disabled={!owner} className="size-4 accent-navy" /> Tomamos clientes nuevos
               </label>
             </div>
             <fieldset className="mt-5">
-              <legend className="text-[14px] font-semibold">Servicios</legend>
+              <legend className="text-ui font-semibold">Servicios</legend>
               <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {RED_SERVICES.map((s) => (
-                  <label key={s.key} className="flex items-center gap-2 text-[14px]">
+                  <label key={s.key} className="flex items-center gap-2 text-ui">
                     <input type="checkbox" name="services" value={s.key} defaultChecked={p?.services.includes(s.key)} disabled={!owner} className="size-4 accent-navy" /> {s.label}
                   </label>
                 ))}
               </div>
             </fieldset>
             <fieldset className="mt-5">
-              <legend className="text-[14px] font-semibold">Rubros en los que se especializan</legend>
+              <legend className="text-ui font-semibold">Rubros en los que se especializan</legend>
               <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {FILE_TEMPLATES.map((t) => (
-                  <label key={t.clave} className="flex items-center gap-2 text-[14px]">
+                  <label key={t.clave} className="flex items-center gap-2 text-ui">
                     <input type="checkbox" name="industries" value={t.clave} defaultChecked={industries.includes(t.clave)} disabled={!owner} className="size-4 accent-navy" /> {t.nombre}
                   </label>
                 ))}
@@ -185,13 +186,13 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
 
         <Panel title="Reseñas" icon={MessageSquareQuote} bodyClassName="p-0">
           {reviews.length === 0 ? (
-            <p className="px-5 py-4 text-[14px] text-muted">Todavía no hay reseñas. Las dejan tus clientes desde su portal, después de 30 días trabajando con el estudio en Faro.</p>
+            <p className="px-5 py-4 text-ui text-muted">Todavía no hay reseñas. Las dejan tus clientes desde su portal, después de 30 días trabajando con el estudio en Faro.</p>
           ) : (
             <ul className="divide-y divide-line">
               {reviews.map(({ r, org }) => (
                 <li key={r.id} className="px-5 py-4">
-                  <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted">
-                    <span className="text-[15px] text-ink" aria-label={`${r.rating} de 5`}>
+                  <div className="flex flex-wrap items-center gap-2 text-meta text-muted">
+                    <span className="text-body text-ink" aria-label={`${r.rating} de 5`}>
                       {"★".repeat(r.rating)}
                       <span className="text-line">{"★".repeat(5 - r.rating)}</span>
                     </span>
@@ -200,13 +201,13 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
                     </span>
                     <Tag>{r.status === "publicada" ? "Publicada" : r.status === "pendiente" ? "En moderación" : "Rechazada por Faro"}</Tag>
                   </div>
-                  <p className="mt-1.5 text-[14px] text-ink">{r.body}</p>
+                  <p className="mt-1.5 text-ui text-ink">{r.body}</p>
                   {r.status === "publicada" && (
                     <form action={respondReviewAction} className="mt-3 grid gap-2">
                       <input type="hidden" name="id" value={r.id} />
-                      <label className="text-[13px] text-muted">
+                      <label className="text-meta text-muted">
                         Respuesta pública del estudio
-                        <textarea name="response" defaultValue={r.response ?? ""} rows={2} maxLength={1500} className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 text-[14px]" />
+                        <textarea name="response" defaultValue={r.response ?? ""} rows={2} maxLength={1500} className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 text-ui" />
                       </label>
                       <div>
                         <SubmitButton pendingText="Guardando…">{r.response ? "Actualizar respuesta" : "Responder"}</SubmitButton>

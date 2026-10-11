@@ -38,31 +38,31 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
             </h2>
             <ol className="mt-10 border-t border-hair">
               {service.items.map((item, i) => (
-                <li key={item} className="grid grid-cols-[3rem_1fr] border-b border-hair py-5 text-[16px] text-paper/85">
-                  <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
+                <li key={item} className="grid grid-cols-[3rem_1fr] border-b border-hair py-5 text-lead text-paper/85">
+                  <span className="tabular text-meta text-rose-light">0{i + 1}</span>
                   {item}
                 </li>
               ))}
             </ol>
           </div>
           <aside className="lg:col-span-4 lg:col-start-9">
-            <h2 className="text-[13px] text-paper/55">Pensado para</h2>
+            <h2 className="text-meta text-paper/55">Pensado para</h2>
             <ul className="mt-4 border-t border-hair">
               {AUDIENCES.map((a) => (
                 <li key={a.slug} className="border-b border-hair">
-                  <Link href={`/${a.slug}`} className="block py-3.5 text-[15px] text-paper/85 transition-colors hover:text-rose-light">
+                  <Link href={`/${a.slug}`} className="block py-3.5 text-body text-paper/85 transition-colors hover:text-rose-light">
                     {a.name}
                   </Link>
                 </li>
               ))}
             </ul>
             <div className="mt-12 border border-hair-strong p-6">
-              <p className="font-display text-2xl leading-tight text-paper">¿Tenés una duda puntual sobre {service.name.toLowerCase()}?</p>
+              <p className="font-display text-headline leading-tight text-paper">¿Tenés una duda puntual sobre {service.name.toLowerCase()}?</p>
               <div className="mt-6 flex flex-wrap items-center gap-5">
                 <CtaLink href={SCHEDULE_HREF} magnetic={false}>
                   Agendar una llamada
                 </CtaLink>
-                <TextLink href="/contacto" className="text-[15px]">
+                <TextLink href="/contacto" className="text-body">
                   Escribinos
                 </TextLink>
               </div>
@@ -76,7 +76,7 @@ export default async function ServicioPage({ params }: { params: Promise<{ slug:
             {others.map((s) => (
               <li key={s.slug} className="border-b border-hair sm:border-b-0 sm:border-r sm:px-8 sm:first:pl-0 sm:last:border-r-0">
                 <Link href={`/servicios/${s.slug}`} className="group block py-10">
-                  <span className="text-[13px] text-paper/55">Otro servicio</span>
+                  <span className="text-meta text-paper/55">Otro servicio</span>
                   <span className="mt-3 block font-display text-[2rem] leading-none text-paper transition-colors group-hover:text-rose-light">{s.name}</span>
                 </Link>
               </li>

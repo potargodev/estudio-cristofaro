@@ -41,8 +41,8 @@ export function SpaceList({ spaces, switchOrg, onPick, tone = "dark" }: { spaces
           <Icon className="size-4" strokeWidth={1.5} aria-hidden />
         </span>
         <span className="min-w-0 flex-1 leading-tight">
-          <span className="block truncate text-[14px]">{s.label}</span>
-          <span className={cn("block truncate text-[12px]", tone === "dark" ? "text-paper/50" : "text-muted")}>{s.kind}</span>
+          <span className="block truncate text-ui">{s.label}</span>
+          <span className={cn("block truncate text-caption", tone === "dark" ? "text-paper/50" : "text-muted")}>{s.kind}</span>
         </span>
         {s.current && <Check className={cn("size-4 shrink-0", tone === "dark" ? "text-rose-light" : "text-rose-deep")} aria-label="Espacio actual" />}
       </>
@@ -101,8 +101,8 @@ export function SpaceSwitcher({ spaces, switchOrg, compact = false, className }:
         <Icon className="size-4" strokeWidth={1.5} aria-hidden />
       </span>
       <span className={cn("min-w-0 flex-1 text-left leading-tight", compact && "hidden xl:block")}>
-        <span className="block truncate text-[14px] font-medium text-paper">{current.label}</span>
-        <span className="block truncate text-[12px] text-paper/55">{current.kind}</span>
+        <span className="block truncate text-ui font-medium text-paper">{current.label}</span>
+        <span className="block truncate text-caption text-paper/55">{current.kind}</span>
       </span>
       {!single && <ChevronsUpDown className={cn("size-4 shrink-0 text-paper/50", compact && "hidden xl:block")} aria-hidden />}
     </>
@@ -124,8 +124,8 @@ export function SpaceSwitcher({ spaces, switchOrg, compact = false, className }:
         </button>
       )}
       {open && (
-        <div role="menu" aria-label="Cambiar de espacio" className={cn("absolute z-50 mt-1.5 rounded-md border border-paper/15 bg-night p-1.5 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)]", compact ? "left-0 w-72" : "inset-x-0")}>
-          <p className="px-2.5 pb-1 pt-1.5 text-[11px] uppercase tracking-[0.12em] text-paper/45">Tus espacios</p>
+        <div role="menu" aria-label="Cambiar de espacio" className={cn("absolute z-50 mt-1.5 rounded-md border border-paper/15 bg-night p-1.5 shadow-overlay", compact ? "left-0 w-72" : "inset-x-0")}>
+          <p className="px-2.5 pb-1 pt-1.5 text-micro uppercase tracking-[0.12em] text-paper/45">Tus espacios</p>
           <SpaceList spaces={spaces} switchOrg={switchOrg} onPick={() => setOpen(false)} />
         </div>
       )}

@@ -28,15 +28,15 @@ export default async function Page({ params, searchParams }: { params: Promise<{
       />
       <div className="grid gap-4">
         <Feedback sp={sp} />
-        {v.r.error && <p className="rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-[14px] text-[#8f2a1c]">{v.r.error}</p>}
+        {v.r.error && <p className="rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-ui text-[#8f2a1c]">{v.r.error}</p>}
         {v.r.status === "esperando" && v.r.waiting_approval_id && (
-          <p className="rounded-md border border-line bg-surface px-4 py-3 text-[14px]">
+          <p className="rounded-md border border-line bg-surface px-4 py-3 text-ui">
             Esperando una decisión en <Link href="/admin/vigia?tab=propuestas" className="underline">Propuestas para aprobar</Link>.
           </p>
         )}
         <ol className="grid gap-2">
           {v.steps.map((s) => (
-            <li key={s.id} className="rounded-md border border-line bg-surface p-3 text-[13px]">
+            <li key={s.id} className="rounded-md border border-line bg-surface p-3 text-meta">
               <p className="flex flex-wrap justify-between gap-2">
                 <span className="font-medium">
                   {s.kind} · {s.node_id}
@@ -47,11 +47,11 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 </span>
               </p>
               {s.error && <p className="mt-1 text-[#8f2a1c]">{s.error}</p>}
-              {s.output != null && <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-all text-[11px] text-muted">{JSON.stringify(s.output, null, 1).slice(0, 1200)}</pre>}
+              {s.output != null && <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-all text-micro text-muted">{JSON.stringify(s.output, null, 1).slice(0, 1200)}</pre>}
             </li>
           ))}
         </ol>
-        <details className="text-[12px] text-muted">
+        <details className="text-caption text-muted">
           <summary className="cursor-pointer">Datos de la corrida</summary>
           <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-all">{JSON.stringify(v.r.context, null, 1).slice(0, 4000)}</pre>
         </details>

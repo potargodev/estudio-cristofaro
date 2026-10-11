@@ -5,6 +5,7 @@ import { addEdge, Background, Controls, Handle, Position, ReactFlow, useEdgesSta
 import { Clock, GitBranch, Play, ShieldCheck, Zap } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { saveFlowAction } from "@/app/admin/flujos-actions";
+import { fieldClass } from "@/components/ds/primitives";
 
 // Canvas del flujo (@xyflow/react): disparador, condiciones (con salidas «sí»
 // y «no»), acciones, aprobaciones y esperas. Debajo, el panel para editar el
@@ -38,7 +39,7 @@ function summary(type: Kind, d: Data, events: Props["events"], tools: Props["too
 function StepNode({ type, data, selected }: NodeProps<FNode>) {
   const Icon = ICON[type as Kind] ?? Play;
   return (
-    <div className={`w-56 rounded-md border bg-surface px-3 py-2 text-[12px] shadow-sm ${selected ? "border-navy ring-1 ring-navy" : "border-line"}`}>
+    <div className={`w-56 rounded-md border bg-surface px-3 py-2 text-caption ${selected ? "border-navy ring-1 ring-navy" : "border-line"}`}>
       {type !== "disparador" && <Handle type="target" position={Position.Top} />}
       <p className="flex items-center gap-1.5 font-semibold text-ink">
         <Icon className="size-3.5 text-rose-deep" aria-hidden /> {KIND_LABEL[type as Kind]}
@@ -48,7 +49,7 @@ function StepNode({ type, data, selected }: NodeProps<FNode>) {
         <>
           <Handle type="source" position={Position.Bottom} id="si" style={{ left: "30%" }} />
           <Handle type="source" position={Position.Bottom} id="no" style={{ left: "70%" }} />
-          <div className="mt-1 flex justify-between px-6 text-[10px] text-muted">
+          <div className="mt-1 flex justify-between px-6 text-micro text-muted">
             <span>sí</span>
             <span>no</span>
           </div>
@@ -60,7 +61,7 @@ function StepNode({ type, data, selected }: NodeProps<FNode>) {
   );
 }
 
-const field = "mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink";
+const field = `mt-1 ${fieldClass}`;
 
 export function FlowEditor(p: Props) {
   const [name, setName] = useState(p.name);
@@ -93,14 +94,14 @@ export function FlowEditor(p: Props) {
     <form action={saveFlowAction} className="grid gap-3">
       <input type="hidden" name="id" value={p.id} />
       <input type="hidden" name="graph" value={graph} />
-      <label className="text-[13px] text-muted">
+      <label className="text-meta text-muted">
         Nombre
         <input name="name" value={name} onChange={(e) => setName(e.target.value)} disabled={p.readOnly} className={field} />
       </label>
       {!p.readOnly && (
         <div className="flex flex-wrap gap-1.5" role="toolbar" aria-label="Agregar pasos">
           {(["condicion", "accion", "aprobacion", "espera"] as Kind[]).map((k) => (
-            <button key={k} type="button" onClick={() => add(k)} className="inline-flex h-8 items-center gap-1 rounded-md border border-line bg-surface px-2.5 text-[13px] hover:border-muted">
+            <button key={k} type="button" onClick={() => add(k)} className="inline-flex h-8 items-center gap-1 rounded-md border border-line bg-surface px-2.5 text-meta hover:border-muted">
               + {KIND_LABEL[k]}
             </button>
           ))}
@@ -112,13 +113,13 @@ export function FlowEditor(p: Props) {
           <Controls showInteractive={false} />
         </ReactFlow>
       </div>
-      <p className="text-[12px] text-muted">Tocá un paso para editarlo. Para conectar, arrastrá desde el punto de abajo de un paso hasta otro. Las condiciones tienen dos salidas: sí y no.</p>
+      <p className="text-caption text-muted">Tocá un paso para editarlo. Para conectar, arrastrá desde el punto de abajo de un paso hasta otro. Las condiciones tienen dos salidas: sí y no.</p>
       {selected && (
         <section aria-label="Paso elegido" className="grid gap-2 rounded-md border border-navy/40 bg-surface p-4 sm:grid-cols-2">
-          <p className="text-[14px] font-semibold sm:col-span-2">{KIND_LABEL[selected.type as Kind]}</p>
+          <p className="text-ui font-semibold sm:col-span-2">{KIND_LABEL[selected.type as Kind]}</p>
           {selected.type === "disparador" && (
             <>
-              <label className="text-[13px] text-muted">
+              <label className="text-meta text-muted">
                 Se dispara
                 <select value={String(d.tipo)} onChange={(e) => set({ tipo: e.target.value })} disabled={p.readOnly} className={field}>
                   <option value="evento">Cuando pasa algo (evento)</option>
@@ -128,7 +129,7 @@ export function FlowEditor(p: Props) {
                 </select>
               </label>
               {d.tipo === "evento" && (
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   Evento
                   <select value={String(d.evento ?? "")} onChange={(e) => set({ evento: e.target.value })} disabled={p.readOnly} className={field}>
                     {p.events.map((e) => (
@@ -141,7 +142,7 @@ export function FlowEditor(p: Props) {
               )}
               {d.tipo === "horario" && (
                 <>
-                  <label className="text-[13px] text-muted">
+                  <label className="text-meta text-muted">
                     Frecuencia
                     <select value={String(d.frecuencia ?? "diaria")} onChange={(e) => set({ frecuencia: e.target.value })} disabled={p.readOnly} className={field}>
                       <option value="diaria">Todos los días</option>
@@ -149,12 +150,12 @@ export function FlowEditor(p: Props) {
                       <option value="mensual">Todos los meses</option>
                     </select>
                   </label>
-                  <label className="text-[13px] text-muted">
+                  <label className="text-meta text-muted">
                     Hora
                     <input type="time" value={String(d.hora ?? "09:00")} onChange={(e) => set({ hora: e.target.value })} disabled={p.readOnly} className={field} />
                   </label>
                   {d.frecuencia !== "diaria" && (
-                    <label className="text-[13px] text-muted">
+                    <label className="text-meta text-muted">
                       {d.frecuencia === "semanal" ? "Día (1 = lunes … 7 = domingo)" : "Día del mes"}
                       <input type="number" min={1} max={d.frecuencia === "semanal" ? 7 : 28} value={Number(d.dia ?? 1)} onChange={(e) => set({ dia: Number(e.target.value) })} disabled={p.readOnly} className={field} />
                     </label>
@@ -165,7 +166,7 @@ export function FlowEditor(p: Props) {
           )}
           {selected.type === "condicion" && (
             <>
-              <label className="text-[13px] text-muted">
+              <label className="text-meta text-muted">
                 Campo
                 <input list="campos" value={String(d.campo ?? "")} onChange={(e) => set({ campo: e.target.value })} disabled={p.readOnly} className={field} />
                 <datalist id="campos">
@@ -176,7 +177,7 @@ export function FlowEditor(p: Props) {
                   <option value="consulta.recibo.estado" />
                 </datalist>
               </label>
-              <label className="text-[13px] text-muted">
+              <label className="text-meta text-muted">
                 Operador
                 <select value={String(d.operador ?? "igual")} onChange={(e) => set({ operador: e.target.value })} disabled={p.readOnly} className={field}>
                   {["igual", "distinto", "mayor", "menor", "contiene", "existe", "no_existe"].map((o) => (
@@ -186,7 +187,7 @@ export function FlowEditor(p: Props) {
                   ))}
                 </select>
               </label>
-              <label className="text-[13px] text-muted sm:col-span-2">
+              <label className="text-meta text-muted sm:col-span-2">
                 Valor
                 <input value={String(d.valor ?? "")} onChange={(e) => set({ valor: e.target.value })} disabled={p.readOnly} className={field} />
               </label>
@@ -194,7 +195,7 @@ export function FlowEditor(p: Props) {
           )}
           {selected.type === "accion" && (
             <>
-              <label className="text-[13px] text-muted">
+              <label className="text-meta text-muted">
                 Qué hace
                 <select value={String(d.accion ?? "aviso")} onChange={(e) => set({ accion: e.target.value })} disabled={p.readOnly} className={field}>
                   {Object.entries(ACTIONS).map(([k, l]) => (
@@ -206,7 +207,7 @@ export function FlowEditor(p: Props) {
               </label>
               {d.accion === "herramienta" && (
                 <>
-                  <label className="text-[13px] text-muted">
+                  <label className="text-meta text-muted">
                     Herramienta
                     <select value={String(d.herramienta ?? "")} onChange={(e) => set({ herramienta: e.target.value })} disabled={p.readOnly} className={field}>
                       <option value="">Elegí…</option>
@@ -218,17 +219,17 @@ export function FlowEditor(p: Props) {
                       ))}
                     </select>
                   </label>
-                  <label className="text-[13px] text-muted sm:col-span-2">
+                  <label className="text-meta text-muted sm:col-span-2">
                     Datos (JSON, podés usar {"{{evento.campo}}"})
-                    <textarea defaultValue={JSON.stringify(d.entrada ?? {}, null, 1)} onBlur={(e) => { try { set({ entrada: JSON.parse(e.target.value || "{}") }); } catch { /* se corrige al guardar */ } }} disabled={p.readOnly} rows={3} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 font-mono text-[12px] text-ink" />
+                    <textarea defaultValue={JSON.stringify(d.entrada ?? {}, null, 1)} onBlur={(e) => { try { set({ entrada: JSON.parse(e.target.value || "{}") }); } catch { /* se corrige al guardar */ } }} disabled={p.readOnly} rows={3} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 font-mono text-caption text-ink" />
                   </label>
-                  <label className="flex items-center gap-2 text-[13px]">
+                  <label className="flex items-center gap-2 text-meta">
                     <input type="checkbox" checked={!!d.por_organizacion} onChange={(e) => set({ por_organizacion: e.target.checked })} disabled={p.readOnly} /> Una vez por cada organización activa
                   </label>
                 </>
               )}
               {(d.accion === "aviso" || d.accion === "mail") && (
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   Para
                   <select value={String(d.para ?? "equipo")} onChange={(e) => set({ para: e.target.value })} disabled={p.readOnly} className={field}>
                     <option value="equipo">Todo el equipo</option>
@@ -237,37 +238,37 @@ export function FlowEditor(p: Props) {
                 </label>
               )}
               {(d.accion === "aviso" || d.accion === "tarea") && (
-                <label className="text-[13px] text-muted sm:col-span-2">
+                <label className="text-meta text-muted sm:col-span-2">
                   Título
                   <input value={String(d.titulo ?? "")} onChange={(e) => set({ titulo: e.target.value })} disabled={p.readOnly} className={field} />
                 </label>
               )}
               {(d.accion === "mail" || d.accion === "solicitud") && (
-                <label className="text-[13px] text-muted sm:col-span-2">
+                <label className="text-meta text-muted sm:col-span-2">
                   Asunto
                   <input value={String(d.asunto ?? "")} onChange={(e) => set({ asunto: e.target.value })} disabled={p.readOnly} className={field} />
                 </label>
               )}
               {(d.accion === "aviso" || d.accion === "mail") && (
-                <label className="text-[13px] text-muted sm:col-span-2">
+                <label className="text-meta text-muted sm:col-span-2">
                   Texto
                   <input value={String(d.texto ?? "")} onChange={(e) => set({ texto: e.target.value })} disabled={p.readOnly} className={field} />
                 </label>
               )}
               {(d.accion === "tarea" || d.accion === "solicitud") && (
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   Organización (ID o {"{{evento.organizacion_id}}"})
                   <input value={String(d.organizacion ?? "")} onChange={(e) => set({ organizacion: e.target.value })} disabled={p.readOnly} className={field} />
                 </label>
               )}
               {d.accion === "tarea" && (
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   Vence en (días)
                   <input type="number" min={0} max={90} value={Number(d.vence_en_dias ?? 3)} onChange={(e) => set({ vence_en_dias: Number(e.target.value) })} disabled={p.readOnly} className={field} />
                 </label>
               )}
               {d.accion === "solicitud" && (
-                <label className="text-[13px] text-muted sm:col-span-2">
+                <label className="text-meta text-muted sm:col-span-2">
                   Mensaje
                   <input value={String(d.mensaje ?? "")} onChange={(e) => set({ mensaje: e.target.value })} disabled={p.readOnly} className={field} />
                 </label>
@@ -276,25 +277,25 @@ export function FlowEditor(p: Props) {
           )}
           {selected.type === "espera" && (
             <>
-              <label className="text-[13px] text-muted">
+              <label className="text-meta text-muted">
                 Días
                 <input type="number" min={0} max={90} value={Number(d.dias ?? 0)} onChange={(e) => set({ dias: Number(e.target.value) })} disabled={p.readOnly} className={field} />
               </label>
-              <label className="text-[13px] text-muted">
+              <label className="text-meta text-muted">
                 Horas
                 <input type="number" min={0} max={23} value={Number(d.horas ?? 0)} onChange={(e) => set({ horas: Number(e.target.value) })} disabled={p.readOnly} className={field} />
               </label>
             </>
           )}
           {selected.type === "aprobacion" && (
-            <label className="text-[13px] text-muted sm:col-span-2">
+            <label className="text-meta text-muted sm:col-span-2">
               Qué se aprueba
               <input value={String(d.motivo ?? "")} onChange={(e) => set({ motivo: e.target.value })} disabled={p.readOnly} className={field} />
             </label>
           )}
           {!p.readOnly && selected.type !== "disparador" && (
             <div className="sm:col-span-2">
-              <button type="button" onClick={remove} className="h-9 rounded-md border border-[#efc4bd] px-3 text-[13px] text-[#8f2a1c]">
+              <button type="button" onClick={remove} className="h-9 rounded-md border border-[#efc4bd] px-3 text-meta text-[#8f2a1c]">
                 Quitar este paso
               </button>
             </div>
@@ -303,7 +304,7 @@ export function FlowEditor(p: Props) {
       )}
       {!p.readOnly && (
         <div>
-          <button type="submit" className="h-10 rounded-md bg-navy px-4 text-[14px] font-medium text-paper">
+          <button type="submit" className="h-10 rounded-md bg-navy px-4 text-ui font-medium text-paper">
             Guardar
           </button>
         </div>

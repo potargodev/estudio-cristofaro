@@ -37,14 +37,14 @@ export default async function UnirsePage({ params, searchParams }: { params: Pro
         <span className="grid size-12 place-items-center rounded-md bg-navy text-gold">
           <Users className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
-        <p className="mt-4 text-[13px] text-muted">{inv.inviter ? `${inv.inviter} te invita a una caja compartida` : "Te invitan a una caja compartida"}</p>
+        <p className="mt-4 text-meta text-muted">{inv.inviter ? `${inv.inviter} te invita a una caja compartida` : "Te invitan a una caja compartida"}</p>
         <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{inv.box.name}</h1>
-        <p className="mt-1 text-[14px] text-muted">
+        <p className="mt-1 text-ui text-muted">
           {inv.members} {inv.members === 1 ? "integrante" : "integrantes"} · {t?.description} Llevan la cuenta juntos en Faro: quién puso qué, cuánto y cuándo.
         </p>
       </header>
       {sp.error && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-[14px] text-danger">
+        <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-ui text-danger">
           {sp.error}
         </p>
       )}
@@ -52,11 +52,11 @@ export default async function UnirsePage({ params, searchParams }: { params: Pro
         <form action={joinBoxAction} className="grid gap-3">
           <input type="hidden" name="token" value={token} />
           <button className="inline-flex h-12 items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Sumarme como {user.name}</button>
-          <p className="text-[13px] text-muted">La caja aparece en Mis cajas. Lo demás sigue siendo tuyo: nadie de esta caja ve tu caja personal.</p>
+          <p className="text-meta text-muted">La caja aparece en Mis cajas. Lo demás sigue siendo tuyo: nadie de esta caja ve tu caja personal.</p>
         </form>
       ) : (
         <>
-          <p className="text-[14px] text-ink">Para entrar a una caja compartida necesitás una cuenta de Faro (es gratis).</p>
+          <p className="text-ui text-ink">Para entrar a una caja compartida necesitás una cuenta de Faro (es gratis).</p>
           <JoinChoices token={token} google={googleEnabled()} next={next} accountOnly />
         </>
       )}

@@ -30,20 +30,20 @@ export function FaroProblem() {
         </SplitHeading>
         <div className="mt-12 grid gap-px overflow-hidden rounded-lg bg-hair md:grid-cols-2">
           <div className="bg-night p-6 sm:p-8">
-            <p className="text-[12px] uppercase tracking-[0.14em] text-paper/45">Hoy</p>
+            <p className="text-caption uppercase tracking-[0.14em] text-paper/45">Hoy</p>
             <Reveal as="ul" className="mt-5 grid gap-3">
               {BEFORE.map((x) => (
-                <li key={x} data-reveal className="text-[15px] leading-relaxed text-paper/60 line-through decoration-paper/25">
+                <li key={x} data-reveal className="text-body leading-relaxed text-paper/60 line-through decoration-paper/25">
                   {x}
                 </li>
               ))}
             </Reveal>
           </div>
           <div className="bg-navy-deep p-6 sm:p-8">
-            <p className="text-[12px] uppercase tracking-[0.14em] text-gold">Con Faro</p>
+            <p className="text-caption uppercase tracking-[0.14em] text-gold">Con Faro</p>
             <Reveal as="ul" className="mt-5 grid gap-3">
               {AFTER.map((x) => (
-                <li key={x} data-reveal className="flex gap-3 text-[15px] leading-relaxed text-paper">
+                <li key={x} data-reveal className="flex gap-3 text-body leading-relaxed text-paper">
                   <ArrowRight className="mt-1 size-4 shrink-0 text-gold" aria-hidden /> {x}
                 </li>
               ))}
@@ -74,18 +74,18 @@ export function FaroLevels() {
               Cada uno ve lo suyo. Nadie más.
             </SplitHeading>
           </div>
-          <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
+          <p className="self-end text-body leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
             Aislamiento entre estudios, entre clientes y entre personas, validado en el servidor en cada pedido. Lo sensible queda en la auditoría.
           </p>
         </div>
         <Reveal as="ol" className="mt-12 grid gap-3 lg:grid-cols-5">
           {LEVELS.map((l, i) => (
             <li key={l.name} data-reveal className="relative rounded-lg border border-hair-strong bg-navy-deep p-5">
-              <span className="tabular text-[12px] text-gold">0{i + 1}</span>
+              <span className="tabular text-caption text-gold">0{i + 1}</span>
               <l.icon className="mt-4 size-6 text-paper" strokeWidth={1.25} aria-hidden />
               <p className="mt-4 font-display text-[26px] leading-none text-paper">{l.name}</p>
-              <p className="mt-1 text-[12px] text-paper/50">{l.who}</p>
-              <p className="mt-3 text-[13px] leading-relaxed text-paper/65">{l.text}</p>
+              <p className="mt-1 text-caption text-paper/50">{l.who}</p>
+              <p className="mt-3 text-meta leading-relaxed text-paper/65">{l.text}</p>
             </li>
           ))}
         </Reveal>
@@ -105,7 +105,7 @@ export function FaroCase() {
               Nació adentro de un estudio.
             </SplitHeading>
           </div>
-          <div className="grid gap-5 text-[15px] leading-relaxed text-paper/70 lg:col-span-6 lg:col-start-7">
+          <div className="grid gap-5 text-body leading-relaxed text-paper/70 lg:col-span-6 lg:col-start-7">
             <p>
               Faro se construyó con el Estudio Cristofaro, un estudio contable de Argentina que lo usa todos los días: su cartera, los vencimientos de cada cliente, el portal donde los clientes suben comprobantes y hacen consultas, y el asistente que prepara borradores que siempre revisa un contador.
             </p>
@@ -118,7 +118,7 @@ export function FaroCase() {
               ].map(([a, b]) => (
                 <li key={a} className="bg-navy-deep p-4">
                   <p className="font-display text-[26px] text-gold">{a}</p>
-                  <p className="text-[13px] text-paper/60">{b}</p>
+                  <p className="text-meta text-paper/60">{b}</p>
                 </li>
               ))}
             </ul>
@@ -151,17 +151,17 @@ export function FaroFaq() {
         <div className="mt-12 grid gap-x-10 md:grid-cols-2">
           {FAQ.map((f) => (
             <details key={f.q} className="group border-t border-hair py-5">
-              <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[17px] text-paper">
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-title text-paper">
                 {f.q}
                 <span aria-hidden className="text-gold transition-transform duration-300 group-open:rotate-45">
                   +
                 </span>
               </summary>
-              <p className="mt-3 text-[15px] leading-relaxed text-paper/65">{f.a}</p>
+              <p className="mt-3 text-body leading-relaxed text-paper/65">{f.a}</p>
             </details>
           ))}
         </div>
-        <p className="mt-8 text-[14px] text-paper/55">
+        <p className="mt-8 text-ui text-paper/55">
           ¿Algo más?{" "}
           <Link href="/ayuda" className="underline underline-offset-4">
             Centro de ayuda
@@ -182,7 +182,7 @@ export function FaroCta() {
           <h2 id="cta-titulo" className="display-md mt-6 text-paper">
             Prendé la luz en tus números.
           </h2>
-          <p className="mx-auto mt-5 max-w-xl text-[17px] text-paper/70">Empezá gratis en dos minutos, o mirá Faro con alguien del equipo.</p>
+          <p className="mx-auto mt-5 max-w-xl text-title text-paper/70">Empezá gratis en dos minutos, o mirá Faro con alguien del equipo.</p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <CtaLink tone="gold" href="/faro/registro?tipo=persona">
               Empezá gratis

@@ -15,16 +15,16 @@ export function WeeklyBars({
   const color = tone === "navy" ? "var(--color-navy)" : "var(--color-rose)";
   return (
     <figure className="border border-line bg-surface p-5">
-      <figcaption className="text-sm text-muted">{title}</figcaption>
+      <figcaption className="text-ui text-muted">{title}</figcaption>
       <div className="mt-4 flex h-36 items-end gap-2" aria-hidden>
         {data.map((d, i) => (
           <div key={d.label} className="flex flex-1 flex-col items-center gap-1.5">
-            <span className="text-xs tabular-nums text-muted">{d.value || ""}</span>
+            <span className="text-caption tabular-nums text-muted">{d.value || ""}</span>
             <div
               className="w-full max-w-9 rounded-t-[3px]"
               style={{ height: `${Math.max(3, (d.value / max) * 100)}px`, background: color, opacity: highlight === i ? 1 : 0.55 }}
             />
-            <span className="text-[11px] text-muted">{d.label}</span>
+            <span className="text-micro text-muted">{d.label}</span>
           </div>
         ))}
       </div>

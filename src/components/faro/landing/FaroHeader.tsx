@@ -32,7 +32,7 @@ export function FaroHeader() {
         <Link href="/faro" aria-label="Faro, inicio">
           <FaroLogo size="sm" />
         </Link>
-        <nav aria-label="Faro" className="ml-6 hidden flex-1 items-center gap-6 text-[14px] text-paper/75 xl:flex">
+        <nav aria-label="Faro" className="ml-6 hidden flex-1 items-center gap-6 text-ui text-paper/75 xl:flex">
           {FARO_NAV.map((n) => (
             <Link key={n.href} href={n.href} className="u-draw pb-0.5 hover:text-paper">
               {n.label}
@@ -40,10 +40,10 @@ export function FaroHeader() {
           ))}
         </nav>
         <span className="flex-1 xl:hidden" />
-        <Link href="/ingresar" className="u-draw hidden pb-0.5 text-[14px] text-paper/80 hover:text-paper sm:inline">
+        <Link href="/ingresar" className="u-draw hidden pb-0.5 text-ui text-paper/80 hover:text-paper sm:inline">
           Ingresar
         </Link>
-        <CtaLink tone="gold" href="/faro/registro?tipo=persona" className="hidden h-10 px-4 text-[14px] sm:inline-flex">
+        <CtaLink tone="gold" href="/faro/registro?tipo=persona" className="hidden h-10 px-4 text-ui sm:inline-flex">
           Empezá gratis
         </CtaLink>
         <button type="button" onClick={() => setOpen(true)} aria-label="Abrir menú" aria-expanded={open} className="grid size-10 place-items-center border border-hair-strong text-paper xl:hidden">
@@ -69,7 +69,7 @@ export function FaroHeader() {
             <CtaLink tone="gold" href="/faro/registro?tipo=persona" magnetic={false}>
               Empezá gratis
             </CtaLink>
-            <Link href="/ingresar" className="text-[15px] text-paper/80">
+            <Link href="/ingresar" className="text-body text-paper/80">
               Ingresar
             </Link>
           </div>

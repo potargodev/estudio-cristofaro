@@ -168,7 +168,7 @@ const isActive = (i: ShellItem, active: ShellItem | null) => !!active && active.
 function Count({ n, badge, className }: { n: number; badge: ShellBadge; className?: string }) {
   if (!n) return null;
   return (
-    <span className={cn("tabular min-w-5 rounded bg-rose-light px-1.5 text-center text-[12px] font-medium leading-5 text-night", className)}>
+    <span className={cn("tabular min-w-5 rounded bg-rose-light px-1.5 text-center text-caption font-medium leading-5 text-night", className)}>
       {n}
       <span className="sr-only"> {BADGE_TEXT[badge]}</span>
     </span>
@@ -183,7 +183,7 @@ function SideNav({ groups, badges, active, onNavigate, shared = false }: { group
     <nav aria-label="Menú" data-tour="nav" className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-3 py-2">
       {[...main, ...pinned].map((g, gi) => (
         <div key={g.title || `g${gi}`} className={cn("mb-4", g.pinned && "mb-0 mt-auto border-t border-paper/10 pt-2", g.pinned && pinned[0] !== g && "mt-0 border-t-0 pt-0")}>
-          {g.title && !g.pinned && <p className="mb-1 h-5 px-3 text-[12px] text-slate-light">{g.title}</p>}
+          {g.title && !g.pinned && <p className="mb-1 h-5 px-3 text-caption text-slate-light">{g.title}</p>}
           <ul>
             {g.items.map((i) => {
               const Icon = ICONS[i.icon];
@@ -196,7 +196,7 @@ function SideNav({ groups, badges, active, onNavigate, shared = false }: { group
                     href={i.href}
                     onClick={onNavigate}
                     aria-current={on ? "page" : undefined}
-                    className={cn("relative flex h-10 items-center gap-3 rounded-md px-3 text-[14px] transition-colors", on ? "bg-paper/[0.08] text-paper" : "text-paper/70 hover:bg-paper/[0.04] hover:text-paper")}
+                    className={cn("relative flex h-10 items-center gap-3 rounded-md px-3 text-ui transition-colors", on ? "bg-paper/[0.08] text-paper" : "text-paper/70 hover:bg-paper/[0.04] hover:text-paper")}
                   >
                     {shared ? (
                       <m.span layoutId={`nav-${g.title}-${i.href}`} transition={SPRING} className="grid size-[18px] shrink-0 place-items-center">
@@ -262,7 +262,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
     const on = isActive(i, active);
     const n = i.badge ? (badges[i.badge] ?? 0) : 0;
     return inMenu ? (
-      <Link key={i.key} href={i.href} onClick={() => setMore(false)} role="menuitem" aria-current={on ? "page" : undefined} className={cn("flex items-center gap-2.5 px-3 py-2 text-[14px]", on ? "text-paper" : "text-paper/75 hover:bg-paper/[0.06] hover:text-paper")}>
+      <Link key={i.key} href={i.href} onClick={() => setMore(false)} role="menuitem" aria-current={on ? "page" : undefined} className={cn("flex items-center gap-2.5 px-3 py-2 text-ui", on ? "text-paper" : "text-paper/75 hover:bg-paper/[0.06] hover:text-paper")}>
         <Icon className={cn("size-4", on && "text-rose-light")} strokeWidth={1.5} aria-hidden />
         <span className="flex-1">{i.label}</span>
         {i.badge && <Count n={n} badge={i.badge} />}
@@ -275,7 +275,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
           </m.span>
           {n > 0 && <span aria-hidden className="absolute right-1.5 top-1.5 size-2 rounded-full bg-rose-light" />}
         </Link>
-        <span role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-50 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded border border-paper/15 bg-night px-2 py-1 text-[12px] text-paper opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+        <span role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-50 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded border border-paper/15 bg-night px-2 py-1 text-caption text-paper opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
           {i.label}
           {n > 0 && <span className="ml-1.5 text-rose-light">{n}</span>}
         </span>
@@ -294,11 +294,11 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
             {shown.map((i) => icon(i))}
             {rest.length > 0 && (
               <li className="relative" data-more>
-                <button type="button" aria-haspopup="menu" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-10 items-center gap-1 rounded-md px-2.5 text-[13px] text-paper/70 hover:bg-paper/[0.06] hover:text-paper">
+                <button type="button" aria-haspopup="menu" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-10 items-center gap-1 rounded-md px-2.5 text-meta text-paper/70 hover:bg-paper/[0.06] hover:text-paper">
                   <MoreHorizontal className="size-[18px]" aria-hidden /> Más
                 </button>
                 {more && (
-                  <div role="menu" className="absolute right-0 top-full z-50 mt-1.5 max-h-[70vh] w-60 overflow-y-auto rounded-md border border-paper/15 bg-night py-1 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)]">
+                  <div role="menu" className="absolute right-0 top-full z-50 mt-1.5 max-h-[70vh] w-60 overflow-y-auto rounded-md border border-paper/15 bg-night py-1 shadow-overlay">
                     {rest.map((i) => icon(i, true))}
                   </div>
                 )}
@@ -360,8 +360,8 @@ export function AppShell(p: ShellProps) {
           )}
           {!small && (
             <span className="min-w-0 leading-tight">
-              <span className="block truncate font-display text-[17px] text-paper">{p.studioBrand}</span>
-              <span className="block text-[11px] text-paper/50">Con tecnología de Faro</span>
+              <span className="block truncate font-display text-title text-paper">{p.studioBrand}</span>
+              <span className="block text-micro text-paper/50">Con tecnología de Faro</span>
             </span>
           )}
         </span>
@@ -447,7 +447,7 @@ export function AppShell(p: ShellProps) {
       <div className={pad}>
         <header className={cn("sticky z-30 flex h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8", collapsed ? "top-0 lg:top-[var(--header-h)]" : "top-0")}>
           <nav aria-label="Ubicación" className="min-w-0 flex-1">
-            <ol className="flex min-w-0 items-center gap-1.5 text-[13px] text-muted">
+            <ol className="flex min-w-0 items-center gap-1.5 text-meta text-muted">
               {trail.map((c, i) => (
                 <li key={i} className={cn("flex min-w-0 items-center gap-1.5", i < trail.length - 1 && "hidden sm:flex")}>
                   {i > 0 && <ChevronRight className="hidden size-3.5 shrink-0 sm:block" aria-hidden />}
@@ -465,10 +465,10 @@ export function AppShell(p: ShellProps) {
             </ol>
           </nav>
           {p.studioAccess && (
-            <button type="button" onClick={() => setSearch(true)} className="hidden h-9 items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-[13px] text-muted hover:border-muted md:flex md:w-48 xl:w-56" aria-label="Buscar (Ctrl o Cmd + K)">
+            <button type="button" onClick={() => setSearch(true)} className="hidden h-9 items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-meta text-muted hover:border-muted md:flex md:w-48 xl:w-56" aria-label="Buscar (Ctrl o Cmd + K)">
               <Search className="size-4" aria-hidden />
               <span className="flex-1 text-left">Buscar…</span>
-              <kbd className="rounded border border-line px-1 text-[11px]">⌘K</kbd>
+              <kbd className="rounded border border-line px-1 text-micro">⌘K</kbd>
             </button>
           )}
           <a
@@ -478,22 +478,22 @@ export function AppShell(p: ShellProps) {
             }}
             data-tour="vigia"
             aria-label={`Vigía${vigiaCount ? ` · ${vigiaCount} ${BADGE_TEXT[p.vigiaBadge]}` : ""}`}
-            className="relative inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-2.5 text-[13px] font-medium text-paper shadow-sm hover:bg-navy-deep sm:px-3"
+            className="relative inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-2.5 text-meta font-medium text-paper hover:bg-navy-deep sm:px-3"
           >
             <WandSparkles className="size-4 text-gold" strokeWidth={1.6} aria-hidden />
             <span className="hidden sm:inline">Vigía</span>
-            {vigiaCount > 0 && <span aria-hidden className="num absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-[11px] leading-[18px] text-night ring-2 ring-canvas">{vigiaCount}</span>}
+            {vigiaCount > 0 && <span aria-hidden className="num absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-micro leading-[18px] text-night ring-2 ring-canvas">{vigiaCount}</span>}
           </a>
           <Link href="/mensajes" aria-label={`Mensajes${p.badges.unread ? ` · ${p.badges.unread} sin leer` : ""}`} title="Mensajes" className={cn("relative grid size-9 place-items-center rounded-md text-ink hover:bg-surface", pathname.startsWith("/mensajes") && "bg-surface")}>
             <MessagesSquare className="size-[18px]" strokeWidth={1.6} aria-hidden />
-            {(p.badges.unread ?? 0) > 0 && <span aria-hidden className="num absolute -right-0.5 -top-0.5 min-w-[17px] rounded-full bg-rose-light px-1 text-center text-[10px] leading-[17px] text-night ring-2 ring-canvas">{p.badges.unread}</span>}
+            {(p.badges.unread ?? 0) > 0 && <span aria-hidden className="num absolute -right-0.5 -top-0.5 min-w-[17px] rounded-full bg-rose-light px-1 text-center text-micro leading-[17px] text-night ring-2 ring-canvas">{p.badges.unread}</span>}
           </Link>
           {p.notices && <NoticesBell items={p.notices.items} unread={p.notices.unread} className="rounded-md text-ink hover:bg-surface" />}
           <HelpMenu className="rounded-md text-ink hover:bg-surface" />
           <AccountMenu user={p.user} spaceName={p.spaceName} links={p.links} spaces={p.spaces} switchOrg={p.switchOrg} signOut={p.signOut} />
         </header>
         {p.assisted && (
-          <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2 text-[13px] text-[#7a5410] sm:px-6 lg:px-8">
+          <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2 text-meta text-[#7a5410] sm:px-6 lg:px-8">
             <span>
               <strong className="font-medium">Acceso asistido de Faro</strong> a {p.assisted.studioName} hasta{" "}
               {new Date(p.assisted.expiresAt).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })}. Todo queda en la auditoría.
@@ -507,7 +507,7 @@ export function AppShell(p: ShellProps) {
             )}
           </div>
         )}
-        <main id="contenido" className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 [--app-bottom:calc(60px+env(safe-area-inset-bottom))] sm:px-6 sm:pt-8 lg:px-8 lg:pb-10 lg:[--app-bottom:0px]">
+        <main id="contenido" className="mx-auto w-full max-w-[calc(var(--content-max)+4rem)] px-4 pb-28 pt-6 [--app-bottom:calc(60px+env(safe-area-inset-bottom))] sm:px-6 sm:pt-8 lg:px-8 lg:pb-10 lg:[--app-bottom:0px]">
           <RouteReveal>{p.children}</RouteReveal>
         </main>
       </div>
@@ -526,12 +526,12 @@ export function AppShell(p: ShellProps) {
                       if (openVigia()) e.preventDefault();
                     }}
                     aria-label={`Vigía${vigiaCount ? ` · ${vigiaCount} ${BADGE_TEXT[p.vigiaBadge]}` : ""}`}
-                    className="relative -mt-5 mb-1 flex flex-col items-center gap-1 text-[11px] text-paper"
+                    className="relative -mt-5 mb-1 flex flex-col items-center gap-1 text-micro text-paper"
                   >
-                    <span className="grid size-[52px] place-items-center rounded-full bg-gold text-night shadow-[0_8px_24px_-8px_rgba(0,0,0,0.6)] ring-4 ring-night motion-safe:transition-transform motion-safe:active:scale-95">
+                    <span className="grid size-[52px] place-items-center rounded-full bg-gold text-night shadow-overlay ring-4 ring-night motion-safe:transition-transform motion-safe:active:scale-95">
                       <WandSparkles className="size-6" strokeWidth={1.6} aria-hidden />
                     </span>
-                    {vigiaCount > 0 && <span aria-hidden className="num absolute right-0 top-0 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-[10px] font-semibold leading-[18px] text-night ring-2 ring-night">{vigiaCount}</span>}
+                    {vigiaCount > 0 && <span aria-hidden className="num absolute right-0 top-0 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-micro font-semibold leading-[18px] text-night ring-2 ring-night">{vigiaCount}</span>}
                     Vigía
                   </a>
                 </li>
@@ -541,11 +541,11 @@ export function AppShell(p: ShellProps) {
             const n = i.badge ? (p.badges[i.badge] ?? 0) : 0;
             return (
               <li key={i.href}>
-                <Link href={i.href} aria-current={on ? "page" : undefined} className={cn("flex flex-col items-center gap-1 pb-2 pt-2.5 text-[11px]", on ? "text-paper" : "text-paper/60")}>
+                <Link href={i.href} aria-current={on ? "page" : undefined} className={cn("flex flex-col items-center gap-1 pb-2 pt-2.5 text-micro", on ? "text-paper" : "text-paper/60")}>
                   <span className="relative">
                     <Icon className={cn("size-[22px]", on && "text-rose-light")} strokeWidth={1.5} aria-hidden />
                     {n > 0 && (
-                      <span className="tabular absolute -right-2.5 -top-1.5 min-w-4 rounded bg-rose-light px-1 text-center text-[10px] font-semibold leading-4 text-night">
+                      <span className="tabular absolute -right-2.5 -top-1.5 min-w-4 rounded bg-rose-light px-1 text-center text-micro font-semibold leading-4 text-night">
                         {n}
                         <span className="sr-only"> {i.badge && BADGE_TEXT[i.badge]}</span>
                       </span>
@@ -557,7 +557,7 @@ export function AppShell(p: ShellProps) {
             );
           })}
           <li>
-            <button type="button" onClick={() => setDrawer(true)} aria-expanded={drawer} aria-label="Más: el menú completo y tus espacios" className={cn("flex w-full flex-col items-center gap-1 pb-2 pt-2.5 text-[11px]", drawer ? "text-paper" : "text-paper/60")}>
+            <button type="button" onClick={() => setDrawer(true)} aria-expanded={drawer} aria-label="Más: el menú completo y tus espacios" className={cn("flex w-full flex-col items-center gap-1 pb-2 pt-2.5 text-micro", drawer ? "text-paper" : "text-paper/60")}>
               <MoreHorizontal className="size-[22px]" strokeWidth={1.5} aria-hidden />
               Más
             </button>

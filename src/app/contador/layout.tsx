@@ -11,7 +11,7 @@ export default async function ContadorLayout({ children }: { children: React.Rea
   await requirePersonal();
   return (
     <AppFrame space="personal">
-      <div className="mx-auto w-full max-w-4xl">{children}</div>
+      <div className="w-full">{children}</div>
     </AppFrame>
   );
 }

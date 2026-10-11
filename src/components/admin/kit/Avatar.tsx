@@ -15,7 +15,7 @@ export function Avatar({ name, size = "md", tone = "light", className }: { name:
       aria-hidden
       className={cn(
         "grid shrink-0 place-items-center font-medium",
-        size === "sm" ? "size-7 text-[11px]" : size === "lg" ? "size-14 text-[18px]" : "size-9 text-[13px]",
+        size === "sm" ? "size-7 text-micro" : size === "lg" ? "size-14 text-title" : "size-9 text-meta",
         tone === "dark" ? "bg-paper/10 text-paper" : "border border-line bg-navy-soft text-ink",
         className,
       )}

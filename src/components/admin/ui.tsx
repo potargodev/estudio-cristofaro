@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 // Componentes de formulario del backoffice, sobre shadcn/ui. Todos funcionan con
 // <form action={serverAction}> nativo (sin estado de formulario en el cliente).
 
-const buttonVariants = { primary: "default", secondary: "outline", danger: "ghost" } as const;
+const buttonVariants = { primary: "default", secondary: "outline", danger: "danger" } as const;
 
 export function SubmitButton({
   children,
@@ -40,10 +40,7 @@ export function SubmitButton({
   const { pending } = useFormStatus();
   const ref = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
-  const className = cn(
-    "h-9 px-4 text-[15px]",
-    variant === "danger" && "border border-danger/40 bg-transparent text-danger hover:border-danger hover:bg-danger/5",
-  );
+  const className = "text-ui";
   const buttonVariant = buttonVariants[variant];
 
   if (!confirm) {
@@ -62,7 +59,7 @@ export function SubmitButton({
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-lg">{confirm}</AlertDialogTitle>
+            <AlertDialogTitle className="text-title">{confirm}</AlertDialogTitle>
             <AlertDialogDescription className="sr-only">Confirmá para continuar o cancelá para volver.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -109,7 +106,7 @@ export function FormSelect({
     <>
       <input type="hidden" name={name} value={value === EMPTY ? "" : value} />
       <Select value={value} onValueChange={setValue}>
-        <SelectTrigger id={id} aria-label={ariaLabel} className={cn("mt-1 h-9 w-full bg-surface text-[15px]", className)}>
+        <SelectTrigger id={id} aria-label={ariaLabel} className={cn("mt-1 h-(--control-h) w-full bg-surface text-(length:--control-text)", className)}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -139,7 +136,7 @@ export function FormCheckbox({
   return (
     <div className="flex items-center gap-2">
       <Checkbox id={id} name={name} defaultChecked={defaultChecked} />
-      <Label htmlFor={id} className="text-[15px] font-normal">
+      <Label htmlFor={id} className="text-body font-normal">
         {label}
       </Label>
     </div>

@@ -66,16 +66,16 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
       {error && <Notice tone="error">No se pudo guardar. Revisá los datos.</Notice>}
       <Link href="/admin/configuracion/conexiones/tango/sincronizacion" className="block rounded-md border border-line bg-surface p-4 hover:bg-canvas">
         <span className="font-medium">Tango en los dos sentidos</span>
-        <span className="mt-1 block text-[14px] text-muted">Escribí en Tango lo que facturás en Faro, recibí sus cambios, unificá nombres y resolvé diferencias.</span>
+        <span className="mt-1 block text-ui text-muted">Escribí en Tango lo que facturás en Faro, recibí sus cambios, unificá nombres y resolvé diferencias.</span>
       </Link>
 
       <section className="border border-line bg-surface p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h2 className="flex items-center gap-2 text-[18px] font-medium">
+            <h2 className="flex items-center gap-2 text-title font-medium">
               Tango Gestión {state && <Badge tone={state.tone}>{state.label}</Badge>}
             </h2>
-            <p className="mt-1 max-w-2xl text-[15px] text-muted">
+            <p className="mt-1 max-w-2xl text-body text-muted">
               Un conector instalado en la PC donde está Tango lee los clientes por la API Delta y los manda a la plataforma, firmados. La
               plataforma nunca se conecta a la red del estudio.
             </p>
@@ -91,21 +91,21 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
         </div>
 
         {tango && (
-          <dl className="mt-5 grid gap-4 border-t border-line pt-5 text-[15px] sm:grid-cols-4">
+          <dl className="mt-5 grid gap-4 border-t border-line pt-5 text-body sm:grid-cols-4">
             <div>
-              <dt className="text-sm text-muted">Clave del conector</dt>
-              <dd className="font-mono text-sm">{tango.key_prefix ? `${tango.key_prefix}…` : "Sin generar"}</dd>
+              <dt className="text-ui text-muted">Clave del conector</dt>
+              <dd className="font-mono text-ui">{tango.key_prefix ? `${tango.key_prefix}…` : "Sin generar"}</dd>
             </div>
             <div>
-              <dt className="text-sm text-muted">Último contacto</dt>
+              <dt className="text-ui text-muted">Último contacto</dt>
               <dd>{when(tango.last_seen_at)}</dd>
             </div>
             <div>
-              <dt className="text-sm text-muted">Última sincronización</dt>
+              <dt className="text-ui text-muted">Última sincronización</dt>
               <dd>{when(tango.last_sync_at)}</dd>
             </div>
             <div>
-              <dt className="text-sm text-muted">Clientes en Tango</dt>
+              <dt className="text-ui text-muted">Clientes en Tango</dt>
               <dd>
                 <Link href="/admin/configuracion/conexiones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
                   {records.n} sincronizados
@@ -133,8 +133,8 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
       {tango && (
         <>
           <section id="empresas">
-            <h2 className="text-[18px] font-medium">Empresas de Tango</h2>
-            <p className="mt-1 text-[15px] text-muted">
+            <h2 className="text-title font-medium">Empresas de Tango</h2>
+            <p className="mt-1 text-body text-muted">
               Si el estudio usa una empresa de Tango por cada cliente, asigná cada empresa a su organización en la plataforma.
             </p>
             {companies.length === 0 ? (
@@ -148,7 +148,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
                         Empresa {c.company_id}
                         {c.name ? ` · ${c.name}` : ""}
                       </p>
-                      <p className="text-sm text-muted">Última sincronización: {when(c.last_sync_at)}</p>
+                      <p className="text-ui text-muted">Última sincronización: {when(c.last_sync_at)}</p>
                     </div>
                     <form action={mapCompanyToOrganization} className="flex items-center gap-2">
                       <input type="hidden" name="id" value={c.id} />
@@ -171,14 +171,14 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
           </section>
 
           <section>
-            <h2 className="text-[18px] font-medium">Últimas sincronizaciones</h2>
+            <h2 className="text-title font-medium">Últimas sincronizaciones</h2>
             {syncs.length === 0 ? (
               <p className="mt-3 border border-dashed border-line p-5 text-muted">
                 Todavía no hubo sincronizaciones. En la PC de Tango corré <code>node index.mjs test</code> y después <code>node index.mjs sync</code>.
               </p>
             ) : (
               <div className="mt-3 overflow-x-auto border border-line bg-surface">
-                <table className="w-full min-w-[640px] text-left text-sm">
+                <table className="w-full min-w-[640px] text-left text-ui">
                   <thead className="border-b border-line bg-canvas text-muted">
                     <tr>
                       <th className="px-3 py-2 font-medium">Inicio</th>
@@ -211,15 +211,15 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
           </section>
 
           <section id="mapeo" className="border border-line bg-surface p-6">
-            <h2 className="text-[18px] font-medium">Mapeo de campos</h2>
-            <p className="mt-1 max-w-3xl text-[15px] text-muted">
+            <h2 className="text-title font-medium">Mapeo de campos</h2>
+            <p className="mt-1 max-w-3xl text-body text-muted">
               Nombres de campo que se buscan en el JSON de cada cliente de Tango, en orden y sin distinguir mayúsculas. Si un dato no aparece, agregá
               el nombre que trae su Tango. El JSON completo queda guardado, así que el cambio aplica también a lo ya sincronizado.
             </p>
             <form action={saveTangoMapping} className="mt-4 grid gap-4 sm:grid-cols-2">
               {(Object.keys(MAPPING_LABELS) as (keyof TangoMapping)[]).map((k) => (
                 <AdminField key={k} label={MAPPING_LABELS[k]} htmlFor={`map-${k}`}>
-                  <Textarea id={`map-${k}`} name={k} rows={2} defaultValue={mapping[k].join(", ")} className="font-mono text-xs" />
+                  <Textarea id={`map-${k}`} name={k} rows={2} defaultValue={mapping[k].join(", ")} className="font-mono text-caption" />
                 </AdminField>
               ))}
               <div className="sm:col-span-2">

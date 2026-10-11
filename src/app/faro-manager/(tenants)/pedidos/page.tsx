@@ -50,7 +50,7 @@ export default async function PedidosPage({ searchParams }: { searchParams: Prom
                   · {name(r.from_plan)} → <strong className="text-ink">{name(r.to_plan)}</strong>
                 </span>
               </p>
-              <p className="text-[13px] text-muted">
+              <p className="text-meta text-muted">
                 {when.format(r.created_at)} · {email ?? "—"}
                 {r.module_key && ` · por el módulo ${r.module_key}`}
                 {r.message && ` · “${r.message}”`}
@@ -61,16 +61,16 @@ export default async function PedidosPage({ searchParams }: { searchParams: Prom
                 <form action={resolvePlanRequestAction}>
                   <input type="hidden" name="id" value={r.id} />
                   <input type="hidden" name="decision" value="aplicar" />
-                  <button className="h-9 rounded-md bg-navy px-4 text-[13px] text-paper hover:bg-navy-deep">Aplicar el cambio</button>
+                  <button className="h-9 rounded-md bg-navy px-4 text-meta text-paper hover:bg-navy-deep">Aplicar el cambio</button>
                 </form>
                 <form action={resolvePlanRequestAction}>
                   <input type="hidden" name="id" value={r.id} />
                   <input type="hidden" name="decision" value="descartar" />
-                  <button className="h-9 rounded-md border border-line px-4 text-[13px] hover:border-muted">Descartar</button>
+                  <button className="h-9 rounded-md border border-line px-4 text-meta hover:border-muted">Descartar</button>
                 </form>
               </div>
             ) : (
-              <span className="rounded-md bg-navy-soft px-2 py-1 text-[12px] text-muted">{r.status === "pendiente" ? "Pendiente" : r.status === "aplicado" ? "Aplicado" : "Descartado"}</span>
+              <span className="rounded-md bg-navy-soft px-2 py-1 text-caption text-muted">{r.status === "pendiente" ? "Pendiente" : r.status === "aplicado" ? "Aplicado" : "Descartado"}</span>
             )}
           </li>
         ))}

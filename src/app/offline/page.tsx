@@ -10,10 +10,10 @@ export default function OfflinePage() {
       <div className="max-w-sm">
         <Sello className="mx-auto size-20 text-rose-light" />
         <h1 className="mt-8 font-display text-[28px] leading-tight">Estás sin conexión</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-paper/70">
+        <p className="mt-3 text-body leading-relaxed text-paper/70">
           Cuando vuelva internet vas a ver tus vencimientos, documentos y consultas al día. Probá de nuevo en un rato.
         </p>
-        <a href="/app" className="mt-8 inline-flex h-11 items-center bg-rose-light px-5 text-[15px] font-medium text-night">
+        <a href="/app" className="mt-8 inline-flex h-11 items-center bg-rose-light px-5 text-body font-medium text-night">
           Reintentar
         </a>
       </div>

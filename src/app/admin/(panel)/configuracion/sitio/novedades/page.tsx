@@ -31,7 +31,7 @@ export default async function NovedadesAdminPage() {
         {posts.map((p) => (
           <li key={p.id}>
             <Link href={`/admin/configuracion/sitio/novedades/${p.id}`} className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-3 hover:bg-canvas">
-              <span className="min-w-0 truncate text-[14px] font-medium text-ink">{p.title}</span>
+              <span className="min-w-0 truncate text-ui font-medium text-ink">{p.title}</span>
               <StatusBadge status={p.published ? "activa" : "pausada"} label={p.published ? "Publicada" : "Borrador"} />
             </Link>
           </li>

@@ -8,7 +8,7 @@ import { changeTemporaryPassword, type ChangeState } from "./actions";
 
 export function ChangePasswordForm({ email }: { email: string }) {
   const [state, action, pending] = useActionState(changeTemporaryPassword, { ok: false } as ChangeState);
-  const field = "mt-1 h-11 bg-surface text-base";
+  const field = "mt-1 h-11 bg-surface text-lead";
   return (
     <div className="grid min-h-dvh place-items-center bg-navy-deep px-4">
       <form action={action} className="w-full max-w-sm border-t border-rose-light bg-canvas p-7">
@@ -18,24 +18,24 @@ export function ChangePasswordForm({ email }: { email: string }) {
           </span>
           <div>
             <h1 className="font-semibold leading-tight">Elegí una contraseña nueva</h1>
-            <p className="text-sm text-muted">{email}</p>
+            <p className="text-ui text-muted">{email}</p>
           </div>
         </div>
-        <p className="mb-4 text-sm leading-relaxed text-muted">Entraste con una contraseña temporal. Para seguir, reemplazala por una propia.</p>
-        <label htmlFor="current" className="block text-sm font-medium">
+        <p className="mb-4 text-ui leading-relaxed text-muted">Entraste con una contraseña temporal. Para seguir, reemplazala por una propia.</p>
+        <label htmlFor="current" className="block text-ui font-medium">
           Contraseña temporal
         </label>
         <Input id="current" name="current" type="password" autoComplete="current-password" required className={field} />
-        <label htmlFor="password" className="mt-4 block text-sm font-medium">
+        <label htmlFor="password" className="mt-4 block text-ui font-medium">
           Contraseña nueva (mínimo 10 caracteres)
         </label>
         <Input id="password" name="password" type="password" autoComplete="new-password" required minLength={10} className={field} />
-        <label htmlFor="confirm" className="mt-4 block text-sm font-medium">
+        <label htmlFor="confirm" className="mt-4 block text-ui font-medium">
           Repetila
         </label>
         <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required className={field} />
         {state.message && (
-          <p role="alert" className="mt-4 text-sm text-danger">
+          <p role="alert" className="mt-4 text-ui text-danger">
             {state.message}
           </p>
         )}

@@ -64,10 +64,10 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
             <section key={c.id} id={`c-${c.id}`} className="scroll-mt-24 border border-line bg-surface">
               <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
                 <div className="min-w-0">
-                  <p className="flex flex-wrap items-center gap-2 text-[16px] font-medium text-ink">
+                  <p className="flex flex-wrap items-center gap-2 text-lead font-medium text-ink">
                     {c.name} <ConnectionState state={c.status} /> <Tag>prefijo {st.prefix}</Tag>
                   </p>
-                  <p className="mt-1 break-all text-[13px] text-muted">
+                  <p className="mt-1 break-all text-meta text-muted">
                     {creds.url} {st.server?.name ? `· ${st.server.name} ${st.server.version ?? ""}` : ""} · listado {st.listed_at ? when(new Date(st.listed_at)) : "nunca"}
                   </p>
                 </div>
@@ -83,11 +83,11 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
               <form action={saveMcpPermissions} className="px-5 py-4">
                 <input type="hidden" name="id" value={c.id} />
                 {(st.tools ?? []).length === 0 ? (
-                  <p className="text-[14px] text-muted">Sin herramientas listadas todavía.</p>
+                  <p className="text-ui text-muted">Sin herramientas listadas todavía.</p>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full min-w-[600px] text-left text-[14px]">
-                      <thead className="text-[12px] uppercase tracking-wide text-muted">
+                    <table className="w-full min-w-[600px] text-left text-ui">
+                      <thead className="text-caption uppercase tracking-wide text-muted">
                         <tr className="border-b border-line">
                           <th className="py-2 font-medium">Herramienta</th>
                           <th className="py-2 font-medium">Según el servidor</th>
@@ -98,12 +98,12 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
                         {(st.tools ?? []).map((t) => (
                           <tr key={t.name} className="border-b border-line align-top last:border-0">
                             <td className="py-2 pr-3">
-                              <p className="font-mono text-[13px] text-ink">{assistantToolName(st.prefix ?? "mcp", t.name)}</p>
-                              {t.description && <p className="mt-0.5 line-clamp-2 text-[12px] text-muted">{t.description}</p>}
+                              <p className="font-mono text-meta text-ink">{assistantToolName(st.prefix ?? "mcp", t.name)}</p>
+                              {t.description && <p className="mt-0.5 line-clamp-2 text-caption text-muted">{t.description}</p>}
                             </td>
-                            <td className="py-2 pr-3 text-[13px]">{t.readOnly ? "Solo lectura" : "Puede escribir"}</td>
+                            <td className="py-2 pr-3 text-meta">{t.readOnly ? "Solo lectura" : "Puede escribir"}</td>
                             <td className="py-2">
-                              <select name={`perm:${t.name}`} defaultValue={t.permission} aria-label={`Permiso de ${t.name}`} className="h-8 border border-line bg-surface px-2 text-[13px]">
+                              <select name={`perm:${t.name}`} defaultValue={t.permission} aria-label={`Permiso de ${t.name}`} className="h-8 border border-line bg-surface px-2 text-meta">
                                 <option value="off">Desactivada</option>
                                 <option value="lectura">Lectura</option>
                                 <option value="escritura">Escritura (pide confirmación)</option>
@@ -115,7 +115,7 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
                     </table>
                   </div>
                 )}
-                <label className="mt-4 flex items-center gap-2 text-[15px]">
+                <label className="mt-4 flex items-center gap-2 text-body">
                   <input type="checkbox" name="active" defaultChecked={c.status === "activa"} className="size-4 accent-[#1c2235]" />
                   Sumar estas herramientas al Asistente
                 </label>
@@ -125,13 +125,13 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
               </form>
               <div className="grid gap-3 border-t border-line px-5 py-4 [&>*]:min-w-0">
                 <details>
-                  <summary className="cursor-pointer text-[14px] font-medium text-ink">Log</summary>
+                  <summary className="cursor-pointer text-ui font-medium text-ink">Log</summary>
                   <div className="mt-3">
                     <LogTable logs={logs[i]} />
                   </div>
                 </details>
                 <details>
-                  <summary className="cursor-pointer text-[14px] font-medium text-ink">Editar conexión</summary>
+                  <summary className="cursor-pointer text-ui font-medium text-ink">Editar conexión</summary>
                   <div className="mt-3 border border-line bg-canvas p-4">
                     <ServerForm current={{ id: c.id, name: c.name, prefix: st.prefix ?? "", url: creds.url ?? "", header: creds.auth_header ?? "Authorization" }} />
                   </div>

@@ -1,8 +1,9 @@
 import { SubmitButton } from "@/components/admin/ui";
 import { PAYMENT_METHODS } from "@/modules/bitacora/catalog";
+import { fieldClass } from "@/components/ds/primitives";
 
-const field = "mt-1 h-11 w-full rounded-md border border-line bg-surface px-3 text-[15px] text-ink focus:border-navy focus:outline-none";
-const label = "text-[13px] text-muted";
+const field = `mt-1 ${fieldClass}`;
+const label = "text-meta text-muted";
 
 export interface EntryDefaults {
   id?: string;
@@ -49,7 +50,7 @@ export function EntryForm({
               ["ingreso", "Ingreso"],
             ] as const
           ).map(([v, l]) => (
-            <label key={v} className="flex h-11 cursor-pointer items-center justify-center rounded-md border border-line text-[15px] has-[:checked]:border-navy has-[:checked]:bg-navy has-[:checked]:text-paper">
+            <label key={v} className="flex h-11 cursor-pointer items-center justify-center rounded-md border border-line text-body has-[:checked]:border-navy has-[:checked]:bg-navy has-[:checked]:text-paper">
               <input type="radio" name="kind" value={v} defaultChecked={(d.kind ?? "gasto") === v} className="sr-only" />
               {l}
             </label>
@@ -59,7 +60,7 @@ export function EntryForm({
       <div className="grid grid-cols-[1fr_auto] gap-2">
         <label className={label}>
           Monto
-          <input name="amount" required inputMode="decimal" defaultValue={d.amount} placeholder="0" autoComplete="off" className={`${field} tabular-nums text-[18px]`} />
+          <input name="amount" required inputMode="decimal" defaultValue={d.amount} placeholder="0" autoComplete="off" className={`${field} tabular-nums text-title`} />
         </label>
         <label className={label}>
           Moneda
@@ -105,7 +106,7 @@ export function EntryForm({
       </label>
       {!d.id && boxes && boxes.length > 0 && (
         <fieldset className="grid gap-2 rounded-md border border-line p-3 sm:col-span-2">
-          <legend className="px-1 text-[13px] text-muted">¿Va también a una caja compartida?</legend>
+          <legend className="px-1 text-meta text-muted">¿Va también a una caja compartida?</legend>
           <select name="box" defaultValue="" aria-label="Destino" className={field}>
             <option value="">Solo a lo personal</option>
             {boxes.map((b) => (
@@ -114,7 +115,7 @@ export function EntryForm({
               </option>
             ))}
           </select>
-          <div className="flex flex-wrap gap-4 text-[14px]">
+          <div className="flex flex-wrap gap-4 text-ui">
             <label className="flex items-center gap-2">
               <input type="radio" name="final" value="registrar" defaultChecked className="size-4 accent-navy" /> Solo registrar
             </label>
@@ -122,7 +123,7 @@ export function EntryForm({
               <input type="radio" name="final" value="dividir" className="size-4 accent-navy" /> Dividir con la caja
             </label>
           </div>
-          <p className="text-[12px] text-muted">Una sola carga: queda en tu Bitácora y en la caja. Si se divide, en tu Bitácora va tu parte.</p>
+          <p className="text-caption text-muted">Una sola carga: queda en tu Bitácora y en la caja. Si se divide, en tu Bitácora va tu parte.</p>
         </fieldset>
       )}
       <div className="sm:col-span-2">

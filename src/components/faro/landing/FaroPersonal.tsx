@@ -27,7 +27,7 @@ export function FaroPersonal() {
             <SplitHeading id="personal-titulo" className="display-md mt-8 text-ink">
               ¿Sos autónomo y llevás tus números solo?
             </SplitHeading>
-            <p className="mt-8 max-w-lg text-[16px] leading-relaxed text-muted">
+            <p className="mt-8 max-w-lg text-lead leading-relaxed text-muted">
               Faro te ordena los números y te muestra qué vence, cuándo y cuánto, en palabras simples. Para monotributistas y responsables inscriptos que arrancan en autogestión. Lo profesional queda para un contador matriculado, y Faro te lo acerca cuando lo necesitás.
             </p>
             <Reveal as="ul" className="mt-10 divide-y divide-line border-y border-line">
@@ -37,9 +37,9 @@ export function FaroPersonal() {
                   <div>
                     <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
                       {f.title}
-                      {f.soon && <span className="border border-line px-1.5 py-0.5 text-[11px] font-normal text-muted">Próximamente</span>}
+                      {f.soon && <span className="border border-line px-1.5 py-0.5 text-micro font-normal text-muted">Próximamente</span>}
                     </p>
-                    <p className="mt-1 text-[14px] leading-relaxed text-muted">{f.text}</p>
+                    <p className="mt-1 text-ui leading-relaxed text-muted">{f.text}</p>
                   </div>
                 </li>
               ))}
@@ -49,16 +49,16 @@ export function FaroPersonal() {
             {/* Celular con el panel del autónomo */}
             <div className="mx-auto max-w-[340px] border border-line bg-night p-3 shadow-[0_40px_80px_-40px_rgba(15,19,32,0.6)]" role="img" aria-label="Ejemplo del panel de Faro Personal en el celular">
               <div className="bg-navy-deep p-5 text-paper">
-                <p className="text-[12px] text-paper/55">Hola, Martina</p>
+                <p className="text-caption text-paper/55">Hola, Martina</p>
                 <p className="mt-1 font-display text-[26px] leading-tight">Este mes pagás {"$\u00a058.300"}</p>
                 <div className="mt-5 h-2 bg-paper/10" aria-hidden>
                   <div className="h-2 bg-gold" style={{ width: "64%" }} />
                 </div>
-                <p className="mt-2 flex justify-between text-[12px] text-paper/60">
+                <p className="mt-2 flex justify-between text-caption text-paper/60">
                   <span>Categoría D · 64% del tope</span>
                   <span className="text-gold">Según lo cargado</span>
                 </p>
-                <ul className="mt-5 divide-y divide-hair border-y border-hair text-[13px]">
+                <ul className="mt-5 divide-y divide-hair border-y border-hair text-meta">
                   <li className="flex justify-between py-2.5">
                     <span className="text-paper/70">Monotributo</span>
                     <span>20/10 · $ 42.300</span>
@@ -72,15 +72,15 @@ export function FaroPersonal() {
                     <span className="text-gold">Cobrada</span>
                   </li>
                 </ul>
-                <p className="mt-5 flex h-10 items-center justify-center bg-gold text-[14px] font-medium text-night">Nueva factura</p>
+                <p className="mt-5 flex h-10 items-center justify-center bg-gold text-ui font-medium text-night">Nueva factura</p>
               </div>
             </div>
             <ul className="mt-8 grid gap-3 sm:grid-cols-2">
               {plans.map((p) => (
                 <li key={p.key} className={p.recommended ? "border border-gold-ink/50 bg-surface p-4" : "border border-line bg-surface p-4"}>
                   <p className="font-display text-[26px] leading-none text-ink">{p.name}</p>
-                  <p className="mt-1 text-[13px] text-muted">{p.tagline}</p>
-                  <p className="tabular mt-3 text-[15px] text-ink">{priceLabel(p)}</p>
+                  <p className="mt-1 text-meta text-muted">{p.tagline}</p>
+                  <p className="tabular mt-3 text-body text-ink">{priceLabel(p)}</p>
                 </li>
               ))}
             </ul>

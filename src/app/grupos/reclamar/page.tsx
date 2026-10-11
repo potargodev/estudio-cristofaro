@@ -32,14 +32,14 @@ export default async function ClaimPage({ searchParams }: { searchParams: Promis
         <p className="mt-2 text-muted">Entrás como {g.name}. Con una cuenta, ves el grupo desde cualquier dispositivo y tus gastos se suman a tu Bitácora.</p>
       </header>
       {sp.error && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-[14px] text-danger">
+        <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-ui text-danger">
           {sp.error.slice(0, 200)}
         </p>
       )}
       {user ? (
         <form action={claimGuestAction} className="grid gap-3">
           <button className="inline-flex h-12 items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Guardar en la cuenta de {user.name}</button>
-          <p className="text-[13px] text-muted">Tus gastos y saldos en el grupo quedan igual.</p>
+          <p className="text-meta text-muted">Tus gastos y saldos en el grupo quedan igual.</p>
         </form>
       ) : (
         <JoinChoices token="" google={googleEnabled()} next="/grupos/reclamar" accountOnly />

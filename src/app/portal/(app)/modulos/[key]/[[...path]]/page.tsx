@@ -37,10 +37,10 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
       <span className="mx-auto grid size-14 place-items-center bg-rose-soft text-rose-deep">
         <Blocks className="size-7" aria-hidden />
       </span>
-      <p className="mt-4 text-sm font-medium uppercase tracking-wider text-rose-deep">Próximamente</p>
-      <h2 className="mt-1 font-display text-[24px]">{mod.name}</h2>
+      <p className="mt-4 text-ui font-medium uppercase tracking-wider text-rose-deep">Próximamente</p>
+      <h2 className="mt-1 font-display text-headline">{mod.name}</h2>
       <p className="mt-3 leading-relaxed text-muted">{mod.description}</p>
-      <p className="mt-3 text-sm text-muted">El módulo ya está habilitado para {me.organizationName}. Te avisamos cuando esté listo para usar.</p>
+      <p className="mt-3 text-ui text-muted">El módulo ya está habilitado para {me.organizationName}. Te avisamos cuando esté listo para usar.</p>
       <Link href="/portal" className="link-underline mt-6 inline-block text-rose-deep">
         Volver al inicio
       </Link>

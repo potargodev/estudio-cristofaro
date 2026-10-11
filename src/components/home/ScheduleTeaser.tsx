@@ -15,7 +15,7 @@ async function Slots() {
 
 function SlotsFallback() {
   return (
-    <div className="border border-hair p-8 text-[15px] text-paper/60">
+    <div className="border border-hair p-8 text-body text-paper/60">
       Buscando horarios libres… <TextLink href={SCHEDULE_HREF} className="text-paper">Ver la agenda completa</TextLink>
     </div>
   );
@@ -32,8 +32,8 @@ export function ScheduleTeaser() {
             <SplitHeading id="agendar-titulo" className="display-md mt-8 text-paper">
               Veinte minutos para ordenar lo que viene.
             </SplitHeading>
-            <p className="mt-8 max-w-sm text-[17px] leading-relaxed text-paper/65">Elegí el día y el horario acá mismo: te confirmamos al instante con el link de Google Meet. Sin compromiso.</p>
-            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-[15px] text-paper/80">
+            <p className="mt-8 max-w-sm text-title leading-relaxed text-paper/65">Elegí el día y el horario acá mismo: te confirmamos al instante con el link de Google Meet. Sin compromiso.</p>
+            <p className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-body text-paper/80">
               <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="u-draw pb-0.5">
                 Escribir por WhatsApp
               </a>

@@ -2,13 +2,13 @@
 export function Feedback({ ok, error }: { ok?: string; error?: string }) {
   if (error)
     return (
-      <p role="alert" className="mb-5 rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-[15px] text-danger">
+      <p role="alert" className="mb-5 rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-body text-danger">
         {error}
       </p>
     );
   if (ok)
     return (
-      <p role="status" className="mb-5 rounded-md border border-line bg-navy-soft px-4 py-3 text-[15px] text-ink">
+      <p role="status" className="mb-5 rounded-md border border-line bg-navy-soft px-4 py-3 text-body text-ink">
         {ok}
       </p>
     );
@@ -16,5 +16,5 @@ export function Feedback({ ok, error }: { ok?: string; error?: string }) {
 }
 
 export function FleetLabel() {
-  return <span className="inline-block rounded border border-line px-2 py-0.5 text-[12px] font-medium text-muted">Flota · grupo informal</span>;
+  return <span className="inline-block rounded border border-line px-2 py-0.5 text-caption font-medium text-muted">Flota · grupo informal</span>;
 }

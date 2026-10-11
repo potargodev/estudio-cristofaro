@@ -48,7 +48,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
   const ov = new Map(overrides.map((o) => [o.module_key, o]));
   return (
     <div className="max-w-5xl">
-      <Link href="/faro-manager/tenants" className="text-[13px] text-muted underline-offset-4 hover:underline">
+      <Link href="/faro-manager/tenants" className="text-meta text-muted underline-offset-4 hover:underline">
         ← Tenants
       </Link>
       <PageHeader
@@ -62,21 +62,21 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
       <div className="grid gap-6 [&>*]:min-w-0">
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="border border-line bg-surface px-4 py-3">
-            <p className="text-[13px] text-muted">Organizaciones</p>
+            <p className="text-meta text-muted">Organizaciones</p>
             <p className="num text-[30px] text-ink">
-              {orgs.n} <span className="text-[16px] text-muted">/ {e?.limits.organizations ?? "∞"}</span>
+              {orgs.n} <span className="text-lead text-muted">/ {e?.limits.organizations ?? "∞"}</span>
             </p>
           </div>
           <div className="border border-line bg-surface px-4 py-3">
-            <p className="text-[13px] text-muted">Usuarios</p>
+            <p className="text-meta text-muted">Usuarios</p>
             <p className="num text-[30px] text-ink">
-              {staff.filter((u) => u.active).length} <span className="text-[16px] text-muted">/ {e?.limits.staffUsers ?? "∞"}</span>
+              {staff.filter((u) => u.active).length} <span className="text-lead text-muted">/ {e?.limits.staffUsers ?? "∞"}</span>
             </p>
           </div>
           <div className="border border-line bg-surface px-4 py-3">
-            <p className="text-[13px] text-muted">IA este mes</p>
+            <p className="text-meta text-muted">IA este mes</p>
             <p className="num text-[30px] text-ink">US$ {Number(ai.cost).toLocaleString("es-AR", { maximumFractionDigits: 2 })}</p>
-            <p className="text-[12px] text-muted">{ai.calls} llamadas</p>
+            <p className="text-caption text-muted">{ai.calls} llamadas</p>
           </div>
         </div>
 
@@ -85,10 +85,10 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
             <form action={setTenantPlan} className="flex flex-wrap items-end gap-2">
               <input type="hidden" name="id" value={t.id} />
               <div>
-                <label htmlFor="plan" className="text-sm font-medium text-ink/80">
+                <label htmlFor="plan" className="text-ui font-medium text-ink/80">
                   Plan
                 </label>
-                <select id="plan" name="plan" defaultValue={t.plan_key} disabled={!owner} className="mt-1 block h-9 border border-line bg-surface px-2 text-[15px]">
+                <select id="plan" name="plan" defaultValue={t.plan_key} disabled={!owner} className="mt-1 block h-9 border border-line bg-surface px-2 text-body">
                   {plans.map((p) => (
                     <option key={p.key} value={p.key}>
                       {p.name}
@@ -104,7 +104,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                 <input type="hidden" name="status" value={t.status !== "suspendido" ? "suspendido" : "activo"} />
                 {t.status !== "suspendido" ? (
                   <>
-                    <label htmlFor="reason" className="text-sm font-medium text-ink/80">
+                    <label htmlFor="reason" className="text-ui font-medium text-ink/80">
                       Motivo de la suspensión
                     </label>
                     <Input id="reason" name="reason" placeholder="Ej.: falta de pago" />
@@ -116,7 +116,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                   </>
                 ) : (
                   <>
-                    <p className="text-[14px] text-muted">Suspendido: {t.suspended_reason}</p>
+                    <p className="text-ui text-muted">Suspendido: {t.suspended_reason}</p>
                     <div>
                       <SubmitButton>Reactivar</SubmitButton>
                     </div>
@@ -137,7 +137,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                 return (
                   <li key={m.key} className="grid gap-2 px-5 py-3 md:grid-cols-[1fr_auto] md:items-center">
                     <div className="min-w-0">
-                      <p className="flex flex-wrap items-center gap-2 text-[15px] text-ink">
+                      <p className="flex flex-wrap items-center gap-2 text-body text-ink">
                         <span className="font-medium">{m.name}</span>
                         <StatusBadge status={on ? "activa" : "pendiente"} label={on ? "Habilitado" : "No incluido"} />
                         {inPlan && <Tag>En el plan</Tag>}
@@ -149,7 +149,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                           </Tag>
                         )}
                       </p>
-                      {o?.reason && <p className="text-[12px] text-muted">Motivo: {o.reason}</p>}
+                      {o?.reason && <p className="text-caption text-muted">Motivo: {o.reason}</p>}
                     </div>
                     {owner && (
                       <form action={setModuleOverride} className="flex flex-wrap items-center gap-2">
@@ -165,8 +165,8 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                         ) : (
                           <>
                             <input type="hidden" name="enabled" value={inPlan ? "false" : "true"} />
-                            <input name="reason" required placeholder="Motivo" aria-label={`Motivo para ${m.name}`} className="h-9 w-40 border border-line bg-surface px-2 text-[13px]" />
-                            <input name="expires" type="date" aria-label="Vence" className="h-9 border border-line bg-surface px-2 text-[13px]" />
+                            <input name="reason" required placeholder="Motivo" aria-label={`Motivo para ${m.name}`} className="h-9 w-40 border border-line bg-surface px-2 text-meta" />
+                            <input name="expires" type="date" aria-label="Vence" className="h-9 border border-line bg-surface px-2 text-meta" />
                             <SubmitButton variant="secondary" pendingText="…">
                               {inPlan ? "Deshabilitar" : "Habilitar"}
                             </SubmitButton>
@@ -183,7 +183,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
 
         {owner && (
           <Panel title="Límites propios" icon={KeyRound}>
-            <p className="text-[14px] text-muted">Pisan los del plan para este tenant (por ejemplo, organizaciones extra). Vacío = el del plan; ∞ = sin límite.</p>
+            <p className="text-ui text-muted">Pisan los del plan para este tenant (por ejemplo, organizaciones extra). Vacío = el del plan; ∞ = sin límite.</p>
             <form action={setTenantLimitsAction} className="mt-3 grid gap-3 sm:grid-cols-3">
               <input type="hidden" name="id" value={t.id} />
               {(
@@ -193,7 +193,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                   ["smartDocsPerMonth", "Lectura inteligente / mes"],
                 ] as const
               ).map(([k, label]) => (
-                <label key={k} className="grid gap-1 text-[13px] text-muted">
+                <label key={k} className="grid gap-1 text-meta text-muted">
                   {label} (plan: {e?.plan.limits[k] ?? "∞"})
                   <Input name={`limit_${k}`} defaultValue={k in (t.limits ?? {}) ? (t.limits[k] == null ? "∞" : String(t.limits[k])) : ""} />
                 </label>
@@ -208,7 +208,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
         <Panel title="Notas internas" icon={ShieldAlert}>
           <form action={setTenantNotesAction} className="grid gap-2">
             <input type="hidden" name="id" value={t.id} />
-            <textarea name="notes" defaultValue={t.notes ?? ""} rows={3} maxLength={4000} aria-label="Notas internas" placeholder="Solo las ve el equipo de Faro" className="rounded-md border border-line bg-surface p-3 text-[14px]" />
+            <textarea name="notes" defaultValue={t.notes ?? ""} rows={3} maxLength={4000} aria-label="Notas internas" placeholder="Solo las ve el equipo de Faro" className="rounded-md border border-line bg-surface p-3 text-ui" />
             <div>
               <SubmitButton variant="secondary">Guardar notas</SubmitButton>
             </div>
@@ -217,13 +217,13 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
 
         {(
           <Panel title="Acceso asistido" icon={LifeBuoy}>
-            <p className="text-[14px] text-muted">
+            <p className="text-ui text-muted">
               Para dar soporte adentro del tenant. Dura 30 minutos, se le avisa por mail al dueño, se ve un banner mientras dure y todo lo que hagas queda en la auditoría del tenant.
             </p>
             <form action={startAssistedAccess} className="mt-3 flex flex-wrap items-end gap-2">
               <input type="hidden" name="id" value={t.id} />
               <div className="min-w-0 flex-1">
-                <label htmlFor="ar" className="text-sm font-medium text-ink/80">
+                <label htmlFor="ar" className="text-ui font-medium text-ink/80">
                   Motivo
                 </label>
                 <Input id="ar" name="reason" required minLength={10} placeholder="Ej.: el estudio pidió ayuda para configurar Xubio (ticket 123)" className="mt-1" />
@@ -233,7 +233,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
               </SubmitButton>
             </form>
             {grants.length > 0 && (
-              <ul className="mt-4 divide-y divide-line border border-line text-[13px]">
+              <ul className="mt-4 divide-y divide-line border border-line text-meta">
                 {grants.map(({ g, who }) => (
                   <li key={g.id} className="px-3 py-2">
                     {fmt.format(g.created_at)} · {who} · {g.reason} · {g.ended_at ? `terminado ${fmt.format(g.ended_at)}` : g.expires_at < new Date() ? "venció" : `vigente hasta ${fmt.format(g.expires_at)}`}
@@ -245,7 +245,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
         )}
 
         <Panel title="Equipo del tenant" icon={ShieldAlert} bodyClassName="p-0">
-          <ul className="divide-y divide-line text-[14px]">
+          <ul className="divide-y divide-line text-ui">
             {staff.map((u) => (
               <li key={u.email} className="flex flex-wrap items-center justify-between gap-2 px-5 py-2.5">
                 <span>
@@ -263,9 +263,9 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
 
         <Panel title="Auditoría de Faro en este tenant">
           {log.length === 0 ? (
-            <p className="text-[14px] text-muted">Sin acciones del equipo de Faro.</p>
+            <p className="text-ui text-muted">Sin acciones del equipo de Faro.</p>
           ) : (
-            <ul className="grid gap-1.5 text-[13px]">
+            <ul className="grid gap-1.5 text-meta">
               {log.map((l) => (
                 <li key={l.id}>
                   {fmt.format(l.created_at)} · {l.actor_label} · {auditLabel(l.action)} {Object.keys(l.metadata).length ? <span className="text-muted">{JSON.stringify(l.metadata)}</span> : null}

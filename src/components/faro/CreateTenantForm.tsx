@@ -15,10 +15,10 @@ export function CreateTenantForm() {
   if (state.ok && state.password) {
     return (
       <div className="grid max-w-xl gap-3 [&>*]:min-w-0" role="status">
-        <p className="text-[15px] font-medium text-ink">Listo. Le mandamos el acceso a {state.email} (si el SMTP está configurado). Contraseña temporal, por si hay que dictarla:</p>
+        <p className="text-body font-medium text-ink">Listo. Le mandamos el acceso a {state.email} (si el SMTP está configurado). Contraseña temporal, por si hay que dictarla:</p>
         <CodeLine text={state.password} />
-        <p className="text-[13px] text-muted">Se muestra una sola vez. Al entrar se le pide cambiarla{kind === "studio" ? " y activar el segundo factor" : ""}.</p>
-        <Link href={`/faro-manager/${state.studioId}`} className="text-[14px] font-medium underline underline-offset-4">
+        <p className="text-meta text-muted">Se muestra una sola vez. Al entrar se le pide cambiarla{kind === "studio" ? " y activar el segundo factor" : ""}.</p>
+        <Link href={`/faro-manager/${state.studioId}`} className="text-ui font-medium underline underline-offset-4">
           Ver el tenant
         </Link>
       </div>
@@ -27,8 +27,8 @@ export function CreateTenantForm() {
   return (
     <form action={action} className="grid max-w-2xl gap-4 sm:grid-cols-2">
       <fieldset className="sm:col-span-2">
-        <legend className="text-sm font-medium text-ink/80">Tipo</legend>
-        <div className="mt-2 flex gap-4 text-[15px]">
+        <legend className="text-ui font-medium text-ink/80">Tipo</legend>
+        <div className="mt-2 flex gap-4 text-body">
           {(
             [
               ["studio", "Estudio contable o contador"],
@@ -47,7 +47,7 @@ export function CreateTenantForm() {
         <Input id="t-name" name="name" required className="mt-1" />
       </AdminField>
       <AdminField label="Plan" htmlFor="t-plan">
-        <select key={kind} id="t-plan" name="plan" className="mt-1 h-9 w-full border border-line bg-surface px-2 text-[15px]">
+        <select key={kind} id="t-plan" name="plan" className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body">
           {plansFor(kind).map((p) => (
             <option key={p.key} value={p.key}>
               {p.name}
@@ -66,7 +66,7 @@ export function CreateTenantForm() {
         <Input id="t-oe" name="owner_email" type="email" required className="mt-1" />
       </AdminField>
       {state.message && (
-        <p role="alert" className="text-[14px] text-danger sm:col-span-2">
+        <p role="alert" className="text-ui text-danger sm:col-span-2">
           {state.message}
         </p>
       )}

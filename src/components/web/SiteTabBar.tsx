@@ -30,7 +30,7 @@ export function SiteTabBar() {
               <Link
                 href={t.href}
                 aria-current={active ? "page" : undefined}
-                className={cn("flex flex-col items-center gap-1 pb-2 pt-2.5 text-[11px]", active ? "text-paper" : "text-paper/65")}
+                className={cn("flex flex-col items-center gap-1 pb-2 pt-2.5 text-micro", active ? "text-paper" : "text-paper/65")}
               >
                 {t.primary ? (
                   <span className="-mt-6 grid size-12 place-items-center bg-rose-light text-night shadow-[0_10px_24px_-8px_rgba(0,0,0,0.6)]">

@@ -11,7 +11,7 @@ export function Container({ className, children }: { className?: string; childre
 /** Índice fino de sección: número tabular en rosé + nombre (sin mayúsculas forzadas) */
 export function SectionIndex({ n, children, className, light = false }: { n: string; children: React.ReactNode; className?: string; light?: boolean }) {
   return (
-    <p className={cn("flex items-center gap-3 text-[13px]", light ? "text-muted" : "text-paper/60", className)}>
+    <p className={cn("flex items-center gap-3 text-meta", light ? "text-muted" : "text-paper/60", className)}>
       <span className={cn("tabular", light ? "text-rose-deep" : "text-rose-light")}>{n}</span>
       <span aria-hidden className={cn("h-px w-8", light ? "bg-hair-ink" : "bg-hair-strong")} />
       <span>{children}</span>
@@ -38,7 +38,7 @@ export function CtaLink({
     <Link
       href={href}
       className={cn(
-        "inline-flex h-12 items-center rounded-[2px] px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper focus-visible:outline-offset-4",
+        "inline-flex h-12 items-center rounded-[2px] px-6 text-body font-medium text-night transition-colors duration-300 hover:bg-paper focus-visible:outline-offset-4",
         tone === "gold" ? "bg-gold" : "bg-rose-light",
         className,
       )}
@@ -55,7 +55,7 @@ export function GhostLink({ href, children, className }: { href: string; childre
     <Link
       href={href}
       className={cn(
-        "inline-flex h-12 items-center rounded-[2px] border border-hair-strong px-6 text-[15px] text-paper transition-colors duration-300 hover:border-paper/60",
+        "inline-flex h-12 items-center rounded-[2px] border border-hair-strong px-6 text-body text-paper transition-colors duration-300 hover:border-paper/60",
         className,
       )}
     >

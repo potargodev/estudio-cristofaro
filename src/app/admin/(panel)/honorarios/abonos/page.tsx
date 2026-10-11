@@ -6,10 +6,11 @@ import { getDb } from "@/db";
 import { organizations } from "@/db/schema";
 import { requireOperator } from "@/lib/auth";
 import { listPlans, planAmount } from "@/modules/billing/fees";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata = { title: "Abonos" };
 
-const field = "mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink";
+const field = `mt-1 ${fieldClass}`;
 const ars = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const ADJ: Record<string, string> = { ninguno: "Sin ajuste", porcentaje: "Porcentaje fijo", ipc: "Por IPC" };
 
@@ -27,17 +28,17 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           {plans.map(({ p, org }, i) => (
             <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
               <div className="min-w-0">
-                <p className="truncate text-[14px] font-medium">
-                  {org} {!p.active && <span className="text-[12px] font-normal text-muted">· pausado</span>}
+                <p className="truncate text-ui font-medium">
+                  {org} {!p.active && <span className="text-caption font-normal text-muted">· pausado</span>}
                 </p>
-                <p className="text-[13px] text-muted">
+                <p className="text-meta text-muted">
                   {p.concept} · desde {p.start_month} · {ADJ[p.adjust_kind]}
                   {p.adjust_kind !== "ninguno" && ` cada ${p.adjust_every} meses`}
                   {p.adjust_kind === "porcentaje" && ` (${Number(p.adjust_percent)}%)`}
                 </p>
               </div>
-              <span className="text-right text-[13px]">
-                <span className="num block text-[15px]">{ars(current[i])}</span>
+              <span className="text-right text-meta">
+                <span className="num block text-body">{ars(current[i])}</span>
                 {current[i] !== p.amount && <span className="text-muted">base {ars(p.amount)}</span>}
               </span>
             </li>
@@ -45,8 +46,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </ul>
       )}
       <form action={savePlanAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-3 sm:items-end">
-        <p className="text-[14px] font-medium sm:col-span-3">Nuevo abono</p>
-        <label className="text-[13px] text-muted">
+        <p className="text-ui font-medium sm:col-span-3">Nuevo abono</p>
+        <label className="text-meta text-muted">
           Organización
           <select name="org" required className={field}>
             {orgs.map((o) => (
@@ -54,19 +55,19 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             ))}
           </select>
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Concepto
           <input name="concept" defaultValue="Honorarios mensuales" className={field} />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Importe mensual
           <input name="amount" inputMode="decimal" required className={field} />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Desde
           <input name="start" type="month" required defaultValue={period} className={field} />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Ajuste
           <select name="adjust_kind" className={field}>
             <option value="ninguno">Sin ajuste</option>
@@ -75,11 +76,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           </select>
         </label>
         <div className="grid grid-cols-2 gap-2">
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Cada (meses)
             <input name="adjust_every" type="number" min={1} max={12} defaultValue={3} className={field} />
           </label>
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Porcentaje
             <input name="adjust_percent" inputMode="decimal" placeholder="Ej.: 10" className={field} />
           </label>

@@ -14,8 +14,8 @@ export function Insights({ items, volver }: { items: { id: string; kind: string;
           <div key={i.id} className="flex items-start gap-3 rounded-md border border-line bg-surface px-4 py-3">
             <Icon className="mt-0.5 size-4 shrink-0 text-rose-deep" strokeWidth={1.6} aria-hidden />
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-medium text-ink">{i.title}</p>
-              <p className="text-[13px] text-muted">{i.body}</p>
+              <p className="text-ui font-medium text-ink">{i.title}</p>
+              <p className="text-meta text-muted">{i.body}</p>
             </div>
             <form action={dismissInsightAction}>
               <input type="hidden" name="id" value={i.id} />

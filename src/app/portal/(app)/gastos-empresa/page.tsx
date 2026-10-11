@@ -21,7 +21,7 @@ export default async function GastosEmpresaPage() {
       <div className="mb-6 flex flex-wrap gap-3">
         {Object.entries(totals).map(([c, v]) => (
           <Card key={c} className="min-w-48">
-            <p className="text-sm text-muted">Total en {c}</p>
+            <p className="text-ui text-muted">Total en {c}</p>
             <p className="num text-3xl">{formatMoney(v, c)}</p>
           </Card>
         ))}
@@ -35,7 +35,7 @@ export default async function GastosEmpresaPage() {
               <li key={r.id} className="flex items-start justify-between gap-3 py-3" data-testid="gasto-empresa">
                 <div className="min-w-0">
                   <p className="font-medium">{r.description}</p>
-                  <p className="text-sm text-muted">
+                  <p className="text-ui text-muted">
                     {day(r.date)} · {categoryName(r.category)} · {r.source === "rendicion" ? "Rendición" : "Gasto compartido"}
                     {r.deductible && " · deducible"}
                     {r.receipt_path && (

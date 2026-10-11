@@ -7,6 +7,7 @@ import { useActionState, useCallback, useEffect, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown";
 import { confirmCardAction, editGroupCardAction, editMovementCardAction, redoCardAction, retryMessageAction, setAutoAction, undoCardAction, type CardState } from "@/app/vigia/actions";
 import { cn } from "@/lib/utils";
+import { fieldClass } from "@/components/ds/primitives";
 
 // Vigía: chat estilo WhatsApp con el agente (IA). Visualmente distinto de
 // Mensajes (personas): burbujas con el acento rosé y el ícono de varita.
@@ -40,7 +41,7 @@ export interface ChatMessage {
 const time = (iso: string) => new Date(iso).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 const TOOL_LABEL: Record<string, string> = { registrar_en_caja_compartida: "Caja compartida", crear_movimiento: "Bitácora", crear_gasto_en_grupo: "Grupo de gastos", crear_grupo: "Grupo nuevo", recordar: "Recordatorio" };
 const STATUS_LABEL: Record<string, string> = { propuesta: "Para confirmar", confirmada: "Registrado", deshecha: "Deshecho", descartada: "Descartado" };
-const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-2.5 text-[14px] text-ink";
+const field = `mt-1 ${fieldClass}`;
 
 function CardForm({ action, id, children, className }: { action: (p: CardState, fd: FormData) => Promise<CardState>; id: string; children: React.ReactNode; className?: string }) {
   const [state, act, pending] = useActionState(action, { ok: true });
@@ -51,7 +52,7 @@ function CardForm({ action, id, children, className }: { action: (p: CardState, 
         {children}
       </fieldset>
       {state.message && !state.ok && (
-        <p role="alert" className="mt-1 text-[12px] text-danger">
+        <p role="alert" className="mt-1 text-caption text-danger">
           {state.message}
         </p>
       )}
@@ -62,24 +63,24 @@ function CardForm({ action, id, children, className }: { action: (p: CardState, 
 function Card({ p, categories }: { p: ChatProposal; categories: { id: string; name: string }[] }) {
   const [editing, setEditing] = useState(false);
   const d = p.data as Record<string, string | number | null>;
-  const btn = "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium";
+  const btn = "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-meta font-medium";
   return (
     <div className={cn("mt-2 rounded-lg border bg-surface p-3", p.status === "propuesta" ? "border-rose-light" : "border-line", (p.status === "deshecha" || p.status === "descartada") && "opacity-60")}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-[0.12em] text-muted">{p.title.startsWith("Negocio ·") ? "Caja de negocio" : (TOOL_LABEL[p.tool] ?? "Registro")}</p>
-          <p className={cn("text-[15px] font-semibold text-ink", (p.status === "deshecha" || p.status === "descartada") && "line-through")}>{p.title}</p>
+          <p className="text-micro uppercase tracking-[0.12em] text-muted">{p.title.startsWith("Negocio ·") ? "Caja de negocio" : (TOOL_LABEL[p.tool] ?? "Registro")}</p>
+          <p className={cn("text-body font-semibold text-ink", (p.status === "deshecha" || p.status === "descartada") && "line-through")}>{p.title}</p>
           {p.lines.map((l, i) => (
-            <p key={i} className="text-[13px] text-muted">
+            <p key={i} className="text-meta text-muted">
               {l}
             </p>
           ))}
         </div>
-        <span className={cn("shrink-0 rounded px-1.5 py-0.5 text-[11px]", p.status === "confirmada" ? "bg-navy-soft text-ink" : "text-muted")}>
+        <span className={cn("shrink-0 rounded px-1.5 py-0.5 text-micro", p.status === "confirmada" ? "bg-navy-soft text-ink" : "text-muted")}>
           {p.auto && p.status === "confirmada" ? "Registrado solo" : STATUS_LABEL[p.status]}
         </span>
       </div>
-      {p.status === "propuesta" && p.needsConfirm && <p className="mt-1 text-[12px] text-muted">Afecta a otras personas: confirmalo vos.</p>}
+      {p.status === "propuesta" && p.needsConfirm && <p className="mt-1 text-caption text-muted">Afecta a otras personas: confirmalo vos.</p>}
       {!editing && (
         <div className="mt-2 flex flex-wrap gap-2">
           {p.status === "propuesta" && p.tool === "registrar_en_caja_compartida" && (
@@ -143,7 +144,7 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
         </div>
       )}
       {editing && p.tool === "crear_movimiento" && (
-        <CardForm action={editMovementCardAction} id={p.id} className="mt-3 grid grid-cols-2 gap-2 text-[12px] text-muted">
+        <CardForm action={editMovementCardAction} id={p.id} className="mt-3 grid grid-cols-2 gap-2 text-caption text-muted">
           <label className="col-span-2">
             Descripción
             <input name="description" defaultValue={String(d.description ?? "")} required className={field} />
@@ -194,17 +195,17 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
           </label>
           <input type="hidden" name="note" value={String(d.note ?? "")} />
           <div className="col-span-2 flex gap-2">
-            <button type="submit" className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-[13px] font-medium text-paper">
+            <button type="submit" className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-meta font-medium text-paper">
               {p.status === "propuesta" ? "Guardar y confirmar" : "Guardar"}
             </button>
-            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-9 items-center rounded-md border border-line px-3 text-[13px]">
+            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-9 items-center rounded-md border border-line px-3 text-meta">
               Cancelar
             </button>
           </div>
         </CardForm>
       )}
       {editing && p.tool === "crear_gasto_en_grupo" && (
-        <CardForm action={editGroupCardAction} id={p.id} className="mt-3 grid grid-cols-2 gap-2 text-[12px] text-muted">
+        <CardForm action={editGroupCardAction} id={p.id} className="mt-3 grid grid-cols-2 gap-2 text-caption text-muted">
           <label className="col-span-2">
             Descripción
             <input name="description" defaultValue={String(d.description ?? "")} required className={field} />
@@ -219,10 +220,10 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
           </label>
           <p className="col-span-2">El reparto se recalcula en la misma proporción. Para cambiar quién participa, editalo después en el grupo.</p>
           <div className="col-span-2 flex gap-2">
-            <button type="submit" className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-[13px] font-medium text-paper" onClick={() => setTimeout(() => setEditing(false), 400)}>
+            <button type="submit" className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-meta font-medium text-paper" onClick={() => setTimeout(() => setEditing(false), 400)}>
               Actualizar
             </button>
-            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-9 items-center rounded-md border border-line px-3 text-[13px]">
+            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-9 items-center rounded-md border border-line px-3 text-meta">
               Cancelar
             </button>
           </div>
@@ -244,7 +245,7 @@ function Bubble({ m, categories }: { m: ChatMessage; categories: { id: string; n
           </span>
         )}
         <div className="min-w-0">
-          <div className={cn("rounded-2xl px-3.5 py-2.5 text-[15px] leading-snug shadow-sm", mine ? "rounded-br-md bg-navy text-paper" : "rounded-bl-md border border-line bg-surface text-ink")}>
+          <div className={cn("rounded-2xl px-3.5 py-2.5 text-body leading-snug", mine ? "rounded-br-md bg-navy text-paper" : "rounded-bl-md border border-line bg-surface text-ink")}>
             {file && m.kind === "audio" && <audio controls preload="none" src={file} className="mb-1 h-10 w-60 max-w-full" aria-label="Audio que mandaste" />}
             {file && m.kind === "imagen" && (
               <a href={file} target="_blank" rel="noreferrer">
@@ -265,9 +266,9 @@ function Bubble({ m, categories }: { m: ChatMessage; categories: { id: string; n
                   <ReactMarkdown components={{ a: ({ href = "", children }) => (href.startsWith("/") ? <Link href={href}>{children}</Link> : <a href={href} target="_blank" rel="noreferrer">{children}</a>) }}>{m.text}</ReactMarkdown>
                 </div>
               ))}
-            {m.transcript && <p className={cn("mt-1 text-[13px] italic", mine ? "text-paper/75" : "text-muted")}>«{m.transcript}»</p>}
+            {m.transcript && <p className={cn("mt-1 text-meta italic", mine ? "text-paper/75" : "text-muted")}>«{m.transcript}»</p>}
           </div>
-          <p className={cn("mt-0.5 flex items-center gap-1 px-1 text-[11px] text-muted", mine && "justify-end")}>
+          <p className={cn("mt-0.5 flex items-center gap-1 px-1 text-micro text-muted", mine && "justify-end")}>
             {m.status === "procesando" && <Loader2 className="size-3 animate-spin motion-reduce:animate-none" aria-hidden />}
             {m.status === "pendiente" && <Clock className="size-3" aria-hidden />}
             {time(m.createdAt)}
@@ -278,7 +279,7 @@ function Bubble({ m, categories }: { m: ChatMessage; categories: { id: string; n
           {mine && (m.status === "pendiente" || m.status === "error") && (
             <form action={retryMessageAction} className="flex justify-end">
               <input type="hidden" name="id" value={m.id} />
-              <button type="submit" className="text-[12px] text-rose-deep underline underline-offset-4">
+              <button type="submit" className="text-caption text-rose-deep underline underline-offset-4">
                 Reintentar ahora
               </button>
             </form>
@@ -415,8 +416,8 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
             <WandSparkles className="size-5" />
           </span>
           <div>
-            <h1 className="text-[18px] font-semibold leading-tight">Vigía</h1>
-            <p className="text-[12px] text-muted">Tu asistente con IA · registra y responde</p>
+            <h1 className="text-title font-semibold leading-tight">Vigía</h1>
+            <p className="text-caption text-muted">Tu asistente con IA · registra y responde</p>
           </div>
         </div>
         <div className="relative">
@@ -424,12 +425,12 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
             <Settings2 className="size-4" aria-hidden />
           </button>
           {settings && (
-            <form action={setAutoAction} className="absolute right-0 top-full z-20 mt-1 w-72 rounded-md border border-line bg-surface p-3 text-[14px] shadow-lg">
+            <form action={setAutoAction} className="absolute right-0 top-full z-20 mt-1 w-72 rounded-md border border-line bg-surface p-3 text-ui shadow-overlay">
               <label className="flex items-start gap-2">
                 <input type="checkbox" name="auto" defaultChecked={auto} className="mt-1 size-4 accent-navy" onChange={(e) => e.currentTarget.form?.requestSubmit()} />
                 <span>
                   Registrar solo mis movimientos personales
-                  <span className="block text-[12px] text-muted">Siempre con Deshacer. Los gastos de grupo siempre te los pregunto.</span>
+                  <span className="block text-caption text-muted">Siempre con Deshacer. Los gastos de grupo siempre te los pregunto.</span>
                 </span>
               </label>
             </form>
@@ -437,7 +438,7 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
         </div>
       </div>
       {!aiReady && (
-        <p role="note" className="mb-3 rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-3 py-2 text-[13px] text-[#7a5410]">
+        <p role="note" className="mb-3 rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-3 py-2 text-meta text-[#7a5410]">
           La IA todavía no está configurada: por ahora solo leo texto y no puedo interpretar audios ni fotos.
         </p>
       )}
@@ -449,12 +450,12 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
       <div ref={end} />
       <div className={cn("sticky z-20 -mx-4 border-t border-line bg-canvas/95 px-4 py-2.5 backdrop-blur", embedded ? "bottom-0 pb-[calc(0.625rem+env(safe-area-inset-bottom))]" : "bottom-[var(--app-bottom,0px)] sm:-mx-6 sm:px-6 lg:bottom-0 lg:mx-0 lg:rounded-lg lg:border lg:px-3")}>
         {error && (
-          <p role="alert" className="mb-2 text-[13px] text-danger">
+          <p role="alert" className="mb-2 text-meta text-danger">
             {error}
           </p>
         )}
         {file && (
-          <p className="mb-2 flex items-center gap-2 text-[13px]">
+          <p className="mb-2 flex items-center gap-2 text-meta">
             <Paperclip className="size-3.5" aria-hidden /> <span className="truncate">{file.name}</span>
             <button type="button" onClick={() => setFile(null)} aria-label="Quitar el archivo" className="text-muted hover:text-ink">
               <X className="size-4" aria-hidden />
@@ -464,8 +465,8 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
         {rec ? (
           <div className="flex items-center gap-3" role="status">
             <span className="size-3 animate-pulse rounded-full bg-danger motion-reduce:animate-none" aria-hidden />
-            <span className="flex-1 text-[15px] tabular-nums">Grabando… {elapsed}s · soltá para mandar</span>
-            <button type="button" onClick={() => stopRec(true)} className="h-10 rounded-md border border-line px-3 text-[13px]">
+            <span className="flex-1 text-body tabular-nums">Grabando… {elapsed}s · soltá para mandar</span>
+            <button type="button" onClick={() => stopRec(true)} className="h-10 rounded-md border border-line px-3 text-meta">
               Cancelar
             </button>
             <button type="button" onClick={() => stopRec(false)} aria-label="Terminar y mandar" className="grid size-11 place-items-center rounded-full bg-navy text-paper">
@@ -505,7 +506,7 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
               rows={1}
               maxLength={2000}
               placeholder="Contame un gasto…"
-              className="max-h-32 min-h-11 flex-1 resize-none rounded-3xl border border-line bg-surface px-4 py-2.5 text-[15px] text-ink placeholder:text-muted focus:border-navy focus:outline-none"
+              className="max-h-32 min-h-11 flex-1 resize-none rounded-3xl border border-line bg-surface px-4 py-2.5 text-body text-ink placeholder:text-muted focus:border-navy focus:outline-none"
             />
             {text.trim() || file ? (
               <button type="submit" disabled={sending} aria-label="Mandar" className="grid size-11 shrink-0 place-items-center rounded-full bg-navy text-paper disabled:opacity-60">

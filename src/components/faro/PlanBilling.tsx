@@ -22,10 +22,10 @@ function Usage({ label, used, max }: { label: string; used: number; max: number 
   const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
   return (
     <div className="rounded-md border border-line bg-canvas px-4 py-3">
-      <p className="text-[13px] text-muted">{label}</p>
+      <p className="text-meta text-muted">{label}</p>
       <p className="font-display text-[30px] leading-tight text-ink">
         {used}
-        <span className="text-[18px] text-muted"> / {max ?? "∞"}</span>
+        <span className="text-title text-muted"> / {max ?? "∞"}</span>
       </p>
       {max != null && (
         <div className="mt-2 h-1.5 rounded bg-navy-soft" role="meter" aria-valuemin={0} aria-valuemax={max} aria-valuenow={used} aria-label={label}>
@@ -69,11 +69,11 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
       {error && <Notice tone="error">{error}</Notice>}
 
       <Panel title={`Plan ${e.plan.name}`} icon={Compass} action={<Tag>{ars(e.plan, usdArs)}</Tag>}>
-        <p className="text-[15px] text-muted">
+        <p className="text-body text-muted">
           {e.plan.tagline} IA: {AI_LEVEL_LABEL[e.plan.ai]}. Soporte: {e.plan.support}.
         </p>
         {trialLeft != null && (
-          <p className="mt-3 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[14px] text-ink">
+          <p className="mt-3 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-ui text-ink">
             Estás en la prueba gratis: te quedan <strong className="font-semibold">{trialLeft} días</strong> (hasta el {day.format(e.tenant.trial_ends_at!)}). No te cobramos nada sin avisarte.
           </p>
         )}
@@ -93,7 +93,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
           )}
         </div>
         {kind === "studio" && e.plan.extraOrgUsd != null && (
-          <p className="mt-3 text-[13px] text-muted">
+          <p className="mt-3 text-meta text-muted">
             Cada organización extra por encima de las incluidas: {formatArs(e.plan.extraOrgUsd * usdArs)} / mes ({formatUsd(e.plan.extraOrgUsd)}).
           </p>
         )}
@@ -103,7 +103,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
         <h2 id="comparar" className="font-display text-[26px] text-ink">
           Comparar planes
         </h2>
-        <p className="mt-1 text-[14px] text-muted">
+        <p className="mt-1 text-ui text-muted">
           Precios en pesos de referencia (1 USD = {formatArs(usdArs)}). Pagando el año, {ANNUAL_FREE_MONTHS} meses de regalo.
         </p>
         <div className={cn("mt-4 grid gap-4", options.length >= 3 ? "lg:grid-cols-3" : "sm:grid-cols-2")}>
@@ -114,18 +114,18 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
             return (
               <article key={p.key} className={cn("flex flex-col rounded-lg border bg-surface p-5", current ? "border-navy ring-1 ring-navy" : "border-line")}>
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-[19px] font-semibold text-ink">{p.name}</h3>
+                  <h3 className="text-section font-semibold text-ink">{p.name}</h3>
                   {current ? <StatusBadge status="activa" label="Tu plan" /> : p.recommended ? <Tag>Recomendado</Tag> : null}
                 </div>
-                <p className="mt-1 text-[14px] text-muted">{p.tagline}</p>
+                <p className="mt-1 text-ui text-muted">{p.tagline}</p>
                 <p className="mt-4 font-display text-[34px] leading-none text-ink">{ars(p, usdArs)}</p>
                 {!p.free && (
-                  <p className="mt-1 text-[12px] text-muted">
+                  <p className="mt-1 text-caption text-muted">
                     {formatUsd(p.priceUsd)} / mes · anual {formatArs(annualUsd(p) * usdArs)}
                     {p.trialDays ? ` · ${p.trialDays} días gratis` : ""}
                   </p>
                 )}
-                <ul className="mt-4 grid gap-1.5 text-[13px] text-ink">
+                <ul className="mt-4 grid gap-1.5 text-meta text-ink">
                   {kind === "studio" && <li>{p.limits.organizations == null ? "Organizaciones ilimitadas" : `Hasta ${p.limits.organizations} organizaciones`}</li>}
                   {kind === "studio" && <li>{p.limits.staffUsers == null ? "Equipo ilimitado" : `${p.limits.staffUsers} personas del estudio`}</li>}
                   <li>{AI_LEVEL_LABEL[p.ai]}</li>
@@ -154,7 +154,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
                   )}
                   {!online && upgrade &&
                     (asked ? (
-                      <p className="text-[13px] text-muted">Pedido enviado: te escribimos pronto.</p>
+                      <p className="text-meta text-muted">Pedido enviado: te escribimos pronto.</p>
                     ) : (
                       <form action={requestPlanUpgrade}>
                         <input type="hidden" name="plan" value={p.key} />
@@ -184,9 +184,9 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
                     {m.status === "proximamente" && <StatusBadge status="pendiente" label="Próximamente" />}
                     {o && <Tag>{o.enabled ? "Habilitado por Faro" : "Deshabilitado por Faro"}</Tag>}
                   </p>
-                  <p className="mt-0.5 text-[13px] text-muted">{m.description}</p>
+                  <p className="mt-0.5 text-meta text-muted">{m.description}</p>
                 </div>
-                {!on && from && <span className="text-[13px] text-muted">Disponible en el plan {from.name}</span>}
+                {!on && from && <span className="text-meta text-muted">Disponible en el plan {from.name}</span>}
               </li>
             );
           })}

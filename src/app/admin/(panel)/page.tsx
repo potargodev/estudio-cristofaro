@@ -277,13 +277,13 @@ async function Attention({ studioId }: { studioId: string }) {
             <li key={it.key} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3.5">
               <it.icon className="size-[18px] shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
               <div className="min-w-0 basis-[calc(100%-2.25rem)] sm:basis-0 sm:flex-1">
-                <p className="truncate text-[14px] font-medium text-ink">{it.title}</p>
-                <p className="text-[13px] text-muted">{it.detail}</p>
+                <p className="truncate text-ui font-medium text-ink">{it.title}</p>
+                <p className="text-meta text-muted">{it.detail}</p>
               </div>
               <span className="ml-[2.125rem] sm:ml-0">{it.status}</span>
               <Link
                 href={it.action.href}
-                className="ml-auto inline-flex h-8 items-center rounded-md border border-line px-3 text-[13px] font-medium text-ink transition-colors hover:border-navy sm:ml-0"
+                className="ml-auto inline-flex h-8 items-center rounded-md border border-line px-3 text-meta font-medium text-ink transition-colors hover:border-navy sm:ml-0"
               >
                 {it.action.label}
               </Link>
@@ -391,16 +391,16 @@ async function Today({ studioId }: { studioId: string }) {
         <ul className="divide-y divide-line">
           {rows.map(({ b, host }) => (
             <li key={b.id} className="flex items-center gap-4 px-5 py-3">
-              <span className="tabular w-14 shrink-0 text-[15px] font-medium text-ink">{time.format(b.starts_at)}</span>
+              <span className="tabular w-14 shrink-0 text-body font-medium text-ink">{time.format(b.starts_at)}</span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] text-ink">{b.name}</span>
-                <span className="block truncate text-[13px] text-muted">
+                <span className="block truncate text-ui text-ink">{b.name}</span>
+                <span className="block truncate text-meta text-muted">
                   {b.starts_at >= end ? "Mañana · " : ""}con {host}
                   {b.reason ? ` · ${b.reason}` : ""}
                 </span>
               </span>
               {b.meet_url && (
-                <a href={b.meet_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1.5 rounded-md bg-navy px-3 text-[13px] text-paper hover:bg-navy-deep">
+                <a href={b.meet_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1.5 rounded-md bg-navy px-3 text-meta text-paper hover:bg-navy-deep">
                   <Video className="size-4" aria-hidden /> Meet
                 </a>
               )}
@@ -427,7 +427,7 @@ async function RecentActivity({ studioId }: { studioId: string }) {
       ) : (
         <ul className="divide-y divide-line">
           {rows.map((r) => (
-            <li key={r.id} className="flex gap-3 px-5 py-3 text-[14px]">
+            <li key={r.id} className="flex gap-3 px-5 py-3 text-ui">
               <Clock className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />
               <span className="min-w-0 flex-1">
                 <span className="block text-ink">
@@ -441,7 +441,7 @@ async function RecentActivity({ studioId }: { studioId: string }) {
                     </>
                   )}
                 </span>
-                <span className="block truncate text-[13px] text-muted">
+                <span className="block truncate text-meta text-muted">
                   {r.actor ?? "Sistema"} · {when.format(r.at)}
                 </span>
               </span>

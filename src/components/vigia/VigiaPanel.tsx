@@ -100,7 +100,7 @@ export function VigiaPanel({ space, label }: { space: SpaceKey; label: string })
         aria-hidden={!open}
         inert={!open}
         className={cn(
-          "app-ui fixed inset-0 z-[60] flex flex-col bg-canvas text-ink shadow-[-24px_0_60px_-30px_rgba(0,0,0,0.45)] lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[480px] lg:border-l lg:border-line",
+          "app-ui fixed inset-0 z-[60] flex flex-col bg-canvas text-ink shadow-overlay lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[480px] lg:border-l lg:border-line",
           "motion-safe:transition-[transform,visibility] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
           open ? "visible translate-x-0" : "invisible translate-x-full",
         )}
@@ -110,10 +110,10 @@ export function VigiaPanel({ space, label }: { space: SpaceKey; label: string })
             <WandSparkles className="size-4" strokeWidth={1.6} />
           </span>
           <p className="min-w-0 flex-1 leading-tight">
-            <span className="block text-[15px] font-semibold">Vigía</span>
-            <span className="block truncate text-[12px] text-muted">{label}</span>
+            <span className="block text-body font-semibold">Vigía</span>
+            <span className="block truncate text-caption text-muted">{label}</span>
           </p>
-          <Link href={full} onClick={() => setOpen(false)} className="inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 text-[13px] text-ink hover:bg-surface" title="Abrir en pantalla completa">
+          <Link href={full} onClick={() => setOpen(false)} className="inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 text-meta text-ink hover:bg-surface" title="Abrir en pantalla completa">
             <Maximize2 className="size-4" aria-hidden />
             <span className="hidden sm:inline">Abrir en pantalla completa</span>
             <span className="sr-only sm:hidden">Abrir en pantalla completa</span>

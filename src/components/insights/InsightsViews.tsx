@@ -9,7 +9,7 @@ export function InsightsLocked() {
   return (
     <div className="rounded-md border border-line bg-surface">
       <EmptyState icon={ChartLine} title="Indicadores viene con el plan Avanzado" text="Tableros de facturación, cobranza, vencimientos y solicitudes del estudio y de cada organización." />
-      <p className="pb-5 text-center text-[14px]">
+      <p className="pb-5 text-center text-ui">
         <Link href="/admin/configuracion/plan" className="underline underline-offset-4">
           Ver planes
         </Link>
@@ -36,7 +36,7 @@ export async function StudioInsights({ studioId }: { studioId: string }) {
         <BarChart title="Vencimientos cumplidos a término" series={d.onTime} unit="pct" />
         <BarChart title="Solicitudes por mes" series={d.requests} unit="n" />
       </div>
-      <p className="text-[13px] text-muted">
+      <p className="text-meta text-muted">
         Vencimientos a término: presentados o pagados sobre el total que venció cada mes{onTimeLast ? ` (último dato: ${onTimeLast.v} %)` : ""}. Facturado: comprobantes autorizados, con las notas de crédito restando.
       </p>
     </div>
@@ -61,7 +61,7 @@ export async function OrgInsights({ studioId, orgId }: { studioId: string; orgId
         <BarChart title="Resultado (ventas menos gastos)" series={d.result} unit="ars" />
         <BarChart title="Vencimientos cumplidos a término" series={d.onTime} unit="pct" />
       </div>
-      <p className="text-[13px] text-muted">Ventas: comprobantes autorizados en ARCA desde Faro. Gastos: los confirmados en Lectura inteligente y los cargados en la organización.</p>
+      <p className="text-meta text-muted">Ventas: comprobantes autorizados en ARCA desde Faro. Gastos: los confirmados en Lectura inteligente y los cargados en la organización.</p>
     </div>
   );
 }

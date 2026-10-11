@@ -10,10 +10,11 @@ import { REQUEST_TYPES } from "@/lib/portal-types";
 import { createRequest } from "../../../actions";
 import { CONSULT_TOPICS } from "@/modules/ai-consults/core";
 import { consultsAvailable } from "@/modules/ai-consults/server";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Nueva solicitud" };
 
-const field = "mt-1.5 w-full rounded-md border border-line bg-surface px-3 text-[15px]";
+const field = `mt-1 ${fieldClass}`;
 
 export default async function NuevaSolicitudPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const me = await requireMember();
@@ -24,7 +25,7 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
   const consults = can(me.orgRole, "solicitudes.crear") && (await consultsAvailable(me.studioId));
   return (
     <>
-      <Link href="/portal/solicitudes" className="link-underline text-sm text-rose-deep">
+      <Link href="/portal/solicitudes" className="link-underline text-ui text-rose-deep">
         Solicitudes
       </Link>
       <div className="mt-2">
@@ -32,13 +33,13 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
       </div>
       <Card className="max-w-2xl">
         {error && (
-          <p role="alert" className="mb-4 text-sm text-danger">
+          <p role="alert" className="mb-4 text-ui text-danger">
             {error === "campos" ? "Completá el asunto y el mensaje." : error}
           </p>
         )}
         <form action={createRequest} className="grid gap-4">
           <div>
-            <label htmlFor="type" className="block text-sm font-medium">
+            <label htmlFor="type" className="block text-ui font-medium">
               Tipo
             </label>
             <select id="type" name="type" defaultValue={types[0][0]} className={`${field} h-11`}>
@@ -51,7 +52,7 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
           </div>
           {consults && (
             <div>
-              <label htmlFor="tema" className="block text-sm font-medium">
+              <label htmlFor="tema" className="block text-ui font-medium">
                 Tema de la consulta (opcional)
               </label>
               <select id="tema" name="tema" defaultValue="" className={`${field} h-11`}>
@@ -62,17 +63,17 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
                   </option>
                 ))}
               </select>
-              <p className="mt-1.5 text-[13px] text-muted">Si es una consulta laboral o impositiva, el estudio te contesta más rápido: la IA prepara la respuesta y una persona del estudio la revisa antes de enviártela.</p>
+              <p className="mt-1.5 text-meta text-muted">Si es una consulta laboral o impositiva, el estudio te contesta más rápido: la IA prepara la respuesta y una persona del estudio la revisa antes de enviártela.</p>
             </div>
           )}
           <div>
-            <label htmlFor="subject" className="block text-sm font-medium">
+            <label htmlFor="subject" className="block text-ui font-medium">
               Asunto
             </label>
             <input id="subject" name="subject" required maxLength={140} className={`${field} h-11`} />
           </div>
           <div>
-            <label htmlFor="body" className="block text-sm font-medium">
+            <label htmlFor="body" className="block text-ui font-medium">
               Mensaje
             </label>
             <textarea id="body" name="body" required rows={6} maxLength={5000} className={`${field} py-2.5`} />

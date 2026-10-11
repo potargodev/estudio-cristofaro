@@ -11,10 +11,11 @@ import { requireStaff } from "@/lib/auth";
 import { getStudioStaff } from "@/lib/organizations";
 import { cn } from "@/lib/utils";
 import { crmEnabled, listTasks, TASK_STATUS, type TaskStatus } from "@/modules/crm/server";
+import { fieldInlineClass } from "@/components/ds/primitives";
 
 export const metadata = { title: "Tareas" };
 
-const field = "h-9 rounded-md border border-line bg-surface px-2 text-[13px] text-ink";
+const field = fieldInlineClass;
 const d = (s: string | null) => (s ? s.split("-").reverse().join("/") : "Sin fecha");
 const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
@@ -26,7 +27,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
     return (
       <>
         <PageHeader title="Tareas" description="El trabajo del equipo por cliente." />
-        <p className="rounded-md border border-line bg-surface p-4 text-[14px]">Las tareas vienen con el plan Profesional.</p>
+        <p className="rounded-md border border-line bg-surface p-4 text-ui">Las tareas vienen con el plan Profesional.</p>
       </>
     );
   const vista = ["tabla", "kanban", "calendario"].includes(sp.vista ?? "") ? sp.vista! : "tabla";
@@ -99,7 +100,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
               ))}
             </select>
             {vista === "calendario" && <input type="month" name="mes" defaultValue={month} aria-label="Mes" className={field} />}
-            <button className="h-9 rounded-md border border-line px-3 text-[13px]">Filtrar</button>
+            <button className="h-9 rounded-md border border-line px-3 text-meta">Filtrar</button>
           </form>
           <form action={syncTasksAction} className="ml-auto">
             <input type="hidden" name="volver" value={volver} />
@@ -109,7 +110,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
 
         {vista === "tabla" && (
           <div className="overflow-x-auto rounded-md border border-line bg-surface">
-            <table className="w-full min-w-[44rem] text-[13px]">
+            <table className="w-full min-w-[44rem] text-meta">
               <thead className="text-left text-muted">
                 <tr className="border-b border-line">
                   <th className="px-3 py-2">Tarea</th>
@@ -125,7 +126,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
                   <tr key={t.id} className="border-b border-line last:border-0" aria-label={t.title}>
                     <td className="px-3 py-2">
                       <span className={cn("font-medium", t.status === "hecha" && "text-muted line-through")}>{t.title}</span>
-                      {t.source !== "manual" && <span className="ml-1 text-[11px] text-muted">({t.source === "obligacion" ? "vencimiento" : "flujo"})</span>}
+                      {t.source !== "manual" && <span className="ml-1 text-micro text-muted">({t.source === "obligacion" ? "vencimiento" : "flujo"})</span>}
                     </td>
                     <td>{org ?? "—"}</td>
                     <td className={cn("num", t.status !== "hecha" && t.due_date && t.due_date < today && "text-[#8f2a1c]")}>{d(t.due_date)}</td>
@@ -177,13 +178,13 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
               const col = list.filter((r) => r.t.status === st);
               return (
                 <section key={st} aria-label={TASK_STATUS[st]} className="grid content-start gap-2 rounded-md border border-line bg-canvas p-2">
-                  <h2 className="px-1 text-[13px] font-semibold">
+                  <h2 className="px-1 text-meta font-semibold">
                     {TASK_STATUS[st]} <span className="num text-muted">({col.length})</span>
                   </h2>
                   {col.map(({ t, org, assignee }) => (
-                    <article key={t.id} className="grid gap-1 rounded-md border border-line bg-surface p-2.5 text-[13px]" aria-label={t.title}>
+                    <article key={t.id} className="grid gap-1 rounded-md border border-line bg-surface p-2.5 text-meta" aria-label={t.title}>
                       <p className="font-medium">{t.title}</p>
-                      <p className="text-[12px] text-muted">
+                      <p className="text-caption text-muted">
                         {[org, assignee, d(t.due_date)].filter(Boolean).join(" · ")}
                       </p>
                       <div className="flex flex-wrap gap-1">
@@ -194,7 +195,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
                               <input type="hidden" name="id" value={t.id} />
                               <input type="hidden" name="status" value={x} />
                               <input type="hidden" name="volver" value={volver} />
-                              <button className="h-7 rounded-md border border-line px-2 text-[12px] hover:border-muted">→ {TASK_STATUS[x]}</button>
+                              <button className="h-7 rounded-md border border-line px-2 text-caption hover:border-muted">→ {TASK_STATUS[x]}</button>
                             </form>
                           ))}
                       </div>
@@ -209,17 +210,17 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
         {vista === "calendario" && (
           <section aria-label="Calendario" className="grid gap-2">
             <div className="flex items-center justify-between">
-              <Link href={qs({ mes: new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5)) - 2, 1)).toISOString().slice(0, 7) })} className="text-[13px] underline">
+              <Link href={qs({ mes: new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5)) - 2, 1)).toISOString().slice(0, 7) })} className="text-meta underline">
                 ← Anterior
               </Link>
-              <h2 className="text-[15px] font-semibold capitalize">
+              <h2 className="text-body font-semibold capitalize">
                 {MONTHS[Number(month.slice(5)) - 1]} {month.slice(0, 4)}
               </h2>
-              <Link href={qs({ mes: new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5)), 1)).toISOString().slice(0, 7) })} className="text-[13px] underline">
+              <Link href={qs({ mes: new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5)), 1)).toISOString().slice(0, 7) })} className="text-meta underline">
                 Siguiente →
               </Link>
             </div>
-            <div className="grid grid-cols-7 gap-1 text-[11px] text-muted">
+            <div className="grid grid-cols-7 gap-1 text-micro text-muted">
               {["lun", "mar", "mié", "jue", "vie", "sáb", "dom"].map((x) => (
                 <span key={x} className="px-1">
                   {x}
@@ -235,7 +236,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
                   const date = n ? `${month}-${String(n).padStart(2, "0")}` : null;
                   const items = date ? list.filter((r) => r.t.due_date === date) : [];
                   return (
-                    <div key={i} className={cn("min-h-16 rounded-md border p-1 text-[11px]", n ? "border-line bg-surface" : "border-transparent", date === today && "border-navy")} aria-label={date ?? undefined}>
+                    <div key={i} className={cn("min-h-16 rounded-md border p-1 text-micro", n ? "border-line bg-surface" : "border-transparent", date === today && "border-navy")} aria-label={date ?? undefined}>
                       {n && <span className="num text-muted">{n}</span>}
                       {items.slice(0, 3).map(({ t }) => (
                         <p key={t.id} className={cn("truncate rounded px-1", t.status === "hecha" ? "text-muted line-through" : "bg-navy-soft")} title={t.title}>
@@ -253,11 +254,11 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
 
         <form action={createTaskAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-[1.5fr_1fr_1fr_9rem_auto] sm:items-end">
           <input type="hidden" name="volver" value={volver} />
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Nueva tarea
             <input name="title" required placeholder="Ej.: Pedir extractos de septiembre" className={cn(field, "mt-1 block w-full")} />
           </label>
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Organización
             <select name="org" className={cn(field, "mt-1 block w-full")}>
               <option value="">—</option>
@@ -268,7 +269,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
               ))}
             </select>
           </label>
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Responsable
             <select name="assignee" defaultValue={me.id} className={cn(field, "mt-1 block w-full")}>
               <option value="">Sin responsable</option>
@@ -279,7 +280,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
               ))}
             </select>
           </label>
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Vence
             <input name="due" type="date" className={cn(field, "mt-1 block w-full")} />
           </label>

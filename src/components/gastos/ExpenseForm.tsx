@@ -6,6 +6,7 @@ import { createExpenseAction, fxAction, readReceiptAction, type FormState } from
 import { cn } from "@/lib/utils";
 import { CATEGORIES, CURRENCIES, FX_SOURCES, RECURRENCES, SPLIT_METHODS, formatMoney, todayAR, type FxSource } from "@/modules/gastos/constants";
 import { parseAmount, splitExpense, type SplitMethod, type SplitSpec } from "@/modules/gastos/core/split";
+import { fieldClass } from "@/components/ds/primitives";
 
 // Formulario rápido de gasto, pensado para el celular: importe grande con
 // teclado numérico, quién pagó (uno o varios), cómo se divide con vista
@@ -17,8 +18,8 @@ interface Member {
   name: string;
 }
 
-const input = "h-11 w-full border border-line bg-surface px-3 text-[16px] focus:border-navy focus:outline-none";
-const chip = (on: boolean) => cn("border px-3.5 py-2 text-[14px] transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-navy/50");
+const input = fieldClass;
+const chip = (on: boolean) => cn("border px-3.5 py-2 text-ui transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-navy/50");
 const num = (v: string) => {
   const n = Number(v.replace(",", "."));
   return Number.isFinite(n) ? n : 0;
@@ -135,11 +136,11 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
 
       {/* Importe */}
       <div className="border border-line bg-surface p-4">
-        <label htmlFor="g-amount" className="text-[13px] text-muted">
+        <label htmlFor="g-amount" className="text-meta text-muted">
           Importe
         </label>
         <div className="mt-1 flex items-center gap-2">
-          <select aria-label="Moneda" value={currency} onChange={(e) => setCurrency(e.target.value)} className="h-14 border border-line bg-canvas px-2 text-[16px]">
+          <select aria-label="Moneda" value={currency} onChange={(e) => setCurrency(e.target.value)} className="h-14 border border-line bg-canvas px-2 text-lead">
             {CURRENCIES.map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -165,7 +166,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
                 </button>
               ))}
             </div>
-            <label className="flex items-center gap-2 text-[14px]">
+            <label className="flex items-center gap-2 text-ui">
               1 {currency} =
               <input
                 inputMode="decimal"
@@ -181,26 +182,26 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
               {baseCurrency}
             </label>
             {amount > 0 && num(fxRateText) > 0 && (
-              <p className="text-[13px] text-muted">
+              <p className="text-meta text-muted">
                 ≈ {formatMoney(Math.round(amount * num(fxRateText)), baseCurrency)} · se guarda la cotización y su fuente
               </p>
             )}
-            {!fxLoading && fxSource !== "manual" && !fxRateText && <p className="text-[13px] text-muted">No pudimos traer la cotización: cargala a mano o guardalo sin convertir.</p>}
+            {!fxLoading && fxSource !== "manual" && !fxRateText && <p className="text-meta text-muted">No pudimos traer la cotización: cargala a mano o guardalo sin convertir.</p>}
           </div>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
-        <label className="grid gap-1.5 text-[14px]">
+        <label className="grid gap-1.5 text-ui">
           ¿En qué?
           <input value={description} onChange={(e) => setDescription(e.target.value)} required minLength={2} maxLength={140} placeholder="Cena, nafta, alquiler…" className={input} />
         </label>
-        <label className="grid gap-1.5 text-[14px]">
+        <label className="grid gap-1.5 text-ui">
           Fecha
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={input} />
         </label>
       </div>
-      <label className="grid gap-1.5 text-[14px]">
+      <label className="grid gap-1.5 text-ui">
         Categoría
         <select value={category} onChange={(e) => setCategory(e.target.value)} className={input}>
           {Object.entries(CATEGORIES).map(([k, v]) => (
@@ -213,7 +214,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
 
       {/* Quién pagó */}
       <fieldset className="min-w-0">
-        <legend className="mb-2 text-[14px] font-medium">¿Quién pagó?</legend>
+        <legend className="mb-2 text-ui font-medium">¿Quién pagó?</legend>
         {!multiPayer ? (
           <div className="flex flex-wrap gap-2">
             {members.map((m) => (
@@ -226,21 +227,21 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           <ul className="grid gap-2">
             {members.map((m) => (
               <li key={m.id} className="flex items-center gap-3">
-                <span className="flex-1 text-[15px]">{m.id === meId ? "Yo" : m.name}</span>
+                <span className="flex-1 text-body">{m.id === meId ? "Yo" : m.name}</span>
                 <input inputMode="decimal" aria-label={`Pagó ${m.name}`} value={payerAmounts[m.id] ?? ""} onChange={(e) => setPayerAmounts((x) => ({ ...x, [m.id]: e.target.value }))} placeholder="0" className="h-11 w-36 border border-line bg-surface px-3 text-right tabular-nums" />
               </li>
             ))}
           </ul>
         )}
-        <button type="button" onClick={() => setMultiPayer((v) => !v)} className="mt-2 text-[14px] text-rose-deep underline-offset-4 hover:underline">
+        <button type="button" onClick={() => setMultiPayer((v) => !v)} className="mt-2 text-ui text-rose-deep underline-offset-4 hover:underline">
           {multiPayer ? "Pagó una sola persona" : "Pagaron varios"}
         </button>
-        {payerError && <p className="mt-1 text-[13px] text-danger">{payerError}</p>}
+        {payerError && <p className="mt-1 text-meta text-danger">{payerError}</p>}
       </fieldset>
 
       {/* Cómo se divide */}
       <fieldset className="min-w-0">
-        <legend className="mb-2 text-[14px] font-medium">¿Cómo se divide?</legend>
+        <legend className="mb-2 text-ui font-medium">¿Cómo se divide?</legend>
         <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
           {(Object.keys(SPLIT_METHODS) as SplitMethod[]).map((m) => (
             <button key={m} type="button" onClick={() => setMethod(m)} className={cn(chip(method === m), "shrink-0")} aria-pressed={method === m}>
@@ -253,7 +254,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           <ul className="mt-3 grid gap-1">
             {members.map((m) => (
               <li key={m.id}>
-                <label className="flex items-center gap-3 py-1.5 text-[15px]">
+                <label className="flex items-center gap-3 py-1.5 text-body">
                   <input type="checkbox" className="size-5 accent-navy" checked={equal.includes(m.id)} onChange={(e) => setEqual((x) => (e.target.checked ? [...x, m.id] : x.filter((y) => y !== m.id)))} />
                   {m.id === meId ? "Yo" : m.name}
                 </label>
@@ -265,11 +266,11 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           <ul className="mt-3 grid gap-2">
             {members.map((m) => (
               <li key={m.id} className="flex items-center gap-3">
-                <span className="flex-1 text-[15px]">{m.id === meId ? "Yo" : m.name}</span>
+                <span className="flex-1 text-body">{m.id === meId ? "Yo" : m.name}</span>
                 <input inputMode="decimal" aria-label={`${SPLIT_METHODS[method]}: ${m.name}`} value={values[m.id] ?? ""} onChange={(e) => setVal(m.id, e.target.value)} placeholder={method === "porcentaje" ? "%" : method === "partes" ? "partes" : "0"} className="h-11 w-32 border border-line bg-surface px-3 text-right tabular-nums" />
               </li>
             ))}
-            {valueHint && <li className="text-right text-[13px] text-muted">{valueHint}</li>}
+            {valueHint && <li className="text-right text-meta text-muted">{valueHint}</li>}
           </ul>
         )}
         {method === "items" && (
@@ -289,7 +290,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
                       key={m.id}
                       type="button"
                       onClick={() => setItems((x) => x.map((y, j) => (j === i ? { ...y, members: y.members.includes(m.id) ? y.members.filter((z) => z !== m.id) : [...y.members, m.id] } : y)))}
-                      className={cn("px-2.5 py-1 text-[13px]", it.members.includes(m.id) ? "bg-navy text-paper" : "border border-line")}
+                      className={cn("px-2.5 py-1 text-meta", it.members.includes(m.id) ? "bg-navy text-paper" : "border border-line")}
                     >
                       {m.id === meId ? "Yo" : m.name}
                     </button>
@@ -297,17 +298,17 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
                 </div>
               </div>
             ))}
-            <button type="button" onClick={() => setItems((x) => [...x, { description: "", amount: "", members: members.map((m) => m.id) }])} className="inline-flex items-center gap-1.5 justify-self-start text-[14px] text-rose-deep">
+            <button type="button" onClick={() => setItems((x) => [...x, { description: "", amount: "", members: members.map((m) => m.id) }])} className="inline-flex items-center gap-1.5 justify-self-start text-ui text-rose-deep">
               <Plus className="size-4" /> Agregar ítem
             </button>
-            <p className="text-[13px] text-muted">Lo que no está en los ítems (propina, servicio) se reparte en proporción a lo que consumió cada uno.</p>
+            <p className="text-meta text-muted">Lo que no está en los ítems (propina, servicio) se reparte en proporción a lo que consumió cada uno.</p>
           </div>
         )}
 
         {/* Vista previa en vivo */}
         <div className="mt-4 border-l-2 border-gold bg-rose-soft px-4 py-3" aria-live="polite" data-testid="split-preview">
           {preview.shares ? (
-            <ul className="grid gap-1 text-[14px]">
+            <ul className="grid gap-1 text-ui">
               {members
                 .filter((m) => preview.shares![m.id])
                 .map((m) => (
@@ -318,36 +319,36 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
                 ))}
             </ul>
           ) : (
-            <p className={cn("text-[14px]", preview.error ? "text-danger" : "text-muted")}>{preview.error || "Escribí el importe y vas a ver cuánto le toca a cada uno."}</p>
+            <p className={cn("text-ui", preview.error ? "text-danger" : "text-muted")}>{preview.error || "Escribí el importe y vas a ver cuánto le toca a cada uno."}</p>
           )}
         </div>
       </fieldset>
 
       {/* Ticket */}
       <div className="grid gap-2">
-        <span className="text-[14px] font-medium">Ticket o factura (opcional)</span>
-        <label className="flex cursor-pointer items-center gap-3 border border-dashed border-navy/40 bg-surface px-4 py-4 text-[15px] hover:bg-navy-soft/50">
+        <span className="text-ui font-medium">Ticket o factura (opcional)</span>
+        <label className="flex cursor-pointer items-center gap-3 border border-dashed border-navy/40 bg-surface px-4 py-4 text-body hover:bg-navy-soft/50">
           <Camera className="size-5 text-rose-deep" aria-hidden />
           <span className="min-w-0 flex-1 truncate">{fileName || "Sacá una foto o elegí un archivo"}</span>
           <input ref={fileRef} type="file" name="receipt" accept="image/jpeg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf" capture="environment" className="sr-only" onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")} />
         </label>
         {receiptAI && fileName && (
-          <button type="button" onClick={readTicket} disabled={reading} className="inline-flex items-center gap-2 justify-self-start text-[14px] text-rose-deep disabled:opacity-60">
+          <button type="button" onClick={readTicket} disabled={reading} className="inline-flex items-center gap-2 justify-self-start text-ui text-rose-deep disabled:opacity-60">
             <Sparkles className="size-4" aria-hidden />
             {reading ? "Leyendo el ticket…" : "Completar con IA desde el ticket"}
           </button>
         )}
-        {readMsg && <p className="text-[13px] text-muted">{readMsg}</p>}
+        {readMsg && <p className="text-meta text-muted">{readMsg}</p>}
       </div>
 
       <details className="border-y border-line py-3">
-        <summary className="cursor-pointer text-[14px] font-medium">Más opciones</summary>
+        <summary className="cursor-pointer text-ui font-medium">Más opciones</summary>
         <div className="mt-4 grid gap-4">
-          <label className="grid gap-1.5 text-[14px]">
+          <label className="grid gap-1.5 text-ui">
             Notas
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={1000} className="border border-line bg-surface px-3 py-2 text-[16px]" />
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={1000} className="border border-line bg-surface px-3 py-2 text-lead" />
           </label>
-          <label className="grid gap-1.5 text-[14px]">
+          <label className="grid gap-1.5 text-ui">
             Repetir
             <select value={recurrence} onChange={(e) => setRecurrence(e.target.value)} className={input}>
               <option value="">No se repite</option>
@@ -360,27 +361,27 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           </label>
           {hasContext && (
             <div className="grid gap-2">
-              <label className="flex items-center gap-2 text-[14px]">
+              <label className="flex items-center gap-2 text-ui">
                 <input type="checkbox" checked={isCompany} onChange={(e) => setIsCompany(e.target.checked)} className="size-4 accent-navy" />
                 Es un gasto de la empresa
               </label>
-              <label className="flex items-center gap-2 text-[14px]">
+              <label className="flex items-center gap-2 text-ui">
                 <input type="checkbox" checked={isDeductible} onChange={(e) => setIsDeductible(e.target.checked)} className="size-4 accent-navy" />
                 Es deducible
               </label>
-              <p className="text-[13px] text-muted">Marcado, va a los gastos de la contabilidad conectada con su comprobante (y lo ve el estudio).</p>
+              <p className="text-meta text-muted">Marcado, va a los gastos de la contabilidad conectada con su comprobante (y lo ve el estudio).</p>
             </div>
           )}
         </div>
       </details>
 
       {state.message && (
-        <p role="alert" className="text-[14px] text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}
       <div className="sticky bottom-[var(--app-bottom,0px)] -mx-4 border-t border-line bg-canvas/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
-        <button type="submit" disabled={pending || !amount || !!preview.error || !!payerError} className="h-14 w-full bg-navy text-[17px] text-paper hover:bg-navy-deep disabled:opacity-50 sm:w-auto sm:px-10">
+        <button type="submit" disabled={pending || !amount || !!preview.error || !!payerError} className="h-14 w-full bg-navy text-title text-paper hover:bg-navy-deep disabled:opacity-50 sm:w-auto sm:px-10">
           {pending ? "Guardando…" : amount ? `Guardar ${formatMoney(amount, currency)}` : "Guardar gasto"}
         </button>
       </div>

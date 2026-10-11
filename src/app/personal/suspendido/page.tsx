@@ -13,9 +13,9 @@ export default async function PersonalSuspendido({ searchParams }: { searchParam
   if (!user) redirect("/ingresar");
   return (
     <AuthShell title="Cuenta suspendida" subtitle="Faro Personal">
-      <p className="text-[15px] leading-relaxed">Tu cuenta de Faro Personal está suspendida. Tus datos están guardados.</p>
+      <p className="text-body leading-relaxed">Tu cuenta de Faro Personal está suspendida. Tus datos están guardados.</p>
       <PayToReactivate studioId={user.studioId} owner={user.role === "titular"} error={sp.error} />
-      <p className="mt-3 text-[14px] text-muted">Por cualquier consulta escribinos a {FARO.contactEmail()}.</p>
+      <p className="mt-3 text-ui text-muted">Por cualquier consulta escribinos a {FARO.contactEmail()}.</p>
     </AuthShell>
   );
 }

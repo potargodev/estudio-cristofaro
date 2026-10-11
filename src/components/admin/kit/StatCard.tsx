@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils";
 import { Sparkline } from "./Sparkline";
 
 /**
- * Tarjeta de indicador: ícono en un recuadro con hairline, etiqueta, número
- * grande en la serif de marca, variación contra el período anterior (flecha y %
+ * Tarjeta de indicador: ícono y etiqueta, número en Archivo tabular (32 px), variación contra el período anterior (flecha y %
  * con texto, no solo color), sparkline opcional y link "Ver detalle".
  */
 export function StatCard({
@@ -38,21 +37,23 @@ export function StatCard({
 }) {
   const good = delta ? (delta.value === 0 ? null : delta.value > 0 === (delta.goodWhen === "up")) : null;
   const Arrow = !delta || delta.value === 0 ? ArrowRight : delta.value > 0 ? ArrowUpRight : ArrowDownRight;
+  // La curva solo aparece si hay historia de verdad (no una línea en cero)
+  const showSpark = spark && spark.filter((v) => v !== 0).length > 1;
   return (
-    <div className={cn("flex flex-col border bg-surface p-5", tone === "alert" ? "border-[#e7b4aa]" : "border-line")}>
+    <div className={cn("flex min-w-0 flex-col rounded-md border bg-surface p-4 sm:p-5", tone === "alert" ? "border-danger/40" : "border-line")}>
       <div className="flex items-start justify-between gap-3">
-        <span className={cn("grid size-10 place-items-center rounded-md", tone === "alert" ? "border border-[#e7b4aa] text-[#8f2a1c]" : "bg-navy text-gold shadow-brand-sm")}>
-          <Icon className="size-[18px]" strokeWidth={1.5} aria-hidden />
-        </span>
-        {spark && <Sparkline data={spark} className="h-7 w-24" />}
+        <p className="flex min-w-0 items-center gap-2 text-ui font-medium text-muted">
+          <Icon className={cn("size-4 shrink-0", tone === "alert" ? "text-danger" : "text-rose-deep")} strokeWidth={1.6} aria-hidden />
+          <span className="truncate">{label}</span>
+        </p>
+        {showSpark && <Sparkline data={spark} className="h-6 w-20 shrink-0" />}
       </div>
-      <p className="mt-4 text-[14px] font-medium text-muted">{label}</p>
-      <p className="tabular mt-1 num text-[44px] leading-none text-ink">
+      <p className="num mt-3 text-metric text-ink">
         {display ?? (value === null ? "—" : <Counter value={value} prefix={prefix} suffix={suffix} duration={800} />)}
       </p>
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
         {delta && (
-          <span className={cn("tabular inline-flex items-center gap-0.5 font-medium", good === null ? "text-muted" : good ? "text-[#1f7a43]" : "text-[#b42318]")}>
+          <span className={cn("num inline-flex items-center gap-0.5 font-medium", good === null ? "text-muted" : good ? "text-[#1f7a43]" : "text-[#b42318]")}>
             <Arrow className="size-3.5" strokeWidth={2} aria-hidden />
             {delta.value > 0 ? "+" : ""}
             {delta.value}% <span className="font-normal text-muted">{delta.label ?? "vs. período anterior"}</span>
@@ -61,7 +62,7 @@ export function StatCard({
         {hint && <span className="text-muted">{hint}</span>}
       </div>
       {href && (
-        <Link href={href} className="mt-auto inline-flex items-center gap-1 pt-4 text-[13px] font-medium text-ink underline-offset-4 hover:underline">
+        <Link href={href} className="mt-auto inline-flex items-center gap-1 pt-4 text-meta font-medium text-ink underline-offset-4 hover:underline">
           Ver detalle <ArrowRight className="size-3.5" aria-hidden />
         </Link>
       )}

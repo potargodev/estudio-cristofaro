@@ -9,10 +9,11 @@ import { requireStaff } from "@/lib/auth";
 import { FILE_TEMPLATES } from "@/modules/industries/catalog";
 import { PROVINCES, RED_SERVICES } from "@/modules/red/catalog";
 import { acceptedContacts, searchSeekers, SEEKER_KINDS } from "@/modules/red/seekers";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Buscar clientes" };
 
-const field = "mt-1 block w-full rounded-md border border-line bg-surface px-2.5 py-2 text-[14px] text-ink";
+const field = `mt-1 py-2 ${fieldClass}`;
 
 /**
  * Buscar clientes (Red Contable de doble mano, §15): personas, autónomos,
@@ -31,7 +32,7 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
       {issue ? (
-        <p className="rounded-lg border border-line bg-surface p-5 text-[14px]">
+        <p className="rounded-lg border border-line bg-surface p-5 text-ui">
           {issue}{" "}
           <Link href="/admin/comercial/red" className="underline underline-offset-4">
             Ir a tu perfil en la Red Contable
@@ -40,7 +41,7 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
       ) : (
         <>
           <form method="get" className="grid gap-2 rounded-lg border border-line bg-surface p-4 sm:grid-cols-5 sm:items-end" role="search" aria-label="Filtrar">
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Tipo
               <select name="tipo" defaultValue={f.tipo ?? ""} className={field}>
                 <option value="">Todos</option>
@@ -51,7 +52,7 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
                 ))}
               </select>
             </label>
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Rubro
               <select name="rubro" defaultValue={f.rubro ?? ""} className={field}>
                 <option value="">Todos</option>
@@ -62,7 +63,7 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
                 ))}
               </select>
             </label>
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Provincia
               <select name="provincia" defaultValue={f.provincia ?? ""} className={field}>
                 <option value="">Todas</option>
@@ -73,7 +74,7 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
                 ))}
               </select>
             </label>
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Necesita
               <select name="necesidad" defaultValue={f.necesidad ?? ""} className={field}>
                 <option value="">Cualquier cosa</option>
@@ -84,21 +85,21 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
                 ))}
               </select>
             </label>
-            <button className="h-10 rounded-md bg-navy px-4 text-[14px] text-paper">Buscar</button>
+            <button className="h-10 rounded-md bg-navy px-4 text-ui text-paper">Buscar</button>
           </form>
           {list.length === 0 ? (
-            <p className="text-[14px] text-muted">No hay nadie disponible con esos filtros por ahora.</p>
+            <p className="text-ui text-muted">No hay nadie disponible con esos filtros por ahora.</p>
           ) : (
             <ul className="grid gap-3 sm:grid-cols-2" aria-label="Disponibles">
               {list.map((x) => (
                 <li key={x.id} className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-5" data-buscando={x.kind}>
                   <p className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[16px] font-medium">{x.kindLabel}{x.industry ? ` · ${x.industry}` : ""}</span>
+                    <span className="text-lead font-medium">{x.kindLabel}{x.industry ? ` · ${x.industry}` : ""}</span>
                     {x.contact && <StatusBadge status={x.contact.status === "aceptado" ? "activa" : x.contact.status === "rechazado" ? "pausada" : "pendiente"} label={x.contact.status === "aceptado" ? "Aceptó" : x.contact.status === "rechazado" ? "No aceptó" : "Contactado"} />}
                   </p>
-                  <p className="text-[14px] text-muted">{[x.size, x.zone].filter(Boolean).join(" · ") || "Sin zona ni tamaño"}</p>
-                  {x.needs.length > 0 && <p className="text-[14px]">Necesita: {x.needs.join(", ")}</p>}
-                  {x.note && <p className="text-[14px] text-muted">«{x.note}»</p>}
+                  <p className="text-ui text-muted">{[x.size, x.zone].filter(Boolean).join(" · ") || "Sin zona ni tamaño"}</p>
+                  {x.needs.length > 0 && <p className="text-ui">Necesita: {x.needs.join(", ")}</p>}
+                  {x.note && <p className="text-ui text-muted">«{x.note}»</p>}
                   {!x.contact && operator && (
                     <form action={contactSeekerAction} className="mt-auto grid gap-2">
                       <input type="hidden" name="id" value={x.id} />
@@ -114,12 +115,12 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
       )}
       {accepted.length > 0 && (
         <section aria-labelledby="aceptaron" className="rounded-lg border border-line bg-surface p-5">
-          <h3 id="aceptaron" className="text-[16px] font-semibold">
+          <h3 id="aceptaron" className="text-lead font-semibold">
             Aceptaron tu contacto
           </h3>
           <ul className="mt-2 divide-y divide-line">
             {accepted.map((a) => (
-              <li key={a.c.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-[14px]">
+              <li key={a.c.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-ui">
                 <span>
                   {a.fleet ? `Flota «${a.fleet}» · Capitán: ${a.name}` : a.name} · {a.email}
                 </span>

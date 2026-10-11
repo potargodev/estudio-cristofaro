@@ -67,7 +67,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         text="Un contador del estudio lo revisa y te contacta en menos de 24 horas hábiles con una propuesta para tu caso."
       >
         <p className="mt-4">
-          <a href="/agendar" className="inline-flex h-11 items-center rounded-[2px] bg-rose-light px-5 text-[15px] font-medium text-night hover:bg-paper">
+          <a href="/agendar" className="inline-flex h-11 items-center rounded-[2px] bg-rose-light px-5 text-body font-medium text-night hover:bg-paper">
             ¿Preferís hablar ya? Agendá una llamada
           </a>
         </p>
@@ -110,7 +110,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
                 transition={{ duration: reduce ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
               />
             </span>
-            <span className={`mt-2 hidden text-[13px] sm:block ${i === step ? "font-medium text-ink" : "text-muted"}`}>
+            <span className={`mt-2 hidden text-meta sm:block ${i === step ? "font-medium text-ink" : "text-muted"}`}>
               {i + 1}. {t}
             </span>
           </li>
@@ -150,7 +150,7 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
           <input id="company" name="company" defaultValue={v?.company} className={inputClass} />
         </Field>
         <div>
-          <p className="text-[15px] font-medium">¿Cuántos empleados tenés?</p>
+          <p className="text-body font-medium">¿Cuántos empleados tenés?</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {EMPLOYEES.map((e) => (
               <label key={e} className="cursor-pointer">

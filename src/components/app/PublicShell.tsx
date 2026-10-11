@@ -27,15 +27,15 @@ export async function PublicShell({ sub, home: homeHref, children, wide = false 
           <span className="flex-1" />
           <ThemeToggle className="text-paper/75 hover:text-paper" />
           {back ? (
-            <Link href={back} className="text-[13px] text-paper/80 underline-offset-4 hover:underline">
+            <Link href={back} className="text-meta text-paper/80 underline-offset-4 hover:underline">
               Volver a mi espacio
             </Link>
           ) : (
             <>
-              <Link href="/ingresar" className="hidden text-[13px] text-paper/80 underline-offset-4 hover:underline sm:inline">
+              <Link href="/ingresar" className="hidden text-meta text-paper/80 underline-offset-4 hover:underline sm:inline">
                 Ingresar
               </Link>
-              <Link href="/faro/registro" className="rounded-md bg-gold px-3 py-1.5 text-[13px] font-medium text-night hover:bg-paper">
+              <Link href="/faro/registro" className="rounded-md bg-gold px-3 py-1.5 text-meta font-medium text-night hover:bg-paper">
                 Crear cuenta
               </Link>
             </>
@@ -46,7 +46,7 @@ export async function PublicShell({ sub, home: homeHref, children, wide = false 
         {children}
       </main>
       <footer className="border-t border-line">
-        <div className={cn("mx-auto flex flex-wrap gap-x-5 gap-y-2 px-4 py-6 text-[13px] text-muted sm:px-6", width)}>
+        <div className={cn("mx-auto flex flex-wrap gap-x-5 gap-y-2 px-4 py-6 text-meta text-muted sm:px-6", width)}>
           <span>Faro</span>
           <Link href="/faro" className="hover:text-ink">
             Qué es Faro

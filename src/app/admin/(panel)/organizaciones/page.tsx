@@ -205,7 +205,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
       <span className="block min-w-0" title={reasons.join(" · ") || undefined}>
         <StatusBadge status={`riesgo_${risk}`} />
         {reasons.length > 0 && (
-          <span className="mt-1 block truncate text-[12px] text-muted">
+          <span className="mt-1 block truncate text-caption text-muted">
             {reasons[0]}
             {reasons.length > 1 && ` +${reasons.length - 1}`}
           </span>
@@ -226,22 +226,22 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
         })}
       </ul>
     ) : (
-      <span className="text-[13px] text-muted">Ninguno</span>
+      <span className="text-meta text-muted">Ninguno</span>
     );
     const dueCell = soon || late ? (
-      <Link href={`/admin/vencimientos?org=${org.id}`} className="tabular block text-[14px] underline-offset-4 hover:underline">
+      <Link href={`/admin/vencimientos?org=${org.id}`} className="tabular block text-ui underline-offset-4 hover:underline">
         <span className={late ? "font-medium text-[#8f2a1c]" : "text-ink"}>{soon + late}</span>
-        <span className="ml-1.5 text-[12px] text-muted">{due?.next ? `próx. ${shortDate.format(new Date(`${due.next}T00:00:00Z`))}` : "vencidos"}</span>
+        <span className="ml-1.5 text-caption text-muted">{due?.next ? `próx. ${shortDate.format(new Date(`${due.next}T00:00:00Z`))}` : "vencidos"}</span>
       </Link>
     ) : (
-      <span className="text-[13px] text-muted">—</span>
+      <span className="text-meta text-muted">—</span>
     );
     const reqCell = reqs ? (
-      <Link href={`/admin/organizaciones/${org.id}?tab=solicitudes`} className="tabular text-[14px] text-ink underline-offset-4 hover:underline">
+      <Link href={`/admin/organizaciones/${org.id}?tab=solicitudes`} className="tabular text-ui text-ink underline-offset-4 hover:underline">
         {reqs}
       </Link>
     ) : (
-      <span className="text-[13px] text-muted">—</span>
+      <span className="text-meta text-muted">—</span>
     );
     const name = (
       <span className="flex min-w-0 items-center gap-3">
@@ -250,7 +250,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
           <Link href={`/admin/organizaciones/${org.id}`} className="block truncate font-medium text-ink underline-offset-4 hover:underline">
             {org.name}
           </Link>
-          <span className="tabular block truncate text-[12px] text-muted">
+          <span className="tabular block truncate text-caption text-muted">
             {sub}
             {org.status !== "activa" && ` · ${ORGANIZATION_STATUSES[org.status]}`}
           </span>
@@ -273,13 +273,13 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
       },
       cells: {
         name,
-        plan: planName ? <Tag>{planName}</Tag> : <span className="text-[13px] text-muted">Sin plan</span>,
-        lead: lead ? <span className="text-[14px] text-ink">{lead}</span> : <span className="text-[13px] text-muted">Sin responsable</span>,
+        plan: planName ? <Tag>{planName}</Tag> : <span className="text-meta text-muted">Sin plan</span>,
+        lead: lead ? <span className="text-ui text-ink">{lead}</span> : <span className="text-meta text-muted">Sin responsable</span>,
         modules,
         due: dueCell,
         reqs: reqCell,
         risk: health,
-        last: <span className={`text-[13px] ${last ? "text-ink" : "text-muted"}`}>{ago(last, now)}</span>,
+        last: <span className={`text-meta ${last ? "text-ink" : "text-muted"}`}>{ago(last, now)}</span>,
       },
       card: (
         <div className="space-y-2.5">
@@ -287,11 +287,11 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
             {name}
             <StatusBadge status={`riesgo_${risk}`} />
           </div>
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 pl-12 text-[13px] text-muted">
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 pl-12 text-meta text-muted">
             {planName ? <Tag>{planName}</Tag> : <span>Sin plan</span>}
             <span>{lead ?? "Sin responsable"}</span>
           </p>
-          <p className="tabular flex flex-wrap gap-x-4 gap-y-1 pl-12 text-[13px] text-muted">
+          <p className="tabular flex flex-wrap gap-x-4 gap-y-1 pl-12 text-meta text-muted">
             <span>
               <span className={late ? "font-medium text-[#8f2a1c]" : "text-ink"}>{soon + late}</span> vencimientos
             </span>
@@ -300,7 +300,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
             </span>
             <span>{ago(last, now)}</span>
           </p>
-          {reasons.length > 0 && <p className="pl-12 text-[12px] text-muted">{reasons.join(" · ")}</p>}
+          {reasons.length > 0 && <p className="pl-12 text-caption text-muted">{reasons.join(" · ")}</p>}
         </div>
       ),
     };
@@ -317,14 +317,14 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
       <PageHeader title="Organizaciones" description="Clientes del estudio con su plan, responsable, módulos y estado de salud. Los vencimientos cuentan los próximos 14 días y los atrasados." actions={role !== "colaborador" ? <HeaderAction href="/admin/organizaciones/nueva" label="Nueva organización" tour="accion" /> : undefined} />
       {connected.length > 0 && (
         <section aria-labelledby="conectadas" className="mb-5 rounded-lg border border-line bg-surface">
-          <h2 id="conectadas" className="px-5 pt-4 text-[15px] font-semibold">
+          <h2 id="conectadas" className="px-5 pt-4 text-body font-semibold">
             Cuentas conectadas <span className="font-normal text-muted">· trabajás sobre sus datos en vivo, con su permiso</span>
           </h2>
           <ul className="mt-2 divide-y divide-line">
             {connected.map(({ c, name, email }) => (
               <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3" data-cuenta-conectada>
-                <Link href={`/admin/organizaciones/cuenta/${c.id}`} className="min-w-0 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
-                  {name} <span className="block text-[13px] font-normal text-muted">{email}</span>
+                <Link href={`/admin/organizaciones/cuenta/${c.id}`} className="min-w-0 text-body font-medium text-ink underline-offset-4 hover:underline">
+                  {name} <span className="block text-meta font-normal text-muted">{email}</span>
                 </Link>
                 <span className="flex items-center gap-2">
                   {c.status !== "activa" && <StatusBadge status="pausada" label="En cierre" />}

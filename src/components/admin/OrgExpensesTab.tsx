@@ -27,13 +27,13 @@ export async function OrgExpensesTab({ orgId, studioId }: { orgId: string; studi
     <div className="grid gap-8">
       <section>
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="font-display text-2xl">Gastos de la organización</h2>
-          <p className="text-[14px] text-muted">{Object.entries(totals).map(([c, v]) => formatMoney(v, c)).join(" · ") || "Sin gastos"}</p>
+          <h2 className="font-display text-headline">Gastos de la organización</h2>
+          <p className="text-ui text-muted">{Object.entries(totals).map(([c, v]) => formatMoney(v, c)).join(" · ") || "Sin gastos"}</p>
         </div>
-        <p className="mt-1 text-[14px] text-muted">Rendiciones aprobadas y grupos de gastos marcados como de la empresa o deducibles.</p>
+        <p className="mt-1 text-ui text-muted">Rendiciones aprobadas y grupos de gastos marcados como de la empresa o deducibles.</p>
         <ul className="mt-4 divide-y divide-line border-y border-line">
           {rows.map((r) => (
-            <li key={r.id} className="flex items-start justify-between gap-3 py-3 text-[14px]">
+            <li key={r.id} className="flex items-start justify-between gap-3 py-3 text-ui">
               <div className="min-w-0">
                 <p className="font-medium text-ink">{r.description}</p>
                 <p className="text-muted">
@@ -55,10 +55,10 @@ export async function OrgExpensesTab({ orgId, studioId }: { orgId: string; studi
         </ul>
       </section>
       <section>
-        <h2 className="font-display text-2xl">Rendiciones del equipo</h2>
+        <h2 className="font-display text-headline">Rendiciones del equipo</h2>
         <ul className="mt-4 divide-y divide-line border-y border-line">
           {rends.map(({ r, employee }) => (
-            <li key={r.id} className="flex items-start justify-between gap-3 py-3 text-[14px]">
+            <li key={r.id} className="flex items-start justify-between gap-3 py-3 text-ui">
               <div className="min-w-0">
                 <p className="font-medium text-ink">{r.description}</p>
                 <p className="text-muted">

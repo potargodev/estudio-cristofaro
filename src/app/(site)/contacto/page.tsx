@@ -47,8 +47,8 @@ export default function ContactoPage() {
           <dl className="border-t border-hair lg:col-span-4">
             {rows.map((r) => (
               <div key={r.label} className="border-b border-hair py-5">
-                <dt className="text-[13px] text-paper/55">{r.label}</dt>
-                <dd className="mt-1.5 text-[17px] text-paper">{r.value}</dd>
+                <dt className="text-meta text-paper/55">{r.label}</dt>
+                <dd className="mt-1.5 text-title text-paper">{r.value}</dd>
               </div>
             ))}
           </dl>

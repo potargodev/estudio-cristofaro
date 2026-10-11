@@ -37,7 +37,7 @@ export function PortalAccess({
   return (
     <div>
       {error && (
-        <p role="alert" className="mb-4 rounded-md bg-danger/5 p-3 text-sm text-danger">
+        <p role="alert" className="mb-4 rounded-md bg-danger/5 p-3 text-ui text-danger">
           {error}
         </p>
       )}
@@ -50,20 +50,20 @@ export function PortalAccess({
               Continuar con Google
             </Button>
           </form>
-          <div className="my-5 flex items-center gap-3 text-xs text-muted">
+          <div className="my-5 flex items-center gap-3 text-caption text-muted">
             <span className="h-px flex-1 bg-line" />o con un enlace por mail
             <span className="h-px flex-1 bg-line" />
           </div>
         </>
       )}
       {state.ok ? (
-        <p role="status" className="rounded-md bg-[#e3efe6] p-4 text-[15px] text-[#24583a]">
+        <p role="status" className="rounded-md bg-[#e3efe6] p-4 text-body text-[#24583a]">
           {state.message}
         </p>
       ) : (
         <form action={action}>
           <input type="hidden" name="next" value={next} />
-          <label htmlFor="email" className="block text-sm font-medium">
+          <label htmlFor="email" className="block text-ui font-medium">
             Email
           </label>
           <Input
@@ -74,10 +74,10 @@ export function PortalAccess({
             required
             defaultValue={email}
             readOnly={Boolean(email)}
-            className="mt-1 h-11 bg-surface text-base read-only:bg-paper"
+            className="mt-1 h-11 bg-surface text-lead read-only:bg-paper"
           />
           {state.message && (
-            <p role="alert" className="mt-3 text-sm text-danger">
+            <p role="alert" className="mt-3 text-ui text-danger">
               {state.message}
             </p>
           )}

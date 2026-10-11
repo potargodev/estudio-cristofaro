@@ -25,12 +25,12 @@ export default async function PreciosPage() {
     <>
       <section className="bg-night pb-6 pt-32 lg:pt-40">
         <Container>
-          <p className="text-[13px] text-gold">Precios</p>
+          <p className="text-meta text-gold">Precios</p>
           <h1 className="display-md mt-6 max-w-3xl text-paper">Un plan para cada forma de llevar los números.</h1>
-          <p className="mt-6 max-w-2xl text-[17px] text-paper/70">
+          <p className="mt-6 max-w-2xl text-title text-paper/70">
             Gratis para personas y autónomos que arrancan, y para el contador que empieza con el plan Inicial. Profesional y Avanzado tienen 30 días de prueba y {ANNUAL_FREE_MONTHS} meses de regalo pagando el año.
           </p>
-          <p className="mt-4 text-[13px] text-paper/50">
+          <p className="mt-4 text-meta text-paper/50">
             Precios de referencia en pesos al {day.format(new Date())} (1 USD = {formatArs(usdArs)}). Pueden cambiar con la cotización.
           </p>
         </Container>
@@ -42,12 +42,12 @@ export default async function PreciosPage() {
           <dl className="mt-8 grid gap-6 md:grid-cols-2">
             {faqs.map((f) => (
               <div key={f.q} className="border-t border-hair pt-5">
-                <dt className="text-[17px] font-medium text-paper">{f.q}</dt>
-                <dd className="mt-2 text-[15px] leading-relaxed text-paper/65">{f.a}</dd>
+                <dt className="text-title font-medium text-paper">{f.q}</dt>
+                <dd className="mt-2 text-body leading-relaxed text-paper/65">{f.a}</dd>
               </div>
             ))}
           </dl>
-          <p className="mt-10 text-[14px] text-paper/55">
+          <p className="mt-10 text-ui text-paper/55">
             ¿Dudas? Mirá el{" "}
             <Link href="/ayuda/primeros-pasos/planes" className="underline underline-offset-4">
               artículo de planes

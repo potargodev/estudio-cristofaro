@@ -28,7 +28,7 @@ export function SlotPicker({ days, error, initial }: { days: PickerDay[]; error?
   }
   return (
     <fieldset>
-      <legend className="text-sm font-medium">Día</legend>
+      <legend className="text-ui font-medium">Día</legend>
       <div className="-mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-2" role="radiogroup" aria-label="Día">
         {days.map((d) => (
           <button
@@ -41,16 +41,16 @@ export function SlotPicker({ days, error, initial }: { days: PickerDay[]; error?
               setStart("");
             }}
             className={cn(
-              "shrink-0 border px-3 py-2 text-left text-sm transition-colors",
+              "shrink-0 border px-3 py-2 text-left text-ui transition-colors",
               d.date === day ? "border-primary bg-primary text-primary-foreground" : "border-line bg-surface hover:border-muted",
             )}
           >
             <span className="block whitespace-nowrap first-letter:uppercase">{d.label}</span>
-            <span className={cn("block text-xs", d.date === day ? "text-primary-foreground/75" : "text-muted")}>{d.slots.length} horarios</span>
+            <span className={cn("block text-caption", d.date === day ? "text-primary-foreground/75" : "text-muted")}>{d.slots.length} horarios</span>
           </button>
         ))}
       </div>
-      <p className="mt-4 text-sm font-medium" id="slot-label">
+      <p className="mt-4 text-ui font-medium" id="slot-label">
         Horario (hora de Buenos Aires)
       </p>
       <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5" role="radiogroup" aria-labelledby="slot-label">
@@ -62,7 +62,7 @@ export function SlotPicker({ days, error, initial }: { days: PickerDay[]; error?
             aria-checked={sl.iso === start}
             onClick={() => setStart(sl.iso)}
             className={cn(
-              "border py-2.5 text-[15px] tabular-nums transition-colors",
+              "border py-2.5 text-body tabular-nums transition-colors",
               sl.iso === start ? "border-rose-deep bg-rose-soft font-semibold text-rose-deep" : "border-line bg-surface hover:border-muted",
             )}
           >
@@ -72,7 +72,7 @@ export function SlotPicker({ days, error, initial }: { days: PickerDay[]; error?
       </div>
       <input type="hidden" name="start" value={start} />
       {error && (
-        <p role="alert" className="mt-2 text-sm text-danger">
+        <p role="alert" className="mt-2 text-ui text-danger">
           {error}
         </p>
       )}

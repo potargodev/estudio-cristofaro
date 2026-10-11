@@ -46,7 +46,7 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
       <Flash sp={sp} />
       {!conn ? (
         <Panel title="Conectar Google Drive">
-          <ol className="list-decimal space-y-1 pl-5 text-[15px] text-ink/90">
+          <ol className="list-decimal space-y-1 pl-5 text-body text-ink/90">
             <li>Conectá la cuenta de Google del estudio (la dueña de las carpetas).</li>
             <li>Creá las carpetas: una por organización.</li>
             <li>Compartí cada carpeta con su cliente y sincronizá cuando quieras traer lo nuevo.</li>
@@ -56,7 +56,7 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
               Conectar con Google
             </a>
           ) : (
-            <p className="mt-4 text-[14px] text-danger">
+            <p className="mt-4 text-ui text-danger">
               Falta configurar en el servidor GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET y ENCRYPTION_KEY, con la Drive API habilitada y la URI de redirección <code>{driveRedirectUri()}</code>.
             </p>
           )}
@@ -66,10 +66,10 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
           <section className="border border-line bg-surface">
             <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
               <div>
-                <p className="flex items-center gap-2 text-[16px] font-medium text-ink">
+                <p className="flex items-center gap-2 text-lead font-medium text-ink">
                   {conn.name} <ConnectionState state={conn.status} />
                 </p>
-                <p className="mt-1 text-[13px] text-muted">
+                <p className="mt-1 text-meta text-muted">
                   Cuenta {email ?? "—"} · {links.length} de {orgs.length} organizaciones con carpeta · Última sincronización {when(conn.last_sync_at)}
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
               {orgs.map((o) => {
                 const l = linkOf.get(o.id);
                 return (
-                  <li key={o.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-2.5 text-[14px]">
+                  <li key={o.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-2.5 text-ui">
                     <span className="text-ink">{o.name}</span>
                     <span className="flex items-center gap-3 text-muted">
                       {docsOf.get(o.id) ? `${docsOf.get(o.id)} archivos recibidos` : null}

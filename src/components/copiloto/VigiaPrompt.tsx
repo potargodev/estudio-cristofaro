@@ -17,8 +17,8 @@ export function VigiaPrompt() {
         <WandSparkles className="size-5" strokeWidth={1.5} aria-hidden />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[16px] font-medium text-ink">Contale al Vigía</span>
-        <span className="block truncate text-[14px] text-muted">«Ayer 5000 de nafta y 3200 en el chino», una foto del ticket o un audio.</span>
+        <span className="block text-lead font-medium text-ink">Contale al Vigía</span>
+        <span className="block truncate text-ui text-muted">«Ayer 5000 de nafta y 3200 en el chino», una foto del ticket o un audio.</span>
       </span>
       <ArrowRight className="size-4 shrink-0 text-muted transition-transform motion-safe:group-hover:translate-x-0.5" aria-hidden />
     </a>

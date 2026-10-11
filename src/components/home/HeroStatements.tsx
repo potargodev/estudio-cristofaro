@@ -148,7 +148,7 @@ export function HeroStatements({ statements, interval }: { statements: string[];
               </li>
             ))}
           </ol>
-          <span className="tabular text-[12px] text-paper/55">
+          <span className="tabular text-caption text-paper/55">
             0{index + 1} / 0{statements.length}
           </span>
         </div>

@@ -41,7 +41,7 @@ export default async function GestionarPage({
   return (
     <section className="mx-auto max-w-3xl px-5 pb-24 pt-36 sm:px-8 lg:pt-48">
       {sp.reprogramada && <SaveToast message="Listo, reprogramamos la llamada. Te mandamos la confirmación." />}
-      <p className="text-sm text-muted">Tu llamada con el Estudio Cristofaro</p>
+      <p className="text-ui text-muted">Tu llamada con el Estudio Cristofaro</p>
       <h1 className="display-sm mt-4 text-paper first-letter:uppercase">
         {b.status === "cancelada" ? "Llamada cancelada" : fmtDateTime(b.starts_at)}
       </h1>
@@ -79,7 +79,7 @@ export default async function GestionarPage({
           </section>
           <section className="border-t border-hair pt-8">
             <h2 className="font-display text-3xl">Cancelar</h2>
-            <p className="mt-1 text-sm text-muted">Le avisamos al estudio y liberamos el horario.</p>
+            <p className="mt-1 text-ui text-muted">Le avisamos al estudio y liberamos el horario.</p>
             <form action={cancelCall} className="mt-4">
               <input type="hidden" name="token" value={token} />
               <SubmitButton variant="danger" pendingText="Cancelando…" confirm="¿Cancelar la llamada?" confirmLabel="Cancelar llamada">

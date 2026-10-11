@@ -22,11 +22,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       <Feedback sp={sp} />
       <MpAccountForm summary={summary} save={saveFaroMpAction} remove={deleteFaroMpAction} webhookUrl={notificationUrl(null)} canEdit={me.faroRole === "faro_owner"} />
       <section aria-label="Últimos webhooks" className="grid gap-2">
-        <h2 className="text-[16px] font-semibold">Últimos webhooks</h2>
+        <h2 className="text-lead font-semibold">Últimos webhooks</h2>
         {events.length === 0 ? (
-          <p className="text-[14px] text-muted">Todavía no llegó ninguno.</p>
+          <p className="text-ui text-muted">Todavía no llegó ninguno.</p>
         ) : (
-          <ul className="divide-y divide-line rounded-md border border-line bg-surface text-[13px]">
+          <ul className="divide-y divide-line rounded-md border border-line bg-surface text-meta">
             {events.map((e) => (
               <li key={e.id} className="flex flex-wrap justify-between gap-2 px-4 py-2">
                 <span>

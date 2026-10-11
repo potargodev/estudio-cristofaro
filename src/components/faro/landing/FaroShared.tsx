@@ -50,11 +50,11 @@ function Demo() {
         </span>
         <div className="min-w-0 flex-1">
           <p className="font-medium text-paper">Viaje a Mendoza</p>
-          <p className="text-[12px] text-paper/55">Socios · 3 personas · pesos</p>
+          <p className="text-caption text-paper/55">Socios · 3 personas · pesos</p>
         </div>
         <div className="flex -space-x-2">
           {PEOPLE.map((p) => (
-            <span key={p.name} className="grid size-8 place-items-center rounded-full border-2 border-navy-deep text-[12px] font-semibold text-night" style={{ background: p.c }}>
+            <span key={p.name} className="grid size-8 place-items-center rounded-full border-2 border-navy-deep text-caption font-semibold text-night" style={{ background: p.c }}>
               {p.name[0]}
             </span>
           ))}
@@ -64,29 +64,29 @@ function Demo() {
         {EXPENSES.map((e, i) =>
           show(i + 1) ? (
             <li key={e.title} className="faro-demo-in border border-hair p-3">
-              <p className="flex items-center justify-between gap-3 text-[14px] text-paper">
+              <p className="flex items-center justify-between gap-3 text-ui text-paper">
                 <span className="flex items-center gap-2">
                   <e.icon className="size-4 text-gold" strokeWidth={1.5} aria-hidden />
                   {e.title}
                 </span>
-                <span className="font-display text-[20px]">{money(e.amount)}</span>
+                <span className="font-display text-section">{money(e.amount)}</span>
               </p>
-              <p className="mt-1 text-[12px] text-paper/55">Pagó {e.payer} · en partes iguales</p>
-              <div className="mt-2 grid grid-cols-3 gap-1.5 text-center text-[11px]">
+              <p className="mt-1 text-caption text-paper/55">Pagó {e.payer} · en partes iguales</p>
+              <div className="mt-2 grid grid-cols-3 gap-1.5 text-center text-micro">
                 {PEOPLE.map((p) => (
                   <span key={p.name} className="border border-hair py-1 text-paper/75">
                     {p.name} {money(e.amount / 3)}
                   </span>
                 ))}
               </div>
-              {e.company && <p className="mt-2 text-[12px] text-gold">De la empresa: pasa a los gastos de la organización con el ticket.</p>}
+              {e.company && <p className="mt-2 text-caption text-gold">De la empresa: pasa a los gastos de la organización con el ticket.</p>}
             </li>
           ) : null,
         )}
       </ul>
       <div className={cn("mt-4 border-t border-hair pt-4 transition-opacity duration-500", show(3) ? "opacity-100" : "opacity-0")}>
-        <p className="text-[12px] text-paper/55">Saldos</p>
-        <div className="mt-2 grid grid-cols-3 gap-2 text-[13px]">
+        <p className="text-caption text-paper/55">Saldos</p>
+        <div className="mt-2 grid grid-cols-3 gap-2 text-meta">
           {[
             ["Ana", 22000],
             ["Juan", 4000],
@@ -100,15 +100,15 @@ function Demo() {
         </div>
       </div>
       <div className={cn("mt-4 transition-opacity duration-500", show(4) ? "opacity-100" : "opacity-0")}>
-        <p className="text-[12px] text-paper/55">Deudas simplificadas · 2 transferencias</p>
-        <ul className="mt-2 grid gap-1.5 text-[14px] text-paper">
+        <p className="text-caption text-paper/55">Deudas simplificadas · 2 transferencias</p>
+        <ul className="mt-2 grid gap-1.5 text-ui text-paper">
           {[
             ["Lucía", "Ana", 22000],
             ["Lucía", "Juan", 4000],
           ].map(([a, b, v]) => (
             <li key={String(b)} className="flex items-center gap-2">
               {a} <ArrowRight className="size-4 text-gold" aria-hidden /> {b}
-              <span className="ml-auto font-display text-[18px]">{money(Number(v))}</span>
+              <span className="ml-auto font-display text-title">{money(Number(v))}</span>
             </li>
           ))}
         </ul>
@@ -136,14 +136,14 @@ export function FaroShared() {
             <SplitHeading id="gastos-titulo" className="display-md mt-8 text-paper">
               Dividí gastos con socios, equipo o amigos, y que lo de la empresa quede en la contabilidad.
             </SplitHeading>
-            <ul className="mt-10 divide-y divide-hair border-y border-hair text-[15px] text-paper/75">
+            <ul className="mt-10 divide-y divide-hair border-y border-hair text-body text-paper/75">
               {POINTS.map((p) => (
                 <li key={p} className="py-3.5">
                   {p}
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-[14px] text-paper/55">Incluido en todos los planes, para estudios, autónomos, empresas y empleados.</p>
+            <p className="mt-6 text-ui text-paper/55">Incluido en todos los planes, para estudios, autónomos, empresas y empleados.</p>
             <CtaLink tone="gold" href="/faro/registro?tipo=persona" className="mt-8">
               Empezá gratis
             </CtaLink>

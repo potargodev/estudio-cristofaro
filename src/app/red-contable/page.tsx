@@ -10,11 +10,12 @@ import { getCurrentUser } from "@/lib/auth";
 import { getDerivationRules, ownSuggestion } from "@/modules/escudo/server";
 import { StudiosMap } from "@/components/red/StudiosMap";
 import { SectionTabs } from "@/components/app/SectionTabs";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Red Contable", description: "Directorio neutral de estudios contables que usan Faro: matrícula verificada, reseñas de clientes reales y orden sin posiciones pagas." };
 export const dynamic = "force-dynamic";
 
-const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
+const field = `mt-1 ${fieldClass}`;
 
 export default async function RedPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
@@ -42,19 +43,19 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
       <PageHeader title="Encontrá tu estudio contable" description="Estudios y contadores que trabajan con Faro, con la matrícula verificada y reseñas de clientes reales. Nadie paga por aparecer primero." className="mb-0" />
 
       {(derivacion || necesito) && (
-        <section aria-label="Lo que necesitás" data-contexto className="mt-6 rounded-md border border-rose/40 bg-rose-soft p-4 text-[14px] text-ink">
+        <section aria-label="Lo que necesitás" data-contexto className="mt-6 rounded-md border border-rose/40 bg-rose-soft p-4 text-ui text-ink">
           <p className="font-medium">Lo que necesitás: {derivacion ? derivacion.context.need : necesito!.need}</p>
           {derivacion && <p className="mt-1 text-muted">Por qué: {derivacion.context.why}</p>}
-          <p className="mt-2 text-[13px] text-muted">Elegí un estudio y pedile una propuesta: {derivacion ? "le llega este contexto armado, sin que lo tengas que explicar de nuevo." : "contale esto en el pedido."} Faro es una herramienta; el criterio y la responsabilidad profesional son del contador.</p>
+          <p className="mt-2 text-meta text-muted">Elegí un estudio y pedile una propuesta: {derivacion ? "le llega este contexto armado, sin que lo tengas que explicar de nuevo." : "contale esto en el pedido."} Faro es una herramienta; el criterio y la responsabilidad profesional son del contador.</p>
         </section>
       )}
 
       <form method="get" className="mt-8 grid gap-3 rounded-lg border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-6" role="search" aria-label="Filtrar estudios">
-        <label className="text-[13px] text-muted lg:col-span-2">
+        <label className="text-meta text-muted lg:col-span-2">
           Zona (localidad, barrio o provincia)
           <input name="zona" defaultValue={filters.zona ?? ""} placeholder="Ej.: Rosario" className={field} />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Rubro
           <select name="rubro" defaultValue={filters.rubro ?? ""} className={field}>
             <option value="">Todos</option>
@@ -65,7 +66,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
             ))}
           </select>
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Servicio
           <select name="servicio" defaultValue={filters.servicio ?? ""} className={field}>
             <option value="">Todos</option>
@@ -76,7 +77,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
             ))}
           </select>
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Modalidad
           <select name="modalidad" defaultValue={filters.modalidad ?? ""} className={field}>
             <option value="">Cualquiera</option>
@@ -84,7 +85,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
             <option value="remoto">Remoto</option>
           </select>
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Tamaño
           <select name="tamano" defaultValue={filters.tamano ?? ""} className={field}>
             <option value="">Cualquiera</option>
@@ -97,16 +98,16 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-6">
           {mapa && <input type="hidden" name="vista" value="mapa" />}
-          <button type="submit" className="h-10 rounded-md bg-navy px-5 text-[14px] font-medium text-paper hover:bg-night">
+          <button type="submit" className="h-10 rounded-md bg-navy px-5 text-ui font-medium text-paper hover:bg-night">
             Buscar
           </button>
-          <Link href="/red-contable" className="h-10 px-3 text-[14px] leading-10 text-muted underline-offset-4 hover:underline">
+          <Link href="/red-contable" className="h-10 px-3 text-ui leading-10 text-muted underline-offset-4 hover:underline">
             Limpiar
           </Link>
         </div>
       </form>
 
-      <p className="mt-6 text-[14px] text-muted">
+      <p className="mt-6 text-ui text-muted">
         {list.length === 0 ? "No encontramos estudios con esos filtros." : `${list.length} ${list.length === 1 ? "estudio" : "estudios"}`} · Ordenados por reseñas, tiempo de respuesta medido en Faro, cupo y coincidencia con tu búsqueda.{" "}
         <Link href="/ayuda/red-contable/resenas" className="underline underline-offset-4">
           Cómo ordenamos
@@ -123,15 +124,15 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
           <li key={x.studioId}>
             <Link href={`/red-contable/${x.slug}${q}`} className="block h-full rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
               <div className="flex items-start gap-3">
-                <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-md bg-navy font-display text-[22px] text-gold">
+                <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-md bg-navy font-display text-headline text-gold">
                   {x.name.charAt(0)}
                 </span>
                 <div className="min-w-0">
-                  <h2 className="text-[18px] font-semibold text-ink">{x.name}</h2>
-                  <p className="text-[14px] text-muted">{x.profile.headline}</p>
+                  <h2 className="text-title font-semibold text-ink">{x.name}</h2>
+                  <p className="text-ui text-muted">{x.profile.headline}</p>
                 </div>
               </div>
-              <ul className="mt-4 grid gap-1.5 text-[13px] text-ink">
+              <ul className="mt-4 grid gap-1.5 text-meta text-ink">
                 <li className="flex items-center gap-1.5">
                   <BadgeCheck className="size-4 text-rose-deep" aria-hidden /> Matrícula verificada · {x.profile.license_body}
                 </li>
@@ -147,19 +148,19 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
               </ul>
               <p className="mt-3 flex flex-wrap gap-1.5">
                 {x.profile.services.slice(0, 4).map((s) => (
-                  <span key={s} className="rounded border border-line px-2 py-0.5 text-[12px] text-muted">
+                  <span key={s} className="rounded border border-line px-2 py-0.5 text-caption text-muted">
                     {labelOf(RED_SERVICES, s)}
                   </span>
                 ))}
-                {!x.profile.accepting_clients && <span className="rounded border border-line bg-canvas px-2 py-0.5 text-[12px] text-muted">Sin cupo por ahora</span>}
+                {!x.profile.accepting_clients && <span className="rounded border border-line bg-canvas px-2 py-0.5 text-caption text-muted">Sin cupo por ahora</span>}
               </p>
             </Link>
           </li>
         ))}
       </ul>
       )}
-      <section className="mt-12 rounded-lg border border-line bg-surface p-5 text-[14px] text-muted">
-        <h2 className="text-[16px] font-semibold text-ink">¿Sos de un estudio?</h2>
+      <section className="mt-12 rounded-lg border border-line bg-surface p-5 text-ui text-muted">
+        <h2 className="text-lead font-semibold text-ink">¿Sos de un estudio?</h2>
         <p className="mt-1">
           Sumarte a la Red es opcional y está incluido en los planes Profesional y Avanzado. Verificamos la matrícula antes de publicar.{" "}
           <Link href="/ayuda/red-contable/perfil-del-estudio" className="underline underline-offset-4">

@@ -39,11 +39,11 @@ export default function EquipoPage() {
           <dl className="mt-12 grid border-t border-hair md:grid-cols-3">
             {principles.map((p, i) => (
               <div key={p.title} className="border-b border-hair py-8 md:border-b-0 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0">
-                <dt className="flex items-baseline gap-3 text-[17px] text-paper">
-                  <span className="tabular text-[12px] text-rose-light">0{i + 1}</span>
+                <dt className="flex items-baseline gap-3 text-title text-paper">
+                  <span className="tabular text-caption text-rose-light">0{i + 1}</span>
                   {p.title}
                 </dt>
-                <dd className="mt-3 text-[15px] leading-relaxed text-paper/65">{p.text}</dd>
+                <dd className="mt-3 text-body leading-relaxed text-paper/65">{p.text}</dd>
               </div>
             ))}
           </dl>

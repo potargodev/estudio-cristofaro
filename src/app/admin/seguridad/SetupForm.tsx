@@ -14,16 +14,16 @@ export function SetupForm() {
   if (!setup.ok) {
     return (
       <form action={start}>
-        <p className="mb-4 text-[15px] leading-relaxed text-muted">
+        <p className="mb-4 text-body leading-relaxed text-muted">
           Para entrar al backoffice necesitás un segundo factor: un código que cambia cada 30 segundos en una app autenticadora (Google Authenticator,
           Microsoft Authenticator, 1Password…). Confirmá tu contraseña para empezar.
         </p>
-        <label htmlFor="password" className="block text-sm font-medium">
+        <label htmlFor="password" className="block text-ui font-medium">
           Contraseña
         </label>
         <Input id="password" name="password" type="password" required autoComplete="current-password" className="mt-1 h-11 bg-surface" />
         {setup.message && (
-          <p role="alert" className="mt-4 text-sm text-danger">
+          <p role="alert" className="mt-4 text-ui text-danger">
             {setup.message}
           </p>
         )}
@@ -47,14 +47,14 @@ export function SetupForm() {
           height={220}
           className="mx-auto mt-3 rounded-md border border-line"
         />
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-ui text-muted">
           ¿No podés escanear? Cargá esta clave a mano: <span className="break-all font-mono text-ink">{setup.secret}</span>
         </p>
       </section>
       <section>
         <h2 className="font-semibold">2. Guardá los códigos de respaldo</h2>
-        <p className="mt-1 text-sm text-muted">Cada uno sirve una sola vez si perdés el teléfono. No se vuelven a mostrar.</p>
-        <ul aria-label="Códigos de respaldo" className="mt-3 grid grid-cols-2 gap-2 rounded-md bg-surface p-3 font-mono text-sm">
+        <p className="mt-1 text-ui text-muted">Cada uno sirve una sola vez si perdés el teléfono. No se vuelven a mostrar.</p>
+        <ul aria-label="Códigos de respaldo" className="mt-3 grid grid-cols-2 gap-2 rounded-md bg-surface p-3 font-mono text-ui">
           {codes.map((c) => (
             <li key={c}>{c}</li>
           ))}
@@ -85,10 +85,10 @@ export function SetupForm() {
           inputMode="numeric"
           autoComplete="one-time-code"
           placeholder="123456"
-          className="mt-2 h-11 bg-surface text-center font-mono text-lg tracking-[0.3em]"
+          className="mt-2 h-11 bg-surface text-center font-mono text-title tracking-[0.3em]"
         />
         {confirm.message && (
-          <p role="alert" className="mt-3 text-sm text-danger">
+          <p role="alert" className="mt-3 text-ui text-danger">
             {confirm.message}
           </p>
         )}

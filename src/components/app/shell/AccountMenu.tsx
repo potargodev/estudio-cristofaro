@@ -66,11 +66,11 @@ export function AccountMenu({
         <Avatar name={user.name || user.email} size="sm" className="size-8" />
       </button>
       {open && (
-        <div role="menu" aria-label="Tu cuenta" className="app-ui absolute right-0 top-full z-50 mt-2 max-h-[calc(100dvh-5rem)] w-[min(18rem,calc(100vw-2rem))] overflow-y-auto rounded-md border border-line bg-surface p-1.5 text-[14px] shadow-[0_16px_40px_-16px_rgba(0,0,0,0.35)]">
+        <div role="menu" aria-label="Tu cuenta" className="app-ui absolute right-0 top-full z-50 mt-2 max-h-[calc(100dvh-5rem)] w-[min(18rem,calc(100vw-2rem))] overflow-y-auto rounded-md border border-line bg-surface p-1.5 text-ui shadow-overlay">
           <div className="px-3 pb-2 pt-1.5">
             <p className="truncate font-medium text-ink">{user.name || user.email}</p>
-            <p className="truncate text-[12px] text-muted">{user.email}</p>
-            <p className="mt-0.5 truncate text-[12px] text-muted">
+            <p className="truncate text-caption text-muted">{user.email}</p>
+            <p className="mt-0.5 truncate text-caption text-muted">
               {user.roleLabel} · {spaceName}
             </p>
           </div>
@@ -95,7 +95,7 @@ export function AccountMenu({
           )}
           <div className="flex items-center justify-between gap-2 px-3 py-1.5 text-ink">
             Tema
-            <ThemeToggle withLabel className="h-8 rounded-md border border-line px-2 text-[13px] text-ink hover:border-muted" />
+            <ThemeToggle withLabel className="h-8 rounded-md border border-line px-2 text-meta text-ink hover:border-muted" />
           </div>
           {spaces.length > 1 && (
             <>

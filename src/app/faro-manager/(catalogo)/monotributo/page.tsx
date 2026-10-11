@@ -28,7 +28,7 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
         {scales.map((s) => (
           <li key={s.id} className="rounded-md border border-line bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-[15px] font-semibold">
+              <p className="text-body font-semibold">
                 Vigente desde el {s.valid_from.split("-").reverse().join("/")} ·{" "}
                 <span className={s.status === "validada" ? "text-[#1f6b3d]" : "text-[#7a5410]"}>{s.status === "validada" ? "validada" : "a validar"}</span>
               </p>
@@ -41,9 +41,9 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
                 </form>
               )}
             </div>
-            <p className="text-[13px] text-muted">{s.source}</p>
+            <p className="text-meta text-muted">{s.source}</p>
             <div className="mt-3 overflow-x-auto">
-              <table className="w-full min-w-[32rem] text-[13px]">
+              <table className="w-full min-w-[32rem] text-meta">
                 <thead className="text-left text-muted">
                   <tr>
                     <th className="py-1">Cat.</th>
@@ -75,27 +75,27 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
       </ul>
       {me.faroRole === "faro_owner" && (
         <form action={saveScaleAction} className="grid gap-3 rounded-md border border-line bg-surface p-4 sm:grid-cols-2">
-          <p className="text-[15px] font-semibold sm:col-span-2">Cargar o actualizar una escala</p>
-          <label className="text-[13px]">
+          <p className="text-body font-semibold sm:col-span-2">Cargar o actualizar una escala</p>
+          <label className="text-meta">
             Vigente desde
             <input name="valid_from" type="date" required className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3" />
           </label>
-          <label className="text-[13px]">
+          <label className="text-meta">
             Estado
             <select name="status" defaultValue="a_validar" className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-2">
               <option value="a_validar">A validar</option>
               <option value="validada">Validada contra la fuente oficial</option>
             </select>
           </label>
-          <label className="text-[13px] sm:col-span-2">
+          <label className="text-meta sm:col-span-2">
             Fuente
             <input name="source" placeholder="URL o resolución de ARCA" className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3" />
           </label>
-          <label className="text-[13px] sm:col-span-2">
+          <label className="text-meta sm:col-span-2">
             Categorías (una por línea: letra;tope anual;superficie;energía;alquiler;cuota servicios;cuota bienes)
-            <textarea name="categories" rows={11} defaultValue={latest ? latest.categories.map((c) => [c.letter, c.maxIncome, n(c.maxSurfaceM2), n(c.maxEnergyKw), n(c.maxRent), n(c.feeServices), n(c.feeGoods)].join(";")).join("\n") : ""} className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-[12px]" />
+            <textarea name="categories" rows={11} defaultValue={latest ? latest.categories.map((c) => [c.letter, c.maxIncome, n(c.maxSurfaceM2), n(c.maxEnergyKw), n(c.maxRent), n(c.feeServices), n(c.feeGoods)].join(";")).join("\n") : ""} className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-caption" />
           </label>
-          <label className="text-[13px] sm:col-span-2">
+          <label className="text-meta sm:col-span-2">
             Notas
             <input name="notes" className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3" />
           </label>

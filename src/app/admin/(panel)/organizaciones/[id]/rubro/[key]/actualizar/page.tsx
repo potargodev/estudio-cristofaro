@@ -27,7 +27,7 @@ export default async function ActualizarRubro({ params }: { params: Promise<{ id
   if (!d) notFound();
   return (
     <div className="max-w-4xl">
-      <Link href={`/admin/organizaciones/${d.organization.id}?tab=rubro`} className="inline-flex items-center gap-1.5 text-[14px] text-muted hover:text-ink">
+      <Link href={`/admin/organizaciones/${d.organization.id}?tab=rubro`} className="inline-flex items-center gap-1.5 text-ui text-muted hover:text-ink">
         <ArrowLeft className="size-4" aria-hidden /> {d.organization.name}
       </Link>
       <PageHeader
@@ -44,14 +44,14 @@ export default async function ActualizarRubro({ params }: { params: Promise<{ id
           <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
             {d.entries.map((e) => (
               <li key={`${e.kind}:${e.key}`}>
-                <label className="flex cursor-pointer gap-3 px-5 py-3 text-[14px]">
+                <label className="flex cursor-pointer gap-3 px-5 py-3 text-ui">
                   <input type="checkbox" name="item" value={`${e.kind}:${e.key}`} defaultChecked={e.change === "nuevo"} disabled={e.customized} className="mt-1 size-4 accent-navy" data-testid="diff-item" />
                   <span className="min-w-0">
                     <span className="block text-ink">
-                      {e.label} <span className="ml-1 text-[12px] text-muted">· {ITEM_KINDS[e.kind as ItemKind]}</span>
+                      {e.label} <span className="ml-1 text-caption text-muted">· {ITEM_KINDS[e.kind as ItemKind]}</span>
                     </span>
-                    {e.detail && <span className="block text-[13px] text-muted">{e.detail}</span>}
-                    <span className={e.customized ? "mt-0.5 block text-[12px] text-[#7a5410]" : "mt-0.5 block text-[12px] text-rose-deep"}>
+                    {e.detail && <span className="block text-meta text-muted">{e.detail}</span>}
+                    <span className={e.customized ? "mt-0.5 block text-caption text-[#7a5410]" : "mt-0.5 block text-caption text-rose-deep"}>
                       {CHANGE[e.change]}
                       {e.customized && " · tenés cambios propios: se mantienen"}
                     </span>

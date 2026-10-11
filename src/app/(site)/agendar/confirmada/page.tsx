@@ -15,12 +15,12 @@ export default async function ConfirmadaPage({ searchParams }: { searchParams: P
   return (
     <section className="pb-24 pt-36 lg:pt-48">
       <Container className="max-w-[60rem]">
-      <p className="flex items-center gap-3 text-[13px] text-paper/60">
+      <p className="flex items-center gap-3 text-meta text-paper/60">
         <span aria-hidden className="h-px w-8 bg-rose-light" />
         Llamada confirmada
       </p>
       <h1 className="display-md mt-8 text-paper">Tu llamada está confirmada.</h1>
-      <p className="mt-10 border-t border-hair pt-6 text-xl text-paper first-letter:uppercase">
+      <p className="mt-10 border-t border-hair pt-6 text-section text-paper first-letter:uppercase">
         {fmtDateTime(b.starts_at)} a {fmtTime(b.ends_at)} <span className="text-muted">(hora de Buenos Aires)</span>
       </p>
       <p className="mt-2 text-muted">Te mandamos la confirmación a {b.email}.</p>
@@ -39,8 +39,8 @@ export default async function ConfirmadaPage({ searchParams }: { searchParams: P
           Agregar a mi calendario (.ics)
         </a>
       </div>
-      {!b.meet_url && <p className="mt-4 text-sm text-muted">El link de la videollamada te lo mandamos por mail antes de la reunión.</p>}
-      <p className="mt-10 text-sm text-muted">
+      {!b.meet_url && <p className="mt-4 text-ui text-muted">El link de la videollamada te lo mandamos por mail antes de la reunión.</p>}
+      <p className="mt-10 text-ui text-muted">
         ¿Necesitás cambiarla?{" "}
         <Link href={`/agenda/gestionar/${t}`} className="text-rose-deep underline">
           Reprogramá o cancelá acá

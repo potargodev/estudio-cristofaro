@@ -40,7 +40,7 @@ export function PushToggle() {
   };
   if (state === "cargando") return null;
   return (
-    <section aria-label="Avisos en este dispositivo" className="flex flex-wrap items-center gap-3 rounded-md border border-line bg-surface px-4 py-3 text-[14px]">
+    <section aria-label="Avisos en este dispositivo" className="flex flex-wrap items-center gap-3 rounded-md border border-line bg-surface px-4 py-3 text-ui">
       {state === "on" ? <Bell className="size-4 text-rose-deep" aria-hidden /> : <BellOff className="size-4 text-muted" aria-hidden />}
       <p className="min-w-0 flex-1">
         {state === "on"
@@ -52,12 +52,12 @@ export function PushToggle() {
               : "Activá los avisos para enterarte de los mensajes nuevos aunque no tengas Faro abierto."}
       </p>
       {state === "off" && (
-        <button type="button" onClick={turnOn} className="h-9 rounded-md bg-navy px-3.5 text-[13px] font-medium text-paper hover:bg-night">
+        <button type="button" onClick={turnOn} className="h-9 rounded-md bg-navy px-3.5 text-meta font-medium text-paper hover:bg-night">
           Activar avisos
         </button>
       )}
       {state === "on" && (
-        <button type="button" onClick={turnOff} className="h-9 rounded-md border border-line px-3.5 text-[13px] hover:border-muted">
+        <button type="button" onClick={turnOff} className="h-9 rounded-md border border-line px-3.5 text-meta hover:border-muted">
           Desactivar
         </button>
       )}

@@ -12,7 +12,7 @@ export function ConnectorLogo({ def, size = "md" }: { def: Pick<ConnectorDefinit
   return (
     <span
       aria-hidden
-      className={cn("grid shrink-0 place-items-center font-semibold tracking-tight", size === "lg" ? "size-12 text-[18px]" : "size-10 text-[15px]")}
+      className={cn("grid shrink-0 place-items-center font-semibold tracking-tight", size === "lg" ? "size-12 text-title" : "size-10 text-body")}
       style={{ background: def.logo.bg, color: def.logo.fg }}
     >
       {def.logo.text}
@@ -45,12 +45,12 @@ export function Flash({ sp }: { sp: Record<string, string | undefined> }) {
 }
 
 export function LogTable({ logs }: { logs: (typeof connection_logs.$inferSelect)[] }) {
-  if (!logs.length) return <p className="text-[14px] text-muted">Todavía no hay pruebas ni sincronizaciones.</p>;
+  if (!logs.length) return <p className="text-ui text-muted">Todavía no hay pruebas ni sincronizaciones.</p>;
   const KIND: Record<string, string> = { sync: "Sincronización", test: "Prueba", import: "Importación" };
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[560px] text-left text-[13px]">
-        <thead className="text-[12px] uppercase tracking-wide text-muted">
+      <table className="w-full min-w-[560px] text-left text-meta">
+        <thead className="text-caption uppercase tracking-wide text-muted">
           <tr className="border-b border-line">
             <th className="py-2 font-medium">Fecha</th>
             <th className="py-2 font-medium">Tipo</th>

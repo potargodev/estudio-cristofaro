@@ -21,10 +21,10 @@ const nextMonth = (m: string) => {
 const day = (iso: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
 
 function Delta({ now, before }: { now: number; before: number }) {
-  if (!before) return <span className="text-[12px] text-muted">Sin datos del mes anterior</span>;
+  if (!before) return <span className="text-caption text-muted">Sin datos del mes anterior</span>;
   const pct = Math.round(((now - before) / before) * 100);
   return (
-    <span className={cn("text-[12px]", pct > 0 ? "text-danger" : "text-[#2f7a4c]")}>
+    <span className={cn("text-caption", pct > 0 ? "text-danger" : "text-[#2f7a4c]")}>
       {pct > 0 ? "+" : ""}
       {pct}% vs. mes anterior
     </span>
@@ -62,7 +62,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
   return (
     <div className="grid gap-6 pb-6">
       {sp.ok && (
-        <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[14px]">
+        <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-ui">
           {sp.ok}
           {sp.deshacer && (
             <form action={restoreEntryAction}>
@@ -76,13 +76,13 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
         </div>
       )}
       {sp.error && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-[14px] text-danger">
+        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-ui text-danger">
           {sp.error}
         </p>
       )}
       <Insights items={insights} volver="/bitacora" />
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <nav aria-label="Ver los montos en" className="flex gap-1.5 text-[13px]">
+        <nav aria-label="Ver los montos en" className="flex gap-1.5 text-meta">
           {[
             { k: "", l: "Pesos" },
             { k: "real", l: "Ajustado por inflación" },
@@ -97,13 +97,13 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           <Link href={q({ mes: prevMonth(month) })} aria-label="Mes anterior" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <ChevronLeft className="size-4" aria-hidden />
           </Link>
-          <span className="min-w-36 text-center text-[15px] font-medium capitalize">{monthLabel(month)}</span>
+          <span className="min-w-36 text-center text-body font-medium capitalize">{monthLabel(month)}</span>
           <Link href={q({ mes: nextMonth(month) })} aria-label="Mes siguiente" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <ChevronRight className="size-4" aria-hidden />
           </Link>
         </div>
       </div>
-      {valueNote && <p className="-mt-3 text-[12px] text-muted">{valueNote}</p>}
+      {valueNote && <p className="-mt-3 text-caption text-muted">{valueNote}</p>}
 
       <section aria-label="Resumen del mes" className="grid grid-cols-3 gap-2 sm:gap-3">
         {[
@@ -112,8 +112,8 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           { l: "Queda", v: ars.now.left, b: null, tone: ars.now.left < 0 ? "text-danger" : "text-ink" },
         ].map((x) => (
           <div key={x.l} className="rounded-lg border border-line bg-surface p-3 sm:p-5">
-            <p className="text-[12px] text-muted sm:text-[13px]">{x.l}</p>
-            <p className={cn("mt-1 num text-[20px] leading-tight sm:text-[32px]", x.tone)}>{show(x.v)}</p>
+            <p className="text-caption text-muted sm:text-meta">{x.l}</p>
+            <p className={cn("mt-1 num text-section leading-tight sm:text-[32px]", x.tone)}>{show(x.v)}</p>
             {x.b !== null && (
               <span className="hidden sm:block">
                 <Delta now={x.v} before={x.b} />
@@ -122,19 +122,19 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           </div>
         ))}
       </section>
-      <p className="-mt-3 text-[13px] text-muted sm:hidden">
+      <p className="-mt-3 text-meta text-muted sm:hidden">
         <Delta now={ars.now.out} before={ars.before.out} /> en gastos
       </p>
       {usd && (usd.now.in > 0 || usd.now.out > 0) && (
-        <p className="-mt-2 text-[13px] text-muted">
+        <p className="-mt-2 text-meta text-muted">
           En dólares: entró {money(usd.now.in, "USD")} · salió {money(usd.now.out, "USD")} · queda {money(usd.now.left, "USD")}
         </p>
       )}
 
       <details data-tour="bitacora-cargar" className="rounded-lg border border-line bg-surface" open={!!sp.cargar}>
-        <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 text-[16px] font-semibold">
+        <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 text-lead font-semibold">
           Cargar a mano
-          <span className="text-[13px] font-normal text-muted">
+          <span className="text-meta font-normal text-muted">
             o mandáselo al{" "}
             <Link href="/vigia" className="font-medium text-rose-deep underline underline-offset-4">
               Vigía
@@ -148,7 +148,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
 
       <section aria-labelledby="por-categoria" className="rounded-lg border border-line bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="por-categoria" className="text-[17px] font-semibold">
+          <h2 id="por-categoria" className="text-title font-semibold">
             Gasto por categoría
           </h2>
           <form method="get" className="flex items-center gap-2">
@@ -156,7 +156,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
             <label htmlFor="cat" className="sr-only">
               Filtrar por categoría
             </label>
-            <select id="cat" name="categoria" defaultValue={cat ?? ""} className="h-9 rounded-md border border-line bg-surface px-2 text-[14px]">
+            <select id="cat" name="categoria" defaultValue={cat ?? ""} className="h-9 rounded-md border border-line bg-surface px-2 text-ui">
               <option value="">Todas</option>
               {cats.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -164,18 +164,18 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
                 </option>
               ))}
             </select>
-            <button type="submit" className="h-9 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+            <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
               Filtrar
             </button>
           </form>
         </div>
         {s.byCategory.length === 0 ? (
-          <p className="mt-3 text-[14px] text-muted">Todavía no hay gastos este mes.</p>
+          <p className="mt-3 text-ui text-muted">Todavía no hay gastos este mes.</p>
         ) : (
           <ul className="mt-4 grid gap-3">
             {s.byCategory.map((c) => (
               <li key={c.categoryId ?? "none"}>
-                <div className="flex justify-between gap-3 text-[14px]">
+                <div className="flex justify-between gap-3 text-ui">
                   <Link href={q({ categoria: c.categoryId })} className="hover:underline">
                     {c.name}
                   </Link>
@@ -192,20 +192,20 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
 
       <section aria-labelledby="movimientos" className="rounded-lg border border-line bg-surface">
         <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-4">
-          <h2 id="movimientos" className="text-[17px] font-semibold">
+          <h2 id="movimientos" className="text-title font-semibold">
             Movimientos
           </h2>
           <div className="flex gap-2">
-            <Link href="/bitacora/categorias" data-tour="bitacora-categorias" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+            <Link href="/bitacora/categorias" data-tour="bitacora-categorias" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
               <Settings2 className="size-4" aria-hidden /> Categorías
             </Link>
-            <a href={`/api/bitacora/csv?mes=${month}${cat ? `&categoria=${cat}` : ""}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+            <a href={`/api/bitacora/csv?mes=${month}${cat ? `&categoria=${cat}` : ""}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
               <Download className="size-4" aria-hidden /> CSV
             </a>
           </div>
         </div>
         {s.movements.length === 0 ? (
-          <p className="border-t border-line px-5 py-4 text-[14px] text-muted">Sin movimientos en {monthLabel(month)}.</p>
+          <p className="border-t border-line px-5 py-4 text-ui text-muted">Sin movimientos en {monthLabel(month)}.</p>
         ) : (
           <ul className="divide-y divide-line border-t border-line">
             {s.movements.map((m) => {
@@ -217,16 +217,16 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
                       {m.source === "grupo" ? <Users className="size-4" aria-hidden /> : m.kind === "ingreso" ? <ArrowDownLeft className="size-4" aria-hidden /> : <ArrowUpRight className="size-4" aria-hidden />}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-1.5 truncate text-[15px] text-ink">
+                      <span className="flex items-center gap-1.5 truncate text-body text-ink">
                         {m.description}
                         {m.source === "copiloto" && <WandSparkles className="size-3.5 shrink-0 text-rose-deep" aria-label="Cargado por el Vigía" />}
                       </span>
-                      <span className="block truncate text-[12px] text-muted">
+                      <span className="block truncate text-caption text-muted">
                         {m.source === "grupo" ? `Mi parte · ${m.group!.name}` : m.categoryName} · {day(m.date)}
                         {m.paymentMethod && ` · ${PAYMENT_METHODS[m.paymentMethod as keyof typeof PAYMENT_METHODS]}`}
                       </span>
                     </span>
-                    <span className={cn("shrink-0 tabular-nums text-[15px]", m.kind === "ingreso" ? "text-[#2f7a4c]" : "text-ink")}>
+                    <span className={cn("shrink-0 tabular-nums text-body", m.kind === "ingreso" ? "text-[#2f7a4c]" : "text-ink")}>
                       {m.kind === "ingreso" ? "+" : "−"}
                       {money(m.amount, m.currency)}
                     </span>
@@ -237,7 +237,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           </ul>
         )}
       </section>
-      <p className="text-[12px] text-muted">Los gastos de tus grupos cuentan acá como «mi parte» (lo que te toca), sin duplicarse.</p>
+      <p className="text-caption text-muted">Los gastos de tus grupos cuentan acá como «mi parte» (lo que te toca), sin duplicarse.</p>
     </div>
   );
 }

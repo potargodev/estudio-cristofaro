@@ -58,13 +58,13 @@ export function SectionTabs({ tabs, label = "Secciones", className }: { tabs: Ta
               scroll={false}
               aria-current={i === on ? "page" : undefined}
               className={cn(
-                "-mb-px flex h-10 items-center gap-2 border-b-2 px-3 text-[14px] transition-colors",
+                "-mb-px flex h-10 items-center gap-2 border-b-2 px-3 text-ui transition-colors",
                 i === on ? "border-navy font-semibold text-ink" : "border-transparent text-muted hover:text-ink",
               )}
             >
               {t.icon && <span className={cn("[&>svg]:size-4", i === on && "text-rose-deep")}>{t.icon}</span>}
               {t.label}
-              {!!t.count && <span className="num rounded-md bg-navy-soft px-1.5 text-[12px] leading-5 text-ink">{t.count}</span>}
+              {!!t.count && <span className="num rounded-md bg-navy-soft px-1.5 text-caption leading-5 text-ink">{t.count}</span>}
             </Link>
           </li>
         ))}

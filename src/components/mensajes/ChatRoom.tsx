@@ -149,8 +149,8 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
           <ArrowLeft className="size-4" aria-hidden />
         </Link>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-[16px] font-semibold">{view.title}</h1>
-          <p className="truncate text-[12px] text-muted">
+          <h1 className="truncate text-lead font-semibold">{view.title}</h1>
+          <p className="truncate text-caption text-muted">
             {typingList.length ? `${typingList.join(", ")} ${typingList.length === 1 ? "está" : "están"} escribiendo…` : view.kind === "directo" ? "Conversación privada" : `${view.members.length} personas`}
             {view.href && (
               <>
@@ -167,7 +167,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
             <MoreVertical className="size-4" aria-hidden />
           </button>
           {menu && (
-            <div role="menu" className="absolute right-0 top-full z-30 mt-1 w-64 rounded-md border border-line bg-surface p-1 text-[14px] shadow-lg">
+            <div role="menu" className="absolute right-0 top-full z-30 mt-1 w-64 rounded-md border border-line bg-surface p-1 text-ui shadow-overlay">
               <button
                 type="button"
                 role="menuitem"
@@ -216,25 +216,25 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
       </header>
 
       <ol className="grid flex-1 content-end gap-1.5 py-4" aria-live="polite">
-        {view.messages.length === 0 && <li className="py-10 text-center text-[14px] text-muted">Todavía no hay mensajes. Escribí el primero.</li>}
+        {view.messages.length === 0 && <li className="py-10 text-center text-ui text-muted">Todavía no hay mensajes. Escribí el primero.</li>}
         {view.messages.map((m, i) => {
           const prev = view.messages[i - 1];
           const newDay = !prev || new Date(prev.createdAt).toDateString() !== new Date(m.createdAt).toDateString();
           const showName = !m.mine && view.kind !== "directo" && (!prev || prev.authorId !== m.authorId || newDay);
           return (
             <li key={m.id} id={`msg-${m.id}`}>
-              {newDay && <p className="my-3 text-center text-[12px] text-muted first-letter:uppercase">{dayLabel(m.createdAt)}</p>}
+              {newDay && <p className="my-3 text-center text-caption text-muted first-letter:uppercase">{dayLabel(m.createdAt)}</p>}
               <div className={cn("group flex items-start gap-2", m.mine ? "justify-end" : "justify-start")}>
                 {!m.mine && (
-                  <span aria-hidden className={cn("grid size-7 shrink-0 place-items-center rounded-full bg-navy-soft text-[11px] font-semibold text-ink", showName && "mt-5", !showName && view.kind !== "directo" && "invisible")}>
+                  <span aria-hidden className={cn("grid size-7 shrink-0 place-items-center rounded-full bg-navy-soft text-micro font-semibold text-ink", showName && "mt-5", !showName && view.kind !== "directo" && "invisible")}>
                     {initials(m.authorName)}
                   </span>
                 )}
                 <div className={cn("max-w-[80%] sm:max-w-[70%]")}>
-                  {showName && <p className="mb-0.5 ml-1 text-[12px] font-medium text-rose-deep">{m.authorName}</p>}
-                  <div className={cn("rounded-[14px] border px-3 py-2 text-[15px] leading-snug", m.mine ? "rounded-br-[4px] border-rose-light/50 bg-rose-soft" : "rounded-bl-[4px] border-line bg-surface", m.deleted && "italic text-muted")}>
+                  {showName && <p className="mb-0.5 ml-1 text-caption font-medium text-rose-deep">{m.authorName}</p>}
+                  <div className={cn("rounded-[14px] border px-3 py-2 text-body leading-snug", m.mine ? "rounded-br-[4px] border-rose-light/50 bg-rose-soft" : "rounded-bl-[4px] border-line bg-surface", m.deleted && "italic text-muted")}>
                     {m.replyTo && (
-                      <a href={`#msg-${m.replyTo.id}`} className="mb-1.5 block rounded-[6px] border-l-2 border-rose-deep bg-canvas/70 px-2 py-1 text-[12px] text-muted">
+                      <a href={`#msg-${m.replyTo.id}`} className="mb-1.5 block rounded-[6px] border-l-2 border-rose-deep bg-canvas/70 px-2 py-1 text-caption text-muted">
                         <span className="font-medium text-ink">{m.replyTo.authorName}</span>: {m.replyTo.body?.slice(0, 90) ?? "Mensaje borrado"}
                       </a>
                     )}
@@ -244,19 +244,19 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                       <>
                         {m.body && <p className="whitespace-pre-wrap break-words">{m.body}</p>}
                         {m.file && (
-                          <a href={`/api/mensajes/archivo/${m.id}`} target="_blank" rel="noreferrer" className="mt-1 flex items-center gap-1.5 text-[13px] underline underline-offset-2">
+                          <a href={`/api/mensajes/archivo/${m.id}`} target="_blank" rel="noreferrer" className="mt-1 flex items-center gap-1.5 text-meta underline underline-offset-2">
                             <Paperclip className="size-3.5" aria-hidden /> {m.file.name}
                           </a>
                         )}
                       </>
                     )}
-                    <p className="mt-0.5 text-right text-[11px] text-muted">
+                    <p className="mt-0.5 text-right text-micro text-muted">
                       {m.editedAt && !m.deleted && "editado · "}
                       {time(m.createdAt)}
                     </p>
                   </div>
                   {!m.deleted && (
-                    <div className={cn("mt-0.5 flex gap-1 text-[12px] text-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100", m.mine ? "justify-end" : "justify-start")}>
+                    <div className={cn("mt-0.5 flex gap-1 text-caption text-muted opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100", m.mine ? "justify-end" : "justify-start")}>
                       <button type="button" onClick={() => (setReply(m), setEditing(null), area.current?.focus())} className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 hover:bg-surface" aria-label="Responder">
                         <CornerUpLeft className="size-3" aria-hidden /> Responder
                       </button>
@@ -292,18 +292,18 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
           );
         })}
         {mineLast && seenBy.length > 0 && (
-          <li className="text-right text-[11px] text-muted">{view.kind === "directo" ? "Visto" : `Visto por ${seenBy.length === others.length ? "todos" : seenBy.map((s) => s.name.split(" ")[0]).join(", ")}`}</li>
+          <li className="text-right text-micro text-muted">{view.kind === "directo" ? "Visto" : `Visto por ${seenBy.length === others.length ? "todos" : seenBy.map((s) => s.name.split(" ")[0]).join(", ")}`}</li>
         )}
         <div ref={end} />
       </ol>
 
       <div className="sticky bottom-[var(--app-bottom,0px)] -mx-4 border-t border-line bg-canvas/95 px-4 py-2 backdrop-blur sm:mx-0 sm:px-0">
         {!view.canPost ? (
-          <p className="py-2 text-center text-[14px] text-muted">No podés escribir en esta conversación.</p>
+          <p className="py-2 text-center text-ui text-muted">No podés escribir en esta conversación.</p>
         ) : (
           <>
             {(reply || editing) && (
-              <div className="mb-2 flex items-center gap-2 rounded-md border-l-2 border-rose-deep bg-surface px-3 py-1.5 text-[13px]">
+              <div className="mb-2 flex items-center gap-2 rounded-md border-l-2 border-rose-deep bg-surface px-3 py-1.5 text-meta">
                 <span className="min-w-0 flex-1 truncate">{editing ? "Editando tu mensaje" : `Respondiendo a ${reply!.authorName}: ${reply!.body?.slice(0, 60) ?? ""}`}</span>
                 <button type="button" aria-label="Cancelar" onClick={() => (setReply(null), editing && setText(""), setEditing(null))} className="grid size-7 place-items-center rounded hover:bg-canvas">
                   <X className="size-3.5" aria-hidden />
@@ -311,7 +311,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
               </div>
             )}
             {file && (
-              <div className="mb-2 flex items-center gap-2 rounded-md bg-surface px-3 py-1.5 text-[13px]">
+              <div className="mb-2 flex items-center gap-2 rounded-md bg-surface px-3 py-1.5 text-meta">
                 <Paperclip className="size-3.5" aria-hidden /> <span className="min-w-0 flex-1 truncate">{file.name}</span>
                 <button type="button" aria-label="Quitar el archivo" onClick={() => setFile(null)} className="grid size-7 place-items-center rounded hover:bg-canvas">
                   <X className="size-3.5" aria-hidden />
@@ -321,7 +321,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
             {emoji && (
               <div className="mb-2 grid grid-cols-8 gap-1 rounded-md border border-line bg-surface p-2" role="listbox" aria-label="Emojis">
                 {EMOJIS.map((e) => (
-                  <button key={e} type="button" role="option" aria-selected={false} onClick={() => (setText((t) => t + e), area.current?.focus())} className="h-9 rounded text-[20px] hover:bg-canvas">
+                  <button key={e} type="button" role="option" aria-selected={false} onClick={() => (setText((t) => t + e), area.current?.focus())} className="h-9 rounded text-section hover:bg-canvas">
                     {e}
                   </button>
                 ))}
@@ -356,7 +356,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                     }
                   }}
                   placeholder="Escribí un mensaje"
-                  className="max-h-40 min-h-10 w-full resize-none rounded-md border border-line bg-surface px-3 py-2 text-[16px] focus:border-navy focus:outline-none"
+                  className="max-h-40 min-h-10 w-full resize-none rounded-md border border-line bg-surface px-3 py-2 text-lead focus:border-navy focus:outline-none"
                 />
               </label>
               <button type="submit" disabled={sending} aria-label={editing ? "Guardar" : "Mandar"} className="grid size-10 shrink-0 place-items-center rounded-md bg-navy text-paper hover:bg-night disabled:opacity-60">
@@ -379,12 +379,12 @@ function ReportDialog({ m, onClose }: { m: MessageView; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[70] grid place-items-center bg-night/50 p-4" role="presentation" onClick={onClose}>
       <div role="dialog" aria-modal="true" aria-labelledby="reporte-titulo" className="w-full max-w-sm rounded-lg border border-line bg-surface p-5" onClick={(e) => e.stopPropagation()}>
-        <h2 id="reporte-titulo" className="text-[17px] font-semibold">
+        <h2 id="reporte-titulo" className="text-title font-semibold">
           Reportar mensaje
         </h2>
-        <p className="mt-1 text-[13px] text-muted">El equipo de Faro ve solo este mensaje, no la conversación. Quien lo escribió no se entera de que lo reportaste.</p>
-        <blockquote className="mt-3 rounded-md bg-canvas px-3 py-2 text-[14px]">{m.body?.slice(0, 200) ?? m.file?.name}</blockquote>
-        <fieldset className="mt-3 grid gap-1.5 text-[14px]">
+        <p className="mt-1 text-meta text-muted">El equipo de Faro ve solo este mensaje, no la conversación. Quien lo escribió no se entera de que lo reportaste.</p>
+        <blockquote className="mt-3 rounded-md bg-canvas px-3 py-2 text-ui">{m.body?.slice(0, 200) ?? m.file?.name}</blockquote>
+        <fieldset className="mt-3 grid gap-1.5 text-ui">
           <legend className="sr-only">Motivo</legend>
           {REASONS.map(([k, l]) => (
             <label key={k} className="flex items-center gap-2">
@@ -392,9 +392,9 @@ function ReportDialog({ m, onClose }: { m: MessageView; onClose: () => void }) {
             </label>
           ))}
         </fieldset>
-        <textarea value={detail} onChange={(e) => setDetail(e.target.value)} maxLength={500} rows={2} placeholder="Contanos algo más (opcional)" className="mt-3 w-full rounded-md border border-line bg-surface px-3 py-2 text-[14px]" />
+        <textarea value={detail} onChange={(e) => setDetail(e.target.value)} maxLength={500} rows={2} placeholder="Contanos algo más (opcional)" className="mt-3 w-full rounded-md border border-line bg-surface px-3 py-2 text-ui" />
         <div className="mt-4 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="h-10 rounded-md border border-line px-4 text-[14px]">
+          <button type="button" onClick={onClose} className="h-10 rounded-md border border-line px-4 text-ui">
             Cancelar
           </button>
           <button
@@ -408,7 +408,7 @@ function ReportDialog({ m, onClose }: { m: MessageView; onClose: () => void }) {
               else toast.error(r.message ?? "No pudimos reportarlo.");
               onClose();
             }}
-            className="h-10 rounded-md bg-navy px-4 text-[14px] font-medium text-paper disabled:opacity-60"
+            className="h-10 rounded-md bg-navy px-4 text-ui font-medium text-paper disabled:opacity-60"
           >
             Reportar
           </button>

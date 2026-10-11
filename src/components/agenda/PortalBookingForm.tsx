@@ -11,7 +11,7 @@ export function PortalBookingForm({ days }: { days: PickerDay[] }) {
     <form action={action} className="grid gap-6">
       <SlotPicker days={days} />
       <div>
-        <label htmlFor="reason" className="block text-sm font-medium">
+        <label htmlFor="reason" className="block text-ui font-medium">
           Motivo
         </label>
         <textarea
@@ -20,11 +20,11 @@ export function PortalBookingForm({ days }: { days: PickerDay[] }) {
           required
           rows={3}
           maxLength={500}
-          className="mt-1.5 w-full rounded-md border border-line bg-surface px-3 py-2.5 text-[15px]"
+          className="mt-1.5 w-full rounded-md border border-line bg-surface px-3 py-2.5 text-body"
         />
       </div>
       {state.message && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}

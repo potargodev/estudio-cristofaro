@@ -20,10 +20,11 @@ import {
 import { requireAdmin } from "@/lib/auth";
 import { requireModule } from "@/lib/faro/require-module";
 import { documentsFor, getLink, listRules, openConflicts, syncCounts } from "@/modules/tango-sync/server";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Tango · Sincronización" };
 
-const field = "mt-1 block w-full rounded-md border border-line bg-surface px-2.5 py-2 text-[14px] text-ink";
+const field = `mt-1 py-2 ${fieldClass}`;
 const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 2 });
 const when = (d: Date | null) => (d ? fmt.format(d) : "—");
@@ -53,7 +54,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
         description="Lo que facturás en Faro se escribe en Tango y lo que cambia en Tango llega a Faro. Una sola verdad: cada comprobante sabe dónde nació, su ID en el otro sistema y cuándo se sincronizó. Si algo no coincide, lo decidís vos."
         className="mb-0"
       />
-      <p className="text-[14px]">
+      <p className="text-ui">
         <Link href="/admin/configuracion/conexiones/tango" className="underline underline-offset-4">
           Volver al conector local de Tango
         </Link>
@@ -63,32 +64,32 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
 
       <section aria-labelledby="enlace" className="rounded-lg border border-line bg-surface p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <h3 id="enlace" className="text-[16px] font-semibold">
+          <h3 id="enlace" className="text-lead font-semibold">
             Enlace con la API de Tango
           </h3>
           {link && (
             <StatusBadge status={link.status === "activo" && !link.last_error ? "activa" : "pausada"} label={link.status === "pausado" ? "Pausado" : link.last_error ? "Con error" : link.webhooks ? "Al instante (webhooks)" : "Cada 15 minutos"} />
           )}
         </div>
-        {link?.last_error && <p className="mt-2 text-[14px] text-danger">Último error: {link.last_error}</p>}
+        {link?.last_error && <p className="mt-2 text-ui text-danger">Último error: {link.last_error}</p>}
         <form action={saveTangoLinkAction} className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="text-[14px]">
+          <label className="text-ui">
             URL de la API
             <input name="api_url" required defaultValue={link?.api_url ?? ""} placeholder="https://tango.tuestudio.com.ar" className={field} />
           </label>
-          <label className="text-[14px]">
+          <label className="text-ui">
             Empresa de Tango
             <input name="company_id" defaultValue={link?.company_id ?? "1"} className={field} />
           </label>
-          <label className="text-[14px]">
+          <label className="text-ui">
             Token de la API {link && <span className="text-muted">(dejalo vacío para no cambiarlo)</span>}
             <input name="token" type="password" autoComplete="off" className={field} />
           </label>
-          <label className="text-[14px]">
+          <label className="text-ui">
             Secreto de los webhooks {link?.webhook_secret_enc && <span className="text-muted">(ya cargado)</span>}
             <input name="webhook_secret" type="password" autoComplete="off" className={field} />
           </label>
-          <label className="flex items-center gap-2 text-[14px] sm:col-span-2">
+          <label className="flex items-center gap-2 text-ui sm:col-span-2">
             <input type="checkbox" name="write_enabled" defaultChecked={link?.write_enabled ?? true} className="size-4" />
             Escribir en Tango cada factura autorizada en Faro
           </label>
@@ -108,12 +109,12 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
                 <RefreshCw className="size-4" aria-hidden /> Sincronizar ahora
               </SubmitButton>
             </form>
-            <a href="/api/integrations/tango/exportar" className="inline-flex items-center gap-2 rounded-md border border-line px-3 py-2 text-[14px] font-medium hover:bg-canvas">
+            <a href="/api/integrations/tango/exportar" className="inline-flex items-center gap-2 rounded-md border border-line px-3 py-2 text-ui font-medium hover:bg-canvas">
               <Download className="size-4" aria-hidden /> Exportar CSV para Tango
             </a>
           </div>
         )}
-        <p className="mt-3 text-[13px] text-muted">Sin API también funciona: exportá el CSV con los nombres estándar o importá archivos desde el conector local.</p>
+        <p className="mt-3 text-meta text-muted">Sin API también funciona: exportá el CSV con los nombres estándar o importá archivos desde el conector local.</p>
       </section>
 
       <section aria-labelledby="resumen" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -122,19 +123,19 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
         </h3>
         {(["sincronizado", "pendiente", "error", "conflicto"] as const).map((st) => (
           <div key={st} className="rounded-md border border-line bg-surface p-3">
-            <p className="text-[13px] text-muted">{DOC_STATUS[st]}</p>
-            <p className="num text-[22px]">{total(st)}</p>
+            <p className="text-meta text-muted">{DOC_STATUS[st]}</p>
+            <p className="num text-headline">{total(st)}</p>
           </div>
         ))}
       </section>
 
       <section aria-labelledby="conflictos" className="rounded-lg border border-line bg-surface p-5">
-        <h3 id="conflictos" className="flex items-center gap-2 text-[16px] font-semibold">
+        <h3 id="conflictos" className="flex items-center gap-2 text-lead font-semibold">
           <ArrowLeftRight className="size-5 text-rose-deep" aria-hidden /> Diferencias para decidir
         </h3>
-        <p className="mt-1 text-[14px] text-muted">Faro nunca pisa datos en silencio. Elegí con qué versión te quedás. Un comprobante autorizado por ARCA no se modifica: solo su copia en Tango.</p>
+        <p className="mt-1 text-ui text-muted">Faro nunca pisa datos en silencio. Elegí con qué versión te quedás. Un comprobante autorizado por ARCA no se modifica: solo su copia en Tango.</p>
         {conflicts.length === 0 ? (
-          <p className="mt-3 rounded-md border border-dashed border-line p-4 text-[14px] text-muted">No hay diferencias abiertas.</p>
+          <p className="mt-3 rounded-md border border-dashed border-line p-4 text-ui text-muted">No hay diferencias abiertas.</p>
         ) : (
           <ul className="mt-3 grid gap-3">
             {conflicts.map(({ c, d }) => (
@@ -142,7 +143,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
                 <p className="font-medium">
                   {d.doc_type} {d.number} · {d.customer_std}
                 </p>
-                <dl className="mt-2 grid gap-1 text-[14px]">
+                <dl className="mt-2 grid gap-1 text-ui">
                   {c.fields.map((f) => (
                     <div key={f.field} className="grid grid-cols-[6rem_1fr] gap-2 sm:grid-cols-[8rem_1fr_1fr]">
                       <dt className="text-muted">{FIELD[f.field] ?? f.field}</dt>
@@ -169,10 +170,10 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
       <section aria-labelledby="normalizacion" className="rounded-lg border border-line bg-surface p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 id="normalizacion" className="text-[16px] font-semibold">
+            <h3 id="normalizacion" className="text-lead font-semibold">
               Nombres estándar
             </h3>
-            <p className="mt-1 max-w-2xl text-[14px] text-muted">
+            <p className="mt-1 max-w-2xl text-ui text-muted">
               Tango suele tener el mismo cliente escrito de varias formas. Faro sugiere cómo unificarlo; vos aprobás. El dato original queda guardado y nunca se borra.
             </p>
           </div>
@@ -186,12 +187,12 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
           <ul className="mt-4 grid gap-3">
             {pendingRules.map((r) => (
               <li key={r.id} className="rounded-md border border-line p-3" data-regla={r.id}>
-                <p className="text-[13px] text-muted">
+                <p className="text-meta text-muted">
                   {FIELD[r.field] ?? r.field} · aparece como: {r.examples.join(" · ")}
                 </p>
                 <form className="mt-2 flex flex-wrap items-end gap-2">
                   <input type="hidden" name="id" value={r.id} />
-                  <label className="min-w-0 flex-1 text-[14px]">
+                  <label className="min-w-0 flex-1 text-ui">
                     Queda como
                     <input name="standard" defaultValue={r.standard} className={field} />
                   </label>
@@ -205,7 +206,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
           </ul>
         )}
         <form action={addTangoRuleAction} className="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-[10rem_1fr_1fr_auto] sm:items-end">
-          <label className="text-[14px]">
+          <label className="text-ui">
             Campo
             <select name="field" className={field} defaultValue="cliente">
               <option value="cliente">Cliente</option>
@@ -213,18 +214,18 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
               <option value="categoria">Categoría</option>
             </select>
           </label>
-          <label className="text-[14px]">
+          <label className="text-ui">
             Cómo viene
             <input name="raw" required className={field} />
           </label>
-          <label className="text-[14px]">
+          <label className="text-ui">
             Cómo tiene que quedar
             <input name="standard" required className={field} />
           </label>
           <SubmitButton variant="secondary">Agregar regla</SubmitButton>
         </form>
         {approved.length > 0 && (
-          <details className="mt-4 text-[14px]">
+          <details className="mt-4 text-ui">
             <summary className="cursor-pointer">Reglas aprobadas ({approved.length})</summary>
             <ul className="mt-2 divide-y divide-line">
               {approved.map((r) => (
@@ -238,11 +239,11 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
       </section>
 
       <section aria-labelledby="comprobantes">
-        <h3 id="comprobantes" className="text-[16px] font-semibold">
+        <h3 id="comprobantes" className="text-lead font-semibold">
           Comprobantes
         </h3>
         {docs.length === 0 ? (
-          <p className="mt-3 rounded-md border border-dashed border-line p-4 text-[14px] text-muted">Todavía no hay comprobantes sincronizados.</p>
+          <p className="mt-3 rounded-md border border-dashed border-line p-4 text-ui text-muted">Todavía no hay comprobantes sincronizados.</p>
         ) : (
           <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
             {docs.map(({ d, org }) => (
@@ -251,12 +252,12 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
                   <p className="truncate font-medium">
                     {d.doc_type} {d.number} · {d.customer_std}
                   </p>
-                  <p className="text-[13px] text-muted">
+                  <p className="text-meta text-muted">
                     Nació en {d.origin === "faro" ? "Faro" : "Tango"}
                     {org ? ` · ${org}` : ""} · ID en Tango: {d.external_id || "—"} · sincronizado: {when(d.synced_at)}
                     {d.customer_raw !== d.customer_std ? ` · original: ${d.customer_raw}` : ""}
                   </p>
-                  {d.last_error && d.status === "error" && <p className="text-[13px] text-danger">{d.last_error}</p>}
+                  {d.last_error && d.status === "error" && <p className="text-meta text-danger">{d.last_error}</p>}
                 </div>
                 <div className="flex items-center gap-3 sm:justify-end">
                   <span className="num">{money.format(Number(d.total))}</span>

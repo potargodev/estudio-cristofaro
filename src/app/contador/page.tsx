@@ -12,12 +12,13 @@ import { money } from "@/modules/bitacora/catalog";
 import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { actionsFor, AUTONOMY_LABEL, connectionHistory, currentConnection, disputeMessages, READONLY_DAYS, STATUS_LABEL, surveyDue } from "@/modules/conexiones/server";
 import { acceptInvitationAction, answerInfoAction, autonomyAction, closingClearAction, declineAction, approveActionAction, rejectActionAction, disputeAction, disputeMessageAction, rateAction, skipRatingAction, seekerAction, answerContactAction, rejectContactAction, resolveDisputeAction, scopesAction, signAction, startClosingAction, weeklyAction } from "./actions";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: { absolute: "Contador · Faro" } };
 
 const card = "rounded-lg border border-line bg-surface p-5";
-const field = "mt-1 block w-full rounded-md border border-line bg-surface px-2.5 py-2 text-[14px] text-ink";
-const lbl = "block text-[13px] text-muted";
+const field = `mt-1 py-2 ${fieldClass}`;
+const lbl = "block text-meta text-muted";
 const fmt = (d: Date | null | undefined) => (d ? d.toLocaleDateString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }) : "—");
 const when = (d: Date) => d.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" });
 const show = (v: unknown) => (v == null ? "—" : typeof v === "boolean" ? (v ? "sí" : "no") : typeof v === "object" ? Object.entries(v as Record<string, unknown>).map(([k, x]) => `${k}: ${typeof x === "boolean" ? (x ? "sí" : "no") : String(x)}`).join(" · ") : String(v));
@@ -26,10 +27,10 @@ function Scopes({ id, personal }: { id: string; personal: boolean }) {
   return (
     <form action={scopesAction} className="grid gap-2">
       <input type="hidden" name="id" value={id} />
-      <p className="text-[14px] text-ink">
+      <p className="text-ui text-ink">
         <strong className="font-medium">Siempre compartís:</strong> tu caja de negocio y lo fiscal (facturación, monotributo, calendario).
       </p>
-      <label className="flex items-center gap-2 text-[14px]">
+      <label className="flex items-center gap-2 text-ui">
         <input type="checkbox" name="personal" defaultChecked={personal} className="size-4 accent-navy" /> También mis cajas personales (la Bitácora)
       </label>
       <div>
@@ -42,10 +43,10 @@ function Scopes({ id, personal }: { id: string; personal: boolean }) {
 function ChooseScopesAndAutonomy() {
   return (
     <>
-      <label className="flex items-center gap-2 text-[14px]">
+      <label className="flex items-center gap-2 text-ui">
         <input type="checkbox" name="personal" className="size-4 accent-navy" /> Compartir también mis cajas personales (apagado: solo la caja de negocio y lo fiscal)
       </label>
-      <fieldset className="grid gap-1 text-[14px]">
+      <fieldset className="grid gap-1 text-ui">
         <legend className={lbl}>¿Cómo trabaja tu contador?</legend>
         <label className="flex items-start gap-2">
           <input type="radio" name="autonomy" value="delegar" defaultChecked className="mt-0.5 size-4 accent-navy" />
@@ -84,14 +85,14 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {survey && (
         <section aria-labelledby="encuesta" className={card} data-encuesta={survey.kind}>
-          <h2 id="encuesta" className="flex items-center gap-2 text-[16px] font-semibold">
+          <h2 id="encuesta" className="flex items-center gap-2 text-lead font-semibold">
             <Star className="size-5 text-rose-deep" aria-hidden /> {survey.kind === "cierre" ? `¿Cómo fue tu relación con ${survey.studio}?` : `¿Cómo va todo con ${survey.studio}?`}
           </h2>
-          <p className="mt-1 text-[13px] text-muted">Tu opinión queda guardada y el estudio la ve. No se publica.</p>
+          <p className="mt-1 text-meta text-muted">Tu opinión queda guardada y el estudio la ve. No se publica.</p>
           <form action={rateAction} className="mt-3 grid gap-2">
             <input type="hidden" name="id" value={survey.connId} />
             <input type="hidden" name="kind" value={survey.kind} />
-            <div className="flex flex-wrap gap-3 text-[14px]">
+            <div className="flex flex-wrap gap-3 text-ui">
               {[1, 2, 3, 4, 5].map((n) => (
                 <label key={n} className="flex items-center gap-1.5">
                   <input type="radio" name="score" value={n} defaultChecked={n === 5} className="size-4 accent-navy" /> {n}
@@ -105,7 +106,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
             <div className="flex flex-wrap gap-2">
               <SubmitButton pendingText="…">Enviar</SubmitButton>
               {survey.kind === "periodica" && (
-                <button type="submit" formAction={skipRatingAction} formNoValidate className="h-10 rounded-md px-3 text-[14px] text-muted hover:text-ink">
+                <button type="submit" formAction={skipRatingAction} formNoValidate className="h-10 rounded-md px-3 text-ui text-muted hover:text-ink">
                   Ahora no
                 </button>
               )}
@@ -116,17 +117,17 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {!c && (
         <section aria-labelledby="sumar" className={card}>
-          <h2 id="sumar" className="text-[16px] font-semibold">
+          <h2 id="sumar" className="text-lead font-semibold">
             Sumá un contador
           </h2>
-          <p className="mt-1 text-[14px] text-muted">
+          <p className="mt-1 text-ui text-muted">
             Faro te ordena y te deja hacer lo básico, pero no da fe de nada: el único que puede hacerlo es un contador matriculado. {NO_REEMPLAZA}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/red-contable" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-[14px] text-paper hover:bg-night">
+            <Link href="/red-contable" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
               <Search className="size-4" aria-hidden /> Buscar en la Red Contable
             </Link>
-            <Link href="/flotas" className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-[14px] hover:border-muted">
+            <Link href="/flotas" className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-ui hover:border-muted">
               <Ship className="size-4" aria-hidden /> Flotas
             </Link>
           </div>
@@ -135,24 +136,24 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {c && (
         <section aria-labelledby="conexion" className={card} data-estado={c.status}>
-          <h2 id="conexion" className="text-[16px] font-semibold">
+          <h2 id="conexion" className="text-lead font-semibold">
             {c.studioName} · {STATUS_LABEL[c.status]}
           </h2>
           {c.status === "invitada" && (
             <form action={acceptInvitationAction} className="mt-3 grid gap-3">
               <input type="hidden" name="id" value={c.id} />
-              <p className="text-[14px]">{c.message ?? "El estudio te invita a conectar tu cuenta."}</p>
+              <p className="text-ui">{c.message ?? "El estudio te invita a conectar tu cuenta."}</p>
               <ChooseScopesAndAutonomy />
               <div className="flex flex-wrap gap-2">
                 <SubmitButton pendingText="…">Aceptar y pasar a la admisión</SubmitButton>
-                <button formAction={declineAction} className="h-10 rounded-md px-3 text-[14px] text-muted hover:text-danger">
+                <button formAction={declineAction} className="h-10 rounded-md px-3 text-ui text-muted hover:text-danger">
                   No, gracias
                 </button>
               </div>
             </form>
           )}
           {c.status === "admision" && (
-            <div className="mt-2 grid gap-3 text-[14px]">
+            <div className="mt-2 grid gap-3 text-ui">
               <p className="text-muted">El estudio está revisando la información que autorizaste antes de aceptarte. Mientras tanto no opera sobre tus datos.</p>
               {c.interview_requested_at && (
                 <p className="rounded-md border border-line bg-navy-soft px-4 py-2.5">
@@ -181,12 +182,12 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
               <Scopes id={c.id} personal={c.scope_personal} />
               <form action={declineAction}>
                 <input type="hidden" name="id" value={c.id} />
-                <button className="text-[13px] text-muted underline underline-offset-4 hover:text-danger">Cancelar el pedido</button>
+                <button className="text-meta text-muted underline underline-offset-4 hover:text-danger">Cancelar el pedido</button>
               </form>
             </div>
           )}
           {c.status === "acuerdo" && c.terms && (
-            <form action={signAction} className="mt-3 grid gap-3 text-[14px]">
+            <form action={signAction} className="mt-3 grid gap-3 text-ui">
               <input type="hidden" name="id" value={c.id} />
               <div className="rounded-md border border-line bg-canvas p-4">
                 <p className="flex items-center gap-2 font-medium">
@@ -224,7 +225,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
             </form>
           )}
           {["activa", "en_cierre", "en_disputa"].includes(c.status) && (
-            <div className="mt-2 grid gap-4 text-[14px]">
+            <div className="mt-2 grid gap-4 text-ui">
               <p className="text-muted">
                 Conectados desde el {fmt(c.started_at)}. Trabaja sobre tus datos en vivo: no se lleva una copia.
                 {c.status !== "activa" && ` Desde el ${fmt(c.closing_started_at)} está en cierre (motivo: ${c.closing_reason}); el estudio solo puede mirar hasta el ${fmt(c.readonly_until)}.`}
@@ -250,21 +251,21 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {proposals.length > 0 && (
         <section aria-labelledby="aprobar" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
-          <h2 id="aprobar" className="text-[16px] font-semibold">
+          <h2 id="aprobar" className="text-lead font-semibold">
             Para aprobar
           </h2>
           <ul className="mt-2 divide-y divide-line">
             {proposals.map((a) => (
-              <li key={a.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-[14px]">
+              <li key={a.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-ui">
                 <span>
                   {a.summary} <span className="text-muted">· {a.actor_name} · {when(a.created_at)}</span>
                 </span>
                 <form action={approveActionAction} className="flex gap-2">
                   <input type="hidden" name="action" value={a.id} />
-                  <button className="h-10 rounded-md bg-navy px-3 text-[14px] text-paper hover:bg-night">
+                  <button className="h-10 rounded-md bg-navy px-3 text-ui text-paper hover:bg-night">
                     Aprobar
                   </button>
-                  <button formAction={rejectActionAction} className="h-10 rounded-md border border-line px-3 text-[14px] hover:border-muted">
+                  <button formAction={rejectActionAction} className="h-10 rounded-md border border-line px-3 text-ui hover:border-muted">
                     Rechazar
                   </button>
                 </form>
@@ -276,10 +277,10 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {c && ["activa", "en_cierre", "en_disputa"].includes(c.status) && (
         <section aria-labelledby="hizo" className={card}>
-          <h2 id="hizo" className="flex items-center gap-2 text-[16px] font-semibold">
+          <h2 id="hizo" className="flex items-center gap-2 text-lead font-semibold">
             <History className="size-5 text-rose-deep" aria-hidden /> Lo que hizo tu contador
           </h2>
-          <form method="get" className="mt-3 flex flex-wrap items-end gap-2 text-[13px]">
+          <form method="get" className="mt-3 flex flex-wrap items-end gap-2 text-meta">
             <label>
               <span className={lbl}>Estado</span>
               <select name="estado" defaultValue={sp.estado ?? ""} className={field}>
@@ -298,20 +299,20 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
               <span className={lbl}>Hasta</span>
               <input type="date" name="hasta" defaultValue={sp.hasta ?? ""} className={field} />
             </label>
-            <button className="h-10 rounded-md border border-line px-3 text-[14px]">Filtrar</button>
+            <button className="h-10 rounded-md border border-line px-3 text-ui">Filtrar</button>
           </form>
           {actions.length === 0 ? (
-            <p className="mt-3 text-[14px] text-muted">Todavía no hay acciones{sp.estado || sp.desde || sp.hasta ? " con esos filtros" : ""}.</p>
+            <p className="mt-3 text-ui text-muted">Todavía no hay acciones{sp.estado || sp.desde || sp.hasta ? " con esos filtros" : ""}.</p>
           ) : (
             <ul className="mt-3 divide-y divide-line">
               {actions.map((a) => (
-                <li key={a.id} className="py-2.5 text-[14px]" data-accion={a.status}>
+                <li key={a.id} className="py-2.5 text-ui" data-accion={a.status}>
                   <p className="text-ink">{a.summary}</p>
-                  <p className="text-[13px] text-muted">
+                  <p className="text-meta text-muted">
                     {a.actor_name} · {when(a.created_at)} · {a.status}
                   </p>
                   {(a.before != null || a.after != null) && (
-                    <p className="text-[13px] text-muted">
+                    <p className="text-meta text-muted">
                       Antes: {show(a.before)} → Después: {show(a.after)}
                     </p>
                   )}
@@ -319,7 +320,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
               ))}
             </ul>
           )}
-          <form action={weeklyAction} className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3 text-[14px]">
+          <form action={weeklyAction} className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3 text-ui">
             <input type="hidden" name="id" value={c.id} />
             <label className="flex items-center gap-2">
               <input type="checkbox" name="weekly" defaultChecked={c.weekly_summary} className="size-4 accent-navy" /> Mandarme un resumen semanal
@@ -331,10 +332,10 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {c && c.status === "activa" && (
         <section aria-labelledby="cerrar" className={card}>
-          <h2 id="cerrar" className="text-[16px] font-semibold">
+          <h2 id="cerrar" className="text-lead font-semibold">
             Terminar la relación
           </h2>
-          <p className="mt-1 text-[14px] text-muted">No es un portazo: queda en cierre y el estudio solo puede mirar por {READONLY_DAYS} días, mientras dejan constancia de que nadie le debe nada a nadie.</p>
+          <p className="mt-1 text-ui text-muted">No es un portazo: queda en cierre y el estudio solo puede mirar por {READONLY_DAYS} días, mientras dejan constancia de que nadie le debe nada a nadie.</p>
           <form action={startClosingAction} className="mt-3 grid gap-2">
             <input type="hidden" name="id" value={c.id} />
             <label>
@@ -350,10 +351,10 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {c && (c.status === "en_cierre" || c.status === "en_disputa") && (
         <section aria-labelledby="checklist" className={card}>
-          <h2 id="checklist" className="flex items-center gap-2 text-[16px] font-semibold">
+          <h2 id="checklist" className="flex items-center gap-2 text-lead font-semibold">
             <ClipboardCheck className="size-5 text-rose-deep" aria-hidden /> Checklist de cierre
           </h2>
-          <ul className="mt-2 grid gap-1 text-[14px]">
+          <ul className="mt-2 grid gap-1 text-ui">
             <li>{c.fees_zero_at ? "✓" : "○"} Honorarios en cero (lo confirma el estudio)</li>
             <li>{c.pending_delivered_at ? "✓" : "○"} Pendientes entregados (lo confirma el estudio)</li>
             <li>{c.studio_clear_at ? "✓" : "○"} El estudio: «nadie le debe nada a nadie»</li>
@@ -381,13 +382,13 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
           )}
           {messages.length > 0 && (
             <div className="mt-4 grid gap-2 border-t border-line pt-3">
-              <p className="flex items-center gap-2 text-[14px] font-medium">
+              <p className="flex items-center gap-2 text-ui font-medium">
                 <MessagesSquare className="size-4" aria-hidden /> Mensajes del cierre
               </p>
               <ul className="grid gap-2">
                 {messages.map(({ m, name }) => (
-                  <li key={m.id} className="rounded-md border border-line bg-canvas px-3 py-2 text-[14px]">
-                    <span className="text-[12px] text-muted">
+                  <li key={m.id} className="rounded-md border border-line bg-canvas px-3 py-2 text-ui">
+                    <span className="text-caption text-muted">
                       {m.side === "usuario" ? "Vos" : (name ?? "El estudio")} · {when(m.created_at)}
                     </span>
                     <span className="block">{m.body}</span>
@@ -416,14 +417,14 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {contacts.some((x) => x.c.status === "pendiente" && !x.fleetId) && (
         <section aria-labelledby="contactos" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
-          <h2 id="contactos" className="text-[16px] font-semibold">
+          <h2 id="contactos" className="text-lead font-semibold">
             Estudios que quieren ser tu contador
           </h2>
           <ul className="mt-2 divide-y divide-line">
             {contacts
               .filter((x) => x.c.status === "pendiente" && !x.fleetId)
               .map((x) => (
-                <li key={x.c.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-[14px]" data-contacto>
+                <li key={x.c.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-ui" data-contacto>
                   <span className="min-w-0">
                     <Link href={`/red-contable/${x.slug}`} className="font-medium underline underline-offset-4">
                       {x.studio}
@@ -432,21 +433,21 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
                   </span>
                   <form action={answerContactAction} className="flex gap-2">
                     <input type="hidden" name="id" value={x.c.id} />
-                    <button className="h-10 rounded-md bg-navy px-3 text-[14px] text-paper hover:bg-night">Aceptar</button>
-                    <button formAction={rejectContactAction} className="h-10 rounded-md border border-line px-3 text-[14px] hover:border-muted">
+                    <button className="h-10 rounded-md bg-navy px-3 text-ui text-paper hover:bg-night">Aceptar</button>
+                    <button formAction={rejectContactAction} className="h-10 rounded-md border border-line px-3 text-ui hover:border-muted">
                       No, gracias
                     </button>
                   </form>
                 </li>
               ))}
           </ul>
-          <p className="mt-2 text-[13px] text-muted">Al aceptar, el estudio ve tu nombre y tus datos y empieza su admisión. Hasta entonces no sabe quién sos.</p>
+          <p className="mt-2 text-meta text-muted">Al aceptar, el estudio ve tu nombre y tus datos y empieza su admisión. Hasta entonces no sabe quién sos.</p>
         </section>
       )}
 
       {titular && (!c || !["activa", "en_cierre", "en_disputa"].includes(c.status)) && (
         <section aria-labelledby="disponible" className={card}>
-          <h2 id="disponible" className="text-[16px] font-semibold">
+          <h2 id="disponible" className="text-lead font-semibold">
             Que los estudios te encuentren
           </h2>
           <div className="mt-3">
@@ -457,10 +458,10 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {history.length > 0 && (
         <section aria-labelledby="historial" className={card}>
-          <h2 id="historial" className="text-[16px] font-semibold">
+          <h2 id="historial" className="text-lead font-semibold">
             Relaciones anteriores
           </h2>
-          <ul className="mt-2 grid gap-1 text-[14px]">
+          <ul className="mt-2 grid gap-1 text-ui">
             {history.map((h) => (
               <li key={h.id}>
                 {h.studio} · {STATUS_LABEL[h.status]} {h.started ? `· del ${fmt(h.started)} al ${fmt(h.closed)}` : `· ${fmt(h.created)}`}
@@ -471,7 +472,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
       )}
 
       {titular && !c && (
-        <p className="text-[13px] text-muted">
+        <p className="text-meta text-muted">
           Para conectar, elegí un estudio en la{" "}
           <Link href="/red-contable" className="underline underline-offset-4">
             Red

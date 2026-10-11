@@ -14,7 +14,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   if (!isDbConfigured) {
     return (
       <div className="mx-auto max-w-xl px-4 py-20">
-        <h1 className="text-2xl font-semibold">Falta conectar la base de datos</h1>
+        <h1 className="text-headline font-semibold">Falta conectar la base de datos</h1>
         <p className="mt-3 leading-relaxed text-muted">
           Completá <code>DATABASE_URL</code> y <code>BETTER_AUTH_SECRET</code> en el archivo <code>.env.local</code> (o en las variables de entorno de
           Easypanel) y reiniciá el servidor. Los pasos están en el README.

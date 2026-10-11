@@ -22,16 +22,16 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     <div className="grid gap-4">
       <Feedback sp={sp} />
       <form action={importUploadAction} className="grid gap-3 rounded-md border border-line bg-surface p-4">
-        <p className="text-[14px]">
+        <p className="text-ui">
           Subí el resumen de tu banco o tarjeta (CSV o PDF con texto) o el CSV de movimientos de Mercado Pago. Antes de cargar nada te mostramos cómo quedó, para que elijas qué columnas son qué y qué filas entran. Las que ya estaban no se duplican.
         </p>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Archivo
-          <input type="file" name="file" required accept=".csv,.txt,.pdf,text/csv,application/pdf" className="mt-1 block w-full text-[14px] text-ink" />
+          <input type="file" name="file" required accept=".csv,.txt,.pdf,text/csv,application/pdf" className="mt-1 block w-full text-ui text-ink" />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Qué es
-          <select name="source" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink sm:w-72">
+          <select name="source" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink sm:w-72">
             <option value="auto">Resumen del banco o la tarjeta</option>
             <option value="mercadopago_csv">Movimientos de Mercado Pago (CSV)</option>
           </select>
@@ -39,16 +39,16 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         <div className="flex flex-wrap items-center gap-3">
           <SubmitButton pendingText="Leyendo…">Ver vista previa</SubmitButton>
           {limit != null && (
-            <span className="text-[13px] text-muted">
+            <span className="text-meta text-muted">
               <span className="num">{used}</span> de <span className="num">{limit}</span> importaciones este mes (Bitácora Gratis).
             </span>
           )}
         </div>
       </form>
-      <Link href="/bitacora/tickets" className="flex items-center justify-between gap-2 rounded-md border border-line bg-surface p-4 text-[14px] hover:border-muted">
+      <Link href="/bitacora/tickets" className="flex items-center justify-between gap-2 rounded-md border border-line bg-surface p-4 text-ui hover:border-muted">
         <span>
           <span className="font-medium">Foto de un ticket o una factura</span>
-          <span className="block text-[13px] text-muted">Faro la lee, te muestra los datos y la cargás como gasto con un toque.</span>
+          <span className="block text-meta text-muted">Faro la lee, te muestra los datos y la cargás como gasto con un toque.</span>
         </span>
         <span aria-hidden>→</span>
       </Link>
@@ -57,8 +57,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           {list.map((i) => (
             <li key={i.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
               <div className="min-w-0">
-                <p className="truncate text-[15px]">{i.fileName}</p>
-                <p className="text-[13px] text-muted">
+                <p className="truncate text-body">{i.fileName}</p>
+                <p className="text-meta text-muted">
                   {SOURCE[i.source] ?? i.source} · {STATUS[i.status] ?? i.status} · {i.createdAt.toLocaleDateString("es-AR")}
                   {i.status === "importado" && (
                     <>
@@ -68,7 +68,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 </p>
               </div>
               {i.status === "vista_previa" && (
-                <Link href={`/bitacora/importar/${i.id}`} className="text-[14px] text-navy underline">
+                <Link href={`/bitacora/importar/${i.id}`} className="text-ui text-navy underline">
                   Seguir
                 </Link>
               )}

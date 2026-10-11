@@ -26,16 +26,16 @@ export function LoginCard({
   return (
     <AuthShell title={title} subtitle={subtitle} footer={footer}>
       <form action={formAction}>
-        <label htmlFor="email" className="block text-sm font-medium">
+        <label htmlFor="email" className="block text-ui font-medium">
           Email
         </label>
-        <Input id="email" name="email" type="email" autoComplete="email" required className="mt-1 h-11 bg-surface text-base" />
-        <label htmlFor="password" className="mt-4 block text-sm font-medium">
+        <Input id="email" name="email" type="email" autoComplete="email" required className="mt-1 h-11 bg-surface text-lead" />
+        <label htmlFor="password" className="mt-4 block text-ui font-medium">
           Contraseña
         </label>
-        <Input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 h-11 bg-surface text-base" />
+        <Input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 h-11 bg-surface text-lead" />
         {state.message && (
-          <p role="alert" className="mt-4 text-sm text-danger">
+          <p role="alert" className="mt-4 text-ui text-danger">
             {state.message}
           </p>
         )}

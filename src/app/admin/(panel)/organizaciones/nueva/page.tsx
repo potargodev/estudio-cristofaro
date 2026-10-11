@@ -24,7 +24,7 @@ export default async function NuevaOrganizacionPage({ searchParams }: { searchPa
   const [plans, people] = await Promise.all([getServicePlans(staff.studioId), getStudioStaff(staff.studioId)]);
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/organizaciones" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
+      <Link href="/admin/organizaciones" className="text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
         Organizaciones
       </Link>
       <div className="mt-2">
@@ -80,7 +80,7 @@ export default async function NuevaOrganizacionPage({ searchParams }: { searchPa
         <fieldset className="grid gap-4 border border-line bg-surface p-6 sm:grid-cols-2">
           <legend className="px-1 font-semibold">Primera razón social</legend>
           <LegalEntityFields k="alta" nameRequired={false} />
-          <p className="text-sm text-muted sm:col-span-2">Si dejás la razón social vacía se usa el nombre de la organización.</p>
+          <p className="text-ui text-muted sm:col-span-2">Si dejás la razón social vacía se usa el nombre de la organización.</p>
         </fieldset>
         <div>
           <SubmitButton>Crear organización</SubmitButton>

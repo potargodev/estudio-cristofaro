@@ -39,9 +39,9 @@ export default async function ContenidosPage() {
               </span>
               <span className="tabular num text-[40px] leading-none text-ink">{s.count ?? 0}</span>
             </span>
-            <h2 className="mt-4 text-[16px] font-medium text-ink">{s.title}</h2>
-            <p className="mt-1 text-[14px] text-muted">{s.text}</p>
-            <span className="mt-4 inline-flex items-center gap-1 text-[13px] text-ink">
+            <h2 className="mt-4 text-lead font-medium text-ink">{s.title}</h2>
+            <p className="mt-1 text-ui text-muted">{s.text}</p>
+            <span className="mt-4 inline-flex items-center gap-1 text-meta text-ink">
               Administrar <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </span>
           </Link>

@@ -71,10 +71,10 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
 
       <section aria-labelledby="mes" className="rounded-md border border-line bg-surface p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="mes" className="text-[17px] font-medium text-ink">
+          <h2 id="mes" className="text-title font-medium text-ink">
             Tu mes · {monthLabel(month)}
           </h2>
-          <Link href="/bitacora" className="text-[14px] font-medium text-rose-deep underline-offset-4 hover:underline">
+          <Link href="/bitacora" className="text-ui font-medium text-rose-deep underline-offset-4 hover:underline">
             Abrir la Bitácora
           </Link>
         </div>
@@ -85,13 +85,13 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
             { k: "Queda", v: ars.left },
           ].map((x) => (
             <div key={x.k} className="min-w-0">
-              <dt className="text-[13px] text-muted">{x.k}</dt>
-              <dd className="num truncate text-[20px] text-ink sm:text-[24px]">{money(x.v)}</dd>
+              <dt className="text-meta text-muted">{x.k}</dt>
+              <dd className="num truncate text-section text-ink sm:text-headline">{money(x.v)}</dd>
             </div>
           ))}
         </dl>
         {summary.byCategory.length > 0 && (
-          <p className="mt-3 text-[13px] text-muted">
+          <p className="mt-3 text-meta text-muted">
             En lo que más gastaste: {summary.byCategory.slice(0, 3).map((c) => c.name).join(", ")}.
           </p>
         )}
@@ -102,10 +102,10 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
           <Boxes className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[17px] font-medium text-ink">Mis cajas</span>
-          <span className="block text-[14px] text-muted">{business ? `Personal y ${business.name}${shared ? `, más ${shared} compartida${shared === 1 ? "" : "s"}` : ""}: cada plata en su caja.` : "Tu caja personal, la de tu negocio y las que compartís con otros, cada una por separado."}</span>
+          <span className="block text-title font-medium text-ink">Mis cajas</span>
+          <span className="block text-ui text-muted">{business ? `Personal y ${business.name}${shared ? `, más ${shared} compartida${shared === 1 ? "" : "s"}` : ""}: cada plata en su caja.` : "Tu caja personal, la de tu negocio y las que compartís con otros, cada una por separado."}</span>
         </span>
-        <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
+        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
       </Link>
 
       <Link href="/grupos" data-tour="grupos" className="group flex items-center gap-4 rounded-md border border-line bg-surface p-5 transition-colors hover:border-muted">
@@ -113,10 +113,10 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
           <Wallet className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[17px] font-medium text-ink">Grupos de gastos</span>
-          <span className="block text-[14px] text-muted">Dividí gastos con socios, clientes o amigos. {titular ? "Lo deducible queda marcado para tu contabilidad." : "Faro calcula quién le debe a quién."}</span>
+          <span className="block text-title font-medium text-ink">Grupos de gastos</span>
+          <span className="block text-ui text-muted">Dividí gastos con socios, clientes o amigos. {titular ? "Lo deducible queda marcado para tu contabilidad." : "Faro calcula quién le debe a quién."}</span>
         </span>
-        <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
+        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
       </Link>
 
       {!titular ? null : (
@@ -125,13 +125,13 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
 
       {activity.length > 0 && (
         <section aria-labelledby="actividad" className="border border-line bg-surface p-5">
-          <h2 id="actividad" className="text-[17px] font-medium text-ink">
+          <h2 id="actividad" className="text-title font-medium text-ink">
             Gastos de tu actividad
           </h2>
-          <p className="mt-1 text-[14px] text-muted">Los que marcaste como de la actividad o deducibles, con su comprobante. Quedan listos para tu contabilidad.</p>
+          <p className="mt-1 text-ui text-muted">Los que marcaste como de la actividad o deducibles, con su comprobante. Quedan listos para tu contabilidad.</p>
           <ul className="mt-3 divide-y divide-line">
             {activity.map((a) => (
-              <li key={a.id} className="flex items-start justify-between gap-3 py-2.5 text-[14px]">
+              <li key={a.id} className="flex items-start justify-between gap-3 py-2.5 text-ui">
                 <span className="min-w-0">
                   <span className="block truncate text-ink">{a.description}</span>
                   <span className="block text-muted">
@@ -155,7 +155,7 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
       )}
 
       <section aria-labelledby="pronto">
-        <h2 id="pronto" className="text-[13px] font-medium uppercase tracking-wide text-muted">
+        <h2 id="pronto" className="text-meta font-medium uppercase tracking-wide text-muted">
           Próximamente
         </h2>
         <ul className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -164,7 +164,7 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
               <s.icon className="mt-0.5 size-5 shrink-0 text-gold-ink" strokeWidth={1.5} aria-hidden />
               <span>
                 <span className="block font-medium text-ink">{s.title}</span>
-                <span className="block text-[14px] text-muted">{s.text}</span>
+                <span className="block text-ui text-muted">{s.text}</span>
               </span>
             </li>
           ))}
@@ -176,10 +176,10 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
           <Ship className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[17px] font-medium text-ink">Flotas</span>
-          <span className="block text-[14px] text-muted">Entre 3 y 20 personas piden juntas una propuesta a un estudio. Cada uno firma su acuerdo y paga solo lo suyo.</span>
+          <span className="block text-title font-medium text-ink">Flotas</span>
+          <span className="block text-ui text-muted">Entre 3 y 20 personas piden juntas una propuesta a un estudio. Cada uno firma su acuerdo y paga solo lo suyo.</span>
         </span>
-        <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
+        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
       </Link>
 
       <Link href="/red-contable" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
@@ -187,10 +187,10 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
           <LifeBuoy className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[17px] font-medium text-ink">Necesito un contador</span>
-          <span className="block text-[14px] text-muted">Compará estudios de la Red: matrícula verificada, reseñas de clientes reales y un orden sin posiciones pagas. Tus números no se comparten hasta que vos lo autorices.</span>
+          <span className="block text-title font-medium text-ink">Necesito un contador</span>
+          <span className="block text-ui text-muted">Compará estudios de la Red: matrícula verificada, reseñas de clientes reales y un orden sin posiciones pagas. Tus números no se comparten hasta que vos lo autorices.</span>
         </span>
-        <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Ver la Red</span>
+        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Ver la Red</span>
       </Link>
         </>
       )}

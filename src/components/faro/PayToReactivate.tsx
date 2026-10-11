@@ -12,7 +12,7 @@ export async function PayToReactivate({ studioId, owner, error }: { studioId: st
   return (
     <div className="mt-4 grid gap-2">
       {error && (
-        <p role="alert" className="text-[14px] text-[#8f2a1c]">
+        <p role="alert" className="text-ui text-[#8f2a1c]">
           {error}
         </p>
       )}

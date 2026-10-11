@@ -18,28 +18,28 @@ function Phone() {
       <div className="rounded-[46px] border border-paper/15 bg-[#0b0e18] p-2.5 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8)]">
         <div className="on-paper relative overflow-hidden rounded-[38px] bg-paper text-ink">
           {/* Barra de estado */}
-          <div className="flex items-center justify-between bg-navy px-6 pb-2 pt-3 text-[11px] text-paper">
+          <div className="flex items-center justify-between bg-navy px-6 pb-2 pt-3 text-micro text-paper">
             <span className="tabular">9:41</span>
             <span className="h-5 w-20 rounded-full bg-black/70" />
             <span className="tabular">100%</span>
           </div>
           {/* Encabezado */}
           <div className="bg-navy px-5 pb-5 pt-2 text-paper">
-            <p className="text-[11px] text-paper/60">Agencia Norte</p>
-            <p className="mt-0.5 font-display text-[22px] leading-tight">Hola, Martina</p>
+            <p className="text-micro text-paper/60">Agencia Norte</p>
+            <p className="mt-0.5 font-display text-headline leading-tight">Hola, Martina</p>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <div className="border border-paper/15 px-3 py-2">
-                <p className="text-[10px] text-paper/60">A pagar en octubre</p>
-                <p className="tabular num text-[17px]">$1.284.300</p>
+                <p className="text-micro text-paper/60">A pagar en octubre</p>
+                <p className="tabular num text-title">$1.284.300</p>
               </div>
               <div className="border border-paper/15 px-3 py-2">
-                <p className="text-[10px] text-paper/60">Resuelto</p>
-                <p className="tabular num text-[17px]">8/10</p>
+                <p className="text-micro text-paper/60">Resuelto</p>
+                <p className="tabular num text-title">8/10</p>
               </div>
             </div>
           </div>
           {/* Avisos */}
-          <ul className="space-y-2 px-4 py-4 text-[12px]">
+          <ul className="space-y-2 px-4 py-4 text-caption">
             <li className="flex items-center gap-3 border border-line bg-white px-3 py-2.5">
               <span className="grid size-8 shrink-0 place-items-center bg-rose-soft text-rose-deep">
                 <Bell className="size-4" strokeWidth={1.5} />
@@ -48,7 +48,7 @@ function Phone() {
                 <span className="block font-medium">IVA vence en 3 días</span>
                 <span className="tabular block text-muted">$642.180 · VEP listo</span>
               </span>
-              <span className="bg-navy px-2 py-1 text-[10px] text-paper">Pagar</span>
+              <span className="bg-navy px-2 py-1 text-micro text-paper">Pagar</span>
             </li>
             <li className="flex items-center gap-3 border border-line bg-white px-3 py-2.5">
               <span className="grid size-8 shrink-0 place-items-center bg-navy-soft text-ink">
@@ -83,7 +83,7 @@ function Phone() {
       {/* Ícono de la app, como en la pantalla de inicio */}
       <div className="absolute -left-6 top-24 hidden w-20 flex-col items-center gap-1.5 sm:flex lg:-left-16">
         <Image src="/icons/icon-192.png" alt="" width={64} height={64} className="rounded-[16px] shadow-[0_16px_30px_-12px_rgba(0,0,0,0.7)]" />
-        <span className="text-[11px] text-paper/70">Cristofaro</span>
+        <span className="text-micro text-paper/70">Cristofaro</span>
       </div>
     </div>
   );
@@ -98,18 +98,18 @@ export function AppDownload() {
     <section id="app" aria-labelledby="app-titulo" className="scroll-mt-16 overflow-hidden border-t border-hair bg-night py-16 text-paper lg:py-32">
       <Container className="grid items-center gap-16 lg:grid-cols-12 lg:gap-12">
         <div className="lg:col-span-6">
-          <p className="flex items-center gap-3 text-[13px] text-paper/60">
+          <p className="flex items-center gap-3 text-meta text-paper/60">
             <span className="size-1.5 bg-rose-light" aria-hidden />
             La app de Estudio Cristofaro
           </p>
           <h2 id="app-titulo" className="display-md mt-8 max-w-[16ch]">
             La contabilidad de tu empresa, <span className="text-rose-light">desde cualquier lugar.</span>
           </h2>
-          <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-paper/65">
+          <p className="mt-6 max-w-lg text-title leading-relaxed text-paper/65">
             Descargá nuestra app y seguí todo lo de tu empresa desde el celular o la compu: qué vence, qué ya está pagado, tus documentos, los mensajes con tu contador y los gastos que anotás con el Vigía. Gratis para todos los
             clientes.
           </p>
-          <p className="mt-10 flex items-center gap-2 text-[15px] font-medium text-paper">
+          <p className="mt-10 flex items-center gap-2 text-body font-medium text-paper">
             <Download className="size-4 text-rose-light" aria-hidden />
             Descargá la aplicación acá
           </p>

@@ -97,14 +97,14 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
               <FormCheckbox id="public" name="public" label="Aparezco en la agenda de la web (/agendar)" defaultChecked={av?.public ?? false} />
             </div>
             <fieldset>
-              <legend className="text-[16px] font-medium">Horario semanal (hora de Buenos Aires)</legend>
-              <p className="mt-1 text-sm text-muted">Hasta dos franjas por día. Dejá vacío el día que no atendés.</p>
+              <legend className="text-lead font-medium">Horario semanal (hora de Buenos Aires)</legend>
+              <p className="mt-1 text-ui text-muted">Hasta dos franjas por día. Dejá vacío el día que no atendés.</p>
               <div className="mt-3 space-y-2">
                 {DAYS.map((name, i) => {
                   const ranges = weekly[String(i + 1) as keyof typeof weekly] ?? [];
                   return (
                     <div key={name} className="grid grid-cols-[90px_1fr] items-center gap-3 sm:grid-cols-[110px_1fr_1fr]">
-                      <span className="text-[15px]">{name}</span>
+                      <span className="text-body">{name}</span>
                       {[1, 2].map((n) => (
                         <div key={n} className={cn("flex items-center gap-2", n === 2 && "col-start-2 sm:col-start-auto")}>
                           <Input
@@ -165,13 +165,13 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
           </form>
           <aside className="space-y-4">
             <section className="border border-line bg-surface p-5">
-              <h2 className="text-[16px] font-medium">Google Calendar</h2>
+              <h2 className="text-lead font-medium">Google Calendar</h2>
               {conn ? (
                 <>
-                  <p className="mt-2 text-sm">
+                  <p className="mt-2 text-ui">
                     <Badge tone="ok">Conectado</Badge> {conn.google_email}
                   </p>
-                  <p className="mt-2 text-sm text-muted">
+                  <p className="mt-2 text-ui text-muted">
                     Se leen tus horarios ocupados y cada llamada se crea con Google Meet e invitación al cliente.
                   </p>
                   <form action={disconnectGoogleCalendar} className="mt-3">
@@ -187,7 +187,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                 </>
               ) : (
                 <>
-                  <p className="mt-2 text-sm text-muted">
+                  <p className="mt-2 text-ui text-muted">
                     Conectalo para no ofrecer horarios en los que ya tenés algo y para crear cada llamada con Google Meet. Es independiente del login.
                   </p>
                   {calendarAvailable() ? (
@@ -195,7 +195,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                       Conectar Google Calendar
                     </a>
                   ) : (
-                    <p className="mt-3 text-sm text-danger">
+                    <p className="mt-3 text-ui text-danger">
                       {encryptionEnabled()
                         ? "Falta configurar GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET."
                         : "Falta configurar ENCRYPTION_KEY en el servidor."}
@@ -204,7 +204,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                 </>
               )}
             </section>
-            <p className="px-1 text-sm text-muted">
+            <p className="px-1 text-ui text-muted">
               Sin Google, la agenda funciona igual: confirmación por mail, archivo .ics y el link fijo de videollamada.
             </p>
           </aside>
@@ -251,15 +251,15 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <Link href={`/admin/comercial/agenda?${qs({ semana: addDays(monday, -7) })}`} className="grid size-9 place-items-center border border-line bg-surface" aria-label="Semana anterior">
               <ChevronLeft className="size-4" aria-hidden />
             </Link>
-            <h2 className="min-w-52 text-center font-display text-[20px]">Semana del {dayFmt.format(new Date(`${monday}T12:00:00Z`))}</h2>
+            <h2 className="min-w-52 text-center font-display text-section">Semana del {dayFmt.format(new Date(`${monday}T12:00:00Z`))}</h2>
             <Link href={`/admin/comercial/agenda?${qs({ semana: addDays(monday, 7) })}`} className="grid size-9 place-items-center border border-line bg-surface" aria-label="Semana siguiente">
               <ChevronRight className="size-4" aria-hidden />
             </Link>
-            <Link href={`/admin/comercial/agenda?${qs({ semana: today })}`} className="ml-2 text-[13px] text-muted underline-offset-4 hover:text-ink hover:underline">
+            <Link href={`/admin/comercial/agenda?${qs({ semana: today })}`} className="ml-2 text-meta text-muted underline-offset-4 hover:text-ink hover:underline">
               Hoy
             </Link>
           </div>
-          <div className="flex gap-1 text-[13px]">
+          <div className="flex gap-1 text-meta">
             <Link
               href={`/admin/comercial/agenda?${new URLSearchParams({ tab: "semana", semana: monday }).toString()}`}
               aria-current={mine ? "true" : undefined}
@@ -276,7 +276,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             </Link>
           </div>
         </div>
-        <ul className="mb-4 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-muted" aria-label="Tipos de llamada">
+        <ul className="mb-4 flex flex-wrap gap-x-5 gap-y-1 text-meta text-muted" aria-label="Tipos de llamada">
           {(Object.keys(CALL_TYPES) as (keyof typeof CALL_TYPES)[]).map((k) => (
             <li key={k} className="flex items-center gap-1.5">
               <span className={cn("size-2.5", CALL_TYPES[k].dot)} aria-hidden />
@@ -291,12 +291,12 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
               const list = rows.filter((r) => localDate(r.b.starts_at) === date);
               return (
                 <section key={date} aria-label={dayFmt.format(new Date(`${date}T12:00:00Z`))} className={cn("min-h-40 border-b border-r border-line p-2", date === today && "bg-navy-soft/40")}>
-                  <h3 className={cn("mb-2 px-1 text-[13px] capitalize", date === today ? "font-medium text-rose-deep" : "text-muted")}>
+                  <h3 className={cn("mb-2 px-1 text-meta capitalize", date === today ? "font-medium text-rose-deep" : "text-muted")}>
                     {dayFmt.format(new Date(`${date}T12:00:00Z`))}
                     {date === today && " · hoy"}
                   </h3>
                   <ul className="space-y-1.5">
-                    {list.length === 0 && <li className="px-1 text-[12px] text-muted">Sin llamadas</li>}
+                    {list.length === 0 && <li className="px-1 text-caption text-muted">Sin llamadas</li>}
                     {list.map(({ b, host, org }) => {
                       const t = CALL_TYPES[b.origin as keyof typeof CALL_TYPES] ?? CALL_TYPES.web;
                       const on = selected?.b.id === b.id;
@@ -306,7 +306,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                             href={`/admin/comercial/agenda?${qs({ llamada: b.id })}`}
                             aria-current={on ? "true" : undefined}
                             className={cn(
-                              "block border-l-2 px-2 py-1.5 text-[13px] transition-colors",
+                              "block border-l-2 px-2 py-1.5 text-meta transition-colors",
                               b.status === "cancelada" ? "border-line bg-canvas text-muted line-through" : t.card,
                               on && "outline outline-1 outline-navy",
                             )}
@@ -315,7 +315,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                               {fmtTime(b.starts_at)}–{fmtTime(b.ends_at)}
                             </span>
                             <span className="block truncate">{b.name}</span>
-                            <span className="block truncate text-[12px] opacity-80">
+                            <span className="block truncate text-caption opacity-80">
                               {org ?? t.label}
                               {!mine ? ` · ${host}` : ""}
                             </span>
@@ -332,14 +332,14 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <aside aria-label="Detalle de la llamada" className="border border-line bg-surface xl:sticky xl:top-20">
               <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
                 <div className="min-w-0">
-                  <p className="text-[12px] text-muted">{(CALL_TYPES[selected.b.origin as keyof typeof CALL_TYPES] ?? CALL_TYPES.web).label}</p>
-                  <h2 className="truncate text-[16px] font-medium text-ink">{selected.b.name}</h2>
+                  <p className="text-caption text-muted">{(CALL_TYPES[selected.b.origin as keyof typeof CALL_TYPES] ?? CALL_TYPES.web).label}</p>
+                  <h2 className="truncate text-lead font-medium text-ink">{selected.b.name}</h2>
                 </div>
                 <Link href={`/admin/comercial/agenda?${qs({})}`} aria-label="Cerrar detalle" className="grid size-8 place-items-center text-muted hover:text-ink">
                   <X className="size-4" aria-hidden />
                 </Link>
               </div>
-              <dl className="space-y-3 px-5 py-4 text-[14px]">
+              <dl className="space-y-3 px-5 py-4 text-ui">
                 <div className="flex items-center gap-2">
                   <Clock className="size-4 text-muted" strokeWidth={1.5} aria-hidden />
                   <dt className="sr-only">Horario</dt>
@@ -376,7 +376,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                 </div>
                 {selected.b.reason && (
                   <div>
-                    <dt className="text-[12px] text-muted">Motivo</dt>
+                    <dt className="text-caption text-muted">Motivo</dt>
                     <dd className="mt-0.5 whitespace-pre-line">{selected.b.reason}</dd>
                   </div>
                 )}
@@ -388,12 +388,12 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                   </a>
                 )}
                 {selected.b.organization_id && (
-                  <Link href={`/admin/organizaciones/${selected.b.organization_id}`} className="inline-flex items-center gap-1 text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep">
+                  <Link href={`/admin/organizaciones/${selected.b.organization_id}`} className="inline-flex items-center gap-1 text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
                     {selected.org ?? "Organización"} <ExternalLink className="size-3.5" aria-hidden />
                   </Link>
                 )}
                 {selected.b.lead_id && (
-                  <Link href={`/admin/comercial/consultas/${selected.b.lead_id}`} className="inline-flex items-center gap-1 text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep">
+                  <Link href={`/admin/comercial/consultas/${selected.b.lead_id}`} className="inline-flex items-center gap-1 text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
                     Ver consulta <ExternalLink className="size-3.5" aria-hidden />
                   </Link>
                 )}

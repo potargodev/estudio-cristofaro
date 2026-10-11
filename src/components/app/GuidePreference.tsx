@@ -9,14 +9,14 @@ export async function GuidePreference() {
   if (!boot) return null;
   return (
     <section aria-labelledby="guia-pref" className="rounded-lg border border-line bg-surface p-5">
-      <h2 id="guia-pref" className="flex items-center gap-2 text-[17px] font-semibold text-ink">
+      <h2 id="guia-pref" className="flex items-center gap-2 text-title font-semibold text-ink">
         <span className="grid size-8 place-items-center rounded-md bg-navy text-gold">
           <Compass className="size-4" aria-hidden />
         </span>
         Guía y recorridos
       </h2>
-      <p className="mt-2 text-[14px] text-muted">Los recorridos cortos aparecen la primera vez que entrás a cada pantalla. El botón «Guía» de arriba queda siempre, aunque los apagues.</p>
-      <form action={guidePreferenceAction} className="mt-4 grid gap-3 text-[14px]">
+      <p className="mt-2 text-ui text-muted">Los recorridos cortos aparecen la primera vez que entrás a cada pantalla. El botón «Guía» de arriba queda siempre, aunque los apagues.</p>
+      <form action={guidePreferenceAction} className="mt-4 grid gap-3 text-ui">
         <label className="flex items-center gap-2.5">
           <input type="checkbox" name="guia" defaultChecked={!boot.disabled} className="size-4 accent-navy" /> Mostrar los recorridos automáticos
         </label>

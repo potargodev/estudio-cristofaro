@@ -24,7 +24,7 @@ export default async function ArticuloPage({ params }: { params: Params }) {
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px]">
       <article className="min-w-0">
-        <nav aria-label="Ubicación" className="flex flex-wrap items-center gap-1.5 text-[13px] text-muted">
+        <nav aria-label="Ubicación" className="flex flex-wrap items-center gap-1.5 text-meta text-muted">
           <Link href="/ayuda" className="hover:text-ink">
             Ayuda
           </Link>
@@ -32,8 +32,8 @@ export default async function ArticuloPage({ params }: { params: Params }) {
           <span>{categoryName(a.categoria)}</span>
         </nav>
         <h1 className="mt-3 font-display text-[34px] leading-tight sm:text-[44px]">{a.titulo}</h1>
-        <p className="mt-2 text-[17px] text-muted">{a.resumen}</p>
-        <p className="mt-4 flex flex-wrap gap-2 text-[12px] text-muted">
+        <p className="mt-2 text-title text-muted">{a.resumen}</p>
+        <p className="mt-4 flex flex-wrap gap-2 text-caption text-muted">
           {a.perfiles.map((p) => (
             <span key={p} className="rounded border border-line px-2 py-0.5">
               {PROFILE_LABELS[p]}
@@ -49,20 +49,20 @@ export default async function ArticuloPage({ params }: { params: Params }) {
         </div>
       </article>
       <aside aria-labelledby="relacionados" className="lg:pt-24">
-        <h2 id="relacionados" className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted">
+        <h2 id="relacionados" className="text-meta font-semibold uppercase tracking-[0.12em] text-muted">
           Relacionados
         </h2>
         <ul className="mt-3 grid gap-2">
           {related.map((r) => (
             <li key={r.id}>
-              <Link href={articleUrl(r)} className="block rounded-md border border-line bg-surface px-4 py-3 text-[14px] hover:border-muted">
+              <Link href={articleUrl(r)} className="block rounded-md border border-line bg-surface px-4 py-3 text-ui hover:border-muted">
                 <span className="block font-medium text-ink">{r.titulo}</span>
-                <span className="block text-[12px] text-muted">{categoryName(r.categoria)}</span>
+                <span className="block text-caption text-muted">{categoryName(r.categoria)}</span>
               </Link>
             </li>
           ))}
         </ul>
-        <Link href="/ayuda" className="mt-4 inline-block text-[14px] font-medium underline-offset-4 hover:underline">
+        <Link href="/ayuda" className="mt-4 inline-block text-ui font-medium underline-offset-4 hover:underline">
           Ver todos los artículos
         </Link>
       </aside>

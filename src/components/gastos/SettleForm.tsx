@@ -6,6 +6,7 @@ import { settleAction, type FormState } from "@/app/grupos/actions";
 import { cn } from "@/lib/utils";
 import { CURRENCIES, SETTLEMENT_METHODS, type SettlementMethodKey } from "@/modules/gastos/constants";
 import { CopyButton } from "./forms";
+import { fieldClass } from "@/components/ds/primitives";
 
 interface Member {
   id: string;
@@ -14,7 +15,7 @@ interface Member {
   cvu: string | null;
 }
 
-const input = "h-12 w-full border border-line bg-surface px-3 text-[16px] focus:border-navy focus:outline-none";
+const input = fieldClass;
 
 export function SettleForm({ groupId, members, meId, initial }: { groupId: string; members: Member[]; meId: string; initial: { from: string; to: string; amount: string; currency: string } }) {
   const [state, action, pending] = useActionState<FormState, FormData>(settleAction, {});
@@ -27,13 +28,13 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
   if (state.ok && state.link)
     return (
       <div className="grid gap-4 border border-gold/60 bg-rose-soft p-5">
-        <p className="text-[15px]">{state.message}</p>
+        <p className="text-body">{state.message}</p>
         <a href={state.link} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center justify-center gap-2 bg-[#009ee3] px-5 text-white hover:opacity-90" data-testid="mp-link">
           Pagar con Mercado Pago
           <ExternalLink className="size-4" aria-hidden />
         </a>
-        <p className="text-[13px] text-muted">Integración de prueba: el cobro real con Mercado Pago llega más adelante. El pago queda informado hasta que la otra persona lo confirme.</p>
-        <a href={`/grupos/g/${groupId}?tab=saldos`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+        <p className="text-meta text-muted">Integración de prueba: el cobro real con Mercado Pago llega más adelante. El pago queda informado hasta que la otra persona lo confirme.</p>
+        <a href={`/grupos/g/${groupId}?tab=saldos`} className="text-ui text-rose-deep underline-offset-4 hover:underline">
           Volver a los saldos
         </a>
       </div>
@@ -43,7 +44,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
     <form action={action} className="grid gap-6">
       <input type="hidden" name="group" value={groupId} />
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="grid gap-1.5 text-[14px]">
+        <label className="grid gap-1.5 text-ui">
           Paga
           <select name="from" value={from} onChange={(e) => setFrom(e.target.value)} className={input}>
             {members.map((m) => (
@@ -53,7 +54,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
             ))}
           </select>
         </label>
-        <label className="grid gap-1.5 text-[14px]">
+        <label className="grid gap-1.5 text-ui">
           Cobra
           <select name="to" value={to} onChange={(e) => setTo(e.target.value)} className={input}>
             {members.map((m) => (
@@ -73,10 +74,10 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
         <input name="amount" inputMode="decimal" required defaultValue={initial.amount} aria-label="Importe" placeholder="0" className="h-14 min-w-0 flex-1 bg-transparent num text-[36px] focus:outline-none" />
       </div>
       <fieldset>
-        <legend className="mb-2 text-[14px] font-medium">¿Cómo?</legend>
+        <legend className="mb-2 text-ui font-medium">¿Cómo?</legend>
         <div className="flex flex-wrap gap-2">
           {(Object.keys(SETTLEMENT_METHODS) as SettlementMethodKey[]).map((k) => (
-            <label key={k} className={cn("cursor-pointer border px-4 py-2.5 text-[14px]", method === k ? "border-navy bg-navy text-paper" : "border-line bg-surface")}>
+            <label key={k} className={cn("cursor-pointer border px-4 py-2.5 text-ui", method === k ? "border-navy bg-navy text-paper" : "border-line bg-surface")}>
               <input type="radio" name="method" value={k} checked={method === k} onChange={() => setMethod(k)} className="sr-only" />
               {SETTLEMENT_METHODS[k]}
             </label>
@@ -84,7 +85,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
         </div>
       </fieldset>
       {method === "transferencia" && creditor && (
-        <div className="grid gap-2 border-l-2 border-gold bg-rose-soft px-4 py-3 text-[14px]">
+        <div className="grid gap-2 border-l-2 border-gold bg-rose-soft px-4 py-3 text-ui">
           {creditor.alias || creditor.cvu ? (
             <>
               <p>Datos de {creditor.name} para transferir:</p>
@@ -104,20 +105,20 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
           )}
         </div>
       )}
-      <label className="grid gap-1.5 text-[14px]">
+      <label className="grid gap-1.5 text-ui">
         Comprobante (opcional)
-        <input type="file" name="receipt" accept="image/jpeg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf" className="text-[14px]" />
+        <input type="file" name="receipt" accept="image/jpeg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf" className="text-ui" />
       </label>
-      <label className="grid gap-1.5 text-[14px]">
+      <label className="grid gap-1.5 text-ui">
         Nota (opcional)
         <input name="note" maxLength={500} className={input} />
       </label>
       {state.message && !state.ok && (
-        <p role="alert" className="text-[14px] text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}
-      <button disabled={pending} className="h-14 bg-navy text-[17px] text-paper hover:bg-navy-deep disabled:opacity-60 sm:w-auto sm:justify-self-start sm:px-10">
+      <button disabled={pending} className="h-14 bg-navy text-title text-paper hover:bg-navy-deep disabled:opacity-60 sm:w-auto sm:justify-self-start sm:px-10">
         {pending ? "Registrando…" : method === "mercado_pago" ? "Generar link de pago" : "Registrar pago"}
       </button>
     </form>

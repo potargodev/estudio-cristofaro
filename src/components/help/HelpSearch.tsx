@@ -50,21 +50,21 @@ export function HelpSearch({ items, initial = "" }: { items: HelpSearchItem[]; i
           onChange={(e) => setQ(e.target.value)}
           placeholder="¿Qué querés hacer? Ej.: invitar a un cliente, dividir un gasto"
           autoComplete="off"
-          className="h-14 w-full rounded-lg border border-line bg-surface pl-12 pr-4 text-[16px] text-ink shadow-sm placeholder:text-muted focus:border-navy focus:outline-none"
+          className="h-14 w-full rounded-lg border border-line bg-surface pl-12 pr-4 text-lead text-ink placeholder:text-muted focus:border-navy focus:outline-none"
         />
       </form>
       {results && (
         <div aria-live="polite" className="mt-3 rounded-lg border border-line bg-surface">
           {results.length === 0 ? (
-            <p className="px-5 py-4 text-[14px] text-muted">No encontramos artículos con esas palabras. Probá con otras o preguntale al asistente.</p>
+            <p className="px-5 py-4 text-ui text-muted">No encontramos artículos con esas palabras. Probá con otras o preguntale al asistente.</p>
           ) : (
             <ul className="divide-y divide-line">
               {results.map((r) => (
                 <li key={r.url}>
                   <Link href={r.url} className="block px-5 py-3.5 hover:bg-canvas">
-                    <span className="block text-[12px] text-muted">{r.categoria}</span>
-                    <span className="block text-[15px] font-medium text-ink">{r.titulo}</span>
-                    <span className="block text-[13px] text-muted">{r.resumen}</span>
+                    <span className="block text-caption text-muted">{r.categoria}</span>
+                    <span className="block text-body font-medium text-ink">{r.titulo}</span>
+                    <span className="block text-meta text-muted">{r.resumen}</span>
                   </Link>
                 </li>
               ))}

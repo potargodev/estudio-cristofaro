@@ -13,7 +13,7 @@ export default async function BitacoraLayout({ children }: { children: React.Rea
   await requireUser();
   return (
     <AppFrame space="personal">
-      <div className="mx-auto w-full max-w-4xl">
+      <div className="w-full">
         <PageHeader
           title="Bitácora"
           description="Tu plata, a la vista. Privada: solo la ves vos (y quien vos elijas)."

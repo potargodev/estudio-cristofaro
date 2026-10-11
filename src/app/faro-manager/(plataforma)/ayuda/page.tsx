@@ -28,8 +28,8 @@ export default async function AyudaOpiniones() {
     <>
       <PageHeader level={2} title="Opiniones de la ayuda" description={`${ARTICLES.length} artículos en docs/ayuda. Arriba, los que más «no me sirvió» tienen.`} />
       <div className="overflow-x-auto rounded-lg border border-line bg-surface">
-        <table className="w-full min-w-[640px] text-left text-[14px]">
-          <thead className="border-b border-line text-[12px] text-muted">
+        <table className="w-full min-w-[640px] text-left text-ui">
+          <thead className="border-b border-line text-caption text-muted">
             <tr>
               <th className="px-4 py-3 font-medium">Artículo</th>
               <th className="px-4 py-3 font-medium">Actualizado</th>
@@ -44,7 +44,7 @@ export default async function AyudaOpiniones() {
                   <Link href={articleUrl(a)} className="font-medium hover:underline">
                     {a.titulo}
                   </Link>
-                  <span className="block text-[12px] text-muted">{categoryName(a.categoria)}</span>
+                  <span className="block text-caption text-muted">{categoryName(a.categoria)}</span>
                 </td>
                 <td className="px-4 py-2.5 text-muted">{a.actualizado}</td>
                 <td className="tabular-nums px-4 py-2.5 text-right">{s.si}</td>
@@ -54,14 +54,14 @@ export default async function AyudaOpiniones() {
           </tbody>
         </table>
       </div>
-      <h2 className="mt-8 text-[17px] font-semibold">Últimos comentarios</h2>
+      <h2 className="mt-8 text-title font-semibold">Últimos comentarios</h2>
       {comments.length === 0 ? (
-        <p className="mt-2 text-[14px] text-muted">Todavía no hay comentarios.</p>
+        <p className="mt-2 text-ui text-muted">Todavía no hay comentarios.</p>
       ) : (
         <ul className="mt-3 grid gap-2">
           {comments.map((c) => (
-            <li key={c.id} className="rounded-md border border-line bg-surface px-4 py-3 text-[14px]">
-              <p className="text-[12px] text-muted">
+            <li key={c.id} className="rounded-md border border-line bg-surface px-4 py-3 text-ui">
+              <p className="text-caption text-muted">
                 {ARTICLES.find((a) => a.id === c.article_id)?.titulo ?? c.article_id} · {c.helpful ? "le sirvió" : "no le sirvió"} · {fmt.format(c.created_at)}
               </p>
               <p className="mt-1">{c.comment}</p>

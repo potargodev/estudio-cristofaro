@@ -17,16 +17,16 @@ function Card({ e }: { e: HubEntry }) {
       <div className="flex items-start gap-3">
         <ConnectorLogo def={e.def} />
         <div className="min-w-0 flex-1">
-          <h3 className="text-[16px] font-medium leading-tight text-ink">{e.def.name}</h3>
+          <h3 className="text-lead font-medium leading-tight text-ink">{e.def.name}</h3>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             <Tag>{VIA_LABEL[e.def.via]}</Tag>
             {e.def.availability !== "disponible" && <StatusBadge status={soon ? "pendiente" : "nuevo"} label={AVAILABILITY_LABEL[e.def.availability]} />}
           </div>
         </div>
       </div>
-      <p className="mt-3 flex-1 text-[14px] leading-snug text-muted">{e.def.description}</p>
+      <p className="mt-3 flex-1 text-ui leading-snug text-muted">{e.def.description}</p>
       {!soon && (
-        <div className="mt-4 grid gap-2 border-t border-line pt-3 text-[13px]">
+        <div className="mt-4 grid gap-2 border-t border-line pt-3 text-meta">
           <div className="flex items-center justify-between gap-2">
             <ConnectionState state={e.state} />
             {e.def.perOrganization && (
@@ -45,7 +45,7 @@ function Card({ e }: { e: HubEntry }) {
               </span>
             </p>
           )}
-          {e.detail && <p className="text-[12px] text-danger">{e.detail}</p>}
+          {e.detail && <p className="text-caption text-danger">{e.detail}</p>}
           <span className="inline-flex items-center gap-1 font-medium text-ink">
             {e.state === "sin_configurar" ? "Configurar" : "Ver conexión"} <ArrowRight className="size-3.5" aria-hidden />
           </span>
@@ -66,7 +66,7 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
   const Section = ({ title, list }: { title: string; list: HubEntry[] }) =>
     list.length ? (
       <section className="mt-8 first:mt-0">
-        <h2 className="mb-3 text-[13px] font-medium uppercase tracking-wide text-muted">{title}</h2>
+        <h2 className="mb-3 text-meta font-medium uppercase tracking-wide text-muted">{title}</h2>
         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {list.map((e) => (
             <li key={e.def.key}>

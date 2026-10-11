@@ -6,6 +6,7 @@ import { saveDraftAction } from "@/app/facturacion/actions";
 import { SubmitButton } from "@/components/admin/ui";
 import { allowedTypes, CBTE_TYPES, DOC_TYPES, IVA_CONDITIONS } from "@/modules/arca/config";
 import { cn } from "@/lib/utils";
+import { fieldClass } from "@/components/ds/primitives";
 
 export interface FormCustomer {
   id: string;
@@ -28,8 +29,8 @@ interface Line {
   ivaRate: string;
 }
 
-const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-3 text-[15px] text-ink focus:border-navy focus:outline-none";
-const label = "text-[13px] font-medium text-ink/80";
+const field = `mt-1 ${fieldClass}`;
+const label = "text-meta font-medium text-ink/80";
 const num = (v: string) => Number(v.replace(/\./g, "").replace(",", ".")) || 0;
 const money = (n: number) => `$ ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -105,7 +106,7 @@ export function InvoiceForm({
       <input type="hidden" name="cbte_type" value={effectiveType} />
 
       <section aria-labelledby="cliente" className="rounded-md border border-line bg-surface p-4 sm:p-5">
-        <h2 id="cliente" className="text-[16px] font-semibold">
+        <h2 id="cliente" className="text-lead font-semibold">
           Cliente
         </h2>
         {customers.length > 0 && (
@@ -161,7 +162,7 @@ export function InvoiceForm({
               <span className={label}>Domicilio (opcional)</span>
               <input name="customer_address" value={cust.address ?? ""} onChange={(e) => setCust({ ...cust, address: e.target.value })} className={field} />
             </label>
-            <label className="flex items-center gap-2 text-[14px] sm:col-span-2">
+            <label className="flex items-center gap-2 text-ui sm:col-span-2">
               <input type="checkbox" name="save_customer" defaultChecked className="size-4 accent-navy" /> Guardarlo como cliente frecuente
             </label>
           </div>
@@ -169,7 +170,7 @@ export function InvoiceForm({
       </section>
 
       <section aria-labelledby="comprobante" className="rounded-md border border-line bg-surface p-4 sm:p-5">
-        <h2 id="comprobante" className="text-[16px] font-semibold">
+        <h2 id="comprobante" className="text-lead font-semibold">
           Comprobante
         </h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -243,7 +244,7 @@ export function InvoiceForm({
 
       <section aria-labelledby="items" className="rounded-md border border-line bg-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="items" className="text-[16px] font-semibold">
+          <h2 id="items" className="text-lead font-semibold">
             Ítems
           </h2>
           {products.length > 0 && (
@@ -254,7 +255,7 @@ export function InvoiceForm({
                 const p = products.find((x) => x.id === e.target.value);
                 if (p) setLines((ls) => [...ls.filter((l) => l.description || l.unitPrice), { description: p.description, quantity: "1", unitPrice: String(p.unitPrice), ivaRate: String(p.ivaRate ?? 21) }]);
               }}
-              className="h-9 rounded-md border border-line bg-surface px-2 text-[14px]"
+              className="h-9 rounded-md border border-line bg-surface px-2 text-ui"
             >
               <option value="">+ Producto frecuente</option>
               {products.map((p) => (
@@ -298,10 +299,10 @@ export function InvoiceForm({
             </li>
           ))}
         </ul>
-        <button type="button" onClick={() => setLines((ls) => [...ls, { description: "", quantity: "1", unitPrice: "", ivaRate: "21" }])} className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-[14px] hover:border-muted">
+        <button type="button" onClick={() => setLines((ls) => [...ls, { description: "", quantity: "1", unitPrice: "", ivaRate: "21" }])} className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-ui hover:border-muted">
           <Plus className="size-4" aria-hidden /> Agregar ítem
         </button>
-        <dl className="mt-4 grid justify-end gap-1 text-right text-[14px]">
+        <dl className="mt-4 grid justify-end gap-1 text-right text-ui">
           {discriminate && (
             <>
               <div className="flex justify-end gap-6">
@@ -314,7 +315,7 @@ export function InvoiceForm({
               </div>
             </>
           )}
-          <div className="flex justify-end gap-6 text-[18px]">
+          <div className="flex justify-end gap-6 text-title">
             <dt className="font-medium">Total</dt>
             <dd className="num">{money(totals.total)}</dd>
           </div>
@@ -323,11 +324,11 @@ export function InvoiceForm({
 
       <label>
         <span className={label}>Notas internas (no salen en el comprobante)</span>
-        <textarea name="notes" defaultValue={initial?.notes ?? ""} rows={2} className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 text-[15px]" />
+        <textarea name="notes" defaultValue={initial?.notes ?? ""} rows={2} className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 text-body" />
       </label>
       <div>
         <SubmitButton pendingText="Guardando…">Guardar borrador</SubmitButton>
-        <p className="mt-2 text-[13px] text-muted">Todavía no se manda nada a ARCA: en el paso siguiente revisás y emitís.</p>
+        <p className="mt-2 text-meta text-muted">Todavía no se manda nada a ARCA: en el paso siguiente revisás y emitís.</p>
       </div>
     </form>
   );

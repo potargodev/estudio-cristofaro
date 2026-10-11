@@ -21,9 +21,9 @@ export default async function AyudaPage({ searchParams }: { searchParams: Promis
   const items = pool.map((a) => ({ url: articleUrl(a), titulo: a.titulo, resumen: a.resumen, categoria: categoryName(a.categoria), title: norm(a.titulo), haystack: norm(`${a.titulo} ${a.resumen} ${a.text}`) }));
   return (
     <>
-      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-rose-deep">Centro de ayuda</p>
+      <p className="text-meta font-semibold uppercase tracking-[0.12em] text-rose-deep">Centro de ayuda</p>
       <h1 className="mt-2 font-display text-[40px] leading-tight sm:text-[56px]">¿En qué te ayudamos?</h1>
-      <p className="mt-2 max-w-2xl text-[16px] text-muted">Guías cortas para cada pantalla de Faro. Si no encontrás lo que buscás, preguntale al asistente: responde citando estos artículos.</p>
+      <p className="mt-2 max-w-2xl text-lead text-muted">Guías cortas para cada pantalla de Faro. Si no encontrás lo que buscás, preguntale al asistente: responde citando estos artículos.</p>
       <div className="mt-8">
         <HelpSearch items={items} initial={sp.q ?? ""} />
       </div>
@@ -34,7 +34,7 @@ export default async function AyudaPage({ searchParams }: { searchParams: Promis
             key={p ?? "todos"}
             href={p ? `/ayuda?perfil=${p}` : "/ayuda"}
             aria-current={p === perfil ? "page" : undefined}
-            className={cn("rounded-md border px-3 py-1.5 text-[14px]", p === perfil ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
+            className={cn("rounded-md border px-3 py-1.5 text-ui", p === perfil ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
           >
             {p ? PROFILE_LABELS[p] : "Todos"}
           </Link>
@@ -53,13 +53,13 @@ export default async function AyudaPage({ searchParams }: { searchParams: Promis
                   <Icon className="size-5" strokeWidth={1.5} aria-hidden />
                 </span>
                 <div>
-                  <h2 id={`cat-${c.key}`} className="text-[17px] font-semibold">
+                  <h2 id={`cat-${c.key}`} className="text-title font-semibold">
                     {c.name}
                   </h2>
-                  <p className="text-[13px] text-muted">{c.text}</p>
+                  <p className="text-meta text-muted">{c.text}</p>
                 </div>
               </div>
-              <ul className="mt-4 grid gap-1.5 text-[14px]">
+              <ul className="mt-4 grid gap-1.5 text-ui">
                 {list.map((a) => (
                   <li key={a.id}>
                     <Link href={articleUrl(a)} className="text-ink underline-offset-4 hover:underline">

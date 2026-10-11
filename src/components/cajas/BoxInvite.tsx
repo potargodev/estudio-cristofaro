@@ -13,7 +13,7 @@ export function BoxInvite({ boxId, boxName, owner }: { boxId: string; boxName: s
       {!state.link && (
         <form action={action}>
           <input type="hidden" name="box" value={boxId} />
-          <button disabled={pending} className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep disabled:opacity-60">
+          <button disabled={pending} className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-navy-deep disabled:opacity-60">
             <Link2 className="size-4" aria-hidden /> {pending ? "Generando…" : "Invitar con un enlace"}
           </button>
         </form>
@@ -23,13 +23,13 @@ export function BoxInvite({ boxId, boxName, owner }: { boxId: string; boxName: s
         <form action={action}>
           <input type="hidden" name="box" value={boxId} />
           <input type="hidden" name="renew" value="1" />
-          <button disabled={pending} className="inline-flex items-center gap-1.5 text-[13px] text-muted underline-offset-4 hover:text-ink hover:underline">
+          <button disabled={pending} className="inline-flex items-center gap-1.5 text-meta text-muted underline-offset-4 hover:text-ink hover:underline">
             <RefreshCw className="size-3.5" aria-hidden /> Renovar (el enlace anterior deja de servir)
           </button>
         </form>
       )}
       {state.message && (
-        <p role="alert" className="text-[14px] text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}

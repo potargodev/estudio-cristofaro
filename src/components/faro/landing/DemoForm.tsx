@@ -3,14 +3,14 @@
 import { useActionState } from "react";
 import { requestDemo, type DemoState } from "@/app/faro/demo/actions";
 
-const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-[15px] text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
-const label = "text-[13px] text-paper/70";
+const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-body text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
+const label = "text-meta text-paper/70";
 
 export function DemoForm() {
   const [state, action, pending] = useActionState<DemoState, FormData>(requestDemo, { ok: false });
   if (state.ok)
     return (
-      <p role="status" className="border border-gold/40 bg-gold/10 px-4 py-4 text-[15px] text-paper">
+      <p role="status" className="border border-gold/40 bg-gold/10 px-4 py-4 text-body text-paper">
         {state.message}
       </p>
     );
@@ -47,11 +47,11 @@ export function DemoForm() {
         <textarea name="message" rows={3} maxLength={1500} className={`${field} h-auto py-2`} />
       </label>
       {state.message && (
-        <p role="alert" className="text-[14px] text-[#f0a493]">
+        <p role="alert" className="text-ui text-[#f0a493]">
           {state.message}
         </p>
       )}
-      <button type="submit" disabled={pending} className="h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
+      <button type="submit" disabled={pending} className="h-12 rounded-[2px] bg-gold px-6 text-body font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
         {pending ? "Enviando…" : "Agendar una demo"}
       </button>
     </form>

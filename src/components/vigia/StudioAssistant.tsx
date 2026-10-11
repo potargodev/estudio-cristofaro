@@ -28,7 +28,7 @@ function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
   ];
   return (
     <div className="max-w-4xl pb-6">
-      <p className="mb-4 text-[15px] text-muted">El asistente trabaja con la IA que elija el estudio. Configurala en tres pasos.</p>
+      <p className="mb-4 text-body text-muted">El asistente trabaja con la IA que elija el estudio. Configurala en tres pasos.</p>
       <ol className="grid gap-4 md:grid-cols-3">
         {steps.map((s, i) => (
           <li key={s.title} className="rounded-md border border-line bg-surface p-5">
@@ -37,7 +37,7 @@ function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
               <s.icon className="size-5 text-ink" strokeWidth={1.5} aria-hidden />
             </span>
             <p className="mt-3 font-medium text-ink">{s.title}</p>
-            <p className="mt-1 text-[14px] text-muted">{s.text}</p>
+            <p className="mt-1 text-ui text-muted">{s.text}</p>
           </li>
         ))}
       </ol>
@@ -57,7 +57,7 @@ function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
             </Link>
           </>
         ) : (
-          <p className="text-[15px] text-muted">La configuración la hace el dueño del estudio en Configuración → IA. Avisale para que la active.</p>
+          <p className="text-body text-muted">La configuración la hace el dueño del estudio en Configuración → IA. Avisale para que la active.</p>
         )}
       </div>
     </div>

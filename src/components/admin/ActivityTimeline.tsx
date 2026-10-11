@@ -41,7 +41,7 @@ export async function ActivityTimeline({ orgId, studioId, before }: { orgId: str
               aria-hidden
               className={`absolute -left-[29px] top-1.5 size-2.5 rounded-full ring-4 ring-paper ${e.result === "ok" ? "bg-rose" : "bg-danger"}`}
             />
-            <p className="text-[15px]">
+            <p className="text-body">
               <span className="font-medium">{auditLabel(e.action)}</span>
               {e.result !== "ok" && (
                 <span className="ml-2">
@@ -49,11 +49,11 @@ export async function ActivityTimeline({ orgId, studioId, before }: { orgId: str
                 </span>
               )}
             </p>
-            <p className="text-sm text-muted">
+            <p className="text-ui text-muted">
               {fmt.format(e.created_at)} · {e.actor_label ?? "sistema"}
               {e.ip ? ` · IP ${e.ip}` : ""}
             </p>
-            {Object.keys(e.metadata ?? {}).length > 0 && <p className="mt-0.5 text-sm text-ink/70">{detail(e.metadata)}</p>}
+            {Object.keys(e.metadata ?? {}).length > 0 && <p className="mt-0.5 text-ui text-ink/70">{detail(e.metadata)}</p>}
           </li>
         ))}
       </ol>

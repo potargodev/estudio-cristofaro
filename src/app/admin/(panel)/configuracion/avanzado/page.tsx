@@ -14,15 +14,16 @@ import { getBranding, whiteLabelEnabled } from "@/modules/white-label/server";
 import { txtName } from "@/modules/white-label/core";
 import { platformAccount, recentMessages, studioRow, templatesOf } from "@/modules/whatsapp/server";
 import { hasModule } from "@/lib/faro/entitlements";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Avanzado" };
 
-const field = "mt-1 block h-10 w-full rounded-md border border-line bg-surface px-3 text-[14px] text-ink";
+const field = `mt-1 ${fieldClass}`;
 const when = new Intl.DateTimeFormat("es-AR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" });
 
 function Locked({ what }: { what: string }) {
   return (
-    <p className="rounded-md border border-line bg-surface p-4 text-[14px] text-muted">
+    <p className="rounded-md border border-line bg-surface p-4 text-ui text-muted">
       {what} viene con el plan Avanzado.{" "}
       <Link href="/admin/configuracion/plan" className="underline underline-offset-4">
         Ver planes
@@ -39,24 +40,24 @@ async function Marca({ studioId }: { studioId: string }) {
     <div className="grid gap-5">
       <Panel title="Marca del portal" icon={Palette}>
         <form action={saveBrandingAction} className="grid gap-4">
-          <label className="flex items-center gap-2 text-[14px]">
+          <label className="flex items-center gap-2 text-ui">
             <input type="checkbox" name="enabled" defaultChecked={b?.enabled ?? false} /> Usar la marca del estudio en el portal de mis clientes
           </label>
           <div className="grid gap-3 sm:grid-cols-3">
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Nombre que ven los clientes
               <input name="display_name" defaultValue={b?.display_name ?? ""} maxLength={80} placeholder="Como figura tu estudio" className={field} />
             </label>
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Color principal (barra lateral)
               <input name="primary" type="color" defaultValue={b?.primary_color ?? "#0f1320"} className={`${field} p-1`} />
             </label>
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Color de acento
               <input name="accent" type="color" defaultValue={b?.accent_color ?? "#c9a596"} className={`${field} p-1`} />
             </label>
           </div>
-          <p className="text-[13px] text-muted">El portal siempre muestra «Con tecnología de Faro». Revisamos que el texto se lea sobre los colores que elijas.</p>
+          <p className="text-meta text-muted">El portal siempre muestra «Con tecnología de Faro». Revisamos que el texto se lea sobre los colores que elijas.</p>
           <div>
             <SubmitButton>Guardar marca</SubmitButton>
           </div>
@@ -68,12 +69,12 @@ async function Marca({ studioId }: { studioId: string }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={`/api/marca/${studioId}/logo?v=${b.updated_at.getTime()}`} alt="Logo actual" className="h-14 w-auto rounded-md bg-night p-2" />
           ) : (
-            <span className="text-[14px] text-muted">Sin logo: se muestra el sello.</span>
+            <span className="text-ui text-muted">Sin logo: se muestra el sello.</span>
           )}
           <form action={logoAction} className="flex flex-wrap items-end gap-2">
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               PNG o JPG, hasta 1 MB (mejor horizontal y con fondo transparente)
-              <input name="logo" type="file" accept=".png,.jpg,.jpeg" className="mt-1 block text-[14px]" />
+              <input name="logo" type="file" accept=".png,.jpg,.jpeg" className="mt-1 block text-ui" />
             </label>
             <SubmitButton variant="secondary" pendingText="Subiendo…">Subir logo</SubmitButton>
           </form>
@@ -87,16 +88,16 @@ async function Marca({ studioId }: { studioId: string }) {
       </Panel>
       <Panel title="Dominio propio" action={b?.custom_domain ? <StatusBadge status={b.domain_status === "verificado" ? "activa" : "pendiente"} label={b.domain_status === "verificado" ? "Verificado" : "Falta verificar"} /> : undefined}>
         <form action={domainAction} className="flex flex-wrap items-end gap-2">
-          <label className="min-w-0 flex-1 text-[13px] text-muted">
+          <label className="min-w-0 flex-1 text-meta text-muted">
             Dominio para el portal de tus clientes
             <input name="domain" defaultValue={b?.custom_domain ?? ""} placeholder="portal.tuestudio.com.ar" className={field} />
           </label>
           <SubmitButton variant="secondary">{b?.custom_domain ? "Cambiar" : "Cargar dominio"}</SubmitButton>
         </form>
         {b?.custom_domain && b.domain_token && (
-          <div className="mt-4 grid gap-2 text-[14px]">
+          <div className="mt-4 grid gap-2 text-ui">
             <p>Creá estos dos registros en el DNS de tu dominio:</p>
-            <dl className="grid gap-1 rounded-md border border-line bg-canvas p-3 font-mono text-[12px]">
+            <dl className="grid gap-1 rounded-md border border-line bg-canvas p-3 font-mono text-caption">
               <dt className="text-muted">CNAME</dt>
               <dd className="break-all">
                 {b.custom_domain} → {appHost}
@@ -110,9 +111,9 @@ async function Marca({ studioId }: { studioId: string }) {
               <form action={verifyDomainAction}>
                 <SubmitButton pendingText="Verificando…">Verificar</SubmitButton>
               </form>
-              {b.domain_checked_at && <span className="text-[13px] text-muted">Último intento: {when.format(b.domain_checked_at)}</span>}
+              {b.domain_checked_at && <span className="text-meta text-muted">Último intento: {when.format(b.domain_checked_at)}</span>}
             </div>
-            <p className="text-[13px] text-muted">Con el dominio verificado, el equipo de Faro activa el certificado seguro (HTTPS) y tus clientes entran al portal desde tu dirección.</p>
+            <p className="text-meta text-muted">Con el dominio verificado, el equipo de Faro activa el certificado seguro (HTTPS) y tus clientes entran al portal desde tu dirección.</p>
           </div>
         )}
       </Panel>
@@ -130,30 +131,30 @@ async function WhatsApp({ studioId }: { studioId: string }) {
     <div className="grid gap-5">
       <Panel title="Número de WhatsApp" icon={MessageCircle} action={row ? <StatusBadge status={row.status === "activa" ? "activa" : "pausada"} label={row.status === "activa" ? "Activo" : "Pausado"} /> : <Tag>Sin activar</Tag>}>
         <form action={waAccountAction} className="grid gap-4">
-          <fieldset className="grid gap-2 text-[14px]">
-            <legend className="mb-1 text-[13px] text-muted">¿Desde qué número salen los avisos?</legend>
+          <fieldset className="grid gap-2 text-ui">
+            <legend className="mb-1 text-meta text-muted">¿Desde qué número salen los avisos?</legend>
             <label className="flex items-start gap-2">
               <input type="radio" name="mode" value="compartido" defaultChecked={row?.mode !== "propio"} className="mt-1" />
               <span>
-                Número de Faro {faro?.display_phone ? `(${faro.display_phone})` : ""} <span className="block text-[13px] text-muted">Listo para usar. Los mensajes llevan el nombre de tu estudio.</span>
+                Número de Faro {faro?.display_phone ? `(${faro.display_phone})` : ""} <span className="block text-meta text-muted">Listo para usar. Los mensajes llevan el nombre de tu estudio.</span>
               </span>
             </label>
             <label className="flex items-start gap-2">
               <input type="radio" name="mode" value="propio" defaultChecked={row?.mode === "propio"} className="mt-1" />
               <span>
-                Número propio del estudio <span className="block text-[13px] text-muted">Necesitás una cuenta de WhatsApp Business verificada por Meta.</span>
+                Número propio del estudio <span className="block text-meta text-muted">Necesitás una cuenta de WhatsApp Business verificada por Meta.</span>
               </span>
             </label>
           </fieldset>
           <details open={row?.mode === "propio"} className="rounded-md border border-line p-3">
-            <summary className="cursor-pointer text-[14px] font-medium">Datos del número propio</summary>
+            <summary className="cursor-pointer text-ui font-medium">Datos del número propio</summary>
             <div className="mt-3 grid gap-3">
               <WaCredentialFields a={row?.mode === "propio" ? row : null} />
-              <p className="text-[13px] text-muted">
-                En Meta, configurá el webhook con la URL <span className="break-all font-mono text-[12px] text-ink">{webhook}</span>
+              <p className="text-meta text-muted">
+                En Meta, configurá el webhook con la URL <span className="break-all font-mono text-caption text-ink">{webhook}</span>
                 {row?.verify_token ? (
                   <>
-                    {" "}y el token de verificación <span className="font-mono text-[12px] text-ink">{row.verify_token}</span>
+                    {" "}y el token de verificación <span className="font-mono text-caption text-ink">{row.verify_token}</span>
                   </>
                 ) : (
                   " (el token de verificación aparece al guardar)"
@@ -178,17 +179,17 @@ async function WhatsApp({ studioId }: { studioId: string }) {
             )}
           </div>
         )}
-        {account?.last_error && <p className="mt-3 text-[13px] text-[#8f2a1c]">Último error de WhatsApp: {account.last_error}</p>}
+        {account?.last_error && <p className="mt-3 text-meta text-[#8f2a1c]">Último error de WhatsApp: {account.last_error}</p>}
       </Panel>
       <Panel title="Plantillas aprobadas" bodyClassName="p-0">
         {templates.length === 0 ? (
-          <p className="p-4 text-[14px] text-muted">{account ? "Todavía no hay plantillas sincronizadas." : "Activá WhatsApp para ver las plantillas."}</p>
+          <p className="p-4 text-ui text-muted">{account ? "Todavía no hay plantillas sincronizadas." : "Activá WhatsApp para ver las plantillas."}</p>
         ) : (
-          <ul className="divide-y divide-line text-[14px]">
+          <ul className="divide-y divide-line text-ui">
             {templates.map((t) => (
               <li key={t.id} className="grid gap-1 px-4 py-3">
                 <span className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-[13px]">{t.name}</span>
+                  <span className="font-mono text-meta">{t.name}</span>
                   <StatusBadge status={t.status === "APPROVED" ? "activa" : t.status === "REJECTED" ? "vencido" : "pendiente"} label={t.status === "APPROVED" ? "Aprobada" : t.status === "REJECTED" ? "Rechazada" : "En revisión de Meta"} />
                   {t.category && <Tag>{t.category.toLowerCase()}</Tag>}
                 </span>
@@ -200,9 +201,9 @@ async function WhatsApp({ studioId }: { studioId: string }) {
       </Panel>
       <Panel title="Últimos mensajes" bodyClassName="p-0">
         {msgs.length === 0 ? (
-          <p className="p-4 text-[14px] text-muted">Todavía no salió ni entró ningún mensaje. Tus clientes verifican su número desde el portal (Mi cuenta → WhatsApp).</p>
+          <p className="p-4 text-ui text-muted">Todavía no salió ni entró ningún mensaje. Tus clientes verifican su número desde el portal (Mi cuenta → WhatsApp).</p>
         ) : (
-          <ul className="divide-y divide-line text-[13px]">
+          <ul className="divide-y divide-line text-meta">
             {msgs.map(({ m, org }) => (
               <li key={m.id} className="flex flex-wrap justify-between gap-2 px-4 py-2">
                 <span className="min-w-0">

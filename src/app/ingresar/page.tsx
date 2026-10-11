@@ -35,17 +35,17 @@ export default async function IngresarPage({ searchParams }: { searchParams: Pro
       <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(3rem+env(safe-area-inset-top))]">
         <Sello className="size-20 text-rose-light" />
         <h1 className="mt-8 font-display text-[34px] leading-[1.05]">Hola de nuevo.</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-paper/65">Ingresá a tu cuenta de Faro.</p>
+        <p className="mt-2 text-body leading-relaxed text-paper/65">Ingresá a tu cuenta de Faro.</p>
         <div className="mt-8">
           <AccessChooser google={googleEnabled()} error={errorText(error)} />
         </div>
         <div className="mt-10 border-t border-paper/15 pt-6">
-          <p className="text-[15px] text-paper">¿Primera vez en Faro?</p>
-          <p className="mt-1 text-[13px] leading-relaxed text-paper/60">Creá tu cuenta gratis con Google o con un enlace por mail, sin contraseña: anotá tus gastos con el Vigía y dividilos con amigos.</p>
-          <Link href="/faro/registro?tipo=persona" className="mt-4 inline-flex h-12 w-full items-center justify-center border border-rose-light/60 text-[15px] text-paper transition-colors hover:bg-paper/10">
+          <p className="text-body text-paper">¿Primera vez en Faro?</p>
+          <p className="mt-1 text-meta leading-relaxed text-paper/60">Creá tu cuenta gratis con Google o con un enlace por mail, sin contraseña: anotá tus gastos con el Vigía y dividilos con amigos.</p>
+          <Link href="/faro/registro?tipo=persona" className="mt-4 inline-flex h-12 w-full items-center justify-center border border-rose-light/60 text-body text-paper transition-colors hover:bg-paper/10">
             Empezá gratis
           </Link>
-          <p className="mt-3 text-[13px] text-paper/50">
+          <p className="mt-3 text-meta text-paper/50">
             <Link href="/faro" className="text-paper underline underline-offset-4 hover:text-rose-light">
               ¿Qué es Faro?
             </Link>{" "}
@@ -56,7 +56,7 @@ export default async function IngresarPage({ searchParams }: { searchParams: Pro
             .
           </p>
         </div>
-        <p className="mt-3 text-[13px] leading-relaxed text-paper/50">
+        <p className="mt-3 text-meta leading-relaxed text-paper/50">
           ¿Todavía no sos cliente?{" "}
           <Link href="/agendar" className="text-paper underline underline-offset-4 hover:text-rose-light">
             Agendá una llamada

@@ -29,8 +29,8 @@ export default async function MasPage() {
           <li key={item.href}>
             <Link href={item.href} className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-canvas">
               <span className="min-w-0">
-                <span className="block text-[15px] text-ink">{item.label}</span>
-                <span className="block text-[13px] text-muted">{item.hint}</span>
+                <span className="block text-body text-ink">{item.label}</span>
+                <span className="block text-meta text-muted">{item.hint}</span>
               </span>
               <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden />
             </Link>
@@ -38,10 +38,10 @@ export default async function MasPage() {
         ))}
       </ul>
       <section aria-labelledby="instalar" className="mt-10">
-        <h2 id="instalar" className="text-[18px] font-semibold">
+        <h2 id="instalar" className="text-title font-semibold">
           Instalá la app
         </h2>
-        <p className="mt-1 text-[15px] text-muted">Tené tu portal a un toque, con su ícono, en el celular o la computadora.</p>
+        <p className="mt-1 text-body text-muted">Tené tu portal a un toque, con su ícono, en el celular o la computadora.</p>
         <InstallPanel tone="light" className="mt-5" />
       </section>
       <div className="mt-10">

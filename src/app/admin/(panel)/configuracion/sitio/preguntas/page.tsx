@@ -45,7 +45,7 @@ export default async function PreguntasAdminPage({ searchParams }: { searchParam
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/configuracion/sitio" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
+      <Link href="/admin/configuracion/sitio" className="text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
         Contenidos
       </Link>
       <div className="mt-2">
@@ -79,7 +79,7 @@ export default async function PreguntasAdminPage({ searchParams }: { searchParam
         ))}
       </div>
 
-      <h2 className="mb-3 mt-10 text-[18px] font-medium">Agregar pregunta</h2>
+      <h2 className="mb-3 mt-10 text-title font-medium">Agregar pregunta</h2>
       <form action={saveFaq} className="grid gap-3 border border-dashed border-line p-5">
         <FaqFields />
         <div>

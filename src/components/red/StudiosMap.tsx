@@ -56,10 +56,10 @@ export function StudiosMap({ items }: { items: MapStudio[] }) {
             .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
             .map(([prov, list]) => (
               <li key={prov} className="rounded-md border border-line bg-surface p-3">
-                <p className="text-[13px] text-muted">
+                <p className="text-meta text-muted">
                   {prov} · <span className="num">{list.length}</span>
                 </p>
-                <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[14px]">
+                <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-ui">
                   {list.map((x) => (
                     <Link key={x.studioId} href={`/red-contable/${x.slug}`} className="text-ink underline-offset-4 hover:underline">
                       {x.name}
@@ -70,7 +70,7 @@ export function StudiosMap({ items }: { items: MapStudio[] }) {
             ))}
         </ul>
         {unplaced.length > 0 && (
-          <p className="mt-3 text-[13px] text-muted">
+          <p className="mt-3 text-meta text-muted">
             Sin provincia cargada:{" "}
             {unplaced.map((x, i) => (
               <span key={x.studioId}>

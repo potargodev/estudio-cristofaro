@@ -39,18 +39,18 @@ export default async function AuditoriaPage({ searchParams }: { searchParams: Pr
       <PageHeader level={2} title="Auditoría de plataforma" description="Cada acción del equipo de Faro (planes, módulos, accesos asistidos, plantillas) y los accesos denegados, con quién, cuándo y en qué tenant." />
       <div className="mb-4 flex flex-wrap items-center gap-2">
         {FILTERS.map(([k, label]) => (
-          <Link key={k} href={`/faro-manager/auditoria${k ? `?f=${encodeURIComponent(k)}` : ""}`} className={cn("rounded-md border px-3 py-1.5 text-[13px]", f === k ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-muted")}>
+          <Link key={k} href={`/faro-manager/auditoria${k ? `?f=${encodeURIComponent(k)}` : ""}`} className={cn("rounded-md border px-3 py-1.5 text-meta", f === k ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-muted")}>
             {label}
           </Link>
         ))}
         <form className="ml-auto" action="/faro-manager/auditoria">
           {f && <input type="hidden" name="f" value={f} />}
-          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por persona" aria-label="Buscar por persona" className="h-9 w-56 rounded-md border border-line bg-surface px-2 text-[14px]" />
+          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por persona" aria-label="Buscar por persona" className="h-9 w-56 rounded-md border border-line bg-surface px-2 text-ui" />
         </form>
       </div>
       <div className="overflow-x-auto rounded-lg border border-line bg-surface">
-        <table className="w-full min-w-[820px] text-left text-[13px]">
-          <thead className="border-b border-line text-[12px] text-muted">
+        <table className="w-full min-w-[820px] text-left text-meta">
+          <thead className="border-b border-line text-caption text-muted">
             <tr>
               <th className="px-4 py-2 font-medium">Cuándo</th>
               <th className="py-2 font-medium">Acción</th>
@@ -64,7 +64,7 @@ export default async function AuditoriaPage({ searchParams }: { searchParams: Pr
               <tr key={a.id} className={a.result === "denegado" ? "bg-[#fbecea]" : undefined}>
                 <td className="whitespace-nowrap px-4 py-2 tabular-nums">{when.format(a.created_at)}</td>
                 <td className="py-2">
-                  {auditLabel(a.action)} <code className="ml-1 text-[11px] text-muted">{a.action}</code>
+                  {auditLabel(a.action)} <code className="ml-1 text-micro text-muted">{a.action}</code>
                 </td>
                 <td className="py-2">{a.actor_label ?? "—"}</td>
                 <td className="py-2">{tenant ?? "Plataforma"}</td>

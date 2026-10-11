@@ -35,7 +35,7 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
       <Feedback ok={sp.ok} error={sp.error} />
       <PageHeader title="Mi estudio" description="Tus acuerdos con estudios y tu estado de cuenta con cada uno. Solo lo ves vos." className="mb-0" />
       {list.length === 0 ? (
-        <p className="mt-6 text-[15px] text-muted">
+        <p className="mt-6 text-body text-muted">
           Todavía no tenés acuerdos.{" "}
           <Link href="/flotas" className="underline underline-offset-4">
             Ir a Flotas
@@ -47,16 +47,16 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
             <li key={a.id} className="rounded-lg border border-line bg-surface p-5">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="text-[17px] font-semibold">{a.terms.studioName}</p>
-                  <p className="text-[13px] text-muted">
+                  <p className="text-title font-semibold">{a.terms.studioName}</p>
+                  <p className="text-meta text-muted">
                     Por la Flota «{a.terms.fleetName}» · {profileLabel(a.profile)} · firmado el {day(a.signed_at.toISOString().slice(0, 10))}
                   </p>
                 </div>
-                <span className={cn("rounded-md px-2.5 py-1 text-[13px] font-medium", account.state === "al_dia" ? "bg-navy-soft text-ink" : "bg-danger/10 text-danger")}>
+                <span className={cn("rounded-md px-2.5 py-1 text-meta font-medium", account.state === "al_dia" ? "bg-navy-soft text-ink" : "bg-danger/10 text-danger")}>
                   {a.status === "finalizado" ? STATUS.finalizado : account.state === "al_dia" ? "Al día" : `Pendiente: ${formatArs(account.pendingAmount)}`}
                 </span>
               </div>
-              <dl className="mt-3 grid gap-x-6 gap-y-1 text-[14px] sm:grid-cols-[180px_1fr]">
+              <dl className="mt-3 grid gap-x-6 gap-y-1 text-ui sm:grid-cols-[180px_1fr]">
                 <dt className="text-muted">Abono</dt>
                 <dd>{formatArs(a.monthly_price)} por mes</dd>
                 <dt className="text-muted">Estado</dt>
@@ -92,7 +92,7 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                   )}
                   {a.status === "activo" && a.debit_status !== "autorizado" &&
                     (a.debit_status === "pendiente" && a.debit_url ? (
-                      <a href={a.debit_url} className="inline-flex h-10 items-center rounded-md border border-line px-4 text-[14px]">
+                      <a href={a.debit_url} className="inline-flex h-10 items-center rounded-md border border-line px-4 text-ui">
                         Autorizar el débito
                       </a>
                     ) : (
@@ -112,15 +112,15 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                 </div>
               )}
               {a.status === "activo" && settlement?.agreement.id !== a.id && (
-                <Link href={`/flotas/servicios?baja=${a.id}`} className="mt-4 inline-block text-[14px] font-medium underline underline-offset-4">
+                <Link href={`/flotas/servicios?baja=${a.id}`} className="mt-4 inline-block text-ui font-medium underline underline-offset-4">
                   Dar de baja el acuerdo
                 </Link>
               )}
               {settlement?.agreement.id === a.id && a.status === "activo" && (
                 <form action={requestEndAction} className="mt-4 grid gap-3 rounded-md border border-navy bg-canvas p-4">
                   <input type="hidden" name="agreement" value={a.id} />
-                  <p className="text-[15px] font-semibold">Liquidación final</p>
-                  <dl className="grid gap-x-6 gap-y-1 text-[14px] sm:grid-cols-[200px_1fr]">
+                  <p className="text-body font-semibold">Liquidación final</p>
+                  <dl className="grid gap-x-6 gap-y-1 text-ui sm:grid-cols-[200px_1fr]">
                     <dt className="text-muted">Fin del servicio</dt>
                     <dd>
                       {day(settlement.endsOn)} ({a.terms.noticeDays} días de preaviso)
@@ -132,13 +132,13 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                       {settlement.pendingAmount ? `${formatArs(settlement.pendingAmount)} (${settlement.pendingPeriods.join(", ")})` : "Nada"}
                     </dd>
                   </dl>
-                  {settlement.pendingAmount > 0 && <p className="text-[13px] text-muted">Lo pendiente es solo tu parte: lo pagás con el botón «Pagar» (si el estudio cobra con Mercado Pago) o directo al estudio. Con la baja se corta el débito automático.</p>}
-                  <label className="flex items-start gap-2 text-[14px]">
+                  {settlement.pendingAmount > 0 && <p className="text-meta text-muted">Lo pendiente es solo tu parte: lo pagás con el botón «Pagar» (si el estudio cobra con Mercado Pago) o directo al estudio. Con la baja se corta el débito automático.</p>}
+                  <label className="flex items-start gap-2 text-ui">
                     <input type="checkbox" name="confirm" required className="mt-0.5 size-4 accent-navy" /> Revisé la liquidación y quiero dar de baja el acuerdo.
                   </label>
                   <div className="flex gap-3">
                     <SubmitButton pendingText="…">Confirmar la baja</SubmitButton>
-                    <Link href="/flotas/servicios" className="h-10 px-2 text-[14px] leading-10 text-muted underline-offset-4 hover:underline">
+                    <Link href="/flotas/servicios" className="h-10 px-2 text-ui leading-10 text-muted underline-offset-4 hover:underline">
                       Cancelar
                     </Link>
                   </div>

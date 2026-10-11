@@ -22,20 +22,20 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   return (
     <div className="grid gap-4">
       <Feedback sp={sp} />
-      <p className="rounded-md border border-line bg-surface p-4 text-[14px]">
+      <p className="rounded-md border border-line bg-surface p-4 text-ui">
         Tus fijos y suscripciones suman <span className="num font-medium">{money(monthly)}</span> por mes. Te avisamos antes de que venzan, cuando se renuevan y si suben de precio.
       </p>
       {list.length === 0 ? (
-        <p className="text-[14px] text-muted">Todavía no detectamos gastos que se repitan. Con dos o tres meses cargados (o importando tus resúmenes) aparecen solos.</p>
+        <p className="text-ui text-muted">Todavía no detectamos gastos que se repitan. Con dos o tres meses cargados (o importando tus resúmenes) aparecen solos.</p>
       ) : (
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
           {list.map((r) => (
             <li key={r.id} className="grid gap-2 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
               <div className="min-w-0">
-                <p className="truncate text-[15px]">
-                  {r.label} <span className="text-[12px] text-muted">· {r.kind === "suscripcion" ? "suscripción" : "fijo"}{r.status === "detectado" ? " · detectado" : ""}</span>
+                <p className="truncate text-body">
+                  {r.label} <span className="text-caption text-muted">· {r.kind === "suscripcion" ? "suscripción" : "fijo"}{r.status === "detectado" ? " · detectado" : ""}</span>
                 </p>
-                <p className="text-[13px] text-muted">
+                <p className="text-meta text-muted">
                   <span className="num">{money(r.last_amount)}</span> · próximo el {d(r.next_date)}
                   {r.price_change_pct && <span className="text-[#8f2a1c]"> · subió {Number(r.price_change_pct)}%</span>}
                   {r.still_used === false && <span className="text-[#8f2a1c]"> · dijiste que no la usás</span>}
@@ -74,22 +74,22 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </ul>
       )}
       <form action={addRecurringAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-[1fr_9rem_6rem_9rem_auto] sm:items-end">
-        <p className="text-[14px] font-medium sm:col-span-5">Agregar uno a mano</p>
-        <label className="text-[13px] text-muted">
+        <p className="text-ui font-medium sm:col-span-5">Agregar uno a mano</p>
+        <label className="text-meta text-muted">
           Qué es
-          <input name="label" required placeholder="Ej.: Alquiler" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink" />
+          <input name="label" required placeholder="Ej.: Alquiler" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Monto
-          <input name="amount" inputMode="decimal" required className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink" />
+          <input name="amount" inputMode="decimal" required className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Día
-          <input name="day" type="number" min={1} max={28} defaultValue={10} className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink" />
+          <input name="day" type="number" min={1} max={28} defaultValue={10} className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
         </label>
-        <label className="text-[13px] text-muted">
+        <label className="text-meta text-muted">
           Tipo
-          <select name="kind" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink">
+          <select name="kind" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink">
             <option value="fijo">Gasto fijo</option>
             <option value="suscripcion">Suscripción</option>
           </select>
@@ -98,7 +98,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       </form>
       <form action={weeklyPrefAction} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line bg-surface p-4">
         <input type="hidden" name="on" value={weekly ? "0" : "1"} />
-        <p className="text-[14px]">Resumen de la semana, cada domingo: <span className="font-medium">{weekly ? "prendido" : "apagado"}</span></p>
+        <p className="text-ui">Resumen de la semana, cada domingo: <span className="font-medium">{weekly ? "prendido" : "apagado"}</span></p>
         <SubmitButton variant="secondary" pendingText="…">{weekly ? "Apagar" : "Prender"}</SubmitButton>
       </form>
     </div>

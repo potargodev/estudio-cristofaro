@@ -12,7 +12,7 @@ export function RescheduleForm({ token, days }: { token: string; days: PickerDay
       <input type="hidden" name="token" value={token} />
       <SlotPicker days={days} />
       {state.message && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}

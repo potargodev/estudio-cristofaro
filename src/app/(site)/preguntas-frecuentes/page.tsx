@@ -34,7 +34,7 @@ export default async function FaqPage() {
                 <AccordionTrigger headingLevel={2} className="py-6 font-display text-[clamp(1.4rem,2.2vw,1.9rem)] font-normal leading-tight text-paper hover:no-underline hover:text-rose-light [&>svg]:size-5 [&>svg]:text-rose-light">
                   {f.question}
                 </AccordionTrigger>
-                <AccordionContent className="max-w-2xl pb-6 text-[16px] leading-relaxed text-paper/70">{f.answer}</AccordionContent>
+                <AccordionContent className="max-w-2xl pb-6 text-lead leading-relaxed text-paper/70">{f.answer}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

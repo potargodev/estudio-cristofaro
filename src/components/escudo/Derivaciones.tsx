@@ -21,18 +21,18 @@ export async function Derivaciones({ me, volver, max = 2 }: { me: Me; volver: st
         <article key={s.id} data-derivacion={s.rule_key} className="flex gap-3 rounded-md border border-rose/40 bg-rose-soft p-4">
           <HandHeart className="mt-0.5 size-5 shrink-0 text-rose-deep" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-medium text-ink">{s.rule.message}</p>
-            <p className="mt-1 text-[13px] text-muted">
+            <p className="text-body font-medium text-ink">{s.rule.message}</p>
+            <p className="mt-1 text-meta text-muted">
               {s.context.why} {NO_REEMPLAZA}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link href={`/red-contable?derivacion=${s.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-[14px] font-medium text-paper hover:bg-night">
+              <Link href={`/red-contable?derivacion=${s.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-ui font-medium text-paper hover:bg-night">
                 Sumar un contador
               </Link>
               <form action={dismissSuggestionAction}>
                 <input type="hidden" name="id" value={s.id} />
                 <input type="hidden" name="volver" value={volver} />
-                <button type="submit" className="inline-flex h-9 items-center gap-1 rounded-md px-2 text-[13px] text-muted hover:text-ink">
+                <button type="submit" className="inline-flex h-9 items-center gap-1 rounded-md px-2 text-meta text-muted hover:text-ink">
                   <X className="size-4" aria-hidden /> Ahora no
                 </button>
               </form>
@@ -47,7 +47,7 @@ export async function Derivaciones({ me, volver, max = 2 }: { me: Me; volver: st
 /** «Esto no reemplaza el criterio de un contador», en una línea y con naturalidad */
 export function NoReemplaza({ className = "" }: { className?: string }) {
   return (
-    <p className={`text-[13px] text-muted ${className}`}>
+    <p className={`text-meta text-muted ${className}`}>
       Faro te muestra datos según lo que cargaste; no revisa ni valida tu situación. {NO_REEMPLAZA}{" "}
       <Link href="/red-contable" className="underline underline-offset-4">
         Buscar un contador

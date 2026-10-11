@@ -28,9 +28,9 @@ export function InviteLinkBanner() {
 function InviteLink({ link }: { link: string }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div role="status" className="mb-6 rounded-md border border-rose/40 bg-rose-soft/50 p-3 text-sm">
+    <div role="status" className="mb-6 rounded-md border border-rose/40 bg-rose-soft/50 p-3 text-ui">
       <p className="font-medium">Enlace de invitación (vence en 7 días, solo sirve para ese email):</p>
-      <p className="mt-1 break-all font-mono text-xs">{link}</p>
+      <p className="mt-1 break-all font-mono text-caption">{link}</p>
       <Button
         type="button"
         variant="outline"
@@ -81,7 +81,7 @@ export function TeamForm({
         {children}
       </form>
       {state && !state.ok && (
-        <p role="alert" className="mt-2 text-sm text-danger">
+        <p role="alert" className="mt-2 text-ui text-danger">
           {state.message}
         </p>
       )}

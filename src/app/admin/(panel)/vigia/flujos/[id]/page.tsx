@@ -54,7 +54,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           )}
           <form action={testFlowAction} className="flex flex-wrap items-center gap-2">
             <input type="hidden" name="id" value={f.id} />
-            <input name="datos" aria-label="Datos de prueba (JSON)" placeholder='{"organizacion_id": "…", "total": 1500}' className="h-9 w-64 rounded-md border border-line bg-surface px-2 font-mono text-[12px]" />
+            <input name="datos" aria-label="Datos de prueba (JSON)" placeholder='{"organizacion_id": "…", "total": 1500}' className="h-9 w-64 rounded-md border border-line bg-surface px-2 font-mono text-caption" />
             <SubmitButton variant="secondary" pendingText="…">Probar</SubmitButton>
           </form>
           <form action={deleteFlowAction} className="ml-auto">
@@ -65,14 +65,14 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           </form>
         </div>
         {issues.length > 0 && (
-          <ul role="alert" className="grid gap-1 rounded-md border border-[#ecd6a8] bg-[#fbf3e2] px-4 py-3 text-[13px] text-[#7a5410]">
+          <ul role="alert" className="grid gap-1 rounded-md border border-[#ecd6a8] bg-[#fbf3e2] px-4 py-3 text-meta text-[#7a5410]">
             {issues.map((i, k) => (
               <li key={k}>{i.message}</li>
             ))}
           </ul>
         )}
         {f.trigger_type === "webhook" && (
-          <p className="break-all rounded-md border border-line bg-surface p-3 text-[13px]">
+          <p className="break-all rounded-md border border-line bg-surface p-3 text-meta">
             {f.webhook_token ? (
               <>
                 URL del webhook (POST con JSON): <code>{`${getSiteUrl()}/api/flujos/webhook/${f.webhook_token}`}</code>
@@ -84,14 +84,14 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         )}
         <FlowEditor id={f.id} name={f.name} graph={graph as never} events={EVENT_LIST} tools={tools} />
         <section aria-label="Corridas" className="grid gap-2">
-          <h2 className="text-[16px] font-semibold">Corridas</h2>
+          <h2 className="text-lead font-semibold">Corridas</h2>
           {runs.length === 0 ? (
-            <p className="text-[14px] text-muted">Todavía no corrió.</p>
+            <p className="text-ui text-muted">Todavía no corrió.</p>
           ) : (
             <ul className="divide-y divide-line rounded-md border border-line bg-surface">
               {runs.map((r) => (
                 <li key={r.id}>
-                  <Link href={`/admin/vigia/flujos/${f.id}/corridas/${r.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-[14px] hover:bg-canvas">
+                  <Link href={`/admin/vigia/flujos/${f.id}/corridas/${r.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-ui hover:bg-canvas">
                     <span>
                       {r.created_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "medium" })} · {r.source}
                     </span>

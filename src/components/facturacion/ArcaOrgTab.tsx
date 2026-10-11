@@ -41,7 +41,7 @@ export async function ArcaOrgTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
           <ul className="flex min-w-max gap-1.5">
             {VIEWS.map((v) => (
               <li key={v.key}>
-                <Link href={href(v.key)} aria-current={ver === v.key ? "page" : undefined} className={cn("inline-flex h-8 items-center rounded-full px-3 text-[13px]", ver === v.key ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
+                <Link href={href(v.key)} aria-current={ver === v.key ? "page" : undefined} className={cn("inline-flex h-8 items-center rounded-full px-3 text-meta", ver === v.key ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
                   {v.label}
                 </Link>
               </li>
@@ -49,7 +49,7 @@ export async function ArcaOrgTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
           </ul>
         </nav>
         {entities.length > 1 && (
-          <form method="get" className="flex items-center gap-2 text-[13px]">
+          <form method="get" className="flex items-center gap-2 text-meta">
             <input type="hidden" name="tab" value="arca" />
             <input type="hidden" name="ver" value={ver} />
             <select name="cuit" defaultValue={scope.cuit} className="h-8 rounded-md border border-line bg-surface px-2">

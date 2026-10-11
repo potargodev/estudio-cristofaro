@@ -58,7 +58,7 @@ export function Benefits() {
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="flex items-center gap-3 text-[13px] text-[#1c2235]">
+              <p className="flex items-center gap-3 text-meta text-[#1c2235]">
                 <span className="tabular">05</span>
                 <span aria-hidden className="h-px w-8 bg-[#1c2235]/40" />
                 <span>Beneficios</span>
@@ -67,7 +67,7 @@ export function Benefits() {
                 Lo que cambia en tu día a día.
               </h2>
             </div>
-            <ol aria-hidden className="hidden items-center gap-4 text-[12px] text-[#1c2235] lg:flex">
+            <ol aria-hidden className="hidden items-center gap-4 text-caption text-[#1c2235] lg:flex">
               {BENEFITS.map((_, i) => (
                 <li key={i} data-idx className={`tabular underline-offset-4 ${i === 0 ? "font-semibold underline" : ""}`}>
                   0{i + 1}
@@ -89,7 +89,7 @@ export function Benefits() {
                 <span className="tabular font-display text-[2.75rem] leading-none text-[#1c2235] lg:text-[clamp(4rem,8vw,7.5rem)]">0{i + 1}</span>
                 <div className="bg-[#1c2235] p-6 lg:min-h-[15rem] lg:p-8">
                   <h3 className="font-display text-[1.6rem] leading-[1.1] text-gold lg:text-[clamp(1.8rem,2.4vw,2.4rem)] lg:leading-[1.05]">{b.t}</h3>
-                  <p className="mt-4 max-w-[32ch] text-[15px] leading-relaxed text-white">{b.d}</p>
+                  <p className="mt-4 max-w-[32ch] text-body leading-relaxed text-white">{b.d}</p>
                 </div>
               </li>
             ))}

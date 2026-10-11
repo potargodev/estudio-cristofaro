@@ -12,9 +12,10 @@ import { todayAR } from "@/modules/gastos/constants";
 import { CHANGA_CONTEXT, NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { grayZone } from "@/modules/escudo/server";
 import { Derivaciones } from "@/components/escudo/Derivaciones";
+import { fieldClass } from "@/components/ds/primitives";
 
-const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-2.5 text-[14px] text-ink";
-const lbl = "block text-[13px] text-muted";
+const field = `mt-1 ${fieldClass}`;
+const lbl = "block text-meta text-muted";
 const card = "rounded-lg border border-line bg-surface p-5";
 const nextMonth = (m: string) => {
   const [y, mm] = m.split("-").map(Number);
@@ -38,7 +39,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
   );
   return (
     <div className="grid gap-6 pb-10 [&>*]:min-w-0">
-      <Link href="/cajas" className="text-[13px] text-muted hover:text-ink">
+      <Link href="/cajas" className="text-meta text-muted hover:text-ink">
         ← Mis cajas
       </Link>
       <PageHeader title={box.name} description="Caja de negocio: lo de tu actividad, separado de lo personal. Tu contador, si lo conectás, ve esta caja y lo fiscal; lo personal, no." className="mb-0" />
@@ -46,14 +47,14 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
 
       {gray && gray.withoutRegime && gray.total > 0 && (
         <section aria-labelledby="foto" data-zona-gris className="rounded-lg border border-rose/40 bg-rose-soft p-5">
-          <h2 id="foto" className="flex items-center gap-2 text-[16px] font-semibold text-ink">
+          <h2 id="foto" className="flex items-center gap-2 text-lead font-semibold text-ink">
             <Eye className="size-5 text-rose-deep" aria-hidden /> Esto ya es una actividad
           </h2>
-          <p className="mt-1 text-[14px] text-ink">
+          <p className="mt-1 text-ui text-ink">
             Según lo que registraste, en los últimos 12 meses cobraste <span className="num font-medium">{money(gray.total)}</span> sin facturar, en {gray.months} {gray.months === 1 ? "mes" : "meses"}. No es un juicio: es la foto de lo que cargaste.
           </p>
-          <p className="mt-2 text-[13px] text-muted">{CHANGA_CONTEXT}</p>
-          <p className="mt-2 text-[13px] text-muted">
+          <p className="mt-2 text-meta text-muted">{CHANGA_CONTEXT}</p>
+          <p className="mt-2 text-meta text-muted">
             Cuando crece, lo que corresponde es anotarse en el monotributo con un contador.{" "}
             <Link href="/red-contable?necesito=changa_actividad" className="font-medium text-rose-deep underline underline-offset-4">
               Buscar un contador
@@ -64,11 +65,11 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
       <Derivaciones me={me} volver={`/cajas/${box.id}`} max={1} />
 
       <nav aria-label="Mes" className="flex items-center justify-between gap-2">
-        <Link href={`/cajas/${box.id}?mes=${prevMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-[14px]">
+        <Link href={`/cajas/${box.id}?mes=${prevMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-ui">
           <ChevronLeft className="size-4" aria-hidden /> <span className="sr-only sm:not-sr-only">Anterior</span>
         </Link>
-        <p className="text-[16px] font-medium capitalize text-ink">{monthLabel(month)}</p>
-        <Link href={`/cajas/${box.id}?mes=${nextMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-[14px]">
+        <p className="text-lead font-medium capitalize text-ink">{monthLabel(month)}</p>
+        <Link href={`/cajas/${box.id}?mes=${nextMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-ui">
           <span className="sr-only sm:not-sr-only">Siguiente</span> <ChevronRight className="size-4" aria-hidden />
         </Link>
       </nav>
@@ -81,12 +82,12 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
           ["Queda en la caja", s.left],
         ].map(([k, v]) => (
           <div key={k as string} className="min-w-0 rounded-md border border-line bg-surface p-3">
-            <dt className="text-[13px] text-muted">{k}</dt>
-            <dd className={cn("num mt-1 truncate text-[18px] sm:text-[20px]", (v as number) < 0 ? "text-danger" : "text-ink")}>{money(v as number)}</dd>
+            <dt className="text-meta text-muted">{k}</dt>
+            <dd className={cn("num mt-1 truncate text-title sm:text-section", (v as number) < 0 ? "text-danger" : "text-ink")}>{money(v as number)}</dd>
           </div>
         ))}
       </dl>
-      <p className="-mt-3 text-[13px] text-muted">
+      <p className="-mt-3 text-meta text-muted">
         Sueldo del dueño este mes: <span className="num">{money(s.salary)}</span> · aportes: <span className="num">{money(s.contributions)}</span>
         {s.uninvoiced > 0 && (
           <>
@@ -96,17 +97,17 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
       </p>
 
       <section aria-labelledby="cargar" className={card}>
-        <h2 id="cargar" className="text-[16px] font-semibold">
+        <h2 id="cargar" className="text-lead font-semibold">
           Cargar en el negocio
         </h2>
         <form action={addBusinessEntryAction} className="mt-3 grid gap-3 sm:grid-cols-2">
           {hidden}
           <fieldset className="flex gap-4 sm:col-span-2">
             <legend className="sr-only">Tipo</legend>
-            <label className="flex items-center gap-2 text-[14px]">
+            <label className="flex items-center gap-2 text-ui">
               <input type="radio" name="kind" value="gasto" defaultChecked className="size-4 accent-navy" /> Gasto
             </label>
-            <label className="flex items-center gap-2 text-[14px]">
+            <label className="flex items-center gap-2 text-ui">
               <input type="radio" name="kind" value="ingreso" className="size-4 accent-navy" /> Ingreso
             </label>
           </fieldset>
@@ -133,10 +134,10 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
             </select>
           </label>
           <div className="grid content-end gap-1.5">
-            <label className="flex items-center gap-2 text-[14px]">
+            <label className="flex items-center gap-2 text-ui">
               <input type="checkbox" name="invoiced" className="size-4 accent-navy" /> Ingreso con factura
             </label>
-            <label className="flex items-center gap-2 text-[14px]">
+            <label className="flex items-center gap-2 text-ui">
               <input type="checkbox" name="deductible" className="size-4 accent-navy" /> Gasto con comprobante a mi nombre
             </label>
           </div>
@@ -147,11 +148,11 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
       </section>
 
       <section aria-labelledby="movs" className="rounded-lg border border-line bg-surface">
-        <h2 id="movs" className="px-5 pt-4 text-[16px] font-semibold">
+        <h2 id="movs" className="px-5 pt-4 text-lead font-semibold">
           Movimientos de {monthLabel(month)}
         </h2>
         {list.length === 0 ? (
-          <p className="px-5 pb-5 pt-2 text-[14px] text-muted">Todavía nada este mes.</p>
+          <p className="px-5 pb-5 pt-2 text-ui text-muted">Todavía nada este mes.</p>
         ) : (
           <ul className="mt-2 divide-y divide-line">
             {list.map((e) => {
@@ -161,21 +162,21 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
                 <li key={e.id} className="flex items-center gap-3 px-5 py-3" data-kind={e.kind}>
                   <Icon className={cn("size-4 shrink-0", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#2f7a4c]" : "text-muted")} aria-hidden />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[15px] text-ink">{e.description}</span>
-                    <span className="block text-[13px] text-muted">
+                    <span className="block truncate text-body text-ink">{e.description}</span>
+                    <span className="block text-meta text-muted">
                       {day(e.date)} · {transfer ? TRANSFER_KINDS[e.kind as "retiro" | "aporte"] : categoryName("negocio", null, e.category)}
                       {e.kind === "ingreso" && !e.invoiced ? " · sin facturar" : ""}
                       {e.source === "bitacora" ? " · movido de lo personal" : ""}
                     </span>
                   </span>
-                  <span className={cn("num shrink-0 text-[15px]", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#2f7a4c]" : "text-ink")}>
+                  <span className={cn("num shrink-0 text-body", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#2f7a4c]" : "text-ink")}>
                     {e.kind === "ingreso" || e.kind === "aporte" ? "+" : "−"}
                     {money(e.amount, e.currency)}
                   </span>
                   <form action={deleteBoxEntryAction}>
                     {hidden}
                     <input type="hidden" name="id" value={e.id} />
-                    <button type="submit" className="h-9 rounded-md px-2 text-[13px] text-muted hover:text-danger" aria-label={`Borrar ${e.description}`}>
+                    <button type="submit" className="h-9 rounded-md px-2 text-meta text-muted hover:text-danger" aria-label={`Borrar ${e.description}`}>
                       Borrar
                     </button>
                   </form>
@@ -188,12 +189,12 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
 
       {owner && (
         <section aria-labelledby="sueldo" className={card}>
-          <h2 id="sueldo" className="flex items-center gap-2 text-[16px] font-semibold">
+          <h2 id="sueldo" className="flex items-center gap-2 text-lead font-semibold">
             <Wallet className="size-5 text-rose-deep" aria-hidden /> Tu sueldo
           </h2>
-          <p className="mt-1 text-[14px] text-muted">El negocio te paga una cifra y esa es la única plata que pasa del negocio a lo personal. Todo lo demás queda en el negocio: así ves de verdad si ganás o perdés.</p>
+          <p className="mt-1 text-ui text-muted">El negocio te paga una cifra y esa es la única plata que pasa del negocio a lo personal. Todo lo demás queda en el negocio: así ves de verdad si ganás o perdés.</p>
           {suggestion && (
-            <p data-sugerencia className="mt-3 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[14px] text-ink">
+            <p data-sugerencia className="mt-3 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-ui text-ink">
               {suggestion.average > 0
                 ? `Según lo que cargaste, el negocio dejó en promedio ${money(suggestion.average)} por mes en los últimos meses. Un sueldo de ${money(suggestion.suggestion)} deja un 30 % en la caja.`
                 : `Según lo que cargaste, el negocio no dejó resultado positivo en los últimos meses (promedio ${money(suggestion.average)}).`}{" "}
@@ -220,7 +221,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
               <span className={lbl}>Próximo sueldo</span>
               <input name="next_date" type="date" defaultValue={salary?.next_date ?? today} className={field} />
             </label>
-            <label className="flex h-10 items-center gap-2 text-[14px]">
+            <label className="flex h-10 items-center gap-2 text-ui">
               <input type="checkbox" name="active" defaultChecked={salary?.active ?? true} className="size-4 accent-navy" /> Registrarlo solo
             </label>
             <div className="sm:col-span-4">
@@ -245,10 +246,10 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
       )}
 
       <section aria-labelledby="aporte" className={card}>
-        <h2 id="aporte" className="flex items-center gap-2 text-[16px] font-semibold">
+        <h2 id="aporte" className="flex items-center gap-2 text-lead font-semibold">
           <PiggyBank className="size-5 text-rose-deep" aria-hidden /> Poner plata en el negocio
         </h2>
-        <p className="mt-1 text-[14px] text-muted">Un aporte sale de tu caja personal (queda en la Bitácora) y entra en el negocio. Es el otro movimiento permitido entre cajas.</p>
+        <p className="mt-1 text-ui text-muted">Un aporte sale de tu caja personal (queda en la Bitácora) y entra en el negocio. Es el otro movimiento permitido entre cajas.</p>
         <form action={contributeAction} className="mt-3 flex flex-wrap items-end gap-3">
           {hidden}
           <label>
@@ -265,7 +266,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
         </form>
       </section>
 
-      <p className="flex items-center gap-2 text-[13px] text-muted">
+      <p className="flex items-center gap-2 text-meta text-muted">
         <Briefcase className="size-4" aria-hidden /> {NO_REEMPLAZA} Los números son los que cargaste.
       </p>
     </div>

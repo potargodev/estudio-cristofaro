@@ -26,15 +26,15 @@ export async function FirstSteps({ className, path }: { className?: string; path
         <ListChecks className="size-4" aria-hidden />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[14px] font-medium">Te {left === 1 ? "falta 1 paso" : `faltan ${left} pasos`}</p>
+        <p className="text-ui font-medium">Te {left === 1 ? "falta 1 paso" : `faltan ${left} pasos`}</p>
         <div className="mt-1.5 flex items-center gap-2">
           <span className="h-1.5 w-24 overflow-hidden rounded-full bg-navy-soft" aria-hidden>
             <span className="block h-full rounded-full bg-navy" style={{ width: `${(done / g.steps.length) * 100}%` }} />
           </span>
-          <span className="truncate text-[12px] text-muted">Ahora: {next.title}</span>
+          <span className="truncate text-caption text-muted">Ahora: {next.title}</span>
         </div>
       </div>
-      <Link href={path ? next.href : "/primeros-pasos"} className="inline-flex h-9 items-center rounded-md bg-navy px-3.5 text-[13px] font-medium text-paper hover:bg-night">
+      <Link href={path ? next.href : "/primeros-pasos"} className="inline-flex h-9 items-center rounded-md bg-navy px-3.5 text-meta font-medium text-paper hover:bg-night">
         {path ? "Hacer este paso" : "Ver los pasos"}
       </Link>
       {!path && <HideFirstSteps />}

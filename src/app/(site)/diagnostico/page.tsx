@@ -22,10 +22,10 @@ export default async function DiagnosticoPage({ searchParams }: { searchParams: 
       />
       <section aria-label="Formulario de diagnóstico">
         <Container className="grid gap-16 py-16 lg:grid-cols-12 lg:py-24">
-          <ul className="border-t border-hair text-[15px] text-paper/70 lg:col-span-4">
+          <ul className="border-t border-hair text-body text-paper/70 lg:col-span-4">
             {NOTES.map((n, i) => (
               <li key={n} className="grid grid-cols-[2.5rem_1fr] border-b border-hair py-4">
-                <span className="tabular text-[12px] text-rose-light">0{i + 1}</span>
+                <span className="tabular text-caption text-rose-light">0{i + 1}</span>
                 {n}
               </li>
             ))}

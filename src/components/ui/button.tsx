@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { Slot } from "radix-ui"
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none motion-reduce:active:translate-y-0 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-ui font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none motion-reduce:active:translate-y-0 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -13,6 +13,8 @@ const buttonVariants = cva(
           "bg-primary text-primary-foreground hover:-translate-y-px hover:bg-navy-deep hover:shadow-[0_8px_20px_-10px_rgba(28,34,53,0.65)] motion-reduce:hover:translate-y-0",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        // Acción destructiva sin gritar: borde y texto en rojo, se llena al pasar el mouse
+        danger: "border border-danger/40 bg-transparent text-danger hover:border-danger hover:bg-danger/5",
         outline:
           "border border-navy/30 bg-transparent text-navy hover:border-navy/60 hover:bg-navy-soft",
         secondary:
@@ -22,15 +24,16 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        // Alturas del sistema (DESIGN.md): 44 px en el celular, 36 px desde 640 px
+        default: "h-(--control-h) px-4 has-[>svg]:px-3",
+        xs: "h-6 gap-1 rounded-md px-2 text-caption has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-(--control-h-sm) gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+        lg: "h-(--control-h) rounded-md px-6 has-[>svg]:px-4",
         // Botones grandes de la web pública
-        xl: "h-12 rounded-md px-5 text-base has-[>svg]:px-4",
-        icon: "size-9",
+        xl: "h-12 rounded-md px-5 text-lead has-[>svg]:px-4",
+        icon: "size-(--control-h)",
         "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-8",
+        "icon-sm": "size-(--control-h-sm)",
         "icon-lg": "size-10",
       },
     },

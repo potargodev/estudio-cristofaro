@@ -16,29 +16,29 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
   const available = Object.entries(INDUSTRY_NAMES).filter(([k]) => !s.industries.some((i) => i.key === k));
   return (
     <div className="grid gap-6">
-      {notice && <p className="rounded-lg border border-[#a9d1b5] bg-[#ecf6ef] px-4 py-3 text-[14px] text-[#1f5f36]">{notice}</p>}
+      {notice && <p className="rounded-lg border border-[#a9d1b5] bg-[#ecf6ef] px-4 py-3 text-ui text-[#1f5f36]">{notice}</p>}
       <section className="rounded-lg border border-line bg-surface p-5">
-        <h2 className="flex items-center gap-2.5 text-[17px] font-semibold">
+        <h2 className="flex items-center gap-2.5 text-title font-semibold">
           <span className="grid size-7 place-items-center rounded-md bg-navy text-gold">
             <Factory className="size-4" aria-hidden />
           </span>
           Rubros
         </h2>
         {s.industries.length === 0 ? (
-          <p className="mt-3 text-[14px] text-muted">Todavía no tiene rubro. Elegí uno para precargar obligaciones, checklist, categorías y tareas.</p>
+          <p className="mt-3 text-ui text-muted">Todavía no tiene rubro. Elegí uno para precargar obligaciones, checklist, categorías y tareas.</p>
         ) : (
           <ul className="mt-4 grid gap-3">
             {s.industries.map((i) => (
               <li key={i.key} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line px-4 py-3">
                 <div>
                   <p className="font-medium text-ink">{i.name}</p>
-                  <p className="text-[13px] text-muted">
+                  <p className="text-meta text-muted">
                     Versión {i.version} aplicada el {i.appliedAt.toLocaleDateString("es-AR")} ·{" "}
                     {reviewed?.[i.key] ? <span className="text-[#1f5f36]">validada</span> : <span className="text-[#7a5410]">plantilla en revisión por el estudio</span>}
                   </p>
                 </div>
                 {i.latest > i.version && canEdit && (
-                  <Link href={`/admin/organizaciones/${orgId}/rubro/${i.key}/actualizar`} className="inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-2 text-[13px] text-paper hover:bg-navy-deep" data-testid="rubro-actualizar">
+                  <Link href={`/admin/organizaciones/${orgId}/rubro/${i.key}/actualizar`} className="inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-2 text-meta text-paper hover:bg-navy-deep" data-testid="rubro-actualizar">
                     <ArrowUpCircle className="size-4" aria-hidden /> Hay una versión nueva ({i.latest})
                   </Link>
                 )}
@@ -51,7 +51,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
             <label htmlFor="pick-industry" className="sr-only">
               Rubro
             </label>
-            <select id="pick-industry" name="rubro" required className="h-10 min-w-56 rounded-md border border-line bg-surface px-3 text-[14px]" defaultValue="">
+            <select id="pick-industry" name="rubro" required className="h-10 min-w-56 rounded-md border border-line bg-surface px-3 text-ui" defaultValue="">
               <option value="" disabled>
                 Agregar un rubro…
               </option>
@@ -61,7 +61,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
                 </option>
               ))}
             </select>
-            <button className="h-10 rounded-md bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">Ver qué trae</button>
+            <button className="h-10 rounded-md bg-navy px-4 text-ui text-paper hover:bg-navy-deep">Ver qué trae</button>
           </form>
         )}
       </section>
@@ -71,14 +71,14 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
         if (!list.length) return null;
         return (
           <section key={k} className="rounded-lg border border-line bg-surface">
-            <h3 className="border-b border-line px-5 py-3 text-[15px] font-semibold">
-              {ITEM_KINDS[k]} <span className="text-[13px] font-normal text-muted">· {list.length}</span>
+            <h3 className="border-b border-line px-5 py-3 text-body font-semibold">
+              {ITEM_KINDS[k]} <span className="text-meta font-normal text-muted">· {list.length}</span>
             </h3>
             <ul className="divide-y divide-line">
               {list.map((it) => {
                 const d = it.data as Record<string, unknown>;
                 return (
-                  <li key={it.id} className="flex items-start gap-3 px-5 py-2.5 text-[14px]">
+                  <li key={it.id} className="flex items-start gap-3 px-5 py-2.5 text-ui">
                     {k === "checklist" ? (
                       <form action={updateSetupItemAction}>
                         <input type="hidden" name="organization" value={orgId} />
@@ -94,9 +94,9 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
                     )}
                     <div className="min-w-0 flex-1">
                       <p className={cn("text-ink", it.done && "text-muted line-through")}>{label(d, it.key)}</p>
-                      {typeof d.vencimiento === "string" && <p className="text-[13px] text-muted">{String(d.frecuencia)} · {d.vencimiento}</p>}
-                      {typeof d.validar === "string" && <p className="text-[12px] text-[#7a5410]">A validar: {d.validar}</p>}
-                      {it.customized && <p className="text-[12px] text-muted">Con cambios del estudio</p>}
+                      {typeof d.vencimiento === "string" && <p className="text-meta text-muted">{String(d.frecuencia)} · {d.vencimiento}</p>}
+                      {typeof d.validar === "string" && <p className="text-caption text-[#7a5410]">A validar: {d.validar}</p>}
+                      {it.customized && <p className="text-caption text-muted">Con cambios del estudio</p>}
                     </div>
                     {canEdit && (
                       <form action={updateSetupItemAction}>
@@ -116,7 +116,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
         );
       })}
       {s.items.some((i) => typeof (i.data as Record<string, unknown>).validar === "string") && (
-        <p className="flex gap-2 text-[13px] text-muted">
+        <p className="flex gap-2 text-meta text-muted">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[#7a5410]" aria-hidden /> Lo marcado &quot;a validar&quot; es normativo y depende de la jurisdicción o del caso.
         </p>
       )}

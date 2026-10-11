@@ -29,23 +29,23 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
   const date = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${e.date}T12:00:00Z`));
   return (
     <>
-      <Link href={`/grupos/g/${v.group.id}`} className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+      <Link href={`/grupos/g/${v.group.id}`} className="text-ui text-rose-deep underline-offset-4 hover:underline">
         ← {v.group.name}
       </Link>
-      <p className="mt-4 text-[13px] text-muted">
+      <p className="mt-4 text-meta text-muted">
         {CATEGORIES[e.category as Category] ?? "Otros"} · {date}
       </p>
       <h1 className="mt-1 font-display text-[28px] leading-tight text-ink sm:text-[32px]">{e.description}</h1>
       <p className="mt-2 num text-[44px] leading-none">{formatMoney(e.amount, e.currency)}</p>
       {e.fx_rate && (
-        <p className="mt-2 text-[14px] text-muted">
+        <p className="mt-2 text-ui text-muted">
           ≈ {formatMoney(Math.round(e.amount * Number(e.fx_rate)), v.group.base_currency)} · 1 {e.currency} = {Number(e.fx_rate).toLocaleString("es-AR")} {v.group.base_currency} ({FX_SOURCES[e.fx_source as keyof typeof FX_SOURCES] ?? e.fx_source}, {e.fx_date})
         </p>
       )}
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <section className="border border-line bg-surface p-4">
-          <h2 className="text-[13px] font-medium uppercase tracking-[0.14em] text-muted">Pagó</h2>
-          <ul className="mt-2 grid gap-1 text-[15px]">
+          <h2 className="text-meta font-medium uppercase tracking-[0.14em] text-muted">Pagó</h2>
+          <ul className="mt-2 grid gap-1 text-body">
             {Object.entries(e.payers).map(([m, a]) => (
               <li key={m} className="flex justify-between">
                 <span>{name(m)}</span>
@@ -55,8 +55,8 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
           </ul>
         </section>
         <section className="border border-line bg-surface p-4">
-          <h2 className="text-[13px] font-medium uppercase tracking-[0.14em] text-muted">{SPLIT_METHODS[e.split_method]}</h2>
-          <ul className="mt-2 grid gap-1 text-[15px]">
+          <h2 className="text-meta font-medium uppercase tracking-[0.14em] text-muted">{SPLIT_METHODS[e.split_method]}</h2>
+          <ul className="mt-2 grid gap-1 text-body">
             {Object.entries(e.shares).map(([m, a]) => (
               <li key={m} className="flex justify-between">
                 <span>{name(m)}</span>
@@ -66,7 +66,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
           </ul>
         </section>
       </div>
-      <ul className="mt-4 grid gap-1 text-[14px] text-muted">
+      <ul className="mt-4 grid gap-1 text-ui text-muted">
         {e.is_company && <li>Gasto de la empresa{v.organizationName ? ` · ${v.organizationName}` : ""}</li>}
         {e.is_deductible && <li>Deducible</li>}
         {e.recurrence && <li>Se repite: {RECURRENCES[e.recurrence as keyof typeof RECURRENCES]} (próximo {e.recurrence_next})</li>}
@@ -74,19 +74,19 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
         <li>Cargado por {name(e.created_by)}</li>
       </ul>
       {e.receipt_path && (
-        <a href={`/api/gastos/archivo/gasto/${e.id}`} target="_blank" className="mt-4 inline-flex items-center gap-2 text-[15px] text-rose-deep underline-offset-4 hover:underline">
+        <a href={`/api/gastos/archivo/gasto/${e.id}`} target="_blank" className="mt-4 inline-flex items-center gap-2 text-body text-rose-deep underline-offset-4 hover:underline">
           <Paperclip className="size-4" aria-hidden />
           Ver comprobante ({e.receipt_name})
         </a>
       )}
 
       <section className="mt-10">
-        <h2 className="mb-3 font-display text-2xl">Comentarios</h2>
+        <h2 className="mb-3 font-display text-headline">Comentarios</h2>
         <ul className="mb-4 grid gap-3">
           {comments.map((c) => (
             <li key={c.id} className="border-l-2 border-line pl-3">
-              <p className="text-[15px]">{c.body}</p>
-              <p className="text-[12px] text-muted">
+              <p className="text-body">{c.body}</p>
+              <p className="text-caption text-muted">
                 {name(c.member_id)} · {when.format(c.created_at)}
               </p>
             </li>
@@ -101,14 +101,14 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
           <form action={stopRecurrenceAction}>
             <input type="hidden" name="group" value={v.group.id} />
             <input type="hidden" name="expense" value={e.id} />
-            <button className="h-11 border border-line px-4 text-[14px] hover:bg-navy-soft">Dejar de repetir</button>
+            <button className="h-11 border border-line px-4 text-ui hover:bg-navy-soft">Dejar de repetir</button>
           </form>
         )}
         {canDelete && (
           <form action={deleteExpenseAction}>
             <input type="hidden" name="group" value={v.group.id} />
             <input type="hidden" name="expense" value={e.id} />
-            <button className="h-11 border border-danger/40 px-4 text-[14px] text-danger hover:bg-danger/5">Borrar gasto</button>
+            <button className="h-11 border border-danger/40 px-4 text-ui text-danger hover:bg-danger/5">Borrar gasto</button>
           </form>
         )}
       </div>

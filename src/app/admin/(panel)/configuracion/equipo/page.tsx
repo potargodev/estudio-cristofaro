@@ -60,8 +60,8 @@ export default async function UsuariosPage({
       )}
 
       <div className="overflow-x-auto border border-line bg-surface">
-        <table className="w-full min-w-[680px] text-left text-[14px]">
-          <thead className="border-b border-line bg-canvas text-[13px] text-muted">
+        <table className="w-full min-w-[680px] text-left text-ui">
+          <thead className="border-b border-line bg-canvas text-meta text-muted">
             <tr>
               <th className="px-4 py-2.5 font-normal">Nombre</th>
               <th className="px-4 py-2.5 font-normal">Rol</th>
@@ -82,9 +82,9 @@ export default async function UsuariosPage({
                       <span className="min-w-0">
                         <span className="block font-medium text-ink">
                           {u.name}
-                          {self && <span className="ml-1.5 text-[13px] font-normal text-muted">(vos)</span>}
+                          {self && <span className="ml-1.5 text-meta font-normal text-muted">(vos)</span>}
                         </span>
-                        <span className="block text-[13px] text-muted">{u.email}</span>
+                        <span className="block text-meta text-muted">{u.email}</span>
                       </span>
                     </span>
                   </td>
@@ -141,7 +141,7 @@ export default async function UsuariosPage({
         </table>
       </div>
 
-      <h2 className="mb-3 mt-10 text-[20px] font-medium">Agregar usuario</h2>
+      <h2 className="mb-3 mt-10 text-section font-medium">Agregar usuario</h2>
       <form action={createStaffUser} className="grid gap-4 border border-line bg-surface p-5 sm:grid-cols-2">
         <AdminField label="Nombre y apellido" htmlFor="name">
           <Input id="name" name="name" required autoComplete="off" />

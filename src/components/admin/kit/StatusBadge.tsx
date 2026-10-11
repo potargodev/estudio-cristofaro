@@ -17,8 +17,8 @@ import { cn } from "@/lib/utils";
 // Paleta única de estados para todo el backoffice. Siempre ícono + texto (nunca
 // solo color). Colores sobre blanco con contraste AA (texto ≥ 4,5:1).
 
-type Tone = "neutral" | "info" | "progress" | "ok" | "done" | "danger" | "gold";
-const TONES: Record<Tone, string> = {
+export type Tone = "neutral" | "info" | "progress" | "ok" | "done" | "danger" | "gold";
+export const TONES: Record<Tone, string> = {
   neutral: "border-[#cfd3dc] bg-[#f3f4f7] text-[#3d4456]",
   info: "border-[#bcc8e6] bg-[#eef2fb] text-[#2b4486]",
   progress: "border-[#e3cf9f] bg-[#fbf5e6] text-[#7a5410]",
@@ -87,7 +87,7 @@ export function StatusBadge({ status, label, className }: { status: StatusKey | 
   const s = STATUS[status as StatusKey] ?? { label: status, icon: CircleDot, tone: "neutral" as Tone };
   const Icon = s.icon;
   return (
-    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[12px] font-medium leading-none", TONES[s.tone], className)}>
+    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-caption font-medium leading-none", TONES[s.tone], className)}>
       <Icon className="size-3.5" strokeWidth={1.75} aria-hidden />
       {label ?? s.label}
     </span>
@@ -97,9 +97,14 @@ export function StatusBadge({ status, label, className }: { status: StatusKey | 
 /** Chip neutro para datos que no son estados (plan, tipo, origen) */
 export function Tag({ children, icon: Icon, className }: { children: React.ReactNode; icon?: LucideIcon; className?: string }) {
   return (
-    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-md border border-line bg-surface px-1.5 py-0.5 text-[12px] leading-none text-ink/80", className)}>
+    <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-md border border-line bg-surface px-1.5 py-0.5 text-caption leading-none text-ink/80", className)}>
       {Icon && <Icon className="size-3.5 text-muted" strokeWidth={1.5} aria-hidden />}
       {children}
     </span>
   );
+}
+
+/** Pastilla de un tono de la paleta de estados, para estados que no están en STATUS */
+export function ToneBadge({ tone = "neutral", children, className }: { tone?: Tone; children: React.ReactNode; className?: string }) {
+  return <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-caption font-medium leading-none", TONES[tone], className)}>{children}</span>;
 }

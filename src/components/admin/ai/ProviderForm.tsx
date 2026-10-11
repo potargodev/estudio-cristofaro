@@ -35,7 +35,7 @@ export function ProviderForm({ action, current, defaultKind }: { action: (fd: Fo
             name="kind"
             value={kind}
             onChange={(e) => setKind(e.target.value as AiProviderKind)}
-            className="mt-1 h-9 w-full border border-line bg-surface px-2 text-[15px]"
+            className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body"
           >
             {AI_PROVIDER_KINDS.map((k) => (
               <option key={k} value={k}>
@@ -82,7 +82,7 @@ export function ProviderForm({ action, current, defaultKind }: { action: (fd: Fo
         hint={`Uno por línea o separados por coma.${meta.models.length ? ` Sugeridos: ${meta.models.join(", ")}.` : ""}`}
         className="sm:col-span-2"
       >
-        <Textarea id={`${p}-models`} name="models" rows={2} defaultValue={(current?.models ?? meta.models).join("\n")} className="mt-1 font-mono text-[14px]" />
+        <Textarea id={`${p}-models`} name="models" rows={2} defaultValue={(current?.models ?? meta.models).join("\n")} className="mt-1 font-mono text-ui" />
       </AdminField>
       <div className="sm:col-span-2">
         <SubmitButton>{current ? "Guardar cambios" : "Agregar proveedor"}</SubmitButton>

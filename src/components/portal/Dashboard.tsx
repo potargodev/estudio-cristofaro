@@ -29,9 +29,9 @@ export function Ring({ value, total, label, empty }: { value: number; total: num
       <div>
         <p className="tabular font-display text-5xl leading-none">
           <Counter value={value} duration={900} />
-          <span className="text-2xl text-muted">/{total}</span>
+          <span className="text-headline text-muted">/{total}</span>
         </p>
-        <p className="mt-1 text-sm text-muted">{total ? label : empty}</p>
+        <p className="mt-1 text-ui text-muted">{total ? label : empty}</p>
       </div>
     </div>
   );
@@ -43,7 +43,7 @@ export function SplitBar({ a, b, labelA, labelB, title }: { a: number; b: number
   return (
     <div>
       <p className="flex items-baseline justify-between">
-        <span className="text-sm text-muted">{title}</span>
+        <span className="text-ui text-muted">{title}</span>
         <span className="tabular font-display text-5xl leading-none">
           <Counter value={total} duration={900} />
         </span>
@@ -56,7 +56,7 @@ export function SplitBar({ a, b, labelA, labelB, title }: { a: number; b: number
           </>
         )}
       </div>
-      <p className="mt-2 flex flex-wrap gap-x-4 text-xs text-muted">
+      <p className="mt-2 flex flex-wrap gap-x-4 text-caption text-muted">
         <span className="inline-flex items-center gap-1.5">
           <span className="size-2 rounded-full bg-paper/85" aria-hidden />
           {labelA}: {a}
@@ -83,7 +83,7 @@ const fmt = new Intl.DateTimeFormat("es-AR", {
 export function Timeline({ items }: { items: TimelineItem[] }) {
   return (
     <Card>
-      <h2 className="font-display text-2xl">Actividad reciente</h2>
+      <h2 className="font-display text-headline">Actividad reciente</h2>
       {items.length === 0 ? (
         <div className="mt-3">
           <Empty>Todavía no hay movimientos.</Empty>
@@ -98,9 +98,9 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
                   <Icon className="size-3.5" aria-hidden />
                 </span>
                 <Link href={it.href} className="group block">
-                  <p className="text-[15px] font-medium group-hover:text-rose-deep">{it.title}</p>
-                  <p className="truncate text-sm text-muted">{it.detail}</p>
-                  <p className="text-xs text-muted">{fmt.format(it.at)}</p>
+                  <p className="text-body font-medium group-hover:text-rose-deep">{it.title}</p>
+                  <p className="truncate text-ui text-muted">{it.detail}</p>
+                  <p className="text-caption text-muted">{fmt.format(it.at)}</p>
                 </Link>
               </li>
             );
@@ -114,7 +114,7 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
 export function MonthCard({ children, month, className }: { children: React.ReactNode; month: string; className?: string }) {
   return (
     <Card className={cn("relative overflow-hidden border-night bg-night text-paper", className)}>
-      <p className="text-sm text-rose-light">Este mes · {month}</p>
+      <p className="text-ui text-rose-light">Este mes · {month}</p>
       <div className="mt-4 grid gap-6 sm:grid-cols-3 [&_.text-muted]:text-paper/70">{children}</div>
     </Card>
   );

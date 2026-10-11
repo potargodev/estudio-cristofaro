@@ -18,7 +18,7 @@ const chip: Record<Tone, string> = {
   info: "border-paper/25 text-paper/75",
 };
 function Chip({ tone, children }: { tone: Tone; children: React.ReactNode }) {
-  return <span className={cn("shrink-0 border px-1.5 py-0.5 text-[11px]", chip[tone])}>{children}</span>;
+  return <span className={cn("shrink-0 border px-1.5 py-0.5 text-micro", chip[tone])}>{children}</span>;
 }
 
 // ───────────── Franja de flujo: de dónde salen los datos ─────────────
@@ -42,16 +42,16 @@ function FlowStrip() {
               <n.icon className="size-5" strokeWidth={1.4} aria-hidden />
             </span>
             <span>
-              <span className="block text-[15px] text-paper">
-                <span className="tabular mr-2 text-[12px] text-rose-light">0{i + 1}</span>
+              <span className="block text-body text-paper">
+                <span className="tabular mr-2 text-caption text-rose-light">0{i + 1}</span>
                 {n.title}
               </span>
-              <span className="mt-1 block text-[13px] text-paper/60">{n.text}</span>
+              <span className="mt-1 block text-meta text-paper/60">{n.text}</span>
             </span>
           </li>
         ))}
       </ol>
-      <p className="mt-6 text-center text-[13px] text-paper/60">Los datos llegan solos. Vos solo confirmás.</p>
+      <p className="mt-6 text-center text-meta text-paper/60">Los datos llegan solos. Vos solo confirmás.</p>
     </div>
   );
 }
@@ -82,16 +82,16 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
             ["Próximo vencimiento", "20/10", "IVA septiembre"],
           ].map(([k, v, d]) => (
             <div key={k} className="bg-night p-4">
-              <p className="text-[12px] text-paper/60">{k}</p>
+              <p className="text-caption text-paper/60">{k}</p>
               <p className="tabular mt-2 num text-[clamp(1.6rem,2.1vw,2.1rem)] leading-none text-paper">{v}</p>
-              <p className="mt-2 text-[12px] text-paper/55">{d}</p>
+              <p className="mt-2 text-caption text-paper/55">{d}</p>
             </div>
           ))}
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="border border-hair p-4">
-            <p className="text-[12px] text-paper/60">Tareas del mes</p>
-            <ul className="mt-3 grid grid-cols-1 gap-1.5 text-[13px]">
+            <p className="text-caption text-paper/60">Tareas del mes</p>
+            <ul className="mt-3 grid grid-cols-1 gap-1.5 text-meta">
               {TASKS.map(([t, done]) => (
                 <li key={t} className="flex items-center gap-2">
                   <span className={cn("grid size-4 place-items-center border", done ? "border-[#5f9a72] bg-[#5f9a72]/20 text-[#9fd3ae]" : "border-paper/30")}>
@@ -103,8 +103,8 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
             </ul>
           </div>
           <div className="border border-hair p-4">
-            <p className="text-[12px] text-paper/60">Actividad del estudio</p>
-            <ul className="mt-3 text-[13px] text-paper/85">
+            <p className="text-caption text-paper/60">Actividad del estudio</p>
+            <ul className="mt-3 text-meta text-paper/85">
               {[
                 ["Hoy 10:12", "Presentamos Ingresos Brutos CABA."],
                 ["Ayer 17:40", "Liquidamos los sueldos de septiembre."],
@@ -124,8 +124,8 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
     );
   if (tab === "vencimientos")
     return (
-      <div className="text-[13px] text-paper/85">
-        <div className="grid grid-cols-[1fr_4.5rem_6.5rem_6.5rem] gap-3 border-b border-hair pb-2 text-[12px] text-paper/60">
+      <div className="text-meta text-paper/85">
+        <div className="grid grid-cols-[1fr_4.5rem_6.5rem_6.5rem] gap-3 border-b border-hair pb-2 text-caption text-paper/60">
           <span>Obligación</span>
           <span className="text-right">Vence</span>
           <span className="text-right">Importe</span>
@@ -153,9 +153,9 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border border-rose-light/40 bg-rose-light/[0.06] px-4 py-3">
           <span>
             <span className="block text-paper">IVA septiembre · {money(DEMO.ivaAmount)}</span>
-            <span className="block text-[12px] text-paper/60">Te avisamos en la app y por mail el 17/10</span>
+            <span className="block text-caption text-paper/60">Te avisamos en la app y por mail el 17/10</span>
           </span>
-          <span className="bg-rose-light px-3 py-1.5 text-[12px] font-medium text-night">Ver cómo pagar</span>
+          <span className="bg-rose-light px-3 py-1.5 text-caption font-medium text-night">Ver cómo pagar</span>
         </div>
       </div>
     );
@@ -163,11 +163,11 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
     return (
       <div className="grid gap-4 md:grid-cols-[1fr_15rem]">
         <div className="grid gap-4">
-          <div className="flex items-center gap-4 border border-dashed border-hair-strong px-4 py-5 text-[13px] text-paper/70">
+          <div className="flex items-center gap-4 border border-dashed border-hair-strong px-4 py-5 text-meta text-paper/70">
             <Upload className="size-5 shrink-0 text-rose-light" aria-hidden />
             Arrastrá tus comprobantes o sacales una foto desde el celular
           </div>
-          <div className="text-[13px]">
+          <div className="text-meta">
             {(
               [
                 ["Factura proveedor 0003-118", "Compras · octubre", "Subido por vos", "ok"],
@@ -182,7 +182,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
                   <FileText className="size-4 shrink-0 text-paper/55" aria-hidden />
                   <span className="min-w-0">
                     <span className="block truncate text-paper/90">{n}</span>
-                    <span className="block text-[12px] text-paper/55">{m}</span>
+                    <span className="block text-caption text-paper/55">{m}</span>
                   </span>
                 </span>
                 <Chip tone={t}>{e}</Chip>
@@ -190,10 +190,10 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
             ))}
           </div>
         </div>
-        <div className="border border-hair p-4 text-[13px]">
-          <p className="text-[12px] text-paper/60">Detalle del documento</p>
+        <div className="border border-hair p-4 text-meta">
+          <p className="text-caption text-paper/60">Detalle del documento</p>
           <p className="mt-1 text-paper">Factura proveedor 0003-118</p>
-          <dl className="mt-3 grid grid-cols-[5rem_1fr] gap-y-1.5 text-[12px]">
+          <dl className="mt-3 grid grid-cols-[5rem_1fr] gap-y-1.5 text-caption">
             {[
               ["Período", "Octubre 2026"],
               ["Tipo", "Compras"],
@@ -206,51 +206,51 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
               </div>
             ))}
           </dl>
-          <p className="mt-4 bg-rose-light py-2 text-center text-[12px] font-medium text-night">Lo ve tu contador</p>
+          <p className="mt-4 bg-rose-light py-2 text-center text-caption font-medium text-night">Lo ve tu contador</p>
         </div>
       </div>
     );
   if (tab === "mensajes")
     return (
       <div className="grid gap-4 md:grid-cols-[1fr_15rem]">
-        <div className="flex flex-col gap-2.5 border border-hair p-4 text-[14px]">
-          <p className="text-[12px] text-paper/55">Mensajes · Lucía G. (Estudio)</p>
+        <div className="flex flex-col gap-2.5 border border-hair p-4 text-ui">
+          <p className="text-caption text-paper/55">Mensajes · Lucía G. (Estudio)</p>
           <p className="max-w-[85%] self-start border border-hair bg-paper/[0.04] px-3 py-2 text-paper/85">¿Te llegó el F.931? Lo dejé en Documentos.</p>
           <p className="max-w-[85%] self-end bg-rose-light/15 px-3 py-2 text-paper">Sí, ya lo pagamos. ¡Gracias!</p>
-          <p className="self-end text-[11px] text-paper/45">Visto</p>
-          <p className="text-[12px] text-paper/45">Lucía está escribiendo…</p>
+          <p className="self-end text-micro text-paper/45">Visto</p>
+          <p className="text-caption text-paper/45">Lucía está escribiendo…</p>
         </div>
-        <div className="flex flex-col gap-3 border border-hair p-4 text-[13px]">
-          <p className="flex items-center gap-2 text-[12px] text-paper/60">
+        <div className="flex flex-col gap-3 border border-hair p-4 text-meta">
+          <p className="flex items-center gap-2 text-caption text-paper/60">
             <Sparkles className="size-3.5 text-rose-light" aria-hidden /> Vigía
           </p>
           <p className="self-end bg-rose-light/15 px-3 py-2 text-paper">«Almuerzo con el cliente, 18.450, con la tarjeta de la empresa»</p>
           <div className="border border-hair p-3">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-paper/45">Gasto de la empresa</p>
-            <p className="mt-0.5 text-[15px] text-paper">$ 18.450 · Comida</p>
+            <p className="text-micro uppercase tracking-[0.12em] text-paper/45">Gasto de la empresa</p>
+            <p className="mt-0.5 text-body text-paper">$ 18.450 · Comida</p>
             <p className="text-paper/55">Almuerzo con cliente · hoy</p>
-            <p className="mt-2 bg-rose-light py-1.5 text-center text-[12px] font-medium text-night">Confirmar</p>
+            <p className="mt-2 bg-rose-light py-1.5 text-center text-caption font-medium text-night">Confirmar</p>
           </div>
-          <p className="text-[12px] text-paper/50">La IA propone; una persona aprueba.</p>
+          <p className="text-caption text-paper/50">La IA propone; una persona aprueba.</p>
         </div>
       </div>
     );
   return (
     <div className="grid gap-4 md:grid-cols-[1fr_15rem]">
-      <div className="flex flex-col gap-3 border border-hair p-4 text-[14px]">
+      <div className="flex flex-col gap-3 border border-hair p-4 text-ui">
         <p className="ml-auto max-w-[80%] bg-navy px-4 py-3 text-paper">Incorporamos una diseñadora el lunes 14.</p>
         <div className="max-w-[88%] border-l border-rose-light pl-4 text-paper/85">
-          <p className="text-[12px] text-rose-light">Solicitud creada: Alta de empleada</p>
+          <p className="text-caption text-rose-light">Solicitud creada: Alta de empleada</p>
           <p className="mt-1">Nos faltan su CUIL y el sueldo acordado.</p>
         </div>
         <p className="ml-auto max-w-[80%] bg-navy px-4 py-3 text-paper">CUIL 27-40123456-8. El sueldo te lo paso mañana.</p>
         <div className="max-w-[88%] border-l border-rose-light pl-4 text-paper/85">
-          <p className="text-[12px] text-rose-light">Lucía G. · Estudio</p>
+          <p className="text-caption text-rose-light">Lucía G. · Estudio</p>
           <p className="mt-1">Perfecto, ya la damos de alta en ARCA. Te aviso cuando esté.</p>
         </div>
       </div>
-      <div className="border border-hair p-4 text-[13px]">
-        <p className="text-[12px] text-paper/60">Alta de empleada</p>
+      <div className="border border-hair p-4 text-meta">
+        <p className="text-caption text-paper/60">Alta de empleada</p>
         <p className="mt-1 text-paper">Diseñadora · desde 14/10</p>
         <ul className="mt-3 grid gap-1.5">
           {[
@@ -267,7 +267,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
             </li>
           ))}
         </ul>
-        <p className="mt-4 flex items-center justify-between border-t border-hair pt-3 text-[12px]">
+        <p className="mt-4 flex items-center justify-between border-t border-hair pt-3 text-caption">
           <span className="text-paper/60">Responde Lucía G.</span>
           <Chip tone="warn">En curso</Chip>
         </p>
@@ -355,11 +355,11 @@ export function PlatformDemo() {
               tabIndex={t.key === tab ? 0 : -1}
               onClick={() => select(t.key)}
               className={cn(
-                "relative shrink-0 px-1 pb-4 pr-8 text-left text-[15px] transition-colors duration-300",
+                "relative shrink-0 px-1 pb-4 pr-8 text-left text-body transition-colors duration-300",
                 t.key === tab ? "text-paper" : "text-paper/60 hover:text-paper/85",
               )}
             >
-              <span className="tabular mr-2 text-[12px] text-rose-light">0{i + 1}</span>
+              <span className="tabular mr-2 text-caption text-rose-light">0{i + 1}</span>
               {t.label}
               <span
                 aria-hidden
@@ -375,7 +375,7 @@ export function PlatformDemo() {
         <div id="plataforma-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="grid gap-8 pt-10 lg:grid-cols-12">
           {/* Ventana de la app */}
           <div className="relative min-w-0 border border-hair-strong bg-navy-deep lg:col-span-9" aria-hidden>
-            <div className="flex items-center justify-between border-b border-hair px-5 py-3 text-[12px] text-paper/60">
+            <div className="flex items-center justify-between border-b border-hair px-5 py-3 text-caption text-paper/60">
               <span className="flex items-center gap-2">
                 <span className="size-2 bg-rose-light" />
                 {DEMO.client}
@@ -383,7 +383,7 @@ export function PlatformDemo() {
               <span>{DEMO.user} · Dirección</span>
             </div>
             <div className="grid md:grid-cols-[11rem_1fr]">
-              <nav className="hidden border-r border-hair p-3 text-[13px] md:block">
+              <nav className="hidden border-r border-hair p-3 text-meta md:block">
                 {NAV.map((n) => (
                   <p
                     key={n.key}
@@ -415,17 +415,17 @@ export function PlatformDemo() {
 
           {/* Datos de la pestaña activa */}
           <aside className="flex flex-col lg:col-span-3" aria-live="polite">
-            <p className="text-[15px] leading-relaxed text-paper/70">{current.text}</p>
+            <p className="text-body leading-relaxed text-paper/70">{current.text}</p>
             <dl key={tab} className="tab-in mt-6 border-t border-hair">
               {current.facts.map((f) => (
                 <div key={f.label} className="border-b border-hair py-5">
                   <dt className="sr-only">{f.label}</dt>
                   <dd className="tabular font-display text-[2.4rem] leading-none text-rose-light">{f.value}</dd>
-                  <dd aria-hidden className="mt-2 text-[14px] leading-snug text-paper/70">{f.label}</dd>
+                  <dd aria-hidden className="mt-2 text-ui leading-snug text-paper/70">{f.label}</dd>
                 </div>
               ))}
             </dl>
-            <p className="mt-8 text-[13px] text-paper/60 lg:mt-auto">
+            <p className="mt-8 text-meta text-paper/60 lg:mt-auto">
               <a href="/faro" className="mb-3 block text-paper/75 underline-offset-4 hover:text-paper hover:underline">
                 Con tecnología de Faro →
               </a>

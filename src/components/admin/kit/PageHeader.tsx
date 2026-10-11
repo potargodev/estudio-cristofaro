@@ -44,9 +44,9 @@ export function PageHeader({
     <header className={cn(level === 1 ? "mb-6" : "mb-5", className)}>
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
         <div className="min-w-0 flex-1 basis-[18rem]">
-          {eyebrow && <div className="mb-1 text-[13px] text-muted">{eyebrow}</div>}
-          {level === 1 ? <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{title}</h1> : <h2 className="text-[18px] font-semibold leading-tight text-ink">{title}</h2>}
-          {description && <p className="mt-1 max-w-3xl text-[15px] leading-snug text-muted">{description}</p>}
+          {eyebrow && <div className="mb-1 text-meta text-muted">{eyebrow}</div>}
+          {level === 1 ? <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{title}</h1> : <h2 className="text-title font-semibold leading-tight text-ink">{title}</h2>}
+          {description && <p className="mt-1 max-w-3xl text-body leading-snug text-muted">{description}</p>}
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </div>

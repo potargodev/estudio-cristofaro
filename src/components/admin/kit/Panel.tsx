@@ -18,13 +18,13 @@ export function EmptyState({
 }) {
   return (
     <div className={cn("flex flex-col items-center px-6 py-10 text-center", className)}>
-      <span className="grid size-12 place-items-center rounded-lg bg-navy text-gold">
+      <span className="grid size-11 place-items-center rounded-full border border-line text-rose-deep">
         <Icon className="size-5" strokeWidth={1.5} aria-hidden />
       </span>
-      <p className="mt-4 text-[15px] font-medium text-ink">{title}</p>
-      {text && <p className="mt-1 max-w-sm text-[14px] text-muted">{text}</p>}
+      <p className="mt-3 text-body font-medium text-ink">{title}</p>
+      {text && <p className="mt-1 max-w-sm text-ui text-muted">{text}</p>}
       {action && (
-        <Link href={action.href} className="mt-4 text-[14px] font-medium text-ink underline underline-offset-4">
+        <Link href={action.href} className="mt-4 inline-flex h-(--control-h) items-center rounded-md border border-navy/30 px-4 text-ui font-medium text-navy hover:border-navy/60 hover:bg-navy-soft">
           {action.label}
         </Link>
       )}
@@ -49,19 +49,15 @@ export function Panel({
   bodyClassName?: string;
 }) {
   return (
-    <section className={cn("min-w-0 border border-line bg-surface", className)}>
-      <header className="flex min-h-[52px] items-center justify-between gap-3 border-b border-line px-5 py-3">
-        <h2 className="flex items-center gap-2.5 text-[17px] font-semibold text-ink">
-          {Icon && (
-            <span className="grid size-7 place-items-center rounded-md bg-navy text-gold">
-              <Icon className="size-4" strokeWidth={1.6} aria-hidden />
-            </span>
-          )}
+    <section className={cn("min-w-0 rounded-md border border-line bg-surface", className)}>
+      <header className="flex min-h-[52px] items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
+        <h2 className="flex items-center gap-2 text-title font-semibold text-ink">
+          {Icon && <Icon className="size-[18px] shrink-0 text-rose-deep" strokeWidth={1.6} aria-hidden />}
           {title}
         </h2>
-        {action && <div className="flex items-center gap-2 text-[13px]">{action}</div>}
+        {action && <div className="flex items-center gap-2 text-meta">{action}</div>}
       </header>
-      <div className={cn("p-5", bodyClassName)}>{children}</div>
+      <div className={cn("p-4 sm:p-5", bodyClassName)}>{children}</div>
     </section>
   );
 }

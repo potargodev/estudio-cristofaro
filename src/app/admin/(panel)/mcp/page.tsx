@@ -66,9 +66,9 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
 
       <div className="grid gap-6 [&>*]:min-w-0">
         <Panel title="Cómo conectar Faro" icon={BookOpen}>
-          <div className="grid gap-5 text-[14px] leading-relaxed [&>*]:min-w-0">
+          <div className="grid gap-5 text-ui leading-relaxed [&>*]:min-w-0">
             <div>
-              <p className="text-[13px] text-muted">URL del servidor MCP (Streamable HTTP)</p>
+              <p className="text-meta text-muted">URL del servidor MCP (Streamable HTTP)</p>
               <CodeLine text={urls.resource} />
             </div>
             <div className="grid gap-4 md:grid-cols-3 [&>*]:min-w-0">
@@ -117,16 +117,16 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                         <StatusBadge status={st.key} label={st.label} />
                         <Tag>{a.kind === "oauth" ? `OAuth · ${client ?? "cliente"}` : `Token ${a.token_prefix ?? ""}…`}</Tag>
                       </p>
-                      <p className="mt-1 text-[13px] text-muted">
+                      <p className="mt-1 text-meta text-muted">
                         {a.can_write ? "Lectura y escritura" : "Solo lectura"} · {a.modules.length ? a.modules.map((m) => TOOL_MODULES[m as keyof typeof TOOL_MODULES] ?? m).join(", ") : "Todos los módulos"} ·{" "}
                         {a.organization_ids ? a.organization_ids.map((id) => orgName.get(id) ?? "—").join(", ") : "Todas las organizaciones"}
                       </p>
-                      <p className="mt-1 text-[13px] text-muted">
+                      <p className="mt-1 text-meta text-muted">
                         De {owner} · creado {day.format(a.created_at)} · {a.expires_at ? `vence ${day.format(a.expires_at)}` : "sin vencimiento"} · último uso {a.last_used_at ? fmt.format(a.last_used_at) : "nunca"}
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Link href={`/admin/mcp?acceso=${a.id}#llamadas`} className="inline-flex h-9 items-center gap-1.5 border border-line bg-surface px-3 text-[14px] hover:border-muted">
+                      <Link href={`/admin/mcp?acceso=${a.id}#llamadas`} className="inline-flex h-9 items-center gap-1.5 border border-line bg-surface px-3 text-ui hover:border-muted">
                         <Activity className="size-4" aria-hidden /> Llamadas
                       </Link>
                       {st.key === "activa" && (
@@ -152,8 +152,8 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                 <EmptyState icon={Activity} title="Sin llamadas todavía" />
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[560px] text-left text-[14px]">
-                    <thead className="text-[12px] uppercase tracking-wide text-muted">
+                  <table className="w-full min-w-[560px] text-left text-ui">
+                    <thead className="text-caption uppercase tracking-wide text-muted">
                       <tr className="border-b border-line">
                         <th className="px-5 py-2 font-medium">Herramienta</th>
                         <th className="py-2 font-medium">Fecha</th>
@@ -164,11 +164,11 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                     <tbody className="tabular">
                       {calls.map((c) => (
                         <tr key={c.id} className="border-b border-line last:border-0">
-                          <td className="px-5 py-2 font-mono text-[13px]">{c.tool ?? c.method}</td>
+                          <td className="px-5 py-2 font-mono text-meta">{c.tool ?? c.method}</td>
                           <td className="py-2">{fmt.format(c.created_at)}</td>
                           <td className="py-2">
                             <StatusBadge status={RESULT[c.result]?.key ?? c.result} label={RESULT[c.result]?.label ?? c.result} />
-                            {c.message && <span className="ml-2 text-[12px] text-muted">{c.message}</span>}
+                            {c.message && <span className="ml-2 text-caption text-muted">{c.message}</span>}
                           </td>
                           <td className="px-5 py-2 text-right">{c.duration_ms} ms</td>
                         </tr>

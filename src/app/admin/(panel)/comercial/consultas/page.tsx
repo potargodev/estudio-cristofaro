@@ -92,26 +92,26 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
             <Link href={`/admin/comercial/consultas/${l.id}`} className="block truncate font-medium text-ink underline-offset-4 hover:underline">
               {l.name}
             </Link>
-            {company && <span className="block truncate text-[12px] text-muted">{company}</span>}
+            {company && <span className="block truncate text-caption text-muted">{company}</span>}
           </span>
         ),
         status: <StatusBadge status={l.status} />,
         source: (
-          <span className="inline-flex items-center gap-1.5 text-[13px] text-ink">
+          <span className="inline-flex items-center gap-1.5 text-meta text-ink">
             <Source className="size-4 text-muted" strokeWidth={1.5} aria-hidden />
             {LEAD_SOURCES[l.source]}
           </span>
         ),
-        days: <span className="tabular text-[13px] text-ink">{daysLabel(l.stageDays)}</span>,
+        days: <span className="tabular text-meta text-ink">{daysLabel(l.stageDays)}</span>,
         next: l.next_action ? (
-          <span className={`block max-w-[16rem] truncate text-[13px] ${overdue ? "font-medium text-[#8f2a1c]" : "text-ink"}`}>
+          <span className={`block max-w-[16rem] truncate text-meta ${overdue ? "font-medium text-[#8f2a1c]" : "text-ink"}`}>
             {l.next_action}
             {l.next_action_at && <span className="tabular"> · {shortDate.format(new Date(`${l.next_action_at}T00:00:00Z`))}</span>}
           </span>
         ) : (
-          <span className="text-[13px] text-muted">—</span>
+          <span className="text-meta text-muted">—</span>
         ),
-        created: <span className="tabular text-[13px] text-muted">{shortDate.format(l.created_at)}</span>,
+        created: <span className="tabular text-meta text-muted">{shortDate.format(l.created_at)}</span>,
       },
     };
   });
@@ -139,7 +139,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
                 type="search"
                 defaultValue={q}
                 placeholder="Nombre, email, empresa…"
-                className="h-9 w-64 rounded-md border border-line bg-surface pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
+                className="h-9 w-64 rounded-md border border-line bg-surface pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
               />
             </form>
             <HeaderAction href="/admin/comercial/consultas/nueva" label="Cargar consulta" />
@@ -154,7 +154,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
         ]}
       />
       {error ? (
-        <p className="border border-line bg-surface p-4 text-[14px] text-[#8f2a1c]">No se pudieron cargar las consultas: {error}</p>
+        <p className="border border-line bg-surface p-4 text-ui text-[#8f2a1c]">No se pudieron cargar las consultas: {error}</p>
       ) : view === "tablero" ? (
         <LeadBoard leads={rows} />
       ) : (

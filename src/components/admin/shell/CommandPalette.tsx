@@ -95,13 +95,13 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
             aria-controls="cmdk-list"
             aria-activedescendant={list[active] ? `cmdk-${active}` : undefined}
             placeholder="Buscar organización, CUIT, consulta o solicitud…"
-            className="h-12 flex-1 bg-transparent text-[15px] text-ink placeholder:text-muted focus:outline-none"
+            className="h-12 flex-1 bg-transparent text-body text-ink placeholder:text-muted focus:outline-none"
           />
-          <kbd className="border border-line px-1.5 py-0.5 text-[11px] text-muted">Esc</kbd>
+          <kbd className="border border-line px-1.5 py-0.5 text-micro text-muted">Esc</kbd>
         </div>
         <ul id="cmdk-list" role="listbox" className="max-h-[50vh] overflow-y-auto py-2">
           {list.length === 0 && (
-            <li className="flex flex-col items-center gap-2 px-4 py-8 text-center text-[14px] text-muted">
+            <li className="flex flex-col items-center gap-2 px-4 py-8 text-center text-ui text-muted">
               <Inbox className="size-5" aria-hidden />
               {pending ? "Buscando…" : "No encontramos resultados. Probá con otro nombre o con el CUIT sin guiones."}
             </li>
@@ -112,7 +112,7 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
             const Icon = GROUP_ICON[h.group as keyof typeof GROUP_ICON] ?? CornerDownLeft;
             return (
               <li key={`${h.group}-${h.id}`} role="presentation">
-                {header && <p className="px-4 pb-1 pt-3 text-[12px] text-muted">{header}</p>}
+                {header && <p className="px-4 pb-1 pt-3 text-caption text-muted">{header}</p>}
                 <button
                   id={`cmdk-${i}`}
                   role="option"
@@ -120,12 +120,12 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
                   type="button"
                   onMouseEnter={() => setActive(i)}
                   onClick={() => go(h.href)}
-                  className={cn("flex w-full items-center gap-3 px-4 py-2.5 text-left text-[14px]", i === active ? "bg-navy-soft" : "")}
+                  className={cn("flex w-full items-center gap-3 px-4 py-2.5 text-left text-ui", i === active ? "bg-navy-soft" : "")}
                 >
                   <Icon className="size-4 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-ink">{h.title}</span>
-                    {h.detail && <span className="block truncate text-[13px] text-muted">{h.detail}</span>}
+                    {h.detail && <span className="block truncate text-meta text-muted">{h.detail}</span>}
                   </span>
                   {i === active && <CornerDownLeft className="size-3.5 text-muted" aria-hidden />}
                 </button>
@@ -133,7 +133,7 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
             );
           })}
         </ul>
-        <p className="flex gap-4 border-t border-line px-4 py-2 text-[12px] text-muted">
+        <p className="flex gap-4 border-t border-line px-4 py-2 text-caption text-muted">
           <span>↑ ↓ para moverte</span>
           <span>Enter para abrir</span>
         </p>

@@ -34,11 +34,11 @@ export default async function RubrosPage({ searchParams }: { searchParams: Promi
             return (
               <li key={t.clave} className="flex flex-wrap items-start justify-between gap-3 px-5 py-4">
                 <div className="min-w-0">
-                  <p className="flex flex-wrap items-center gap-2 text-[15px] font-medium">
-                    {t.nombre} <span className="text-[12px] font-normal text-muted">versión {t.version}</span>
+                  <p className="flex flex-wrap items-center gap-2 text-body font-medium">
+                    {t.nombre} <span className="text-caption font-normal text-muted">versión {t.version}</span>
                     {st.state === "en_revision" ? <StatusBadge status="pendiente" label={st.label} /> : <StatusBadge status="activa" label={st.label} />}
                   </p>
-                  <p className="mt-0.5 text-[13px] text-muted">
+                  <p className="mt-0.5 text-meta text-muted">
                     {t.descripcion}
                     {st.at && ` · ${day.format(st.at)}`}
                   </p>
@@ -49,7 +49,7 @@ export default async function RubrosPage({ searchParams }: { searchParams: Promi
                     {st.state === "validada_estudio" ? (
                       <>
                         <input type="hidden" name="undo" value="1" />
-                        <button type="submit" className="h-9 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+                        <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
                           Quitar validación
                         </button>
                       </>
@@ -65,7 +65,7 @@ export default async function RubrosPage({ searchParams }: { searchParams: Promi
           })}
         </ul>
       </Panel>
-      <p className="mt-4 text-[13px] text-muted">La validación es para la versión vigente: si Faro publica una versión nueva, vuelve a «en revisión» hasta que la revisen. Cada validación queda en la auditoría.</p>
+      <p className="mt-4 text-meta text-muted">La validación es para la versión vigente: si Faro publica una versión nueva, vuelve a «en revisión» hasta que la revisen. Cada validación queda en la auditoría.</p>
     </div>
   );
 }

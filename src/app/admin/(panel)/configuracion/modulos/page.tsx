@@ -36,19 +36,19 @@ export default async function ModulosPage() {
                       <ModuleIcon name={m.icon} className="size-5" />
                     </span>
                     {st === "activo" ? (
-                      <span className="rounded-md bg-[#e3efe6] px-2 py-0.5 text-[12px] font-medium text-[#24583a]">{m.core ? "Núcleo" : "Activo"}</span>
+                      <span className="rounded-md bg-[#e3efe6] px-2 py-0.5 text-caption font-medium text-[#24583a]">{m.core ? "Núcleo" : "Activo"}</span>
                     ) : st === "plan" ? (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-rose-soft px-2 py-0.5 text-[12px] font-medium text-rose-deep">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-rose-soft px-2 py-0.5 text-caption font-medium text-rose-deep">
                         <Lock className="size-3" aria-hidden /> Plan {plan?.name ?? "superior"}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-navy-soft px-2 py-0.5 text-[12px] font-medium text-muted">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-navy-soft px-2 py-0.5 text-caption font-medium text-muted">
                         <Sparkles className="size-3" aria-hidden /> Próximamente
                       </span>
                     )}
                   </div>
-                  <p className="mt-4 text-[17px] font-semibold text-ink">{m.name}</p>
-                  <p className="mt-1 flex-1 text-[14px] text-muted">{m.description}</p>
+                  <p className="mt-4 text-title font-semibold text-ink">{m.name}</p>
+                  <p className="mt-1 flex-1 text-ui text-muted">{m.description}</p>
                 </Link>
               </li>
             );

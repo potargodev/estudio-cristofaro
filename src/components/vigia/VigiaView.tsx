@@ -50,7 +50,7 @@ export async function VigiaView({ user, space, sp, base }: { user: StaffUser; sp
     <div className={embedded ? "flex min-h-full flex-col" : "flex flex-col"}>
       {tabs.length > 1 && <SectionTabs label="Vistas del Vigía" className={embedded ? "sticky top-0 z-30 bg-canvas px-4" : "mb-4"} tabs={tabs.map((t) => ({ href: href(t.key), label: t.label, icon: t.icon, count: t.count, active: t.key === tab }))} />}
       {space === "portal" && (
-        <p role="note" className={embedded ? "mx-4 mt-3 text-[13px] text-muted" : "mb-3 text-[13px] text-muted"}>
+        <p role="note" className={embedded ? "mx-4 mt-3 text-meta text-muted" : "mb-3 text-meta text-muted"}>
           En tu organización, el Vigía te ayuda con tu Bitácora y tus grupos. No ve ni cambia datos de la organización.
         </p>
       )}

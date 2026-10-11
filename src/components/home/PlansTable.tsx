@@ -62,7 +62,7 @@ export function PlansTable({
               Un plan según el momento de tu empresa.
             </SplitHeading>
           </div>
-          <p className="self-end text-[15px] leading-relaxed text-paper/60 lg:col-span-4 lg:col-start-9">
+          <p className="self-end text-body leading-relaxed text-paper/60 lg:col-span-4 lg:col-start-9">
             Todos incluyen la plataforma, las alertas y un responsable asignado. El precio final depende de razones sociales, empleados y volumen. La
             implementación inicial se cotiza aparte.
           </p>
@@ -70,7 +70,7 @@ export function PlansTable({
 
         {/* Escritorio: tabla */}
         <div data-table className={cn("hidden lg:block", !full && "mt-16")} onMouseLeave={() => setCol(null)}>
-          <table className="w-full table-fixed border-collapse text-left text-[14px] text-paper/80">
+          <table className="w-full table-fixed border-collapse text-left text-ui text-paper/80">
             <caption className="sr-only">Comparación de planes</caption>
             <colgroup>
               <col className="w-[28%]" />
@@ -82,16 +82,16 @@ export function PlansTable({
               <tr data-row className="align-top">
                 <th scope="col" className="pb-6 pr-6 pt-6 text-left font-normal">
                   <span className="block font-display text-[1.75rem] leading-[1.05] text-rose-light">Planes disponibles</span>
-                  <span className="mt-3 block max-w-[22ch] text-[13px] leading-relaxed text-paper/55">Servicio contable integral, con la plataforma incluida.</span>
+                  <span className="mt-3 block max-w-[22ch] text-meta leading-relaxed text-paper/55">Servicio contable integral, con la plataforma incluida.</span>
                 </th>
                 {HOME_PLANS.map((p, i) => (
                   <th key={p.key} scope="col" onMouseEnter={() => setCol(i + 1)} className={cn(cell(i + 1), "pb-6 pt-6 font-normal", i === 1 && "border-t")}>
-                    <span className="flex h-6 items-center justify-between gap-2 text-[12px]">
+                    <span className="flex h-6 items-center justify-between gap-2 text-caption">
                       <span className="tabular text-rose-light">Plan 0{i + 1}</span>
                       {"featured" in p && <span className="border border-rose-light/50 px-1.5 py-0.5 leading-none text-rose-light">El más elegido</span>}
                     </span>
                     <span className="mt-3 flex min-h-[2.1em] items-start font-display text-[1.85rem] leading-[1.05] text-paper">{p.name}</span>
-                    <span className="tabular mt-3 block text-[14px] text-paper/55">{priceLabel(p.key, prices)}</span>
+                    <span className="tabular mt-3 block text-ui text-paper/55">{priceLabel(p.key, prices)}</span>
                   </th>
                 ))}
               </tr>
@@ -99,7 +99,7 @@ export function PlansTable({
             <tbody>
               {ROWS.map(([label, ...vals]) => (
                 <tr data-row key={label} className="border-t border-hair">
-                  <th scope="row" className="py-4 pr-6 align-top text-[13px] font-normal text-paper/55">
+                  <th scope="row" className="py-4 pr-6 align-top text-meta font-normal text-paper/55">
                     {label}
                   </th>
                   {vals.map((v, i) => (
@@ -134,13 +134,13 @@ export function PlansTable({
         <ul className="mt-6 grid gap-px border border-hair bg-hair lg:hidden">
           {HOME_PLANS.map((p) => (
             <li key={p.key} className={cn("bg-night p-6", "featured" in p && "outline outline-1 -outline-offset-1 outline-rose-light")}>
-              <p className="mb-2 flex items-center justify-between text-[12px] text-rose-light">
+              <p className="mb-2 flex items-center justify-between text-caption text-rose-light">
                 <span className="tabular">Plan 0{HOME_PLANS.indexOf(p) + 1}</span>
                 {"featured" in p && <span className="border border-rose-light/50 px-1.5 py-0.5 leading-none">El más elegido</span>}
               </p>
               <PlanName className="font-display text-[2rem] leading-none text-paper">{p.name}</PlanName>
-              <p className="tabular mt-2 text-[14px] text-paper/55">{priceLabel(p.key, prices)}</p>
-              <ul className="mt-5 border-t border-hair text-[14px] text-paper/80">
+              <p className="tabular mt-2 text-ui text-paper/55">{priceLabel(p.key, prices)}</p>
+              <ul className="mt-5 border-t border-hair text-ui text-paper/80">
                 {(full
                   ? ROWS.flatMap(([label, ...vals]) => {
                       const v = vals[HOME_PLANS.indexOf(p)];
@@ -158,8 +158,8 @@ export function PlansTable({
         </ul>
 
         <div className="mt-16 grid gap-6 border-t border-hair pt-8 lg:grid-cols-12">
-          <p className="text-[13px] text-paper/55 lg:col-span-3">Módulos para sumar</p>
-          <ul className="flex flex-wrap gap-x-8 gap-y-3 text-[15px] text-paper/80 lg:col-span-9">
+          <p className="text-meta text-paper/55 lg:col-span-3">Módulos para sumar</p>
+          <ul className="flex flex-wrap gap-x-8 gap-y-3 text-body text-paper/80 lg:col-span-9">
             {MODULES.map((m) => (
               <li key={m}>{m}</li>
             ))}
@@ -167,7 +167,7 @@ export function PlansTable({
         </div>
         {!full && (
           <p className="mt-10">
-            <TextLink href="/planes" className="text-[15px] text-rose-light">
+            <TextLink href="/planes" className="text-body text-rose-light">
               Ver la comparación completa
             </TextLink>
           </p>

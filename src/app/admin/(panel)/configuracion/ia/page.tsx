@@ -84,11 +84,11 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
                         <Tag>{PROVIDERS[p.kind].label}</Tag>
                         {!p.active && <Tag>Pausado</Tag>}
                       </p>
-                      <p className="mt-1 text-[13px] text-muted">
+                      <p className="mt-1 text-meta text-muted">
                         {p.key_hint ? `Clave …${p.key_hint}` : "Sin clave"}
                         {p.base_url ? ` · ${p.base_url}` : ""} · Modelos: {(p.settings.models ?? []).join(", ") || "ninguno"}
                       </p>
-                      <p className="mt-1 flex items-center gap-1.5 text-[13px]">
+                      <p className="mt-1 flex items-center gap-1.5 text-meta">
                         {p.last_test_ok === null ? (
                           <CircleDashed className="size-4 text-muted" strokeWidth={1.5} aria-hidden />
                         ) : p.last_test_ok ? (
@@ -123,7 +123,7 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
                     </div>
                   </div>
                   <details className="mt-3">
-                    <summary className="cursor-pointer text-[14px] text-ink underline-offset-4 hover:underline">Editar</summary>
+                    <summary className="cursor-pointer text-ui text-ink underline-offset-4 hover:underline">Editar</summary>
                     <div className="mt-3 border border-line bg-canvas p-4">
                       <ProviderForm
                         action={saveProvider}
@@ -174,9 +174,9 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
         <Panel title="Uso" icon={Gauge}>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-[13px] text-muted">Gasto estimado este mes</p>
+              <p className="text-meta text-muted">Gasto estimado este mes</p>
               <p className="num text-[36px] leading-none text-ink">{usd(spend.usd)}</p>
-              <p className="mt-1 text-[13px] text-muted">
+              <p className="mt-1 text-meta text-muted">
                 {spend.tokens.toLocaleString("es-AR")} tokens{budget ? ` · límite ${usd(budget)}` : " · sin límite"}
               </p>
             </div>
@@ -185,14 +185,14 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
                 <div className="h-2 w-full bg-navy-soft">
                   <div className={pct >= 90 ? "h-2 bg-danger" : "h-2 bg-rose-deep"} style={{ width: `${pct}%` }} />
                 </div>
-                <p className="mt-1 text-right text-[12px] text-muted">{pct}% del límite</p>
+                <p className="mt-1 text-right text-caption text-muted">{pct}% del límite</p>
               </div>
             )}
           </div>
           <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[560px] text-left text-[14px]">
+            <table className="w-full min-w-[560px] text-left text-ui">
               <caption className="sr-only">Uso por modelo en los últimos 30 días</caption>
-              <thead className="text-[12px] uppercase tracking-wide text-muted">
+              <thead className="text-caption uppercase tracking-wide text-muted">
                 <tr className="border-b border-line">
                   <th className="py-2 font-medium">Modelo (30 días)</th>
                   <th className="py-2 text-right font-medium">Llamadas</th>
@@ -224,7 +224,7 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-[12px] text-muted">El costo es una estimación con precios de referencia por modelo; el importe real lo factura cada proveedor.</p>
+          <p className="mt-3 text-caption text-muted">El costo es una estimación con precios de referencia por modelo; el importe real lo factura cada proveedor.</p>
         </Panel>
       </div>
     </div>

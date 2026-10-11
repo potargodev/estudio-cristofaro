@@ -104,11 +104,11 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
                 <Link
                   href={`/admin/organizaciones/${orgId}?tab=${t.href}`}
                   aria-current={on ? "page" : undefined}
-                  className={cn("-mb-px inline-flex h-10 items-center gap-2 border-b-2 px-3 text-[14px] transition-colors", on ? "border-navy font-semibold text-ink" : "border-transparent text-muted hover:text-ink")}
+                  className={cn("-mb-px inline-flex h-10 items-center gap-2 border-b-2 px-3 text-ui transition-colors", on ? "border-navy font-semibold text-ink" : "border-transparent text-muted hover:text-ink")}
                 >
                   <t.icon className={cn("size-4", on && "text-rose-deep")} strokeWidth={1.5} aria-hidden />
                   {t.label}
-                  {!!n && <span className="num rounded-md bg-navy-soft px-1.5 text-[12px] text-ink">{n}</span>}
+                  {!!n && <span className="num rounded-md bg-navy-soft px-1.5 text-caption text-ink">{n}</span>}
                 </Link>
               </li>
             );
@@ -123,7 +123,7 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
                 <Link
                   href={`/admin/organizaciones/${orgId}?tab=${t.key}`}
                   aria-current={active === t.key ? "page" : undefined}
-                  className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px]", active === t.key ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}
+                  className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-meta", active === t.key ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}
                 >
                   {SUB_LABEL[t.key] ?? t.label}
                 </Link>
@@ -207,14 +207,14 @@ export async function ObligationsTab({ orgId, studioId, entities }: { orgId: str
             <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-4 py-3">
               <span>
                 <span className="font-medium">{o.tax}</span>
-                <span className="ml-2 text-sm text-muted">
+                <span className="ml-2 text-ui text-muted">
                   {periodLabel(o.period)} · vence {dateLabel(o.due_date)}
                 </span>
               </span>
               <span className="flex items-center gap-3">
                 <span className="tabular-nums">{moneyLabel(o.amount)}</span>
                 <Badge tone={obligationTone(o.status, o.due_date, today)}>{OBLIGATION_STATUS[o.status]}</Badge>
-                <span className="text-sm text-rose-deep group-open:hidden">Editar</span>
+                <span className="text-ui text-rose-deep group-open:hidden">Editar</span>
               </span>
             </summary>
             <div className="border-t border-line p-4">
@@ -272,13 +272,13 @@ function DocList({ docs, orgId, highlightNew, readable, read }: { docs: Document
                 <Badge tone="warn">Nuevo</Badge>
               </span>
             )}
-            <p className="text-sm text-muted">
+            <p className="text-ui text-muted">
               {categoryLabel(d.category)} · {periodLabel(d.period)} · {dateFmt.format(d.created_at)} · {formatBytes(d.size_bytes)}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
           {readable && read?.has(d.id) ? (
-            <Link href={`/admin/organizaciones/${orgId}/lectura/${read.get(d.id)}`} className="text-[13px] text-navy underline">
+            <Link href={`/admin/organizaciones/${orgId}/lectura/${read.get(d.id)}`} className="text-meta text-navy underline">
               Ver lectura
             </Link>
           ) : readable && ["application/pdf", "image/jpeg", "image/png"].includes(d.mime_type ?? "") ? (
@@ -345,7 +345,7 @@ export async function DocumentsTab({
           <ScanText className="mt-0.5 size-5 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
           <span>
             <span className="block font-semibold">Lectura inteligente</span>
-            <span className="block text-sm text-muted">{readable ? (pending ? `${pending} documento${pending === 1 ? "" : "s"} para confirmar.` : "Facturas, tickets y extractos leídos con IA, para confirmar y exportar.") : "No incluida en el plan."}</span>
+            <span className="block text-ui text-muted">{readable ? (pending ? `${pending} documento${pending === 1 ? "" : "s"} para confirmar.` : "Facturas, tickets y extractos leídos con IA, para confirmar y exportar.") : "No incluida en el plan."}</span>
           </span>
         </span>
         <span aria-hidden>→</span>
@@ -353,7 +353,7 @@ export async function DocumentsTab({
       <section className="border border-line bg-surface p-5">
         <h2 className="font-semibold">Subir documento para la organización</h2>
         {error && (
-          <p role="alert" className="mt-2 text-sm text-danger">
+          <p role="alert" className="mt-2 text-ui text-danger">
             {error === "archivo" ? "Elegí un archivo." : error}
           </p>
         )}
@@ -423,8 +423,8 @@ export async function RequestThread({
       <header className="border-b border-line px-5 py-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-[16px] font-medium text-ink">{r.subject}</h3>
-            <p className="mt-0.5 text-[13px] text-muted">
+            <h3 className="text-lead font-medium text-ink">{r.subject}</h3>
+            <p className="mt-0.5 text-meta text-muted">
               {clientName && (
                 <>
                   <Link href={`/admin/organizaciones/${r.organization_id}?tab=solicitudes#${r.id}`} className="text-ink underline-offset-4 hover:underline">
@@ -438,24 +438,24 @@ export async function RequestThread({
           </div>
           <StatusBadge status={r.status} />
         </div>
-        {meta && <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted">{meta}</div>}
+        {meta && <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-meta text-muted">{meta}</div>}
       </header>
       <ol className="space-y-3 px-5 py-5">
         {messages.map((m) => (
           <li key={m.id} className={cn("max-w-[85%] border px-4 py-3", m.from_client ? "border-line bg-canvas" : "ml-auto border-navy/15 bg-navy-soft")}>
-            <p className="text-[12px] text-muted">
+            <p className="text-caption text-muted">
               {m.from_client ? (m.author ?? "Cliente") : `${m.author ?? "Estudio"} (estudio)`} · <span className="tabular">{msgDate.format(m.created_at)}</span>
             </p>
-            <p className="mt-1 whitespace-pre-line text-[14px] leading-relaxed text-ink">{m.body}</p>
+            <p className="mt-1 whitespace-pre-line text-ui leading-relaxed text-ink">{m.body}</p>
             {m.document_id && (
-              <a href={`/api/archivos/${m.document_id}`} className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-ink underline underline-offset-4 hover:text-rose-deep">
+              <a href={`/api/archivos/${m.document_id}`} className="mt-2 inline-flex items-center gap-1.5 text-meta text-ink underline underline-offset-4 hover:text-rose-deep">
                 <Paperclip className="size-4" strokeWidth={1.5} aria-hidden />
                 {m.document_name}
               </a>
             )}
           </li>
         ))}
-        {messages.length === 0 && <li className="text-[14px] text-muted">Sin mensajes.</li>}
+        {messages.length === 0 && <li className="text-ui text-muted">Sin mensajes.</li>}
       </ol>
       <form action={replyRequest} className="grid gap-3 border-t border-line bg-canvas/50 px-5 py-4 sm:grid-cols-[1fr_200px]">
         <input type="hidden" name="request_id" value={r.id} />
@@ -524,7 +524,7 @@ export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: s
                 <p className="font-medium">
                   {t.name} {t.assignment === "responsable" && <Badge tone="ok">Responsable principal</Badge>}
                 </p>
-                <p className="text-sm text-muted">{t.email}</p>
+                <p className="text-ui text-muted">{t.email}</p>
               </div>
               <div className="flex gap-2">
                 {t.assignment !== "responsable" && (
@@ -636,7 +636,7 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
                   Empresa {c.company_id}
                   {c.name ? ` · ${c.name}` : ""}
                 </span>
-                <span className="text-sm text-muted">Última sincronización: {c.last_sync_at ? syncFmt.format(c.last_sync_at) : "pendiente"}</span>
+                <span className="text-ui text-muted">Última sincronización: {c.last_sync_at ? syncFmt.format(c.last_sync_at) : "pendiente"}</span>
               </li>
             ))}
           </ul>
@@ -650,11 +650,11 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
               <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <span>
                   <span className="font-medium">{r.entity ?? "Sin razón social"}</span>
-                  <span className="ml-2 text-sm text-muted">
+                  <span className="ml-2 text-ui text-muted">
                     {formatCuit(r.cuit, "Sin CUIT")} · Tango: empresa {r.company}, id {r.external}
                   </span>
                 </span>
-                <span className="text-sm text-muted">
+                <span className="text-ui text-muted">
                   <Badge tone="ok">Fuente: Tango</Badge> sincronizado {syncFmt.format(r.synced)}
                 </span>
               </li>
@@ -673,18 +673,18 @@ function Meter({ label, used, max, extra }: { label: string; used: number; max: 
   const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
   return (
     <div className="border border-line bg-surface p-4">
-      <p className="text-sm text-muted">{label}</p>
+      <p className="text-ui text-muted">{label}</p>
       <p className={cn("mt-1 font-display text-3xl", over && "text-danger")}>
         {used}
-        <span className="text-lg text-muted"> / {max ?? "∞"}</span>
+        <span className="text-title text-muted"> / {max ?? "∞"}</span>
       </p>
       {max != null && (
         <div className="mt-2 h-1.5 overflow-hidden bg-line" aria-hidden>
           <div className={cn("h-full", over ? "bg-danger" : "bg-rose")} style={{ width: `${pct}%` }} />
         </div>
       )}
-      {extra > 0 && <p className="mt-2 text-xs text-rose-deep">Incluye +{extra} por excepción</p>}
-      {over && <p className="mt-1 text-xs text-danger">Excede el plan</p>}
+      {extra > 0 && <p className="mt-2 text-caption text-rose-deep">Incluye +{extra} por excepción</p>}
+      {over && <p className="mt-1 text-caption text-danger">Excede el plan</p>}
     </div>
   );
 }
@@ -721,7 +721,7 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
             <SubmitButton>Guardar plan</SubmitButton>
           </div>
           {plan && (
-            <ul className="mt-4 space-y-1 text-sm text-muted">
+            <ul className="mt-4 space-y-1 text-ui text-muted">
               {plan.features.map((f) => (
                 <li key={f}>· {f}</li>
               ))}
@@ -742,8 +742,8 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
 
       <section>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-[18px] font-medium">Módulos del catálogo</h2>
-          <p className="text-sm text-muted">Se activan sin tocar código. Los que todavía no tienen pantalla muestran “Próximamente” en el portal.</p>
+          <h2 className="text-title font-medium">Módulos del catálogo</h2>
+          <p className="text-ui text-muted">Se activan sin tocar código. Los que todavía no tienen pantalla muestran “Próximamente” en el portal.</p>
         </div>
         <ul className="grid gap-3 md:grid-cols-2">
           {MODULES.map((m) => {
@@ -759,7 +759,7 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
                     {on && <Badge tone="ok">Activo</Badge>}
                     {!isModuleAvailable(m.key) && <Badge tone="neutral">Próximamente</Badge>}
                   </p>
-                  <p className="mt-1 text-sm text-muted">{m.description}</p>
+                  <p className="mt-1 text-ui text-muted">{m.description}</p>
                 </div>
                 <form action={setOrganizationModule}>
                   <input type="hidden" name="organization_id" value={orgId} />
@@ -788,7 +788,7 @@ export async function PlanTab({ orgId, studioId, planId }: { orgId: string; stud
 
       <section className="border border-dashed border-line p-5">
         <h2 className="font-semibold">Excepción a los límites del plan</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <p className="mt-1 max-w-2xl text-ui text-muted">
           Suma lugares por encima del plan sin cambiarlo (por ejemplo, una razón social más mientras se cotiza el upgrade). Queda registrada en la
           actividad con el motivo.
         </p>

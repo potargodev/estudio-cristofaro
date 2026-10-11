@@ -56,13 +56,13 @@ export default async function ConsultaPage({
 
   return (
     <div className="max-w-5xl">
-      <Link href="/admin/comercial/consultas" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
+      <Link href="/admin/comercial/consultas" className="text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
         Consultas
       </Link>
       <div className="mb-6 mt-2 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-[20px] font-semibold tracking-tight">{lead.name}</h2>
-          <p className="mt-1 text-sm text-muted">
+          <h2 className="text-section font-semibold tracking-tight">{lead.name}</h2>
+          <p className="mt-1 text-ui text-muted">
             {LEAD_SOURCES[lead.source]} · {created}
           </p>
         </div>
@@ -110,7 +110,7 @@ export default async function ConsultaPage({
       <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
         <section className="border border-line bg-surface p-6">
           <h2 className="font-semibold">Lo que nos contó</h2>
-          <dl className="mt-4 space-y-3 text-[15px]">
+          <dl className="mt-4 space-y-3 text-body">
             {[
               ["Tipo", lead.contributor_type ? CONTRIBUTOR_TYPES[lead.contributor_type] ?? lead.contributor_type : null],
               ["Actividad", lead.activity],
@@ -118,18 +118,18 @@ export default async function ConsultaPage({
             ].map(([k, v]) =>
               v ? (
                 <div key={k}>
-                  <dt className="text-sm text-muted">{k}</dt>
+                  <dt className="text-ui text-muted">{k}</dt>
                   <dd>{v}</dd>
                 </div>
               ) : null,
             )}
             {lead.needs.length > 0 && (
               <div>
-                <dt className="text-sm text-muted">Necesita</dt>
+                <dt className="text-ui text-muted">Necesita</dt>
                 <dd>
                   <ul className="mt-1 flex flex-wrap gap-1.5">
                     {lead.needs.map((n) => (
-                      <li key={n} className="rounded-md bg-navy-soft px-2.5 py-0.5 text-sm text-navy-deep">
+                      <li key={n} className="rounded-md bg-navy-soft px-2.5 py-0.5 text-ui text-navy-deep">
                         {n}
                       </li>
                     ))}
@@ -139,7 +139,7 @@ export default async function ConsultaPage({
             )}
             {lead.message && (
               <div>
-                <dt className="text-sm text-muted">Mensaje</dt>
+                <dt className="text-ui text-muted">Mensaje</dt>
                 <dd className="whitespace-pre-line leading-relaxed">{lead.message}</dd>
               </div>
             )}
@@ -194,7 +194,7 @@ export default async function ConsultaPage({
       </div>
 
       <section className="mt-10">
-        <h2 className="mb-3 text-[18px] font-medium">Llamadas agendadas</h2>
+        <h2 className="mb-3 text-title font-medium">Llamadas agendadas</h2>
         <CallsList studioId={studioId} where={eq(bookings.lead_id, lead.id)} empty="No agendó llamadas." />
       </section>
 

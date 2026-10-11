@@ -13,7 +13,7 @@ export default async function NuevoGrupo() {
   const contexts = [...(ctx.tenant ? [{ value: "tenant", label: "Mis gastos de la actividad (Faro Personal)" }] : []), ...ctx.organizations.map((o) => ({ value: o.id, label: o.name }))];
   return (
     <>
-      <Link href="/grupos" className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+      <Link href="/grupos" className="text-ui text-rose-deep underline-offset-4 hover:underline">
         ← Tus grupos
       </Link>
       <h1 className="mt-3 font-display text-[28px] leading-tight text-ink sm:text-[32px]">Nuevo grupo</h1>

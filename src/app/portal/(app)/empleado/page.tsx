@@ -25,18 +25,18 @@ export default async function EmpleadoHome() {
       <PageHeader title={`Hola, ${me.employee.firstName}`} description={`Tu espacio en la empresa · ${me.organizationName}${me.employee.position ? ` · ${me.employee.position}` : ""}`} className="mb-0" />
       {notes.length > 0 && (
         <section aria-label="Comunicados" className="mt-6 grid gap-2">
-          <h2 className="flex items-center gap-2 text-[15px] font-semibold">
-            <Megaphone className="size-4 text-rose-deep" aria-hidden /> Comunicados {unread.length > 0 && <span className="num rounded-md bg-rose-soft px-1.5 text-[12px] text-rose-deep">{unread.length}</span>}
+          <h2 className="flex items-center gap-2 text-body font-semibold">
+            <Megaphone className="size-4 text-rose-deep" aria-hidden /> Comunicados {unread.length > 0 && <span className="num rounded-md bg-rose-soft px-1.5 text-caption text-rose-deep">{unread.length}</span>}
           </h2>
           <ul className="divide-y divide-line rounded-md border border-line bg-surface">
             {notes.slice(0, 5).map(({ a, r }) => (
               <li key={a.id}>
                 <Link href={`/portal/comunicados/${a.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-canvas">
                   <span className="min-w-0">
-                    <span className={`block truncate text-[14px] ${(a.require_ack ? !r.ack_at : !r.read_at) ? "font-semibold" : ""}`}>{a.title}</span>
-                    <span className="text-[12px] text-muted">{a.created_at.toLocaleDateString("es-AR")}</span>
+                    <span className={`block truncate text-ui ${(a.require_ack ? !r.ack_at : !r.read_at) ? "font-semibold" : ""}`}>{a.title}</span>
+                    <span className="text-caption text-muted">{a.created_at.toLocaleDateString("es-AR")}</span>
                   </span>
-                  <span className="text-[12px] text-muted">{r.ack_at ? "Confirmado" : a.require_ack ? "Confirmá la lectura" : r.read_at ? "Leído" : "Nuevo"}</span>
+                  <span className="text-caption text-muted">{r.ack_at ? "Confirmado" : a.require_ack ? "Confirmá la lectura" : r.read_at ? "Leído" : "Nuevo"}</span>
                 </Link>
               </li>
             ))}
@@ -51,8 +51,8 @@ export default async function EmpleadoHome() {
                 <c.icon className="size-5" strokeWidth={1.6} aria-hidden />
               </span>
               <span>
-                <span className="block text-[17px] font-semibold">{c.title}</span>
-                <span className="mt-1 block text-[14px] text-muted">{c.text}</span>
+                <span className="block text-title font-semibold">{c.title}</span>
+                <span className="mt-1 block text-ui text-muted">{c.text}</span>
               </span>
             </Link>
           </li>

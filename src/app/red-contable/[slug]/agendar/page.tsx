@@ -20,7 +20,7 @@ export default async function AgendarRedPage({ params, searchParams }: { params:
   const x = await publicProfile(slug);
   if (!x) notFound();
   const back = (
-    <Link href={`/red-contable/${x.slug}`} className="text-[13px] text-muted hover:text-ink">
+    <Link href={`/red-contable/${x.slug}`} className="text-meta text-muted hover:text-ink">
       ← {x.name}
     </Link>
   );
@@ -32,19 +32,19 @@ export default async function AgendarRedPage({ params, searchParams }: { params:
       <div className="grid gap-4">
         {back}
         <PageHeader title="Tu llamada está confirmada" description={`Con ${x.name}. Te mandamos la confirmación a ${b.email}.`} className="mb-0" />
-        <p className="num text-[17px] first-letter:uppercase">
-          {fmtDateTime(b.starts_at)} a {fmtTime(b.ends_at)} <span className="text-[14px] font-normal text-muted">(hora de Buenos Aires)</span>
+        <p className="num text-title first-letter:uppercase">
+          {fmtDateTime(b.starts_at)} a {fmtTime(b.ends_at)} <span className="text-ui font-normal text-muted">(hora de Buenos Aires)</span>
         </p>
         <div className="flex flex-wrap gap-2">
           {b.meet_url && (
-            <a href={b.meet_url} className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-[14px] text-paper hover:bg-night">
+            <a href={b.meet_url} className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
               <Video className="size-4" aria-hidden /> Link de la videollamada
             </a>
           )}
-          <a href={`/api/agenda/ics/${t}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-[14px] text-ink hover:border-navy">
+          <a href={`/api/agenda/ics/${t}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-ui text-ink hover:border-navy">
             <CalendarPlus className="size-4" aria-hidden /> Agregar a mi calendario (.ics)
           </a>
-          <Link href={`/agenda/gestionar/${t}`} className="inline-flex h-10 items-center px-2 text-[14px] text-muted underline underline-offset-4">
+          <Link href={`/agenda/gestionar/${t}`} className="inline-flex h-10 items-center px-2 text-ui text-muted underline underline-offset-4">
             Reprogramar o cancelar
           </Link>
         </div>
@@ -57,7 +57,7 @@ export default async function AgendarRedPage({ params, searchParams }: { params:
       {back}
       <PageHeader title={`Agendar una llamada con ${x.name}`} description="Elegí un horario y te mandamos el link de la videollamada. Sin compromiso." className="mb-0" />
       {days.length === 0 ? (
-        <p className="rounded-md border border-line bg-surface p-4 text-[14px] text-muted">Este estudio no tiene horarios libres en la agenda por ahora. Pedile una propuesta desde su ficha y te responde por mail.</p>
+        <p className="rounded-md border border-line bg-surface p-4 text-ui text-muted">Este estudio no tiene horarios libres en la agenda por ahora. Pedile una propuesta desde su ficha y te responde por mail.</p>
       ) : (
         <div className="max-w-4xl">
           <BookingForm days={days} red={x.slug} />

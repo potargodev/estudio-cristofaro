@@ -21,9 +21,9 @@ function Metric({ label, value, hint, icon: Icon, href }: { label: string; value
       <span className="grid size-10 place-items-center rounded-md bg-navy text-gold">
         <Icon className="size-5" strokeWidth={1.6} aria-hidden />
       </span>
-      <p className="mt-4 text-[14px] font-medium text-muted">{label}</p>
+      <p className="mt-4 text-ui font-medium text-muted">{label}</p>
       <p className="mt-1 num text-[44px] leading-none text-ink">{value}</p>
-      {hint && <p className="mt-2 text-[13px] text-muted">{hint}</p>}
+      {hint && <p className="mt-2 text-meta text-muted">{hint}</p>}
     </>
   );
   return href ? (
@@ -97,8 +97,8 @@ export default async function FaroResumen() {
       </section>
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <section className="rounded-lg border border-line bg-surface p-5">
-          <h2 className="text-[17px] font-semibold">Tenants por plan</h2>
-          <ul className="mt-4 grid gap-2 text-[14px]">
+          <h2 className="text-title font-semibold">Tenants por plan</h2>
+          <ul className="mt-4 grid gap-2 text-ui">
             {plans.map((p) => {
               const n = byKind.filter((r) => r.plan === p.key).reduce((s, r) => s + r.n, 0);
               return (
@@ -113,15 +113,15 @@ export default async function FaroResumen() {
           </ul>
         </section>
         <section className="rounded-lg border border-line bg-surface p-5">
-          <h2 className="text-[17px] font-semibold">Uso de módulos</h2>
-          <p className="text-[13px] text-muted">Tenants que lo tienen activo (por plan u override).</p>
-          <ul className="mt-4 grid gap-2.5 text-[14px]">
+          <h2 className="text-title font-semibold">Uso de módulos</h2>
+          <p className="text-meta text-muted">Tenants que lo tienen activo (por plan u override).</p>
+          <ul className="mt-4 grid gap-2.5 text-ui">
             {moduleUse.slice(0, 12).map(({ m, n, plus }) => (
               <li key={m.key}>
                 <div className="flex justify-between gap-3">
                   <span>
                     {m.name}
-                    {plus > 0 && <span className="ml-1 text-[12px] text-muted">· {plus} por override</span>}
+                    {plus > 0 && <span className="ml-1 text-caption text-muted">· {plus} por override</span>}
                   </span>
                   <span className="tabular-nums">{n}</span>
                 </div>

@@ -4,6 +4,7 @@
 //   PW=/ruta/a/playwright node --env-file=.env.local scripts/pruebas/principios-navegador.mjs [etapa]
 
 import { createHmac, randomBytes } from "node:crypto";
+import { readFileSync } from "node:fs";
 import postgres from "postgres";
 import { BASE, check, data, failures } from "./lib.mjs";
 
@@ -125,6 +126,10 @@ if (stage("2")) {
 // ─── Etapa 3 · Mis cajas, caja de negocio y sueldo ───
 if (stage("3")) {
   const T = d.users.titular;
+  // En una base nueva el autónomo de datos.mjs se crea después de la migración 0037:
+  // se repiten sus dos inserts (idempotentes) para tener el estado migrado
+  const mig = readFileSync(new URL("../../drizzle/0037_cajas.sql", import.meta.url), "utf8").split("--> statement-breakpoint");
+  for (const st of mig.filter((x) => /INSERT INTO "box(es|_members)"/.test(x) && !/bitacora_entries" e\n/.test(x)).slice(0, 2)) await sql.unsafe(st);
   const [biz] = await sql`select id from boxes where owner_id = ${T} and kind = 'negocio'`;
   check("el autónomo ya tiene su caja de negocio", !!biz);
   await sql`delete from box_salaries where box_id = ${biz.id}`;

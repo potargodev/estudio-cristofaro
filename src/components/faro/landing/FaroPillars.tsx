@@ -21,17 +21,17 @@ export function FaroPillars() {
               Más clientes con el mismo equipo.
             </SplitHeading>
           </div>
-          <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-5 lg:col-start-8">
+          <p className="self-end text-body leading-relaxed text-paper/65 lg:col-span-5 lg:col-start-8">
             Faro nació adentro de un estudio contable real. Hace lo que el estudio repite todos los meses y te deja lo que necesita criterio profesional.
           </p>
         </div>
         <Reveal as="ul" className="mt-14 grid border-t border-hair sm:grid-cols-2 lg:grid-cols-4">
           {PILLARS.map((p, i) => (
             <li key={p.title} data-reveal className="border-b border-hair py-8 sm:px-6 sm:odd:pl-0 lg:border-b-0 lg:border-l lg:first:border-l-0 lg:first:pl-0">
-              <span className="tabular text-[13px] text-gold">0{i + 1}</span>
+              <span className="tabular text-meta text-gold">0{i + 1}</span>
               <p.icon className="mt-6 size-6 text-paper" strokeWidth={1.25} aria-hidden />
               <h3 className="mt-5 font-display text-[28px] leading-none text-paper">{p.title}</h3>
-              <p className="mt-4 text-[14px] leading-relaxed text-paper/65">{p.text}</p>
+              <p className="mt-4 text-ui leading-relaxed text-paper/65">{p.text}</p>
             </li>
           ))}
         </Reveal>

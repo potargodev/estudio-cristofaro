@@ -13,7 +13,7 @@ export function ForWhom() {
             <SplitHeading id="para-quien-titulo" className="display-md mt-8 text-paper">
               Para empresas de servicios que ya no entran en una planilla.
             </SplitHeading>
-            <p className="mt-8 max-w-sm text-[15px] leading-relaxed text-paper/65">
+            <p className="mt-8 max-w-sm text-body leading-relaxed text-paper/65">
               Entre 5 y 30 personas, con dueños que todavía administran y sin un área contable propia.
             </p>
           </div>
@@ -21,11 +21,11 @@ export function ForWhom() {
             {AUDIENCES.map((a, i) => (
               <li key={a.slug} className="border-b border-hair">
                 <Link href={`/${a.slug}`} className="group grid grid-cols-[3rem_1fr] gap-x-4 py-8 lg:grid-cols-[4rem_1fr_14rem] lg:items-baseline">
-                  <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
+                  <span className="tabular text-meta text-rose-light">0{i + 1}</span>
                   <span className="font-sans text-[clamp(1.35rem,2.1vw,2rem)] font-semibold leading-[1.15] tracking-[-0.01em] text-paper transition-colors duration-500 group-hover:text-rose-light">
                     {a.name}
                   </span>
-                  <span className="col-start-2 mt-3 text-[14px] leading-relaxed text-paper/60 lg:col-start-3 lg:mt-0">{a.summary}</span>
+                  <span className="col-start-2 mt-3 text-ui leading-relaxed text-paper/60 lg:col-start-3 lg:mt-0">{a.summary}</span>
                 </Link>
               </li>
             ))}

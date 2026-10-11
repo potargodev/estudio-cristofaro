@@ -50,7 +50,7 @@ export function Cursor() {
     <div
       ref={dot}
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[100] grid place-items-center rounded-full text-[11px] font-medium text-night mix-blend-normal"
+      className="pointer-events-none fixed left-0 top-0 z-[100] grid place-items-center rounded-full text-micro font-medium text-night mix-blend-normal"
       style={{
         width: size,
         height: size,

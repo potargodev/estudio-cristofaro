@@ -37,6 +37,7 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 - Tango es una fuente intercambiable: todo tiene que funcionar también con importación de archivos.
 
 ## Estilo
+- **Referencia de diseño: `DESIGN.md`** (tokens, escala tipográfica, alturas, radios, anchos, componentes y reglas). Toda pantalla se arma con `@/components/ds` y los roles de texto (`text-ui`, `text-title`…); nada de tamaños, alturas ni radios a mano. `PRODUCT.md` resume el producto para las herramientas de diseño (Impeccable en `.claude/skills/impeccable`). La auditoría está en `docs/auditoria-diseno.md`.
 - Textos de interfaz en español rioplatense (voseo), lenguaje simple para clientes y preciso para el estudio.
 - Identidad de marca: azul noche #1c2235, rosé #a57c6d (el "dorado" de la marca es este rosé / oro rosa, no un amarillo; los tokens `gold` apuntan a él), pizarra; títulos en Gilda Display (reemplazó a Forum en el rediseño, elegida por el cliente); números en Archivo tabular (clase `num`: tabular-nums y lining-nums, semibold) en la app y en las pantallas de producto de las landings; textos en Archivo.
 - Logo de Faro: sello de Estudio Cristofaro + "FARO" en mayúsculas, Bodoni Moda 800 (next/font, `font-faro`) con tracking amplio (`FaroLogo`), en la app, /faro, el Faro Manager, los mails (`mailLayout` con marca "Faro") y los íconos de la PWA de Faro (`/faro.webmanifest`). El portal de una organización muestra la marca del estudio y "Con tecnología de Faro".

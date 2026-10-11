@@ -8,9 +8,10 @@ import { money } from "@/modules/bitacora/catalog";
 import { previewRows } from "@/modules/bitacora/imports";
 import { requireUser } from "@/modules/bitacora/session";
 import type { Mapping } from "@/modules/bitacora/smart";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Vista previa de la importación" };
-const field = "mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink";
+const field = `mt-1 ${fieldClass}`;
 
 function parseMapping(raw?: string): Mapping | undefined {
   if (!raw) return undefined;
@@ -48,28 +49,28 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const MappingFields = () => (
     <>
       <input type="hidden" name="id" value={p.imp.id} />
-      <label className="text-[13px] text-muted">Fecha<Select name="col_date" value={m.date} /></label>
-      <label className="text-[13px] text-muted">Descripción<Select name="col_description" value={m.description} /></label>
-      <label className="text-[13px] text-muted">Importe (con signo)<Select name="col_amount" value={m.amount} optional /></label>
-      <label className="text-[13px] text-muted">Débito<Select name="col_debit" value={m.debit} optional /></label>
-      <label className="text-[13px] text-muted">Crédito<Select name="col_credit" value={m.credit} optional /></label>
-      <label className="flex items-center gap-2 text-[13px] text-muted">
+      <label className="text-meta text-muted">Fecha<Select name="col_date" value={m.date} /></label>
+      <label className="text-meta text-muted">Descripción<Select name="col_description" value={m.description} /></label>
+      <label className="text-meta text-muted">Importe (con signo)<Select name="col_amount" value={m.amount} optional /></label>
+      <label className="text-meta text-muted">Débito<Select name="col_debit" value={m.debit} optional /></label>
+      <label className="text-meta text-muted">Crédito<Select name="col_credit" value={m.credit} optional /></label>
+      <label className="flex items-center gap-2 text-meta text-muted">
         <input type="checkbox" name="positive_is_expense" defaultChecked={!!m.positiveIsExpense} /> Los gastos vienen en positivo (tarjeta)
       </label>
-      <label className="flex items-center gap-2 text-[13px] text-muted">
+      <label className="flex items-center gap-2 text-meta text-muted">
         <input type="checkbox" name="skip_header" defaultChecked={!!m.skipHeader} /> La primera fila son títulos
       </label>
     </>
   );
   return (
     <div className="grid gap-4">
-      <Link href="/bitacora/importar" className="text-[13px] text-muted hover:text-ink">← Importar</Link>
+      <Link href="/bitacora/importar" className="text-meta text-muted hover:text-ink">← Importar</Link>
       <Feedback sp={sp} />
-      <p className="text-[14px]">
+      <p className="text-ui">
         <span className="font-medium">{p.imp.file_name}</span>: <span className="num">{p.rows.length}</span> movimientos leídos, <span className="num">{p.rows.length - fresh.length}</span> ya estaban en tu Bitácora.
       </p>
       <details className="rounded-md border border-line bg-surface p-4" open={!p.rows.length}>
-        <summary className="cursor-pointer text-[14px] font-medium">Qué columna es qué</summary>
+        <summary className="cursor-pointer text-ui font-medium">Qué columna es qué</summary>
         <form action={importRemapAction} className="mt-3 grid gap-2 sm:grid-cols-3">
           <MappingFields />
           <div className="sm:col-span-3">
@@ -78,7 +79,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         </form>
       </details>
       {p.rows.length === 0 ? (
-        <p className="text-[14px] text-muted">Con estas columnas no encontramos movimientos. Revisá qué columna es la fecha y cuál el importe.</p>
+        <p className="text-ui text-muted">Con estas columnas no encontramos movimientos. Revisá qué columna es la fecha y cuál el importe.</p>
       ) : (
         <form action={importConfirmAction} className="grid gap-3">
           <div className="hidden">
@@ -89,20 +90,20 @@ export default async function Page({ params, searchParams }: { params: Promise<{
               <li key={r.externalId} className={`flex items-center gap-3 px-4 py-2.5 ${r.duplicate ? "opacity-60" : ""}`}>
                 <input type="checkbox" name="row" value={r.externalId} defaultChecked={!r.duplicate} disabled={r.duplicate} aria-label={`Importar ${r.description}`} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px]">{r.description}</p>
-                  <p className="text-[12px] text-muted">
+                  <p className="truncate text-ui">{r.description}</p>
+                  <p className="text-caption text-muted">
                     {r.date.split("-").reverse().join("/")}
                     {r.duplicate && " · ya estaba cargado"}
                   </p>
                 </div>
-                <span className={`num text-[14px] ${r.kind === "ingreso" ? "text-[#1f6b3d]" : ""}`}>
+                <span className={`num text-ui ${r.kind === "ingreso" ? "text-[#1f6b3d]" : ""}`}>
                   {r.kind === "ingreso" ? "+" : "−"}
                   {money(r.amount)}
                 </span>
               </li>
             ))}
           </ul>
-          {p.rows.length > 300 && <p className="text-[13px] text-muted">Mostramos los primeros 300; se importan los que marques de esta lista.</p>}
+          {p.rows.length > 300 && <p className="text-meta text-muted">Mostramos los primeros 300; se importan los que marques de esta lista.</p>}
           <div className="flex flex-wrap gap-2">
             <SubmitButton pendingText="Importando…">Importar {fresh.length} movimientos</SubmitButton>
           </div>

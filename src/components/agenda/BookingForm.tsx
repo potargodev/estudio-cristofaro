@@ -15,11 +15,11 @@ export function BookingForm({ days, initial, red }: { days: PickerDay[]; initial
       <Honeypot />
       {red && <input type="hidden" name="red" value={red} />}
       <section className="border-t border-line pt-8">
-        <h2 className="mb-6 flex items-baseline gap-4 font-display text-3xl"><span className="tabular text-[13px] font-sans text-rose-deep">01</span>Elegí día y horario</h2>
+        <h2 className="mb-6 flex items-baseline gap-4 font-display text-3xl"><span className="tabular text-meta font-sans text-rose-deep">01</span>Elegí día y horario</h2>
         <SlotPicker days={days} error={e.start} initial={initial} />
       </section>
       <section className="border-t border-line pt-8">
-        <h2 className="mb-6 flex items-baseline gap-4 font-display text-3xl"><span className="tabular text-[13px] font-sans text-rose-deep">02</span>Tus datos</h2>
+        <h2 className="mb-6 flex items-baseline gap-4 font-display text-3xl"><span className="tabular text-meta font-sans text-rose-deep">02</span>Tus datos</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Nombre y apellido" name="name" error={e.name}>
             <input id="name" name="name" required autoComplete="name" className={inputClass} />
@@ -49,7 +49,7 @@ export function BookingForm({ days, initial, red }: { days: PickerDay[]; initial
         <Button type="submit" size="xl" disabled={pending || days.length === 0}>
           {pending ? "Agendando…" : "Confirmar llamada"}
         </Button>
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-ui text-muted">
           Al confirmar aceptás que usemos tus datos para coordinar la llamada (ver{" "}
           <a href="/privacidad" className="underline">
             privacidad

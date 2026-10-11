@@ -24,20 +24,20 @@ export default async function EstadoDeCuentaPage({ searchParams }: { searchParam
     <>
       <EmpresaHeader me={me} />
       <PageTitle level={2} title="Estado de cuenta" intro="Los honorarios de tu estudio: qué está pendiente y qué ya pagaste." />
-      {sp.pago && <p className="mb-4 rounded-md border border-line bg-navy-soft px-4 py-3 text-[14px]">Volviste de Mercado Pago. Cuando se acredite el pago lo vas a ver acá como pagado.</p>}
-      {sp.error && <p role="alert" className="mb-4 rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-[14px] text-[#8f2a1c]">{sp.error}</p>}
+      {sp.pago && <p className="mb-4 rounded-md border border-line bg-navy-soft px-4 py-3 text-ui">Volviste de Mercado Pago. Cuando se acredite el pago lo vas a ver acá como pagado.</p>}
+      {sp.error && <p role="alert" className="mb-4 rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-ui text-[#8f2a1c]">{sp.error}</p>}
       {!st ? (
         <Empty>Tu estudio todavía no publica cobros en Faro.</Empty>
       ) : (
         <>
           <div className="mb-6 flex flex-wrap gap-3">
             <Card className="min-w-48">
-              <p className="text-sm text-muted">Pendiente</p>
+              <p className="text-ui text-muted">Pendiente</p>
               <p className="num text-3xl">{ars(st.pending)}</p>
-              {st.overdue > 0 && <p className="text-sm text-[#8f2a1c]">{ars(st.overdue)} vencido</p>}
+              {st.overdue > 0 && <p className="text-ui text-[#8f2a1c]">{ars(st.overdue)} vencido</p>}
             </Card>
             <Card className="min-w-48">
-              <p className="text-sm text-muted">Pagado</p>
+              <p className="text-ui text-muted">Pagado</p>
               <p className="num text-3xl">{ars(st.paid)}</p>
             </Card>
           </div>
@@ -50,7 +50,7 @@ export default async function EstadoDeCuentaPage({ searchParams }: { searchParam
                   <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                     <div className="min-w-0">
                       <p className="font-medium">{r.concept}</p>
-                      <p className="text-sm text-muted">
+                      <p className="text-ui text-muted">
                         {r.status === "pagado" ? `Pagado el ${r.paid_at?.toLocaleDateString("es-AR")}` : `Vence el ${d(r.due_date)}`}
                       </p>
                     </div>

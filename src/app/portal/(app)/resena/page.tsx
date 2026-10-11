@@ -22,22 +22,22 @@ export default async function ResenaPage({ searchParams }: { searchParams: Promi
     <>
       <PageTitle title={`Reseñá a ${st?.name ?? "tu estudio"}`} intro="Tu opinión ayuda a otras personas a elegir. Se publica con tu nombre de pila y la marca «cliente verificado», después de la moderación de Faro." />
       {sp.ok && (
-        <p role="status" className="mb-4 rounded-md border border-line bg-navy-soft px-4 py-3 text-[15px]">
+        <p role="status" className="mb-4 rounded-md border border-line bg-navy-soft px-4 py-3 text-body">
           ¡Gracias! Tu reseña queda en moderación y en unos días se publica.
         </p>
       )}
       {sp.error && (
-        <p role="alert" className="mb-4 rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-[15px] text-danger">
+        <p role="alert" className="mb-4 rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-body text-danger">
           {sp.error}
         </p>
       )}
       {!inRed ? (
-        <p className="text-[15px] text-muted">Tu estudio todavía no está en la Red Contable de Faro, así que por ahora no se pueden dejar reseñas.</p>
+        <p className="text-body text-muted">Tu estudio todavía no está en la Red Contable de Faro, así que por ahora no se pueden dejar reseñas.</p>
       ) : !e.ok ? (
-        <div className="rounded-lg border border-line bg-surface p-5 text-[15px]">
+        <div className="rounded-lg border border-line bg-surface p-5 text-body">
           <p>{e.reason}</p>
           {"review" in e && e.review && (
-            <p className="mt-2 text-[14px] text-muted">
+            <p className="mt-2 text-ui text-muted">
               Estado: {e.review.status === "publicada" ? "publicada" : e.review.status === "pendiente" ? "en moderación" : "no publicada"}.{" "}
               {e.review.status === "publicada" && st && (
                 <Link href={`/red-contable/${st.slug}`} className="underline underline-offset-4">
@@ -50,21 +50,21 @@ export default async function ResenaPage({ searchParams }: { searchParams: Promi
       ) : (
         <form action={submitReviewAction} className="grid max-w-xl gap-4 rounded-lg border border-line bg-surface p-5">
           <fieldset>
-            <legend className="text-[15px] font-semibold">¿Cómo calificás al estudio?</legend>
+            <legend className="text-body font-semibold">¿Cómo calificás al estudio?</legend>
             <div className="mt-2 flex flex-wrap gap-2">
               {[5, 4, 3, 2, 1].map((n) => (
-                <label key={n} className="flex cursor-pointer items-center gap-1.5 rounded-md border border-line px-3 py-2 text-[14px] has-[:checked]:border-navy has-[:checked]:bg-navy-soft">
+                <label key={n} className="flex cursor-pointer items-center gap-1.5 rounded-md border border-line px-3 py-2 text-ui has-[:checked]:border-navy has-[:checked]:bg-navy-soft">
                   <input type="radio" name="rating" value={n} required className="size-4 accent-navy" /> {"★".repeat(n)}
                   <span className="sr-only">{n} de 5</span>
                 </label>
               ))}
             </div>
           </fieldset>
-          <label className="text-[14px] text-muted">
+          <label className="text-ui text-muted">
             Contá tu experiencia
-            <textarea name="body" required minLength={20} maxLength={2000} rows={5} className="mt-1.5 w-full rounded-md border border-line bg-canvas px-3 py-2 text-[15px] text-ink" />
+            <textarea name="body" required minLength={20} maxLength={2000} rows={5} className="mt-1.5 w-full rounded-md border border-line bg-canvas px-3 py-2 text-body text-ink" />
           </label>
-          <p className="text-[13px] text-muted">
+          <p className="text-meta text-muted">
             Una reseña por organización. El estudio puede responderla públicamente.{" "}
             <Link href="/ayuda/red-contable/resenas" className="underline underline-offset-4">
               Reglas de las reseñas

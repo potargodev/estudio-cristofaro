@@ -18,19 +18,19 @@ export function FaroModules() {
               Un núcleo sólido y módulos que se prenden.
             </SplitHeading>
           </div>
-          <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
+          <p className="self-end text-body leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
             Estudios, organizaciones, usuarios, auditoría, portal, vencimientos, documentos, solicitudes, agenda, alertas, grupos de gastos, Vigía, Bitácora y Mensajes están en todos los planes. El resto se suma según el plan.
           </p>
         </div>
         <Reveal as="ul" className="mt-14 grid gap-px bg-hair sm:grid-cols-2 lg:grid-cols-4" stagger={0.04}>
           {SHOWN.map((m) => (
             <li key={m.key} data-reveal className="flex flex-col bg-night p-6">
-              <p className="flex items-center justify-between gap-3 text-[12px]">
+              <p className="flex items-center justify-between gap-3 text-caption">
                 <span className={m.status === "disponible" ? "text-gold" : "text-paper/50"}>{STATUS[m.status]}</span>
                 <span className="text-paper/45">Desde {getPlan(m.minPlan.studio ?? m.minPlan.personal)?.name}</span>
               </p>
-              <h3 className="mt-4 font-display text-[24px] leading-tight text-paper">{m.name}</h3>
-              <p className="mt-3 text-[14px] leading-relaxed text-paper/60">{m.description}</p>
+              <h3 className="mt-4 font-display text-headline leading-tight text-paper">{m.name}</h3>
+              <p className="mt-3 text-ui leading-relaxed text-paper/60">{m.description}</p>
             </li>
           ))}
         </Reveal>

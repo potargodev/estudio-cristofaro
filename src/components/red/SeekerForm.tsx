@@ -2,9 +2,10 @@ import { SubmitButton } from "@/components/admin/ui";
 import { FILE_TEMPLATES } from "@/modules/industries/catalog";
 import { PROVINCES, RED_SERVICES } from "@/modules/red/catalog";
 import { SEEKER_KINDS, SEEKER_SIZES } from "@/modules/red/seekers";
+import { fieldClass } from "@/components/ds/primitives";
 
-const field = "mt-1 block w-full rounded-md border border-line bg-surface px-2.5 py-2 text-[14px] text-ink";
-const lbl = "block text-[13px] text-muted";
+const field = `mt-1 py-2 ${fieldClass}`;
+const lbl = "block text-meta text-muted";
 
 type Seeker = { active: boolean; kind: string; industry: string | null; size: string | null; province: string | null; city: string | null; needs: string[]; note: string | null } | null;
 
@@ -15,10 +16,10 @@ export function SeekerForm({ action, seeker, fleet, hidden }: { action: (fd: For
       {Object.entries(hidden ?? {}).map(([k, v]) => (
         <input key={k} type="hidden" name={k} value={v} />
       ))}
-      <label className="flex items-center gap-2 text-[15px] font-medium sm:col-span-2">
+      <label className="flex items-center gap-2 text-body font-medium sm:col-span-2">
         <input type="checkbox" name="active" defaultChecked={!!seeker?.active} className="size-5 accent-navy" /> Disponible, busco contador
       </label>
-      <p className="text-[13px] text-muted sm:col-span-2">Aparecés en el listado de los estudios solo con lo que elijas acá, sin {fleet ? "el nombre de la Flota ni de sus integrantes" : "tu nombre"} ni datos de contacto. Si un estudio te contacta, decidís vos; recién al aceptar ve tus datos.</p>
+      <p className="text-meta text-muted sm:col-span-2">Aparecés en el listado de los estudios solo con lo que elijas acá, sin {fleet ? "el nombre de la Flota ni de sus integrantes" : "tu nombre"} ni datos de contacto. Si un estudio te contacta, decidís vos; recién al aceptar ve tus datos.</p>
       {!fleet && (
         <label>
           <span className={lbl}>Sos</span>
@@ -74,7 +75,7 @@ export function SeekerForm({ action, seeker, fleet, hidden }: { action: (fd: For
       </label>
       <fieldset className="sm:col-span-2">
         <legend className={lbl}>Qué necesitás</legend>
-        <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1.5 text-[14px]">
+        <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1.5 text-ui">
           {RED_SERVICES.map((x) => (
             <label key={x.key} className="flex items-center gap-1.5">
               <input type="checkbox" name="needs" value={x.key} defaultChecked={seeker?.needs.includes(x.key)} className="size-4 accent-navy" /> {x.label}

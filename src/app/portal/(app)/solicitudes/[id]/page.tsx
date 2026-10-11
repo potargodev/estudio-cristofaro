@@ -40,13 +40,13 @@ export default async function SolicitudPage({
     <>
       {creada && <SaveToast message="Solicitud enviada. Te respondemos pronto." />}
       {enviado && <SaveToast message="Mensaje enviado." />}
-      <Link href="/portal/solicitudes" className="link-underline text-sm text-rose-deep">
+      <Link href="/portal/solicitudes" className="link-underline text-ui text-rose-deep">
         Solicitudes
       </Link>
       <div className="mb-6 mt-2 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{r.subject}</h1>
-          <p className="mt-1 text-sm text-muted">{REQUEST_TYPES[r.type]}</p>
+          <p className="mt-1 text-ui text-muted">{REQUEST_TYPES[r.type]}</p>
         </div>
         <Badge tone={requestTone(r.status)}>{REQUEST_STATUS[r.status]}</Badge>
       </div>
@@ -55,7 +55,7 @@ export default async function SolicitudPage({
         {messages.map((m) => (
           <li key={m.id} className={cn("flex", m.from_client ? "justify-end" : "justify-start")}>
             <div className={cn("max-w-[85%] rounded-lg px-4 py-3", m.from_client ? "bg-navy text-paper" : "border border-line bg-surface")}>
-              <p className={cn("text-xs", m.from_client ? "text-paper/70" : "text-muted")}>
+              <p className={cn("text-caption", m.from_client ? "text-paper/70" : "text-muted")}>
                 {m.from_client ? "Vos" : "Estudio Cristofaro"} · {dateFmt.format(m.created_at)}
               </p>
               <p className="mt-1 whitespace-pre-line leading-relaxed">{m.body}</p>
@@ -63,7 +63,7 @@ export default async function SolicitudPage({
                 <a
                   href={`/api/archivos/${m.document_id}`}
                   className={cn(
-                    "mt-2 inline-flex items-center gap-1.5 text-sm underline underline-offset-4",
+                    "mt-2 inline-flex items-center gap-1.5 text-ui underline underline-offset-4",
                     m.from_client ? "text-rose-light" : "text-rose-deep",
                   )}
                 >
@@ -80,7 +80,7 @@ export default async function SolicitudPage({
         <Card className="mt-6">
           <h2 className="font-semibold">{r.status === "resuelta" ? "¿Necesitás algo más? Escribinos y la reabrimos" : "Agregar un mensaje"}</h2>
           {error && (
-            <p role="alert" className="mt-2 text-sm text-danger">
+            <p role="alert" className="mt-2 text-ui text-danger">
               {error}
             </p>
           )}
@@ -94,7 +94,7 @@ export default async function SolicitudPage({
               name="body"
               rows={4}
               maxLength={5000}
-              className="w-full rounded-md border border-line bg-surface px-3 py-2.5 text-[15px]"
+              className="w-full rounded-md border border-line bg-surface px-3 py-2.5 text-body"
             />
             <FileField id="file" label="Adjunto (opcional)" />
             <div>

@@ -22,16 +22,16 @@ export default async function RegistroPage({ searchParams }: { searchParams: Pro
       <Container>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <p className="text-[13px] text-gold">Crear una cuenta</p>
+            <p className="text-meta text-gold">Crear una cuenta</p>
             <h1 className="display-md mt-6 text-paper">Prendé la luz en tu gestión.</h1>
-            <ul className="mt-10 divide-y divide-hair border-y border-hair text-[15px] text-paper/75">
+            <ul className="mt-10 divide-y divide-hair border-y border-hair text-body text-paper/75">
               {PERKS.map((p) => (
                 <li key={p} className="py-3.5">
                   {p}
                 </li>
               ))}
             </ul>
-            {interest && <p className="mt-6 text-[14px] text-paper/60">Empezás en el plan gratis y te contactamos para pasar a {getPlan(interest)?.name}.</p>}
+            {interest && <p className="mt-6 text-ui text-paper/60">Empezás en el plan gratis y te contactamos para pasar a {getPlan(interest)?.name}.</p>}
           </div>
           <div className="border border-hair-strong bg-navy-deep/70 p-6 sm:p-8 lg:col-span-6 lg:col-start-7">
             <RegisterForm google={googleEnabled()} initial={sp.tipo === "personal" || sp.tipo === "studio" || sp.tipo === "persona" ? sp.tipo : undefined} interest={interest} />

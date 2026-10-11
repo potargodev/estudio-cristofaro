@@ -103,11 +103,11 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
           <section key={c.id} id={`c-${c.id}`} className="scroll-mt-24 border border-line bg-surface">
             <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
               <div>
-                <p className="flex flex-wrap items-center gap-2 text-[16px] font-medium text-ink">
+                <p className="flex flex-wrap items-center gap-2 text-lead font-medium text-ink">
                   {c.name} <ConnectionState state={c.status} />
                   <Tag>{c.organization_id ? `Cuenta de ${orgName.get(c.organization_id) ?? "organización"}` : "Cuenta del estudio"}</Tag>
                 </p>
-                <p className="mt-1 text-[13px] text-muted">
+                <p className="mt-1 text-meta text-muted">
                   {(c.settings as { empresa?: string }).empresa ? `Empresa en Xubio: ${(c.settings as { empresa?: string }).empresa} · ` : ""}Client ID {creds.client_id ?? "—"} · Última sincronización {when(c.last_sync_at)}
                 </p>
               </div>
@@ -120,7 +120,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                 </form>
                 <form action={syncXubioAction} className="flex items-center gap-2">
                   <input type="hidden" name="id" value={c.id} />
-                  <select name="days" defaultValue="90" aria-label="Período a sincronizar" className="h-9 border border-line bg-surface px-2 text-[14px]">
+                  <select name="days" defaultValue="90" aria-label="Período a sincronizar" className="h-9 border border-line bg-surface px-2 text-ui">
                     <option value="30">30 días</option>
                     <option value="90">90 días</option>
                     <option value="365">12 meses</option>
@@ -139,18 +139,18 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                   const row = counts.find((x) => x.resource === k);
                   return (
                     <div key={k} className="border border-line bg-canvas px-3 py-2">
-                      <dt className="text-[12px] text-muted">{label}</dt>
+                      <dt className="text-caption text-muted">{label}</dt>
                       <dd className="num text-[26px] leading-tight text-ink">{row?.n ?? 0}</dd>
-                      {row && <dd className="text-[12px] text-muted">{row.cruzados} con organización</dd>}
+                      {row && <dd className="text-caption text-muted">{row.cruzados} con organización</dd>}
                     </div>
                   );
                 })}
               </dl>
               {latest.length > 0 && (
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[520px] text-left text-[13px]">
-                    <caption className="mb-2 text-left text-[13px] font-medium text-ink">Últimos comprobantes</caption>
-                    <thead className="text-[12px] uppercase tracking-wide text-muted">
+                  <table className="w-full min-w-[520px] text-left text-meta">
+                    <caption className="mb-2 text-left text-meta font-medium text-ink">Últimos comprobantes</caption>
+                    <thead className="text-caption uppercase tracking-wide text-muted">
                       <tr className="border-b border-line">
                         <th className="py-1.5 font-medium">Fecha</th>
                         <th className="py-1.5 font-medium">Tipo</th>
@@ -175,10 +175,10 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
               )}
               {pending.length > 0 && (
                 <div>
-                  <p className="text-[13px] font-medium text-ink">Clientes de Xubio sin razón social en Faro</p>
+                  <p className="text-meta font-medium text-ink">Clientes de Xubio sin razón social en Faro</p>
                   <ul className="mt-2 divide-y divide-line border border-line">
                     {pending.map((r) => (
-                      <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-[14px]">
+                      <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-ui">
                         <span>
                           {r.name} <span className="text-muted">· CUIT {r.cuit ?? "—"}</span>
                         </span>
@@ -195,19 +195,19 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-1 text-[12px] text-muted">
+                  <p className="mt-1 text-caption text-muted">
                     ¿Es un cliente nuevo? <Link href="/admin/organizaciones/nueva" className="underline underline-offset-4">Creá la organización</Link> con su CUIT y se cruza en la próxima sincronización.
                   </p>
                 </div>
               )}
               <details>
-                <summary className="cursor-pointer text-[14px] font-medium text-ink">Log de la conexión</summary>
+                <summary className="cursor-pointer text-ui font-medium text-ink">Log de la conexión</summary>
                 <div className="mt-3">
                   <LogTable logs={logs} />
                 </div>
               </details>
               <details>
-                <summary className="cursor-pointer text-[14px] font-medium text-ink">Editar credenciales</summary>
+                <summary className="cursor-pointer text-ui font-medium text-ink">Editar credenciales</summary>
                 <div className="mt-3 border border-line bg-canvas p-4">
                   <XubioForm orgs={orgs} current={{ id: c.id, name: c.name, organization_id: c.organization_id, client_id: creds.client_id }} />
                 </div>

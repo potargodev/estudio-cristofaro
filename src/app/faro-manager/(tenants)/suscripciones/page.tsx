@@ -31,13 +31,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
       <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {cards.map(([k, v, hint]) => (
           <div key={k} className="rounded-md border border-line bg-surface p-3">
-            <dt className="text-[12px] text-muted">{k}</dt>
-            <dd className="num text-[20px]">{v}</dd>
-            {hint && <dd className="text-[11px] text-muted">{hint}</dd>}
+            <dt className="text-caption text-muted">{k}</dt>
+            <dd className="num text-section">{v}</dd>
+            {hint && <dd className="text-micro text-muted">{hint}</dd>}
           </div>
         ))}
       </dl>
-      <nav aria-label="Filtrar por estado" className="flex flex-wrap gap-1.5 text-[13px]">
+      <nav aria-label="Filtrar por estado" className="flex flex-wrap gap-1.5 text-meta">
         {["", "activa", "prueba", "morosa", "suspendida", "cancelada"].map((st) => (
           <Link key={st} href={st ? `?estado=${st}` : "?"} aria-current={(sp.estado ?? "") === st ? "page" : undefined} className={`rounded-full px-3 py-1 ${(sp.estado ?? "") === st ? "bg-navy text-paper" : "border border-line"}`}>
             {st ? STATUS[st] : "Todas"}
@@ -49,15 +49,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
           <li key={r.id}>
             <Link href={`/faro-manager/${r.studioId}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-canvas">
               <span className="min-w-0">
-                <span className="block truncate text-[14px]">{r.name}</span>
-                <span className="text-[12px] text-muted">
+                <span className="block truncate text-ui">{r.name}</span>
+                <span className="text-caption text-muted">
                   {r.plan} · {r.interval} · {STATUS[r.status] ?? r.status}
                   {r.status === "prueba" && r.trialEnds && ` hasta el ${r.trialEnds.toLocaleDateString("es-AR")}`}
                   {r.status === "activa" && r.periodEnd && ` hasta el ${r.periodEnd.toLocaleDateString("es-AR")}`}
                   {r.pastDue && ` · sin pagar desde el ${r.pastDue.toLocaleDateString("es-AR")}`}
                 </span>
               </span>
-              <span className="num text-[14px]">{r.amount ? ars(r.amount) : "—"}</span>
+              <span className="num text-ui">{r.amount ? ars(r.amount) : "—"}</span>
             </Link>
           </li>
         ))}

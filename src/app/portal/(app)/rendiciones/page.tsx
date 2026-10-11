@@ -27,7 +27,7 @@ export default async function RendicionesPage() {
       <EmpresaHeader me={me} />
       <PageTitle level={me.orgRole === "empleado" ? 1 : 2} title="Rendiciones" intro={approver ? "Los gastos que rinde el equipo: aprobá, rechazá y marcá los reintegros. Lo aprobado pasa a los gastos de la empresa." : "Cargá lo que gastaste para la empresa con su ticket. Administración lo revisa y te avisa."}>
         {me.orgRole === "empleado" && (
-          <Link href="/grupos" className="text-[14px] text-rose-deep underline-offset-4 hover:underline">
+          <Link href="/grupos" className="text-ui text-rose-deep underline-offset-4 hover:underline">
             Grupos de gastos →
           </Link>
         )}
@@ -54,14 +54,14 @@ export default async function RendicionesPage() {
                       <div className="flex justify-between gap-3">
                         <div className="min-w-0">
                           <p className="font-medium">{r.description}</p>
-                          <p className="text-sm text-muted">
+                          <p className="text-ui text-muted">
                             {r.employee} · {day(r.date)} · {categoryName(r.category)} ·{" "}
                             <a href={`/api/gastos/archivo/rendicion/${r.id}`} target="_blank" className="text-rose-deep underline-offset-4 hover:underline">
                               ticket
                             </a>
                           </p>
                         </div>
-                        <p className="shrink-0 num text-xl">{formatMoney(r.amount, r.currency)}</p>
+                        <p className="shrink-0 num text-section">{formatMoney(r.amount, r.currency)}</p>
                       </div>
                       <DecideButtons id={r.id} />
                     </li>
@@ -83,7 +83,7 @@ export default async function RendicionesPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-medium">{r.description}</p>
-                        <p className="text-sm text-muted">
+                        <p className="text-ui text-muted">
                           {approver && `${r.employee} · `}
                           {day(r.date)} · {categoryName(r.category)}
                           {r.reason && ` · ${r.reason}`}

@@ -19,13 +19,13 @@ export default async function IndicesPage({ searchParams }: { searchParams: Prom
       <Feedback sp={sp} />
       {me.faroRole === "faro_owner" && (
         <form action={saveIpcAction} className="grid gap-3 rounded-md border border-line bg-surface p-4">
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Serie (una fila por mes: AAAA-MM;valor)
-            <textarea name="series" required rows={6} placeholder={"2026-08;9876,5\n2026-09;10012,3"} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 font-mono text-[13px] text-ink" />
+            <textarea name="series" required rows={6} placeholder={"2026-08;9876,5\n2026-09;10012,3"} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 font-mono text-meta text-ink" />
           </label>
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Fuente
-            <input name="source" placeholder="INDEC · IPC nivel general (base dic-2016 = 100)" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink" />
+            <input name="source" placeholder="INDEC · IPC nivel general (base dic-2016 = 100)" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
           </label>
           <div>
             <SubmitButton>Guardar</SubmitButton>
@@ -33,9 +33,9 @@ export default async function IndicesPage({ searchParams }: { searchParams: Prom
         </form>
       )}
       {rows.length === 0 ? (
-        <p className="text-[14px] text-muted">Todavía no hay valores del IPC: la Bitácora muestra los montos en pesos de cada mes.</p>
+        <p className="text-ui text-muted">Todavía no hay valores del IPC: la Bitácora muestra los montos en pesos de cada mes.</p>
       ) : (
-        <table className="w-full rounded-md border border-line bg-surface text-[13px]">
+        <table className="w-full rounded-md border border-line bg-surface text-meta">
           <thead className="text-left text-muted">
             <tr>
               <th className="px-3 py-2">Mes</th>

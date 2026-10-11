@@ -8,13 +8,14 @@ import { cn } from "@/lib/utils";
 import { formatCuil } from "@/modules/payroll/core";
 import type { ResolvedPayroll } from "@/modules/payroll/scope";
 import { announcementView, batchView, getEmployee, listAnnouncements, listBatches, listEmployees, listNovedades, NOVEDADES, payrollEnabled } from "@/modules/payroll/server";
+import { fieldClass } from "@/components/ds/primitives";
 
 // Sueldos y empleados: la misma pantalla en la ficha de la organización (el
 // estudio en su nombre) y en el portal (Empresa → Sueldos y empleados).
 
 type SP = Record<string, string | undefined>;
-const field = "mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-[14px] text-ink";
-const lbl = "text-[13px] text-muted";
+const field = `mt-1 ${fieldClass}`;
+const lbl = "text-meta text-muted";
 const d = (s: string | null | undefined) => (s ? s.split("-").reverse().join("/") : "—");
 const per = (p: string) => `${p.slice(5)}/${p.slice(0, 4)}`;
 const SLIP: Record<string, { label: string; tone: string }> = {
@@ -46,7 +47,7 @@ function SubNav({ r, active }: { r: ResolvedPayroll; active: string }) {
       <ul className="flex min-w-max gap-1.5">
         {items.map(([k, label, Icon]) => (
           <li key={k}>
-            <Link href={k ? `${r.base}/${k}` : r.base} aria-current={active === k ? "page" : undefined} className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px]", active === k ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
+            <Link href={k ? `${r.base}/${k}` : r.base} aria-current={active === k ? "page" : undefined} className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-meta", active === k ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
               <Icon className="size-3.5" aria-hidden /> {label}
             </Link>
           </li>
@@ -59,7 +60,7 @@ function SubNav({ r, active }: { r: ResolvedPayroll; active: string }) {
 export async function SueldosScreen({ r, path, sp }: { r: ResolvedPayroll; path: string[]; sp: SP }) {
   const [section, id] = path;
   const on = await payrollEnabled(r.scope.studioId);
-  if (!on.employees && !on.payroll) return <p className="rounded-md border border-line bg-surface p-4 text-[14px]">Sueldos y empleados viene con el plan Profesional del estudio.</p>;
+  if (!on.employees && !on.payroll) return <p className="rounded-md border border-line bg-surface p-4 text-ui">Sueldos y empleados viene con el plan Profesional del estudio.</p>;
   const body =
     section === "empleado" && id ? await EmployeeView({ r, id, sp }) : section === "recibos" && id ? await BatchView({ r, id, sp }) : section === "recibos" ? await BatchesView({ r, sp }) : section === "comunicados" && id ? await AnnouncementView({ r, id, sp }) : section === "comunicados" ? await AnnouncementsView({ r, sp }) : section === "novedades" ? await NovedadesView({ r, sp }) : await EmployeesView({ r, sp });
   if (!body) notFound();
@@ -100,7 +101,7 @@ function EmployeeFields({ e }: { e?: Partial<Awaited<ReturnType<typeof listEmplo
       </label>
       <label className={cn(lbl, "sm:col-span-2")}>
         Notas
-        <textarea name="notes" defaultValue={e?.notes ?? ""} rows={2} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 text-[14px] text-ink" />
+        <textarea name="notes" defaultValue={e?.notes ?? ""} rows={2} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 text-ui text-ink" />
       </label>
     </>
   );
@@ -112,7 +113,7 @@ async function EmployeesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
   return (
     <div className="grid gap-4">
       <Feedback sp={sp} />
-      <p className="text-[14px] text-muted">
+      <p className="text-ui text-muted">
         {active.length} empleado{active.length === 1 ? "" : "s"} activo{active.length === 1 ? "" : "s"} en {r.orgName}.
       </p>
       {list.length > 0 && (
@@ -121,17 +122,17 @@ async function EmployeesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
             <li key={e.id}>
               <Link href={`${r.base}/empleado/${e.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-canvas">
                 <span className="min-w-0">
-                  <span className="block truncate text-[14px] font-medium">
+                  <span className="block truncate text-ui font-medium">
                     {e.last_name ? `${e.last_name}, ` : ""}
                     {e.first_name}
                   </span>
-                  <span className="text-[12px] text-muted">
+                  <span className="text-caption text-muted">
                     {[e.position, e.area, e.cuil && `CUIL ${formatCuil(e.cuil)}`].filter(Boolean).join(" · ") || "Sin datos del legajo"}
                     {!e.active && ` · baja el ${d(e.end_date)}`}
                     {e.user_id ? " · con acceso al portal" : ""}
                   </span>
                 </span>
-                {!e.active && <span className="rounded-md bg-canvas px-2 py-0.5 text-[12px] text-muted">Baja</span>}
+                {!e.active && <span className="rounded-md bg-canvas px-2 py-0.5 text-caption text-muted">Baja</span>}
               </Link>
             </li>
           ))}
@@ -139,7 +140,7 @@ async function EmployeesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
       )}
       {r.scope.canManage && (
         <details className="rounded-md border border-line bg-surface p-4" open={list.length === 0}>
-          <summary className="cursor-pointer text-[14px] font-medium">Dar de alta un empleado</summary>
+          <summary className="cursor-pointer text-ui font-medium">Dar de alta un empleado</summary>
           <form action={saveEmployeeAction} className="mt-3 grid gap-2 sm:grid-cols-2">
             <Hidden r={r} />
             <EmployeeFields />
@@ -160,12 +161,12 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
   const docHref = (docId: string) => `/api/legajo/${docId}`;
   return (
     <div className="grid gap-4">
-      <Link href={r.base} className="text-[13px] text-muted hover:text-ink">
+      <Link href={r.base} className="text-meta text-muted hover:text-ink">
         ← Legajo
       </Link>
       <Feedback sp={sp} />
-      <h2 className="text-[18px] font-semibold">
-        {e.first_name} {e.last_name} {!e.active && <span className="text-[13px] font-normal text-muted">· baja el {d(e.end_date)}{e.end_reason ? ` (${e.end_reason})` : ""}</span>}
+      <h2 className="text-title font-semibold">
+        {e.first_name} {e.last_name} {!e.active && <span className="text-meta font-normal text-muted">· baja el {d(e.end_date)}{e.end_reason ? ` (${e.end_reason})` : ""}</span>}
       </h2>
       <form action={saveEmployeeAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-2">
         <Hidden r={r} />
@@ -180,27 +181,27 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
         )}
       </form>
       <section aria-label="Documentos" className="grid gap-2">
-        <h3 className="text-[15px] font-semibold">Documentos</h3>
+        <h3 className="text-body font-semibold">Documentos</h3>
         {v.docs.length > 0 ? (
-          <ul className="divide-y divide-line rounded-md border border-line bg-surface text-[14px]">
+          <ul className="divide-y divide-line rounded-md border border-line bg-surface text-ui">
             {v.docs.map((doc) => (
               <li key={doc.id} className="flex justify-between gap-2 px-4 py-2">
                 <a href={docHref(doc.id)} className="truncate underline">
                   {doc.name}
                 </a>
-                <span className="text-[12px] text-muted">{doc.kind}</span>
+                <span className="text-caption text-muted">{doc.kind}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-[14px] text-muted">Sin documentos.</p>
+          <p className="text-ui text-muted">Sin documentos.</p>
         )}
         {r.scope.canManage && (
           <form action={employeeDocumentAction} className="flex flex-wrap items-end gap-2">
             <Hidden r={r} />
             <input type="hidden" name="id" value={e.id} />
-            <input type="file" name="file" required aria-label="Documento" className="text-[13px]" />
-            <select name="kind" aria-label="Tipo de documento" className="h-9 rounded-md border border-line bg-surface px-2 text-[13px]">
+            <input type="file" name="file" required aria-label="Documento" className="text-meta" />
+            <select name="kind" aria-label="Tipo de documento" className="h-9 rounded-md border border-line bg-surface px-2 text-meta">
               <option value="dni">DNI</option>
               <option value="alta">Alta temprana</option>
               <option value="contrato">Contrato</option>
@@ -213,15 +214,15 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
         )}
       </section>
       <section aria-label="Recibos" className="grid gap-2">
-        <h3 className="text-[15px] font-semibold">Recibos</h3>
+        <h3 className="text-body font-semibold">Recibos</h3>
         {v.slips.length ? (
-          <ul className="divide-y divide-line rounded-md border border-line bg-surface text-[14px]">
+          <ul className="divide-y divide-line rounded-md border border-line bg-surface text-ui">
             {v.slips.map((p) => (
               <li key={p.id} className="flex justify-between gap-2 px-4 py-2">
                 <a href={`/api/recibos/${p.id}`} className="underline">
                   {per(p.period)}
                 </a>
-                <span className={cn("text-[13px]", SLIP[p.status]?.tone)}>
+                <span className={cn("text-meta", SLIP[p.status]?.tone)}>
                   {SLIP[p.status]?.label}
                   {p.signed_at && ` · ${p.signed_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}`}
                 </span>
@@ -229,12 +230,12 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
             ))}
           </ul>
         ) : (
-          <p className="text-[14px] text-muted">Sin recibos.</p>
+          <p className="text-ui text-muted">Sin recibos.</p>
         )}
       </section>
       <section aria-label="Historial" className="grid gap-2">
-        <h3 className="text-[15px] font-semibold">Historial</h3>
-        <ol className="grid gap-1 text-[14px]">
+        <h3 className="text-body font-semibold">Historial</h3>
+        <ol className="grid gap-1 text-ui">
           {v.events.map((ev) => (
             <li key={ev.id} className="flex gap-3">
               <span className="num w-24 shrink-0 text-muted">{d(ev.date)}</span>
@@ -299,7 +300,7 @@ async function BatchesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
       {r.scope.canManage && (
         <form action={uploadPayslipsAction} className="grid gap-3 rounded-md border border-line bg-surface p-4">
           <Hidden r={r} />
-          <p className="text-[14px]">Subí un PDF por empleado (con el CUIL en el nombre del archivo o adentro) o un PDF único con todos los recibos: lo dividimos por CUIL y asignamos cada uno al legajo. Revisás y publicás.</p>
+          <p className="text-ui">Subí un PDF por empleado (con el CUIL en el nombre del archivo o adentro) o un PDF único con todos los recibos: lo dividimos por CUIL y asignamos cada uno al legajo. Revisás y publicás.</p>
           <div className="grid gap-2 sm:grid-cols-[10rem_1fr]">
             <label className={lbl}>
               Período
@@ -307,7 +308,7 @@ async function BatchesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
             </label>
             <label className={lbl}>
               Recibos (PDF)
-              <input name="files" type="file" multiple required accept="application/pdf,.pdf" className="mt-1 block w-full text-[14px] text-ink" />
+              <input name="files" type="file" multiple required accept="application/pdf,.pdf" className="mt-1 block w-full text-ui text-ink" />
             </label>
           </div>
           <div>
@@ -316,7 +317,7 @@ async function BatchesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
         </form>
       )}
       {list.length === 0 ? (
-        <p className="text-[14px] text-muted">Todavía no hay recibos cargados.</p>
+        <p className="text-ui text-muted">Todavía no hay recibos cargados.</p>
       ) : (
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
           {list.map(({ b, counts }) => {
@@ -326,13 +327,13 @@ async function BatchesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
               <li key={b.id}>
                 <Link href={`${r.base}/recibos/${b.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-canvas">
                   <span>
-                    <span className="block text-[14px] font-medium">Recibos de {per(b.period)}</span>
-                    <span className="text-[12px] text-muted">
+                    <span className="block text-ui font-medium">Recibos de {per(b.period)}</span>
+                    <span className="text-caption text-muted">
                       {b.status === "publicado" ? "Publicado" : "En revisión"} · {total} recibo{total === 1 ? "" : "s"}
                       {counts.sin_asignar ? ` · ${counts.sin_asignar} sin asignar` : ""}
                     </span>
                   </span>
-                  <span className="num text-[13px]">
+                  <span className="num text-meta">
                     {signed}/{total} firmados
                   </span>
                 </Link>
@@ -352,12 +353,12 @@ async function BatchView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp: SP
   const ready = v.slips.filter((x) => x.p.status === "asignado").length;
   return (
     <div className="grid gap-4">
-      <Link href={`${r.base}/recibos`} className="text-[13px] text-muted hover:text-ink">
+      <Link href={`${r.base}/recibos`} className="text-meta text-muted hover:text-ink">
         ← Recibos
       </Link>
       <Feedback sp={sp} />
-      <h2 className="text-[18px] font-semibold">
-        Recibos de {per(v.b.period)} <span className="text-[13px] font-normal text-muted">· {v.b.mode === "unico" ? "PDF único dividido por CUIL" : "PDFs individuales"}</span>
+      <h2 className="text-title font-semibold">
+        Recibos de {per(v.b.period)} <span className="text-meta font-normal text-muted">· {v.b.mode === "unico" ? "PDF único dividido por CUIL" : "PDFs individuales"}</span>
       </h2>
       {r.scope.canManage && (
         <div className="flex flex-wrap gap-2">
@@ -382,8 +383,8 @@ async function BatchView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp: SP
           <li key={p.id} className="grid gap-2 px-4 py-3" aria-label={first ? `${first} ${last}` : p.file_name}>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="truncate text-[14px] font-medium">{first ? `${last ? `${last}, ` : ""}${first}` : "Sin asignar"}</p>
-                <p className="text-[12px] text-muted">
+                <p className="truncate text-ui font-medium">{first ? `${last ? `${last}, ` : ""}${first}` : "Sin asignar"}</p>
+                <p className="text-caption text-muted">
                   <a href={`/api/recibos/${p.id}`} className="underline">
                     {p.file_name}
                   </a>
@@ -392,10 +393,10 @@ async function BatchView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp: SP
                   {p.match === "manual" && " · asignado a mano"}
                 </p>
               </div>
-              <span className={cn("text-[13px]", SLIP[p.status]?.tone)}>{SLIP[p.status]?.label}</span>
+              <span className={cn("text-meta", SLIP[p.status]?.tone)}>{SLIP[p.status]?.label}</span>
             </div>
             {p.signed_at && (
-              <p className="flex gap-1.5 text-[12px] text-muted">
+              <p className="flex gap-1.5 text-caption text-muted">
                 <CheckCircle2 className="mt-0.5 size-3.5 shrink-0" aria-hidden />
                 {p.signed_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "medium" })} · IP {p.sign_ip ?? "—"} · {p.sign_device} · hash {p.sha256.slice(0, 12)}… · sello {p.seal?.slice(0, 12)}…{p.reason ? ` · motivo: ${p.reason}` : ""}
               </p>
@@ -405,7 +406,7 @@ async function BatchView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp: SP
                 <Hidden r={r} />
                 <input type="hidden" name="batch" value={v.b.id} />
                 <input type="hidden" name="id" value={p.id} />
-                <select name="employee" defaultValue={p.employee_id ?? ""} aria-label="Empleado" className="h-9 max-w-[16rem] rounded-md border border-line bg-surface px-2 text-[13px]">
+                <select name="employee" defaultValue={p.employee_id ?? ""} aria-label="Empleado" className="h-9 max-w-[16rem] rounded-md border border-line bg-surface px-2 text-meta">
                   <option value="" disabled>
                     Elegí el empleado
                   </option>
@@ -423,7 +424,7 @@ async function BatchView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp: SP
         ))}
       </ul>
       {v.missing.length > 0 && (
-        <p className="text-[13px] text-muted">
+        <p className="text-meta text-muted">
           Sin recibo en este lote: {v.missing.map((e) => `${e.first_name} ${e.last_name}`.trim()).join(", ")}.
         </p>
       )}
@@ -442,14 +443,14 @@ async function AnnouncementsView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
       {r.scope.canManage && (
         <form action={announcementAction} className="grid gap-2 rounded-md border border-line bg-surface p-4" encType="multipart/form-data">
           <Hidden r={r} />
-          <p className="text-[14px] font-medium">Nuevo comunicado{r.scope.fromStudio ? ` (en nombre de ${r.orgName})` : ""}</p>
+          <p className="text-ui font-medium">Nuevo comunicado{r.scope.fromStudio ? ` (en nombre de ${r.orgName})` : ""}</p>
           <label className={lbl}>
             Título
             <input name="title" required className={field} />
           </label>
           <label className={lbl}>
             Texto
-            <textarea name="body" required rows={4} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 text-[14px] text-ink" />
+            <textarea name="body" required rows={4} className="mt-1 block w-full rounded-md border border-line bg-surface p-2 text-ui text-ink" />
           </label>
           <div className="grid gap-2 sm:grid-cols-2">
             <label className={lbl}>
@@ -465,10 +466,10 @@ async function AnnouncementsView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
             </label>
             <label className={lbl}>
               Adjuntos
-              <input name="files" type="file" multiple className="mt-1 block w-full text-[13px] text-ink" />
+              <input name="files" type="file" multiple className="mt-1 block w-full text-meta text-ink" />
             </label>
           </div>
-          <label className="flex items-center gap-2 text-[14px]">
+          <label className="flex items-center gap-2 text-ui">
             <input type="checkbox" name="require_ack" defaultChecked /> Pedir confirmación de lectura
           </label>
           <div>
@@ -477,20 +478,20 @@ async function AnnouncementsView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
         </form>
       )}
       {list.length === 0 ? (
-        <p className="text-[14px] text-muted">No hay comunicados.</p>
+        <p className="text-ui text-muted">No hay comunicados.</p>
       ) : (
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
           {list.map(({ a, st }) => (
             <li key={a.id}>
               <Link href={`${r.base}/comunicados/${a.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-canvas">
                 <span className="min-w-0">
-                  <span className="block truncate text-[14px] font-medium">{a.title}</span>
-                  <span className="text-[12px] text-muted">
+                  <span className="block truncate text-ui font-medium">{a.title}</span>
+                  <span className="text-caption text-muted">
                     {a.created_at.toLocaleDateString("es-AR")} · {a.area ?? "Todos"}
                     {a.from_studio ? " · enviado por el estudio" : ""}
                   </span>
                 </span>
-                <span className="num text-[13px]">
+                <span className="num text-meta">
                   {a.require_ack ? `${st.ack}/${st.total} confirmaron` : `${st.read}/${st.total} leyeron`}
                 </span>
               </Link>
@@ -507,14 +508,14 @@ async function AnnouncementView({ r, id, sp }: { r: ResolvedPayroll; id: string;
   if (!v) return null;
   return (
     <div className="grid gap-4">
-      <Link href={`${r.base}/comunicados`} className="text-[13px] text-muted hover:text-ink">
+      <Link href={`${r.base}/comunicados`} className="text-meta text-muted hover:text-ink">
         ← Comunicados
       </Link>
       <Feedback sp={sp} />
-      <h2 className="text-[18px] font-semibold">{v.a.title}</h2>
-      <p className="whitespace-pre-line text-[14px]">{v.a.body}</p>
-      {v.a.attachments.length > 0 && <p className="text-[13px] text-muted">Adjuntos: {v.a.attachments.map((x) => x.name).join(", ")}</p>}
-      <ul className="divide-y divide-line rounded-md border border-line bg-surface text-[14px]">
+      <h2 className="text-title font-semibold">{v.a.title}</h2>
+      <p className="whitespace-pre-line text-ui">{v.a.body}</p>
+      {v.a.attachments.length > 0 && <p className="text-meta text-muted">Adjuntos: {v.a.attachments.map((x) => x.name).join(", ")}</p>}
+      <ul className="divide-y divide-line rounded-md border border-line bg-surface text-ui">
         {v.recipients.map(({ r: rd, first, last }) => (
           <li key={rd.employee_id} className="flex justify-between gap-2 px-4 py-2">
             <span>
@@ -539,7 +540,7 @@ async function NovedadesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
       <Feedback sp={sp} />
       {r.canReport && (
         <form action={novedadAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-2">
-          <p className="text-[14px] font-medium sm:col-span-2">Informar una novedad al estudio</p>
+          <p className="text-ui font-medium sm:col-span-2">Informar una novedad al estudio</p>
           <label className={lbl}>
             Novedad
             <select name="tipo" className={field}>
@@ -595,7 +596,7 @@ async function NovedadesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
         </form>
       )}
       {list.length === 0 ? (
-        <p className="text-[14px] text-muted">No hay novedades informadas.</p>
+        <p className="text-ui text-muted">No hay novedades informadas.</p>
       ) : (
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
           {list.map((q) => {
@@ -603,8 +604,8 @@ async function NovedadesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
             return (
               <li key={q.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <span className="min-w-0">
-                  <span className="block truncate text-[14px]">{q.subject}</span>
-                  <span className="text-[12px] text-muted">
+                  <span className="block truncate text-ui">{q.subject}</span>
+                  <span className="text-caption text-muted">
                     {q.created_at.toLocaleDateString("es-AR")} · {data?.aplicada ? "aplicada al legajo" : q.status === "resuelta" ? "resuelta" : "pendiente"}
                   </span>
                 </span>

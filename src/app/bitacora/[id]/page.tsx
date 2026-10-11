@@ -31,12 +31,12 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   const hint = looksLikeBusiness(e.description, e.note);
   return (
     <div className="grid max-w-2xl gap-5">
-      <Link href={`/bitacora?mes=${mes}`} className="text-[13px] text-muted hover:text-ink">
+      <Link href={`/bitacora?mes=${mes}`} className="text-meta text-muted hover:text-ink">
         ← Bitácora
       </Link>
       <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{e.kind === "ingreso" ? "Ingreso" : "Gasto"}</h1>
       {sp.error && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-[14px] text-danger">
+        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-ui text-danger">
           {sp.error}
         </p>
       )}
@@ -59,12 +59,12 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         />
       </div>
       {sp.ok && (
-        <p role="status" className="rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[14px] text-ink">
+        <p role="status" className="rounded-md border border-line bg-navy-soft px-4 py-2.5 text-ui text-ink">
           {sp.ok}
         </p>
       )}
       {fromBox ? (
-        <p className="rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[14px] text-ink">
+        <p className="rounded-md border border-line bg-navy-soft px-4 py-2.5 text-ui text-ink">
           {e.transfer_id ? "Es un movimiento entre cajas (sueldo del dueño o aporte). Se cambia o se borra desde " : "Este movimiento también está en una caja compartida. Se cambia desde "}
           <Link href="/cajas" className="underline underline-offset-4">
             Mis cajas
@@ -73,8 +73,8 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         </p>
       ) : (
         <section className="grid gap-3 rounded-lg border border-line bg-surface p-5" aria-label="¿Es de tu negocio?">
-          <p className="text-[15px] font-medium">¿Es de tu negocio?</p>
-          <p className="text-[14px] text-muted">
+          <p className="text-body font-medium">¿Es de tu negocio?</p>
+          <p className="text-ui text-muted">
             {hint ? `Parece del trabajo (por «${hint}»). ` : ""}Lo de tu actividad va en la caja de negocio, separado de lo personal. Al moverlo no se duplica: sale de acá y queda allá, con el registro original.
           </p>
           <form action={moveToBusinessAction}>
@@ -84,7 +84,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
               Mover a la caja de negocio
             </SubmitButton>
           </form>
-          {e.accounting_expense_id && <p className="text-[13px] text-muted">Antes lo pasaste a los gastos de tu actividad en Faro Personal; ese registro se conserva.</p>}
+          {e.accounting_expense_id && <p className="text-meta text-muted">Antes lo pasaste a los gastos de tu actividad en Faro Personal; ese registro se conserva.</p>}
         </section>
       )}
       {origin && <CopilotOrigin o={origin} />}
@@ -92,7 +92,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         <form action={deleteEntryAction}>
           <input type="hidden" name="id" value={e.id} />
           <input type="hidden" name="mes" value={mes} />
-          <button type="submit" className="h-10 rounded-md border border-danger/40 px-4 text-[14px] text-danger hover:bg-danger/10">
+          <button type="submit" className="h-10 rounded-md border border-danger/40 px-4 text-ui text-danger hover:bg-danger/10">
             Borrar movimiento
           </button>
         </form>

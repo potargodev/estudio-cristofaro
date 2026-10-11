@@ -15,11 +15,11 @@ const TABS: { kind: TenantKind; label: string; intro: string }[] = [
 
 /** "$ 68.600 / mes" (lo que ve la persona) y la referencia "USD 49 · anual …" */
 function Price({ p, usdArs }: { p: FaroPlan; usdArs: number }) {
-  if (p.free || !p.priceUsd) return <span className="tabular mt-4 block text-[18px] text-paper">Gratis</span>;
+  if (p.free || !p.priceUsd) return <span className="tabular mt-4 block text-title text-paper">Gratis</span>;
   return (
     <span className="mt-4 block">
-      <span className="tabular block text-[18px] text-paper">{formatArs(p.priceUsd * usdArs)} / mes</span>
-      <span className="tabular block text-[13px] text-paper/55">
+      <span className="tabular block text-title text-paper">{formatArs(p.priceUsd * usdArs)} / mes</span>
+      <span className="tabular block text-meta text-paper/55">
         Referencia {formatUsd(p.priceUsd)} · anual {formatArs(p.priceUsd * (12 - ANNUAL_FREE_MONTHS) * usdArs)}{p.trialDays ? ` · ${p.trialDays} días gratis` : ""}
       </span>
     </span>
@@ -59,7 +59,7 @@ export function FaroPlans({ kinds = ["persona", "personal", "studio"], plans: al
               Empezá gratis. Crecé cuando quieras.
             </SplitHeading>
           </div>
-          <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">{tab.intro}</p>
+          <p className="self-end text-body leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">{tab.intro}</p>
         </div>
         {tabs.length > 1 && (
           <div role="tablist" aria-label="Tipo de cuenta" className="mt-12 inline-flex border border-hair-strong p-1">
@@ -72,26 +72,26 @@ export function FaroPlans({ kinds = ["persona", "personal", "studio"], plans: al
                 aria-selected={kind === t.kind}
                 aria-controls="planes-panel"
                 onClick={() => setKind(t.kind)}
-                className={cn("h-10 px-5 text-[14px] transition-colors duration-300", kind === t.kind ? "bg-paper text-night" : "text-paper/75 hover:text-paper")}
+                className={cn("h-10 px-5 text-ui transition-colors duration-300", kind === t.kind ? "bg-paper text-night" : "text-paper/75 hover:text-paper")}
               >
                 {t.label}
               </button>
             ))}
           </div>
         )}
-        <p className="mt-6 text-[13px] text-paper/55">Precios de referencia en USD, convertidos a pesos al tipo de cambio que publica Faro. Pago anual: {ANNUAL_FREE_MONTHS} meses de regalo.</p>
+        <p className="mt-6 text-meta text-paper/55">Precios de referencia en USD, convertidos a pesos al tipo de cambio que publica Faro. Pago anual: {ANNUAL_FREE_MONTHS} meses de regalo.</p>
         <div id="planes-panel" role="tabpanel" aria-labelledby={`tab-${kind}`} className="mt-8">
           {/* Escritorio: tabla */}
-          <table className="hidden w-full table-fixed border-collapse text-left text-[14px] text-paper/80 lg:table">
+          <table className="hidden w-full table-fixed border-collapse text-left text-ui text-paper/80 lg:table">
             <caption className="sr-only">Comparación de planes {tab.label.toLowerCase()}</caption>
             <thead>
               <tr>
                 <th className="w-[30%]" />
                 {plans.map((p) => (
                   <th key={p.key} scope="col" className={cn("border-t px-5 pb-6 pt-6 align-top font-normal", p.recommended ? "border-x border-t-2 border-gold bg-gold/[0.04]" : "border-hair")}>
-                    <span className="flex items-center gap-2 text-[12px] text-gold">{p.recommended ? "Recomendado" : " "}</span>
+                    <span className="flex items-center gap-2 text-caption text-gold">{p.recommended ? "Recomendado" : " "}</span>
                     <span className="mt-1 block font-display text-[36px] leading-none text-paper">{p.name}</span>
-                    <span className="mt-3 block text-[14px] text-paper/65">{p.tagline}</span>
+                    <span className="mt-3 block text-ui text-paper/65">{p.tagline}</span>
                     <Price p={p} usdArs={usdArs} />
                     <span className="mt-5 block">{cta(p.key, p.free)}</span>
                   </th>
@@ -117,11 +117,11 @@ export function FaroPlans({ kinds = ["persona", "personal", "studio"], plans: al
           <ul className="grid gap-4 lg:hidden">
             {plans.map((p, i) => (
               <li key={p.key} className={cn("border p-5", p.recommended ? "border-gold bg-gold/[0.04]" : "border-hair-strong")}>
-                {p.recommended && <p className="text-[12px] text-gold">Recomendado</p>}
+                {p.recommended && <p className="text-caption text-gold">Recomendado</p>}
                 <h3 className="font-display text-[32px] leading-none text-paper">{p.name}</h3>
-                <p className="mt-2 text-[14px] text-paper/65">{p.tagline}</p>
+                <p className="mt-2 text-ui text-paper/65">{p.tagline}</p>
                 <Price p={p} usdArs={usdArs} />
-                <dl className="mt-4 divide-y divide-hair border-y border-hair text-[14px]">
+                <dl className="mt-4 divide-y divide-hair border-y border-hair text-ui">
                   {rows.map(([label, ...vals]) => (
                     <div key={label} className="flex justify-between gap-4 py-2.5">
                       <dt className="text-paper/55">{label}</dt>

@@ -12,7 +12,7 @@ export function VerifyForm() {
   return (
     <form action={action}>
       <input type="hidden" name="mode" value={mode} />
-      <label htmlFor="code" className="block text-sm font-medium">
+      <label htmlFor="code" className="block text-ui font-medium">
         {mode === "totp" ? "Código de 6 números de tu app autenticadora" : "Código de respaldo"}
       </label>
       <Input
@@ -24,10 +24,10 @@ export function VerifyForm() {
         autoComplete="one-time-code"
         inputMode={mode === "totp" ? "numeric" : "text"}
         pattern={mode === "totp" ? "[0-9 ]{6,7}" : undefined}
-        className="mt-1 h-11 bg-surface text-center font-mono text-lg tracking-[0.3em]"
+        className="mt-1 h-11 bg-surface text-center font-mono text-title tracking-[0.3em]"
       />
       {state.message && (
-        <p role="alert" className="mt-4 text-sm text-danger">
+        <p role="alert" className="mt-4 text-ui text-danger">
           {state.message}
         </p>
       )}
@@ -37,11 +37,11 @@ export function VerifyForm() {
       <button
         type="button"
         onClick={() => setMode(mode === "totp" ? "backup" : "totp")}
-        className="mt-4 block text-sm text-rose-deep hover:underline"
+        className="mt-4 block text-ui text-rose-deep hover:underline"
       >
         {mode === "totp" ? "No tengo el teléfono: usar un código de respaldo" : "Usar el código de la app"}
       </button>
-      <Link href="/admin/login" className="mt-2 block text-sm text-muted hover:underline">
+      <Link href="/admin/login" className="mt-2 block text-ui text-muted hover:underline">
         Volver a empezar
       </Link>
     </form>

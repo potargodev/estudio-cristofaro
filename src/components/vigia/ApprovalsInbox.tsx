@@ -51,26 +51,26 @@ function DraftField({ id, k, v }: { id: string; k: string; v: unknown }) {
   const locked = k.endsWith("_id");
   return (
     <div className={t === "string" && String(v).length > 60 ? "sm:col-span-2" : ""}>
-      <label htmlFor={fid} className="text-[13px] font-medium text-ink/80">
+      <label htmlFor={fid} className="text-meta font-medium text-ink/80">
         {LABELS[k] ?? k}
       </label>
       <input type="hidden" name={`t:${k}`} value={t} />
       {locked ? (
         <>
           <input type="hidden" name={`f:${k}`} value={String(v)} />
-          <p id={fid} className="mt-1 font-mono text-[12px] text-muted">
+          <p id={fid} className="mt-1 font-mono text-caption text-muted">
             {String(v)}
           </p>
         </>
       ) : t === "boolean" ? (
-        <select id={fid} name={`f:${k}`} defaultValue={String(v)} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-[15px]">
+        <select id={fid} name={`f:${k}`} defaultValue={String(v)} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body">
           <option value="true">Sí</option>
           <option value="false">No</option>
         </select>
       ) : t === "string" && String(v).length > 60 ? (
         <Textarea id={fid} name={`f:${k}`} defaultValue={String(v)} rows={5} className="mt-1" />
       ) : t === "json" ? (
-        <Textarea id={fid} name={`f:${k}`} defaultValue={JSON.stringify(v, null, 2)} rows={3} className="mt-1 font-mono text-[13px]" />
+        <Textarea id={fid} name={`f:${k}`} defaultValue={JSON.stringify(v, null, 2)} rows={3} className="mt-1 font-mono text-meta" />
       ) : (
         <Input id={fid} name={`f:${k}`} defaultValue={String(v)} inputMode={t === "number" ? "decimal" : undefined} className="mt-1" />
       )}
@@ -117,7 +117,7 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
 
   return (
     <div className={embedded ? "pb-6" : "max-w-4xl pb-6"}>
-      <p className="mb-3 text-[14px] text-muted">
+      <p className="mb-3 text-ui text-muted">
         Lo que propone la IA (desde el Asistente, un cliente MCP o los Flujos) y no se ejecuta sin una persona: comunicaciones a clientes, pagos y datos fiscales. Revisá el borrador, editalo si hace falta y aprobá o rechazá.
       </p>
       <div className="mb-4 flex gap-1.5" role="group" aria-label="Ver">
@@ -125,7 +125,7 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
           { href: back, label: "Pendientes", on: tab === "pendientes", n: pendingCount },
           { href: `${back}&ver=historial`, label: "Historial", on: tab === "historial" },
         ].map((v) => (
-          <Link key={v.label} href={v.href} aria-current={v.on ? "page" : undefined} className={v.on ? "inline-flex h-8 items-center gap-1.5 rounded-full bg-navy px-3 text-[13px] font-medium text-paper" : "inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-[13px] text-ink hover:border-muted"}>
+          <Link key={v.label} href={v.href} aria-current={v.on ? "page" : undefined} className={v.on ? "inline-flex h-8 items-center gap-1.5 rounded-full bg-navy px-3 text-meta font-medium text-paper" : "inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-meta text-ink hover:border-muted"}>
             {v.label}
             {!!v.n && <span className="num">{v.n}</span>}
           </Link>
@@ -149,8 +149,8 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
               <li key={a.id} id={a.id} className="scroll-mt-24 border border-line bg-surface">
                 <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
                   <div className="min-w-0">
-                    <p className="text-[16px] font-medium text-ink">{a.title}</p>
-                    <p className="mt-1 flex flex-wrap items-center gap-2 text-[13px] text-muted">
+                    <p className="text-lead font-medium text-ink">{a.title}</p>
+                    <p className="mt-1 flex flex-wrap items-center gap-2 text-meta text-muted">
                       <Tag icon={O.icon}>
                         {O.label}
                         {access ? ` · ${access}` : ""}
@@ -175,17 +175,17 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
                   )}
                 </div>
                 <div className="px-5 py-4">
-                  <p className="text-[13px] font-medium uppercase tracking-wide text-muted">Borrador completo</p>
-                  <dl className="mt-2 grid gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
+                  <p className="text-meta font-medium uppercase tracking-wide text-muted">Borrador completo</p>
+                  <dl className="mt-2 grid gap-x-6 gap-y-2 text-ui sm:grid-cols-2">
                     {Object.entries(input).map(([k, v]) => (
                       <div key={k} className={typeof v === "string" && v.length > 60 ? "sm:col-span-2" : ""}>
-                        <dt className="text-[12px] text-muted">{LABELS[k] ?? k}</dt>
+                        <dt className="text-caption text-muted">{LABELS[k] ?? k}</dt>
                         <dd className="whitespace-pre-wrap break-words text-ink">{display(k, v)}</dd>
                       </div>
                     ))}
                   </dl>
                   {a.status !== "pendiente" && (
-                    <p className="mt-3 text-[13px] text-muted">
+                    <p className="mt-3 text-meta text-muted">
                       {a.status === "rechazada" ? `Rechazada por ${deciders.get(a.decided_by ?? "") ?? "—"}: ${a.reason}` : `Aprobada por ${deciders.get(a.decided_by ?? "") ?? "—"}${a.edited ? " (con cambios)" : ""}`}
                       {a.decided_at ? ` · ${fmt.format(a.decided_at)}` : ""}
                       {a.status === "error" && a.result ? ` · ${String((a.result as { message?: string }).message ?? "")}` : ""}
@@ -205,7 +205,7 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
                       </form>
                     </div>
                     <details>
-                      <summary className="cursor-pointer text-[14px] font-medium text-ink">Editar y aprobar</summary>
+                      <summary className="cursor-pointer text-ui font-medium text-ink">Editar y aprobar</summary>
                       <form action={decideApprovalAction} className="mt-3 grid gap-3 sm:grid-cols-2">
                         <input type="hidden" name="id" value={a.id} />
                         <input type="hidden" name="volver" value={back} />
@@ -219,13 +219,13 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
                       </form>
                     </details>
                     <details>
-                      <summary className="cursor-pointer text-[14px] font-medium text-ink">Rechazar</summary>
+                      <summary className="cursor-pointer text-ui font-medium text-ink">Rechazar</summary>
                       <form action={decideApprovalAction} className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
                         <input type="hidden" name="id" value={a.id} />
                         <input type="hidden" name="volver" value={back} />
                         <input type="hidden" name="mode" value="rechazar" />
                         <div className="flex-1">
-                          <label htmlFor={`${a.id}-reason`} className="text-[13px] font-medium text-ink/80">
+                          <label htmlFor={`${a.id}-reason`} className="text-meta font-medium text-ink/80">
                             Motivo
                           </label>
                           <Input id={`${a.id}-reason`} name="reason" required minLength={3} maxLength={500} placeholder="Ej.: el importe no coincide con la DDJJ" className="mt-1" />

@@ -29,10 +29,11 @@ import {
 } from "../actions";
 import { SeekerForm } from "@/components/red/SeekerForm";
 import { fleetSeeker, myContacts } from "@/modules/red/seekers";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Flota" };
 
-const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-3 text-[14px] text-ink focus:border-navy focus:outline-none";
+const field = `mt-1 ${fieldClass}`;
 const time = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 const STATUS = { invitado: "Invitado", activo: "Activo", salio: "Salió", rechazo: "No aceptó" } as const;
 
@@ -62,18 +63,18 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         <div className="min-w-0">
           <FleetLabel />
           <h1 className="mt-1 font-display text-[28px] leading-tight text-ink sm:text-[32px]">{x.fleet.name}</h1>
-          {x.fleet.description && <p className="text-[15px] text-muted">{x.fleet.description}</p>}
+          {x.fleet.description && <p className="text-body text-muted">{x.fleet.description}</p>}
         </div>
       </div>
-      <p className="mt-4 rounded-md border border-line bg-surface px-4 py-3 text-[13px] text-muted">{INFORMAL_NOTICE}</p>
+      <p className="mt-4 rounded-md border border-line bg-surface px-4 py-3 text-meta text-muted">{INFORMAL_NOTICE}</p>
       <FirstSteps className="mt-6" path={`/flotas/${x.fleet.id}`} />
 
       <section aria-labelledby="tripulacion" className="mt-8">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="tripulacion" className="text-[19px] font-semibold">
+          <h2 id="tripulacion" className="text-section font-semibold">
             Tripulación ({active.length} de {FLEET_MAX})
           </h2>
-          <p className="text-[13px] text-muted">
+          <p className="text-meta text-muted">
             Mínimo {FLEET_MIN} para pedir propuestas. Cada uno ve nombre, perfil y estado; nunca finanzas.
           </p>
         </div>
@@ -81,12 +82,12 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           {x.members.map((m) => (
             <li key={m.id} className="flex flex-wrap items-center gap-3 px-5 py-3">
               <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-1.5 text-[15px] font-medium">
+                <span className="flex items-center gap-1.5 text-body font-medium">
                   {m.role === "capitan" && <Crown className="size-4 text-rose-deep" aria-label="Capitán" />}
                   {m.name}
-                  {m.isMe && <span className="text-[12px] font-normal text-muted">(vos)</span>}
+                  {m.isMe && <span className="text-caption font-normal text-muted">(vos)</span>}
                 </span>
-                <span className="block text-[13px] text-muted">
+                <span className="block text-meta text-muted">
                   {m.role === "capitan" ? "Capitán" : "Tripulante"} · {profileLabel(m.profile)} · {STATUS[m.status]}
                   {m.accepted && " · aceptó la propuesta"}
                 </span>
@@ -97,7 +98,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                     <form action={transferCaptainAction}>
                       {hidden}
                       <input type="hidden" name="member" value={m.id} />
-                      <button type="submit" className="h-8 rounded-md border border-line px-2.5 text-[12px] hover:border-muted">
+                      <button type="submit" className="h-8 rounded-md border border-line px-2.5 text-caption hover:border-muted">
                         Hacer Capitán
                       </button>
                     </form>
@@ -105,7 +106,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                   <form action={removeMemberAction}>
                     {hidden}
                     <input type="hidden" name="member" value={m.id} />
-                    <button type="submit" className="h-8 rounded-md border border-line px-2.5 text-[12px] hover:border-muted">
+                    <button type="submit" className="h-8 rounded-md border border-line px-2.5 text-caption hover:border-muted">
                       Quitar
                     </button>
                   </form>
@@ -116,11 +117,11 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         </ul>
         {isCaptain && (
           <section aria-labelledby="red-disponible" className="mt-4 rounded-lg border border-line bg-surface p-4">
-            <p id="red-disponible" className="text-[15px] font-semibold">
+            <p id="red-disponible" className="text-body font-semibold">
               Que los estudios encuentren a la Flota
             </p>
             {fleetContacts.filter((c) => c.c.status === "pendiente").map((c) => (
-              <form key={c.c.id} action={fleetContactAction} className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-md border border-rose/40 bg-rose-soft px-3 py-2 text-[14px]">
+              <form key={c.c.id} action={fleetContactAction} className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-md border border-rose/40 bg-rose-soft px-3 py-2 text-ui">
                 {hidden}
                 <input type="hidden" name="id" value={c.c.id} />
                 <span>
@@ -130,8 +131,8 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                   quiere hacerles una propuesta.
                 </span>
                 <span className="flex gap-2">
-                  <button className="h-9 rounded-md bg-navy px-3 text-[13px] text-paper">Aceptar</button>
-                  <button formAction={fleetRejectContactAction} className="h-9 rounded-md border border-line px-3 text-[13px]">
+                  <button className="h-9 rounded-md bg-navy px-3 text-meta text-paper">Aceptar</button>
+                  <button formAction={fleetRejectContactAction} className="h-9 rounded-md border border-line px-3 text-meta">
                     No, gracias
                   </button>
                 </span>
@@ -146,13 +147,13 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           {isCaptain && (
             <form action={inviteAction} className="rounded-lg border border-line bg-surface p-4">
               {hidden}
-              <p className="text-[15px] font-semibold">Invitar</p>
+              <p className="text-body font-semibold">Invitar</p>
               <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   Nombre
                   <input name="name" maxLength={120} className={field} />
                 </label>
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   Email
                   <input name="email" type="email" required className={field} />
                 </label>
@@ -164,8 +165,8 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           )}
           <form action={setProfileAction} className="rounded-lg border border-line bg-surface p-4">
             {hidden}
-            <p className="text-[15px] font-semibold">Tu perfil</p>
-            <label className="text-[13px] text-muted">
+            <p className="text-body font-semibold">Tu perfil</p>
+            <label className="text-meta text-muted">
               Lo usa el estudio para cotizarte
               <select name="profile" defaultValue={x.me.profile ?? ""} className={field}>
                 {PROFILES.map((p) => (
@@ -183,18 +184,18 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
       </section>
 
       <section aria-labelledby="pedido" className="mt-10">
-        <h2 id="pedido" className="text-[19px] font-semibold">
+        <h2 id="pedido" className="text-section font-semibold">
           Pedido de propuesta
         </h2>
         {x.fleet.request_status === "publicado" ? (
-          <div className="mt-3 rounded-lg border border-line bg-surface p-4 text-[14px]">
+          <div className="mt-3 rounded-lg border border-line bg-surface p-4 text-ui">
             <p>
               Publicado en la Red Contable{x.fleet.request_zone ? ` · zona ${x.fleet.request_zone}` : ""}. Los estudios ven cuántos son por perfil y la zona, sin datos personales.
             </p>
             {isCaptain && (
               <form action={closeRequestAction} className="mt-3">
                 {hidden}
-                <button type="submit" className="h-9 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+                <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
                   Cerrar el pedido
                 </button>
               </form>
@@ -203,46 +204,46 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         ) : isCaptain ? (
           <form action={publishRequestAction} className="mt-3 grid gap-3 rounded-lg border border-line bg-surface p-4">
             {hidden}
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Zona (para estudios presenciales)
               <input name="zone" defaultValue={x.fleet.request_zone ?? ""} maxLength={80} placeholder="Ej.: Rosario" className={field} />
             </label>
             <fieldset>
-              <legend className="text-[13px] text-muted">Qué necesitan</legend>
+              <legend className="text-meta text-muted">Qué necesitan</legend>
               <div className="mt-1 grid gap-1.5 sm:grid-cols-2">
                 {RED_SERVICES.map((s) => (
-                  <label key={s.key} className="flex items-center gap-2 text-[14px]">
+                  <label key={s.key} className="flex items-center gap-2 text-ui">
                     <input type="checkbox" name="services" value={s.key} defaultChecked={x.fleet.request_services.includes(s.key)} className="size-4 accent-navy" /> {s.label}
                   </label>
                 ))}
               </div>
             </fieldset>
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Mensaje para los estudios (sin datos personales)
               <textarea name="message" defaultValue={x.fleet.request_message ?? ""} rows={3} maxLength={1000} className={`${field} h-auto py-2`} />
             </label>
             <div>
               <SubmitButton pendingText="…">{x.fleet.request_status === "cerrado" ? "Volver a publicar" : "Publicar en la Red"}</SubmitButton>
             </div>
-            {active.length < FLEET_MIN && <p className="text-[13px] text-muted">Hacen falta {FLEET_MIN - active.length} integrantes activos más para publicar.</p>}
+            {active.length < FLEET_MIN && <p className="text-meta text-muted">Hacen falta {FLEET_MIN - active.length} integrantes activos más para publicar.</p>}
           </form>
         ) : (
-          <p className="mt-2 text-[14px] text-muted">{x.fleet.request_status === "cerrado" ? "El Capitán cerró el pedido." : "El Capitán todavía no publicó el pedido."}</p>
+          <p className="mt-2 text-ui text-muted">{x.fleet.request_status === "cerrado" ? "El Capitán cerró el pedido." : "El Capitán todavía no publicó el pedido."}</p>
         )}
       </section>
 
       <section aria-labelledby="propuestas" className="mt-10">
-        <h2 id="propuestas" className="text-[19px] font-semibold">
+        <h2 id="propuestas" className="text-section font-semibold">
           Propuestas ({x.proposals.length})
         </h2>
         {x.proposals.length === 0 ? (
-          <p className="mt-2 text-[14px] text-muted">Cuando los estudios respondan, las comparan acá.</p>
+          <p className="mt-2 text-ui text-muted">Cuando los estudios respondan, las comparan acá.</p>
         ) : (
           <>
             <div className="mt-3 overflow-x-auto rounded-lg border border-line bg-surface">
-              <table className="w-full min-w-[640px] text-left text-[14px]">
+              <table className="w-full min-w-[640px] text-left text-ui">
                 <caption className="sr-only">Comparación de propuestas: precio mensual por integrante según perfil</caption>
-                <thead className="border-b border-line text-[12px] text-muted">
+                <thead className="border-b border-line text-caption text-muted">
                   <tr>
                     <th className="px-4 py-3 font-medium">Estudio</th>
                     {PROFILES.map((p) => (
@@ -272,33 +273,33 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                       <td className="px-3 py-3">{p.notice_days} días</td>
                       <td className="px-3 py-3">
                         {votes}
-                        {myVote && <span className="ml-1 text-[12px] text-muted">(tu voto)</span>}
+                        {myVote && <span className="ml-1 text-caption text-muted">(tu voto)</span>}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <p className="mt-2 text-[12px] text-muted">Precios en pesos por mes y por integrante, pago mensual por adelantado. En negrita, tu perfil. La votación no es vinculante: cada uno decide si acepta.</p>
+            <p className="mt-2 text-caption text-muted">Precios en pesos por mes y por integrante, pago mensual por adelantado. En negrita, tu perfil. La votación no es vinculante: cada uno decide si acepta.</p>
             <ul className="mt-4 grid gap-3">
               {x.proposals.map(({ p, studio, myVote, accepted }) => (
                 <li key={p.id} className="rounded-lg border border-line bg-surface p-4">
-                  <p className="text-[15px] font-semibold">{studio}</p>
-                  <p className="mt-1 whitespace-pre-line text-[14px]">{p.includes}</p>
-                  {p.below_min_since && <p className="mt-2 text-[13px] text-danger">La Flota quedó debajo del mínimo de esta propuesta: el precio grupal tiene 30 días de aviso.</p>}
-                  <p className="mt-2 text-[13px] text-muted">{accepted} {accepted === 1 ? "integrante aceptó" : "integrantes aceptaron"}</p>
+                  <p className="text-body font-semibold">{studio}</p>
+                  <p className="mt-1 whitespace-pre-line text-ui">{p.includes}</p>
+                  {p.below_min_since && <p className="mt-2 text-meta text-danger">La Flota quedó debajo del mínimo de esta propuesta: el precio grupal tiene 30 días de aviso.</p>}
+                  <p className="mt-2 text-meta text-muted">{accepted} {accepted === 1 ? "integrante aceptó" : "integrantes aceptaron"}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {!myVote && (
                       <form action={voteAction}>
                         {hidden}
                         <input type="hidden" name="proposal" value={p.id} />
-                        <button type="submit" className="h-9 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+                        <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
                           Votar esta
                         </button>
                       </form>
                     )}
                     {!x.myAgreement && (
-                      <Link href={`/flotas/acuerdo/${p.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-4 text-[13px] font-medium text-paper hover:bg-night">
+                      <Link href={`/flotas/acuerdo/${p.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-4 text-meta font-medium text-paper hover:bg-night">
                         Ver y aceptar mi acuerdo
                       </Link>
                     )}
@@ -309,7 +310,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           </>
         )}
         {x.myAgreement && (
-          <p className="mt-3 text-[14px]">
+          <p className="mt-3 text-ui">
             Ya tenés tu acuerdo con el estudio.{" "}
             <Link href="/flotas/servicios" className="font-medium underline underline-offset-4">
               Ver Mis servicios
@@ -319,7 +320,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
       </section>
 
       <section aria-labelledby="conversacion" className="mt-10">
-        <h2 id="conversacion" className="flex items-center gap-2 text-[19px] font-semibold">
+        <h2 id="conversacion" className="flex items-center gap-2 text-section font-semibold">
           <MessageSquare className="size-5 text-rose-deep" aria-hidden /> Conversación y novedades
         </h2>
         <form action={postMessageAction} className="mt-3 flex gap-2">
@@ -332,8 +333,8 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         </form>
         <ol className="mt-4 grid gap-2">
           {x.events.map((e) => (
-            <li key={e.id} className={cn("rounded-md px-4 py-2.5 text-[14px]", e.kind === "mensaje" ? "border border-line bg-surface" : "bg-canvas text-muted")}>
-              <span className="block text-[12px] text-muted">
+            <li key={e.id} className={cn("rounded-md px-4 py-2.5 text-ui", e.kind === "mensaje" ? "border border-line bg-surface" : "bg-canvas text-muted")}>
+              <span className="block text-caption text-muted">
                 {e.kind === "mensaje" ? e.actor_label : "Novedad"} · {time.format(e.created_at)}
               </span>
               {e.body}
@@ -343,17 +344,17 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
       </section>
 
       <section className="mt-10 rounded-lg border border-line bg-surface p-5">
-        <h2 className="flex items-center gap-2 text-[17px] font-semibold">
+        <h2 className="flex items-center gap-2 text-title font-semibold">
           <Anchor className="size-5 text-rose-deep" aria-hidden /> Configuración
         </h2>
         {isCaptain && (
           <form action={updateFleetAction} className="mt-3 grid gap-3 sm:grid-cols-2">
             {hidden}
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Nombre
               <input name="name" defaultValue={x.fleet.name} required maxLength={60} className={field} />
             </label>
-            <label className="text-[13px] text-muted">
+            <label className="text-meta text-muted">
               Descripción
               <input name="description" defaultValue={x.fleet.description ?? ""} maxLength={500} className={field} />
             </label>
@@ -364,11 +365,11 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         )}
         <form action={leaveFleetAction} className="mt-4">
           {hidden}
-          <p className="text-[13px] text-muted">
+          <p className="text-meta text-muted">
             Salir de la Flota no da de baja tu acuerdo con el estudio: lo mantenés con la tarifa grupal o lo das de baja desde Mis servicios.
             {isCaptain && " Si salís, el rol de Capitán pasa al integrante más antiguo."}
           </p>
-          <button type="submit" className="mt-2 h-9 rounded-md border border-line px-3 text-[13px] hover:border-muted">
+          <button type="submit" className="mt-2 h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
             Salir de la Flota
           </button>
         </form>

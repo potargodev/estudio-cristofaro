@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 function Problem({ text }: { text: string }) {
   return (
     <AuthShell title="No se pudo conectar" subtitle="Faro · MCP">
-      <p className="text-[15px] text-muted">{text}</p>
+      <p className="text-body text-muted">{text}</p>
     </AuthShell>
   );
 }
@@ -48,27 +48,27 @@ export default async function AutorizarPage({ searchParams }: { searchParams: Pr
 
   return (
     <AuthShell title={`Conectar ${client.name}`} subtitle="Faro · acceso MCP" wide>
-      <p className="text-[15px] leading-relaxed text-ink">
+      <p className="text-body leading-relaxed text-ink">
         <strong>{client.name}</strong> quiere operar Faro en tu nombre ({user.email}), con los permisos de tu rol. Elegí qué puede ver y hacer. Lo sensible igual pasa por Aprobaciones y podés revocar el acceso cuando quieras en Accesos MCP.
       </p>
-      <p className="mt-2 break-all text-[12px] text-muted">Vuelve a: {redirectUri}</p>
+      <p className="mt-2 break-all text-caption text-muted">Vuelve a: {redirectUri}</p>
       <form action={authorizeOAuthClient} className="mt-5 grid gap-5">
         <input type="hidden" name="client_id" value={clientId} />
         <input type="hidden" name="redirect_uri" value={redirectUri} />
         <input type="hidden" name="state" value={sp.state ?? ""} />
         <input type="hidden" name="code_challenge" value={sp.code_challenge ?? ""} />
         <div>
-          <label htmlFor="oauth-name" className="text-sm font-medium text-ink/80">
+          <label htmlFor="oauth-name" className="text-ui font-medium text-ink/80">
             Nombre del acceso
           </label>
-          <input id="oauth-name" name="name" defaultValue={client.name} maxLength={80} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-[15px]" />
+          <input id="oauth-name" name="name" defaultValue={client.name} maxLength={80} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body" />
         </div>
         <ScopeFields modules={TOOL_MODULES} orgs={orgs} idPrefix="oauth" />
         <div className="flex flex-wrap gap-2">
-          <button type="submit" name="decision" value="permitir" className="h-10 bg-navy px-5 text-[15px] font-medium text-paper hover:bg-navy-deep">
+          <button type="submit" name="decision" value="permitir" className="h-10 bg-navy px-5 text-body font-medium text-paper hover:bg-navy-deep">
             Permitir acceso
           </button>
-          <button type="submit" name="decision" value="rechazar" formNoValidate className="h-10 border border-line bg-surface px-5 text-[15px] text-ink hover:border-muted">
+          <button type="submit" name="decision" value="rechazar" formNoValidate className="h-10 border border-line bg-surface px-5 text-body text-ink hover:border-muted">
             Rechazar
           </button>
         </div>

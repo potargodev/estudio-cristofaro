@@ -25,14 +25,14 @@ export default async function AcuerdoPage({ params, searchParams }: { params: Pr
   return (
     <>
       <Feedback error={sp.error} />
-      <Link href={`/flotas/${x.fleet.id}`} className="text-[13px] text-muted hover:text-ink">
+      <Link href={`/flotas/${x.fleet.id}`} className="text-meta text-muted hover:text-ink">
         ← {x.fleet.name}
       </Link>
       <h1 className="mt-3 font-display text-[28px] leading-tight text-ink sm:text-[32px]">Acuerdo de servicio con {x.studio}</h1>
-      <p className="mt-2 text-[15px] text-muted">
+      <p className="mt-2 text-body text-muted">
         Es un acuerdo <strong className="font-semibold text-ink">individual</strong> entre vos y el estudio. La Flota no firma nada ni tiene un pozo común.
       </p>
-      <article className="mt-6 grid gap-4 rounded-lg border border-line bg-surface p-5 text-[15px]">
+      <article className="mt-6 grid gap-4 rounded-lg border border-line bg-surface p-5 text-body">
         <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-[180px_1fr]">
           <dt className="text-muted">Partes</dt>
           <dd>
@@ -57,23 +57,23 @@ export default async function AcuerdoPage({ params, searchParams }: { params: Pr
           <dt className="text-muted">Pagos</dt>
           <dd>Pagás solo tu abono, directo al estudio, por el medio que acuerden (el estudio lo registra). Nadie paga ni debe por otro.</dd>
         </dl>
-        <p className="rounded-md bg-canvas px-3 py-2 text-[13px] text-muted">{INFORMAL_NOTICE}</p>
+        <p className="rounded-md bg-canvas px-3 py-2 text-meta text-muted">{INFORMAL_NOTICE}</p>
       </article>
       {x.price != null && (
         <form action={signAgreementAction} className="mt-6 grid max-w-xl gap-4">
           <input type="hidden" name="proposal" value={x.p.id} />
-          <label className="flex items-start gap-2 text-[14px]">
+          <label className="flex items-start gap-2 text-ui">
             <input type="checkbox" name="consent" required className="mt-0.5 size-4 accent-navy" />
             <span>Acepto compartir mi nombre y mail con {x.studio} y quedar como cliente del estudio en Faro. Lo puedo revocar dando de baja el acuerdo.</span>
           </label>
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Firmá escribiendo tu nombre completo ({u.name})
-            <input name="signed_name" required autoComplete="name" className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-[15px] text-ink" />
+            <input name="signed_name" required autoComplete="name" className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-body text-ink" />
           </label>
           <div>
             <SubmitButton pendingText="Firmando…">Firmar mi acuerdo</SubmitButton>
           </div>
-          <p className="text-[12px] text-muted">
+          <p className="text-caption text-muted">
             Guardamos la fecha, la hora y la IP de la firma. Texto en borrador, pendiente de revisión legal (
             <Link href="/legal/flotas" className="underline underline-offset-4">
               condiciones de Flotas

@@ -22,7 +22,7 @@ export function ObligationsImport() {
     <div className="space-y-6">
       <form action={previewAction} className="flex flex-wrap items-end gap-3 border border-line bg-surface p-5">
         <div>
-          <Label htmlFor="import-file" className="mb-1 text-sm">
+          <Label htmlFor="import-file" className="mb-1 text-ui">
             Archivo
           </Label>
           <Input id="import-file" name="file" type="file" accept=".csv,.xlsx" required className="h-auto w-80 max-w-full py-1.5" />
@@ -31,7 +31,7 @@ export function ObligationsImport() {
           {previewing ? "Leyendo…" : "Ver vista previa"}
         </Button>
         {preview.message && !preview.ok && (
-          <p role="alert" className="w-full text-sm text-danger">
+          <p role="alert" className="w-full text-ui text-danger">
             {preview.message}
           </p>
         )}
@@ -58,7 +58,7 @@ export function ObligationsImport() {
             </form>
           </div>
           <div className="overflow-x-auto border border-line bg-surface">
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[760px] text-left text-ui">
               <thead className="border-b border-line bg-canvas text-muted">
                 <tr>
                   <th className="px-3 py-2 font-medium">Fila</th>

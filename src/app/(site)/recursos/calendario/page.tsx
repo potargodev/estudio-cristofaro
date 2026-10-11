@@ -29,7 +29,7 @@ function Table({ caption, rows }: { caption: string; rows: typeof MONTHLY }) {
     <table className="w-full border-collapse text-left">
       <caption className="pb-6 text-left font-display text-[clamp(1.8rem,3vw,2.6rem)] text-paper">{caption}</caption>
       <thead>
-        <tr className="border-y border-hair text-[13px] text-paper/55">
+        <tr className="border-y border-hair text-meta text-paper/55">
           <th scope="col" className="py-3 pr-6 font-normal">
             Obligación
           </th>
@@ -43,10 +43,10 @@ function Table({ caption, rows }: { caption: string; rows: typeof MONTHLY }) {
       </thead>
       <tbody>
         {rows.map((r) => (
-          <tr key={r.name} className="border-b border-hair align-top text-[15px]">
+          <tr key={r.name} className="border-b border-hair align-top text-body">
             <th scope="row" className="py-5 pr-6 font-normal text-paper">
               {r.name}
-              <span className="mt-1 block text-[13px] text-paper/55 sm:hidden">{r.when}</span>
+              <span className="mt-1 block text-meta text-paper/55 sm:hidden">{r.when}</span>
             </th>
             <td className="hidden py-5 pr-6 text-paper/70 sm:table-cell">{r.when}</td>
             <td className="py-5 text-paper/65">{r.detail}</td>
@@ -77,7 +77,7 @@ export default function CalendarioPage() {
               <CtaLink href={SCHEDULE_HREF} magnetic={false}>
                 Agendar una llamada
               </CtaLink>
-              <a href="https://www.arca.gob.ar/vencimientos/" target="_blank" rel="noopener noreferrer" className="u-draw pb-0.5 text-[15px] text-paper/80">
+              <a href="https://www.arca.gob.ar/vencimientos/" target="_blank" rel="noopener noreferrer" className="u-draw pb-0.5 text-body text-paper/80">
                 Calendario oficial de ARCA
               </a>
             </div>

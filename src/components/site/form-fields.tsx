@@ -4,7 +4,7 @@ import { m, useReducedMotion } from "motion/react";
 
 // Campos de la web (tema oscuro): rectos, borde hairline y foco en rosé
 export const inputClass =
-  "mt-2 block w-full rounded-[2px] border border-hair-strong bg-night px-3.5 py-3 text-[16px] text-paper placeholder:text-paper/55 transition-colors focus:border-rose-light focus:outline-none aria-[invalid=true]:border-danger";
+  "mt-2 block w-full rounded-[2px] border border-hair-strong bg-night px-3.5 py-3 text-lead text-paper placeholder:text-paper/55 transition-colors focus:border-rose-light focus:outline-none aria-[invalid=true]:border-danger";
 
 export function Field({
   label,
@@ -21,13 +21,13 @@ export function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-[14px] text-paper/80">
+      <label htmlFor={name} className="block text-ui text-paper/80">
         {label}
       </label>
       {children}
-      {hint && !error && <p className="mt-1.5 text-[13px] text-paper/55">{hint}</p>}
+      {hint && !error && <p className="mt-1.5 text-meta text-paper/55">{hint}</p>}
       {error && (
-        <p id={`${name}-error`} className="mt-1.5 text-[13px] text-danger">
+        <p id={`${name}-error`} className="mt-1.5 text-meta text-danger">
           {error}
         </p>
       )}
@@ -83,7 +83,7 @@ export function SentMessage({ title, text, children }: { title: string; text: st
         />
       </svg>
       <div>
-        <p className="font-display text-2xl text-paper">{title}</p>
+        <p className="font-display text-headline text-paper">{title}</p>
         <p className="mt-2 leading-relaxed text-paper/75">{text}</p>
         {children}
       </div>

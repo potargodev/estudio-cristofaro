@@ -14,12 +14,13 @@ import { cn } from "@/lib/utils";
 import { FILE_TEMPLATES } from "@/modules/industries/catalog";
 import { saveWelcomeData, saveWelcomeIndustries } from "./actions";
 import { FARO_APP_METADATA } from "@/lib/faro/pwa";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { ...FARO_APP_METADATA, title: { absolute: "Bienvenida · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
-const field = "mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-[15px] text-ink focus:border-navy focus:outline-none";
-const label = "text-[13px] font-medium text-muted";
+const field = `mt-1 ${fieldClass}`;
+const label = "text-meta font-medium text-muted";
 
 /**
  * Asistente de bienvenida del dueño de la cuenta: datos, rubros y por dónde
@@ -50,30 +51,30 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
           <FaroLogo size="sm" />
           <div className="flex items-center gap-2">
             <ThemeToggle className="text-paper/75 hover:text-paper" />
-            <Link href={home} className="text-[13px] text-paper/75 underline-offset-4 hover:underline">
+            <Link href={home} className="text-meta text-paper/75 underline-offset-4 hover:underline">
               Saltear por ahora
             </Link>
           </div>
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12">
-        <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-rose-deep">Bienvenida</p>
+        <p className="text-meta font-semibold uppercase tracking-[0.12em] text-rose-deep">Bienvenida</p>
         <h1 className="mt-2 font-display text-[36px] leading-tight sm:text-[48px]">Hola, {first}.</h1>
-        <p className="mt-2 max-w-xl text-[16px] text-muted">
+        <p className="mt-2 max-w-xl text-lead text-muted">
           {kind === "studio" ? "Dejemos el estudio listo en tres pasos. Lo podés cambiar después." : kind === "personal" ? "Tres pasos y tu panel queda armado con tu CUIT y tu actividad." : "Contanos qué querés hacer primero y te llevamos ahí."}
         </p>
 
         <ol className="mt-8 flex flex-wrap gap-2" aria-label="Pasos">
           {steps.map((s, i) => (
-            <li key={s} aria-current={i + 1 === paso ? "step" : undefined} className={cn("flex items-center gap-2 rounded-md border px-3 py-1.5 text-[13px]", i + 1 === paso ? "border-navy bg-navy text-paper" : i + 1 < paso ? "border-line bg-surface text-ink" : "border-line text-muted")}>
-              <span className={cn("grid size-5 place-items-center rounded-full text-[11px]", i + 1 < paso ? "bg-navy text-gold" : "border border-current")}>{i + 1 < paso ? <Check className="size-3" aria-hidden /> : i + 1}</span>
+            <li key={s} aria-current={i + 1 === paso ? "step" : undefined} className={cn("flex items-center gap-2 rounded-md border px-3 py-1.5 text-meta", i + 1 === paso ? "border-navy bg-navy text-paper" : i + 1 < paso ? "border-line bg-surface text-ink" : "border-line text-muted")}>
+              <span className={cn("grid size-5 place-items-center rounded-full text-micro", i + 1 < paso ? "bg-navy text-gold" : "border border-current")}>{i + 1 < paso ? <Check className="size-3" aria-hidden /> : i + 1}</span>
               {s}
             </li>
           ))}
         </ol>
 
         {sp.error && (
-          <p role="alert" className="mt-6 rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-[14px] text-danger">
+          <p role="alert" className="mt-6 rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-ui text-danger">
             {sp.error}
           </p>
         )}
@@ -116,8 +117,8 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
           {kind !== "persona" && paso === 2 && (
             <form action={saveWelcomeIndustries}>
               <fieldset>
-                <legend className="text-[17px] font-semibold">{kind === "studio" ? "¿Con qué rubros trabajás?" : "¿En qué rubro trabajás?"}</legend>
-                <p className="mt-1 text-[14px] text-muted">
+                <legend className="text-title font-semibold">{kind === "studio" ? "¿Con qué rubros trabajás?" : "¿En qué rubro trabajás?"}</legend>
+                <p className="mt-1 text-ui text-muted">
                   {kind === "studio" ? "Elegí los que quieras. Al crear una organización, Faro te propone las obligaciones y documentos típicos de su rubro." : "Con eso te mostramos las obligaciones y los gastos típicos de tu actividad."}
                 </p>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -125,8 +126,8 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                     <label key={x.clave} className="flex cursor-pointer items-start gap-3 rounded-md border border-line p-3 has-[:checked]:border-navy has-[:checked]:bg-navy-soft">
                       <input type={kind === "studio" ? "checkbox" : "radio"} name="industries" value={x.clave} defaultChecked={t.industries.includes(x.clave)} className="mt-0.5 size-4 accent-navy" />
                       <span className="min-w-0">
-                        <span className="block text-[14px] font-medium">{x.nombre}</span>
-                        <span className="block text-[12px] text-muted">{x.descripcion}</span>
+                        <span className="block text-ui font-medium">{x.nombre}</span>
+                        <span className="block text-caption text-muted">{x.descripcion}</span>
                       </span>
                     </label>
                   ))}
@@ -134,7 +135,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
               </fieldset>
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <SubmitButton pendingText="Guardando…">Seguir</SubmitButton>
-                <Link href="/bienvenida?paso=1" className="text-[14px] text-muted underline-offset-4 hover:underline">
+                <Link href="/bienvenida?paso=1" className="text-ui text-muted underline-offset-4 hover:underline">
                   Volver
                 </Link>
               </div>
@@ -144,7 +145,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
           {kind === "persona" && paso === 1 && (
             <form action={saveWelcomeIndustries}>
               <fieldset>
-                <legend className="text-[17px] font-semibold">¿Qué querés hacer primero?</legend>
+                <legend className="text-title font-semibold">¿Qué querés hacer primero?</legend>
                 <div className="mt-4 grid gap-2">
                   {[
                     { v: "copiloto", icon: WandSparkles, t: "Anotar mis gastos", d: "Contáselos al Vigía por texto, audio o foto del ticket, y se arma tu Bitácora sola." },
@@ -156,8 +157,8 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                       <input type="radio" name="goal" value={o.v} defaultChecked={i === 0} className="mt-1 size-4 accent-navy" />
                       <o.icon className="mt-0.5 size-5 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
                       <span>
-                        <span className="block text-[15px] font-medium">{o.t}</span>
-                        <span className="block text-[13px] text-muted">{o.d}</span>
+                        <span className="block text-body font-medium">{o.t}</span>
+                        <span className="block text-meta text-muted">{o.d}</span>
                       </span>
                     </label>
                   ))}
@@ -171,8 +172,8 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
 
           {finalStep && (
             <div>
-              <h2 className="text-[20px] font-semibold">¡Listo! ¿Por dónde seguís?</h2>
-              <p className="mt-1 text-[14px] text-muted">Tus primeros pasos quedan en el botón «Guía», arriba, y se marcan solos a medida que los hacés.</p>
+              <h2 className="text-section font-semibold">¡Listo! ¿Por dónde seguís?</h2>
+              <p className="mt-1 text-ui text-muted">Tus primeros pasos quedan en el botón «Guía», arriba, y se marcan solos a medida que los hacés.</p>
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
                 {(kind === "studio"
                   ? [
@@ -196,12 +197,12 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                     <span className="grid size-10 place-items-center rounded-md bg-navy text-gold">
                       <o.icon className="size-5" strokeWidth={1.5} aria-hidden />
                     </span>
-                    <span className="mt-3 block text-[15px] font-medium group-hover:underline">{o.t}</span>
-                    <span className="block text-[13px] text-muted">{o.d}</span>
+                    <span className="mt-3 block text-body font-medium group-hover:underline">{o.t}</span>
+                    <span className="block text-meta text-muted">{o.d}</span>
                   </Link>
                 ))}
               </div>
-              <Link href={home} className="mt-6 inline-block text-[14px] font-medium underline-offset-4 hover:underline">
+              <Link href={home} className="mt-6 inline-block text-ui font-medium underline-offset-4 hover:underline">
                 Ir al inicio
               </Link>
             </div>

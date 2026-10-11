@@ -22,7 +22,7 @@ export function CopyButton({ text, label = "Copiar" }: { text: string; label?: s
           /* sin permiso de portapapeles */
         }
       }}
-      className="inline-flex h-8 shrink-0 items-center gap-1.5 border border-line bg-surface px-2.5 text-[13px] text-ink hover:border-muted"
+      className="inline-flex h-8 shrink-0 items-center gap-1.5 border border-line bg-surface px-2.5 text-meta text-ink hover:border-muted"
     >
       {done ? <Check className="size-3.5" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
       {done ? "Copiado" : label}
@@ -44,11 +44,11 @@ export function CreateAccess({ modules, orgs, endpoint }: { modules: Record<stri
   if (state.ok && state.token) {
     return (
       <div className="grid gap-4 [&>*]:min-w-0" role="status">
-        <p className="flex items-center gap-2 text-[15px] font-medium text-ink">
+        <p className="flex items-center gap-2 text-body font-medium text-ink">
           <KeyRound className="size-4 text-rose-deep" aria-hidden /> Acceso “{state.name}” creado. Copiá el token ahora: no se vuelve a mostrar.
         </p>
         <CodeLine text={state.token} />
-        <div className="grid gap-2 text-[14px] [&>*]:min-w-0">
+        <div className="grid gap-2 text-ui [&>*]:min-w-0">
           <p className="font-medium text-ink">Claude Code (terminal)</p>
           <CodeLine text={`claude mcp add --transport http faro ${endpoint} --header "Authorization: Bearer ${state.token}"`} />
           <p className="font-medium text-ink">Cualquier cliente MCP (config JSON)</p>
@@ -67,11 +67,11 @@ export function CreateAccess({ modules, orgs, endpoint }: { modules: Record<stri
       </AdminField>
       <ScopeFields modules={modules} orgs={orgs} idPrefix="nuevo" />
       {state.message && (
-        <p role="alert" className="text-[14px] text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}
-      <Button type="submit" disabled={pending} className="h-9 w-fit px-4 text-[15px]">
+      <Button type="submit" disabled={pending} className="h-9 w-fit px-4 text-body">
         {pending ? "Creando…" : "Crear acceso y ver el token"}
       </Button>
     </form>

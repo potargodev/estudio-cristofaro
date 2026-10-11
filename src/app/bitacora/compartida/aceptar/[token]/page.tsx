@@ -12,7 +12,7 @@ export default async function Page({ params }: { params: Promise<{ token: string
   return (
     <form action={acceptShareAction} className="grid max-w-xl gap-3 rounded-md border border-line bg-surface p-4">
       <input type="hidden" name="token" value={token} />
-      <p className="text-[14px]">
+      <p className="text-ui">
         Te invitaron a ver una Bitácora compartida. Vas a aceptar con <span className="font-medium">{me.email}</span>. Tu propia Bitácora sigue siendo privada.
       </p>
       <div>

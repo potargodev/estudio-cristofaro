@@ -40,7 +40,7 @@ export default async function SolicitudesPage() {
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{r.subject}</span>
-                  <span className="block text-sm text-muted">
+                  <span className="block text-ui text-muted">
                     {REQUEST_TYPES[r.type]} · {dateFmt.format(r.updated_at)}
                   </span>
                 </span>

@@ -35,7 +35,7 @@ export function FaroIndustries({ items }: { items: IndustryPreview[] }) {
               Elegí el rubro y arranca configurado.
             </SplitHeading>
           </div>
-          <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
+          <p className="self-end text-body leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
             {items.length} plantillas con obligaciones, documentos y tareas típicas. Son sugerencias: el estudio las revisa y las marca como validadas.
           </p>
         </div>
@@ -47,7 +47,7 @@ export function FaroIndustries({ items }: { items: IndustryPreview[] }) {
               type="button"
               aria-selected={x.key === it.key}
               onClick={() => setKey(x.key)}
-              className={cn("rounded-[2px] border px-3 py-1.5 text-[13px] transition-colors duration-300", x.key === it.key ? "border-gold bg-gold/10 text-paper" : "border-hair-strong text-paper/60 hover:text-paper")}
+              className={cn("rounded-[2px] border px-3 py-1.5 text-meta transition-colors duration-300", x.key === it.key ? "border-gold bg-gold/10 text-paper" : "border-hair-strong text-paper/60 hover:text-paper")}
             >
               {x.name}
             </button>
@@ -56,16 +56,16 @@ export function FaroIndustries({ items }: { items: IndustryPreview[] }) {
         <div role="tabpanel" key={it.key} className="mt-8 rounded-lg border border-hair-strong bg-navy-deep p-5 sm:p-7">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="font-display text-[28px] text-paper">{it.name}</h3>
-            <span className="rounded border border-hair px-2 py-0.5 text-[11px] text-paper/55">Plantilla en revisión por el estudio</span>
+            <span className="rounded border border-hair px-2 py-0.5 text-micro text-paper/55">Plantilla en revisión por el estudio</span>
           </div>
-          <p className="mt-1 max-w-2xl text-[14px] text-paper/60">{it.description}</p>
+          <p className="mt-1 max-w-2xl text-ui text-paper/60">{it.description}</p>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {cols.map((c, ci) => (
               <div key={c.title}>
-                <p className="text-[11px] uppercase tracking-[0.12em] text-paper/45">{c.title}</p>
+                <p className="text-micro uppercase tracking-[0.12em] text-paper/45">{c.title}</p>
                 <ul className="mt-3 grid gap-2">
                   {c.list.slice(0, 5).map((x, i) => (
-                    <li key={x} className="faro-demo-in flex items-start gap-2 text-[13px] text-paper/85" style={{ "--d": ci * 120 + i * 60 } as React.CSSProperties}>
+                    <li key={x} className="faro-demo-in flex items-start gap-2 text-meta text-paper/85" style={{ "--d": ci * 120 + i * 60 } as React.CSSProperties}>
                       <Check className="mt-0.5 size-3.5 shrink-0 text-gold" aria-hidden /> {x}
                     </li>
                   ))}

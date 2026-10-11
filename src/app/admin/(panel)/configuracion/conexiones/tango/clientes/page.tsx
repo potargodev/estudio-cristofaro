@@ -79,7 +79,7 @@ export default async function TangoClientesPage({
 
   return (
     <div className="max-w-6xl">
-      <Link href="/admin/configuracion/conexiones/tango" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
+      <Link href="/admin/configuracion/conexiones/tango" className="text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
         Integraciones
       </Link>
       <div className="mt-2">
@@ -104,7 +104,7 @@ export default async function TangoClientesPage({
               key={f.key}
               href={`?estado=${f.key}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
               className={cn(
-                "rounded-md border px-3 py-1 text-sm",
+                "rounded-md border px-3 py-1 text-ui",
                 estado === f.key ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-navy/40",
               )}
             >
@@ -129,12 +129,12 @@ export default async function TangoClientesPage({
             <li key={r.id} id={r.id} className="grid scroll-mt-6 gap-3 px-4 py-3.5 lg:grid-cols-[1.3fr_1fr_1.2fr] lg:items-center">
               <div className="min-w-0">
                 <p className="truncate font-medium">{data.name ?? `Cliente ${r.external_id}`}</p>
-                <p className="text-sm text-muted">
+                <p className="text-ui text-muted">
                   {fmtCuit(data.cuit)} · Empresa {r.company_id}
                   {companyName.get(r.company_id) ? ` (${companyName.get(r.company_id)})` : ""} · id {r.external_id}
                 </p>
               </div>
-              <div className="text-sm">
+              <div className="text-ui">
                 {linked ? (
                   <span className="flex flex-wrap items-center gap-2">
                     <Badge tone="ok">Vinculado</Badge>
@@ -150,7 +150,7 @@ export default async function TangoClientesPage({
                 ) : (
                   <Badge tone="neutral">No vinculado</Badge>
                 )}
-                <p className="mt-1 text-xs text-muted">Sincronizado: {fmt.format(r.synced_at)}</p>
+                <p className="mt-1 text-caption text-muted">Sincronizado: {fmt.format(r.synced_at)}</p>
               </div>
               <div className="flex flex-wrap items-center gap-2 lg:justify-end">
                 {linked ? (

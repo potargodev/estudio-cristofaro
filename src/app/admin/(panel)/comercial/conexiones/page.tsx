@@ -8,10 +8,11 @@ import { SubmitButton } from "@/components/admin/ui";
 import { inviteClientAction } from "@/app/admin/conexiones-actions";
 import { requireStaff } from "@/lib/auth";
 import { STATUS_LABEL, studioConnections, studioRatings } from "@/modules/conexiones/server";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Conexiones" };
 
-const field = "mt-1 block w-full rounded-md border border-line bg-surface px-2.5 py-2 text-[14px] text-ink";
+const field = `mt-1 py-2 ${fieldClass}`;
 const GROUPS: { title: string; states: string[] }[] = [
   { title: "Para revisar", states: ["admision", "acuerdo"] },
   { title: "Invitaciones enviadas", states: ["invitada"] },
@@ -36,16 +37,16 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
 
       <section aria-labelledby="invitar" className="rounded-lg border border-line bg-surface p-5">
-        <h3 id="invitar" className="flex items-center gap-2 text-[16px] font-semibold">
+        <h3 id="invitar" className="flex items-center gap-2 text-lead font-semibold">
           <UserPlus className="size-5 text-rose-deep" aria-hidden /> Invitar a un cliente
         </h3>
-        <p className="mt-1 text-[13px] text-muted">La persona tiene que tener su cuenta de Faro (es gratis). Elige qué compartir y cómo trabajan; después hacés tu admisión.</p>
+        <p className="mt-1 text-meta text-muted">La persona tiene que tener su cuenta de Faro (es gratis). Elige qué compartir y cómo trabajan; después hacés tu admisión.</p>
         <form action={inviteClientAction} className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Mail
             <input name="email" type="email" required className={field} />
           </label>
-          <label className="text-[13px] text-muted">
+          <label className="text-meta text-muted">
             Mensaje (opcional)
             <input name="message" maxLength={500} className={field} />
           </label>
@@ -58,17 +59,17 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
         if (!rows.length) return null;
         return (
           <section key={g.title} aria-label={g.title} className="rounded-lg border border-line bg-surface">
-            <h3 className="px-5 pt-4 text-[15px] font-semibold">
+            <h3 className="px-5 pt-4 text-body font-semibold">
               {g.title} <span className="font-normal text-muted">· {rows.length}</span>
             </h3>
             <ul className="mt-2 divide-y divide-line">
               {rows.map(({ c, name, email }) => (
                 <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3" data-conexion={c.status}>
                   <span className="min-w-0">
-                    <Link href={c.status === "activa" || c.status === "en_cierre" || c.status === "en_disputa" ? `/admin/organizaciones/cuenta/${c.id}` : `/admin/comercial/conexiones/${c.id}`} className="block truncate text-[15px] font-medium text-ink underline-offset-4 hover:underline">
+                    <Link href={c.status === "activa" || c.status === "en_cierre" || c.status === "en_disputa" ? `/admin/organizaciones/cuenta/${c.id}` : `/admin/comercial/conexiones/${c.id}`} className="block truncate text-body font-medium text-ink underline-offset-4 hover:underline">
                       {name}
                     </Link>
-                    <span className="block text-[13px] text-muted">
+                    <span className="block text-meta text-muted">
                       {email} · {c.initiated_by === "usuario" ? "la pidió la persona" : "la invitó el estudio"} · {c.source === "flota" ? "desde una Flota" : c.created_at.toLocaleDateString("es-AR")}
                     </span>
                   </span>
@@ -79,19 +80,19 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
           </section>
         );
       })}
-      {list.length === 0 && <p className="text-[14px] text-muted">Todavía no hay conexiones. Llegan desde la Red Contable o invitando a tus clientes.</p>}
+      {list.length === 0 && <p className="text-ui text-muted">Todavía no hay conexiones. Llegan desde la Red Contable o invitando a tus clientes.</p>}
 
       <section aria-labelledby="calificaciones" className="rounded-lg border border-line bg-surface p-5">
-        <h3 id="calificaciones" className="flex items-center gap-2 text-[16px] font-semibold">
+        <h3 id="calificaciones" className="flex items-center gap-2 text-lead font-semibold">
           <Star className="size-5 text-rose-deep" aria-hidden /> Tus calificaciones
         </h3>
-        <p className="mt-1 text-[13px] text-muted">Las encuestas durante la relación y al cierre. Son privadas: solo las ves vos; no cambian lo que se muestra en la Red.</p>
+        <p className="mt-1 text-meta text-muted">Las encuestas durante la relación y al cierre. Son privadas: solo las ves vos; no cambian lo que se muestra en la Red.</p>
         {ratings.length === 0 ? (
-          <p className="mt-2 text-[14px] text-muted">Todavía no hay calificaciones.</p>
+          <p className="mt-2 text-ui text-muted">Todavía no hay calificaciones.</p>
         ) : (
           <ul className="mt-2 divide-y divide-line">
             {ratings.map(({ r, name }) => (
-              <li key={r.id} className="py-2 text-[14px]">
+              <li key={r.id} className="py-2 text-ui">
                 <span className="num">{"★".repeat(r.score ?? 0)}</span> {name} · {r.kind === "cierre" ? "al cierre" : "durante la relación"} · {r.created_at.toLocaleDateString("es-AR")}
                 {r.comment && <span className="block text-muted">«{r.comment}»</span>}
               </li>

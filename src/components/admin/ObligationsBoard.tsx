@@ -42,7 +42,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={cn("h-7 rounded-md border px-2.5 text-[13px] transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
+      className={cn("h-7 rounded-md border px-2.5 text-meta transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
     >
       {children}
     </button>
@@ -118,12 +118,12 @@ export function ObligationsBoard({
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Buscar organización, impuesto o período…"
-              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
+              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
             />
           </label>
-          <label className="flex items-center gap-2 text-[13px] text-muted">
+          <label className="flex items-center gap-2 text-meta text-muted">
             Organización
-            <select value={org} onChange={(e) => setOrg(e.target.value)} className="h-9 max-w-56 rounded-md border border-line bg-surface px-2 text-[14px] text-ink">
+            <select value={org} onChange={(e) => setOrg(e.target.value)} className="h-9 max-w-56 rounded-md border border-line bg-surface px-2 text-ui text-ink">
               <option value="">Todas</option>
               {orgs.map(([id, name]) => (
                 <option key={id} value={id}>
@@ -132,13 +132,13 @@ export function ObligationsBoard({
               ))}
             </select>
           </label>
-          <p className="tabular ml-auto text-[13px] text-muted" aria-live="polite">
+          <p className="tabular ml-auto text-meta text-muted" aria-live="polite">
             {filtered.length} vencimientos
           </p>
         </div>
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <div role="group" aria-label="Estado" className="flex flex-wrap items-center gap-1.5">
-            <span className="mr-1 text-[13px] text-muted">Estado</span>
+            <span className="mr-1 text-meta text-muted">Estado</span>
             {STATUS_OPTIONS.map(([v, l]) => (
               <Chip key={v} on={statuses.includes(v)} onClick={() => toggle(statuses, setStatuses, v)}>
                 {l}
@@ -147,7 +147,7 @@ export function ObligationsBoard({
           </div>
           {allTaxes.length > 1 && (
             <div role="group" aria-label="Impuesto" className="flex flex-wrap items-center gap-1.5">
-              <span className="mr-1 text-[13px] text-muted">Impuesto</span>
+              <span className="mr-1 text-meta text-muted">Impuesto</span>
               {allTaxes.map((t) => (
                 <Chip key={t} on={taxes.includes(t)} onClick={() => toggle(taxes, setTaxes, t)}>
                   {t}
@@ -157,7 +157,7 @@ export function ObligationsBoard({
           )}
           {allResp.length > 1 && (
             <div role="group" aria-label="Responsable" className="flex flex-wrap items-center gap-1.5">
-              <span className="mr-1 text-[13px] text-muted">Responsable</span>
+              <span className="mr-1 text-meta text-muted">Responsable</span>
               {allResp.map((t) => (
                 <Chip key={t} on={resp.includes(t)} onClick={() => toggle(resp, setResp, t)}>
                   {t}
@@ -169,7 +169,7 @@ export function ObligationsBoard({
       </div>
 
       {selected.size > 0 && (
-        <div className="sticky top-[var(--app-top,3.5rem)] z-10 flex flex-wrap items-center gap-3 border-b border-line bg-navy px-4 py-2.5 text-[14px] text-paper">
+        <div className="sticky top-[var(--app-top,3.5rem)] z-10 flex flex-wrap items-center gap-3 border-b border-line bg-navy px-4 py-2.5 text-ui text-paper">
           <span className="tabular">{selected.size} seleccionados</span>
           {(
             [
@@ -183,12 +183,12 @@ export function ObligationsBoard({
               ))}
               <input type="hidden" name="status" value={status} />
               <input type="hidden" name="back" value={back} />
-              <button type="submit" className="h-8 rounded-md bg-rose-light px-3 text-[13px] font-medium text-night hover:bg-paper">
+              <button type="submit" className="h-8 rounded-md bg-rose-light px-3 text-meta font-medium text-night hover:bg-paper">
                 {label}
               </button>
             </form>
           ))}
-          <button type="button" onClick={() => setSelected(new Set())} className="ml-auto text-[13px] text-paper/80 underline-offset-4 hover:underline">
+          <button type="button" onClick={() => setSelected(new Set())} className="ml-auto text-meta text-paper/80 underline-offset-4 hover:underline">
             Deseleccionar
           </button>
         </div>
@@ -202,7 +202,7 @@ export function ObligationsBoard({
           const late = list.filter((r) => r.status === "vencido").length;
           return (
             <section key={week} aria-label={`Semana del ${weekFmt.format(new Date(`${week}T00:00:00Z`))}`}>
-              <header className="flex items-center gap-3 border-b border-line bg-canvas px-4 py-2 text-[13px]">
+              <header className="flex items-center gap-3 border-b border-line bg-canvas px-4 py-2 text-meta">
                 <input type="checkbox" checked={allOn} onChange={() => toggleGroup(list)} aria-label="Elegir toda la semana" className="size-4 accent-[var(--color-navy)]" />
                 <span className="font-medium text-ink">
                   {week === thisWeek ? "Esta semana" : `Semana del ${weekFmt.format(new Date(`${week}T00:00:00Z`))}`}
@@ -220,18 +220,18 @@ export function ObligationsBoard({
                     )}
                   >
                     <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggleRow(r.id)} aria-label={`Elegir ${r.tax} ${r.period} de ${r.org}`} className="size-4 accent-[var(--color-navy)]" />
-                    <span className={cn("tabular hidden text-[13px] md:block", r.status === "vencido" ? "font-medium text-[#8f2a1c]" : "text-muted")}>
+                    <span className={cn("tabular hidden text-meta md:block", r.status === "vencido" ? "font-medium text-[#8f2a1c]" : "text-muted")}>
                       {dayFmt.format(new Date(`${r.due}T00:00:00Z`))}
                     </span>
                     <span className="min-w-0">
-                      <span className="block truncate text-[14px] font-medium text-ink">
+                      <span className="block truncate text-ui font-medium text-ink">
                         {r.tax} <span className="font-normal text-muted">{r.period}</span>
                       </span>
-                      <Link href={`/admin/organizaciones/${r.orgId}?tab=vencimientos`} className="block truncate text-[13px] text-muted underline-offset-4 hover:text-ink hover:underline">
+                      <Link href={`/admin/organizaciones/${r.orgId}?tab=vencimientos`} className="block truncate text-meta text-muted underline-offset-4 hover:text-ink hover:underline">
                         {r.org}
                       </Link>
                       {/* Celular: fecha, importe y responsable en una línea */}
-                      <span className="tabular mt-0.5 block truncate text-[13px] text-muted md:hidden">
+                      <span className="tabular mt-0.5 block truncate text-meta text-muted md:hidden">
                         <span className={r.status === "vencido" ? "font-medium text-[#8f2a1c]" : ""}>{dayFmt.format(new Date(`${r.due}T00:00:00Z`))}</span>
                         {" · "}
                         {r.amount != null ? money.format(r.amount) : "sin importe"}
@@ -239,8 +239,8 @@ export function ObligationsBoard({
                         {r.responsible ?? "sin responsable"}
                       </span>
                     </span>
-                    <span className="tabular hidden text-right text-[14px] text-ink md:block">{r.amount != null ? money.format(r.amount) : "—"}</span>
-                    <span className="hidden truncate text-[13px] text-muted md:block">{r.responsible ?? "Sin responsable"}</span>
+                    <span className="tabular hidden text-right text-ui text-ink md:block">{r.amount != null ? money.format(r.amount) : "—"}</span>
+                    <span className="hidden truncate text-meta text-muted md:block">{r.responsible ?? "Sin responsable"}</span>
                     <span className="text-right">
                       <StatusBadge status={r.status} />
                     </span>

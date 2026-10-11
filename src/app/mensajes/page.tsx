@@ -32,8 +32,8 @@ export default async function MensajesPage() {
       {list.length === 0 ? (
         <div className="rounded-md border border-dashed border-line bg-surface p-8 text-center">
           <MessagesSquare className="mx-auto size-8 text-muted" strokeWidth={1.5} aria-hidden />
-          <p className="mt-3 text-[15px]">Todavía no tenés conversaciones.</p>
-          <p className="mt-1 text-[14px] text-muted">Cuando compartas un grupo de gastos o una Flota, su conversación aparece acá sola.</p>
+          <p className="mt-3 text-body">Todavía no tenés conversaciones.</p>
+          <p className="mt-1 text-ui text-muted">Cuando compartas un grupo de gastos o una Flota, su conversación aparece acá sola.</p>
         </div>
       ) : (
         <ul className="divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
@@ -47,16 +47,16 @@ export default async function MensajesPage() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">
-                      <span className={cn("truncate text-[15px]", c.unread > 0 && "font-semibold")}>{c.title}</span>
-                      {KIND[c.kind as keyof typeof KIND] && <span className="shrink-0 text-[11px] text-muted">{KIND[c.kind as keyof typeof KIND]}</span>}
+                      <span className={cn("truncate text-body", c.unread > 0 && "font-semibold")}>{c.title}</span>
+                      {KIND[c.kind as keyof typeof KIND] && <span className="shrink-0 text-micro text-muted">{KIND[c.kind as keyof typeof KIND]}</span>}
                       {c.muted && <BellOff className="size-3.5 shrink-0 text-muted" aria-label="Silenciada" />}
                     </span>
-                    <span className={cn("block truncate text-[13px]", c.unread > 0 ? "text-ink" : "text-muted")}>{c.last ?? "Sin mensajes todavía"}</span>
+                    <span className={cn("block truncate text-meta", c.unread > 0 ? "text-ink" : "text-muted")}>{c.last ?? "Sin mensajes todavía"}</span>
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-1">
-                    <span className="text-[12px] text-muted">{when(c.lastAt)}</span>
+                    <span className="text-caption text-muted">{when(c.lastAt)}</span>
                     {c.unread > 0 && (
-                      <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-[11px] font-semibold text-night" aria-label={`${c.unread} sin leer`}>
+                      <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-micro font-semibold text-night" aria-label={`${c.unread} sin leer`}>
                         {c.unread > 99 ? "99+" : c.unread}
                       </span>
                     )}
@@ -72,16 +72,16 @@ export default async function MensajesPage() {
 
       {blocked.length > 0 && (
         <section aria-labelledby="bloqueadas" className="rounded-md border border-line bg-surface p-4">
-          <h2 id="bloqueadas" className="text-[15px] font-semibold">
+          <h2 id="bloqueadas" className="text-body font-semibold">
             Personas bloqueadas
           </h2>
           <ul className="mt-2 divide-y divide-line">
             {blocked.map((b) => (
-              <li key={b.id} className="flex items-center justify-between gap-3 py-2 text-[14px]">
+              <li key={b.id} className="flex items-center justify-between gap-3 py-2 text-ui">
                 {b.name}
                 <form action={unblockAction}>
                   <input type="hidden" name="user" value={b.id} />
-                  <button className="text-[13px] text-muted underline-offset-4 hover:text-ink hover:underline">Desbloquear</button>
+                  <button className="text-meta text-muted underline-offset-4 hover:text-ink hover:underline">Desbloquear</button>
                 </form>
               </li>
             ))}

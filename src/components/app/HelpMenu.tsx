@@ -48,7 +48,7 @@ export function HelpMenu({ className }: { className?: string }) {
         <CircleHelp className="size-[18px]" strokeWidth={1.6} aria-hidden />
       </button>
       {open && (
-        <div role="menu" aria-label="Ayuda" className="app-ui absolute right-0 top-full z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-md border border-line bg-surface p-1.5 text-[14px] text-ink shadow-[0_16px_40px_-16px_rgba(0,0,0,0.35)]">
+        <div role="menu" aria-label="Ayuda" className="app-ui absolute right-0 top-full z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-md border border-line bg-surface p-1.5 text-ui text-ink shadow-overlay">
           <button
             type="button"
             role="menuitem"
@@ -78,7 +78,7 @@ export function HelpMenu({ className }: { className?: string }) {
               <button type="button" role="menuitemcheckbox" aria-checked={!g.disabled} onClick={() => void toggleGuide()} className="flex w-full items-center justify-between gap-3 rounded-[4px] px-3 py-2.5 text-left hover:bg-canvas">
                 <span>
                   <span className="block font-medium">Guía {g.disabled ? "apagada" : "prendida"}</span>
-                  <span className="block text-[12px] text-muted">{g.disabled ? "No aparece nada solo." : "Un recorrido corto la primera vez que entrás a cada pantalla."}</span>
+                  <span className="block text-caption text-muted">{g.disabled ? "No aparece nada solo." : "Un recorrido corto la primera vez que entrás a cada pantalla."}</span>
                 </span>
                 <span aria-hidden className={cn("relative h-5 w-9 shrink-0 rounded-full transition-colors", g.disabled ? "bg-line" : "bg-navy")}>
                   <span className={cn("absolute top-0.5 size-4 rounded-full bg-surface shadow motion-safe:transition-[left]", g.disabled ? "left-0.5" : "left-[18px]")} />

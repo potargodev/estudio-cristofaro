@@ -39,14 +39,14 @@ export function AuthShell({
               </span>
             )}
             <div>
-              <h1 className="text-[19px] font-bold leading-tight">{title}</h1>
-              <p className="text-sm text-muted">{subtitle}</p>
+              <h1 className="text-section font-bold leading-tight">{title}</h1>
+              <p className="text-ui text-muted">{subtitle}</p>
             </div>
           </div>
           {children}
         </div>
-        {footer && <div className="mt-5 text-center text-sm text-paper/70">{footer}</div>}
-        {brand === "studio" && <p className="mt-6 text-center text-[12px] text-paper/45">Con tecnología de Faro</p>}
+        {footer && <div className="mt-5 text-center text-ui text-paper/70">{footer}</div>}
+        {brand === "studio" && <p className="mt-6 text-center text-caption text-paper/45">Con tecnología de Faro</p>}
       </div>
     </div>
   );

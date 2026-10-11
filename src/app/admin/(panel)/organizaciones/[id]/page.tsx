@@ -142,7 +142,7 @@ export default async function OrganizacionPage({
         <Avatar name={org.name} size="lg" />
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{org.name}</h1>
-          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted">
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-meta text-muted">
             <StatusBadge status={org.status} />
             {limits.planName ? <Tag>{limits.planName}</Tag> : <span>Sin plan</span>}
             <span className="tabular">
@@ -200,26 +200,26 @@ export default async function OrganizacionPage({
             </div>
             <aside className="space-y-4">
               <div className="border border-line bg-surface p-5">
-                <h2 className="text-[16px] font-medium">Responsable del estudio</h2>
-                <p className="mt-1 text-[15px] text-muted">{lead ? `${lead.name} · ${lead.email}` : "Sin asignar."}</p>
+                <h2 className="text-lead font-medium">Responsable del estudio</h2>
+                <p className="mt-1 text-body text-muted">{lead ? `${lead.name} · ${lead.email}` : "Sin asignar."}</p>
                 <Link
                   href={`/admin/organizaciones/${org.id}?tab=equipo`}
-                  className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep"
+                  className="mt-2 inline-block text-ui text-ink underline underline-offset-4 hover:text-rose-deep"
                 >
                   Gestionar equipo
                 </Link>
               </div>
               <div>
-                <h2 className="mb-2 text-[16px] font-medium">Llamadas</h2>
+                <h2 className="mb-2 text-lead font-medium">Llamadas</h2>
                 <Suspense fallback={<ListSkeleton rows={2} />}>
                   <CallsList studioId={studioId} where={eq(bookings.organization_id, org.id)} empty="Todavía no agendaron llamadas." />
                 </Suspense>
               </div>
               {org.lead_id && (
                 <div className="border border-line bg-surface p-5">
-                  <h2 className="text-[16px] font-medium">Origen</h2>
-                  <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
-                  <Link href={`/admin/comercial/consultas/${org.lead_id}`} className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep">
+                  <h2 className="text-lead font-medium">Origen</h2>
+                  <p className="mt-1 text-body text-muted">Llegó como consulta.</p>
+                  <Link href={`/admin/comercial/consultas/${org.lead_id}`} className="mt-2 inline-block text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
                     Ver consulta original
                   </Link>
                 </div>

@@ -72,8 +72,8 @@ export function LegalEntitiesSection({ orgId, entities, limitText }: { orgId: st
   return (
     <section className="space-y-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-[18px] font-medium">Razones sociales</h2>
-        <p className="text-sm text-muted">{limitText}</p>
+        <h2 className="text-title font-medium">Razones sociales</h2>
+        <p className="text-ui text-muted">{limitText}</p>
       </div>
       <div className="space-y-2">
         {entities.map((le) => (
@@ -81,13 +81,13 @@ export function LegalEntitiesSection({ orgId, entities, limitText }: { orgId: st
             <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-4 py-3">
               <span className="min-w-0">
                 <span className="font-medium">{le.business_name}</span>
-                <span className="ml-2 text-sm text-muted">
+                <span className="ml-2 text-ui text-muted">
                   {formatCuit(le.cuit, "Sin CUIT")} · {REGIMES[le.regime]}
                   {le.category ? ` · ${le.category}` : ""}
                   {!le.active ? " · inactiva" : ""}
                 </span>
               </span>
-              <span className="text-sm text-rose-deep group-open:hidden">Editar</span>
+              <span className="text-ui text-rose-deep group-open:hidden">Editar</span>
             </summary>
             <div className="border-t border-line p-4">
               <form action={saveLegalEntity} className="grid gap-3 sm:grid-cols-2">

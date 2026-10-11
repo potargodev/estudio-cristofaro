@@ -17,9 +17,9 @@ function GoogleIcon() {
   );
 }
 
-const field = "mt-1.5 h-12 w-full border border-paper/20 bg-paper/[0.06] px-3.5 text-[16px] text-paper placeholder:text-paper/40 focus:border-rose-light focus:outline-none";
-const label = "block text-[13px] text-paper/70";
-const primary = "mt-5 inline-flex h-12 w-full items-center justify-center bg-rose-light text-[15px] font-medium text-night transition-colors hover:bg-paper disabled:opacity-60";
+const field = "mt-1.5 h-12 w-full border border-paper/20 bg-paper/[0.06] px-3.5 text-lead text-paper placeholder:text-paper/40 focus:border-rose-light focus:outline-none";
+const label = "block text-meta text-paper/70";
+const primary = "mt-5 inline-flex h-12 w-full items-center justify-center bg-rose-light text-body font-medium text-night transition-colors hover:bg-paper disabled:opacity-60";
 
 /**
  * Ingreso único (sitio y app instalada): Google, enlace por mail o usuario y
@@ -36,7 +36,7 @@ export function AccessChooser({ google, error }: { google: boolean; error?: stri
   return (
     <div>
       {error && (
-        <p role="alert" className="mb-5 border border-[#e8a598]/40 bg-[#e8a598]/10 p-3 text-[14px] text-[#f3c4ba]">
+        <p role="alert" className="mb-5 border border-[#e8a598]/40 bg-[#e8a598]/10 p-3 text-ui text-[#f3c4ba]">
           {error}
         </p>
       )}
@@ -44,14 +44,14 @@ export function AccessChooser({ google, error }: { google: boolean; error?: stri
       {google && (
         <form action={signInWithGoogle}>
           <input type="hidden" name="next" value="/portal" />
-          <button type="submit" className="inline-flex h-12 w-full items-center justify-center gap-3 bg-paper text-[15px] font-medium text-night transition-colors hover:bg-white">
+          <button type="submit" className="inline-flex h-12 w-full items-center justify-center gap-3 bg-paper text-body font-medium text-night transition-colors hover:bg-white">
             <GoogleIcon />
             Continuar con Google
           </button>
         </form>
       )}
 
-      <div className={cn("flex items-center gap-3 text-[12px] text-paper/50", google ? "my-6" : "mb-6")}>
+      <div className={cn("flex items-center gap-3 text-caption text-paper/50", google ? "my-6" : "mb-6")}>
         <span className="h-px flex-1 bg-paper/15" />
         {google ? "o entrá con" : "Entrá con"}
         <span className="h-px flex-1 bg-paper/15" />
@@ -71,7 +71,7 @@ export function AccessChooser({ google, error }: { google: boolean; error?: stri
             aria-selected={method === key}
             onClick={() => setMethod(key)}
             className={cn(
-              "inline-flex h-10 items-center justify-center gap-2 text-[13px] transition-colors",
+              "inline-flex h-10 items-center justify-center gap-2 text-meta transition-colors",
               method === key ? "bg-paper/10 text-paper" : "text-paper/60 hover:text-paper",
             )}
           >
@@ -84,7 +84,7 @@ export function AccessChooser({ google, error }: { google: boolean; error?: stri
       <div role="tabpanel" className="mt-6">
         {method === "link" ? (
           linkState.ok ? (
-            <p role="status" className="border border-rose-light/40 bg-rose-light/10 p-4 text-[15px] leading-relaxed text-paper">
+            <p role="status" className="border border-rose-light/40 bg-rose-light/10 p-4 text-body leading-relaxed text-paper">
               {linkState.message}
             </p>
           ) : (
@@ -95,14 +95,14 @@ export function AccessChooser({ google, error }: { google: boolean; error?: stri
               </label>
               <input id="link-email" name="email" type="email" autoComplete="email" required placeholder="nombre@empresa.com" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
               {linkState.message && (
-                <p role="alert" className="mt-3 text-[14px] text-[#f3c4ba]">
+                <p role="alert" className="mt-3 text-ui text-[#f3c4ba]">
                   {linkState.message}
                 </p>
               )}
               <button type="submit" disabled={linkPending} className={primary}>
                 {linkPending ? "Enviando…" : "Recibir enlace para entrar"}
               </button>
-              <p className="mt-3 text-[13px] leading-relaxed text-paper/55">Te llega un mail con un botón para entrar, sin contraseña.</p>
+              <p className="mt-3 text-meta leading-relaxed text-paper/55">Te llega un mail con un botón para entrar, sin contraseña.</p>
             </form>
           )
         ) : (
@@ -116,14 +116,14 @@ export function AccessChooser({ google, error }: { google: boolean; error?: stri
             </label>
             <input id="pw-password" name="password" type="password" autoComplete="current-password" required className={field} />
             {pwState.message && (
-              <p role="alert" className="mt-3 text-[14px] text-[#f3c4ba]">
+              <p role="alert" className="mt-3 text-ui text-[#f3c4ba]">
                 {pwState.message}
               </p>
             )}
             <button type="submit" disabled={pwPending} className={primary}>
               {pwPending ? "Ingresando…" : "Ingresar"}
             </button>
-            <p className="mt-3 text-[13px] leading-relaxed text-paper/55">Después te pedimos el código de tu app de autenticación.</p>
+            <p className="mt-3 text-meta leading-relaxed text-paper/55">Después te pedimos el código de tu app de autenticación.</p>
           </form>
         )}
       </div>

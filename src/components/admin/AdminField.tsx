@@ -18,11 +18,11 @@ export function AdminField({
 }) {
   return (
     <div className={className}>
-      <Label htmlFor={htmlFor} className="mb-1 text-sm font-medium text-ink/80">
+      <Label htmlFor={htmlFor} className="mb-1 text-ui font-medium text-ink/80">
         {label}
       </Label>
       {children}
-      {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
+      {hint && <p className="mt-1 text-caption text-muted">{hint}</p>}
     </div>
   );
 }
@@ -39,7 +39,7 @@ export function Notice({ tone = "ok", children }: { tone?: "ok" | "error"; child
         <circle cx="8" cy="8" r="6.5" />
         <path d="M8 4.8v3.6M8 11v.2" />
       </svg>
-      <AlertDescription className="text-[15px] text-danger">{children}</AlertDescription>
+      <AlertDescription className="text-body text-danger">{children}</AlertDescription>
     </Alert>
   );
 }

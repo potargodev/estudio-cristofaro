@@ -26,8 +26,8 @@ function PanelIntro({ title, text, href, cta }: { title: string; text: string; h
   return (
     <div className="col-span-3 pr-6">
       <p className="font-display text-3xl leading-none text-paper">{title}</p>
-      <p className="mt-3 text-sm leading-relaxed text-paper/65">{text}</p>
-      <Link href={href} className="u-draw mt-5 inline-block text-sm text-rose-light">
+      <p className="mt-3 text-ui leading-relaxed text-paper/65">{text}</p>
+      <Link href={href} className="u-draw mt-5 inline-block text-ui text-rose-light">
         {cta}
       </Link>
     </div>
@@ -99,7 +99,7 @@ export function SiteHeader() {
       onClick={() => (menu === k ? setMenu(null) : open(k))}
       onPointerEnter={() => open(k)}
       onPointerLeave={scheduleClose}
-      className={cn("u-draw py-1 text-[14px] transition-colors", menu === k ? "text-paper" : "text-paper/75 hover:text-paper")}
+      className={cn("u-draw py-1 text-ui transition-colors", menu === k ? "text-paper" : "text-paper/75 hover:text-paper")}
     >
       {label}
     </button>
@@ -108,7 +108,7 @@ export function SiteHeader() {
     <Link
       href={href}
       aria-current={pathname === href || pathname.startsWith(`${href}/`) ? "page" : undefined}
-      className="u-draw py-1 text-[14px] text-paper/75 transition-colors hover:text-paper aria-[current=page]:text-paper"
+      className="u-draw py-1 text-ui text-paper/75 transition-colors hover:text-paper aria-[current=page]:text-paper"
     >
       {label}
     </Link>
@@ -143,12 +143,12 @@ export function SiteHeader() {
             {trigger("recursos", "Recursos")}
           </nav>
           <div className="hidden items-center gap-6 lg:flex">
-            <Link href="/ingresar" className="u-draw py-1 text-[14px] text-paper/75 hover:text-paper">
+            <Link href="/ingresar" className="u-draw py-1 text-ui text-paper/75 hover:text-paper">
               Ingresar
             </Link>
             <Link
               href={SCHEDULE_HREF}
-              className="inline-flex h-10 items-center rounded-[2px] bg-rose-light px-4 text-[14px] font-medium text-night transition-colors hover:bg-paper"
+              className="inline-flex h-10 items-center rounded-[2px] bg-rose-light px-4 text-ui font-medium text-night transition-colors hover:bg-paper"
             >
               Agendar una llamada
             </Link>
@@ -158,7 +158,7 @@ export function SiteHeader() {
             onClick={() => setMobile(true)}
             aria-expanded={mobile}
             aria-controls={`${panelId}-mobile`}
-            className="flex h-10 items-center gap-2 text-[14px] text-paper lg:hidden"
+            className="flex h-10 items-center gap-2 text-ui text-paper lg:hidden"
           >
             <span className="flex w-6 flex-col gap-1.5" aria-hidden>
               <span className="h-px bg-paper" />
@@ -197,8 +197,8 @@ export function SiteHeader() {
                       {PLATFORM_TABS.map((t) => (
                         <Link key={t.key} href={`/#plataforma-${t.key}`} className="group col-span-2 border-l border-hair pl-5 pr-2">
                           <PlatformMini tab={t.key} />
-                          <p className="mt-3 text-sm text-paper group-hover:text-rose-light">{t.label}</p>
-                          <p className="mt-1 text-[13px] leading-snug text-paper/60">{t.title}</p>
+                          <p className="mt-3 text-ui text-paper group-hover:text-rose-light">{t.label}</p>
+                          <p className="mt-1 text-meta leading-snug text-paper/60">{t.title}</p>
                         </Link>
                       ))}
                     </>
@@ -208,9 +208,9 @@ export function SiteHeader() {
                       <PanelIntro title="Para quién" text="Empresas de servicios de 5 a 30 personas, con dueños que todavía administran." href="/#para-quien" cta="Ver todos los rubros" />
                       {AUDIENCES.map((a, i) => (
                         <Link key={a.slug} href={`/${a.slug}`} className="group col-span-2 block border-l border-hair pl-5 pr-2">
-                          <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
+                          <span className="tabular text-meta text-rose-light">0{i + 1}</span>
                           <span className="mt-2 block font-display text-[1.35rem] leading-tight text-paper group-hover:text-rose-light">{a.name}</span>
-                          <span className="mt-2 block text-[13px] leading-snug text-paper/60">{a.summary}</span>
+                          <span className="mt-2 block text-meta leading-snug text-paper/60">{a.summary}</span>
                         </Link>
                       ))}
                     </>
@@ -220,9 +220,9 @@ export function SiteHeader() {
                       <PanelIntro title="Recursos" text="Novedades, fechas y respuestas para ordenar tu administración." href="/novedades" cta="Ver novedades" />
                       {RESOURCES.map((r, i) => (
                         <Link key={r.href} href={r.href} className="group col-span-2 block border-l border-hair pl-5 pr-2">
-                          <span className="tabular text-[13px] text-rose-light">0{i + 1}</span>
+                          <span className="tabular text-meta text-rose-light">0{i + 1}</span>
                           <span className="mt-2 block font-display text-[1.35rem] leading-tight text-paper group-hover:text-rose-light">{r.label}</span>
-                          <span className="mt-2 block text-[13px] leading-snug text-paper/60">{r.text}</span>
+                          <span className="mt-2 block text-meta leading-snug text-paper/60">{r.text}</span>
                         </Link>
                       ))}
                     </>
@@ -262,7 +262,7 @@ export function SiteHeader() {
             >
               <div className="flex h-20 items-center justify-between px-5">
                 <Logo inverted />
-                <button type="button" onClick={() => setMobile(false)} className="h-10 text-[14px] text-paper" autoFocus>
+                <button type="button" onClick={() => setMobile(false)} className="h-10 text-ui text-paper" autoFocus>
                   Cerrar
                 </button>
               </div>
@@ -287,7 +287,7 @@ export function SiteHeader() {
                         className="flex items-baseline justify-between py-4 font-display text-5xl leading-none text-paper"
                       >
                         {label}
-                        <span className="tabular text-[13px] font-sans text-rose-light">0{i + 1}</span>
+                        <span className="tabular text-meta font-sans text-rose-light">0{i + 1}</span>
                       </Link>
                     </li>
                   ))}
@@ -295,7 +295,7 @@ export function SiteHeader() {
                 <Link
                   href={SCHEDULE_HREF}
                   onClick={() => setMobile(false)}
-                  className="mt-8 flex h-14 items-center justify-center rounded-[2px] bg-rose-light text-[15px] font-medium text-night"
+                  className="mt-8 flex h-14 items-center justify-center rounded-[2px] bg-rose-light text-body font-medium text-night"
                 >
                   Agendar una llamada
                 </Link>

@@ -20,11 +20,11 @@ const usd = (n: number) => `US$ ${n.toLocaleString("es-AR", { maximumFractionDig
 function Metric({ label, value, hint, icon: Icon }: { label: string; value: string | number; hint?: string; icon: typeof Building2 }) {
   return (
     <div className="border border-line bg-surface px-5 py-4">
-      <p className="flex items-center gap-2 text-[13px] text-muted">
+      <p className="flex items-center gap-2 text-meta text-muted">
         <Icon className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden /> {label}
       </p>
       <p className="mt-1 num text-[34px] leading-none text-ink">{value}</p>
-      {hint && <p className="mt-1.5 text-[12px] text-muted">{hint}</p>}
+      {hint && <p className="mt-1.5 text-caption text-muted">{hint}</p>}
     </div>
   );
 }
@@ -86,11 +86,11 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
 
   return (
     <div>
-      <PageHeader level={2} title="Tenants" description="Estudios, autónomos y personas que usan Faro, con su plan, estado y uso. Sin datos de clientes: para entrar a un tenant, pedí un acceso asistido desde su ficha." actions={<Link href="/faro-manager/nuevo" className="inline-flex h-9 items-center rounded-md bg-navy px-4 text-[13px] text-paper hover:bg-navy-deep">Alta manual</Link>} />
+      <PageHeader level={2} title="Tenants" description="Estudios, autónomos y personas que usan Faro, con su plan, estado y uso. Sin datos de clientes: para entrar a un tenant, pedí un acceso asistido desde su ficha." actions={<Link href="/faro-manager/nuevo" className="inline-flex h-9 items-center rounded-md bg-navy px-4 text-meta text-paper hover:bg-navy-deep">Alta manual</Link>} />
       <section aria-label="Por plan" className="mt-3 grid gap-3 sm:grid-cols-3 xl:grid-cols-5">
         {PLANS.map((p) => (
           <Link key={p.key} href={href("plan", plan === p.key ? null : p.key)} className={cn("border bg-surface px-4 py-3 hover:border-muted", plan === p.key ? "border-navy" : "border-line")}>
-            <p className="text-[12px] text-muted">{KIND_LABEL[p.kind]}</p>
+            <p className="text-caption text-muted">{KIND_LABEL[p.kind]}</p>
             <p className="font-medium text-ink">{p.name}</p>
             <p className="num text-[26px] leading-tight text-ink">{byKind.find((r) => r.plan === p.key)?.n ?? 0}</p>
           </Link>
@@ -101,7 +101,7 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
         {filters.map(([k, cur, opts]) => (
           <div key={k} className="flex items-center gap-1" role="group" aria-label={k === "tipo" ? "Tipo de tenant" : "Estado"}>
             {opts.map(([v, label]) => (
-              <Link key={label} href={href(k, v)} aria-current={cur === v ? "true" : undefined} className={cn("border px-3 py-1.5 text-[13px]", cur === v ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}>
+              <Link key={label} href={href(k, v)} aria-current={cur === v ? "true" : undefined} className={cn("border px-3 py-1.5 text-meta", cur === v ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}>
                 {label}
               </Link>
             ))}
@@ -112,13 +112,13 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
           <label htmlFor="q" className="sr-only">
             Buscar
           </label>
-          <input id="q" name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por nombre" className="h-9 w-56 border border-line bg-surface px-2 text-[14px]" />
+          <input id="q" name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por nombre" className="h-9 w-56 border border-line bg-surface px-2 text-ui" />
         </form>
       </div>
 
       <div className="mt-4 overflow-x-auto border border-line bg-surface">
-        <table className="w-full min-w-[760px] text-left text-[14px]">
-          <thead className="text-[12px] uppercase tracking-wide text-muted">
+        <table className="w-full min-w-[760px] text-left text-ui">
+          <thead className="text-caption uppercase tracking-wide text-muted">
             <tr className="border-b border-line">
               <th className="px-4 py-2 font-medium">Tenant</th>
               <th className="py-2 font-medium">Tipo</th>
@@ -144,7 +144,7 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
                   <Link href={`/faro-manager/${t.id}`} className="font-medium text-ink underline-offset-4 hover:underline">
                     {t.name}
                   </Link>
-                  <span className="block text-[12px] text-muted">{t.slug}</span>
+                  <span className="block text-caption text-muted">{t.slug}</span>
                 </td>
                 <td className="py-2.5">{KIND_LABEL[t.kind]}</td>
                 <td className="py-2.5">
@@ -157,7 +157,7 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
                 <td className="py-2.5 text-right">{staff}</td>
                 <td className="py-2.5 text-right">{usd(Number(ai))}</td>
                 <td className="px-4 py-2.5 whitespace-nowrap">
-                  {day.format(t.created_at)} <span className="text-[12px] text-muted">· {t.created_via === "registro" ? "autoregistro" : t.created_via}</span>
+                  {day.format(t.created_at)} <span className="text-caption text-muted">· {t.created_via === "registro" ? "autoregistro" : t.created_via}</span>
                 </td>
               </tr>
             ))}

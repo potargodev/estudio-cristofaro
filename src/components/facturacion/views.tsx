@@ -46,13 +46,14 @@ import {
 } from "@/modules/arca/server";
 import type { TaxpayerData } from "@/modules/arca/padron";
 import { InvoiceForm } from "./InvoiceForm";
+import { fieldClass } from "@/components/ds/primitives";
 
 // Vistas de facturación y ARCA, iguales para el autónomo (/facturacion) y para
 // una organización del estudio (ficha → ARCA). Reciben el alcance ya validado.
 
 type SP = Record<string, string | undefined>;
-const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-3 text-[15px] text-ink focus:border-navy focus:outline-none";
-const lbl = "text-[13px] font-medium text-ink/80";
+const field = `mt-1 ${fieldClass}`;
+const lbl = "text-meta font-medium text-ink/80";
 const card = "rounded-md border border-line bg-surface p-4 sm:p-5";
 const date = (d: string | null) => (d ? `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(0, 4)}` : "—");
 const STATUS: Record<string, { label: string; tone: string }> = {
@@ -77,13 +78,13 @@ export function ScopeFields({ scope, volver }: { scope: IssuerScope; volver?: st
 export function Feedback({ sp }: { sp: SP }) {
   if (sp.error)
     return (
-      <p role="alert" className="mb-4 flex gap-2 rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-[14px] text-[#8f2a1c]">
+      <p role="alert" className="mb-4 flex gap-2 rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-ui text-[#8f2a1c]">
         <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden /> {sp.error}
       </p>
     );
   if (sp.ok)
     return (
-      <p role="status" className="mb-4 flex gap-2 rounded-md border border-line bg-navy-soft px-4 py-3 text-[14px] text-ink">
+      <p role="status" className="mb-4 flex gap-2 rounded-md border border-line bg-navy-soft px-4 py-3 text-ui text-ink">
         <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#1f6b3d]" aria-hidden /> {sp.ok}
       </p>
     );
@@ -92,7 +93,7 @@ export function Feedback({ sp }: { sp: SP }) {
 
 export function StatusPill({ status }: { status: string }) {
   const s = STATUS[status] ?? STATUS.borrador;
-  return <span className={cn("inline-flex h-6 items-center rounded-full border px-2 text-[12px] font-medium", s.tone)}>{s.label}</span>;
+  return <span className={cn("inline-flex h-6 items-center rounded-full border px-2 text-caption font-medium", s.tone)}>{s.label}</span>;
 }
 
 // ───────────── Comprobantes ─────────────
@@ -107,28 +108,28 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
       <div className="flex flex-wrap items-end justify-between gap-3">
         <form method="get" className="flex flex-wrap gap-2" role="search">
           {scope.kind === "studio" && <input type="hidden" name="tab" value="arca" />}
-          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por cliente" className="h-9 w-48 rounded-md border border-line bg-surface px-3 text-[14px]" />
-          <select name="estado" defaultValue={sp.estado ?? ""} className="h-9 rounded-md border border-line bg-surface px-2 text-[14px]">
+          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por cliente" className="h-9 w-48 rounded-md border border-line bg-surface px-3 text-ui" />
+          <select name="estado" defaultValue={sp.estado ?? ""} className="h-9 rounded-md border border-line bg-surface px-2 text-ui">
             <option value="">Todos</option>
             <option value="borrador">Borradores</option>
             <option value="autorizada">Autorizados</option>
             <option value="rechazada">Rechazados</option>
             <option value="error">Con error</option>
           </select>
-          <button type="submit" className="h-9 rounded-md border border-line px-3 text-[14px]">
+          <button type="submit" className="h-9 rounded-md border border-line px-3 text-ui">
             Filtrar
           </button>
         </form>
         <HeaderAction href={`${scope.base}/nueva`} label="Nueva factura" />
       </div>
-      <p className="text-[14px] text-muted">
+      <p className="text-ui text-muted">
         {settings.business_name} · CUIT {formatCuit(scope.cuit) || "sin cargar"} · {IVA_CONDITIONS[settings.iva_condition]} · este mes: <span className="num text-ink">{money(monthTotal)}</span> en {authorizedMonth.length} comprobante{authorizedMonth.length === 1 ? "" : "s"}
       </p>
       {list.length === 0 ? (
         <div className={cn(card, "text-center")}>
           <FileText className="mx-auto size-8 text-muted" strokeWidth={1.5} aria-hidden />
           <p className="mt-2 font-medium">Todavía no hay comprobantes</p>
-          <p className="mt-1 text-[14px] text-muted">Armá el primero: lo revisás y recién después se emite en ARCA.</p>
+          <p className="mt-1 text-ui text-muted">Armá el primero: lo revisás y recién después se emite en ARCA.</p>
         </div>
       ) : (
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
@@ -136,13 +137,13 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
             <li key={i.id}>
               <Link href={`${scope.base}/${i.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-canvas">
                 <span className="min-w-0">
-                  <span className="block truncate text-[15px] text-ink">{i.customer_name}</span>
-                  <span className="block text-[13px] text-muted">
+                  <span className="block truncate text-body text-ink">{i.customer_name}</span>
+                  <span className="block text-meta text-muted">
                     {CBTE_TYPES[i.cbte_type].label} {fullNumber(i.point_of_sale, i.number)} · {date(i.issue_date)}
                   </span>
                 </span>
                 <span className="flex items-center gap-3">
-                  <span className="num text-[15px]">{money(Number(i.total), i.currency)}</span>
+                  <span className="num text-body">{money(Number(i.total), i.currency)}</span>
                   <StatusPill status={i.status} />
                 </span>
               </Link>
@@ -205,20 +206,20 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
       <div className={card}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-[13px] text-muted">
+            <p className="text-meta text-muted">
               {t.label} · {fullNumber(inv.point_of_sale, inv.number)} · {date(inv.issue_date)}
             </p>
-            <p className="mt-1 text-[18px] font-semibold">{inv.customer_name}</p>
-            <p className="text-[13px] text-muted">
+            <p className="mt-1 text-title font-semibold">{inv.customer_name}</p>
+            <p className="text-meta text-muted">
               {DOC_TYPES[inv.customer_doc_type]} {inv.customer_doc_type === 80 ? formatCuit(inv.customer_doc_number) : inv.customer_doc_number} · {IVA_CONDITIONS[inv.customer_iva_condition]}
             </p>
           </div>
           <div className="text-right">
             <StatusPill status={inv.status} />
-            <p className="num mt-2 text-[24px]">{money(Number(inv.total), inv.currency)}</p>
+            <p className="num mt-2 text-headline">{money(Number(inv.total), inv.currency)}</p>
           </div>
         </div>
-        <ul className="mt-4 divide-y divide-line border-t border-line text-[14px]">
+        <ul className="mt-4 divide-y divide-line border-t border-line text-ui">
           {inv.items.map((it, i) => (
             <li key={i} className="flex justify-between gap-3 py-2">
               <span>
@@ -230,20 +231,20 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           ))}
         </ul>
         {inv.status === "autorizada" && (
-          <p className="mt-3 flex items-center gap-2 text-[14px] text-[#1f6b3d]">
+          <p className="mt-3 flex items-center gap-2 text-ui text-[#1f6b3d]">
             <ShieldCheck className="size-4" aria-hidden /> CAE {inv.cae} · vence el {date(inv.cae_due)}
             {inv.environment === "homologacion" && <span className="text-[#8f2a1c]"> · homologación (sin validez fiscal)</span>}
           </p>
         )}
-        {inv.error && <p className="mt-3 text-[14px] text-[#8f2a1c]">{inv.error}</p>}
+        {inv.error && <p className="mt-3 text-ui text-[#8f2a1c]">{inv.error}</p>}
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <a href={pdf} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-1.5 rounded-md border border-line bg-surface px-4 text-[14px] hover:border-muted">
+        <a href={pdf} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-1.5 rounded-md border border-line bg-surface px-4 text-ui hover:border-muted">
           <FileText className="size-4" aria-hidden /> {inv.status === "autorizada" ? "Ver PDF" : "Vista previa (borrador)"}
         </a>
         {editable && (
-          <Link href={`${scope.base}/${inv.id}/editar`} className="inline-flex h-10 items-center rounded-md border border-line bg-surface px-4 text-[14px] hover:border-muted">
+          <Link href={`${scope.base}/${inv.id}/editar`} className="inline-flex h-10 items-center rounded-md border border-line bg-surface px-4 text-ui hover:border-muted">
             Editar
           </Link>
         )}
@@ -263,9 +264,9 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           <form action={emitAction} className={cn(card, "grid gap-3 border-navy/30")}>
             <ScopeFields scope={scope} />
             <input type="hidden" name="id" value={inv.id} />
-            <p className="text-[15px] font-semibold">Emitir en ARCA</p>
-            <p className="text-[14px] text-muted">Faro pide el próximo número a ARCA y el CAE. Una vez autorizado no se puede borrar: se corrige con una nota de crédito.</p>
-            <label className="flex items-start gap-2 text-[14px]">
+            <p className="text-body font-semibold">Emitir en ARCA</p>
+            <p className="text-ui text-muted">Faro pide el próximo número a ARCA y el CAE. Una vez autorizado no se puede borrar: se corrige con una nota de crédito.</p>
+            <label className="flex items-start gap-2 text-ui">
               <input type="checkbox" name="confirmo" required className="mt-0.5 size-4 accent-navy" /> Revisé el cliente, los importes y el tipo de comprobante. Quiero emitirlo.
             </label>
             <div>
@@ -275,7 +276,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
             </div>
           </form>
         ) : (
-          <p className="text-[14px] text-muted">Tu rol prepara borradores; lo emite el dueño o un contador del estudio.</p>
+          <p className="text-ui text-muted">Tu rol prepara borradores; lo emite el dueño o un contador del estudio.</p>
         )
       ) : null}
 
@@ -284,20 +285,20 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           <form action={emailAction} className={cn(card, "grid gap-2")}>
             <ScopeFields scope={scope} />
             <input type="hidden" name="id" value={inv.id} />
-            <p className="flex items-center gap-2 text-[15px] font-semibold">
+            <p className="flex items-center gap-2 text-body font-semibold">
               <Mail className="size-4" aria-hidden /> Enviar por mail
             </p>
             <input name="to" type="email" required defaultValue={inv.customer_email ?? ""} placeholder="mail del cliente" className={field} />
             <div>
               <SubmitButton pendingText="Enviando…">Enviar</SubmitButton>
-              {inv.emailed_at && <span className="ml-3 text-[13px] text-muted">Enviado el {date(inv.emailed_at.toISOString().slice(0, 10))}</span>}
+              {inv.emailed_at && <span className="ml-3 text-meta text-muted">Enviado el {date(inv.emailed_at.toISOString().slice(0, 10))}</span>}
             </div>
           </form>
           <div className={cn(card, "grid gap-2")}>
-            <p className="flex items-center gap-2 text-[15px] font-semibold">
+            <p className="flex items-center gap-2 text-body font-semibold">
               <Link2 className="size-4" aria-hidden /> Link para compartir
             </p>
-            {share ? <input readOnly value={share} className={cn(field, "text-[13px]")} aria-label="Link del comprobante" /> : <p className="text-[14px] text-muted">El link está desactivado.</p>}
+            {share ? <input readOnly value={share} className={cn(field, "text-meta")} aria-label="Link del comprobante" /> : <p className="text-ui text-muted">El link está desactivado.</p>}
             <form action={shareAction} className="flex gap-2">
               <ScopeFields scope={scope} />
               <input type="hidden" name="id" value={inv.id} />
@@ -307,25 +308,25 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           </div>
           {scope.kind === "personal" && t.kind === "factura" && (
             <div className={cn(card, "grid gap-2 lg:col-span-2")}>
-              <p className="flex items-center gap-2 text-[15px] font-semibold">
+              <p className="flex items-center gap-2 text-body font-semibold">
                 <Link2 className="size-4" aria-hidden /> Cobrar con Mercado Pago
-                {inv.paid_at && <span className="rounded-md bg-[#e3efe6] px-2 py-0.5 text-[12px] font-medium text-[#24583a]">Pagada el {date(inv.paid_at.toISOString().slice(0, 10))}</span>}
+                {inv.paid_at && <span className="rounded-md bg-[#e3efe6] px-2 py-0.5 text-caption font-medium text-[#24583a]">Pagada el {date(inv.paid_at.toISOString().slice(0, 10))}</span>}
               </p>
               {inv.payment_url ? (
-                <input readOnly value={inv.payment_url} className={cn(field, "text-[13px]")} aria-label="Link de pago" />
+                <input readOnly value={inv.payment_url} className={cn(field, "text-meta")} aria-label="Link de pago" />
               ) : (
                 <form action={paymentLinkAction} className="flex flex-wrap items-center gap-2">
                   <ScopeFields scope={scope} />
                   <input type="hidden" name="id" value={inv.id} />
                   <SubmitButton variant="secondary" pendingText="…">Crear link de pago</SubmitButton>
-                  <span className="text-[13px] text-muted">Va en el PDF y en el mail. Necesitás tu cuenta de Mercado Pago conectada en Ajustes.</span>
+                  <span className="text-meta text-muted">Va en el PDF y en el mail. Necesitás tu cuenta de Mercado Pago conectada en Ajustes.</span>
                 </form>
               )}
             </div>
           )}
           {t.kind === "factura" && (
             <div className={cn(card, "flex flex-wrap items-center gap-2 lg:col-span-2")}>
-              <p className="mr-auto text-[14px] text-muted">¿Hay que corregirla? Se hace con una nota que ARCA asocia a esta factura.</p>
+              <p className="mr-auto text-ui text-muted">¿Hay que corregirla? Se hace con una nota que ARCA asocia a esta factura.</p>
               {(["credito", "debito"] as const).map((k) => (
                 <form key={k} action={noteFromInvoiceAction}>
                   <ScopeFields scope={scope} />
@@ -355,8 +356,8 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
       <Feedback sp={sp} />
       <div className={cn(card, "flex flex-wrap items-center justify-between gap-3")}>
         <div>
-          <p className="text-[15px] font-semibold">Constancia de inscripción · CUIT {formatCuit(scope.cuit) || "sin cargar"}</p>
-          <p className="text-[13px] text-muted">{valid ? `Consultada el ${valid.fetchedAt.toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })} por web service oficial de ARCA${valid.environment === "homologacion" ? " (homologación)" : ""}.` : "Todavía no la consultamos."}</p>
+          <p className="text-body font-semibold">Constancia de inscripción · CUIT {formatCuit(scope.cuit) || "sin cargar"}</p>
+          <p className="text-meta text-muted">{valid ? `Consultada el ${valid.fetchedAt.toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })} por web service oficial de ARCA${valid.environment === "homologacion" ? " (homologación)" : ""}.` : "Todavía no la consultamos."}</p>
         </div>
         <form action={fetchSituationAction}>
           <ScopeFields scope={scope} volver={volver} />
@@ -371,7 +372,7 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
       {d && (
         <div className="grid gap-4 lg:grid-cols-2">
           <div className={card}>
-            <dl className="grid grid-cols-[9rem_1fr] gap-x-3 gap-y-2 text-[14px]">
+            <dl className="grid grid-cols-[9rem_1fr] gap-x-3 gap-y-2 text-ui">
               <dt className="text-muted">Nombre</dt>
               <dd>{d.name}</dd>
               <dt className="text-muted">Estado de la CUIT</dt>
@@ -391,8 +392,8 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
             </dl>
           </div>
           <div className={card}>
-            <p className="text-[14px] font-semibold">Actividades</p>
-            <ul className="mt-2 grid gap-1 text-[14px]">
+            <p className="text-ui font-semibold">Actividades</p>
+            <ul className="mt-2 grid gap-1 text-ui">
               {d.activities.map((a) => (
                 <li key={a.id}>
                   <span className="num text-muted">{a.id}</span> · {a.description}
@@ -400,8 +401,8 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-[14px] font-semibold">Impuestos</p>
-            <ul className="mt-2 grid gap-1 text-[14px]">
+            <p className="mt-4 text-ui font-semibold">Impuestos</p>
+            <ul className="mt-2 grid gap-1 text-ui">
               {d.taxes.map((x) => (
                 <li key={x.id}>
                   {x.description} <span className="text-muted">· desde {x.since ?? "—"}</span>
@@ -412,9 +413,9 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
         </div>
       )}
       {last && (
-        <details className="text-[13px] text-muted">
+        <details className="text-meta text-muted">
           <summary className="cursor-pointer">Registro original de ARCA (última consulta)</summary>
-          <pre className="mt-2 max-h-72 overflow-auto rounded-md border border-line bg-canvas p-3 text-[12px]">{JSON.stringify(last.raw, null, 2)}</pre>
+          <pre className="mt-2 max-h-72 overflow-auto rounded-md border border-line bg-canvas p-3 text-caption">{JSON.stringify(last.raw, null, 2)}</pre>
         </details>
       )}
     </div>
@@ -441,18 +442,18 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
     <div className="grid gap-4">
       <Feedback sp={sp} />
       {s.scale.status !== "validada" && (
-        <p className="rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2.5 text-[13px] text-[#7a5410]">Escala de categorías vigente desde el {date(s.scale.valid_from)} · {s.scale.source}. Está marcada «a validar»: verificá los topes en arca.gob.ar antes de decidir.</p>
+        <p className="rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2.5 text-meta text-[#7a5410]">Escala de categorías vigente desde el {date(s.scale.valid_from)} · {s.scale.source}. Está marcada «a validar»: verificá los topes en arca.gob.ar antes de decidir.</p>
       )}
       <div className={cn(card, "grid gap-4 sm:grid-cols-[auto_1fr] sm:items-center")}>
         <div className="flex items-center gap-3">
           <span aria-hidden className={cn("size-12 rounded-full", l.dot)} />
           <div>
-            <p className="text-[18px] font-semibold">{l.label}</p>
-            <p className="text-[13px] text-muted">Categoría {s.category ?? "sin cargar"}{s.cap ? ` · tope ${fmt(s.cap)}` : ""}</p>
+            <p className="text-title font-semibold">{l.label}</p>
+            <p className="text-meta text-muted">Categoría {s.category ?? "sin cargar"}{s.cap ? ` · tope ${fmt(s.cap)}` : ""}</p>
           </div>
         </div>
         <div>
-          <p className="text-[15px]">{s.message}</p>
+          <p className="text-body">{s.message}</p>
           {s.used != null && (
             <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-canvas" role="progressbar" aria-valuenow={Math.round(s.used * 100)} aria-valuemin={0} aria-valuemax={100} aria-label="Uso del tope de la categoría">
               <div className={cn("h-full rounded-full", l.dot)} style={{ width: `${Math.min(100, s.used * 100)}%` }} />
@@ -468,21 +469,21 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
           ["Proyección a 12 meses", fmt(s.projection12m)],
         ].map(([k, v]) => (
           <div key={k} className={card}>
-            <dt className="text-[13px] text-muted">{k}</dt>
-            <dd className="num mt-1 text-[20px]">{v}</dd>
+            <dt className="text-meta text-muted">{k}</dt>
+            <dd className="num mt-1 text-section">{v}</dd>
           </div>
         ))}
       </dl>
-      <p className="text-[14px] text-muted">
+      <p className="text-ui text-muted">
         Próxima recategorización: <strong className="text-ink">{s.nextRecategorization.label}</strong>, con lo facturado hasta el {date(s.nextRecategorization.cutoff)} (se hace hasta el {date(s.nextRecategorization.deadline)}).
       </p>
       <section className={card} aria-labelledby="meses">
-        <h2 id="meses" className="text-[15px] font-semibold">
+        <h2 id="meses" className="text-body font-semibold">
           Mes a mes
         </h2>
         <ul className="mt-3 grid gap-1.5">
           {s.months.map((m) => (
-            <li key={m.month} className="grid grid-cols-[4.5rem_1fr_8rem] items-center gap-2 text-[13px]">
+            <li key={m.month} className="grid grid-cols-[4.5rem_1fr_8rem] items-center gap-2 text-meta">
               <span className="num text-muted">{m.month}</span>
               <span className="h-2 rounded-full bg-canvas">
                 <span className="block h-full rounded-full bg-navy/70" style={{ width: `${(m.amount / max) * 100}%` }} />
@@ -493,7 +494,7 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
         </ul>
         <form action={saveAdjustmentAction} className="mt-4 grid gap-2 border-t border-line pt-4 sm:grid-cols-[9rem_10rem_1fr_auto] sm:items-end">
           <ScopeFields scope={scope} volver={volver} />
-          <p className="text-[13px] text-muted sm:col-span-4">¿Facturaste por fuera de Faro (antes de usarlo o con otro sistema)? Cargá el total del mes para que el semáforo lo cuente.</p>
+          <p className="text-meta text-muted sm:col-span-4">¿Facturaste por fuera de Faro (antes de usarlo o con otro sistema)? Cargá el total del mes para que el semáforo lo cuente.</p>
           <label>
             <span className={lbl}>Mes</span>
             <input name="month" type="month" required className={field} />
@@ -510,34 +511,34 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
         </form>
       </section>
       <section className={card} aria-labelledby="ri">
-        <h2 id="ri" className="text-[15px] font-semibold">
+        <h2 id="ri" className="text-body font-semibold">
           ¿Y si pasás a responsable inscripto?
         </h2>
-        <p className="mt-1 text-[14px] text-muted">Simulación educativa con la alícuota general (21 %), sobre lo que cargaste. Es un dato, no una recomendación: el pase a responsable inscripto lo decide un contador matriculado con vos.</p>
+        <p className="mt-1 text-ui text-muted">Simulación educativa con la alícuota general (21 %), sobre lo que cargaste. Es un dato, no una recomendación: el pase a responsable inscripto lo decide un contador matriculado con vos.</p>
         <form method="get" className="mt-3 flex flex-wrap items-end gap-2">
           <label>
             <span className={lbl}>Compras con IVA en 12 meses (opcional)</span>
             <input name="compras" inputMode="numeric" defaultValue={sp.compras ?? ""} className={cn(field, "w-56")} />
           </label>
-          <button type="submit" className="h-10 rounded-md border border-line px-3 text-[14px]">
+          <button type="submit" className="h-10 rounded-md border border-line px-3 text-ui">
             Recalcular
           </button>
         </form>
-        <dl className="mt-3 grid gap-2 text-[14px] sm:grid-cols-3">
+        <dl className="mt-3 grid gap-2 text-ui sm:grid-cols-3">
           <div>
             <dt className="text-muted">IVA de tus ventas por mes</dt>
-            <dd className="num text-[18px]">{fmt(sim.debit)}</dd>
+            <dd className="num text-title">{fmt(sim.debit)}</dd>
           </div>
           <div>
             <dt className="text-muted">IVA de tus compras por mes</dt>
-            <dd className="num text-[18px]">{fmt(sim.credit)}</dd>
+            <dd className="num text-title">{fmt(sim.credit)}</dd>
           </div>
           <div>
             <dt className="text-muted">IVA a pagar por mes (aprox.)</dt>
-            <dd className="num text-[18px]">{fmt(sim.ivaMonthly)}</dd>
+            <dd className="num text-title">{fmt(sim.ivaMonthly)}</dd>
           </div>
         </dl>
-        <p className="mt-2 text-[13px] text-muted">Además se suman Ganancias y aportes de autónomos. Esto no reemplaza el criterio de un contador: <Link href="/red-contable?necesito=simulacion_ri" className="underline underline-offset-4">sumá uno desde la Red Contable</Link>.</p>
+        <p className="mt-2 text-meta text-muted">Además se suman Ganancias y aportes de autónomos. Esto no reemplaza el criterio de un contador: <Link href="/red-contable?necesito=simulacion_ri" className="underline underline-offset-4">sumá uno desde la Red Contable</Link>.</p>
       </section>
     </div>
   );
@@ -553,7 +554,7 @@ export async function CalendarView({ scope, sp, volver }: { scope: IssuerScope; 
       <div className="grid content-start gap-3">
         <Feedback sp={sp} />
         {list.length === 0 ? (
-          <p className={cn(card, "text-[14px] text-muted")}>Completá tu perfil fiscal y armamos tu calendario de los próximos 6 meses.</p>
+          <p className={cn(card, "text-ui text-muted")}>Completá tu perfil fiscal y armamos tu calendario de los próximos 6 meses.</p>
         ) : (
           <ul className="divide-y divide-line rounded-md border border-line bg-surface">
             {list.map((o) => {
@@ -561,25 +562,25 @@ export async function CalendarView({ scope, sp, volver }: { scope: IssuerScope; 
               return (
                 <li key={o.id} className={cn("flex flex-wrap items-center justify-between gap-2 px-4 py-3", o.due_date < today && "opacity-60")}>
                   <span className="min-w-0">
-                    <span className="block text-[15px]">{o.tax}</span>
-                    <span className="block text-[13px] text-muted">
+                    <span className="block text-body">{o.tax}</span>
+                    <span className="block text-meta text-muted">
                       Período {o.period} · {o.notes}
                     </span>
                   </span>
                   <span className="text-right">
-                    <span className="num block text-[15px]">{date(o.due_date)}</span>
-                    <span className={cn("block text-[12px]", days <= 3 && days >= 0 ? "text-[#8f2a1c]" : "text-muted")}>{days < 0 ? "Pasó" : days === 0 ? "Vence hoy" : `En ${days} día${days === 1 ? "" : "s"}`}</span>
+                    <span className="num block text-body">{date(o.due_date)}</span>
+                    <span className={cn("block text-caption", days <= 3 && days >= 0 ? "text-[#8f2a1c]" : "text-muted")}>{days < 0 ? "Pasó" : days === 0 ? "Vence hoy" : `En ${days} día${days === 1 ? "" : "s"}`}</span>
                   </span>
                 </li>
               );
             })}
           </ul>
         )}
-        <p className="text-[13px] text-muted">Fechas de referencia según la terminación de tu CUIT. Si un vencimiento cae en feriado se corre: verificalo en el calendario oficial de ARCA.</p>
+        <p className="text-meta text-muted">Fechas de referencia según la terminación de tu CUIT. Si un vencimiento cae en feriado se corre: verificalo en el calendario oficial de ARCA.</p>
       </div>
       <form action={saveProfileAction} className={cn(card, "grid content-start gap-3")}>
         <ScopeFields scope={scope} volver={volver} />
-        <p className="text-[15px] font-semibold">Tu perfil fiscal</p>
+        <p className="text-body font-semibold">Tu perfil fiscal</p>
         <label>
           <span className={lbl}>Régimen</span>
           <select name="regime" defaultValue={p?.regime ?? "monotributo"} className={field}>
@@ -611,10 +612,10 @@ export async function CalendarView({ scope, sp, volver }: { scope: IssuerScope; 
           <span className={lbl}>Jurisdicción</span>
           <input name="jurisdiction" defaultValue={p?.jurisdiction ?? ""} placeholder="Ej.: Santa Fe" className={field} />
         </label>
-        <label className="flex items-center gap-2 text-[14px]">
+        <label className="flex items-center gap-2 text-ui">
           <input type="checkbox" name="autonomos" defaultChecked={p?.autonomos ?? false} className="size-4 accent-navy" /> Aporto a autónomos
         </label>
-        <label className="flex items-center gap-2 text-[14px]">
+        <label className="flex items-center gap-2 text-ui">
           <input type="checkbox" name="alerts_email" defaultChecked={p?.alerts_email ?? true} className="size-4 accent-navy" /> Avisarme por mail
         </label>
         <label>
@@ -634,22 +635,22 @@ export async function ChecksView({ scope, sp, volver }: { scope: IssuerScope; sp
   return (
     <div className="grid gap-4">
       <Feedback sp={sp} />
-      <p className="text-[14px] text-muted">Para esto ARCA no tiene un servicio oficial que Faro pueda consultar. Te decimos qué mirar y dónde; anotás lo que ves y te lo recordamos. Lo que anotás es tu lectura, no una revisión profesional.</p>
+      <p className="text-ui text-muted">Para esto ARCA no tiene un servicio oficial que Faro pueda consultar. Te decimos qué mirar y dónde; anotás lo que ves y te lo recordamos. Lo que anotás es tu lectura, no una revisión profesional.</p>
       {list.map((c) => (
         <details key={c.key} className={card} open={!c.state}>
           <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2">
-            <span className="text-[15px] font-semibold">{c.title}</span>
-            <span className={cn("text-[13px]", c.state?.status === "con_novedades" ? "text-[#8f2a1c]" : c.state?.status === "ok" ? "text-[#1f6b3d]" : "text-muted")}>
+            <span className="text-body font-semibold">{c.title}</span>
+            <span className={cn("text-meta", c.state?.status === "con_novedades" ? "text-[#8f2a1c]" : c.state?.status === "ok" ? "text-[#1f6b3d]" : "text-muted")}>
               {c.state?.status === "ok" ? `Sin novedades según lo que viste · ${c.state.checked_at?.toLocaleDateString("es-AR")}` : c.state?.status === "con_novedades" ? "Con novedades" : "Sin revisar"}
             </span>
           </summary>
-          <p className="mt-2 text-[14px] text-muted">{c.why}</p>
-          <ol className="mt-3 grid list-decimal gap-1 pl-5 text-[14px]">
+          <p className="mt-2 text-ui text-muted">{c.why}</p>
+          <ol className="mt-3 grid list-decimal gap-1 pl-5 text-ui">
             {c.steps.map((s) => (
               <li key={s}>{s}</li>
             ))}
           </ol>
-          <a href={c.link} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-[14px] font-medium underline underline-offset-4">
+          <a href={c.link} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-ui font-medium underline underline-offset-4">
             Entrar a ARCA ({c.service}) <ExternalLink className="size-3.5" aria-hidden />
           </a>
           <form action={saveCheckAction} className="mt-4 grid gap-2 border-t border-line pt-4 sm:grid-cols-2">
@@ -692,7 +693,7 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
       {scope.kind === "personal" && (
         <section aria-label="Mercado Pago" className="grid gap-2 lg:col-span-2">
-          <p className="text-[15px] font-semibold">Cobrar tus facturas con Mercado Pago</p>
+          <p className="text-body font-semibold">Cobrar tus facturas con Mercado Pago</p>
           <MpAccountForm summary={mp} save={savePersonalMpAction} remove={deletePersonalMpAction} webhookUrl={notificationUrl(scope.studioId)} />
         </section>
       )}
@@ -700,7 +701,7 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
         <ScopeFields scope={scope} volver={volver} />
         <div className="sm:col-span-2">
           <Feedback sp={sp} />
-          <p className="text-[15px] font-semibold">Datos del emisor y del PDF</p>
+          <p className="text-body font-semibold">Datos del emisor y del PDF</p>
         </div>
         <label className="sm:col-span-2">
           <span className={lbl}>Razón social o nombre</span>
@@ -744,10 +745,10 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
         </label>
         <label className="sm:col-span-2">
           <span className={lbl}>Logo (PNG o JPG)</span>
-          <input name="logo" type="file" accept="image/png,image/jpeg" className="mt-1 block w-full text-[14px]" />
+          <input name="logo" type="file" accept="image/png,image/jpeg" className="mt-1 block w-full text-ui" />
         </label>
         {s.logo_path && (
-          <label className="flex items-center gap-2 text-[14px] sm:col-span-2">
+          <label className="flex items-center gap-2 text-ui sm:col-span-2">
             <input type="checkbox" name="quitar_logo" className="size-4 accent-navy" /> Quitar el logo actual
           </label>
         )}
@@ -760,12 +761,12 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
         </div>
       </form>
       <div className={cn(card, "grid content-start gap-3")}>
-        <p className="text-[15px] font-semibold">Puntos de venta y delegación</p>
-        <p className="text-[14px] text-muted">Para que Faro emita en nombre de CUIT {formatCuit(scope.cuit)}, la CUIT tiene que delegarle a Faro el servicio de factura electrónica en ARCA.</p>
-        <Link href="/ayuda/facturacion/delegar-en-faro" className="text-[14px] font-medium underline underline-offset-4">
+        <p className="text-body font-semibold">Puntos de venta y delegación</p>
+        <p className="text-ui text-muted">Para que Faro emita en nombre de CUIT {formatCuit(scope.cuit)}, la CUIT tiene que delegarle a Faro el servicio de factura electrónica en ARCA.</p>
+        <Link href="/ayuda/facturacion/delegar-en-faro" className="text-ui font-medium underline underline-offset-4">
           Cómo delegar el servicio (paso a paso)
         </Link>
-        <ul className="grid gap-1 text-[14px]">
+        <ul className="grid gap-1 text-ui">
           {points.length === 0 ? (
             <li className="text-muted">Sin puntos de venta traídos de ARCA.</li>
           ) : (
@@ -798,15 +799,15 @@ export async function CustomersView({ scope, sp, volver }: { scope: IssuerScope;
         <Feedback sp={sp} />
       </div>
       <section className={card} aria-labelledby="clientes">
-        <h2 id="clientes" className="text-[15px] font-semibold">
+        <h2 id="clientes" className="text-body font-semibold">
           Clientes frecuentes
         </h2>
-        <ul className="mt-2 divide-y divide-line text-[14px]">
+        <ul className="mt-2 divide-y divide-line text-ui">
           {customers.map((c) => (
             <li key={c.id} className="flex items-center justify-between gap-2 py-2">
               <span className="min-w-0">
                 <span className="block truncate">{c.name}</span>
-                <span className="block text-[13px] text-muted">
+                <span className="block text-meta text-muted">
                   {DOC_TYPES[c.doc_type]} {c.doc_number !== "0" ? c.doc_number : ""} · {IVA_CONDITIONS[c.iva_condition]}
                 </span>
               </span>
@@ -861,10 +862,10 @@ export async function CustomersView({ scope, sp, volver }: { scope: IssuerScope;
         </form>
       </section>
       <section className={card} aria-labelledby="productos">
-        <h2 id="productos" className="text-[15px] font-semibold">
+        <h2 id="productos" className="text-body font-semibold">
           Productos y servicios
         </h2>
-        <ul className="mt-2 divide-y divide-line text-[14px]">
+        <ul className="mt-2 divide-y divide-line text-ui">
           {products.map((p) => (
             <li key={p.id} className="flex items-center justify-between gap-2 py-2">
               <span className="min-w-0 truncate">

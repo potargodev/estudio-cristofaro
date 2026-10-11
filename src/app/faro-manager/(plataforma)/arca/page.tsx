@@ -6,10 +6,11 @@ import { requireFaro } from "@/lib/auth";
 import { ARCA_ENVS, arcaUrls, formatCuit, usingMock, type ArcaEnv } from "@/modules/arca/config";
 import { activeEnv, credentialSummary } from "@/modules/arca/credentials";
 import { deleteArcaCredentialAction, saveArcaCredentialAction, setArcaEnvAction, testArcaAction } from "../../arca-actions";
+import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "ARCA" };
 
-const field = "mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 text-[14px]";
+const field = `mt-1 py-2 ${fieldClass}`;
 
 /** Certificado de la CUIT operadora de Faro por ambiente, ambiente activo y prueba de conexión */
 export default async function ArcaPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -21,14 +22,14 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
     <div className="grid gap-5">
       <PageHeader level={2} title="ARCA" description="Faro factura y consulta el padrón por web services oficiales, con el certificado de su CUIT y la delegación de cada contribuyente." className="mb-0" />
       <Feedback sp={sp} />
-      {usingMock() && <p className="rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2.5 text-[13px] text-[#7a5410]">Las URLs apuntan al simulador (ARCA_*_URL). Nada de lo que se emita tiene validez.</p>}
+      {usingMock() && <p className="rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2.5 text-meta text-[#7a5410]">Las URLs apuntan al simulador (ARCA_*_URL). Nada de lo que se emita tiene validez.</p>}
       <form action={setArcaEnvAction} className="flex flex-wrap items-center gap-3 rounded-md border border-line bg-surface p-4">
-        <p className="mr-auto text-[15px]">
+        <p className="mr-auto text-body">
           Ambiente activo: <strong>{ARCA_ENVS[env].label}</strong>
         </p>
         {owner && (
           <>
-            <select name="environment" defaultValue={env} className="h-9 rounded-md border border-line bg-surface px-2 text-[14px]">
+            <select name="environment" defaultValue={env} className="h-9 rounded-md border border-line bg-surface px-2 text-ui">
               <option value="homologacion">Homologación</option>
               <option value="produccion">Producción</option>
             </select>
@@ -44,11 +45,11 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
           const urls = arcaUrls(e);
           return (
             <section key={e} className="grid content-start gap-3 rounded-md border border-line bg-surface p-4" aria-labelledby={`env-${e}`}>
-              <h3 id={`env-${e}`} className="text-[16px] font-semibold">
+              <h3 id={`env-${e}`} className="text-lead font-semibold">
                 {ARCA_ENVS[e].label}
               </h3>
               {c ? (
-                <dl className="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-1 text-[14px]">
+                <dl className="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-1 text-ui">
                   <dt className="text-muted">CUIT operadora</dt>
                   <dd className="num">{formatCuit(c.cuit)}</dd>
                   <dt className="text-muted">Certificado</dt>
@@ -59,9 +60,9 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
                   <dd className={c.lastTestOk === false ? "text-[#8f2a1c]" : c.lastTestOk ? "text-[#1f6b3d]" : ""}>{c.lastTestAt ? `${c.lastTestAt.toLocaleString("es-AR")} · ${c.lastTestDetail}` : "Sin probar"}</dd>
                 </dl>
               ) : (
-                <p className="text-[14px] text-muted">Sin certificado cargado.</p>
+                <p className="text-ui text-muted">Sin certificado cargado.</p>
               )}
-              <details className="text-[12px] text-muted">
+              <details className="text-caption text-muted">
                 <summary className="cursor-pointer">URLs</summary>
                 <p className="mt-1 break-all">WSAA {urls.wsaa}</p>
                 <p className="break-all">WSFE {urls.wsfe}</p>
@@ -85,24 +86,24 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
               )}
               {owner && (
                 <details>
-                  <summary className="cursor-pointer text-[14px] font-medium">{c ? "Reemplazar el certificado" : "Cargar el certificado"}</summary>
+                  <summary className="cursor-pointer text-ui font-medium">{c ? "Reemplazar el certificado" : "Cargar el certificado"}</summary>
                   <form action={saveArcaCredentialAction} encType="multipart/form-data" className="mt-3 grid gap-2">
                     <input type="hidden" name="environment" value={e} />
-                    <label className="text-[13px]">
+                    <label className="text-meta">
                       CUIT operadora
                       <input name="cuit" required inputMode="numeric" defaultValue={c?.cuit ?? ""} className={field} />
                     </label>
-                    <label className="text-[13px]">
+                    <label className="text-meta">
                       Certificado (.crt o .pem)
-                      <input name="cert_file" type="file" accept=".crt,.pem,.cer" className="mt-1 block text-[13px]" />
+                      <input name="cert_file" type="file" accept=".crt,.pem,.cer" className="mt-1 block text-meta" />
                     </label>
                     <textarea name="cert" rows={3} placeholder="…o pegá el -----BEGIN CERTIFICATE-----" className={field} />
-                    <label className="text-[13px]">
+                    <label className="text-meta">
                       Clave privada (.key)
-                      <input name="key_file" type="file" accept=".key,.pem" className="mt-1 block text-[13px]" />
+                      <input name="key_file" type="file" accept=".key,.pem" className="mt-1 block text-meta" />
                     </label>
                     <textarea name="key" rows={3} placeholder="…o pegá el -----BEGIN PRIVATE KEY-----" className={field} />
-                    <p className="text-[12px] text-muted">Se guardan cifrados con ENCRYPTION_KEY y nunca vuelven al navegador. Cómo generarlos: Centro de ayuda → Facturación → Certificado de homologación.</p>
+                    <p className="text-caption text-muted">Se guardan cifrados con ENCRYPTION_KEY y nunca vuelven al navegador. Cómo generarlos: Centro de ayuda → Facturación → Certificado de homologación.</p>
                     <div>
                       <SubmitButton pendingText="Guardando…">Guardar</SubmitButton>
                     </div>

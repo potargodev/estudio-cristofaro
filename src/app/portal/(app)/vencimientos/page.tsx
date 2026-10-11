@@ -14,7 +14,7 @@ function PayLink({ url }: { url: string | null }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center rounded-md bg-navy px-3 py-1.5 text-sm font-medium text-paper transition-colors hover:bg-navy-deep"
+      className="inline-flex items-center rounded-md bg-navy px-3 py-1.5 text-ui font-medium text-paper transition-colors hover:bg-navy-deep"
     >
       Pagar
     </a>
@@ -40,7 +40,7 @@ export default async function VencimientosPage() {
         (group) =>
           group.items.length > 0 && (
             <section key={group.title} className="mb-8">
-              <h2 className="mb-3 text-lg font-semibold">{group.title}</h2>
+              <h2 className="mb-3 text-title font-semibold">{group.title}</h2>
               {/* Celular: tarjetas */}
               <ul className="space-y-3 md:hidden">
                 {group.items.map((o) => (
@@ -48,14 +48,14 @@ export default async function VencimientosPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-medium">{o.tax}</p>
-                        <p className="text-sm text-muted">{periodLabel(o.period)}</p>
+                        <p className="text-ui text-muted">{periodLabel(o.period)}</p>
                       </div>
                       <Badge tone={obligationTone(o.status, o.due_date, today)}>{OBLIGATION_STATUS[o.status]}</Badge>
                     </div>
                     <div className="mt-3 flex items-end justify-between gap-3">
-                      <div className="text-sm">
+                      <div className="text-ui">
                         <p className="text-muted">Vence el {dateLabel(o.due_date)}</p>
-                        <p className="text-base font-semibold tabular-nums">{moneyLabel(o.amount)}</p>
+                        <p className="text-lead font-semibold tabular-nums">{moneyLabel(o.amount)}</p>
                       </div>
                       <PayLink url={o.payment_url} />
                     </div>
@@ -64,8 +64,8 @@ export default async function VencimientosPage() {
               </ul>
               {/* Escritorio: tabla */}
               <div className="hidden overflow-hidden rounded-md border border-line bg-surface md:block">
-                <table className="w-full text-left text-[15px]">
-                  <thead className="border-b border-line bg-canvas text-sm text-muted">
+                <table className="w-full text-left text-body">
+                  <thead className="border-b border-line bg-canvas text-ui text-muted">
                     <tr>
                       <th className="px-4 py-2.5 font-medium">Impuesto</th>
                       <th className="px-4 py-2.5 font-medium">Período</th>

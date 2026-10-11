@@ -19,7 +19,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     <div className="grid gap-4">
       <Feedback sp={sp} />
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface p-4">
-        <p className="text-[14px]">
+        <p className="text-ui">
           {monthLabel(v.month)}: llevás <span className="num">{money(v.totalSpent)}</span> de <span className="num">{money(v.total)}</span> en tus sobres.
         </p>
         {pending > 0 && (
@@ -28,15 +28,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           </form>
         )}
       </div>
-      {!v.hasHistory && <p className="text-[14px] text-muted">Cuando tengas al menos un mes completo cargado, te sugerimos cuánto poner en cada sobre según lo que solés gastar.</p>}
+      {!v.hasHistory && <p className="text-ui text-muted">Cuando tengas al menos un mes completo cargado, te sugerimos cuánto poner en cada sobre según lo que solés gastar.</p>}
       <ul className="grid gap-2">
         {v.list.map((x) => {
           const pct = x.budget ? x.spent / x.budget : 0;
           return (
             <li key={x.categoryId} className="rounded-md border border-line bg-surface p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-[15px] font-medium">{x.name}</p>
-                <p className="num text-[14px] text-muted">
+                <p className="text-body font-medium">{x.name}</p>
+                <p className="num text-ui text-muted">
                   {money(x.spent)}
                   {x.budget ? ` de ${money(x.budget)}` : ""}
                 </p>
@@ -48,12 +48,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               ) : null}
               <form action={saveBudgetAction} className="mt-3 flex flex-wrap items-end gap-2">
                 <input type="hidden" name="category_id" value={x.categoryId} />
-                <label className="text-[13px] text-muted">
+                <label className="text-meta text-muted">
                   Sobre por mes
-                  <input name="amount" inputMode="decimal" defaultValue={x.budget ? String(x.budget / 100) : ""} placeholder={x.suggested ? `Sugerido: ${x.suggested / 100}` : "Sin sobre"} className="mt-1 block h-9 w-40 rounded-md border border-line bg-surface px-2 text-[14px] text-ink" />
+                  <input name="amount" inputMode="decimal" defaultValue={x.budget ? String(x.budget / 100) : ""} placeholder={x.suggested ? `Sugerido: ${x.suggested / 100}` : "Sin sobre"} className="mt-1 block h-9 w-40 rounded-md border border-line bg-surface px-2 text-ui text-ink" />
                 </label>
                 <SubmitButton variant="secondary" pendingText="…">Guardar</SubmitButton>
-                {x.suggested && <span className="text-[12px] text-muted">Sugerido: {money(x.suggested)} (mediana de los últimos meses)</span>}
+                {x.suggested && <span className="text-caption text-muted">Sugerido: {money(x.suggested)} (mediana de los últimos meses)</span>}
               </form>
             </li>
           );

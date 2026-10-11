@@ -26,7 +26,7 @@ export default async function PlanesAdminPage({ searchParams }: { searchParams: 
 
   return (
     <div className="max-w-3xl">
-      <Link href="/admin/configuracion/sitio" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
+      <Link href="/admin/configuracion/sitio" className="text-ui text-ink underline underline-offset-4 hover:text-rose-deep">
         Contenidos
       </Link>
       <div className="mt-2">

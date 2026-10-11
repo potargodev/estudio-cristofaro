@@ -58,7 +58,7 @@ export default async function ArchivosPage({ searchParams }: { searchParams: Pro
             <header className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-3">
               <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
                 {c.name} <Tag>{String((c.settings as { system?: string }).system ?? "archivo")}</Tag>
-                <span className="text-[13px] font-normal text-muted">Última importación {when(c.last_sync_at)}</span>
+                <span className="text-meta font-normal text-muted">Última importación {when(c.last_sync_at)}</span>
               </p>
               <form action={deleteConnection}>
                 <input type="hidden" name="id" value={c.id} />
@@ -69,14 +69,14 @@ export default async function ArchivosPage({ searchParams }: { searchParams: Pro
               </form>
             </header>
             <div className="grid gap-4 px-5 py-4 [&>*]:min-w-0">
-              <p className="text-[14px] text-ink">
+              <p className="text-ui text-ink">
                 {counts.map((r) => `${RESOURCE_LABEL[r.resource as keyof typeof RESOURCE_LABEL] ?? r.resource}: ${r.n} (${r.cruzados} con organización)`).join(" · ") || "Sin registros"}
               </p>
               <LogTable logs={logs} />
             </div>
           </section>
         ))}
-        <p className="text-[13px] text-muted">
+        <p className="text-meta text-muted">
           Los vencimientos se importan aparte, desde <Link href="/admin/vencimientos/importar" className="underline underline-offset-4">Vencimientos → Importar</Link>.
         </p>
       </div>

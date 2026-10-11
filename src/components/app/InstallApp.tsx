@@ -61,10 +61,10 @@ export function useInstall() {
 /** Pasos para instalar a mano cuando el navegador no ofrece el botón */
 function Steps({ platform, safari, firefox, current }: { platform: Platform; safari: boolean; firefox: boolean; current: boolean }) {
   const li = "flex gap-3";
-  const n = (i: number) => <span className="tabular grid size-6 shrink-0 place-items-center border border-current/30 text-[12px]">{i}</span>;
+  const n = (i: number) => <span className="tabular grid size-6 shrink-0 place-items-center border border-current/30 text-caption">{i}</span>;
   if (platform === "ios")
     return (
-      <ol className="space-y-3 text-[15px]">
+      <ol className="space-y-3 text-body">
         <li className={li}>
           {n(1)}
           <span>
@@ -88,7 +88,7 @@ function Steps({ platform, safari, firefox, current }: { platform: Platform; saf
     );
   if (platform === "mac" && safari)
     return (
-      <ol className="space-y-3 text-[15px]">
+      <ol className="space-y-3 text-body">
         <li className={li}>
           {n(1)}
           <span>
@@ -104,7 +104,7 @@ function Steps({ platform, safari, firefox, current }: { platform: Platform; saf
       </ol>
     );
   return (
-    <ol className="space-y-3 text-[15px]">
+    <ol className="space-y-3 text-body">
       <li className={li}>
         {n(1)}
         <span>
@@ -156,7 +156,7 @@ export function InstallPanel({ tone = "dark", className }: { tone?: "dark" | "li
               aria-selected={on}
               onClick={() => setChosen(p.key)}
               className={cn(
-                "inline-flex h-10 items-center gap-2 border px-3.5 text-[14px] transition-colors",
+                "inline-flex h-10 items-center gap-2 border px-3.5 text-ui transition-colors",
                 dark
                   ? on
                     ? "border-rose-light bg-rose-light text-night"
@@ -168,7 +168,7 @@ export function InstallPanel({ tone = "dark", className }: { tone?: "dark" | "li
             >
               <p.icon className="size-4" strokeWidth={1.5} aria-hidden />
               {p.label}
-              {p.key === detected && <span className={cn("text-[11px]", on ? "opacity-70" : dark ? "text-rose-light" : "text-rose-deep")}>· tu equipo</span>}
+              {p.key === detected && <span className={cn("text-micro", on ? "opacity-70" : dark ? "text-rose-light" : "text-rose-deep")}>· tu equipo</span>}
             </button>
           );
         })}
@@ -176,7 +176,7 @@ export function InstallPanel({ tone = "dark", className }: { tone?: "dark" | "li
 
       <div role="tabpanel" aria-label={P.label} className={cn("mt-6 border p-5 sm:p-6", dark ? "border-paper/15 bg-paper/[0.03] text-paper/85" : "border-line bg-surface text-ink")}>
         {installed && current ? (
-          <p className="flex items-center gap-2 text-[15px]">
+          <p className="flex items-center gap-2 text-body">
             <Check className={cn("size-5", dark ? "text-rose-light" : "text-rose-deep")} aria-hidden />
             Ya tenés la app instalada en este equipo.
           </p>
@@ -185,16 +185,16 @@ export function InstallPanel({ tone = "dark", className }: { tone?: "dark" | "li
             <button
               type="button"
               onClick={() => void install()}
-              className={cn("inline-flex h-12 items-center gap-2 px-6 text-[15px] font-medium transition-colors", dark ? "bg-rose-light text-night hover:bg-paper" : "bg-navy text-paper hover:bg-night")}
+              className={cn("inline-flex h-12 items-center gap-2 px-6 text-body font-medium transition-colors", dark ? "bg-rose-light text-night hover:bg-paper" : "bg-navy text-paper hover:bg-night")}
             >
               <Download className="size-5" aria-hidden />
               Instalar en {P.label}
             </button>
-            <span className={cn("text-[13px]", dark ? "text-paper/60" : "text-muted")}>Gratis · ocupa menos de 1 MB · sin pasar por la tienda</span>
+            <span className={cn("text-meta", dark ? "text-paper/60" : "text-muted")}>Gratis · ocupa menos de 1 MB · sin pasar por la tienda</span>
           </div>
         ) : (
           <>
-            <p className={cn("mb-4 text-[13px]", dark ? "text-paper/60" : "text-muted")}>
+            <p className={cn("mb-4 text-meta", dark ? "text-paper/60" : "text-muted")}>
               {current ? `Instalala en tu ${P.label} en dos pasos:` : `Para instalarla en ${P.label}:`}
             </p>
             <Steps platform={platform} safari={current && safari} firefox={firefox} current={current} />

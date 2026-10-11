@@ -69,7 +69,7 @@ export default async function PortalHome() {
             <Card>
               <div className="flex items-center justify-between gap-3">
                 <h2 className="font-semibold">Próximos vencimientos</h2>
-                <Link href="/portal/vencimientos" className="link-underline text-sm text-rose-deep">
+                <Link href="/portal/vencimientos" className="link-underline text-ui text-rose-deep">
                   Ver todos
                 </Link>
               </div>
@@ -83,7 +83,7 @@ export default async function PortalHome() {
                     <li key={o.id} className="flex items-center justify-between gap-3 py-3">
                       <div className="min-w-0">
                         <p className="font-medium">{o.tax}</p>
-                        <p className="text-sm text-muted">
+                        <p className="text-ui text-muted">
                           {periodLabel(o.period)} · vence el {dateLabel(o.due_date)}
                         </p>
                       </div>
@@ -108,13 +108,13 @@ export default async function PortalHome() {
             {(can(me.orgRole, "agenda.reservar") || canReview) && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {can(me.orgRole, "agenda.reservar") && (
-                  <Link href="/portal/agendar" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-[15px] font-medium text-paper transition-colors hover:bg-navy-deep">
+                  <Link href="/portal/agendar" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-body font-medium text-paper transition-colors hover:bg-navy-deep">
                     <CalendarDays className="size-4" aria-hidden />
                     Agendar una llamada
                   </Link>
                 )}
                 {canReview && (
-                  <Link href="/portal/resena" className="inline-flex h-10 items-center gap-2 rounded-md border border-line bg-surface px-4 text-[15px] font-medium text-ink transition-colors hover:border-muted">
+                  <Link href="/portal/resena" className="inline-flex h-10 items-center gap-2 rounded-md border border-line bg-surface px-4 text-body font-medium text-ink transition-colors hover:border-muted">
                     <Star className="size-4" aria-hidden />
                     Reseñar al estudio
                   </Link>
@@ -132,7 +132,7 @@ export default async function PortalHome() {
                 >
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{lastDoc.name}</span>
-                    <span className="block text-sm text-muted">
+                    <span className="block text-ui text-muted">
                       {categoryLabel(lastDoc.category)} · {periodLabel(lastDoc.period)}
                     </span>
                   </span>
@@ -151,7 +151,7 @@ export default async function PortalHome() {
               <div className="flex items-center justify-between gap-3">
                 <h2 className="font-semibold">Solicitudes abiertas</h2>
                 {canCreateRequests(me.orgRole) && (
-                  <Link href="/portal/solicitudes/nueva" className="link-underline text-sm text-rose-deep">
+                  <Link href="/portal/solicitudes/nueva" className="link-underline text-ui text-rose-deep">
                     Nueva
                   </Link>
                 )}
@@ -167,7 +167,7 @@ export default async function PortalHome() {
                       <Link href={`/portal/solicitudes/${r.id}`} className="flex items-center justify-between gap-3 py-3 hover:text-rose-deep">
                         <span className="min-w-0">
                           <span className="block truncate font-medium">{r.subject}</span>
-                          <span className="block text-sm text-muted">{REQUEST_TYPES[r.type]}</span>
+                          <span className="block text-ui text-muted">{REQUEST_TYPES[r.type]}</span>
                         </span>
                         <Badge tone={requestTone(r.status)}>{REQUEST_STATUS[r.status]}</Badge>
                       </Link>
@@ -187,7 +187,7 @@ export default async function PortalHome() {
         >
           <span>
             <span className="block font-semibold">¿Tenés comprobantes para mandarnos?</span>
-            <span className="block text-sm text-muted">Subilos en Documentos y nos llegan al momento.</span>
+            <span className="block text-ui text-muted">Subilos en Documentos y nos llegan al momento.</span>
           </span>
           <ArrowRight className="size-5 text-rose-deep" aria-hidden />
         </Link>

@@ -23,7 +23,7 @@ export default async function CuentaPage({ searchParams }: { searchParams: Promi
         <Panel title="Datos" icon={UserRound}>
           <div className="flex items-center gap-4">
             <Avatar name={user.name || user.email} size="lg" />
-            <dl className="grid grid-cols-[6rem_1fr] gap-x-4 gap-y-2 text-[14px]">
+            <dl className="grid grid-cols-[6rem_1fr] gap-x-4 gap-y-2 text-ui">
               <dt className="text-muted">Nombre</dt>
               <dd>{user.name || "—"}</dd>
               <dt className="text-muted">Email</dt>
@@ -37,14 +37,14 @@ export default async function CuentaPage({ searchParams }: { searchParams: Promi
           </div>
         </Panel>
         <Panel title="Segundo factor (2FA)" icon={ShieldCheck}>
-          <div className="flex flex-wrap items-start justify-between gap-4 text-[14px]">
+          <div className="flex flex-wrap items-start justify-between gap-4 text-ui">
             <p className="max-w-md text-muted">
               Cada ingreso pide tu contraseña y un código de 6 números de tu app de autenticación. Si perdés el celular, usá uno de tus códigos de
               respaldo.
             </p>
             <StatusBadge status="activa" label="Activo" />
           </div>
-          <ul className="mt-5 grid gap-2 border-t border-line pt-5 text-[14px]">
+          <ul className="mt-5 grid gap-2 border-t border-line pt-5 text-ui">
             <li className="flex gap-2">
               <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#1f7a43]" aria-hidden />
               El estudio exige el segundo factor a todas las personas del equipo.
@@ -57,7 +57,7 @@ export default async function CuentaPage({ searchParams }: { searchParams: Promi
           </ul>
         </Panel>
         <Panel title="App del backoffice" icon={Smartphone}>
-          <p className="mb-5 text-[14px] text-muted">Instalala para entrar directo, con su ícono, desde el celular o la computadora.</p>
+          <p className="mb-5 text-ui text-muted">Instalala para entrar directo, con su ícono, desde el celular o la computadora.</p>
           <InstallPanel tone="light" />
         </Panel>
         <GuidePreference />

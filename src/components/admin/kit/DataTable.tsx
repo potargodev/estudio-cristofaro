@@ -163,10 +163,10 @@ export function DataTable({
                 setPage(0);
               }}
               placeholder={searchPlaceholder}
-              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
+              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
             />
           </label>
-          <p className="tabular text-[13px] text-muted" aria-live="polite">
+          <p className="tabular text-meta text-muted" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
           </p>
           {filters.length > 0 && (
@@ -174,10 +174,10 @@ export function DataTable({
               type="button"
               aria-expanded={showFilters}
               onClick={() => setShowFilters((v) => !v)}
-              className="ml-auto inline-flex h-9 items-center gap-2 rounded-md border border-line px-3 text-[13px] text-ink md:hidden"
+              className="ml-auto inline-flex h-9 items-center gap-2 rounded-md border border-line px-3 text-meta text-ink md:hidden"
             >
               <SlidersHorizontal className="size-4" strokeWidth={1.5} aria-hidden />
-              Filtros{activeChips.length > 0 && <span className="tabular rounded-md bg-navy px-1.5 text-[12px] text-paper">{activeChips.length}</span>}
+              Filtros{activeChips.length > 0 && <span className="tabular rounded-md bg-navy px-1.5 text-caption text-paper">{activeChips.length}</span>}
             </button>
           )}
         </div>
@@ -185,7 +185,7 @@ export function DataTable({
           <div className={cn("flex-wrap gap-x-5 gap-y-2 md:flex", showFilters ? "flex" : "hidden")}>
             {filters.map((f) => (
               <div key={f.key} role="group" aria-label={f.label} className="flex flex-wrap items-center gap-1.5">
-                <span className="mr-1 text-[13px] text-muted">{f.label}</span>
+                <span className="mr-1 text-meta text-muted">{f.label}</span>
                 {f.options.map((o) => {
                   const on = active[f.key]?.includes(o.value);
                   return (
@@ -195,7 +195,7 @@ export function DataTable({
                       aria-pressed={on}
                       onClick={() => toggleFilter(f.key, o.value)}
                       className={cn(
-                        "h-7 rounded-md border px-2.5 text-[13px] transition-colors",
+                        "h-7 rounded-md border px-2.5 text-meta transition-colors",
                         on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted",
                       )}
                     >
@@ -206,7 +206,7 @@ export function DataTable({
               </div>
             ))}
             {activeChips.length > 0 && (
-              <button type="button" onClick={() => setActive({})} className="inline-flex items-center gap-1 text-[13px] text-muted underline-offset-4 hover:text-ink hover:underline">
+              <button type="button" onClick={() => setActive({})} className="inline-flex items-center gap-1 text-meta text-muted underline-offset-4 hover:text-ink hover:underline">
                 <X className="size-3.5" aria-hidden /> Limpiar filtros
               </button>
             )}
@@ -216,7 +216,7 @@ export function DataTable({
 
       {/* Acciones en lote */}
       {selectable && selected.size > 0 && bulkActions.length > 0 && (
-        <div className="flex flex-wrap items-center gap-3 border-b border-line bg-navy px-4 py-2.5 text-[14px] text-paper">
+        <div className="flex flex-wrap items-center gap-3 border-b border-line bg-navy px-4 py-2.5 text-ui text-paper">
           <span className="tabular">{selected.size} seleccionados</span>
           {bulkActions.map((b) => (
             <form key={b.label} action={b.action} onSubmit={() => setTimeout(() => setSelected(new Set()), 0)}>
@@ -229,7 +229,7 @@ export function DataTable({
               <button
                 type="submit"
                 className={cn(
-                  "h-8 rounded-md px-3 text-[13px] font-medium",
+                  "h-8 rounded-md px-3 text-meta font-medium",
                   b.tone === "secondary" ? "border border-paper/40 text-paper hover:border-paper" : "bg-rose-light text-night hover:bg-paper",
                 )}
               >
@@ -237,22 +237,22 @@ export function DataTable({
               </button>
             </form>
           ))}
-          <button type="button" onClick={() => setSelected(new Set())} className="ml-auto text-[13px] text-paper/80 underline-offset-4 hover:underline">
+          <button type="button" onClick={() => setSelected(new Set())} className="ml-auto text-meta text-paper/80 underline-offset-4 hover:underline">
             Deseleccionar
           </button>
         </div>
       )}
 
       {filtered.length === 0 ? (
-        <div>{empty ?? <p className="p-8 text-center text-[14px] text-muted">No hay resultados con estos filtros.</p>}</div>
+        <div>{empty ?? <p className="p-8 text-center text-ui text-muted">No hay resultados con estos filtros.</p>}</div>
       ) : (
         <>
           {/* Escritorio: tabla */}
           <div className="hidden md:block">
-            <table className="w-full border-collapse text-[14px]">
+            <table className="w-full border-collapse text-ui">
               <caption className="sr-only">{caption}</caption>
               <thead className="sticky top-[var(--app-top,3.5rem)] z-10 bg-canvas">
-                <tr className="border-b border-line text-[13px] text-muted">
+                <tr className="border-b border-line text-meta text-muted">
                   {selectable && (
                     <th scope="col" className="w-10 px-3">
                       <input type="checkbox" checked={allVisibleSelected} onChange={toggleAll} aria-label="Elegir todas las filas visibles" className="size-4 accent-[var(--color-navy)]" />
@@ -320,7 +320,7 @@ export function DataTable({
                 )}
                 <div className="min-w-0 flex-1">
                   {r.card ?? (
-                    <dl className="grid grid-cols-[7rem_1fr] gap-x-3 gap-y-1.5 text-[14px]">
+                    <dl className="grid grid-cols-[7rem_1fr] gap-x-3 gap-y-1.5 text-ui">
                       {columns.map((c) => (
                         <div key={c.key} className="contents">
                           <dt className="text-muted">{c.header}</dt>
@@ -334,7 +334,7 @@ export function DataTable({
             ))}
           </ul>
           {/* Paginación */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-[13px] text-muted">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-meta text-muted">
             <label className="flex items-center gap-2">
               Filas por página
               <select

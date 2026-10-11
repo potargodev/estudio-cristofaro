@@ -24,14 +24,14 @@ export default function ServiciosPage() {
             {services.map((s, i) => (
               <li key={s.slug} id={s.slug} className="grid gap-8 border-b border-hair py-14 lg:grid-cols-12 lg:py-20">
                 <div className="lg:col-span-5">
-                  <p className="tabular text-[13px] text-rose-light">0{i + 1}</p>
+                  <p className="tabular text-meta text-rose-light">0{i + 1}</p>
                   <h2 className="mt-4 font-display text-[clamp(2.4rem,4.4vw,4rem)] leading-none text-paper">{s.name}</h2>
-                  <p className="mt-5 max-w-md text-[16px] leading-relaxed text-paper/65">{s.summary}</p>
-                  <Link href={`/servicios/${s.slug}`} className="u-draw mt-6 inline-block pb-0.5 text-[15px] text-paper">
+                  <p className="mt-5 max-w-md text-lead leading-relaxed text-paper/65">{s.summary}</p>
+                  <Link href={`/servicios/${s.slug}`} className="u-draw mt-6 inline-block pb-0.5 text-body text-paper">
                     Ver el detalle de {s.name.toLowerCase()}
                   </Link>
                 </div>
-                <ul className="border-t border-hair text-[15px] text-paper/80 lg:col-span-6 lg:col-start-7">
+                <ul className="border-t border-hair text-body text-paper/80 lg:col-span-6 lg:col-start-7">
                   {s.items.map((item) => (
                     <li key={item} className="border-b border-hair py-4">
                       {item}

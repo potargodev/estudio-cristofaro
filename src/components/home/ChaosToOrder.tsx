@@ -135,10 +135,10 @@ export function ChaosToOrder() {
           <h2 id="caos-titulo" className="display-sm mt-6 max-w-[14ch]">
             Del grupo de WhatsApp a un sistema que avisa solo.
           </h2>
-          <p className="mt-6 max-w-sm text-[16px] leading-relaxed text-muted">
+          <p className="mt-6 max-w-sm text-lead leading-relaxed text-muted">
             Mails, planillas y mensajes sueltos pasan a un solo lugar, con fechas, estados y una persona que responde.
           </p>
-          <dl className="mt-10 grid grid-cols-2 border-t border-hair-ink text-[13px]">
+          <dl className="mt-10 grid grid-cols-2 border-t border-hair-ink text-meta">
             <div className="border-r border-hair-ink py-4 pr-4">
               <dt className="text-muted">Hoy</dt>
               <dd className="mt-1 text-ink">Todo depende de acordarse.</dd>
@@ -148,7 +148,7 @@ export function ChaosToOrder() {
               <dd className="mt-1 text-ink">Todo tiene fecha y dueño.</dd>
             </div>
           </dl>
-          <a href="#plataforma" className="mt-8 inline-flex items-center gap-2 text-[15px] text-ink underline decoration-hair-ink underline-offset-[6px] hover:decoration-rose-deep">
+          <a href="#plataforma" className="mt-8 inline-flex items-center gap-2 text-body text-ink underline decoration-hair-ink underline-offset-[6px] hover:decoration-rose-deep">
             Ver la plataforma <ArrowRight className="size-4" aria-hidden />
           </a>
         </div>
@@ -181,35 +181,35 @@ export function ChaosToOrder() {
                 data-on={seen.has(i) ? "1" : undefined}
                 className="group w-full shrink-0 snap-start snap-always py-8 lg:py-10"
               >
-                <p className="flex items-center gap-3 text-[13px] text-muted">
+                <p className="flex items-center gap-3 text-meta text-muted">
                   <span className="tabular text-rose-deep">0{i + 1}</span>
                   {r.topic}
                 </p>
                 <div className="mt-5 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10">
                   {/* Hoy */}
                   <div className="min-w-0">
-                    <p className="text-[12px] text-muted">Hoy</p>
+                    <p className="text-caption text-muted">Hoy</p>
                     <p className="mt-1.5 text-[clamp(1.15rem,1.6vw,1.4rem)] leading-snug text-ink transition-[color,text-decoration-color] delay-200 duration-700 [text-decoration-line:line-through] [text-decoration-color:transparent] group-data-[on]:text-muted group-data-[on]:[text-decoration-color:var(--color-rose-deep)] motion-reduce:transition-none">
                       {r.problem}
                     </p>
-                    <p className="mt-4 inline-flex max-w-full items-center gap-2.5 border border-dashed border-hair-ink px-3 py-2 text-[13px] text-muted">
+                    <p className="mt-4 inline-flex max-w-full items-center gap-2.5 border border-dashed border-hair-ink px-3 py-2 text-meta text-muted">
                       <r.source.icon className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
                       <span className="min-w-0 truncate">{r.source.text}</span>
                     </p>
                   </div>
                   {/* Con el estudio */}
                   <div className="min-w-0 translate-y-3 opacity-0 transition-[opacity,transform] delay-500 duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-[on]:translate-y-0 group-data-[on]:opacity-100 motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none">
-                    <p className="text-[12px] text-rose-deep">Con Estudio Cristofaro</p>
+                    <p className="text-caption text-rose-deep">Con Estudio Cristofaro</p>
                     <p className="mt-1.5 text-[clamp(1.15rem,1.6vw,1.4rem)] font-medium leading-snug text-ink">{r.solution}</p>
                     <div className="mt-4 flex items-center gap-3 border border-hair-ink bg-white px-3.5 py-3 shadow-[0_10px_30px_-18px_rgba(28,34,53,0.35)]">
                       <span className="grid size-9 shrink-0 place-items-center bg-navy text-paper">
                         <r.result.icon className="size-4" strokeWidth={1.5} aria-hidden />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[14px] font-medium text-ink">{r.result.label}</span>
-                        <span className="tabular block truncate text-[13px] text-muted">{r.result.detail}</span>
+                        <span className="block truncate text-ui font-medium text-ink">{r.result.label}</span>
+                        <span className="tabular block truncate text-meta text-muted">{r.result.detail}</span>
                       </span>
-                      <span className="shrink-0 border border-rose/40 bg-rose-soft px-2 py-0.5 text-[12px] text-rose-deep">{r.result.status}</span>
+                      <span className="shrink-0 border border-rose/40 bg-rose-soft px-2 py-0.5 text-caption text-rose-deep">{r.result.status}</span>
                     </div>
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export function ChaosToOrder() {
                   <span className={`block h-[3px] transition-all duration-500 motion-reduce:transition-none ${i === index ? "w-8 bg-rose-deep" : "w-4 bg-hair-ink"}`} />
                 </button>
               ))}
-              <span className="tabular ml-2 text-[12px] text-muted">
+              <span className="tabular ml-2 text-caption text-muted">
                 0{index + 1} / 0{ROWS.length}
               </span>
             </div>

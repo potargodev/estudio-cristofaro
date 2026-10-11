@@ -20,10 +20,10 @@ export default async function SuspendidoPage({ searchParams }: { searchParams: P
   const [t] = await getDb().select({ name: studios.name, reason: studios.suspended_reason }).from(studios).where(eq(studios.id, user.studioId));
   return (
     <AuthShell title="Cuenta suspendida" subtitle={`Faro · ${t?.name ?? ""}`}>
-      <p className="text-[15px] leading-relaxed text-ink">El acceso a Faro de esta cuenta está suspendido. Tus datos están guardados y no se borró nada.</p>
-      {t?.reason && <p className="mt-3 text-[14px] text-muted">Motivo: {t.reason}</p>}
+      <p className="text-body leading-relaxed text-ink">El acceso a Faro de esta cuenta está suspendido. Tus datos están guardados y no se borró nada.</p>
+      {t?.reason && <p className="mt-3 text-ui text-muted">Motivo: {t.reason}</p>}
       <PayToReactivate studioId={user.studioId} owner={user.role === "dueno"} error={sp.error} />
-      <p className="mt-3 text-[14px] text-muted">Por cualquier consulta escribinos a {FARO.contactEmail()}.</p>
+      <p className="mt-3 text-ui text-muted">Por cualquier consulta escribinos a {FARO.contactEmail()}.</p>
       <form action={signOut} className="mt-6">
         <SubmitButton variant="secondary" pendingText="Saliendo…">
           Cerrar sesión

@@ -5,8 +5,9 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { createRendicionAction, decideRendicionAction, reimburseAction, type RendicionState } from "@/app/portal/rendicion-actions";
 import { CATEGORIES, CURRENCIES, todayAR } from "@/modules/gastos/constants";
+import { fieldClass } from "@/components/ds/primitives";
 
-const input = "h-11 w-full border border-line bg-surface px-3 text-[16px] focus:border-navy focus:outline-none";
+const input = fieldClass;
 
 function useResult(state: RendicionState, onOk?: () => void) {
   useEffect(() => {
@@ -29,7 +30,7 @@ export function RendicionForm() {
   });
   return (
     <form ref={form} action={action} className="grid gap-4">
-      <label className="grid gap-1.5 text-[14px]">
+      <label className="grid gap-1.5 text-ui">
         ¿En qué gastaste?
         <input name="description" required minLength={2} maxLength={140} placeholder="Taxi a lo de un cliente" className={input} />
       </label>
@@ -39,7 +40,7 @@ export function RendicionForm() {
             <option key={c}>{c}</option>
           ))}
         </select>
-        <input name="amount" inputMode="decimal" required placeholder="Importe" aria-label="Importe" className={`${input} text-[20px] tabular-nums`} />
+        <input name="amount" inputMode="decimal" required placeholder="Importe" aria-label="Importe" className={`${input} text-section tabular-nums`} />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <input name="date" type="date" defaultValue={todayAR()} aria-label="Fecha" className={input} />
@@ -51,13 +52,13 @@ export function RendicionForm() {
           ))}
         </select>
       </div>
-      <label className="flex cursor-pointer items-center gap-3 border border-dashed border-navy/40 bg-surface px-4 py-4 text-[15px]">
+      <label className="flex cursor-pointer items-center gap-3 border border-dashed border-navy/40 bg-surface px-4 py-4 text-body">
         <Camera className="size-5 text-rose-deep" aria-hidden />
         <span className="flex-1 truncate">{file || "Foto del ticket o la factura (obligatoria)"}</span>
         <input type="file" name="receipt" required accept="image/jpeg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf" capture="environment" className="sr-only" onChange={(e) => setFile(e.target.files?.[0]?.name ?? "")} />
       </label>
       {state.message && !state.ok && (
-        <p role="alert" className="text-[14px] text-danger">
+        <p role="alert" className="text-ui text-danger">
           {state.message}
         </p>
       )}
@@ -79,21 +80,21 @@ export function DecideButtons({ id }: { id: string }) {
       {rejecting && <input name="reason" required placeholder="Motivo del rechazo" aria-label="Motivo del rechazo" className={input} />}
       <div className="flex flex-wrap gap-2">
         {!rejecting && (
-          <button disabled={pending} className="h-10 bg-navy px-4 text-[14px] text-paper hover:bg-navy-deep">
+          <button disabled={pending} className="h-10 bg-navy px-4 text-ui text-paper hover:bg-navy-deep">
             Aprobar
           </button>
         )}
         {rejecting ? (
           <>
-            <button disabled={pending} className="h-10 bg-danger px-4 text-[14px] text-white">
+            <button disabled={pending} className="h-10 bg-danger px-4 text-ui text-white">
               Confirmar rechazo
             </button>
-            <button type="button" onClick={() => setRejecting(false)} className="h-10 px-3 text-[14px] text-muted">
+            <button type="button" onClick={() => setRejecting(false)} className="h-10 px-3 text-ui text-muted">
               Cancelar
             </button>
           </>
         ) : (
-          <button type="button" onClick={() => setRejecting(true)} className="h-10 border border-line px-4 text-[14px] hover:bg-navy-soft">
+          <button type="button" onClick={() => setRejecting(true)} className="h-10 border border-line px-4 text-ui hover:bg-navy-soft">
             Rechazar
           </button>
         )}
@@ -108,7 +109,7 @@ export function ReimburseButton({ id }: { id: string }) {
   return (
     <form action={action}>
       <input type="hidden" name="id" value={id} />
-      <button disabled={pending} className="h-10 border border-navy/30 px-4 text-[14px] text-navy hover:bg-navy-soft">
+      <button disabled={pending} className="h-10 border border-navy/30 px-4 text-ui text-navy hover:bg-navy-soft">
         Marcar reintegrada
       </button>
     </form>

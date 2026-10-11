@@ -39,8 +39,8 @@ export function Steps() {
                 <p className="tabular font-display text-[clamp(2.4rem,3.6vw,3.4rem)] leading-none text-rose-light">
                   <span className="sr-only">Paso </span>0{i + 1}
                 </p>
-                <h3 className="mt-4 text-[18px] font-medium text-paper">{s.t}</h3>
-                <p className="mt-2 max-w-[30ch] text-[15px] leading-relaxed text-paper/65">{s.d}</p>
+                <h3 className="mt-4 text-title font-medium text-paper">{s.t}</h3>
+                <p className="mt-2 max-w-[30ch] text-body leading-relaxed text-paper/65">{s.d}</p>
               </div>
             </li>
           ))}

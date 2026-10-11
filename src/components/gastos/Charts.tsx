@@ -17,10 +17,10 @@ export function CategoryChart({ data, currency }: { data: Record<string, number>
       <ul className="grid gap-3">
         {rows.map(([k, v], i) => (
           <li key={k}>
-            <div className="flex items-baseline justify-between gap-3 text-[14px]">
+            <div className="flex items-baseline justify-between gap-3 text-ui">
               <span>{categoryName(k)}</span>
               <span className="tabular-nums text-muted">
-                {formatMoney(v, currency)} <span className="text-[12px]">· {Math.round((v / total) * 100)}%</span>
+                {formatMoney(v, currency)} <span className="text-caption">· {Math.round((v / total) * 100)}%</span>
               </span>
             </div>
             <div className="mt-1.5 h-2.5 bg-navy-soft">
@@ -43,14 +43,14 @@ export function MonthChart({ data, currency }: { data: Record<string, number>; c
       <div className="flex h-48 items-end gap-2 border-b border-line">
         {rows.map(([m, v], i) => (
           <div key={m} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1" role="img" aria-label={`${m}: ${formatMoney(v, currency)}`}>
-            <span className="hidden truncate text-[11px] tabular-nums text-muted sm:block">{formatMoney(v, currency, { compact: true })}</span>
+            <span className="hidden truncate text-micro tabular-nums text-muted sm:block">{formatMoney(v, currency, { compact: true })}</span>
             <div className="gastos-col w-full max-w-12 origin-bottom bg-navy" style={{ height: `${Math.max(2, (v / max) * 82)}%`, animationDelay: `${i * 50}ms` }} />
           </div>
         ))}
       </div>
       <div className="mt-1.5 flex gap-2">
         {rows.map(([m]) => (
-          <span key={m} className="min-w-0 flex-1 text-center text-[12px] text-muted">
+          <span key={m} className="min-w-0 flex-1 text-center text-caption text-muted">
             {MONTHS[Number(m.slice(5, 7)) - 1]}
           </span>
         ))}

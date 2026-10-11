@@ -19,15 +19,15 @@ export default async function Comunicado({ params, searchParams }: { params: Pro
   const { a, r } = row;
   return (
     <>
-      <Link href="/portal/empleado" className="text-[13px] text-muted hover:text-ink">
+      <Link href="/portal/empleado" className="text-meta text-muted hover:text-ink">
         ← Inicio
       </Link>
       <PageTitle title={a.title} intro={`${a.created_at.toLocaleDateString("es-AR")}${a.from_studio ? " · enviado por el estudio en nombre de la empresa" : ""}`} />
       <Feedback sp={sp} />
       <Card>
-        <p className="whitespace-pre-line text-[15px] leading-relaxed">{a.body}</p>
+        <p className="whitespace-pre-line text-body leading-relaxed">{a.body}</p>
         {a.attachments.length > 0 && (
-          <ul className="mt-4 grid gap-1 text-[14px]">
+          <ul className="mt-4 grid gap-1 text-ui">
             {a.attachments.map((x, i) => (
               <li key={x.path}>
                 <a href={`/api/comunicados/${a.id}/adjunto/${i}`} className="underline">
@@ -40,7 +40,7 @@ export default async function Comunicado({ params, searchParams }: { params: Pro
       </Card>
       {a.require_ack &&
         (r.ack_at ? (
-          <p className="mt-4 text-[14px] text-muted">Confirmaste la lectura el {r.ack_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}.</p>
+          <p className="mt-4 text-ui text-muted">Confirmaste la lectura el {r.ack_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}.</p>
         ) : (
           <form action={ackAnnouncementAction} className="mt-4">
             <input type="hidden" name="id" value={a.id} />

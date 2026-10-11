@@ -47,18 +47,18 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
                     <Icon className="size-5" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate text-[16px] font-medium text-ink">{b.kind === "personal" ? "Personal" : b.name}</span>
-                    <span className="block text-[13px] text-muted">{b.kind === "compartida" ? `${t?.name ?? "Compartida"} · ${b.members.length} ${b.members.length === 1 ? "persona" : "personas"}` : b.kind === "negocio" ? "Negocio · solo vos" : "Personal · solo vos"}</span>
+                    <span className="block truncate text-lead font-medium text-ink">{b.kind === "personal" ? "Personal" : b.name}</span>
+                    <span className="block text-meta text-muted">{b.kind === "compartida" ? `${t?.name ?? "Compartida"} · ${b.members.length} ${b.members.length === 1 ? "persona" : "personas"}` : b.kind === "negocio" ? "Negocio · solo vos" : "Personal · solo vos"}</span>
                   </span>
                 </span>
-                <span className="text-[14px] text-muted">{b.kind === "compartida" ? t?.description : PURPOSE[b.kind]}</span>
+                <span className="text-ui text-muted">{b.kind === "compartida" ? t?.description : PURPOSE[b.kind]}</span>
                 {b.kind === "personal" && (
-                  <span className="num text-[14px] text-ink">
+                  <span className="num text-ui text-ink">
                     Este mes: entró {money(personal.byCurrency.ARS.now.in)} · salió {money(personal.byCurrency.ARS.now.out)}
                   </span>
                 )}
                 {b.kind === "negocio" && biz && (
-                  <span className="num text-[14px] text-ink">
+                  <span className="num text-ui text-ink">
                     Este mes: resultado {money(biz.result)} · sueldo {money(biz.salary)}
                   </span>
                 )}
@@ -68,10 +68,10 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
         })}
         {!business && (
           <li className="flex flex-col gap-3 rounded-lg border border-dashed border-line bg-surface p-5">
-            <span className="flex items-center gap-2 text-[16px] font-medium text-ink">
+            <span className="flex items-center gap-2 text-lead font-medium text-ink">
               <Briefcase className="size-5 text-rose-deep" aria-hidden /> Caja de negocio
             </span>
-            <span className="text-[14px] text-muted">
+            <span className="text-ui text-muted">
               {autonomo ? "Tenés una actividad: abrí tu caja de negocio para separar lo del trabajo de lo personal." : "¿Hacés una changa, un freelance o vendés algo? Aunque sea chico, separalo de lo personal: así ves si ganás o perdés."}
             </span>
             <form action={openBusinessAction}>
@@ -80,7 +80,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
           </li>
         )}
         <li>
-          <Link href="/cajas/nueva" className="flex h-full min-h-28 items-center justify-center gap-2 rounded-lg border border-dashed border-line bg-surface p-5 text-[15px] font-medium text-rose-deep hover:border-navy">
+          <Link href="/cajas/nueva" className="flex h-full min-h-28 items-center justify-center gap-2 rounded-lg border border-dashed border-line bg-surface p-5 text-body font-medium text-rose-deep hover:border-navy">
             <Plus className="size-5" aria-hidden /> Caja compartida
             <HeartHandshake className="size-5" aria-hidden />
           </Link>
@@ -89,16 +89,16 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
 
       {hints.length > 0 && (
         <section aria-labelledby="parece" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
-          <h2 id="parece" className="flex items-center gap-2 text-[16px] font-semibold text-ink">
+          <h2 id="parece" className="flex items-center gap-2 text-lead font-semibold text-ink">
             <Lightbulb className="size-5 text-rose-deep" aria-hidden /> Esto parece de tu negocio
           </h2>
-          <p className="mt-1 text-[14px] text-muted">Lo cargaste en lo personal, pero parece del trabajo. Si es del negocio, movelo: no se duplica.</p>
+          <p className="mt-1 text-ui text-muted">Lo cargaste en lo personal, pero parece del trabajo. Si es del negocio, movelo: no se duplica.</p>
           <ul className="mt-3 divide-y divide-line">
             {hints.map(({ entry, hint }) => (
               <li key={entry.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                 <span className="min-w-0">
-                  <span className="block text-[15px] text-ink">{entry.description}</span>
-                  <span className="num block text-[13px] text-muted">
+                  <span className="block text-body text-ink">{entry.description}</span>
+                  <span className="num block text-meta text-muted">
                     {money(entry.amount, entry.currency)} · {entry.date} · por «{hint}»
                   </span>
                 </span>
@@ -110,7 +110,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
                   </form>
                   <form action={dismissHintAction}>
                     <input type="hidden" name="id" value={entry.id} />
-                    <button type="submit" className="h-10 rounded-md px-3 text-[13px] text-muted hover:text-ink">
+                    <button type="submit" className="h-10 rounded-md px-3 text-meta text-muted hover:text-ink">
                       Es personal
                     </button>
                   </form>
@@ -121,7 +121,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
         </section>
       )}
 
-      <p className="text-[13px] text-muted">
+      <p className="text-meta text-muted">
         Cada caja es un mundo cerrado: la plata y la gente de una no se mezclan con las de otra. Lo único que pasa entre cajas es un movimiento a la vista: el sueldo que te pagás desde el negocio o un aporte. Ver{" "}
         <Link href="/ayuda/bitacora/mis-cajas" className="underline underline-offset-4">
           cómo funcionan las cajas

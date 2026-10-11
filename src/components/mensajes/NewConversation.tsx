@@ -5,8 +5,9 @@ import { useActionState, useMemo, useState } from "react";
 import { createGroupChatAction, openDirectAction, type ChatState } from "@/app/mensajes/actions";
 import { cn } from "@/lib/utils";
 import type { Contact } from "@/modules/messages/server";
+import { fieldClass } from "@/components/ds/primitives";
 
-const field = "h-11 w-full rounded-md border border-line bg-surface px-3 text-[16px] focus:border-navy focus:outline-none";
+const field = fieldClass;
 
 export function NewConversation({ contacts, staff }: { contacts: Contact[]; staff: boolean }) {
   const [tab, setTab] = useState<"persona" | "grupo">("persona");
@@ -16,7 +17,7 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
   const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const shown = useMemo(() => contacts.filter((c) => (!canal || tab !== "grupo" || c.team) && (!q || norm(c.name).includes(norm(q)) || c.via.some((v) => norm(v).includes(norm(q))))), [contacts, q, canal, tab]);
   if (!contacts.length)
-    return <p className="rounded-md border border-dashed border-line bg-surface p-6 text-center text-[14px] text-muted">Todavía no compartís ningún espacio con otra persona. Sumate a un grupo de gastos o a una Flota, o pedile a tu estudio que te invite.</p>;
+    return <p className="rounded-md border border-dashed border-line bg-surface p-6 text-center text-ui text-muted">Todavía no compartís ningún espacio con otra persona. Sumate a un grupo de gastos o a una Flota, o pedile a tu estudio que te invite.</p>;
   return (
     <div className="grid gap-4">
       <div role="tablist" aria-label="Tipo de conversación" className="grid grid-cols-2 rounded-md border border-line p-1">
@@ -26,7 +27,7 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
             ["grupo", staff ? "Grupo o canal" : "Grupo"],
           ] as const
         ).map(([k, t]) => (
-          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={cn("h-10 rounded-[4px] text-[14px]", tab === k ? "bg-navy text-paper" : "text-muted hover:text-ink")}>
+          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={cn("h-10 rounded-[4px] text-ui", tab === k ? "bg-navy text-paper" : "text-muted hover:text-ink")}>
             {t}
           </button>
         ))}
@@ -41,26 +42,26 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
           {shown.map((c) => (
             <li key={c.id} className="flex items-center gap-3 px-4 py-3">
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[15px]">{c.name}</span>
-                <span className="block truncate text-[12px] text-muted">{c.via.join(" · ")}</span>
+                <span className="block truncate text-body">{c.name}</span>
+                <span className="block truncate text-caption text-muted">{c.via.join(" · ")}</span>
               </span>
               <form action={openDirectAction}>
                 <input type="hidden" name="user" value={c.id} />
-                <button className="h-9 rounded-md border border-line px-3 text-[13px] hover:border-muted">Escribir</button>
+                <button className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">Escribir</button>
               </form>
             </li>
           ))}
-          {shown.length === 0 && <li className="px-4 py-6 text-center text-[14px] text-muted">Nadie coincide con el filtro.</li>}
+          {shown.length === 0 && <li className="px-4 py-6 text-center text-ui text-muted">Nadie coincide con el filtro.</li>}
         </ul>
       ) : (
         <form action={action} className="grid gap-3">
           {canal && <input type="hidden" name="canal" value="1" />}
-          <label className="grid gap-1.5 text-[14px]">
+          <label className="grid gap-1.5 text-ui">
             {canal ? "Nombre del canal" : "Nombre de la conversación"}
             <input name="title" required minLength={2} maxLength={80} placeholder={canal ? "Liquidaciones, Clientes nuevos…" : "Cumple de Ana, Viaje…"} className={field} />
           </label>
           {staff && (
-            <label className="flex items-center gap-2 text-[14px]">
+            <label className="flex items-center gap-2 text-ui">
               <input type="checkbox" checked={canal} onChange={(e) => setCanal(e.target.checked)} className="size-4 accent-navy" />
               Canal interno del equipo (solo personas del estudio)
             </label>
@@ -73,8 +74,8 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
                   <label className="flex cursor-pointer items-center gap-3 px-4 py-2.5">
                     <input type="checkbox" name="users" value={c.id} className="size-4 accent-navy" />
                     <span className="min-w-0">
-                      <span className="block truncate text-[15px]">{c.name}</span>
-                      <span className="block truncate text-[12px] text-muted">{c.via.join(" · ")}</span>
+                      <span className="block truncate text-body">{c.name}</span>
+                      <span className="block truncate text-caption text-muted">{c.via.join(" · ")}</span>
                     </span>
                   </label>
                 </li>
@@ -82,7 +83,7 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
             </ul>
           </fieldset>
           {state.message && (
-            <p role="alert" className="text-[14px] text-danger">
+            <p role="alert" className="text-ui text-danger">
               {state.message}
             </p>
           )}

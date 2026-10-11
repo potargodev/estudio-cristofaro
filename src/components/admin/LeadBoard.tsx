@@ -64,9 +64,9 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                 over === col.value ? "border-navy bg-navy-soft" : "border-line bg-canvas"
               }`}
             >
-              <h2 className="flex items-center justify-between px-2 py-1.5 text-[14px] font-medium text-ink">
+              <h2 className="flex items-center justify-between px-2 py-1.5 text-ui font-medium text-ink">
                 {col.label}
-                <span className="tabular rounded-md border border-line bg-surface px-1.5 text-[12px] text-muted">{items.length}</span>
+                <span className="tabular rounded-md border border-line bg-surface px-1.5 text-caption text-muted">{items.length}</span>
               </h2>
               <ul className="mt-1 space-y-2">
                 {items.map((l) => {
@@ -87,16 +87,16 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", l.id)}
                       className="cursor-grab border border-line bg-surface p-3 transition-colors hover:border-muted active:cursor-grabbing"
                     >
-                      <Link href={`/admin/comercial/consultas/${l.id}`} className="block text-[14px] font-medium leading-snug text-ink underline-offset-4 hover:underline">
+                      <Link href={`/admin/comercial/consultas/${l.id}`} className="block text-ui font-medium leading-snug text-ink underline-offset-4 hover:underline">
                         {l.name}
                       </Link>
                       {(l.company || l.contributor_type) && (
-                        <p className="mt-0.5 truncate text-[13px] text-muted">
+                        <p className="mt-0.5 truncate text-meta text-muted">
                           {l.company ?? CONTRIBUTOR_TYPES[l.contributor_type ?? ""] ?? l.contributor_type}
                         </p>
                       )}
                       {l.next_action ? (
-                        <p className={`mt-2 flex items-start gap-1.5 text-[12px] ${overdue ? "font-medium text-[#8f2a1c]" : "text-ink/80"}`}>
+                        <p className={`mt-2 flex items-start gap-1.5 text-caption ${overdue ? "font-medium text-[#8f2a1c]" : "text-ink/80"}`}>
                           <CalendarClock className="mt-px size-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
                           <span>
                             {l.next_action}
@@ -105,9 +105,9 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                           </span>
                         </p>
                       ) : (
-                        active && <p className="mt-2 text-[12px] text-rose-deep">Sin próxima acción</p>
+                        active && <p className="mt-2 text-caption text-rose-deep">Sin próxima acción</p>
                       )}
-                      <div className="mt-2 flex items-center justify-between gap-2 text-[12px] text-muted">
+                      <div className="mt-2 flex items-center justify-between gap-2 text-caption text-muted">
                         <span className="inline-flex min-w-0 items-center gap-1.5">
                           <Source className="size-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
                           <span className="truncate">{LEAD_SOURCES[l.source]}</span>
@@ -118,12 +118,12 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                         </span>
                       </div>
                       <Select value={l.status} onValueChange={(v) => move(l.id, v as LeadStatus)}>
-                        <SelectTrigger size="sm" aria-label={`Estado de ${l.name}`} className="mt-2.5 h-7 w-full rounded-md bg-canvas text-[12px]">
+                        <SelectTrigger size="sm" aria-label={`Estado de ${l.name}`} className="mt-2.5 h-7 w-full rounded-md bg-canvas text-caption">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           {LEAD_STATUSES.map((s) => (
-                            <SelectItem key={s.value} value={s.value} className="text-xs">
+                            <SelectItem key={s.value} value={s.value} className="text-caption">
                               {s.label}
                             </SelectItem>
                           ))}

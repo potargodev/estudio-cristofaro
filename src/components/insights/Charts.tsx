@@ -12,9 +12,9 @@ export const fmt = (v: number, unit: "ars" | "n" | "pct") => (unit === "ars" ? a
 export function Kpi({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: "danger" | "ok" }) {
   return (
     <div className="rounded-md border border-line bg-surface px-4 py-3">
-      <p className="text-[13px] text-muted">{label}</p>
-      <p className={cn("num mt-0.5 text-[24px] leading-tight text-ink", tone === "danger" && "text-danger")}>{value}</p>
-      {hint && <p className="mt-0.5 text-[12px] text-muted">{hint}</p>}
+      <p className="text-meta text-muted">{label}</p>
+      <p className={cn("num mt-0.5 text-headline leading-tight text-ink", tone === "danger" && "text-danger")}>{value}</p>
+      {hint && <p className="mt-0.5 text-caption text-muted">{hint}</p>}
     </div>
   );
 }
@@ -35,16 +35,16 @@ export function BarChart({ title, series, unit, second, legend }: { title: strin
   return (
     <figure className="rounded-md border border-line bg-surface p-4">
       <figcaption className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="text-[14px] font-medium text-ink">{title}</span>
+        <span className="text-ui font-medium text-ink">{title}</span>
         {last && (
-          <span className="num text-[13px] text-muted">
+          <span className="num text-meta text-muted">
             {monthLabel(last.m)}: {fmt(last.v, unit)}
             {delta != null && unit !== "pct" && <span className={delta < 0 ? "text-danger" : "text-[#1f5f36]"}> · {delta > 0 ? "+" : ""}{delta} %</span>}
           </span>
         )}
       </figcaption>
       {legend && second && (
-        <p className="mt-1 flex gap-3 text-[12px] text-muted">
+        <p className="mt-1 flex gap-3 text-caption text-muted">
           <span className="inline-flex items-center gap-1"><span className="size-2.5 rounded-sm bg-navy" aria-hidden />{legend[0]}</span>
           <span className="inline-flex items-center gap-1"><span className="size-2.5 rounded-sm bg-rose-deep" aria-hidden />{legend[1]}</span>
         </p>
@@ -62,7 +62,7 @@ export function BarChart({ title, series, unit, second, legend }: { title: strin
               {bar(p.v, 0, p.v < 0 ? "fill-danger" : "fill-navy")}
               {second && bar(second[i]?.v ?? 0, bw + 2, "fill-rose-deep")}
               {(series.length <= 6 || i % 2 === series.length % 2) && (
-                <text x={i * slot + slot / 2} y={H - 4} textAnchor="middle" className="fill-muted text-[11px]">
+                <text x={i * slot + slot / 2} y={H - 4} textAnchor="middle" className="fill-muted text-micro">
                   {monthLabel(p.m)}
                 </text>
               )}

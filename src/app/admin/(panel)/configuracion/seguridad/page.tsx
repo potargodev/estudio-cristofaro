@@ -45,13 +45,13 @@ export default async function SeguridadPage() {
     <div className="grid max-w-4xl gap-6">
       <PageHeader level={2} title="Seguridad" description="Segundo factor, accesos del equipo de Faro y accesos de herramientas externas." className="mb-0" />
       <Panel title="Tu segundo factor (2FA)" icon={ShieldCheck}>
-        <div className="flex flex-wrap items-start justify-between gap-4 text-[14px]">
+        <div className="flex flex-wrap items-start justify-between gap-4 text-ui">
           <p className="max-w-lg text-muted">
             {me.tenantKind === "studio" ? "El estudio exige contraseña y un código de 6 números de tu app de autenticación en cada ingreso." : "Tu cuenta entra con Google, un enlace a tu mail o tu contraseña."}
           </p>
           <StatusBadge status={me.twoFactorEnabled ? "activa" : "pausada"} label={me.twoFactorEnabled ? "Activo" : "Sin activar"} />
         </div>
-        <ul className="mt-4 grid gap-2 border-t border-line pt-4 text-[14px]">
+        <ul className="mt-4 grid gap-2 border-t border-line pt-4 text-ui">
           <li className="flex gap-2">
             <KeyRound className="mt-0.5 size-4 shrink-0 text-rose-deep" aria-hidden />
             <span>
@@ -66,27 +66,27 @@ export default async function SeguridadPage() {
       </Panel>
       {team.length > 0 && (
         <Panel title="Segundo factor del equipo" icon={Users}>
-          <ul className="divide-y divide-line text-[14px]">
+          <ul className="divide-y divide-line text-ui">
             {team.map((u) => (
               <li key={u.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                 <span className="min-w-0">
                   <span className="block truncate text-ink">{u.name || u.email}</span>
-                  <span className="block truncate text-[13px] text-muted">
+                  <span className="block truncate text-meta text-muted">
                     {isStudioRole(u.role) ? STUDIO_ROLE_LABELS[u.role] : u.role} · {u.email}
                     {!u.active && " · desactivado"}
                   </span>
                 </span>
                 {u.twoFactor ? (
-                  <span className="inline-flex items-center gap-1.5 text-[13px] text-[#1f7a43]">
+                  <span className="inline-flex items-center gap-1.5 text-meta text-[#1f7a43]">
                     <CheckCircle2 className="size-4" aria-hidden /> 2FA activo
                   </span>
                 ) : (
-                  <span className="text-[13px] text-danger">Sin 2FA: no puede entrar hasta activarlo</span>
+                  <span className="text-meta text-danger">Sin 2FA: no puede entrar hasta activarlo</span>
                 )}
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-[13px] text-muted">
+          <p className="mt-3 text-meta text-muted">
             Altas, roles y reseteo de contraseñas, en{" "}
             <Link href="/admin/configuracion/equipo" className="underline underline-offset-4">
               Equipo y usuarios
@@ -97,17 +97,17 @@ export default async function SeguridadPage() {
       )}
       {owner && (
         <Panel title="Accesos asistidos de Faro" icon={LifeBuoy}>
-          <p className="text-[14px] text-muted">Cuando el equipo de Faro entra a ayudarte, queda acá y en la auditoría, con el motivo y el horario.</p>
+          <p className="text-ui text-muted">Cuando el equipo de Faro entra a ayudarte, queda acá y en la auditoría, con el motivo y el horario.</p>
           {assisted.length === 0 ? (
-            <p className="mt-3 text-[14px] text-ink">Nadie de Faro entró a tu cuenta.</p>
+            <p className="mt-3 text-ui text-ink">Nadie de Faro entró a tu cuenta.</p>
           ) : (
-            <ul className="mt-3 divide-y divide-line text-[14px]">
+            <ul className="mt-3 divide-y divide-line text-ui">
               {assisted.map((a) => (
                 <li key={a.id} className="py-2.5">
                   <span className="block text-ink">
                     {a.who} · {a.reason}
                   </span>
-                  <span className="num block text-[13px] font-normal text-muted">
+                  <span className="num block text-meta font-normal text-muted">
                     {fmt.format(a.createdAt)} → {fmt.format(a.endedAt ?? a.expiresAt)}
                     {a.endedAt ? " (terminado)" : a.expiresAt > new Date() ? " (vigente)" : " (vencido)"}
                   </span>
@@ -118,10 +118,10 @@ export default async function SeguridadPage() {
         </Panel>
       )}
       <Panel title="Accesos MCP" icon={Waypoints}>
-        <p className="text-[14px] text-muted">
+        <p className="text-ui text-muted">
           Las herramientas externas (Claude, ChatGPT y otras) entran con un acceso que podés revocar cuando quieras. Lo sensible siempre queda en las Propuestas para aprobar del Vigía.
         </p>
-        <Link href="/admin/mcp" className="mt-3 inline-flex text-[14px] font-medium underline underline-offset-4">
+        <Link href="/admin/mcp" className="mt-3 inline-flex text-ui font-medium underline underline-offset-4">
           Ver los accesos MCP
         </Link>
       </Panel>

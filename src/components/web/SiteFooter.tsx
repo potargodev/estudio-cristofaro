@@ -41,7 +41,7 @@ export function SiteFooter() {
           </p>
           <div className="flex flex-wrap items-end gap-4 lg:col-span-5 lg:justify-end">
             <CtaLink href={SCHEDULE_HREF}>Agendar una llamada</CtaLink>
-            <a href={whatsappLink()} target="_blank" rel="noopener" className="u-draw pb-0.5 text-[15px] text-paper/75 hover:text-paper">
+            <a href={whatsappLink()} target="_blank" rel="noopener" className="u-draw pb-0.5 text-body text-paper/75 hover:text-paper">
               o escribinos por WhatsApp
             </a>
           </div>
@@ -49,14 +49,14 @@ export function SiteFooter() {
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Logo inverted />
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-paper/60">
+            <p className="mt-5 max-w-xs text-ui leading-relaxed text-paper/60">
               Contabilidad empresarial para PyMEs de servicios en CABA y GBA. {site.hours}.
             </p>
           </div>
           {columns.map((c) => (
             <div key={c.title} className="lg:col-span-2 lg:col-start-auto">
-              <h2 className="text-[13px] text-rose-light">{c.title}</h2>
-              <ul className="mt-4 space-y-2.5 text-[15px]">
+              <h2 className="text-meta text-rose-light">{c.title}</h2>
+              <ul className="mt-4 space-y-2.5 text-body">
                 {c.links.map((l) => (
                   <li key={l.label}>
                     <Link href={l.href} className="u-draw pb-0.5 text-paper/75 hover:text-paper">
@@ -68,7 +68,7 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-3 border-t border-hair py-6 text-[13px] text-paper/55 sm:flex-row sm:justify-between">
+        <div className="flex flex-col gap-3 border-t border-hair py-6 text-meta text-paper/55 sm:flex-row sm:justify-between">
           <p>
             © {new Date().getFullYear()} {site.name} ·{" "}
             <Link href="/faro" className="u-draw text-paper/75 hover:text-paper">

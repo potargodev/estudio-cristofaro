@@ -13,8 +13,8 @@ const KINDS: { kind: TenantKind; title: string; text: string; plan: string; icon
   { kind: "studio", title: "Un estudio o un contador", text: "Gestionás clientes: organizaciones, vencimientos, documentos y equipo.", plan: "Estudios · Inicial, gratis", icon: Building2 },
 ];
 
-const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-[15px] text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
-const label = "text-[13px] text-paper/70";
+const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-body text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
+const label = "text-meta text-paper/70";
 
 /** Autoregistro: primero "¿Qué sos?", después los datos. Sin tarjeta. */
 export function RegisterForm({ kinds = ["persona", "personal", "studio"], initial, interest, google = false }: { kinds?: TenantKind[]; initial?: TenantKind; interest?: string; google?: boolean }) {
@@ -41,9 +41,9 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
                   <o.icon className="size-5 text-gold" strokeWidth={1.5} aria-hidden />
                   {kind === o.kind && <Check className="size-4 text-gold" aria-hidden />}
                 </span>
-                <span className="mt-3 text-[16px] font-medium text-paper">{o.title}</span>
-                <span className="mt-1 text-[13px] leading-snug text-paper/60">{o.text}</span>
-                <span className="mt-3 text-[12px] text-gold">{o.plan}</span>
+                <span className="mt-3 text-lead font-medium text-paper">{o.title}</span>
+                <span className="mt-1 text-meta leading-snug text-paper/60">{o.text}</span>
+                <span className="mt-3 text-caption text-gold">{o.plan}</span>
               </button>
             ))}
           </div>
@@ -74,7 +74,7 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
             <label className={label}>
               Tu CUIT
               <input name="cuit" defaultValue={state.values?.cuit} required inputMode="numeric" placeholder="20-12345678-9" className={field} />
-              <span className="mt-1 block text-[12px] text-paper/45">Con tu CUIT armamos tu calendario y, más adelante, la facturación con ARCA.</span>
+              <span className="mt-1 block text-caption text-paper/45">Con tu CUIT armamos tu calendario y, más adelante, la facturación con ARCA.</span>
             </label>
           )}
           {kind === "personal" && (
@@ -102,7 +102,7 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
               </label>
             </div>
           )}
-          <label className="flex items-start gap-2.5 text-[13px] text-paper/70">
+          <label className="flex items-start gap-2.5 text-meta text-paper/70">
             <input name="terms" type="checkbox" required defaultChecked={state.values?.terms === "on"} className="mt-0.5 size-4 accent-[#c9a596]" />
             <span>
               Acepto los{" "}
@@ -117,16 +117,16 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
             </span>
           </label>
           {state.message && (
-            <p role="alert" className="border border-[#f0a493]/40 bg-[#f0a493]/10 px-3 py-2 text-[14px] text-[#f0a493]">
+            <p role="alert" className="border border-[#f0a493]/40 bg-[#f0a493]/10 px-3 py-2 text-ui text-[#f0a493]">
               {state.message}
             </p>
           )}
           {kind === "studio" ? (
-            <button type="submit" disabled={pending} className="mt-2 h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
+            <button type="submit" disabled={pending} className="mt-2 h-12 rounded-[2px] bg-gold px-6 text-body font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
               {pending ? "Creando tu cuenta…" : "Crear mi cuenta gratis"}
             </button>
           ) : state.ok && state.message ? (
-            <p role="status" className="border border-gold/40 bg-gold/10 px-3 py-3 text-[14px] text-paper">
+            <p role="status" className="border border-gold/40 bg-gold/10 px-3 py-3 text-ui text-paper">
               {state.message}
             </p>
           ) : (
@@ -136,7 +136,7 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
                   type="submit"
                   disabled={pending}
                   onClick={() => method.current && (method.current.value = "google")}
-                  className="h-12 rounded-[2px] bg-paper px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-white disabled:opacity-60"
+                  className="h-12 rounded-[2px] bg-paper px-6 text-body font-medium text-night transition-colors duration-300 hover:bg-white disabled:opacity-60"
                 >
                   Continuar con Google
                 </button>
@@ -145,13 +145,13 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
                 type="submit"
                 disabled={pending}
                 onClick={() => method.current && (method.current.value = "enlace")}
-                className="h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60"
+                className="h-12 rounded-[2px] bg-gold px-6 text-body font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60"
               >
                 {pending ? "Un momento…" : "Enviame el enlace"}
               </button>
             </div>
           )}
-          <p className="text-[13px] text-paper/55">
+          <p className="text-meta text-paper/55">
             {kind === "studio"
               ? "Al entrar vas a activar el segundo factor: es obligatorio para los estudios porque manejan datos de clientes."
               : "Sin contraseña: entrás con Google o con un enlace a tu mail. Sin tarjeta."}{" "}

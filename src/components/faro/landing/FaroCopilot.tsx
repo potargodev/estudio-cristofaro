@@ -14,7 +14,7 @@ function Phone() {
         <span className="grid size-7 place-items-center rounded-full bg-[#c9a596] text-[#1c2235]">
           <WandSparkles className="size-3.5" aria-hidden />
         </span>
-        <span className="text-[13px] font-medium">Vigía</span>
+        <span className="text-meta font-medium">Vigía</span>
       </div>
       <div className="grid gap-2.5 px-3 py-4 text-[12.5px] leading-snug">
         <div className="faro-demo-in ml-auto flex max-w-[82%] items-center gap-2 rounded-[16px] rounded-br-[5px] bg-[#1c2235] px-3 py-2 text-[#f7f5f3]" style={d(200)}>
@@ -31,12 +31,12 @@ function Phone() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-[9px] uppercase tracking-[0.12em] text-[#6b7083]">Bitácora</p>
-                  <p className="text-[13px] font-semibold">{t as string}</p>
-                  <p className="text-[11px] text-[#6b7083]">{l as string}</p>
+                  <p className="text-meta font-semibold">{t as string}</p>
+                  <p className="text-micro text-[#6b7083]">{l as string}</p>
                 </div>
-                <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px]", done ? "bg-[#e8eaf2]" : "text-[#6b7083]")}>{done ? "Registrado" : "Para confirmar"}</span>
+                <span className={cn("rounded-[4px] px-1.5 py-0.5 text-micro", done ? "bg-[#e8eaf2]" : "text-[#6b7083]")}>{done ? "Registrado" : "Para confirmar"}</span>
               </div>
-              <div className="mt-1.5 flex gap-1.5 text-[11px]">
+              <div className="mt-1.5 flex gap-1.5 text-micro">
                 {done ? (
                   <span className="inline-flex items-center gap-1 rounded-[6px] border border-[#e5e1dc] px-2 py-1">
                     <Undo2 className="size-3" aria-hidden /> Deshacer
@@ -59,7 +59,7 @@ function Phone() {
       </div>
       <div className="flex items-center gap-2 border-t border-[#e5e1dc] px-3 py-2.5">
         <Paperclip className="size-4 text-[#6b7083]" aria-hidden />
-        <span className="flex-1 rounded-full border border-[#e5e1dc] bg-white px-3 py-1.5 text-[11px] text-[#9095a3]">Contame un gasto…</span>
+        <span className="flex-1 rounded-full border border-[#e5e1dc] bg-white px-3 py-1.5 text-micro text-[#9095a3]">Contame un gasto…</span>
         <span className="grid size-8 place-items-center rounded-full bg-[#c9a596] text-[#1c2235]">
           <Mic className="size-4" aria-hidden />
         </span>
@@ -77,7 +77,7 @@ function BitacoraCard() {
   ] as const;
   return (
     <div className="faro-demo-in rounded-lg border border-hair-strong bg-navy-deep p-5" style={d(300)} role="img" aria-label="Ejemplo de Bitácora del mes (datos ficticios)">
-      <p className="flex items-center gap-2 text-[12px] text-paper/60">
+      <p className="flex items-center gap-2 text-caption text-paper/60">
         <NotebookPen className="size-4 text-gold" aria-hidden /> Bitácora · octubre
       </p>
       <div className="mt-3 grid grid-cols-3 gap-2">
@@ -87,14 +87,14 @@ function BitacoraCard() {
           ["Queda", "$ 337.700"],
         ].map(([l, v]) => (
           <div key={l}>
-            <p className="text-[11px] text-paper/50">{l}</p>
-            <p className="num text-[20px] leading-tight text-paper">{v}</p>
+            <p className="text-micro text-paper/50">{l}</p>
+            <p className="num text-section leading-tight text-paper">{v}</p>
           </div>
         ))}
       </div>
       <ul className="mt-4 grid gap-2">
         {cats.map(([n, w]) => (
-          <li key={n} className="text-[12px] text-paper/75">
+          <li key={n} className="text-caption text-paper/75">
             <span className="flex justify-between">
               <span>{n}</span>
               <span className="text-paper/50">{w} %</span>
@@ -112,10 +112,10 @@ function BitacoraCard() {
 function GroupCard() {
   return (
     <div className="faro-demo-in rounded-lg border border-hair-strong bg-navy-deep p-5" style={d(500)} role="img" aria-label="Ejemplo de grupo de gastos (datos ficticios)">
-      <p className="flex items-center gap-2 text-[12px] text-paper/60">
+      <p className="flex items-center gap-2 text-caption text-paper/60">
         <Users className="size-4 text-gold" aria-hidden /> Viaje a Mendoza · 4 personas
       </p>
-      <ul className="mt-3 divide-y divide-hair text-[13px]">
+      <ul className="mt-3 divide-y divide-hair text-meta">
         {[
           ["Lu le debe a Mati", "$ 18.250"],
           ["Juan le debe a Mati", "$ 9.800"],
@@ -126,7 +126,7 @@ function GroupCard() {
           </li>
         ))}
       </ul>
-      <p className="mt-2 text-[12px] text-paper/55">Dividido en partes iguales, por montos o por porcentaje. Dos transferencias y quedan a mano.</p>
+      <p className="mt-2 text-caption text-paper/55">Dividido en partes iguales, por montos o por porcentaje. Dos transferencias y quedan a mano.</p>
     </div>
   );
 }
@@ -142,10 +142,10 @@ export function FaroCopilot() {
             <h2 id="copiloto-titulo" className="mt-6 font-display text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.02] text-paper">
               Contale tus gastos. Él los anota.
             </h2>
-            <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-paper/75">
+            <p className="mt-6 max-w-lg text-title leading-relaxed text-paper/75">
               Mandale un audio, un texto o la foto del ticket al Vigía. Te propone cada registro en una tarjeta para que lo confirmes, y tu Bitácora se arma sola: cuánto entró, cuánto salió y en qué se fue. Y si compartiste la cena, lo divide en tu grupo.
             </p>
-            <ul className="mt-6 grid gap-2 text-[15px] text-paper/80">
+            <ul className="mt-6 grid gap-2 text-body text-paper/80">
               <li>· Gratis para empezar, desde el teléfono.</li>
               <li>· Tu Bitácora es privada: no la ve nadie más.</li>
               <li>· La IA propone, vos confirmás.</li>

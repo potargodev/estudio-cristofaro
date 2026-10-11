@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 function Problem({ title, text }: { title: string; text: string }) {
   return (
     <AuthShell title={title} subtitle="Estudio Cristofaro">
-      <p className="text-[15px] leading-relaxed text-muted">{text}</p>
+      <p className="text-body leading-relaxed text-muted">{text}</p>
       <Link href="/portal/login" className="mt-6 inline-block text-rose-deep hover:underline">
         Ir al portal
       </Link>
@@ -65,7 +65,7 @@ export default async function InvitacionPage({ params }: { params: Promise<{ tok
     }
     return (
       <AuthShell title="Esta invitación es para otra cuenta" subtitle={orgName}>
-        <p className="text-[15px] leading-relaxed text-muted">
+        <p className="text-body leading-relaxed text-muted">
           Entraste como <strong className="text-ink">{user.email}</strong>, pero la invitación es para{" "}
           <strong className="text-ink">{inv.email}</strong>. Cerrá la sesión y entrá con el email invitado.
         </p>
@@ -84,7 +84,7 @@ export default async function InvitacionPage({ params }: { params: Promise<{ tok
       subtitle="Portal de clientes · Estudio Cristofaro"
       footer={<p>No hay contraseñas: entrás con Google o con un enlace a tu mail.</p>}
     >
-      <p className="mb-5 text-[15px] leading-relaxed text-muted">
+      <p className="mb-5 text-body leading-relaxed text-muted">
         {inviter ?? "El estudio"} te invitó con el rol <strong className="text-ink">{ORG_ROLE_LABELS[inv.role]}</strong>. Entrá con{" "}
         <strong className="text-ink">{inv.email}</strong> para aceptar.
       </p>

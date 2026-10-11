@@ -66,7 +66,7 @@ const TYPES: { key: Key; label: string; icon: typeof Building2; benefit: string;
 ];
 
 const Row = ({ a, b, tone = "text-paper/80", d = 0 }: { a: string; b: string; tone?: string; d?: number }) => (
-  <div className="faro-demo-in flex items-center justify-between gap-3 border-b border-hair py-2.5 text-[13px] last:border-0" style={{ "--d": d } as React.CSSProperties}>
+  <div className="faro-demo-in flex items-center justify-between gap-3 border-b border-hair py-2.5 text-meta last:border-0" style={{ "--d": d } as React.CSSProperties}>
     <span className="truncate text-paper/75">{a}</span>
     <span className={cn("shrink-0", tone)}>{b}</span>
   </div>
@@ -77,9 +77,9 @@ function Demo({ k }: { k: Key }) {
   if (k === "personas")
     return (
       <>
-        <p className="text-[12px] text-paper/55">Bitácora · octubre</p>
+        <p className="text-caption text-paper/55">Bitácora · octubre</p>
         <p className="faro-demo-in mt-3 font-display text-[34px] leading-none text-paper">$ 214.300</p>
-        <p className="text-[12px] text-paper/55">te quedan para el mes</p>
+        <p className="text-caption text-paper/55">te quedan para el mes</p>
         <div className="mt-3">
           <Row a="“Un café y dos medialunas, 4.800”" b="Comida · registrado" tone="text-[#8fd1a5]" d={120} />
           <Row a="Delivery de noche" b="+38% vs. septiembre" tone="text-gold" d={200} />
@@ -90,7 +90,7 @@ function Demo({ k }: { k: Key }) {
   if (k === "estudios")
     return (
       <>
-        <p className="text-[12px] text-paper/55">Organizaciones · salud de la cartera</p>
+        <p className="text-caption text-paper/55">Organizaciones · salud de la cartera</p>
         <div className="mt-3">
           <Row a="Agencia Norte SRL" b="Al día" tone="text-[#8fd1a5]" />
           <Row a="Consultora Sur SAS" b="2 vencimientos" tone="text-gold" d={80} />
@@ -102,12 +102,12 @@ function Demo({ k }: { k: Key }) {
   if (k === "contadores")
     return (
       <>
-        <p className="text-[12px] text-paper/55">Semana del 13 de octubre</p>
-        <div className="mt-3 grid grid-cols-5 gap-1.5 text-center text-[11px]">
+        <p className="text-caption text-paper/55">Semana del 13 de octubre</p>
+        <div className="mt-3 grid grid-cols-5 gap-1.5 text-center text-micro">
           {["Lun", "Mar", "Mié", "Jue", "Vie"].map((d, i) => (
             <div key={d} className="faro-demo-in border border-hair p-1.5" style={{ "--d": i * 70 } as React.CSSProperties}>
               <p className="text-paper/55">{d}</p>
-              <p className="mt-2 font-display text-[22px] text-paper">{[4, 1, 6, 0, 3][i]}</p>
+              <p className="mt-2 font-display text-headline text-paper">{[4, 1, 6, 0, 3][i]}</p>
               <p className="text-paper/45">venc.</p>
             </div>
           ))}
@@ -119,24 +119,24 @@ function Demo({ k }: { k: Key }) {
   if (k === "autonomos")
     return (
       <>
-        <p className="text-[12px] text-paper/55">Semáforo de monotributo · categoría D</p>
+        <p className="text-caption text-paper/55">Semáforo de monotributo · categoría D</p>
         <div className="faro-demo-in mt-4 h-2.5 bg-paper/10" aria-hidden>
           <div className="h-2.5 bg-gold" style={{ width: "72%" }} />
         </div>
-        <p className="mt-2 flex justify-between text-[12px] text-paper/60">
+        <p className="mt-2 flex justify-between text-caption text-paper/60">
           <span>Según lo que cargaste, facturaste el 72 % del tope</span>
           <span className="text-gold">Margen</span>
         </p>
-        <Row a="Hasta el tope quedan" b="$ 4.180.000" tone="font-display text-[18px] text-paper" d={160} />
+        <Row a="Hasta el tope quedan" b="$ 4.180.000" tone="font-display text-title text-paper" d={160} />
         <Row a="Próximo vencimiento" b="Monotributo · 20/10" d={240} />
       </>
     );
   if (k === "empresas")
     return (
       <>
-        <p className="text-[12px] text-paper/55">Tu mes en Agencia Norte</p>
+        <p className="text-caption text-paper/55">Tu mes en Agencia Norte</p>
         <p className="faro-demo-in mt-3 font-display text-[34px] leading-none text-paper">$ 1.284.000</p>
-        <p className="text-[12px] text-paper/55">para pagar este mes, en 3 vencimientos</p>
+        <p className="text-caption text-paper/55">para pagar este mes, en 3 vencimientos</p>
         <div className="mt-3">
           <Row a="IVA septiembre" b="Vence el lunes · VEP" tone="text-gold" d={120} />
           <Row a="Lucía, tu responsable" b="Respondió tu consulta" d={200} />
@@ -145,14 +145,14 @@ function Demo({ k }: { k: Key }) {
     );
   return (
     <>
-      <p className="text-[12px] text-paper/55">Recibo de sueldo · septiembre</p>
+      <p className="text-caption text-paper/55">Recibo de sueldo · septiembre</p>
       <div className="faro-demo-in mt-3 border border-hair p-3">
-        <p className="flex justify-between text-[13px] text-paper/75">
+        <p className="flex justify-between text-meta text-paper/75">
           <span>Neto a cobrar</span>
-          <span className="font-display text-[22px] text-paper">$ 1.120.400</span>
+          <span className="font-display text-headline text-paper">$ 1.120.400</span>
         </p>
       </div>
-      <div className="faro-demo-in mt-3 grid grid-cols-2 gap-2 text-[13px]" style={{ "--d": 160 } as React.CSSProperties}>
+      <div className="faro-demo-in mt-3 grid grid-cols-2 gap-2 text-meta" style={{ "--d": 160 } as React.CSSProperties}>
         <span className="flex h-10 items-center justify-center bg-gold font-medium text-night">Firmar conforme</span>
         <span className="flex h-10 items-center justify-center border border-hair-strong text-paper/80">No conforme</span>
       </div>
@@ -173,7 +173,7 @@ export function FaroForWhom() {
               Una herramienta, seis maneras de usarla.
             </SplitHeading>
           </div>
-          <p className="self-end text-[15px] leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
+          <p className="self-end text-body leading-relaxed text-paper/65 lg:col-span-4 lg:col-start-9">
             Empezás gratis con tus finanzas. Si sos autónomo, Faro te ordena los números y te conecta con un contador cuando lo necesitás; si sos contador, gestionás tu cartera y conectás a tus clientes y a sus empleados.
           </p>
         </div>
@@ -193,16 +193,16 @@ export function FaroForWhom() {
                   k === x.key ? "border-gold text-paper" : "border-hair-strong text-paper/60 hover:text-paper",
                 )}
               >
-                <span className="tabular hidden text-[13px] text-gold lg:inline">0{i + 1}</span>
+                <span className="tabular hidden text-meta text-gold lg:inline">0{i + 1}</span>
                 <x.icon className={cn("size-5", k === x.key ? "text-gold" : "")} strokeWidth={1.5} aria-hidden />
-                <span className="whitespace-nowrap text-[15px] lg:font-display lg:text-[26px] lg:leading-none">{x.label}</span>
+                <span className="whitespace-nowrap text-body lg:font-display lg:text-[26px] lg:leading-none">{x.label}</span>
               </button>
             ))}
           </div>
           <div id="quien-panel" role="tabpanel" aria-labelledby={`quien-${k}`} key={k} className="grid gap-8 lg:col-span-8 lg:grid-cols-2">
             <div>
               <p className="faro-demo-in font-display text-[28px] leading-tight text-paper sm:text-[34px]">{t.benefit}</p>
-              <ul className="mt-6 grid gap-3 text-[15px] text-paper/80">
+              <ul className="mt-6 grid gap-3 text-body text-paper/80">
                 {t.features.map((f, i) => (
                   <li key={f} className="faro-demo-in flex gap-3" style={{ "--d": 80 + i * 70 } as React.CSSProperties}>
                     <Check className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
@@ -210,7 +210,7 @@ export function FaroForWhom() {
                   </li>
                 ))}
               </ul>
-              {t.note && <p className="mt-4 text-[13px] text-paper/50">{t.note}</p>}
+              {t.note && <p className="mt-4 text-meta text-paper/50">{t.note}</p>}
               <div className="mt-8">
                 {t.cta.ghost ? <GhostLink href={t.cta.href}>{t.cta.label}</GhostLink> : <CtaLink tone="gold" href={t.cta.href}>{t.cta.label}</CtaLink>}
               </div>

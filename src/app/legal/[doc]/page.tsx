@@ -28,16 +28,16 @@ export default async function LegalPage({ params }: { params: Params }) {
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px]">
       <article className="min-w-0">
-        <p role="note" className="inline-block rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-3 py-1.5 text-[13px] font-medium text-[#7a5410]">
+        <p role="note" className="inline-block rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-3 py-1.5 text-meta font-medium text-[#7a5410]">
           {DRAFT_NOTICE} · {day.format(new Date(`${d.fecha}T12:00:00Z`))}
         </p>
         <h1 className="mt-4 font-display text-[34px] leading-tight sm:text-[46px]">{d.titulo}</h1>
-        <p className="mt-2 text-[14px] text-muted">Versión {d.version}</p>
+        <p className="mt-2 text-ui text-muted">Versión {d.version}</p>
         <div className="mt-6 border-t border-line pt-2">
           <HelpMarkdown text={d.body} />
         </div>
         {user && !user.assisted && (
-          <div className="mt-10 rounded-lg border border-line bg-surface p-5 text-[15px]">
+          <div className="mt-10 rounded-lg border border-line bg-surface p-5 text-body">
             {accepted ? (
               <p>Aceptaste esta versión el {day.format(accepted.accepted_at)}.</p>
             ) : (
@@ -52,8 +52,8 @@ export default async function LegalPage({ params }: { params: Params }) {
         )}
       </article>
       <aside className="lg:pt-16">
-        <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted">Textos legales</h2>
-        <ul className="mt-3 grid gap-1.5 text-[14px]">
+        <h2 className="text-meta font-semibold uppercase tracking-[0.12em] text-muted">Textos legales</h2>
+        <ul className="mt-3 grid gap-1.5 text-ui">
           {LEGAL_DOCS.map((x) => (
             <li key={x.key}>
               <Link href={`/legal/${x.key}`} aria-current={x.key === key ? "page" : undefined} className={cn("hover:underline", x.key === key ? "font-semibold text-ink" : "text-muted")}>

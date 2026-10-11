@@ -68,8 +68,8 @@ export function TangoKeyPanel({ hasKey, platformUrl }: { hasKey: boolean; platfo
 
       {state.ok && state.key && (
         <div role="status" className="mt-4 border border-rose/40 bg-rose-soft/50 p-4">
-          <p className="text-sm font-semibold">Clave del conector. Copiala o bajá el config.json ahora: no se vuelve a mostrar.</p>
-          <p className="mt-2 break-all rounded bg-surface px-3 py-2 font-mono text-sm">{state.key}</p>
+          <p className="text-ui font-semibold">Clave del conector. Copiala o bajá el config.json ahora: no se vuelve a mostrar.</p>
+          <p className="mt-2 break-all rounded bg-surface px-3 py-2 font-mono text-ui">{state.key}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button type="button" onClick={download} className="h-9">
               <Download />

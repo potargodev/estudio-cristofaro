@@ -38,9 +38,9 @@ export default async function ModulosPage({ searchParams }: { searchParams: Prom
               </span>
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-ink">
-                  {m.name} <code className="ml-1 text-[12px] font-normal text-muted">{m.key}</code>
+                  {m.name} <code className="ml-1 text-caption font-normal text-muted">{m.key}</code>
                 </p>
-                <p className="text-[13px] text-muted">
+                <p className="text-meta text-muted">
                   {m.core ? "Núcleo: en todos los planes" : inPlans.length ? `En: ${inPlans.join(", ")}` : "En ningún plan todavía"} · {m.tools.length} herramientas · {m.events.length} eventos
                 </p>
               </div>
@@ -49,7 +49,7 @@ export default async function ModulosPage({ searchParams }: { searchParams: Prom
                   <form key={v} action={setModuleReleaseAction}>
                     <input type="hidden" name="module" value={m.key} />
                     <input type="hidden" name="status" value={v} />
-                    <button disabled={!owner || st === v} className={cn("h-8 rounded-md border px-3 text-[12px]", st === v ? "border-navy bg-navy text-paper" : "border-line hover:border-muted")}>
+                    <button disabled={!owner || st === v} className={cn("h-8 rounded-md border px-3 text-caption", st === v ? "border-navy bg-navy text-paper" : "border-line hover:border-muted")}>
                       {label}
                     </button>
                   </form>

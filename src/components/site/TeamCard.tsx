@@ -33,12 +33,12 @@ export function TeamCard({ member, index }: { member: TeamMember; index: number 
         )}
       </div>
       <div className="mt-6 border-t border-hair pt-5">
-        <p className="tabular text-[12px] text-rose-light">0{index + 1}</p>
+        <p className="tabular text-caption text-rose-light">0{index + 1}</p>
         <h2 className="mt-2 font-display text-[1.9rem] leading-tight text-paper">{member.name}</h2>
-        <p className="mt-1 text-[14px] text-paper/70">{member.role}</p>
-        {member.detail && <p className="mt-1 text-[13px] text-paper/55">{member.detail}</p>}
-        <p className="mt-4 text-[15px] leading-relaxed text-paper/65">{member.bio}</p>
-        <p className="mt-4 border-l border-rose-light pl-3 text-[14px] text-paper/80">{member.specialty}</p>
+        <p className="mt-1 text-ui text-paper/70">{member.role}</p>
+        {member.detail && <p className="mt-1 text-meta text-paper/55">{member.detail}</p>}
+        <p className="mt-4 text-body leading-relaxed text-paper/65">{member.bio}</p>
+        <p className="mt-4 border-l border-rose-light pl-3 text-ui text-paper/80">{member.specialty}</p>
       </div>
     </article>
   );
