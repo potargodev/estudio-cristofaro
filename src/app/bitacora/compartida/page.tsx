@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { revokeShareAction, shareAction } from "@/app/bitacora/plus-actions";
+import { pairFromHogarAction } from "@/app/cajas/actions";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import { mySharing } from "@/modules/bitacora/shares";
@@ -23,6 +24,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </p>
       )}
       <p className="text-[14px] text-muted">Tu Bitácora es privada. Si querés llevar las cuentas del hogar con otra persona, invitala: elegís si solo mira o también carga, y cualquiera de las dos puede dejar de compartir cuando quiera.</p>
+      <p className="rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[14px] text-ink">
+        ¿Quieren llevar la cuenta juntos (quién puso qué, si están a mano, ahorros en común)? Armen una <Link href="/cajas/nueva" className="underline underline-offset-4">caja compartida de pareja</Link>: cada uno carga lo suyo y su Bitácora sigue privada.
+      </p>
       {withMe.length > 0 && (
         <section className="grid gap-2" aria-label="Compartidas conmigo">
           <h2 className="text-[16px] font-semibold">Compartidas con vos</h2>
@@ -54,10 +58,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                     {s.permission === "cargar" ? "Ve y carga" : "Solo ve"} · {s.status === "activa" ? "aceptó" : "invitación enviada"}
                   </p>
                 </div>
-                <form action={revokeShareAction}>
-                  <input type="hidden" name="id" value={s.id} />
-                  <SubmitButton variant="danger" pendingText="…">Dejar de compartir</SubmitButton>
-                </form>
+                <div className="flex flex-wrap gap-2">
+                  {s.status === "activa" && (
+                    <form action={pairFromHogarAction}>
+                      <input type="hidden" name="id" value={s.id} />
+                      <SubmitButton variant="secondary" pendingText="…">Armar una caja de pareja</SubmitButton>
+                    </form>
+                  )}
+                  <form action={revokeShareAction}>
+                    <input type="hidden" name="id" value={s.id} />
+                    <SubmitButton variant="danger" pendingText="…">Dejar de compartir</SubmitButton>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>

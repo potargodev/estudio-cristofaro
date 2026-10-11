@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { isMonth, parseAmount } from "@/modules/bitacora/catalog";
 import { archiveCategory, BitacoraError, createEntry, deleteEntry, restoreEntry, saveCategory, updateEntry, type EntryInput } from "@/modules/bitacora/server";
 import { requireUser } from "@/modules/bitacora/session";
+import { CajaError } from "@/modules/cajas/server";
+import { addSharedEntry } from "@/modules/cajas/shared";
 
 // Bitácora: el usuario sale SIEMPRE de la sesión y cada función valida que el
 // movimiento o la categoría sean suyos.
@@ -38,6 +40,27 @@ const go = (base: string, q: string): never => redirect(`${base}${base.includes(
 export async function createEntryAction(fd: FormData) {
   const me = await requireUser();
   const b = back(fd);
+  // Una carga, varios destinos (principios §18.3): también a una caja compartida
+  if (s(fd, "box")) {
+    const i = (() => {
+      try {
+        return input(fd);
+      } catch (e) {
+        if (e instanceof BitacoraError) go(b, `error=${encodeURIComponent(e.message)}`);
+        throw e;
+      }
+    })();
+    if (i.kind !== "gasto") go(b, `error=${encodeURIComponent("A una caja compartida se cargan gastos (los ahorros, desde la caja).")}`);
+    try {
+      const r = await addSharedEntry(me, s(fd, "box"), { kind: "gasto", amount: i.amount, date: i.date, description: i.description, note: i.note, mode: s(fd, "final") === "dividir" ? "dividir" : "registrar", alsoPersonal: true, personalCategoryId: i.categoryId ?? null });
+      revalidatePath("/bitacora");
+      revalidatePath("/cajas", "layout");
+      go(b, `ok=${encodeURIComponent(s(fd, "final") === "dividir" ? "Cargado en tu Bitácora (tu parte) y dividido en la caja" : "Cargado en tu Bitácora y en la caja")}${r.personalEntryId ? `&nuevo=${r.personalEntryId}` : ""}`);
+    } catch (e) {
+      if (e instanceof CajaError) go(b, `error=${encodeURIComponent(e.message)}`);
+      throw e;
+    }
+  }
   try {
     const e = await createEntry(me.id, input(fd));
     revalidatePath("/bitacora");

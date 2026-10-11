@@ -66,6 +66,8 @@ function copilot(body, last, q) {
   if (parts.some((p) => p.type === "image_url" || p.type === "file")) return { tools: [{ tool: "crear_movimiento", args: { tipo: "gasto", monto: 18450, descripcion: "Coto", categoria: "Supermercado", medio_pago: "debito" } }] };
   const grupo = q.match(/cre[aá] (?:un )?grupo (.+?) con (.+?)(?:\.|$)/);
   if (grupo) return { tools: [{ tool: "crear_grupo", args: { nombre: cap(grupo[1].trim()), tipo: "viaje", integrantes: people(grupo[2]) } }] };
+  const caja = q.match(/pagu[eé]\s*\$?\s*([\d.,]+k?)\s+(?:de |en |por )?(?:la |el |los |las )?(.+?)\s+(?:con|para) (?:mi |mis |los |las )?(pareja|novi[ao]|familia|socios?|abuel[oa]s|padres|viejos)/);
+  if (caja) return { tools: [{ tool: "registrar_en_caja_compartida", args: { caja: caja[3], descripcion: cap(caja[2].trim()), monto: num(caja[1]) } }] };
   const gasto = q.match(/pagu[eé]\s*\$?\s*([\d.,]+k?)\s*(?:de (?:la |el |los |las )?(.+?))?\s+con\s+(.+?)(?:\s+en (?:el grupo )?(.+?))?(?:,|\.|$)/);
   if (gasto) return { tools: [{ tool: "crear_gasto_en_grupo", args: { descripcion: cap(gasto[2] ?? "Gasto"), monto: num(gasto[1]), dividir_entre: people(gasto[3]), ...(gasto[4] ? { grupo: gasto[4] } : {}) } }] };
   if (/cu[aá]nto gast[eé]/.test(q)) return { tools: [{ tool: "consultar_bitacora", args: /delivery|comida/.test(q) ? { categoria: "Comida y delivery" } : {} }] };

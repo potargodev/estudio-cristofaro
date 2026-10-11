@@ -195,3 +195,25 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Nada. Flotas no cambia en esta etapa.
+
+## Principios · Etapa 4 · Registro compartido (octubre 2026)
+
+**Qué quedó**
+- **Cajas compartidas** con opciones ya armadas (`/cajas/nueva`): pareja, familia, amigos, negocio con otros y padres y abuelos (definida por el fin: puede sumarse cualquiera). Cada opción trae sus categorías, su desglose y su final por defecto; no se configura ni se le pone nombre.
+- **Invitación** por enlace o WhatsApp (`/caja/<enlace>`, renovable); para entrar hay que tener cuenta (se crea ahí mismo, gratis).
+- **Una carga, uno o más destinos:** desde la caja («si lo pagué yo, también en mi caja personal») o desde la Bitácora («También a <caja>»); si se divide, en la Bitácora va la parte propia. Nunca se carga dos veces.
+- **Dos finales** que elige quien paga: «Solo registrar» (queda que puso ese monto, sin deuda) y «Dividir» (lógica de Grupos de gastos: quién le debe a quién).
+- **Confirmación de pago:** lo que carga otra persona a tu nombre y tu parte de un gasto dividido no cuentan hasta que confirmás («Sí, lo pagué», «Ya la pagué»).
+- **Desglose por caja:** quién puso qué, cuánto debe, qué falta confirmar, la diferencia contra lo parejo, «Están parejos», en qué se fue por categoría y **metas de ahorro** dentro de la caja con lo que puso cada uno.
+- **Hogar** sigue igual y suma «Armar una caja de pareja» (sin mover datos: ver decisiones). **Grupos de gastos** sin cambios.
+- **Vigía:** «pagué 3000 la cena con mi pareja» propone la tarjeta de la caja con **Solo registrar** y **Dividir**.
+- Ayuda: nuevo `bitacora/cajas-compartidas`; actualizados `bitacora/mis-cajas` y `bitacora/hogar-compartido`.
+
+**Qué se probó**
+- `npm test` (91): núcleo del desglose (`src/modules/cajas/ledger.test.ts`) con la cena de $3.000 en los dos finales.
+- `principios-servidor.mts 4` (34/34): opciones, enlace (falso y renovado), aislamiento de quien no es integrante (ver, desglose, cargar, enlace, confirmar, metas ajenas), cena con solo registrar ($3.000, también en la Bitácora) y con dividir ($1.500 pendiente hasta que confirme), confirmación de lo cargado por otro, metas, salir con deudas, padres y abuelos con cualquiera, Hogar → caja de pareja y el Vigía con los dos finales.
+- `principios-navegador.mjs 4` (15/15): opciones, invitar y sumarse con cuenta, sin cuenta pide crearla, dividir → la pareja confirma → «Están parejos», carga desde la Bitácora a las dos cajas, 390 px y escritorio en claro y oscuro, 404 para quien no es integrante.
+- Regresión: etapas 1 a 3, `gastos.mts` (33/33 con el simulador de cotizaciones).
+
+**Qué falta configurar**
+- Nada. SMTP sigue pendiente para los avisos por mail (los avisos en la app funcionan).

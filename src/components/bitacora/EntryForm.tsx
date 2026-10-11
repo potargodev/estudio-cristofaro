@@ -23,12 +23,15 @@ export function EntryForm({
   d = {},
   submit = "Guardar",
   hidden,
+  boxes,
 }: {
   action: (fd: FormData) => void | Promise<void>;
   categories: { id: string; name: string; kind: string }[];
   d?: EntryDefaults;
   submit?: string;
   hidden?: Record<string, string>;
+  /** Cajas compartidas: la misma carga puede ir también a una (una carga, varios destinos) */
+  boxes?: { id: string; name: string }[];
 }) {
   const today = new Date().toISOString().slice(0, 10);
   return (
@@ -100,6 +103,28 @@ export function EntryForm({
         Nota (opcional)
         <input name="note" maxLength={500} defaultValue={d.note ?? ""} className={field} />
       </label>
+      {!d.id && boxes && boxes.length > 0 && (
+        <fieldset className="grid gap-2 rounded-md border border-line p-3 sm:col-span-2">
+          <legend className="px-1 text-[13px] text-muted">¿Va también a una caja compartida?</legend>
+          <select name="box" defaultValue="" aria-label="Destino" className={field}>
+            <option value="">Solo a lo personal</option>
+            {boxes.map((b) => (
+              <option key={b.id} value={b.id}>
+                También a {b.name}
+              </option>
+            ))}
+          </select>
+          <div className="flex flex-wrap gap-4 text-[14px]">
+            <label className="flex items-center gap-2">
+              <input type="radio" name="final" value="registrar" defaultChecked className="size-4 accent-navy" /> Solo registrar
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="radio" name="final" value="dividir" className="size-4 accent-navy" /> Dividir con la caja
+            </label>
+          </div>
+          <p className="text-[12px] text-muted">Una sola carga: queda en tu Bitácora y en la caja. Si se divide, en tu Bitácora va tu parte.</p>
+        </fieldset>
+      )}
       <div className="sm:col-span-2">
         <SubmitButton pendingText="Guardando…">{submit}</SubmitButton>
       </div>

@@ -16,3 +16,7 @@ Tu Bitácora es privada. Si querés que tu pareja o alguien de tu casa la vea, c
 **Dejar de compartir:** cualquiera de las dos personas lo corta en cualquier momento desde **Hogar**. Queda registrado.
 
 Si lo que quieren es dividir gastos entre varias personas y saber quién le debe a quién, usen un [grupo de gastos](/ayuda/grupos-de-gastos/crear-un-grupo).
+
+## ¿Quieren llevar la cuenta juntos?
+
+El Hogar es compartir **tu** Bitácora. Si quieren llevar la cuenta juntos (quién puso qué, si están a mano y ahorros en común), armen una [caja compartida de pareja](/ayuda/bitacora/cajas-compartidas). Desde **Hogar** tocá **Armar una caja de pareja** al lado de la persona con quien compartís: la caja se crea con los dos y tu Bitácora sigue igual.

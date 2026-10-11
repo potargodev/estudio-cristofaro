@@ -9,6 +9,7 @@ import { ipcFactor, mepFor } from "@/modules/bitacora/planning";
 import { listInsights } from "@/modules/bitacora/recurring";
 import { Insights } from "@/components/bitacora/Insights";
 import { requireUser } from "@/modules/bitacora/session";
+import { mySharedBoxes } from "@/modules/cajas/shared";
 import { createEntryAction, restoreEntryAction } from "./actions";
 
 export const metadata: Metadata = { title: { absolute: "Bitácora · Faro" } };
@@ -35,7 +36,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const me = await requireUser();
   const month = isMonth(sp.mes) ? sp.mes! : monthOf();
-  const cats = await listCategories(me.id);
+  const [cats, shared] = await Promise.all([listCategories(me.id), mySharedBoxes(me.id)]);
   const cat = sp.categoria && cats.some((c) => c.id === sp.categoria) ? sp.categoria : null;
   const [s, insights, factor, mep] = await Promise.all([monthSummary(me.id, month, cat), listInsights(me.id, 4), sp.ver === "real" ? ipcFactor(month) : null, sp.ver === "mep" ? mepFor(month) : null]);
   // Valores reales (IPC de Faro Manager) o en dólares MEP
@@ -141,7 +142,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           </span>
         </summary>
         <div className="border-t border-line p-5">
-          <EntryForm action={createEntryAction} categories={cats} hidden={{ mes: month }} submit="Cargar" />
+          <EntryForm action={createEntryAction} categories={cats} hidden={{ mes: month }} submit="Cargar" boxes={shared} />
         </div>
       </details>
 

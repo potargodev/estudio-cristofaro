@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { isMonth, parseAmount } from "@/modules/bitacora/catalog";
 import { requireUser } from "@/modules/bitacora/session";
 import { addBusinessEntry, CajaError, contribute, deleteBoxEntry, dismissBusinessHint, moveToBusiness, openBusinessBox, paySalary, setSalary } from "@/modules/cajas/server";
+import { addSharedEntry, pairBoxFromHogar, boxInviteLink, confirmEntry, confirmSharePaid, createGoal, createSharedBox, deleteSharedEntry, joinBox, leaveBox } from "@/modules/cajas/shared";
 import { todayAR } from "@/modules/gastos/constants";
 
 // Mis cajas: el usuario sale siempre de la sesión y cada función del servidor
@@ -110,4 +111,99 @@ export async function contributeAction(fd: FormData) {
   revalidatePath("/cajas", "layout");
   revalidatePath("/bitacora");
   go(back, { ok: "Aporte registrado: salió de tu caja personal y entró en el negocio." });
+}
+
+// ── Cajas compartidas ────────────────────────────────────────────────
+
+export async function createSharedBoxAction(fd: FormData) {
+  const me = await requireUser();
+  const box = await guard("/cajas/nueva", () => createSharedBox(me, s(fd, "purpose")));
+  revalidatePath("/cajas");
+  go(`/cajas/${box.id}`, { ok: "Caja lista. Invitá a los demás con el enlace." });
+}
+
+export interface LinkState {
+  link?: string;
+  message?: string;
+}
+
+export async function boxLinkAction(_: LinkState, fd: FormData): Promise<LinkState> {
+  const me = await requireUser();
+  try {
+    return { link: await boxInviteLink(me, s(fd, "box"), s(fd, "renew") === "1") };
+  } catch (e) {
+    if (e instanceof CajaError) return { message: e.message };
+    throw e;
+  }
+}
+
+export async function joinBoxAction(fd: FormData) {
+  const me = await requireUser();
+  const token = s(fd, "token");
+  const box = await guard(`/caja/${encodeURIComponent(token)}`, () => joinBox(me, token));
+  revalidatePath("/cajas");
+  go(`/cajas/${box.id}`, { ok: "Te sumaste a la caja." });
+}
+
+export async function leaveBoxAction(fd: FormData) {
+  const me = await requireUser();
+  await guard(boxPath(fd), () => leaveBox(me, s(fd, "box")));
+  revalidatePath("/cajas");
+  go("/cajas", { ok: "Saliste de la caja." });
+}
+
+export async function addSharedEntryAction(fd: FormData) {
+  const me = await requireUser();
+  const back = boxPath(fd);
+  const kind = s(fd, "kind") === "ahorro" ? "ahorro" : s(fd, "kind") === "ingreso" ? "ingreso" : "gasto";
+  await guard(back, () =>
+    addSharedEntry(me, s(fd, "box"), {
+      kind,
+      amount: amountOf(fd),
+      date: s(fd, "date") || undefined,
+      category: s(fd, "category"),
+      description: s(fd, "description") || (kind === "ahorro" ? "Ahorro" : ""),
+      note: s(fd, "note") || null,
+      paidBy: s(fd, "paid_by") || null,
+      mode: s(fd, "final") === "dividir" ? "dividir" : "registrar",
+      splitWith: fd.getAll("split").map(String),
+      alsoPersonal: fd.get("personal") === "on",
+      goalId: s(fd, "goal") || null,
+    }),
+  );
+  revalidatePath("/cajas", "layout");
+  revalidatePath("/bitacora");
+  go(back, { ok: s(fd, "final") === "dividir" ? "Dividido. Cada parte queda pendiente hasta que quien la debe confirme que la pagó." : "Registrado." });
+}
+
+export async function confirmEntryAction(fd: FormData) {
+  const me = await requireUser();
+  const back = boxPath(fd);
+  await guard(back, () => (s(fd, "what") === "parte" ? confirmSharePaid(me, s(fd, "box"), s(fd, "id")) : confirmEntry(me, s(fd, "box"), s(fd, "id"))));
+  revalidatePath("/cajas", "layout");
+  go(back, { ok: "Confirmado: ya cuenta en tu seguimiento." });
+}
+
+export async function deleteSharedEntryAction(fd: FormData) {
+  const me = await requireUser();
+  const back = boxPath(fd);
+  await guard(back, () => deleteSharedEntry(me, s(fd, "box"), s(fd, "id")));
+  revalidatePath("/cajas", "layout");
+  revalidatePath("/bitacora");
+  go(back, { ok: "Borrado." });
+}
+
+export async function createGoalAction(fd: FormData) {
+  const me = await requireUser();
+  const back = boxPath(fd);
+  await guard(back, () => createGoal(me, s(fd, "box"), s(fd, "name"), amountOf(fd, "target")));
+  revalidatePath("/cajas", "layout");
+  go(back, { ok: "Meta creada." });
+}
+
+export async function pairFromHogarAction(fd: FormData) {
+  const me = await requireUser();
+  const box = await guard("/bitacora/compartida", () => pairBoxFromHogar(me, s(fd, "id")));
+  revalidatePath("/cajas");
+  go(`/cajas/${box.id}`, { ok: "Armaste la caja de pareja con quien compartías el Hogar. El Hogar sigue igual." });
 }

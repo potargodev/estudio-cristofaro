@@ -38,7 +38,8 @@ const s = (fd: FormData, k: string) => {
 };
 
 export async function confirmCardAction(_p: CardState, fd: FormData): Promise<CardState> {
-  return run(async () => confirmProposal(await me(), s(fd, "id")), "Listo, registrado.");
+  const final = s(fd, "final");
+  return run(async () => confirmProposal(await me(), s(fd, "id"), final === "dividir" || final === "registrar" ? { final } : undefined), final === "dividir" ? "Listo, dividido: queda pendiente hasta que te pasen su parte." : "Listo, registrado.");
 }
 
 export async function undoCardAction(_p: CardState, fd: FormData): Promise<CardState> {

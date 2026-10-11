@@ -4,7 +4,7 @@ resumen: Una sola cuenta con varias cajas (personal, negocio y compartidas), có
 perfiles: [persona, autonomo]
 modulo: core
 actualizado: 2026-10-11
-relacionados: [bitacora/bitacora, primeros-pasos/faro-y-tu-contador]
+relacionados: [bitacora/bitacora, bitacora/cajas-compartidas, primeros-pasos/faro-y-tu-contador]
 ---
 
 En Faro tenés **una sola cuenta** y adentro conviven todas tus situaciones. La pieza es la **caja**: cada una tiene su gente, su plata y su propósito. Las ves todas juntas en **Mis cajas** (menú de tu espacio Personal).
@@ -13,7 +13,7 @@ En Faro tenés **una sola cuenta** y adentro conviven todas tus situaciones. La 
 
 - **Personal:** tu plata de todos los días. Es tu **Bitácora**: movimientos, sobres, fijos y metas siguen igual.
 - **Negocio:** lo de tu actividad, por chica que sea (una changa, un freelance, vender algo). Si sos autónomo ya la tenés abierta; si no, tocá **Abrir caja de negocio** en Mis cajas.
-- **Compartidas:** con tu pareja, tu familia, amigos, socios o para sostener a tus padres o abuelos. Se arman en un paso desde Mis cajas.
+- **Compartidas:** con tu pareja, tu familia, amigos, socios o para sostener a tus padres o abuelos. Se arman en un paso desde Mis cajas: ver [Cajas compartidas](/ayuda/bitacora/cajas-compartidas).
 
 ## Cada caja es un mundo cerrado
 

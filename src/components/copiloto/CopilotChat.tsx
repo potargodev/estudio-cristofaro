@@ -38,7 +38,7 @@ export interface ChatMessage {
 }
 
 const time = (iso: string) => new Date(iso).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
-const TOOL_LABEL: Record<string, string> = { crear_movimiento: "Bitácora", crear_gasto_en_grupo: "Grupo de gastos", crear_grupo: "Grupo nuevo", recordar: "Recordatorio" };
+const TOOL_LABEL: Record<string, string> = { registrar_en_caja_compartida: "Caja compartida", crear_movimiento: "Bitácora", crear_gasto_en_grupo: "Grupo de gastos", crear_grupo: "Grupo nuevo", recordar: "Recordatorio" };
 const STATUS_LABEL: Record<string, string> = { propuesta: "Para confirmar", confirmada: "Registrado", deshecha: "Deshecho", descartada: "Descartado" };
 const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-2.5 text-[14px] text-ink";
 
@@ -82,7 +82,24 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
       {p.status === "propuesta" && p.needsConfirm && <p className="mt-1 text-[12px] text-muted">Afecta a otras personas: confirmalo vos.</p>}
       {!editing && (
         <div className="mt-2 flex flex-wrap gap-2">
-          {p.status === "propuesta" && (
+          {p.status === "propuesta" && p.tool === "registrar_en_caja_compartida" && (
+            <>
+              {/* Dos finales (§18.4): los elige quien pagó, en el momento */}
+              <CardForm action={confirmCardAction} id={p.id}>
+                <input type="hidden" name="final" value="registrar" />
+                <button type="submit" className={cn(btn, "bg-navy text-paper hover:bg-night")}>
+                  <Check className="size-4" aria-hidden /> Solo registrar
+                </button>
+              </CardForm>
+              <CardForm action={confirmCardAction} id={p.id}>
+                <input type="hidden" name="final" value="dividir" />
+                <button type="submit" className={cn(btn, "bg-navy text-paper hover:bg-night")}>
+                  <Check className="size-4" aria-hidden /> Dividir
+                </button>
+              </CardForm>
+            </>
+          )}
+          {p.status === "propuesta" && p.tool !== "registrar_en_caja_compartida" && (
             <CardForm action={confirmCardAction} id={p.id}>
               <button type="submit" className={cn(btn, "bg-navy text-paper hover:bg-night")}>
                 <Check className="size-4" aria-hidden /> Confirmar
@@ -111,6 +128,11 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
           {p.status === "confirmada" && p.tool === "crear_gasto_en_grupo" && typeof d.groupId === "string" && (
             <Link href={`/grupos/g/${d.groupId}`} className={cn(btn, "border border-line hover:border-muted")}>
               Ver el grupo
+            </Link>
+          )}
+          {p.status === "confirmada" && p.tool === "registrar_en_caja_compartida" && typeof d.boxId === "string" && (
+            <Link href={`/cajas/${d.boxId}`} className={cn(btn, "border border-line hover:border-muted")}>
+              Ver la caja
             </Link>
           )}
           {p.status === "confirmada" && p.tool === "crear_movimiento" && (

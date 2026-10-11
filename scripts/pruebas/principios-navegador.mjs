@@ -88,8 +88,8 @@ if (stage("2")) {
   const p = await as(d.cookies.titular);
   await p.goto(`${BASE}/personal`);
   await p.getByRole("button", { name: "Ahora no" }).first().click();
-  await p.waitForLoadState("networkidle");
-  check("«Ahora no»: la sugerencia se esconde", !(await p.evaluate(() => document.body.innerText.includes("Empezaste a facturar al exterior"))));
+  const gone = await p.waitForFunction(() => !document.body.innerText.includes("Empezaste a facturar al exterior"), null, { timeout: 15000 }).then(() => true, () => false);
+  check("«Ahora no»: la sugerencia se esconde", gone);
   const [sg] = await sql`select status, snoozed_until from derivation_suggestions where user_id = ${T} and rule_key = 'facturacion_exterior'`;
   check("y vuelve más adelante (snooze guardado)", sg.status === "descartada" && sg.snoozed_until > new Date());
   await sql`update derivation_suggestions set status = 'activa', snoozed_until = null where user_id = ${T}`;
@@ -167,6 +167,62 @@ if (stage("3")) {
   const q = await as(d.cookies.duenaNorte);
   const r2 = await q.goto(`${BASE}/cajas/${biz.id}`);
   check("otra persona con cuenta, forzando el ID: 404", r2.status() === 404);
+}
+
+// ─── Etapa 4 · Registro compartido ───
+if (stage("4")) {
+  const T = d.users.titular;
+  await sql`delete from boxes where owner_id = ${T} and kind = 'compartida'`;
+  const pareja = await persona("pareja.prueba@prueba.local", "Pato Pareja");
+  await sql`delete from box_members where user_id = ${pareja.id}`;
+  const p = await as(d.cookies.titular);
+  await p.goto(`${BASE}/cajas/nueva`);
+  check("opciones ya armadas: pareja, familia, amigos, negocio, padres y abuelos", (await seen(p, "Padres y abuelos")) && (await p.locator("[data-opcion]").count()) === 5);
+  check("«Padres y abuelos» por el fin: cualquiera puede participar", await seen(p, "hermanos, cuñados, primos, sobrinos, nietos"));
+  await p.locator('[data-opcion="pareja"]').click();
+  await p.waitForURL(/\/cajas\/[0-9a-f-]{36}/);
+  const boxId = p.url().split("/cajas/")[1].split("?")[0];
+  await p.getByRole("button", { name: "Invitar con un enlace" }).click();
+  check("invitar: enlace y WhatsApp", (await seen(p, "Mandar por WhatsApp")) && (await p.getByTestId("share-link").count()) === 1);
+  const link = (await p.getByTestId("share-link").innerText()).trim();
+  const anon = await as(null);
+  await anon.goto(link);
+  check("sin cuenta: para entrar hay que tener cuenta (se crea ahí)", (await seen(anon, "necesitás una cuenta de Faro")) && !(await anon.evaluate(() => document.body.innerText.includes("Sin cuenta"))));
+  const q = await as(await cookieFor(pareja.id));
+  await q.goto(link);
+  await q.getByRole("button", { name: /Sumarme como/ }).click();
+  await q.waitForURL(/\/cajas\/[0-9a-f-]{36}/);
+  check("con cuenta: se suma y entra a la caja", await seen(q, "Te sumaste a la caja."));
+  // Cena de $3.000 dividida
+  await p.goto(`${BASE}/cajas/${boxId}`);
+  await p.getByLabel("Monto").first().fill("3.000");
+  await p.getByLabel("En qué fue").fill("Cena");
+  await p.locator('input[name="final"][value="dividir"]').check();
+  await p.getByRole("button", { name: "Cargar", exact: true }).click();
+  check("dividir: «Pato Pareja le debe $ 1.500»", (await seen(p, "Pato Pareja le debe $ 1.500")) && (await seen(p, "pendiente hasta que confirme")));
+  await q.goto(`${BASE}/cajas/${boxId}`);
+  check("la pareja ve «Para confirmar» con su parte", (await seen(q, "Tu parte de Cena")) && (await q.getByRole("button", { name: "Ya la pagué" }).count()) === 1);
+  await q.getByRole("button", { name: "Ya la pagué" }).click();
+  check("al confirmar el pago: están parejos", (await seen(q, "Confirmado: ya cuenta en tu seguimiento.")) && (await seen(q, "Están parejos.")));
+  // Una carga, dos destinos desde la Bitácora
+  await p.goto(`${BASE}/bitacora?cargar=1`);
+  if (!(await p.locator('select[name="box"]').isVisible())) await p.getByText("Cargar a mano").first().click();
+  await p.locator('select[name="box"]').selectOption(boxId);
+  await p.locator('input[name="amount"]').first().fill("3.000");
+  await p.locator('input[name="description"]').first().fill("Cena del sábado");
+  await p.getByRole("button", { name: "Cargar", exact: true }).click();
+  check("Bitácora → también a la caja: queda en las dos", (await seen(p, "Cargado en tu Bitácora y en la caja")) && (await sql`select count(*)::int n from box_entries where box_id = ${boxId} and description = 'Cena del sábado' and personal_entry_id is not null`)[0].n === 1);
+  for (const dark of [false, true]) {
+    const v = await as(d.cookies.titular, { dark, width: dark ? 1280 : 390 });
+    await v.goto(`${BASE}/cajas/${boxId}`);
+    check(`caja compartida (${dark ? "oscuro, escritorio" : "claro, 390 px"}): desglose y sin scroll horizontal`, (await seen(v, "Quién puso qué")) && (await noHScroll(v)));
+  }
+  const b = await as(d.cookies.adminB);
+  check("alguien que no es integrante (forzando el ID): 404", (await b.goto(`${BASE}/cajas/${boxId}`)).status() === 404);
+  const o = await as(d.cookies.duenaNorte);
+  check("otra persona con cuenta, no integrante: 404", (await o.goto(`${BASE}/cajas/${boxId}`)).status() === 404);
+  await p.goto(`${BASE}/cajas`);
+  check("Mis cajas muestra la caja de pareja con su gente", await seen(p, "Pareja · 2 personas"));
 }
 
 check("sin errores de JavaScript", errors.length === 0, errors.slice(0, 3).join(" | "));

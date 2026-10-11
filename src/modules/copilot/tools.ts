@@ -54,7 +54,16 @@ export const consultarSaldos = z.object({
   persona: z.string().max(80).optional().describe("Con quién (ej. Juan)"),
 });
 
+export const registrarEnCajaCompartida = z.object({
+  caja: z.string().min(2).max(80).describe('Con quién o qué caja compartida: "pareja", "familia", "amigos", "padres" (padres o abuelos), "negocio" o el nombre de la caja'),
+  descripcion: z.string().min(1).max(140),
+  monto: z.number().positive().describe("Importe total, en unidades"),
+  fecha,
+  categoria: z.string().max(40).optional(),
+});
+
 export const PROPOSAL_TOOLS = {
+  registrar_en_caja_compartida: { schema: registrarEnCajaCompartida, description: 'Carga un gasto en una caja compartida del usuario (pareja, familia, amigos, padres y abuelos, negocio con otros) cuando dice que lo pagó "con mi pareja", "para los abuelos", etc. La tarjeta le deja elegir entre solo registrar o dividir. No la uses para grupos de gastos de un viaje o una salida con amigos que ya tienen un grupo.' },
   crear_movimiento: { schema: crearMovimiento, description: "Registra un gasto o ingreso en la caja personal (Bitácora) o, si es del trabajo o de una changa, en la caja de negocio. Llamala una vez por cada movimiento (puede haber varios en un mensaje)." },
   crear_gasto_en_grupo: { schema: crearGastoEnGrupo, description: "Carga un gasto compartido en un grupo de gastos y lo divide (iguales, porcentaje o montos). Usala solo si el usuario habla de compartir con otras personas o de un grupo." },
   crear_grupo: { schema: crearGrupo, description: "Crea un grupo de gastos nuevo con las personas nombradas." },

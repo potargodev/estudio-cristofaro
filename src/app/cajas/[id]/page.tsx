@@ -16,5 +16,6 @@ export default async function CajaPage({ params, searchParams }: { params: Promi
   if (r.box.kind === "personal") redirect("/bitacora");
   const month = isMonth(sp.mes) ? sp.mes! : monthOf();
   if (r.box.kind === "negocio") return <BusinessBoxView me={me} box={r.box} month={month} sp={sp} />;
-  notFound();
+  const { SharedBoxView } = await import("@/components/cajas/SharedBoxView");
+  return <SharedBoxView me={me} box={r.box} month={month} sp={sp} />;
 }

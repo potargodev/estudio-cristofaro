@@ -3,6 +3,7 @@ import { asksForCriteria, criteriaFootnote, professionalReply, SHIELD_PROMPT } f
 import { professionalTaskIn, suggest } from "@/modules/escudo/server";
 import { businessCategoryFor, categoryName as boxCategoryName } from "@/modules/cajas/catalog";
 import { addBusinessEntry, deleteBoxEntry, openBusinessBox, CajaError } from "@/modules/cajas/server";
+import { activeMembers, addSharedEntry, deleteSharedEntry, mySharedBoxes } from "@/modules/cajas/shared";
 import { generateText, jsonSchema, stepCountIs, tool, type ModelMessage, type ToolSet } from "ai";
 import { and, asc, desc, eq, gte, inArray, lt, sql } from "drizzle-orm";
 import { z } from "zod/v4";
@@ -106,7 +107,8 @@ async function contextFor(u: CopilotUser) {
     const v = await getGroupView(actorOf(u), g.id).catch(() => null);
     if (v) withMembers.push({ id: g.id, name: g.name, members: v.members.filter((m) => m.active && m.id !== v.me.id).map((m) => m.name) });
   }
-  return { cats, groups: withMembers };
+  const shared = await mySharedBoxes(u.id).catch(() => []);
+  return { cats, groups: withMembers, shared };
 }
 
 function systemPrompt(u: CopilotUser, ctx: Awaited<ReturnType<typeof contextFor>>) {
@@ -116,9 +118,11 @@ function systemPrompt(u: CopilotUser, ctx: Awaited<ReturnType<typeof contextFor>
 
 Qué hacés:
 - Convertís lo que la persona te cuenta (texto, audio transcripto, foto de ticket o factura, captura de transferencia o de Mercado Pago, PDF) en registros, llamando a las herramientas. Puede haber varios en un mensaje: "ayer 5000 de nafta y 3200 en el chino" son DOS crear_movimiento.
+- Si dice que lo pagó con su pareja, para sus padres o abuelos, con su familia o con sus socios y tiene una caja compartida para eso → registrar_en_caja_compartida (la tarjeta le deja elegir solo registrar o dividir).
 - Gasto personal → crear_movimiento. Si es del trabajo, de su actividad, de su emprendimiento o de una changa o freelance → crear_movimiento con caja "negocio" (cada caja es un mundo aparte). Si menciona personas o un grupo ("con Juan", "en el viaje", "dividido") → crear_gasto_en_grupo.
 - Montos argentinos: "3.500" = 3500; "5 lucas" = 5000; "2k" = 2000. "ayer" = el día anterior a hoy.
 - Categorías de la persona: ${ctx.cats.map((c) => c.name).join(", ")}. Elegí la que mejor encaje.
+- Cajas compartidas de la persona: ${ctx.shared.length ? ctx.shared.map((b) => b.name).join(", ") : "todavía ninguna"}.
 - Grupos de la persona: ${ctx.groups.length ? ctx.groups.map((g) => `${g.name} (con ${g.members.join(", ") || "nadie más"})`).join("; ") : "todavía ninguno"}.
 - Consultas ("¿cuánto gasté en delivery este mes?", "¿cuánto le debo a Juan?"): usá consultar_bitacora o consultar_saldos_grupo y respondé corto, con el dato y un enlace markdown a la pantalla ([Ver en Bitácora](/bitacora) o el que te devuelva la herramienta).
 - Si algo es ambiguo (falta el monto, no sabés en qué grupo), NO llames herramientas: preguntá UNA sola cosa, corta.
@@ -134,7 +138,36 @@ ${SHIELD_PROMPT}
 
 type Preview = { title: string; lines: string[]; needsConfirm: boolean; data: Record<string, unknown> };
 
+const PURPOSE_HINTS: [RegExp, string][] = [
+  [/pareja|novi[oa]|espos[oa]|marido|mujer/, "pareja"],
+  [/abuel|padre|viej|mama|papa/, "padres"],
+  [/familia|hij[oa]s|chicos/, "familia"],
+  [/amig/, "amigos"],
+  [/socio|negocio|emprendimiento/, "negocio"],
+];
+
 async function previewFor(u: CopilotUser, tool: ProposalTool, raw: unknown): Promise<Preview | { question: string }> {
+  if (tool === "registrar_en_caja_compartida") {
+    const i = PROPOSAL_TOOLS.registrar_en_caja_compartida.schema.parse(raw);
+    const boxesList = await mySharedBoxes(u.id);
+    if (!boxesList.length) return { question: "Todavía no tenés cajas compartidas. Armá una en [Mis cajas](/cajas/nueva) (pareja, familia, amigos, padres y abuelos o negocio) y lo cargo ahí." };
+    const n = norm(i.caja);
+    const purpose = PURPOSE_HINTS.find(([re]) => re.test(n))?.[1];
+    const hits = boxesList.filter((b) => (purpose && b.purpose === purpose) || norm(b.name).includes(n));
+    if (hits.length !== 1) return { question: `¿En qué caja lo cargo? Tenés: ${boxesList.map((b) => b.name).join(", ")}.` };
+    const box = hits[0];
+    const amount = Math.round(i.monto * 100);
+    const date = i.fecha ?? todayAR();
+    const members = await activeMembers(box.id);
+    const others = members.filter((m) => m.id !== u.id);
+    const half = members.length > 1 ? Math.floor(amount / members.length) : amount;
+    return {
+      title: `${box.name} · ${money(amount, "ARS")}`,
+      lines: [`${i.descripcion} · pagaste vos · ${daysLabel(date)}`, others.length ? `Solo registrar: queda que pusiste ${money(amount, "ARS")}. Dividir: ${others.map((m) => m.name).join(", ")} ${others.length === 1 ? "te debe" : "te deben"} ${money(half, "ARS")}${others.length === 1 ? "" : " cada uno"}.` : "Todavía estás solo en la caja: invitá a los demás para dividir."],
+      needsConfirm: true,
+      data: { boxId: box.id, boxName: box.name, amount, date, description: i.descripcion, category: i.categoria ?? null },
+    };
+  }
   if (tool === "crear_movimiento") {
     const i = PROPOSAL_TOOLS.crear_movimiento.schema.parse(raw);
     const date = i.fecha ?? todayAR();
@@ -241,9 +274,13 @@ const wrapErr = async <T>(fn: () => Promise<T>) => {
   }
 };
 
-async function apply(u: CopilotUser, p: typeof copilot_proposals.$inferSelect) {
+async function apply(u: CopilotUser, p: typeof copilot_proposals.$inferSelect, opts?: { final?: "registrar" | "dividir" }) {
   const d = p.preview.data as Record<string, never>;
   return wrapErr(async () => {
+    if (p.tool === "registrar_en_caja_compartida") {
+      const e = await addSharedEntry(u, d.boxId, { kind: "gasto", amount: d.amount, date: d.date, description: d.description, category: d.category ?? undefined, mode: opts?.final === "dividir" ? "dividir" : "registrar", alsoPersonal: true, source: "vigia", copilotMessageId: p.source_message_id });
+      return { type: "movimiento_compartido", id: e.id };
+    }
     if (p.tool === "crear_movimiento" && d.box === "negocio") {
       const box = await openBusinessBox(u);
       const e = await addBusinessEntry(u, box.id, { kind: d.kind, amount: d.amount, currency: d.currency, date: d.date, category: d.category, description: d.description, note: d.note, source: "vigia", copilotMessageId: p.source_message_id });
@@ -267,12 +304,13 @@ async function apply(u: CopilotUser, p: typeof copilot_proposals.$inferSelect) {
   });
 }
 
-export async function confirmProposal(u: CopilotUser, id: string) {
+export async function confirmProposal(u: CopilotUser, id: string, opts?: { final?: "registrar" | "dividir" }) {
   const p = await ownProposal(u.id, id);
   if (p.status !== "propuesta") throw new CopilotError("Esa tarjeta ya se resolvió.");
-  const r = await apply(u, p);
+  if (p.tool === "registrar_en_caja_compartida" && !opts?.final) throw new CopilotError("Elegí si solo lo registrás o si lo dividís.");
+  const r = await apply(u, p, opts);
   await db().update(copilot_proposals).set({ status: "confirmada", result_type: r.type, result_id: r.id, decided_at: new Date() }).where(eq(copilot_proposals.id, p.id));
-  await audit({ studioId: u.studioId, actor: { id: u.id, email: u.email }, action: "copiloto.confirmar", entityType: r.type, entityId: r.id, metadata: { herramienta: p.tool } });
+  await audit({ studioId: u.studioId, actor: { id: u.id, email: u.email }, action: "copiloto.confirmar", entityType: r.type, entityId: r.id, metadata: { herramienta: p.tool, ...(opts?.final ? { final: opts.final } : {}) } });
   return r;
 }
 
@@ -286,6 +324,7 @@ export async function undoProposal(u: CopilotUser, id: string) {
   await wrapErr(async () => {
     const d = p.preview.data as Record<string, string>;
     if (p.result_type === "movimiento") await deleteEntry(u.id, p.result_id!);
+    else if (p.result_type === "movimiento_compartido") await deleteSharedEntry(u, d.boxId, p.result_id!);
     else if (p.result_type === "movimiento_caja") {
       const [be] = await db().select({ boxId: box_entries.box_id }).from(box_entries).where(eq(box_entries.id, p.result_id!));
       if (be) await deleteBoxEntry(u, be.boxId, p.result_id!);

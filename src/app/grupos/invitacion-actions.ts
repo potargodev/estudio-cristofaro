@@ -23,7 +23,7 @@ export type JoinState = { ok?: boolean; message?: string; link?: string | null }
 const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
 const TOKEN = /^[A-Za-z0-9_-]{20,100}$/;
 /** Solo vuelve a pantallas de grupos (evita redirecciones abiertas) */
-const safeNext = (v: string) => (/^\/grupos\/(unirse\/[A-Za-z0-9_-]{20,100}|reclamar)$/.test(v) ? v : "/grupos");
+const safeNext = (v: string) => (/^\/grupos\/(unirse\/[A-Za-z0-9_-]{20,100}|reclamar)$/.test(v) || /^\/caja\/[0-9a-f-]{36}\.[A-Za-z0-9_-]{20,100}$/.test(v) ? v : "/grupos");
 
 const setGuestCookie = async (token: string) =>
   (await cookies()).set(GUEST_COOKIE, token, { httpOnly: true, sameSite: "lax", secure: getSiteUrl().startsWith("https"), maxAge: 60 * 60 * 24 * 90, path: "/" });
