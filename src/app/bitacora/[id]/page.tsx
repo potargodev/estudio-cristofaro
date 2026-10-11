@@ -7,7 +7,8 @@ import { BitacoraError, getEntry, listCategories } from "@/modules/bitacora/serv
 import { requireUser } from "@/modules/bitacora/session";
 import { originOf } from "@/modules/copilot/server";
 import { deleteEntryAction, updateEntryAction } from "../actions";
-import { professionalAction } from "../plus-actions";
+import { moveToBusinessAction } from "@/app/cajas/actions";
+import { looksLikeBusiness } from "@/modules/cajas/catalog";
 import { SubmitButton } from "@/components/admin/ui";
 
 export const metadata: Metadata = { title: "Movimiento" };
@@ -26,7 +27,8 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
   if (e.deleted_at) notFound();
   const [cats, origin] = await Promise.all([listCategories(me.id), e.source === "copiloto" ? originOf(me.id, "movimiento", e.id) : null]);
   const mes = sp.mes ?? e.date.slice(0, 7);
-  const autonomo = me.role === "titular" && me.tenantKind === "personal";
+  const fromBox = !!(e.transfer_id || e.box_entry_id);
+  const hint = looksLikeBusiness(e.description, e.note);
   return (
     <div className="grid max-w-2xl gap-5">
       <Link href={`/bitacora?mes=${mes}`} className="text-[13px] text-muted hover:text-ink">
@@ -38,12 +40,22 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           {sp.error}
         </p>
       )}
-      <div className="rounded-lg border border-line bg-surface p-5">
+      <div className={fromBox ? "pointer-events-none rounded-lg border border-line bg-surface p-5 opacity-60" : "rounded-lg border border-line bg-surface p-5"} aria-disabled={fromBox || undefined}>
         <EntryForm
           action={updateEntryAction}
           categories={cats}
           hidden={{ mes }}
-          d={{ id: e.id, kind: e.kind, amount: (e.amount / 100).toLocaleString("es-AR", { maximumFractionDigits: 2 }), currency: e.currency, date: e.date, categoryId: e.category_id, description: e.description, paymentMethod: e.payment_method, note: e.note }}
+          d={{
+            id: e.id,
+            kind: e.kind,
+            amount: (e.amount / 100).toLocaleString("es-AR", { maximumFractionDigits: 2 }),
+            currency: e.currency,
+            date: e.date,
+            categoryId: e.category_id,
+            description: e.description,
+            paymentMethod: e.payment_method,
+            note: e.note,
+          }}
         />
       </div>
       {sp.ok && (
@@ -51,40 +63,40 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           {sp.ok}
         </p>
       )}
-      {autonomo && e.kind === "gasto" && (
-        <section className="grid gap-3 rounded-lg border border-line bg-surface p-5" aria-label="Personal o de tu actividad">
-          <p className="text-[15px] font-medium">¿Es de tu actividad?</p>
-          <form action={professionalAction} className="grid gap-2">
+      {fromBox ? (
+        <p className="rounded-md border border-line bg-navy-soft px-4 py-2.5 text-[14px] text-ink">
+          {e.transfer_id ? "Es un movimiento entre cajas (sueldo del dueño o aporte). Se cambia o se borra desde " : "Este movimiento también está en una caja compartida. Se cambia desde "}
+          <Link href="/cajas" className="underline underline-offset-4">
+            Mis cajas
+          </Link>
+          .
+        </p>
+      ) : (
+        <section className="grid gap-3 rounded-lg border border-line bg-surface p-5" aria-label="¿Es de tu negocio?">
+          <p className="text-[15px] font-medium">¿Es de tu negocio?</p>
+          <p className="text-[14px] text-muted">
+            {hint ? `Parece del trabajo (por «${hint}»). ` : ""}Lo de tu actividad va en la caja de negocio, separado de lo personal. Al moverlo no se duplica: sale de acá y queda allá, con el registro original.
+          </p>
+          <form action={moveToBusinessAction}>
             <input type="hidden" name="id" value={e.id} />
-            <label className="flex items-center gap-2 text-[14px]">
-              <input type="checkbox" name="professional" defaultChecked={e.professional} /> Es un gasto de mi actividad (no personal)
-            </label>
-            <label className="flex items-center gap-2 text-[14px]">
-              <input type="checkbox" name="deductible" defaultChecked={e.deductible} /> Se puede deducir
-            </label>
-            <div>
-              <SubmitButton variant="secondary" pendingText="…">Guardar</SubmitButton>
-            </div>
+            <input type="hidden" name="volver" value={`/bitacora/${e.id}`} />
+            <SubmitButton variant="secondary" pendingText="…">
+              Mover a la caja de negocio
+            </SubmitButton>
           </form>
-          {e.accounting_expense_id ? (
-            <p className="text-[13px] text-muted">Ya está en los gastos de tu actividad en Faro Personal.</p>
-          ) : (
-            <form action={professionalAction}>
-              <input type="hidden" name="id" value={e.id} />
-              <input type="hidden" name="op" value="pasar" />
-              <SubmitButton pendingText="…">Pasar a Faro Personal</SubmitButton>
-            </form>
-          )}
+          {e.accounting_expense_id && <p className="text-[13px] text-muted">Antes lo pasaste a los gastos de tu actividad en Faro Personal; ese registro se conserva.</p>}
         </section>
       )}
       {origin && <CopilotOrigin o={origin} />}
-      <form action={deleteEntryAction}>
-        <input type="hidden" name="id" value={e.id} />
-        <input type="hidden" name="mes" value={mes} />
-        <button type="submit" className="h-10 rounded-md border border-danger/40 px-4 text-[14px] text-danger hover:bg-danger/10">
-          Borrar movimiento
-        </button>
-      </form>
+      {!fromBox && (
+        <form action={deleteEntryAction}>
+          <input type="hidden" name="id" value={e.id} />
+          <input type="hidden" name="mes" value={mes} />
+          <button type="submit" className="h-10 rounded-md border border-danger/40 px-4 text-[14px] text-danger hover:bg-danger/10">
+            Borrar movimiento
+          </button>
+        </form>
+      )}
     </div>
   );
 }

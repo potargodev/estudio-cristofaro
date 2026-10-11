@@ -35,9 +35,9 @@ Las pestañas de arriba llevan a [Sobres y Metas](/ayuda/bitacora/sobres-y-metas
 - **Bitácora Gratis:** todo lo de esta página, sobres, fijos, avisos, 1 meta y 2 importaciones de resúmenes por mes.
 - **Bitácora Plus** (con cualquier plan pago de Faro, o si tu estudio te da un plan pago): metas e importaciones sin límite y conexiones con Mercado Pago y Gmail.
 
-## Gastos de tu actividad (autónomos)
+## Gastos de tu negocio
 
-Si tenés Faro Personal, al abrir un gasto podés marcarlo como **de tu actividad** y **deducible**, y tocar **Pasar a Faro Personal**: queda en los gastos de tu actividad, con el origen, para tu contador. Lo personal sigue privado.
+La Bitácora es tu **caja personal**. Lo de tu trabajo o de una changa va en tu **caja de negocio**, separado (ver [Mis cajas](/ayuda/bitacora/mis-cajas)). Si cargaste algo del trabajo en lo personal, abrí el movimiento y tocá **Mover a la caja de negocio**: sale de acá y queda allá, sin duplicarse y con el registro original. Los gastos que antes marcaste «de mi actividad» ya están en tu caja de negocio. Lo personal sigue privado.
 
 ## Gastos de tus grupos
 

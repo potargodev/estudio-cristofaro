@@ -4,6 +4,7 @@ import { AnimatePresence, LayoutGroup, LazyMotion, domMax, m, useReducedMotion }
 import { NoticesBell, type Notice } from "./NoticesBell";
 export type { ShellSpace } from "./SpaceSwitcher";
 import {
+  Boxes,
   ArrowLeftRight,
   Briefcase,
   Calculator,
@@ -82,6 +83,7 @@ import { activeItem, BADGE_TEXT, type ShellBadge, type ShellGroup, type ShellIco
 // Ayuda y tema. La preferencia de la barra se guarda por usuario en la base.
 
 const ICONS: Record<ShellIcon, LucideIcon> = {
+  cajas: Boxes,
   resumen: LayoutDashboard,
   organizaciones: Building2,
   vencimientos: CalendarClock,

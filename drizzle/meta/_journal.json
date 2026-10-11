@@ -260,6 +260,27 @@
       "when": 1791748149922,
       "tag": "0036_escudo_responsabilidad",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1791749250848,
+      "tag": "0037_cajas",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1791749330867,
+      "tag": "0038_cajas_sugerencias",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1791749764362,
+      "tag": "0039_cajas_claves",
+      "breakpoints": true
     }
   ]
 }

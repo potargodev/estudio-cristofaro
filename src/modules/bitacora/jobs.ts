@@ -35,5 +35,8 @@ export async function runBitacoraJobs(now = new Date()) {
     g.__bitacoraWeek = day;
     resumenes = await sendWeeklySummaries(active);
   }
-  return { avisos, resumenes, activos: active.length };
+  // Cajas: el sueldo del dueño que vence hoy pasa del negocio a lo personal
+  const { runSalaryJobs } = await import("@/modules/cajas/server");
+  const sueldos = await runSalaryJobs(day).catch((e) => (console.error("[cajas] sueldos", (e as Error).message), 0));
+  return { avisos, resumenes, sueldos, activos: active.length };
 }

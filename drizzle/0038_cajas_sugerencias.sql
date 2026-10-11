@@ -1,0 +1,1 @@
+ALTER TABLE "bitacora_entries" ADD COLUMN "business_hint_dismissed" boolean DEFAULT false NOT NULL;

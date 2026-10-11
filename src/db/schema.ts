@@ -2043,6 +2043,13 @@ export const bitacora_entries = pgTable(
     professional: boolean("professional").notNull().default(false),
     deductible: boolean("deductible").notNull().default(false),
     accounting_expense_id: uuid("accounting_expense_id"),
+    /** Cajas (principios §10 y §17): movido a la caja de negocio (queda borrado acá, sin perderse) o espejo de un movimiento de otra caja */
+    moved_to_box_entry_id: uuid("moved_to_box_entry_id"),
+    box_entry_id: uuid("box_entry_id"),
+    /** La persona dijo que no a la sugerencia «parece del negocio» */
+    business_hint_dismissed: boolean("business_hint_dismissed").notNull().default(false),
+    /** Sueldo del dueño o aporte: el movimiento explícito entre cajas */
+    transfer_id: uuid("transfer_id"),
     /** Importaciones y conexiones: lote, ID externo, registro original, validación y sincronización */
     import_id: uuid("import_id"),
     external_id: text("external_id"),
@@ -3646,3 +3653,169 @@ export const derivation_suggestions = pgTable(
   },
   (t) => [uniqueIndex("derivation_suggestions_user_rule_idx").on(t.user_id, t.rule_key)],
 );
+
+// ───────────────────────── Cajas (principios §10, §11, §17 y §18) ─────────────────────────
+
+/** personal: la Bitácora (sus movimientos siguen en bitacora_entries) · negocio: la actividad · compartida: con otras personas */
+export const boxKind = pgEnum("box_kind", ["personal", "negocio", "compartida"]);
+
+/** Una caja es un mundo cerrado: su gente, su plata y su propósito. Entre cajas solo pasa plata con un movimiento explícito. */
+export const boxes = pgTable(
+  "boxes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    kind: boxKind("kind").notNull(),
+    /** Compartidas: pareja | familia | amigos | negocio | padres (opciones prearmadas) */
+    purpose: text("purpose"),
+    name: text("name").notNull(),
+    owner_id: uuid("owner_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** Invitación por link (solo el hash) */
+    invite_token_hash: text("invite_token_hash"),
+    invite_created_at: timestamp("invite_created_at", { withTimezone: true }),
+    archived_at: timestamp("archived_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("boxes_owner_individual_idx").on(t.owner_id, t.kind).where(sql`${t.kind} in ('personal', 'negocio')`), index("boxes_owner_idx").on(t.owner_id)],
+);
+
+export const box_members = pgTable(
+  "box_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    box_id: uuid("box_id")
+      .notNull()
+      .references(() => boxes.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("integrante"), // titular | integrante
+    status: text("status").notNull().default("activo"), // activo | salio
+    joined_at: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
+    left_at: timestamp("left_at", { withTimezone: true }),
+  },
+  (t) => [uniqueIndex("box_members_box_user_idx").on(t.box_id, t.user_id), index("box_members_user_idx").on(t.user_id)],
+);
+
+/** Metas de ahorro dentro de una caja */
+export const box_goals = pgTable("box_goals", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  box_id: uuid("box_id")
+    .notNull()
+    .references(() => boxes.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  target: bigint("target", { mode: "number" }).notNull(),
+  currency: text("currency").notNull().default("ARS"),
+  created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  archived_at: timestamp("archived_at", { withTimezone: true }),
+  created_at: createdAt(),
+});
+
+/**
+ * Movimientos de una caja de negocio o compartida (los de la caja personal son
+ * los de la Bitácora). kind: gasto | ingreso | ahorro. En las compartidas,
+ * quién pagó, el final (registrar o dividir) y si la persona que pagó lo
+ * confirmó: hasta entonces no cuenta en su seguimiento.
+ */
+export const box_entries = pgTable(
+  "box_entries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    box_id: uuid("box_id")
+      .notNull()
+      .references(() => boxes.id, { onDelete: "cascade" }),
+    // Sin clave foránea: el movimiento queda aunque se borre la cuenta de quien lo cargó (y no choca con el borrado en cascada de la caja)
+    created_by: uuid("created_by"),
+    paid_by: uuid("paid_by"),
+    kind: text("kind").notNull().default("gasto"),
+    /** En centavos */
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    date: date("date").notNull(),
+    category: text("category").notNull().default("otros"),
+    description: text("description").notNull(),
+    note: text("note"),
+    /** registrar | dividir (compartidas) */
+    mode: text("mode").notNull().default("registrar"),
+    /** confirmado | pendiente (lo cargó otra persona y falta que quien pagó lo confirme) */
+    status: text("status").notNull().default("confirmado"),
+    confirmed_at: timestamp("confirmed_at", { withTimezone: true }),
+    goal_id: uuid("goal_id"),
+    /** Negocio: ingreso con factura emitida (false = sin facturar, zona gris §13) y gasto deducible */
+    invoiced: boolean("invoiced").notNull().default(false),
+    deductible: boolean("deductible").notNull().default(false),
+    /** manual | vigia | bitacora (movido) | sueldo | aporte */
+    source: text("source").notNull().default("manual"),
+    origin_id: uuid("origin_id"),
+    /** La misma carga en la caja personal (una carga, varios destinos) */
+    personal_entry_id: uuid("personal_entry_id"),
+    transfer_id: uuid("transfer_id"),
+    copilot_message_id: uuid("copilot_message_id"),
+    /** Registro original (por ejemplo, el movimiento de la Bitácora que se movió) */
+    raw: jsonb("raw").$type<unknown>(),
+    deleted_at: timestamp("deleted_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("box_entries_box_date_idx").on(t.box_id, t.date)],
+);
+
+/** Dividir: cuánto le toca a cada integrante y si confirmó que se lo pagó a quien puso la plata */
+export const box_entry_shares = pgTable(
+  "box_entry_shares",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    entry_id: uuid("entry_id")
+      .notNull()
+      .references(() => box_entries.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    /** Quien debe confirma que pagó; recién ahí cuenta en su seguimiento */
+    paid_at: timestamp("paid_at", { withTimezone: true }),
+  },
+  (t) => [uniqueIndex("box_entry_shares_entry_user_idx").on(t.entry_id, t.user_id)],
+);
+
+/** Movimiento explícito entre cajas: el sueldo del dueño (negocio → personal) o un aporte (personal → otra caja) */
+export const box_transfers = pgTable(
+  "box_transfers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    kind: text("kind").notNull(), // sueldo | aporte
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** null = la caja personal del usuario (sin clave foránea: el registro del movimiento queda) */
+    from_box_id: uuid("from_box_id"),
+    to_box_id: uuid("to_box_id"),
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    date: date("date").notNull(),
+    salary_id: uuid("salary_id"),
+    note: text("note"),
+    created_at: createdAt(),
+  },
+  (t) => [index("box_transfers_user_idx").on(t.user_id, t.date)],
+);
+
+/** Sueldo del dueño: monto y frecuencia; se registra solo en cada fecha */
+export const box_salaries = pgTable("box_salaries", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  box_id: uuid("box_id")
+    .notNull()
+    .unique()
+    .references(() => boxes.id, { onDelete: "cascade" }),
+  user_id: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  amount: bigint("amount", { mode: "number" }).notNull(),
+  currency: text("currency").notNull().default("ARS"),
+  frequency: text("frequency").notNull().default("mensual"), // mensual | quincenal | semanal
+  next_date: date("next_date").notNull(),
+  active: boolean("active").notNull().default(true),
+  updated_at: updatedAt(),
+});

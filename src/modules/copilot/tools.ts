@@ -16,6 +16,7 @@ export const crearMovimiento = z.object({
   descripcion: z.string().min(1).max(160).describe("Comercio o en qué fue (ej. Kiosco, Nafta YPF)"),
   medio_pago: z.enum(["efectivo", "debito", "credito", "transferencia", "mercado_pago"]).optional(),
   nota: z.string().max(300).optional(),
+  caja: z.enum(["personal", "negocio"]).default("personal").describe('"negocio" si es de su trabajo, su actividad, su emprendimiento o una changa o freelance; si no, "personal"'),
 });
 
 export const crearGastoEnGrupo = z.object({
@@ -54,7 +55,7 @@ export const consultarSaldos = z.object({
 });
 
 export const PROPOSAL_TOOLS = {
-  crear_movimiento: { schema: crearMovimiento, description: "Registra un gasto o ingreso personal en la Bitácora del usuario. Llamala una vez por cada movimiento (puede haber varios en un mensaje)." },
+  crear_movimiento: { schema: crearMovimiento, description: "Registra un gasto o ingreso en la caja personal (Bitácora) o, si es del trabajo o de una changa, en la caja de negocio. Llamala una vez por cada movimiento (puede haber varios en un mensaje)." },
   crear_gasto_en_grupo: { schema: crearGastoEnGrupo, description: "Carga un gasto compartido en un grupo de gastos y lo divide (iguales, porcentaje o montos). Usala solo si el usuario habla de compartir con otras personas o de un grupo." },
   crear_grupo: { schema: crearGrupo, description: "Crea un grupo de gastos nuevo con las personas nombradas." },
   recordar: { schema: recordar, description: "Agenda un recordatorio para el usuario." },

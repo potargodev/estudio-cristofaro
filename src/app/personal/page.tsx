@@ -1,5 +1,5 @@
 import { and, desc, eq, isNull, or } from "drizzle-orm";
-import { CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Ship, Wallet } from "lucide-react";
+import { Boxes, CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Ship, Wallet } from "lucide-react";
 import Link from "next/link";
 import { FirstSteps } from "@/components/app/FirstSteps";
 import { getDb } from "@/db";
@@ -15,6 +15,7 @@ import { Insights } from "@/components/bitacora/Insights";
 import { requireUser } from "@/modules/bitacora/session";
 import { getPlan, planFullName } from "@/lib/faro/plans";
 import { ownOrganization } from "@/lib/faro/tenants";
+import { myBoxes } from "@/modules/cajas/server";
 
 export const metadata = { title: { absolute: "Inicio · Faro" } };
 
@@ -47,6 +48,9 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
         .orderBy(desc(accounting_expenses.date))
         .limit(8)
     : [];
+  const boxesList = await myBoxes(me.id);
+  const business = boxesList.find((b) => b.kind === "negocio");
+  const shared = boxesList.filter((b) => b.kind === "compartida").length;
   const first = me.name.split(" ")[0];
   const ars = summary.byCurrency.ARS.now;
   const context = !titular
@@ -89,6 +93,17 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
           </p>
         )}
       </section>
+
+      <Link href="/cajas" className="group flex items-center gap-4 rounded-md border border-line bg-surface p-5 transition-colors hover:border-muted">
+        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
+          <Boxes className="size-6" strokeWidth={1.5} aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[17px] font-medium text-ink">Mis cajas</span>
+          <span className="block text-[14px] text-muted">{business ? `Personal y ${business.name}${shared ? `, más ${shared} compartida${shared === 1 ? "" : "s"}` : ""}: cada plata en su caja.` : "Tu caja personal, la de tu negocio y las que compartís con otros, cada una por separado."}</span>
+        </span>
+        <span className="text-[14px] font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
+      </Link>
 
       <Link href="/grupos" data-tour="grupos" className="group flex items-center gap-4 rounded-md border border-line bg-surface p-5 transition-colors hover:border-muted">
         <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">

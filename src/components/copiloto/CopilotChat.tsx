@@ -67,7 +67,7 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
     <div className={cn("mt-2 rounded-lg border bg-surface p-3", p.status === "propuesta" ? "border-rose-light" : "border-line", (p.status === "deshecha" || p.status === "descartada") && "opacity-60")}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-[0.12em] text-muted">{TOOL_LABEL[p.tool] ?? "Registro"}</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-muted">{p.title.startsWith("Negocio ·") ? "Caja de negocio" : (TOOL_LABEL[p.tool] ?? "Registro")}</p>
           <p className={cn("text-[15px] font-semibold text-ink", (p.status === "deshecha" || p.status === "descartada") && "line-through")}>{p.title}</p>
           {p.lines.map((l, i) => (
             <p key={i} className="text-[13px] text-muted">

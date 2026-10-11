@@ -122,6 +122,53 @@ if (stage("2")) {
   check("/faro: sin «sin ser contador» ni «sin contador»", !(await pub.evaluate(() => /sin ser contador|acompaña sin contador/i.test(document.body.innerText))));
 }
 
+// ─── Etapa 3 · Mis cajas, caja de negocio y sueldo ───
+if (stage("3")) {
+  const T = d.users.titular;
+  const [biz] = await sql`select id from boxes where owner_id = ${T} and kind = 'negocio'`;
+  check("el autónomo ya tiene su caja de negocio", !!biz);
+  await sql`delete from box_salaries where box_id = ${biz.id}`;
+  await sql`delete from box_entries where box_id = ${biz.id}`;
+  const [lic] = await sql`insert into bitacora_entries (user_id, kind, amount, date, description) values (${T}, 'gasto', 2500000, current_date, 'Licencia Figma') returning id`;
+  for (const dark of [false, true]) {
+    const p = await as(d.cookies.titular, { dark, width: dark ? 1280 : 390 });
+    await p.goto(`${BASE}/cajas`);
+    check(`Mis cajas (${dark ? "oscuro, escritorio" : "claro, 390 px"}): personal, negocio y compartida`, (await seen(p, "Tu plata de todos los días. Es tu Bitácora.")) && (await seen(p, "Mi negocio")) && (await seen(p, "Caja compartida")));
+    check(`Mis cajas (${dark ? "oscuro" : "claro"}): sin scroll horizontal`, await noHScroll(p));
+  }
+  const p = await as(d.cookies.titular);
+  await p.goto(`${BASE}/cajas`);
+  check("«Licencia Figma» en lo personal: Faro sugiere moverla", await seen(p, "Esto parece de tu negocio"));
+  await p.locator("li", { hasText: "Licencia Figma" }).getByRole("button", { name: "Mover al negocio" }).click();
+  await p.waitForURL(/\/cajas\/[0-9a-f-]{36}/);
+  check("moverla lleva a la caja de negocio con el gasto", (await seen(p, "ya no está en lo personal")) && (await seen(p, "Licencia Figma")) && (await seen(p, "movido de lo personal")));
+  check("y sale de lo personal", !!(await sql`select deleted_at from bitacora_entries where id = ${lic.id}`)[0].deleted_at);
+  await p.getByRole("radio", { name: "Ingreso" }).check();
+  await p.getByLabel("Monto").first().fill("500.000");
+  await p.getByLabel("En qué fue").fill("Cobro proyecto");
+  await p.locator("select[name=category]").selectOption("ventas");
+  await p.getByLabel("Ingreso con factura").check();
+  await p.getByRole("button", { name: "Cargar", exact: true }).click();
+  check("cargar un ingreso en el negocio", await seen(p, "Cargado en la caja de negocio."));
+  const salary = p.locator("section", { hasText: "Tu sueldo" });
+  await salary.getByLabel("Monto").first().fill("200.000");
+  await salary.getByRole("button", { name: "Guardar sueldo" }).click();
+  check("configurar el sueldo (monto y frecuencia)", await seen(p, "Sueldo guardado"));
+  await p.locator("form", { hasText: "Pagarte ahora" }).getByRole("button", { name: "Registrar sueldo" }).click();
+  check("registrar el sueldo: sale del negocio", (await seen(p, "entró en tu caja personal")) && (await seen(p, "Sueldo del dueño")));
+  const [tr] = await sql`select id from bitacora_entries where user_id = ${T} and transfer_id is not null and deleted_at is null order by created_at desc limit 1`;
+  await p.goto(`${BASE}/bitacora`);
+  check("y entra en la Bitácora (caja personal)", await seen(p, "Sueldo de Mi negocio"));
+  await p.goto(`${BASE}/bitacora/${tr.id}`);
+  check("en la Bitácora se ve como movimiento entre cajas (no se edita ahí)", await seen(p, "Es un movimiento entre cajas"));
+  const b = await as(d.cookies.adminB);
+  const r = await b.goto(`${BASE}/cajas/${biz.id}`);
+  check("caja ajena forzando el ID: 404", r.status() === 404);
+  const q = await as(d.cookies.duenaNorte);
+  const r2 = await q.goto(`${BASE}/cajas/${biz.id}`);
+  check("otra persona con cuenta, forzando el ID: 404", r2.status() === 404);
+}
+
 check("sin errores de JavaScript", errors.length === 0, errors.slice(0, 3).join(" | "));
 await browser.close();
 await sql.end();

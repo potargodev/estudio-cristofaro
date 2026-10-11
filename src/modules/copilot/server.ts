@@ -1,11 +1,13 @@
 import "server-only";
 import { asksForCriteria, criteriaFootnote, professionalReply, SHIELD_PROMPT } from "@/modules/escudo/catalog";
 import { professionalTaskIn, suggest } from "@/modules/escudo/server";
+import { businessCategoryFor, categoryName as boxCategoryName } from "@/modules/cajas/catalog";
+import { addBusinessEntry, deleteBoxEntry, openBusinessBox, CajaError } from "@/modules/cajas/server";
 import { generateText, jsonSchema, stepCountIs, tool, type ModelMessage, type ToolSet } from "ai";
 import { and, asc, desc, eq, gte, inArray, lt, sql } from "drizzle-orm";
 import { z } from "zod/v4";
 import { getDb } from "@/db";
-import { copilot_messages, copilot_proposals, copilot_reminders, users } from "@/db/schema";
+import { box_entries, copilot_messages, copilot_proposals, copilot_reminders, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { getPrefs } from "@/lib/prefs";
 import { money, monthOf } from "@/modules/bitacora/catalog";
@@ -114,7 +116,7 @@ function systemPrompt(u: CopilotUser, ctx: Awaited<ReturnType<typeof contextFor>
 
 Qué hacés:
 - Convertís lo que la persona te cuenta (texto, audio transcripto, foto de ticket o factura, captura de transferencia o de Mercado Pago, PDF) en registros, llamando a las herramientas. Puede haber varios en un mensaje: "ayer 5000 de nafta y 3200 en el chino" son DOS crear_movimiento.
-- Gasto personal → crear_movimiento. Si menciona personas o un grupo ("con Juan", "en el viaje", "dividido") → crear_gasto_en_grupo.
+- Gasto personal → crear_movimiento. Si es del trabajo, de su actividad, de su emprendimiento o de una changa o freelance → crear_movimiento con caja "negocio" (cada caja es un mundo aparte). Si menciona personas o un grupo ("con Juan", "en el viaje", "dividido") → crear_gasto_en_grupo.
 - Montos argentinos: "3.500" = 3500; "5 lucas" = 5000; "2k" = 2000. "ayer" = el día anterior a hoy.
 - Categorías de la persona: ${ctx.cats.map((c) => c.name).join(", ")}. Elegí la que mejor encaje.
 - Grupos de la persona: ${ctx.groups.length ? ctx.groups.map((g) => `${g.name} (con ${g.members.join(", ") || "nadie más"})`).join("; ") : "todavía ninguno"}.
@@ -135,9 +137,20 @@ type Preview = { title: string; lines: string[]; needsConfirm: boolean; data: Re
 async function previewFor(u: CopilotUser, tool: ProposalTool, raw: unknown): Promise<Preview | { question: string }> {
   if (tool === "crear_movimiento") {
     const i = PROPOSAL_TOOLS.crear_movimiento.schema.parse(raw);
-    const cat = await categoryByHint(u.id, i.categoria, i.tipo);
     const date = i.fecha ?? todayAR();
     const amount = Math.round(i.monto * 100);
+    // Caja de negocio (principios §10): lo del trabajo o de una changa va separado de lo personal
+    if (i.caja === "negocio") {
+      const changa = /changa|freelance|trabajito/i.test(`${i.descripcion} ${i.nota ?? ""} ${i.categoria ?? ""}`);
+      const category = i.tipo === "ingreso" ? (changa ? "changa" : "ventas") : businessCategoryFor(`${i.descripcion} ${i.categoria ?? ""}`);
+      return {
+        title: `Negocio · ${i.tipo === "ingreso" ? "Ingreso" : "Gasto"} ${money(amount, i.moneda)}`,
+        lines: [[i.descripcion, boxCategoryName("negocio", null, category), daysLabel(date)].filter(Boolean).join(" · "), "Caja de negocio"],
+        needsConfirm: false,
+        data: { box: "negocio", kind: i.tipo, amount, currency: i.moneda, date, category, description: i.descripcion, note: i.nota ?? null },
+      };
+    }
+    const cat = await categoryByHint(u.id, i.categoria, i.tipo);
     return {
       title: `${i.tipo === "ingreso" ? "Ingreso" : "Gasto"} ${money(amount, i.moneda)}`,
       lines: [[i.descripcion, cat?.name, daysLabel(date)].filter(Boolean).join(" · "), ...(i.medio_pago ? [i.medio_pago.replace("_", " ")] : [])],
@@ -223,7 +236,7 @@ const wrapErr = async <T>(fn: () => Promise<T>) => {
   try {
     return await fn();
   } catch (e) {
-    if (e instanceof GastosError || e instanceof SplitError || e instanceof BitacoraError) throw new CopilotError(e.message);
+    if (e instanceof GastosError || e instanceof SplitError || e instanceof BitacoraError || e instanceof CajaError) throw new CopilotError(e.message);
     throw e;
   }
 };
@@ -231,6 +244,11 @@ const wrapErr = async <T>(fn: () => Promise<T>) => {
 async function apply(u: CopilotUser, p: typeof copilot_proposals.$inferSelect) {
   const d = p.preview.data as Record<string, never>;
   return wrapErr(async () => {
+    if (p.tool === "crear_movimiento" && d.box === "negocio") {
+      const box = await openBusinessBox(u);
+      const e = await addBusinessEntry(u, box.id, { kind: d.kind, amount: d.amount, currency: d.currency, date: d.date, category: d.category, description: d.description, note: d.note, source: "vigia", copilotMessageId: p.source_message_id });
+      return { type: "movimiento_caja", id: e.id };
+    }
     if (p.tool === "crear_movimiento") {
       const e = await createEntry(u.id, { ...(d as object), source: "copiloto", copilotMessageId: p.source_message_id } as never);
       return { type: "movimiento", id: e.id };
@@ -268,6 +286,10 @@ export async function undoProposal(u: CopilotUser, id: string) {
   await wrapErr(async () => {
     const d = p.preview.data as Record<string, string>;
     if (p.result_type === "movimiento") await deleteEntry(u.id, p.result_id!);
+    else if (p.result_type === "movimiento_caja") {
+      const [be] = await db().select({ boxId: box_entries.box_id }).from(box_entries).where(eq(box_entries.id, p.result_id!));
+      if (be) await deleteBoxEntry(u, be.boxId, p.result_id!);
+    }
     else if (p.result_type === "gasto_grupo") await deleteExpense(actorOf(u), d.groupId, p.result_id!);
     else if (p.result_type === "grupo") await archiveGroup(actorOf(u), p.result_id!);
     else await db().delete(copilot_reminders).where(and(eq(copilot_reminders.id, p.result_id!), eq(copilot_reminders.user_id, u.id)));
@@ -288,6 +310,7 @@ export async function redoProposal(u: CopilotUser, id: string) {
 export async function editMovementProposal(u: CopilotUser, id: string, data: { kind: "gasto" | "ingreso"; amount: number; currency: string; date: string; categoryId: string | null; description: string; paymentMethod: string | null; note: string | null }) {
   const p = await ownProposal(u.id, id);
   if (p.tool !== "crear_movimiento") throw new CopilotError("Solo los movimientos se editan acá; los gastos de grupo, desde el grupo.");
+  if ((p.preview.data as { box?: string }).box) throw new CopilotError("Los movimientos de una caja se editan desde Mis cajas.");
   const cats = await listCategories(u.id);
   const cat = cats.find((c) => c.id === data.categoryId);
   const preview = { ...p.preview, title: `${data.kind === "ingreso" ? "Ingreso" : "Gasto"} ${money(data.amount, data.currency)}`, lines: [[data.description, cat?.name, daysLabel(data.date)].filter(Boolean).join(" · ")], data: { ...data } };

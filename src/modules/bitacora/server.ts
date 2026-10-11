@@ -106,8 +106,15 @@ async function ownEntry(userId: string, id: string) {
 
 export const getEntry = ownEntry;
 
+/** Cada caja es un mundo cerrado (principios §17): lo que vino de otra caja se maneja desde Mis cajas */
+function fromAnotherBox(e: { transfer_id: string | null; box_entry_id: string | null; moved_to_box_entry_id: string | null }) {
+  if (e.transfer_id) throw new BitacoraError("Es un movimiento entre cajas (sueldo o aporte): se cambia o se borra desde Mis cajas.");
+  if (e.box_entry_id) throw new BitacoraError("Este movimiento también está en una caja compartida: se cambia desde esa caja.");
+  if (e.moved_to_box_entry_id) throw new BitacoraError("Este movimiento se movió a tu caja de negocio.");
+}
+
 export async function updateEntry(userId: string, id: string, i: EntryInput) {
-  await ownEntry(userId, id);
+  fromAnotherBox(await ownEntry(userId, id));
   const v = validate(i);
   const cat = await ownCategory(userId, i.categoryId ?? null);
   const [row] = await db()
@@ -120,12 +127,12 @@ export async function updateEntry(userId: string, id: string, i: EntryInput) {
 
 /** Borrado suave (Deshacer) */
 export async function deleteEntry(userId: string, id: string) {
-  await ownEntry(userId, id);
+  fromAnotherBox(await ownEntry(userId, id));
   await db().update(bitacora_entries).set({ deleted_at: new Date() }).where(and(eq(bitacora_entries.id, id), eq(bitacora_entries.user_id, userId)));
 }
 
 export async function restoreEntry(userId: string, id: string) {
-  await ownEntry(userId, id);
+  fromAnotherBox(await ownEntry(userId, id));
   await db().update(bitacora_entries).set({ deleted_at: null }).where(and(eq(bitacora_entries.id, id), eq(bitacora_entries.user_id, userId)));
 }
 

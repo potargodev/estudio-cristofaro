@@ -77,7 +77,7 @@ function copilot(body, last, q) {
   const d = new Date(Date.now() - 3 * 3600_000 - (ayer ? 86400_000 : 0)).toISOString().slice(0, 10);
   const items = [...q.matchAll(/(\d[\d.,]*k?)\s+(?:de |en (?:el |la )?)?([a-záéíóúñ ]+?)(?=\s+y\s+|,|\.|$)/g)].map((m) => ({
     tool: "crear_movimiento",
-    args: { tipo: /cobr|sueldo/.test(m[2]) ? "ingreso" : "gasto", monto: num(m[1]), fecha: d, descripcion: cap(m[2].trim()), ...(/nafta|sube|uber/.test(m[2]) ? { categoria: "Transporte" } : /chino|super/.test(m[2]) ? { categoria: "Supermercado" } : {}) },
+    args: { tipo: /cobr|sueldo|changa/.test(m[2]) ? "ingreso" : "gasto", monto: num(m[1]), fecha: d, descripcion: cap(m[2].replace(/\s+(para el|del|de mi) (negocio|trabajo|laburo)$/, "").trim()), ...(/nafta|sube|uber/.test(m[2]) ? { categoria: "Transporte" } : /chino|super/.test(m[2]) ? { categoria: "Supermercado" } : {}), ...(/negocio|trabajo|laburo|changa/.test(q) ? { caja: "negocio" } : {}) },
   }));
   if (items.length) return { tools: items };
   return { text: "Contame un gasto, por ejemplo «5000 de nafta»." };

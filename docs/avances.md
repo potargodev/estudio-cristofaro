@@ -176,3 +176,22 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Que un contador (Estudio Cristofaro) valide la lista de tareas y los umbrales en Faro Manager → Catálogo → Escudo (ver pendientes).
+
+## Principios · Etapa 3 · Mis cajas, caja de negocio y sueldo del dueño (octubre 2026)
+
+**Qué quedó**
+- **Mis cajas** (`/cajas`, ítem nuevo del espacio Personal): todas las cajas juntas, cada una con su gente, su plata y su propósito. Caja **personal** = la Bitácora (movimientos, sobres, fijos y metas siguen igual); caja de **negocio** separada (`/cajas/<id>`), que se abre sola para los autónomos y con un toque para cualquiera con una actividad.
+- Migraciones `0037_cajas` (tablas y datos), `0038_cajas_sugerencias` y `0039_cajas_claves`. Los gastos marcados «de mi actividad» pasaron a la caja de negocio sin perder nada (registro original en `raw`, el de la Bitácora borrado y vinculado, auditado).
+- **Parece del negocio:** los gastos personales con licencias, software, hosting, oficina o librería aparecen en Mis cajas con «Mover al negocio» o «Es personal»; también desde el movimiento de la Bitácora.
+- **Sueldo del dueño:** monto, frecuencia y fecha; se registra solo (tareas de la Bitácora) o con «Registrar sueldo». Es el único movimiento del negocio a lo personal: retiro en el negocio e ingreso en la Bitácora, unidos y no editables desde la Bitácora. Cifra sugerida a partir de los números del negocio, como dato (§1.a). **Aporte** de lo personal al negocio.
+- **Cada caja es un mundo cerrado:** solo los integrantes ven y tocan una caja; entre cajas solo pasa plata por `box_transfers`.
+- **Vigía:** «12000 de hosting para el negocio» propone la tarjeta en la caja de negocio; confirmar y deshacer funcionan sobre la caja.
+- Ayuda: nuevo `bitacora/mis-cajas`; actualizado `bitacora/bitacora`. `faro-producto.md` §2.o: Mis cajas en el menú de Personal.
+
+**Qué se probó**
+- `principios-servidor.mts 3` (32/32): migración de datos (sin duplicar al correrla dos veces, sin restaurar lo movido), Mis cajas, una sola caja de negocio, aislamiento forzando IDs (ver, cargar, borrar, sueldo, mover), sugerencia de mover, sueldo (las dos cajas, no editable desde la Bitácora, borrado de los dos lados), aporte, sueldo automático una sola vez por fecha, cifra sugerida y Vigía.
+- `principios-navegador.mjs 3` (16/16, 390 px y escritorio, claro y oscuro): Mis cajas, mover «Licencia Figma», cargar un ingreso, configurar y registrar el sueldo, verlo en la Bitácora como movimiento entre cajas, y 404 forzando el ID desde otro estudio y desde otra persona.
+- Regresión: `npm test` (86), etapas 1 y 2, `copiloto.mts`.
+
+**Qué falta configurar**
+- Nada. Flotas no cambia en esta etapa.

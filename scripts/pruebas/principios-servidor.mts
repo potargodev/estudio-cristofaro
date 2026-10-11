@@ -170,6 +170,127 @@ if (stage("2")) {
   await sql`delete from users where id = ${U}`;
 }
 
+// ─── Etapa 3 · Cajas, caja de negocio y sueldo del dueño (§10, §11, §17) ───
+if (stage("3")) {
+  const cj = await import("../../src/modules/cajas/server.ts");
+  const cat = await import("../../src/modules/cajas/catalog.ts");
+  const bit = await import("../../src/modules/bitacora/server.ts");
+  const { createTenant } = await import("../../src/lib/faro/tenants.ts");
+  const ts = Date.now();
+  const mk = async (i: number, kind: "persona" | "personal" = "persona") => {
+    const email = `cajas-${ts}-${i}@prueba.local`;
+    const r = await createTenant({ kind, name: `Caja ${i}`, owner: { name: `Caja ${i}`, email, password: "clave-larga-123" }, via: "manual", ...(kind === "personal" ? { cuit: "20111111112" } : {}) } as never);
+    if (!r.ok) throw new Error(r.message);
+    return { id: r.userId, studioId: r.studioId, name: `Caja ${i}`, email };
+  };
+  const A = await mk(1);
+  const B = await mk(2);
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Migración de datos: lo marcado «de mi actividad» pasa a la caja de negocio sin perder nada
+  await bit.ensureCategories(A.id);
+  const [e1] = await sql`insert into bitacora_entries (user_id, kind, amount, date, description, professional, deductible, note) values (${A.id}, 'gasto', 1500000, ${today}, 'Licencia Adobe', true, true, 'anual') returning id`;
+  const [e2] = await sql`insert into bitacora_entries (user_id, kind, amount, date, description) values (${A.id}, 'gasto', 300000, ${today}, 'Super') returning id`;
+  const mig = readFileSync(new URL("../../drizzle/0037_cajas.sql", import.meta.url), "utf8").split("--> statement-breakpoint");
+  const dataSql = mig.slice(mig.findIndex((x) => x.includes("-- Datos")));
+  for (const st of dataSql) await sql.unsafe(st);
+  const biz = await cj.businessBoxOf(A.id);
+  const [moved] = biz ? await sql`select * from box_entries where box_id = ${biz.id} and origin_id = ${e1.id}` : [];
+  const [orig] = await sql`select deleted_at, moved_to_box_entry_id from bitacora_entries where id = ${e1.id}`;
+  check("migración: caja de negocio abierta para quien marcó gastos de su actividad", !!biz);
+  check("migración: el gasto pasó con monto, deducible, nota y registro original", !!moved && Number(moved.amount) === 1500000 && moved.deductible && moved.note === "anual" && moved.raw?.id === e1.id && moved.source === "bitacora");
+  check("migración: el de la Bitácora queda borrado y vinculado (no se duplica)", !!orig.deleted_at && orig.moved_to_box_entry_id === moved?.id);
+  for (const st of dataSql) await sql.unsafe(st);
+  check("migración: correrla de nuevo no duplica", (await sql`select count(*)::int n from box_entries where origin_id = ${e1.id}`)[0].n === 1);
+  check("lo personal sigue en lo personal", !(await sql`select deleted_at from bitacora_entries where description = 'Super' and user_id = ${A.id}`)[0].deleted_at);
+  let threw = false;
+  try {
+    await bit.restoreEntry(A.id, e1.id);
+  } catch (e) {
+    threw = e instanceof bit.BitacoraError;
+  }
+  check("un movimiento movido no se puede restaurar en lo personal", threw);
+
+  // Mis cajas
+  const boxesA = await cj.myBoxes(A.id);
+  check("Mis cajas: personal y negocio, cada una con su gente", boxesA.some((b) => b.kind === "personal") && boxesA.some((b) => b.kind === "negocio" && b.members.length === 1));
+  check("una sola caja de negocio por persona", (await cj.openBusinessBox(A)).id === biz!.id);
+  const autonomo = await mk(3, "personal");
+  const migAut = dataSql;
+  for (const st of migAut.slice(0, 2)) await sql.unsafe(st);
+  check("migración: un autónomo tiene su caja de negocio", !!(await cj.businessBoxOf(autonomo.id)));
+
+  // Aislamiento forzando IDs
+  check("caja ajena: boxFor da null", (await cj.boxFor(B.id, biz!.id)) === null);
+  const fails2 = async (fn: () => Promise<unknown>) => fn().then(() => false, (e) => e instanceof cj.CajaError);
+  check("cargar en una caja ajena: error", await fails2(() => cj.addBusinessEntry(B, biz!.id, { kind: "gasto", amount: 100, date: today, category: "otros", description: "Intruso" })));
+  check("ver movimientos de una caja ajena: error", await fails2(() => cj.boxEntries(B, biz!.id, today.slice(0, 7))));
+  check("borrar un movimiento de una caja ajena: error", await fails2(() => cj.deleteBoxEntry(B, biz!.id, moved.id)));
+  check("pagarse el sueldo de un negocio ajeno: error", await fails2(() => cj.paySalary(B, biz!.id, { amount: 1000 })));
+  check("mover a su negocio un gasto ajeno: error", await fails2(() => cj.moveToBusiness(B, e2.id)));
+
+  // Sugerencia de mover y mover
+  const [lic] = await sql`insert into bitacora_entries (user_id, kind, amount, date, description) values (${A.id}, 'gasto', 2500000, ${today}, 'Licencia Figma') returning id`;
+  const hints = await cj.businessHints(A.id);
+  check("«Licencia Figma» en lo personal: Faro sugiere moverla", hints.some((h) => h.entry.id === lic.id) && !hints.some((h) => h.entry.description === "Super"));
+  const mv = await cj.moveToBusiness(A, lic.id);
+  check("moverla: queda en el negocio como software", mv.category === "software" && mv.box_id === biz!.id);
+  check("y deja de sugerirse", !(await cj.businessHints(A.id)).some((h) => h.entry.id === lic.id));
+  check("mover queda en la auditoría", (await sql`select count(*)::int n from audit_log where actor_id = ${A.id} and action = 'caja.mover_a_negocio'`)[0].n === 1);
+
+  // Sueldo del dueño: el único movimiento del negocio a lo personal
+  await cj.addBusinessEntry(A, biz!.id, { kind: "ingreso", amount: 50000000, date: today, category: "ventas", description: "Cobro cliente", invoiced: true });
+  const t = await cj.paySalary(A, biz!.id, { amount: 20000000 });
+  const [inBiz] = await sql`select kind from box_entries where transfer_id = ${t.id}`;
+  const [inPers] = await sql`select kind, amount from bitacora_entries where transfer_id = ${t.id}`;
+  check("sueldo: retiro en el negocio e ingreso en lo personal, unidos", inBiz?.kind === "retiro" && inPers?.kind === "ingreso" && Number(inPers.amount) === 20000000);
+  const sum = await cj.businessSummary(A, biz!.id, today.slice(0, 7));
+  check("el sueldo no es un gasto de la actividad: resultado y caja por separado", sum.salary === 20000000 && sum.result === 50000000 - 1500000 - 2500000 && sum.left === sum.result - 20000000);
+  threw = false;
+  try {
+    await bit.updateEntry(A.id, (await sql`select id from bitacora_entries where transfer_id = ${t.id}`)[0].id, { kind: "ingreso", amount: 1, date: today, description: "x" });
+  } catch (e) {
+    threw = e instanceof bit.BitacoraError;
+  }
+  check("cada caja es un mundo cerrado: el sueldo no se edita desde la Bitácora", threw);
+  await cj.deleteTransfer(A, t.id);
+  check("borrar el sueldo lo borra de las dos cajas", (await sql`select count(*)::int n from box_entries where transfer_id = ${t.id} and deleted_at is null`)[0].n === 0 && (await sql`select count(*)::int n from bitacora_entries where transfer_id = ${t.id} and deleted_at is null`)[0].n === 0);
+  const ap = await cj.contribute(A, biz!.id, { amount: 1000000 });
+  check("aporte: gasto en lo personal y aporte en el negocio", (await sql`select kind from bitacora_entries where transfer_id = ${ap.id}`)[0].kind === "gasto" && (await sql`select kind from box_entries where transfer_id = ${ap.id}`)[0].kind === "aporte");
+  // Sueldo configurado: se registra una sola vez por fecha
+  await cj.setSalary(A, biz!.id, { amount: 15000000, frequency: "mensual", nextDate: today, active: true });
+  const n1 = await cj.runSalaryJobs(today);
+  const n2 = await cj.runSalaryJobs(today);
+  const [sal] = await sql`select next_date from box_salaries where box_id = ${biz!.id}`;
+  check("sueldo automático: se registra una vez por fecha y avanza a la próxima", n1 >= 1 && n2 === 0 && new Date(sal.next_date).toISOString().slice(0, 10) > today && (await sql`select count(*)::int n from box_transfers where salary_id is not null and user_id = ${A.id}`)[0].n === 1);
+  check("sueldo auditado", (await sql`select count(*)::int n from audit_log where actor_id = ${A.id} and action in ('caja.sueldo', 'caja.sueldo_configurado')`)[0].n >= 2);
+  // Sueldo sugerido como dato
+  const sg = cat.suggestedSalary([60000000, 40000000, 50000000]);
+  check("sueldo sugerido: promedio y cifra que deja un 30 % (dato)", sg!.average === 50000000 && sg!.suggestion === 35000000);
+  check("sin resultado positivo, no sugiere cifra", cat.suggestedSalary([-1000, -2000])!.suggestion === 0);
+
+  // Vigía: lo del trabajo va a la caja de negocio
+  const c = await import("../../src/modules/copilot/server.ts");
+  const { savePlatformAi } = await import("../../src/modules/copilot/platform.ts");
+  const [savedAi] = await sql`select * from platform_ai where id = 'default'`;
+  await savePlatformAi(d.users.adminA, { provider: "openai_compatible", apiKey: "clave-de-prueba", baseUrl: "http://localhost:4010/v1", modelPrimary: "faro-mock", modelFallback: null, transcription: "openai", freeTier: false, limits: {}, dailyCap: null, monthlyCap: null, priceIn: 0.1, priceOut: 0.4 } as never);
+  const [m] = await sql`insert into copilot_messages (user_id, role, kind, text, status) values (${A.id}, 'usuario', 'texto', '12000 de hosting para el negocio', 'procesando') returning id`;
+  const res = await c.processMessage(m.id);
+  const [prop] = await sql`select * from copilot_proposals where message_id = ${res.replyId!}`;
+  check("Vigía: «12000 de hosting para el negocio» → tarjeta de la caja de negocio", !!prop && prop.preview.data.box === "negocio" && prop.preview.data.category === "software", JSON.stringify(prop?.preview));
+  const u = { id: A.id, name: A.name, email: A.email, studioId: A.studioId, role: "titular" };
+  const r = await c.confirmProposal(u as never, prop.id);
+  check("al confirmar queda en la caja de negocio, no en la Bitácora", r.type === "movimiento_caja" && (await sql`select box_id, source from box_entries where id = ${r.id}`)[0].source === "vigia");
+  await c.undoProposal(u as never, prop.id);
+  check("deshacer la borra de la caja", !!(await sql`select deleted_at from box_entries where id = ${r.id}`)[0].deleted_at);
+  if (savedAi) await sql`update platform_ai set ${sql(savedAi)} where id = 'default'`;
+  else await sql`delete from platform_ai where id = 'default'`;
+  for (const x of [A, B, autonomo]) {
+    await sql`delete from studios where id = ${x.studioId}`;
+    await sql`delete from users where id = ${x.id}`;
+  }
+}
+
 console.log(fails ? `\n${fails} fallas` : "\nTodo bien");
 await sql.end();
 process.exit(fails ? 1 : 0);

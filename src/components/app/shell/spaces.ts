@@ -13,6 +13,7 @@ import type { PortalNavItem } from "@/lib/portal-nav";
 export type Space = "studio" | "personal" | "portal" | "faro";
 
 export type ShellIcon =
+  | "cajas"
   | "resumen"
   | "organizaciones"
   | "vencimientos"
@@ -140,6 +141,8 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
   if (x.space === "personal") {
     const items: ShellItem[] = [
       { href: "/personal", label: "Inicio", icon: "resumen", exact: true },
+      // Mis cajas (principios §17): personal, negocio y compartidas; la Bitácora es la caja personal
+      { href: "/cajas", label: "Mis cajas", icon: "cajas" },
       { href: "/bitacora", label: "Bitácora", icon: "bitacora" },
       { href: "/grupos", label: "Grupos", icon: "gastos" },
     ];
@@ -172,7 +175,7 @@ export function bottomFor(x: SpaceInput, groups: ShellGroup[]): ShellItem[] {
   const all = groups.flatMap((g) => g.items);
   const pick = (...hrefs: string[]) => hrefs.map((h) => all.find((i) => i.href === h)).filter((i): i is ShellItem => !!i);
   if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos");
-  if (x.space === "personal") return pick("/personal", "/bitacora", "/grupos");
+  if (x.space === "personal") return pick("/personal", "/cajas", "/grupos");
   if (x.space === "portal") return all.filter((i) => i.href !== "/portal/solicitudes" || all.length <= 3).slice(0, 3);
   return pick("/faro-manager", "/faro-manager/tenants", "/faro-manager/red");
 }
