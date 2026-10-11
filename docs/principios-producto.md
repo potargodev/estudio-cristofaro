@@ -15,6 +15,40 @@ Acordado en octubre de 2026.
 - La frase **"esto no reemplaza el criterio de un contador"** es la columna vertebral del producto, no letra chica legal. Tiene que estar presente donde corresponde, con naturalidad.
 - El Vigía nunca presenta algo como una verdad validada. Siempre deja claro que muestra datos o borradores, no una validación profesional. Ejemplo: "Según lo que cargaste, facturaste el 82 % del tope de tu categoría", nunca "Estás bien con el monotributo".
 
+### 1.a Escudo de responsabilidad (columna vertebral, no letra chica)
+
+- Faro deja siempre en claro que es una **plataforma, una herramienta**, y que la gestión fiscal tiene que estar acompañada por un profesional matriculado.
+- Nunca puede quedar la sensación de que "Faro me recomendó hacer X". Nadie debería poder atribuirle un problema fiscal a haber seguido a Faro en vez de a un contador.
+- **El responsable siempre es el profesional matriculado.** En autogestión, Faro lo recuerda e invita a sumar uno. En gestión profesional, la responsabilidad es del contador conectado (§2).
+- Esto se refleja en los textos, en la ayuda, en el Vigía y en los términos. Con naturalidad y de forma constante, no como un cartel que se ignora.
+
+### 1.b Faro no reemplaza al matriculado
+
+Hay tareas que una persona o un autónomo no puede hacer por su cuenta porque la ley exige un contador matriculado. Para esas, Faro **no "ayuda a hacerlas"**: explica que requieren un profesional matriculado y ofrece sumar un contador desde la Red.
+
+| Dentro de la autogestión (Faro acompaña) | Fuera de la autogestión (requiere matriculado: Faro deriva) |
+|---|---|
+| Emitir facturas propias | Presentaciones y declaraciones juradas complejas en nombre de terceros o con criterio profesional |
+| Anotar ingresos y gastos, marcar lo "de mi actividad" | Certificaciones de ingresos y otras certificaciones contables |
+| Ver el semáforo del monotributo y la recategorización como dato | Balances y estados contables |
+| Ver la constancia y el calendario de vencimientos | Cierres de ejercicio |
+| Chequeos guiados para revisar su situación en ARCA | Firmas y dictámenes profesionales |
+| Pagar sus propias obligaciones | Planificación fiscal, pase a responsable inscripto, inicio de sociedades |
+
+La lista se mantiene en un solo lugar, con validación de un contador (Estudio Cristofaro, cliente cero), y puede crecer.
+
+### 1.c Disparador de derivación
+
+- Cuando el usuario cruza el umbral de "algo más que administrar un par de facturas" (más volumen, más complejidad fiscal o una tarea de la columna derecha de 1.b), **el propio sistema le sugiere activamente sumar un contador**. No espera a que el usuario se dé cuenta solo.
+- Ejemplos de umbral (a definir con un contador):
+  - semáforo del monotributo cerca del tope o con riesgo de exclusión;
+  - primeros empleados;
+  - facturación al exterior;
+  - varias actividades;
+  - pase a responsable inscripto;
+  - preguntas al Vigía sobre temas que requieren criterio profesional.
+- La sugerencia lleva a la Red de estudios con el contexto ya armado (qué necesita y por qué).
+
 ## 2. Dos modos de responsabilidad (el corazón del negocio)
 
 | Modo | Quién | De quién es la responsabilidad |
