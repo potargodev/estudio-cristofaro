@@ -231,6 +231,17 @@ Precisa §16 y §17.
 - **"Solo registrar":** queda que puso $3.000 y nadie le debe nada.
 - **"Dividir":** la pareja le debe $1.500, pendiente hasta que se los pase.
 
+## 19. Estrategia de lanzamiento: se arranca por los estudios
+
+**Decisión (resuelve el "huevo y la gallina"):** se arranca por los **estudios**, no por las personas sueltas. El estudio fundador es **Estudio Cristofaro**.
+
+Por qué:
+1. Un estudio entra y trae toda su cartera de clientes de una vez, en lugar de juntarlos uno por uno.
+2. Esos clientes llegan con la relación ya armada: no hay que convencer a cada persona de usar Faro, la usan porque su contador se lo pide.
+3. Cristofaro es el socio fundador y el caso real. El producto se pule con ellos y, con ese caso en mano, se sale a buscar el segundo y el tercer estudio.
+
+Las personas sueltas, que llegan por la Bitácora y el registro compartido, se dejan crecer de forma orgánica al principio. El esfuerzo inicial no va ahí.
+
 ---
 
 ## Decisiones abiertas
@@ -244,7 +255,7 @@ El resto de los puntos de este documento quedaron cerrados.
 
 ## Temas pendientes de charlar
 
-Se anotan para no perderlos. Todavía no hay decisiones tomadas:
+Se anotan para no perderlos. Siguen abiertos el modelo de negocio (2) y el primer paso concreto al mercado (4).
 
 1. **El recorrido completo en cuatro escalones**:
    - persona;
@@ -254,5 +265,5 @@ Se anotan para no perderlos. Todavía no hay decisiones tomadas:
 
    Falta cerrar el **escalón 1** (cómo se engancha y crece la persona) y el **escalón 4** (cómo vive todo esto el estudio desde su lado).
 2. **Modelo de negocio:** cómo gana plata Faro y quién paga qué (personas, autónomos, estudios, comisión o no por clientes derivados desde la Red).
-3. **Los primeros usuarios (el huevo y la gallina):** sin estudios no hay a quién derivar, y sin personas no hay clientes que derivar. ¿Por qué lado se arranca?
+3. ~~**Los primeros usuarios (el huevo y la gallina)**~~ **Resuelto en §19:** se arranca por los estudios, con Estudio Cristofaro como fundador.
 4. **Primer paso real al mercado:** qué se lanza primero, sin querer abrir todos los frentes a la vez.
