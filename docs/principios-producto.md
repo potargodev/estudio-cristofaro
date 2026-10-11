@@ -141,6 +141,33 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
 - **Dato de contexto (a confirmar por un contador):** en Argentina se puede estar en relación de dependencia y ser monotributista al mismo tiempo por una actividad independiente. En ese caso no se paga el componente previsional del monotributo, porque ya se aporta por el empleo, y se paga el impositivo.
 - Si la changa es de verdad independiente y no un empleo encubierto lo evalúa el contador, no Faro.
 
+## 14. Faro y los sistemas contables (Tango, Xubio, Contabilium)
+
+**Contexto:** una contadora contó que en su estudio cada persona del equipo carga en Tango como quiere (nombres y criterios distintos) y que todo termina desordenado. Además, según ella, estas herramientas cobran caro, sobre todo por volumen de facturas.
+
+### 14.a Faro como capa de orden
+- Al conectar Tango (o Xubio u otro sistema), Faro no trae el desorden tal cual: **normaliza** los datos. Mapea nombres, clientes, cuentas y categorías a un estándar único, los limpia y los muestra ordenados.
+- Faro funciona como un traductor que convierte la forma de cargar de cada persona en un lenguaje común. Hoy ese orden se hace a mano o no se hace: es un valor concreto para el estudio.
+- Cada normalización guarda el registro original y se puede revisar (regla de datos de integraciones de CLAUDE.md).
+
+### 14.b Faro como alternativa más barata (convivencia primero)
+- Mucho de lo que estas plataformas cobran caro tiene un costo real casi nulo: facturar contra ARCA es conectarse a sus web services. Lo que se cobra es el software alrededor. Faro puede ofrecer lo mismo más barato o incluido en el plan.
+- La estrategia **no es "reemplazá Tango ya"**. Los estudios tienen años de historia y procesos ahí, y a veces lo usan porque el cliente también.
+- Mensaje: **"Quedate con Tango si querés: Faro te lo ordena. Y lo que puedas, hacelo en Faro y ahorrate la plata."** Primero conviven y, si el estudio quiere, más adelante se reemplaza.
+
+### 14.c Una sola verdad: sincronización en los dos sentidos
+- El riesgo que mata la adopción es que el contador termine con **dos verdades**, una en Tango y otra en Faro. Lo que se hace en un lado tiene que quedar en el otro.
+- Modelo:
+  1. **De Faro a Tango:** lo que se hace en Faro (facturar, cargar un comprobante) Faro lo escribe en Tango por la API en el momento, con nombres y categorías estándar. Así cada comprobante entra ordenado: Faro no ensucia Tango, lo va ordenando de a poco.
+  2. **De Tango a Faro:** lo que se carga directo en Tango llega a Faro por webhooks (avisos en tiempo real) o por sincronización periódica, y Faro lo refleja normalizado.
+- Cada registro sabe dónde nació, cuándo se sincronizó y su ID en el otro sistema, para no duplicar y para detectar conflictos. Si algo no coincide, se marca para que lo resuelva una persona: Faro nunca pisa datos en silencio.
+- **Dato de contexto (búsqueda web, a validar):** la API de Tango permite escribir (crear comprobantes y crear, modificar o anular pedidos) y ofrece webhooks; no es solo de lectura.
+- **Límites a validar con la cuenta real del estudio:**
+  - qué operaciones se pueden escribir por API y cuáles hay que hacer sí o sí en Tango;
+  - si los webhooks están disponibles en la versión que usa el estudio (el conector actual de Faro usa Tango Delta local y hoy solo lee);
+  - el costo de la API.
+- Tango sigue siendo una fuente intercambiable (CLAUDE.md): todo tiene que funcionar también con importación y exportación de archivos.
+
 ---
 
 ## Decisiones abiertas
