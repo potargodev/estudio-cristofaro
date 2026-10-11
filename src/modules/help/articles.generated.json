@@ -62,6 +62,121 @@
   "text": "Documentos es el lugar donde el estudio y la organización se pasan archivos, sin mails sueltos ni chats perdidos. Para el cliente Subir un comprobante 1. En tu portal, entrá a Documentos . 2. En Subir un comprobante , elegí el archivo. 3. Elegí el Tipo : Comprobantes, Recibos de sueldo, Constancias u Otro. 4. Si corresponde, elegí el Período mes y año . 5. Tocá Subir archivo . Al estudio le llega un aviso. Se aceptan PDF, JPG, PNG o XLSX de hasta 10 MB . Ver y descargar Los documentos se ordenan por período y, adentro, por categoría. Cada uno dice si lo subiste vos o es del estudio . Tocá el archivo para descargarlo. Pueden ver documentos el Administrador, Dirección, Administración y Consulta. Subir, solo Administrador, Dirección y Administración. Para el estudio 1. Abrí la organización y andá a la pestaña Documentos . 2. En Subir documento para la organización , elegí el archivo, la categoría, el período y la razón social. 3. Tocá Subir y avisar al cliente : le llega un mail. Abajo ves por separado lo subido por la organización y lo subido por el estudio . En la ficha, el contador de Documentos sin revisar te muestra lo nuevo del cliente. Categorías Comprobantes, Constancias, Declaraciones juradas, Recibos de sueldo, VEP y boletas de pago, Balances e informes, Adjuntos de solicitudes y Otro. Tus archivos son privados Los archivos no tienen un enlace público. Solo se descargan entrando a Faro, y cada descarga verifica que tengas permiso. Solo los ven el estudio y los miembros de esa organización con permiso para ver documentos. Si alguien sin permiso intenta abrir un archivo, no ve nada y el intento queda registrado. Toda descarga queda en la auditoría. Próximamente Con Google Drive en beta cada organización puede tener una carpeta: lo que el cliente sube ahí entra a sus documentos en Faro. Ver Conexiones /ayuda/conexiones/conexiones ."
  },
  {
+  "id": "facturacion/calendario-y-chequeos",
+  "categoria": "facturacion",
+  "slug": "calendario-y-chequeos",
+  "titulo": "Calendario personal y chequeos guiados",
+  "resumen": "Tus vencimientos según tu CUIT y tu régimen, con aviso por mail, y una guía para revisar lo que ARCA no ofrece por web service (deuda, multas e intimaciones).",
+  "perfiles": [
+   "autonomo"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "facturacion/semaforo-monotributo",
+   "facturacion/mi-situacion-arca"
+  ],
+  "body": "## Calendario\n\nEn **Facturación → Calendario** completá tu **perfil fiscal**: régimen, categoría, Ingresos Brutos, jurisdicción y si aportás a autónomos. Faro arma tus vencimientos de los próximos 6 meses:\n\n- **Monotributo:** la cuota del 20 de cada mes y la recategorización (febrero y agosto).\n- **Responsable inscripto:** IVA mensual y las declaraciones juradas anuales de Ganancias y Bienes Personales.\n- **Autónomos** e **Ingresos Brutos** (local o Convenio Multilateral), si corresponde.\n\nLas fechas salen de la terminación de tu CUIT y pasan al día hábil siguiente si caen en fin de semana. Los feriados no se contemplan: verificá en el calendario oficial de ARCA.\n\n**Avisos:** te mandamos un mail (y un aviso en la campanita) unos días antes de cada vencimiento. Elegís cuántos.\n\n## Chequeos guiados\n\nHay cosas que ARCA no ofrece por un servicio oficial que Faro pueda consultar: la **deuda** de monotributo o autónomos, los **saldos** de IVA y Ganancias, las **intimaciones y multas** del Domicilio Fiscal Electrónico. Faro no inventa ese dato: en **Facturación → Chequeos** te explica qué mirar, con el paso a paso y el link a ARCA. Anotás lo que viste (todo en orden o algo para resolver, con el monto) y te lo recordamos cada tanto.",
+  "text": "Calendario En Facturación → Calendario completá tu perfil fiscal : régimen, categoría, Ingresos Brutos, jurisdicción y si aportás a autónomos. Faro arma tus vencimientos de los próximos 6 meses: Monotributo: la cuota del 20 de cada mes y la recategorización febrero y agosto . Responsable inscripto: IVA mensual y las declaraciones juradas anuales de Ganancias y Bienes Personales. Autónomos e Ingresos Brutos local o Convenio Multilateral , si corresponde. Las fechas salen de la terminación de tu CUIT y pasan al día hábil siguiente si caen en fin de semana. Los feriados no se contemplan: verificá en el calendario oficial de ARCA. Avisos: te mandamos un mail y un aviso en la campanita unos días antes de cada vencimiento. Elegís cuántos. Chequeos guiados Hay cosas que ARCA no ofrece por un servicio oficial que Faro pueda consultar: la deuda de monotributo o autónomos, los saldos de IVA y Ganancias, las intimaciones y multas del Domicilio Fiscal Electrónico. Faro no inventa ese dato: en Facturación → Chequeos te explica qué mirar, con el paso a paso y el link a ARCA. Anotás lo que viste todo en orden o algo para resolver, con el monto y te lo recordamos cada tanto."
+ },
+ {
+  "id": "facturacion/certificado-homologacion",
+  "categoria": "facturacion",
+  "slug": "certificado-homologacion",
+  "titulo": "Certificado de ARCA para Faro (homologación y producción)",
+  "resumen": "Cómo generar la clave privada y el pedido de certificado (CSR), obtener el certificado de homologación con una CUIT propia y cargarlo en el Faro Manager.",
+  "perfiles": [
+   "estudio"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "facturacion/delegar-en-faro",
+   "facturacion/emitir-facturas"
+  ],
+  "body": "Faro se autentica ante ARCA (WSAA) con el **certificado digital de la CUIT que lo opera**. Primero se prueba en **homologación** (ambiente de pruebas, sin validez fiscal) y después se pide el de **producción**. Esta guía es para el equipo de Faro (Faro Manager → Plataforma → ARCA).\n\n## 1. Generar la clave privada y el CSR\n\nEn una computadora con OpenSSL:\n\n```\nopenssl genrsa -out faro.key 2048\nopenssl req -new -key faro.key -subj \"/C=AR/O=Faro/CN=faro-homologacion/serialNumber=CUIT 20XXXXXXXXX\" -out faro.csr\n```\n\nReemplazá `20XXXXXXXXX` por la CUIT que va a operar. **Guardá `faro.key` en un lugar seguro**: no se la mandes a nadie.\n\n## 2. Certificado de homologación\n\n1. Entrá a ARCA con la CUIT y su clave fiscal.\n2. Adherí el servicio **WSASS - Autogestión Certificados Homologación** (desde «Administrador de Relaciones» si no aparece).\n3. En WSASS, tocá **Nuevo certificado**, poné un nombre (por ejemplo, `faro-homologacion`) y pegá el contenido de `faro.csr`.\n4. Copiá el certificado que devuelve y guardalo como `faro.crt`.\n5. En WSASS → **Crear autorización a servicio**: autorizá el certificado para **wsfe** y para **ws_sr_constancia_inscripcion**.\n\n## 3. Cargarlo en Faro\n\n1. Faro Manager → **Plataforma → ARCA** → Homologación → **Cargar el certificado**.\n2. Cargá la CUIT, `faro.crt` y `faro.key` (o pegá su contenido). Se guardan **cifrados** con `ENCRYPTION_KEY` y nunca vuelven al navegador.\n3. Tocá **Probar la conexión**: tiene que mostrar los servidores OK y los tickets del WSAA para factura electrónica y constancia.\n\n## 4. Producción\n\nCuando las pruebas den bien: generá otra clave y otro CSR, pedí el certificado en **Administración de Certificados Digitales** (producción), autorizalo para los mismos servicios, cargalo en **Producción** y cambiá el **ambiente activo**. Cambiar el ambiente afecta a todas las cuentas que facturan con Faro.\n\n## Vencimiento\n\nLos certificados vencen. El Faro Manager muestra la fecha en rojo cuando falta menos de un mes: renovalo antes.",
+  "text": "Faro se autentica ante ARCA WSAA con el certificado digital de la CUIT que lo opera . Primero se prueba en homologación ambiente de pruebas, sin validez fiscal y después se pide el de producción . Esta guía es para el equipo de Faro Faro Manager → Plataforma → ARCA . 1. Generar la clave privada y el CSR En una computadora con OpenSSL: Reemplazá 20XXXXXXXXX por la CUIT que va a operar. Guardá faro.key en un lugar seguro : no se la mandes a nadie. 2. Certificado de homologación 1. Entrá a ARCA con la CUIT y su clave fiscal. 2. Adherí el servicio WSASS Autogestión Certificados Homologación desde «Administrador de Relaciones» si no aparece . 3. En WSASS, tocá Nuevo certificado , poné un nombre por ejemplo, faro homologacion y pegá el contenido de faro.csr . 4. Copiá el certificado que devuelve y guardalo como faro.crt . 5. En WSASS → Crear autorización a servicio : autorizá el certificado para wsfe y para ws sr constancia inscripcion . 3. Cargarlo en Faro 1. Faro Manager → Plataforma → ARCA → Homologación → Cargar el certificado . 2. Cargá la CUIT, faro.crt y faro.key o pegá su contenido . Se guardan cifrados con ENCRYPTION KEY y nunca vuelven al navegador. 3. Tocá Probar la conexión : tiene que mostrar los servidores OK y los tickets del WSAA para factura electrónica y constancia. 4. Producción Cuando las pruebas den bien: generá otra clave y otro CSR, pedí el certificado en Administración de Certificados Digitales producción , autorizalo para los mismos servicios, cargalo en Producción y cambiá el ambiente activo . Cambiar el ambiente afecta a todas las cuentas que facturan con Faro. Vencimiento Los certificados vencen. El Faro Manager muestra la fecha en rojo cuando falta menos de un mes: renovalo antes."
+ },
+ {
+  "id": "facturacion/delegar-en-faro",
+  "categoria": "facturacion",
+  "slug": "delegar-en-faro",
+  "titulo": "Delegar la facturación en Faro (Administrador de Relaciones)",
+  "resumen": "Para que Faro emita tus comprobantes, delegale una sola vez el servicio de factura electrónica desde el Administrador de Relaciones de ARCA.",
+  "perfiles": [
+   "autonomo",
+   "estudio",
+   "organizacion"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "facturacion/emitir-facturas",
+   "facturacion/certificado-homologacion"
+  ],
+  "body": "Así trabajan todos los facturadores en la nube: la CUIT que factura (la tuya, o la de la organización) **delega** el servicio web de factura electrónica en la CUIT que opera Faro. Faro nunca usa tu clave fiscal.\n\n## Paso a paso\n\n1. Entrá a ARCA con tu CUIT y tu **clave fiscal** (nivel 2 o superior).\n2. Abrí **Administrador de Relaciones de Clave Fiscal**.\n3. Tocá **Nueva relación**.\n4. En **Servicio**, elegí **ARCA → WebServices → Facturación Electrónica**.\n5. En **Representante**, cargá la **CUIT de Faro** (la ves en Facturación → Ajustes) y confirmá.\n6. Si no tenés un punto de venta para web services, creálo en **Administración de puntos de venta y domicilios** → **A/B/M de puntos de venta**, con el sistema **«Factura electrónica - Monotributo - Web Services»** o **«RECE para aplicativo y web services»**.\n7. Volvé a Faro y, en **Facturación → Ajustes**, tocá **Probar la delegación y traer puntos de venta**.\n\nSi la prueba dice que la CUIT no delegó el servicio, revisá el paso 4: tiene que ser «Facturación Electrónica» dentro de WebServices.\n\n## En el estudio\n\nCada organización que el estudio factura tiene que hacer esta delegación con su CUIT. La prueba está en la ficha de la organización → **ARCA** → **Ajustes y delegación**.\n\n## Revocar\n\nDesde el mismo Administrador de Relaciones podés dar de baja la relación cuando quieras. Faro deja de poder emitir en tu nombre en ese momento.",
+  "text": "Así trabajan todos los facturadores en la nube: la CUIT que factura la tuya, o la de la organización delega el servicio web de factura electrónica en la CUIT que opera Faro. Faro nunca usa tu clave fiscal. Paso a paso 1. Entrá a ARCA con tu CUIT y tu clave fiscal nivel 2 o superior . 2. Abrí Administrador de Relaciones de Clave Fiscal . 3. Tocá Nueva relación . 4. En Servicio , elegí ARCA → WebServices → Facturación Electrónica . 5. En Representante , cargá la CUIT de Faro la ves en Facturación → Ajustes y confirmá. 6. Si no tenés un punto de venta para web services, creálo en Administración de puntos de venta y domicilios → A/B/M de puntos de venta , con el sistema «Factura electrónica Monotributo Web Services» o «RECE para aplicativo y web services» . 7. Volvé a Faro y, en Facturación → Ajustes , tocá Probar la delegación y traer puntos de venta . Si la prueba dice que la CUIT no delegó el servicio, revisá el paso 4: tiene que ser «Facturación Electrónica» dentro de WebServices. En el estudio Cada organización que el estudio factura tiene que hacer esta delegación con su CUIT. La prueba está en la ficha de la organización → ARCA → Ajustes y delegación . Revocar Desde el mismo Administrador de Relaciones podés dar de baja la relación cuando quieras. Faro deja de poder emitir en tu nombre en ese momento."
+ },
+ {
+  "id": "facturacion/emitir-facturas",
+  "categoria": "facturacion",
+  "slug": "emitir-facturas",
+  "titulo": "Emitir facturas electrónicas con ARCA",
+  "resumen": "Armá el borrador, revisalo y emitilo: Faro pide el número y el CAE a ARCA, arma el PDF con tu marca y te deja mandarlo por mail o compartir un link.",
+  "perfiles": [
+   "autonomo",
+   "estudio"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "facturacion/delegar-en-faro",
+   "facturacion/semaforo-monotributo",
+   "ia/ia-y-aprobaciones"
+  ],
+  "body": "Faro emite comprobantes electrónicos por el **web service oficial de ARCA (WSFEv1)**. Nunca entra a tu cuenta de ARCA con tu clave: usa la delegación que le das una sola vez (ver [Delegar la facturación en Faro](/ayuda/facturacion/delegar-en-faro)).\n\n## Dónde está\n\n- **Autónomo:** en tu espacio **Personal → Facturación**.\n- **Estudio:** en la ficha de la organización, pestaña **ARCA** → **Comprobantes**. El estudio factura en nombre de su cliente (el cliente delega el servicio a Faro).\n\n## Paso a paso\n\n1. Tocá **Nueva factura**.\n2. Elegí un **cliente frecuente** o cargá uno nuevo (nombre, documento y condición frente al IVA). Si tildás «Guardarlo», la próxima vez está en la lista.\n3. Faro elige la letra según tu condición y la del cliente: **C** si sos monotributista, **A** o **B** si sos responsable inscripto, **E** para clientes del exterior.\n4. Completá el punto de venta, la fecha, si son servicios (con el período y el vencimiento del pago) y los ítems. Podés sumar un **producto frecuente** en un toque.\n5. **Guardar borrador.** Todavía no se manda nada a ARCA.\n6. Revisá el borrador (con la vista previa en PDF), tildá «Revisé…» y tocá **Emitir comprobante**. Faro pide a ARCA el próximo número y el **CAE**.\n\nSi ARCA lo rechaza, ves el motivo (por ejemplo, un punto de venta que no está habilitado) y podés corregir el borrador y volver a emitir. Si se cortó la conexión justo al emitir, el próximo intento consulta ARCA y recupera el CAE: nunca se emite dos veces.\n\n## El PDF\n\nLo arma Faro con tu **logo, tu color y tus datos de contacto** (en **Ajustes**), y con todo lo obligatorio: letra y código, CAE, vencimiento del CAE y el **código QR** de ARCA. Los borradores salen marcados «sin validez fiscal».\n\n## Mandarlo\n\n- **Por mail:** con el PDF adjunto.\n- **Link para compartir:** se genera al autorizar. Lo podés desactivar o generar uno nuevo cuando quieras.\n\n## Corregir una factura\n\nUna factura autorizada no se borra: se corrige con una **nota de crédito** (anula total o parcialmente) o una **nota de débito** (suma). Desde la factura tocá la que corresponda: Faro arma el borrador asociado.\n\n## Con el Vigía\n\nPodés pedirle «facturale 150.000 a Juan Pérez por diseño». El Vigía prepara la factura y la deja en **Propuestas para aprobar**: se emite recién cuando la aprobás. Lo fiscal nunca se ejecuta solo.\n\n## Límites\n\n- **Faro Personal Gratis:** 10 comprobantes autorizados por mes.\n- **Pro:** sin límite.",
+  "text": "Faro emite comprobantes electrónicos por el web service oficial de ARCA WSFEv1 . Nunca entra a tu cuenta de ARCA con tu clave: usa la delegación que le das una sola vez ver Delegar la facturación en Faro /ayuda/facturacion/delegar en faro . Dónde está Autónomo: en tu espacio Personal → Facturación . Estudio: en la ficha de la organización, pestaña ARCA → Comprobantes . El estudio factura en nombre de su cliente el cliente delega el servicio a Faro . Paso a paso 1. Tocá Nueva factura . 2. Elegí un cliente frecuente o cargá uno nuevo nombre, documento y condición frente al IVA . Si tildás «Guardarlo», la próxima vez está en la lista. 3. Faro elige la letra según tu condición y la del cliente: C si sos monotributista, A o B si sos responsable inscripto, E para clientes del exterior. 4. Completá el punto de venta, la fecha, si son servicios con el período y el vencimiento del pago y los ítems. Podés sumar un producto frecuente en un toque. 5. Guardar borrador. Todavía no se manda nada a ARCA. 6. Revisá el borrador con la vista previa en PDF , tildá «Revisé…» y tocá Emitir comprobante . Faro pide a ARCA el próximo número y el CAE . Si ARCA lo rechaza, ves el motivo por ejemplo, un punto de venta que no está habilitado y podés corregir el borrador y volver a emitir. Si se cortó la conexión justo al emitir, el próximo intento consulta ARCA y recupera el CAE: nunca se emite dos veces. El PDF Lo arma Faro con tu logo, tu color y tus datos de contacto en Ajustes , y con todo lo obligatorio: letra y código, CAE, vencimiento del CAE y el código QR de ARCA. Los borradores salen marcados «sin validez fiscal». Mandarlo Por mail: con el PDF adjunto. Link para compartir: se genera al autorizar. Lo podés desactivar o generar uno nuevo cuando quieras. Corregir una factura Una factura autorizada no se borra: se corrige con una nota de crédito anula total o parcialmente o una nota de débito suma . Desde la factura tocá la que corresponda: Faro arma el borrador asociado. Con el Vigía Podés pedirle «facturale 150.000 a Juan Pérez por diseño». El Vigía prepara la factura y la deja en Propuestas para aprobar : se emite recién cuando la aprobás. Lo fiscal nunca se ejecuta solo. Límites Faro Personal Gratis: 10 comprobantes autorizados por mes. Pro: sin límite."
+ },
+ {
+  "id": "facturacion/mi-situacion-arca",
+  "categoria": "facturacion",
+  "slug": "mi-situacion-arca",
+  "titulo": "Mi situación con ARCA (constancia de inscripción)",
+  "resumen": "Faro consulta tu constancia de inscripción por web service oficial y te muestra régimen, categoría, actividades e impuestos, con la fecha de la consulta y el registro original.",
+  "perfiles": [
+   "autonomo",
+   "estudio"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "facturacion/semaforo-monotributo",
+   "facturacion/calendario-y-chequeos"
+  ],
+  "body": "En **Facturación → Mi situación** tocá **Consultar ahora**. Faro pide a ARCA la constancia de inscripción de tu CUIT (servicio oficial `ws_sr_constancia_inscripcion`) y te muestra:\n\n- Nombre, estado de la CUIT y domicilio fiscal.\n- Régimen (monotributo o responsable inscripto) y la **categoría**.\n- **Actividades** e **impuestos** en los que estás inscripto.\n\nCada consulta queda guardada con su **fecha** y el **registro original** de ARCA (lo ves al final, en «Registro original»). La categoría actualiza el semáforo y tu calendario.\n\nEn el estudio, está en la ficha de la organización → **ARCA → Situación con ARCA**, para cada razón social.",
+  "text": "En Facturación → Mi situación tocá Consultar ahora . Faro pide a ARCA la constancia de inscripción de tu CUIT servicio oficial ws sr constancia inscripcion y te muestra: Nombre, estado de la CUIT y domicilio fiscal. Régimen monotributo o responsable inscripto y la categoría . Actividades e impuestos en los que estás inscripto. Cada consulta queda guardada con su fecha y el registro original de ARCA lo ves al final, en «Registro original» . La categoría actualiza el semáforo y tu calendario. En el estudio, está en la ficha de la organización → ARCA → Situación con ARCA , para cada razón social."
+ },
+ {
+  "id": "facturacion/semaforo-monotributo",
+  "categoria": "facturacion",
+  "slug": "semaforo-monotributo",
+  "titulo": "Semáforo de monotributo y recategorización",
+  "resumen": "Cuánto facturaste en los últimos 12 meses contra el tope de tu categoría, cuánto podés facturar sin pasarte, qué categoría te corresponde en enero o julio y una simulación del pase a responsable inscripto.",
+  "perfiles": [
+   "autonomo",
+   "estudio"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "facturacion/emitir-facturas",
+   "facturacion/calendario-y-chequeos",
+   "facturacion/mi-situacion-arca"
+  ],
+  "body": "El semáforo está en **Facturación → Monotributo** (en el estudio, ficha de la organización → ARCA → Monotributo).\n\n## Cómo se calcula\n\n- **Facturación de los últimos 12 meses:** los comprobantes autorizados en Faro (las notas de crédito restan) más lo que cargues a mano para los meses en que facturaste por fuera de Faro.\n- **Tu categoría:** la que trae la constancia de ARCA (Mi situación) o la que cargues en el Calendario.\n- **El tope:** el de tu categoría según la **escala vigente** que mantiene Faro. Si la escala dice «a validar», verificá los topes en arca.gob.ar.\n\n## Los colores\n\n- **Verde:** usaste menos del 70% del tope.\n- **Amarillo:** entre el 70% y el 90%.\n- **Rojo:** más del 90%, o ya te pasaste.\n- **Riesgo de exclusión:** superaste el tope de la categoría más alta. Hablá con un contador cuanto antes.\n\n## Recategorización\n\nEs en **enero** (con lo facturado hasta el 31 de diciembre) y en **julio** (hasta el 30 de junio). El semáforo te dice qué categoría te correspondería con lo facturado.\n\n## ¿Y si paso a responsable inscripto?\n\nUna simulación **educativa** del IVA que pagarías por mes con la alícuota general. No incluye Ganancias ni autónomos, y no reemplaza el consejo de un contador: si querés que alguien lo mire con vos, buscá un estudio en la Red.",
+  "text": "El semáforo está en Facturación → Monotributo en el estudio, ficha de la organización → ARCA → Monotributo . Cómo se calcula Facturación de los últimos 12 meses: los comprobantes autorizados en Faro las notas de crédito restan más lo que cargues a mano para los meses en que facturaste por fuera de Faro. Tu categoría: la que trae la constancia de ARCA Mi situación o la que cargues en el Calendario. El tope: el de tu categoría según la escala vigente que mantiene Faro. Si la escala dice «a validar», verificá los topes en arca.gob.ar. Los colores Verde: usaste menos del 70% del tope. Amarillo: entre el 70% y el 90%. Rojo: más del 90%, o ya te pasaste. Riesgo de exclusión: superaste el tope de la categoría más alta. Hablá con un contador cuanto antes. Recategorización Es en enero con lo facturado hasta el 31 de diciembre y en julio hasta el 30 de junio . El semáforo te dice qué categoría te correspondería con lo facturado. ¿Y si paso a responsable inscripto? Una simulación educativa del IVA que pagarías por mes con la alícuota general. No incluye Ganancias ni autónomos, y no reemplaza el consejo de un contador: si querés que alguien lo mire con vos, buscá un estudio en la Red."
+ },
+ {
   "id": "flotas/acuerdos-y-salida",
   "categoria": "flotas",
   "slug": "acuerdos-y-salida",

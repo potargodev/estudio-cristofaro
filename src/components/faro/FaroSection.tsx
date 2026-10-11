@@ -1,4 +1,4 @@
-import { ClipboardList, Factory, Gauge, MessageSquareText, MessagesSquare, ScrollText, Sparkles, Blocks, Tags, UserPlus, Building2, type LucideIcon } from "lucide-react";
+import { ClipboardList, Landmark, Factory, Gauge, MessageSquareText, MessagesSquare, ScrollText, Sparkles, Blocks, Tags, UserPlus, Building2, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 
 // Secciones del Faro Manager (docs/faro-producto.md §2.o): Tenants, Catálogo
@@ -30,6 +30,7 @@ export const FARO_SECTIONS = {
       { href: "/faro-manager/modulos", label: "Módulos", icon: Blocks },
       { href: "/faro-manager/plantillas", label: "Plantillas", icon: Factory },
       { href: "/faro-manager/ia", label: "IA de la plataforma", icon: Sparkles },
+      { href: "/faro-manager/monotributo", label: "Monotributo", icon: Gauge },
     ],
   },
   plataforma: {
@@ -40,6 +41,7 @@ export const FARO_SECTIONS = {
       { href: "/faro-manager/ayuda", label: "Opiniones de la ayuda", icon: MessageSquareText },
       { href: "/faro-manager/reportes", label: "Mensajes reportados", icon: MessagesSquare },
       { href: "/faro-manager/uso-ia", label: "Uso y costos de IA", icon: Gauge },
+      { href: "/faro-manager/arca", label: "ARCA", icon: Landmark },
     ],
   },
 } satisfies Record<string, { title: string; description: string; tabs: Tab[] }>;

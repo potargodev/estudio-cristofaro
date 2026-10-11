@@ -1,0 +1,48 @@
+---
+titulo: Emitir facturas electrónicas con ARCA
+resumen: Armá el borrador, revisalo y emitilo: Faro pide el número y el CAE a ARCA, arma el PDF con tu marca y te deja mandarlo por mail o compartir un link.
+perfiles: [autonomo, estudio]
+modulo: arca
+actualizado: 2026-10-11
+relacionados: [facturacion/delegar-en-faro, facturacion/semaforo-monotributo, ia/ia-y-aprobaciones]
+---
+
+Faro emite comprobantes electrónicos por el **web service oficial de ARCA (WSFEv1)**. Nunca entra a tu cuenta de ARCA con tu clave: usa la delegación que le das una sola vez (ver [Delegar la facturación en Faro](/ayuda/facturacion/delegar-en-faro)).
+
+## Dónde está
+
+- **Autónomo:** en tu espacio **Personal → Facturación**.
+- **Estudio:** en la ficha de la organización, pestaña **ARCA** → **Comprobantes**. El estudio factura en nombre de su cliente (el cliente delega el servicio a Faro).
+
+## Paso a paso
+
+1. Tocá **Nueva factura**.
+2. Elegí un **cliente frecuente** o cargá uno nuevo (nombre, documento y condición frente al IVA). Si tildás «Guardarlo», la próxima vez está en la lista.
+3. Faro elige la letra según tu condición y la del cliente: **C** si sos monotributista, **A** o **B** si sos responsable inscripto, **E** para clientes del exterior.
+4. Completá el punto de venta, la fecha, si son servicios (con el período y el vencimiento del pago) y los ítems. Podés sumar un **producto frecuente** en un toque.
+5. **Guardar borrador.** Todavía no se manda nada a ARCA.
+6. Revisá el borrador (con la vista previa en PDF), tildá «Revisé…» y tocá **Emitir comprobante**. Faro pide a ARCA el próximo número y el **CAE**.
+
+Si ARCA lo rechaza, ves el motivo (por ejemplo, un punto de venta que no está habilitado) y podés corregir el borrador y volver a emitir. Si se cortó la conexión justo al emitir, el próximo intento consulta ARCA y recupera el CAE: nunca se emite dos veces.
+
+## El PDF
+
+Lo arma Faro con tu **logo, tu color y tus datos de contacto** (en **Ajustes**), y con todo lo obligatorio: letra y código, CAE, vencimiento del CAE y el **código QR** de ARCA. Los borradores salen marcados «sin validez fiscal».
+
+## Mandarlo
+
+- **Por mail:** con el PDF adjunto.
+- **Link para compartir:** se genera al autorizar. Lo podés desactivar o generar uno nuevo cuando quieras.
+
+## Corregir una factura
+
+Una factura autorizada no se borra: se corrige con una **nota de crédito** (anula total o parcialmente) o una **nota de débito** (suma). Desde la factura tocá la que corresponda: Faro arma el borrador asociado.
+
+## Con el Vigía
+
+Podés pedirle «facturale 150.000 a Juan Pérez por diseño». El Vigía prepara la factura y la deja en **Propuestas para aprobar**: se emite recién cuando la aprobás. Lo fiscal nunca se ejecuta solo.
+
+## Límites
+
+- **Faro Personal Gratis:** 10 comprobantes autorizados por mes.
+- **Pro:** sin límite.

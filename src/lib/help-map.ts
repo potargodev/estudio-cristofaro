@@ -1,6 +1,14 @@
 // Botón "?" contextual: qué artículo del centro de ayuda corresponde a cada
 // pantalla. El primer prefijo que coincide gana (de lo más específico a lo general).
 const MAP: [string, string][] = [
+  ["/facturacion/monotributo", "facturacion/semaforo-monotributo"],
+  ["/facturacion/calendario", "facturacion/calendario-y-chequeos"],
+  ["/facturacion/chequeos", "facturacion/calendario-y-chequeos"],
+  ["/facturacion/arca", "facturacion/mi-situacion-arca"],
+  ["/facturacion/ajustes", "facturacion/delegar-en-faro"],
+  ["/facturacion", "facturacion/emitir-facturas"],
+  ["/faro-manager/arca", "facturacion/certificado-homologacion"],
+  ["/faro-manager/monotributo", "facturacion/semaforo-monotributo"],
   ["/admin/organizaciones/nueva", "organizaciones/rubros"],
   ["/admin/configuracion/rubros", "organizaciones/rubros"],
   ["/admin/organizaciones", "organizaciones/invitaciones"],
