@@ -30,7 +30,7 @@ const msg = (path: string, ok: boolean, text: string) => go(path, `${ok ? "ok" :
 
 // ───────────── Xubio ─────────────
 
-const XUBIO = "/admin/conexiones/xubio";
+const XUBIO = "/admin/configuracion/conexiones/xubio";
 
 export async function saveXubio(fd: FormData) {
   const admin = await requireAdmin();
@@ -58,7 +58,7 @@ export async function saveXubio(fd: FormData) {
   // Se prueba al guardar
   const conn = await connectionOfStudio(connId!, admin.studioId, "xubio");
   const r = await testXubio(conn!, admin.id);
-  revalidatePath("/admin/conexiones", "layout");
+  revalidatePath("/admin/configuracion/conexiones", "layout");
   msg(`${XUBIO}#c-${connId}`, r.ok, r.message);
 }
 
@@ -68,7 +68,7 @@ export async function testXubioAction(fd: FormData) {
   if (!conn) msg(XUBIO, false, "Esa conexión no existe.");
   const r = await testXubio(conn!, admin.id);
   await audit({ studioId: admin.studioId, organizationId: conn!.organization_id, actor: admin, action: "conexion.probar", entityType: "conexion", entityId: conn!.id, result: r.ok ? "ok" : "error", metadata: { conector: "xubio" } });
-  revalidatePath("/admin/conexiones", "layout");
+  revalidatePath("/admin/configuracion/conexiones", "layout");
   msg(`${XUBIO}#c-${conn!.id}`, r.ok, r.message);
 }
 
@@ -79,25 +79,25 @@ export async function syncXubioAction(fd: FormData) {
   const days = Math.min(365, Math.max(7, Number(s(fd, "days") ?? 90) || 90));
   const r = await syncXubio(conn!, admin.id, days);
   await audit({ studioId: admin.studioId, organizationId: conn!.organization_id, actor: admin, action: "conexion.sincronizar", entityType: "conexion", entityId: conn!.id, result: r.ok ? "ok" : "error", metadata: { conector: "xubio", registros: r.records, dias: days } });
-  revalidatePath("/admin/conexiones", "layout");
+  revalidatePath("/admin/configuracion/conexiones", "layout");
   msg(`${XUBIO}#c-${conn!.id}`, r.ok, r.message);
 }
 
 export async function deleteConnection(fd: FormData) {
   const admin = await requireAdmin();
   const conn = await connectionOfStudio(s(fd, "id"), admin.studioId);
-  const back = s(fd, "back") ?? "/admin/conexiones";
+  const back = s(fd, "back") ?? "/admin/configuracion/conexiones";
   if (!conn) msg(back, false, "Esa conexión no existe.");
   await getDb().delete(connections).where(and(eq(connections.id, conn!.id), eq(connections.studio_id, admin.studioId)));
   await audit({ studioId: admin.studioId, organizationId: conn!.organization_id, actor: admin, action: "conexion.eliminar", entityType: "conexion", entityId: conn!.id, metadata: { conector: conn!.connector, nombre: conn!.name } });
-  revalidatePath("/admin/conexiones", "layout");
-  msg(back.startsWith("/admin/conexiones") ? back : "/admin/conexiones", true, "Conexión eliminada con sus registros.");
+  revalidatePath("/admin/configuracion/conexiones", "layout");
+  msg(back.startsWith("/admin/configuracion/conexiones") ? back : "/admin/configuracion/conexiones", true, "Conexión eliminada con sus registros.");
 }
 
 /** Vincula a mano un registro externo con una razón social del estudio (queda validado) */
 export async function linkExternalRecord(fd: FormData) {
   const admin = await requireAdmin();
-  const back = s(fd, "back") ?? "/admin/conexiones";
+  const back = s(fd, "back") ?? "/admin/configuracion/conexiones";
   const recordId = s(fd, "record_id");
   const leId = s(fd, "legal_entity_id");
   if (!recordId || !leId || !/^[0-9a-f-]{36}$/i.test(recordId) || !/^[0-9a-f-]{36}$/i.test(leId)) msg(back, false, "Elegí la razón social.");
@@ -117,7 +117,7 @@ export async function linkExternalRecord(fd: FormData) {
 
 // ───────────── Google Drive ─────────────
 
-const DRIVE = "/admin/conexiones/google-drive";
+const DRIVE = "/admin/configuracion/conexiones/google-drive";
 
 export async function driveFoldersAction() {
   const admin = await requireAdmin();
@@ -142,7 +142,7 @@ export async function driveSyncAction() {
 
 // ───────────── MCP externo ─────────────
 
-const MCPX = "/admin/conexiones/mcp-externo";
+const MCPX = "/admin/configuracion/conexiones/mcp-externo";
 
 export async function saveMcpExterno(fd: FormData) {
   const admin = await requireAdmin();
@@ -183,7 +183,7 @@ async function refresh(connId: string, studioId: string, actorId: string) {
     text = `No se pudo conectar con el servidor MCP: ${(error as Error).message?.slice(0, 200)}`;
   }
   await endLog(log, conn!.id, ok, text);
-  revalidatePath("/admin/conexiones", "layout");
+  revalidatePath("/admin/configuracion/conexiones", "layout");
   msg(`${MCPX}#c-${conn!.id}`, ok, text);
 }
 
@@ -203,7 +203,7 @@ export async function saveMcpPermissions(fd: FormData) {
   });
   await getDb().update(connections).set({ settings: { ...st, tools }, status: fd.get("active") === "on" ? "activa" : "pausada" }).where(eq(connections.id, conn!.id));
   await audit({ studioId: admin.studioId, actor: admin, action: "conexion.editar", entityType: "conexion", entityId: conn!.id, metadata: { conector: "mcp_externo", permisos: Object.fromEntries(tools.map((t) => [t.name, t.permission])) } });
-  revalidatePath("/admin/conexiones", "layout");
+  revalidatePath("/admin/configuracion/conexiones", "layout");
   msg(`${MCPX}#c-${conn!.id}`, true, "Permisos guardados.");
 }
 
@@ -266,6 +266,6 @@ export async function importExportFile(_prev: ImportState, fd: FormData): Promis
   const message = `Importadas ${imported} filas de ${file.name} (${template.label}). ${matched} cruzadas por CUIT con razones sociales.`;
   await endLog(log, conn.id, true, message, imported);
   await audit({ studioId: admin.studioId, organizationId: org?.id ?? null, actor: admin, action: "conexion.importar", entityType: "conexion", entityId: conn.id, metadata: { plantilla: template.key, archivo: file.name, filas: imported } });
-  revalidatePath("/admin/conexiones", "layout");
+  revalidatePath("/admin/configuracion/conexiones", "layout");
   return { ok: true, ...base, imported, matched, message };
 }

@@ -14,7 +14,7 @@ import { encrypt, encryptionEnabled } from "@/lib/crypto";
 
 // Configuración de IA del estudio: solo administradores, siempre dentro de su estudio.
 
-const BASE = "/admin/ia/configuracion";
+const BASE = "/admin/configuracion/ia";
 
 function s(fd: FormData, key: string): string | null {
   const v = fd.get(key);

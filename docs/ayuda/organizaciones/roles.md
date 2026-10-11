@@ -3,7 +3,7 @@ titulo: Roles del estudio y de la organización
 resumen: Qué puede hacer cada persona según su rol, en el equipo del estudio y en el portal de cada organización.
 perfiles: [estudio, organizacion, empleado]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [organizaciones/invitaciones, primeros-pasos/primeros-pasos-estudio, grupos-de-gastos/rendiciones]
 ---
 
@@ -17,7 +17,7 @@ En Faro hay dos equipos: el del **estudio** y el de cada **organización** (clie
 | **Contador** | Trabaja la cartera: crea y edita organizaciones, vencimientos, documentos, solicitudes y consultas comerciales. |
 | **Colaborador** | El día a día: vencimientos, documentos, solicitudes y agenda. No ve las consultas comerciales ni crea o edita organizaciones. |
 
-Al equipo lo suma el dueño desde **Configuración → Usuarios**. Todos entran con contraseña y segundo factor obligatorio.
+Al equipo lo suma el dueño desde **Configuración → Equipo y usuarios**. Todos entran con contraseña y segundo factor obligatorio.
 
 ## Roles de la organización
 

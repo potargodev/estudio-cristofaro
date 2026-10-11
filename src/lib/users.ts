@@ -7,7 +7,7 @@ import type { UserRole } from "./types";
 /**
  * Crea un usuario con email y contraseña directamente en la base, con el mismo
  * formato que usa Better Auth (cuenta "credential" con la contraseña hasheada).
- * Lo usan el seed y la sección /admin/usuarios, porque el registro público
+ * Lo usan el seed y la sección /admin/configuracion/equipo, porque el registro público
  * está deshabilitado.
  */
 export async function createUserWithPassword(

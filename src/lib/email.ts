@@ -62,7 +62,7 @@ export async function sendLeadEmails(lead: LeadMail) {
       to: notifyTo,
       replyTo: lead.email ?? undefined,
       subject: `Nueva consulta: ${lead.name}`,
-      html: `<p>Entró una consulta desde la web.</p><table>${table}</table><p><a href="${getSiteUrl()}/admin/consultas">Abrir en el backoffice</a></p>`,
+      html: `<p>Entró una consulta desde la web.</p><table>${table}</table><p><a href="${getSiteUrl()}/admin/comercial/consultas">Abrir en el backoffice</a></p>`,
     }),
   ];
 

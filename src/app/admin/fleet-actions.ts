@@ -15,7 +15,7 @@ const s = (fd: FormData, k: string) => {
   const v = fd.get(k);
   return typeof v === "string" ? v.trim() : "";
 };
-const back = (q: string): never => redirect(`/admin/red/flotas?${q}`);
+const back = (q: string): never => redirect(`/admin/comercial/red/flotas?${q}`);
 
 async function staff() {
   const me = await requireTenant("studio", ["dueno", "contador"]);
@@ -34,7 +34,7 @@ export async function submitProposalAction(fd: FormData) {
     throw e;
   }
   await audit({ studioId: me.studioId, actor: me, action: "flota.propuesta", entityType: "flota", entityId: fleet, metadata: { precios: prices } });
-  revalidatePath("/admin/red/flotas");
+  revalidatePath("/admin/comercial/red/flotas");
   back("ok=Propuesta%20enviada");
 }
 
@@ -47,6 +47,6 @@ export async function registerPaymentAction(fd: FormData) {
     if (e instanceof FleetError) back(`error=${encodeURIComponent(e.message)}`);
     throw e;
   }
-  revalidatePath("/admin/red/flotas");
+  revalidatePath("/admin/comercial/red/flotas");
   back("ok=Pago%20registrado");
 }

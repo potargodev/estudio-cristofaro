@@ -58,7 +58,7 @@ export const CHECKLISTS: Record<OnboardingProfile, ChecklistStep[]> = {
     { key: "rubro", title: "Aplicá la plantilla de un rubro", text: "Carga obligaciones, documentos y tareas típicas de una vez.", href: "/admin/organizaciones", help: "organizaciones/rubros" },
     { key: "vencimientos", title: "Cargá vencimientos", text: "El calendario fiscal de tus clientes, con alertas.", href: "/admin/vencimientos", help: "vencimientos/calendario" },
     { key: "cliente", title: "Invitá a un cliente al portal", text: "Entra con Google o con un enlace, solo con invitación.", href: "/admin/organizaciones", help: "organizaciones/invitaciones" },
-    { key: "equipo", title: "Sumá a tu equipo", text: "Contadores y colaboradores, cada uno con su rol.", href: "/admin/usuarios", help: "organizaciones/roles" },
+    { key: "equipo", title: "Sumá a tu equipo", text: "Contadores y colaboradores, cada uno con su rol.", href: "/admin/configuracion/equipo", help: "organizaciones/roles" },
   ],
   estudio_equipo: [
     { key: "seguridad", title: "Activá el segundo factor", text: "Es obligatorio para entrar al estudio.", href: "/admin/seguridad", help: "primeros-pasos/registro" },

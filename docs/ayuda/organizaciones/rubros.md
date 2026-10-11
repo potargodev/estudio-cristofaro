@@ -3,7 +3,7 @@ titulo: Plantillas por rubro
 resumen: Cómo precargar en una organización las obligaciones, el checklist, las categorías y las tareas típicas de su industria, con vista previa y sin pisar tus cambios.
 perfiles: [estudio]
 modulo: industries
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [primeros-pasos/primeros-pasos-estudio, vencimientos/calendario, ia/ia-y-aprobaciones]
 ---
 
@@ -19,7 +19,7 @@ Obligaciones del rubro, checklist de alta (documentación a pedir), categorías 
 
 ## Cómo aplicarla
 
-1. Elegí el rubro al crear la organización, o después, en la pestaña **Rubro** de la ficha: elegilo en **Agregar un rubro…** y tocá **Ver qué trae**.
+1. Elegí el rubro al crear la organización, o después, en **Resumen → Rubro** de la ficha: elegilo en **Agregar un rubro…** y tocá **Ver qué trae**.
 2. Revisá la **vista previa**: muestra todo lo que se va a crear y cuántos ítems son nuevos. Lo que la organización ya tiene aparece tachado y no se duplica.
 3. Tocá **Confirmar y crear**. Lo podés editar después.
 
@@ -29,7 +29,7 @@ Lo aplican el dueño y los contadores. El colaborador lo ve, pero no lo cambia. 
 
 Cada plantilla es una sugerencia hasta que alguien del estudio la revisa. Mientras tanto se muestra como **«Plantilla en revisión por el estudio»**. Para validarla:
 
-1. En el menú, en **Clientes**, entrá a **Rubros** (o abrí la vista previa del rubro de una organización).
+1. En el menú, entrá a **Configuración → Rubros y plantillas** (o abrí la vista previa del rubro de una organización).
 2. Revisá las obligaciones, documentos y tareas de la plantilla.
 3. Tocá **Marcar como validada**. Lo pueden hacer el dueño y los contadores; queda en la auditoría con tu nombre y la fecha.
 
@@ -39,7 +39,7 @@ Los datos normativos (alícuotas, convenios, regímenes) llevan la marca **"A va
 
 ## Cuando sale una versión nueva
 
-Faro guarda qué versión aplicaste. Si la plantilla se actualiza, en la pestaña **Rubro** aparece **Hay una versión nueva**. Ahí ves las diferencias, elegís qué incorporar y tocás **Incorporar lo elegido**. **Lo que cambiaste vos nunca se pisa.**
+Faro guarda qué versión aplicaste. Si la plantilla se actualiza, en **Resumen → Rubro** de la ficha aparece **Hay una versión nueva**. Ahí ves las diferencias, elegís qué incorporar y tocás **Incorporar lo elegido**. **Lo que cambiaste vos nunca se pisa.**
 
 ## Con el Asistente
 

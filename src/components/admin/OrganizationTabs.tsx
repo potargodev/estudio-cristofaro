@@ -61,30 +61,69 @@ export const ORG_TABS = [
 export type OrgTabKey = (typeof ORG_TABS)[number]["key"];
 
 /** Pestañas viejas de la ficha de cliente → nuevas */
-export const LEGACY_TABS: Record<string, OrgTabKey> = { datos: "general", portal: "miembros" };
+export const LEGACY_TABS: Record<string, OrgTabKey> = { datos: "general", portal: "miembros", resumen: "general", conexiones: "integraciones" };
+
+/**
+ * Pestañas principales de la ficha (docs/faro-producto.md §2.o): Resumen,
+ * Vencimientos, Documentos, Solicitudes y Conexiones. Lo demás (datos, rubro,
+ * plan, miembros, equipo, gastos y actividad) vive dentro de Resumen. Lugar
+ * listo para sumar Sueldos (F5) y ARCA (F3) como pestañas principales.
+ */
+const MAIN_TABS: { key: string; label: string; icon: (typeof ORG_TABS)[number]["icon"]; href: OrgTabKey; keys: OrgTabKey[] }[] = [
+  { key: "resumen", label: "Resumen", icon: Building2, href: "general", keys: ["general", "rubro", "plan", "miembros", "equipo", "gastos", "actividad"] },
+  { key: "vencimientos", label: "Vencimientos", icon: CalendarClock, href: "vencimientos", keys: ["vencimientos"] },
+  { key: "documentos", label: "Documentos", icon: FileText, href: "documentos", keys: ["documentos"] },
+  { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare, href: "solicitudes", keys: ["solicitudes"] },
+  // F5: { key: "sueldos", label: "Sueldos", … }  ·  F3: { key: "arca", label: "ARCA", … }
+  { key: "conexiones", label: "Conexiones", icon: PlugZap, href: "integraciones", keys: ["integraciones"] },
+];
+
+const SUB_LABEL: Partial<Record<OrgTabKey, string>> = { general: "Datos y razones sociales", miembros: "Miembros del portal" };
 
 export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTabKey; counts: Partial<Record<OrgTabKey, number>> }) {
+  const main = MAIN_TABS.find((t) => t.keys.includes(active)) ?? MAIN_TABS[0];
+  const subs = ORG_TABS.filter((t) => main.keys.includes(t.key) && main.keys.length > 1);
   return (
-    <nav aria-label="Secciones de la organización" className="-mx-4 mb-8 overflow-x-auto border-b border-line px-4 sm:mx-0 sm:px-0">
-      <ul className="flex min-w-max gap-1">
-        {ORG_TABS.map((t) => (
-          <li key={t.key}>
-            <Link
-              href={`/admin/organizaciones/${orgId}?tab=${t.key}`}
-              aria-current={active === t.key ? "page" : undefined}
-              className={cn(
-                "-mb-px inline-flex items-center gap-2 border-b-2 px-3 py-2.5 text-[14px] transition-colors",
-                active === t.key ? "border-rose-deep text-ink" : "border-transparent text-muted hover:text-ink",
-              )}
-            >
-              <t.icon className={cn("size-4", active === t.key && "text-rose-deep")} strokeWidth={1.5} aria-hidden />
-              {t.label}
-              {!!counts[t.key] && <span className="tabular rounded-md bg-navy-soft px-1.5 text-[12px] text-ink">{counts[t.key]}</span>}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className="mb-8">
+      <nav aria-label="Secciones de la organización" className="-mx-4 overflow-x-auto border-b border-line px-4 sm:mx-0 sm:px-0">
+        <ul className="flex min-w-max gap-1">
+          {MAIN_TABS.map((t) => {
+            const on = t === main;
+            const n = t.keys.reduce((s, k) => s + (counts[k] ?? 0), 0);
+            return (
+              <li key={t.key}>
+                <Link
+                  href={`/admin/organizaciones/${orgId}?tab=${t.href}`}
+                  aria-current={on ? "page" : undefined}
+                  className={cn("-mb-px inline-flex h-10 items-center gap-2 border-b-2 px-3 text-[14px] transition-colors", on ? "border-navy font-semibold text-ink" : "border-transparent text-muted hover:text-ink")}
+                >
+                  <t.icon className={cn("size-4", on && "text-rose-deep")} strokeWidth={1.5} aria-hidden />
+                  {t.label}
+                  {!!n && <span className="num rounded-md bg-navy-soft px-1.5 text-[12px] text-ink">{n}</span>}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+      {subs.length > 0 && (
+        <nav aria-label="Resumen de la organización" className="-mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <ul className="flex min-w-max gap-1.5">
+            {subs.map((t) => (
+              <li key={t.key}>
+                <Link
+                  href={`/admin/organizaciones/${orgId}?tab=${t.key}`}
+                  aria-current={active === t.key ? "page" : undefined}
+                  className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px]", active === t.key ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}
+                >
+                  {SUB_LABEL[t.key] ?? t.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </div>
   );
 }
 
@@ -533,11 +572,11 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
         <p>Esta organización no está vinculada con Tango.</p>
         <p className="mt-2">
           Podés vincular sus razones sociales desde{" "}
-          <Link href="/admin/conexiones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
+          <Link href="/admin/configuracion/conexiones/tango/clientes" className="text-ink underline underline-offset-4 hover:text-rose-deep">
             Clientes en Tango
           </Link>{" "}
           o asignarle una empresa de Tango en{" "}
-          <Link href="/admin/conexiones/tango#empresas" className="text-ink underline underline-offset-4 hover:text-rose-deep">
+          <Link href="/admin/configuracion/conexiones/tango#empresas" className="text-ink underline underline-offset-4 hover:text-rose-deep">
             Integraciones
           </Link>
           . Sin Tango, todo funciona igual con importación de archivos.

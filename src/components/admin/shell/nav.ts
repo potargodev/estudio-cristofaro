@@ -1,5 +1,7 @@
-// Navegación del backoffice: grupos, secciones, badges y acción principal.
-// Archivo sin "use client": lo usan el layout (servidor) y el shell (cliente).
+// Navegación del espacio del estudio (docs/faro-producto.md §2.o): el menú,
+// las pestañas de Comercial y de Configuración y sus badges. Archivo sin
+// "use client": lo usan los layouts (servidor) y el shell (cliente). Es solo
+// presentación: cada página vuelve a validar el acceso en el servidor.
 
 export type NavIcon =
   | "resumen"
@@ -20,7 +22,10 @@ export type NavIcon =
   | "modulos"
   | "ayuda"
   | "red"
-  | "rubros";
+  | "rubros"
+  | "comercial"
+  | "configuracion"
+  | "seguridad";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -29,25 +34,24 @@ export interface NavItem {
   icon: NavIcon;
   exact?: boolean;
   badge?: BadgeKey;
+  /** Solo el dueño del tenant (dueño del estudio o titular) */
   adminOnly?: boolean;
   /** Oculto para el colaborador */
   operatorOnly?: boolean;
-  /** También para la cuenta personal (titular): IA, MCP, gastos y plan */
+  /** Solo el estudio dueño del sitio público (STUDIO_SLUG) */
+  siteOnly?: boolean;
+  /** También en la cuenta personal (titular) */
   personal?: boolean;
-  /** Solo para la cuenta personal */
-  personalOnly?: boolean;
   /** Módulo de Faro que lo habilita (src/modules/registry.ts); sin él, el ítem queda con candado */
   module?: string;
+  /** Otras rutas que también lo marcan activo (sus pestañas) */
+  match?: string[];
 }
 
 interface NavGroup {
   title: string;
-  adminOnly?: boolean;
-  operatorOnly?: boolean;
-  /** Solo el estudio dueño del sitio público (STUDIO_SLUG) */
-  siteOnly?: boolean;
-  /** Solo el equipo de Faro */
-  faroOnly?: boolean;
+  /** Fijo abajo de la barra lateral */
+  pinned?: boolean;
   items: NavItem[];
 }
 
@@ -63,69 +67,71 @@ export interface NavAccess {
   modules?: string[];
 }
 
+/** Pestañas de Comercial: Consultas, Agenda y Perfil en la Red */
+export const COMERCIAL_TABS: NavItem[] = [
+  { href: "/admin/comercial/consultas", label: "Consultas", icon: "consultas", badge: "leads", operatorOnly: true },
+  { href: "/admin/comercial/agenda", label: "Agenda", icon: "agenda" },
+  { href: "/admin/comercial/red", label: "Perfil en la Red", icon: "red", operatorOnly: true, module: "red_estudios" },
+];
+
+/** Pestañas de Configuración (una sola entrada del menú, regla 6) */
+export const CONFIG_TABS: NavItem[] = [
+  { href: "/admin/configuracion/equipo", label: "Equipo y usuarios", icon: "usuarios", adminOnly: true },
+  { href: "/admin/configuracion/plan", label: "Plan y módulos", icon: "modulos", adminOnly: true, personal: true, match: ["/admin/configuracion/modulos"] },
+  { href: "/admin/configuracion/modulos", label: "Plan y módulos", icon: "modulos", personal: true },
+  { href: "/admin/configuracion/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true, module: "connections" },
+  { href: "/admin/configuracion/ia", label: "IA", icon: "ia", adminOnly: true, personal: true },
+  { href: "/admin/configuracion/rubros", label: "Rubros y plantillas", icon: "rubros", module: "industries" },
+  { href: "/admin/configuracion/sitio", label: "Sitio web", icon: "contenidos", operatorOnly: true, siteOnly: true },
+  { href: "/admin/configuracion/seguridad", label: "Seguridad", icon: "seguridad", personal: true },
+];
+
 export const NAV_GROUPS: NavGroup[] = [
   {
-    title: "General",
+    title: "Operación",
     items: [
-      { href: "/admin", label: "Resumen", icon: "resumen", exact: true },
-      { href: "/personal", label: "Mi panel", icon: "resumen", exact: true, personal: true, personalOnly: true },
-      { href: "/grupos", label: "Grupos de gastos", icon: "gastos", personal: true, module: "shared_expenses" },
-    ],
-  },
-  {
-    title: "Clientes",
-    items: [
+      { href: "/admin", label: "Inicio", icon: "resumen", exact: true },
       { href: "/admin/organizaciones", label: "Organizaciones", icon: "organizaciones", module: "core" },
       { href: "/admin/vencimientos", label: "Vencimientos", icon: "vencimientos", badge: "obligations" },
       { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
-      { href: "/admin/rubros", label: "Rubros", icon: "rubros", module: "industries" },
     ],
   },
   {
-    title: "Comercial",
-    operatorOnly: true,
-    items: [
-      { href: "/admin/consultas", label: "Consultas", icon: "consultas", badge: "leads" },
-      { href: "/admin/agenda", label: "Agenda", icon: "agenda" },
-      { href: "/admin/red", label: "Red de estudios", icon: "red", module: "red_estudios" },
-    ],
+    title: "Negocio",
+    items: [{ href: "/admin/comercial", label: "Comercial", icon: "comercial", badge: "leads" }],
   },
-  {
-    title: "Faro IA",
-    items: [
-      { href: "/admin/asistente", label: "Asistente", icon: "asistente", personal: true, module: "ai" },
-      { href: "/admin/aprobaciones", label: "Aprobaciones", icon: "aprobaciones", badge: "approvals", personal: true, module: "ai" },
-      { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp", personal: true, module: "ai" },
-    ],
-  },
-  { title: "Sitio web", siteOnly: true, operatorOnly: true, items: [{ href: "/admin/contenidos", label: "Contenidos", icon: "contenidos" }] },
   {
     title: "Configuración",
-    adminOnly: true,
-    items: [
-      { href: "/admin/usuarios", label: "Usuarios", icon: "usuarios", adminOnly: true },
-      { href: "/admin/conexiones", label: "Conexiones", icon: "integraciones", adminOnly: true, module: "connections" },
-      { href: "/admin/ia/configuracion", label: "IA", icon: "ia", adminOnly: true, personal: true },
-      { href: "/admin/plan", label: "Plan y facturación", icon: "faro", adminOnly: true, personal: true },
-      { href: "/admin/modulos", label: "Módulos", icon: "modulos", personal: true },
-    ],
+    pinned: true,
+    items: [{ href: "/admin/configuracion", label: "Configuración", icon: "configuracion" }],
   },
-  { title: "Ayuda", items: [{ href: "/ayuda", label: "Centro de ayuda", icon: "ayuda", personal: true }] },
-  { title: "Faro", faroOnly: true, items: [{ href: "/faro-manager", label: "Faro Manager", icon: "faro" }] },
 ];
 
 /** ¿El ítem está habilitado por los módulos del tenant? (sin módulo o sin dato: sí) */
 export const itemEnabled = (i: { module?: string }, a: NavAccess) => !i.module || !a.modules || a.modules.includes(i.module);
 
+const allowed = (i: NavItem, a: NavAccess) => (!i.adminOnly || a.isAdmin) && (!i.operatorOnly || a.isOperator) && (!i.siteOnly || a.hasSite) && (!a.isPersonal || !!i.personal);
+
+/** Pestañas visibles de una sección (sin repetir la misma etiqueta: gana la primera que entra) */
+export function visibleTabs(tabs: NavItem[], a: NavAccess) {
+  const seen = new Set<string>();
+  return tabs.filter((t) => {
+    if (!allowed(t, a) || seen.has(t.label)) return false;
+    seen.add(t.label);
+    return true;
+  });
+}
+
 export function visibleGroups(a: NavAccess) {
-  return NAV_GROUPS.filter((g) => (!g.adminOnly || a.isAdmin) && (!g.operatorOnly || a.isOperator) && (!g.siteOnly || a.hasSite) && (!g.faroOnly || a.isFaro))
-    .map((g) => ({
-      ...g,
-      items: g.items.filter(
-        (i) => (!i.adminOnly || a.isAdmin) && (!i.operatorOnly || a.isOperator) && (a.isPersonal ? i.personal || g.faroOnly : !i.personalOnly),
-      ),
-    }))
-    .filter((g) => g.items.length);
+  return NAV_GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((i) => {
+      if (!allowed(i, a)) return false;
+      // Comercial entra si tiene alguna pestaña (el colaborador ve la Agenda)
+      if (i.href === "/admin/comercial") return visibleTabs(COMERCIAL_TABS, a).length > 0;
+      return true;
+    }),
+  })).filter((g) => g.items.length);
 }
 
 export const BADGE_LABEL: Record<BadgeKey, string> = {
@@ -134,32 +140,6 @@ export const BADGE_LABEL: Record<BadgeKey, string> = {
   obligations: "vencimientos esta semana",
   approvals: "propuestas para aprobar",
 };
-
-/** Breadcrumb: grupo › sección › subpantalla, a partir de la ruta */
-export function crumbs(pathname: string): { label: string; href?: string }[] {
-  const all = NAV_GROUPS.flatMap((g) => g.items.map((i) => ({ ...i, group: g.title })));
-  const item = [...all].sort((a, b) => b.href.length - a.href.length).find((i) => (i.exact ? pathname === i.href : pathname.startsWith(i.href)));
-  if (pathname === "/admin/cuenta") return [{ label: "Mi cuenta" }];
-  if (!item) return [{ label: "Backoffice" }];
-  const out: { label: string; href?: string }[] = [{ label: item.group }, { label: item.label, href: item.href }];
-  const rest = pathname.slice(item.href.length).split("/").filter(Boolean);
-  const SUB: Record<string, string> = {
-    nueva: "Nueva",
-    nuevo: "Nuevo",
-    importar: "Importar",
-    novedades: "Novedades",
-    preguntas: "Preguntas frecuentes",
-    planes: "Planes",
-    tango: "Tango",
-    clientes: "Clientes",
-    xubio: "Xubio",
-    "google-drive": "Google Drive",
-    "mcp-externo": "MCP externo",
-    archivos: "Archivos",
-  };
-  for (const seg of rest) out.push({ label: SUB[seg] ?? "Detalle" });
-  return out;
-}
 
 /**
  * Contexto de la pantalla actual para el Vigía del estudio: la ficha de una

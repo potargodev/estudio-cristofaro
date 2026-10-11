@@ -123,16 +123,16 @@ const FACTURACION_LISTA = false;
 /** Grupos del menú del espacio */
 export function groupsFor(x: SpaceInput): ShellGroup[] {
   if (x.space === "studio" && x.studio) {
-    const studio = visibleGroups(x.studio).map((g) => ({
+    // Operación · Negocio · Configuración (fija abajo)
+    return visibleGroups(x.studio).map((g) => ({
       title: g.title,
-      items: g.items
-        .filter((i) => i.href !== "/grupos" && i.href !== "/ayuda")
-        .map((i) => {
-          const locked = !!i.module && !!x.studio!.modules && !x.studio!.modules.includes(i.module);
-          return { href: locked ? `/admin/modulos/${i.module}` : i.href, label: i.label, icon: i.icon as ShellIcon, exact: i.exact, badge: locked ? undefined : (i.badge as ShellBadge | undefined), locked };
-        }),
+      pinned: g.pinned,
+      items: g.items.map((i) => {
+        const locked = !!i.module && !!x.studio!.modules && !x.studio!.modules.includes(i.module);
+        const badge = i.badge === "leads" && !x.studio!.isOperator ? undefined : (i.badge as ShellBadge | undefined);
+        return { href: locked ? `/admin/configuracion/modulos/${i.module}` : i.href, label: i.label, icon: i.icon as ShellIcon, exact: i.exact, badge: locked ? undefined : badge, locked };
+      }),
     }));
-    return studio.filter((g) => g.items.length && g.title !== "Ayuda" && g.title !== "Faro");
   }
   if (x.space === "personal") {
     const items: ShellItem[] = [

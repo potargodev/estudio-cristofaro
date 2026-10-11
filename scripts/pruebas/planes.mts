@@ -59,12 +59,12 @@ await db.delete(faro_module_releases).where(eq(faro_module_releases.module_key, 
 
 // HTTP: pantallas con candado
 await db.delete(tenant_modules).where(and(eq(tenant_modules.studio_id, B), eq(tenant_modules.module_key, "tango")));
-const r1 = await fetch(`${BASE}/admin/conexiones/tango`, { headers: { Cookie: d.cookies.adminB }, redirect: "manual" });
-check("Inicial: la pantalla de Tango lleva a 'Disponible en el plan'", r1.status >= 300 && (r1.headers.get("location") ?? "").includes("/admin/modulos/tango"));
-const r2 = await fetch(`${BASE}/admin/modulos/tango`, { headers: { Cookie: d.cookies.adminB } });
+const r1 = await fetch(`${BASE}/admin/configuracion/conexiones/tango`, { headers: { Cookie: d.cookies.adminB }, redirect: "manual" });
+check("Inicial: la pantalla de Tango lleva a 'Disponible en el plan'", r1.status >= 300 && (r1.headers.get("location") ?? "").includes("/admin/configuracion/modulos/tango"));
+const r2 = await fetch(`${BASE}/admin/configuracion/modulos/tango`, { headers: { Cookie: d.cookies.adminB } });
 const html = await r2.text();
 check("Tango muestra 'Disponible en el plan Profesional' con CTA", html.includes("Disponible en el plan") && html.includes("Profesional") && html.includes("Quiero mejorar mi plan"));
-const r3 = await fetch(`${BASE}/admin/modulos/flows`, { headers: { Cookie: d.cookies.adminB } });
+const r3 = await fetch(`${BASE}/admin/configuracion/modulos/flows`, { headers: { Cookie: d.cookies.adminB } });
 check("Flujos muestra 'Próximamente'", (await r3.text()).includes("Próximamente"));
 
 await db.update(studios).set({ plan_key: "avanzado" }).where(eq(studios.id, B));

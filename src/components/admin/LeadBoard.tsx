@@ -87,7 +87,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", l.id)}
                       className="cursor-grab border border-line bg-surface p-3 transition-colors hover:border-muted active:cursor-grabbing"
                     >
-                      <Link href={`/admin/consultas/${l.id}`} className="block text-[14px] font-medium leading-snug text-ink underline-offset-4 hover:underline">
+                      <Link href={`/admin/comercial/consultas/${l.id}`} className="block text-[14px] font-medium leading-snug text-ink underline-offset-4 hover:underline">
                         {l.name}
                       </Link>
                       {(l.company || l.contributor_type) && (

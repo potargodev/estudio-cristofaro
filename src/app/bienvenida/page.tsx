@@ -177,8 +177,8 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                 {(kind === "studio"
                   ? [
                       { href: "/admin/organizaciones/nueva", icon: Building2, t: "Crear la primera organización", d: "Con su rubro y sus CUIT." },
-                      { href: "/admin/conexiones", icon: FileUp, t: "Importar clientes", d: "Desde Tango o desde un archivo." },
-                      { href: "/admin/usuarios", icon: UserPlus, t: "Invitar a tu equipo", d: "Contadores y colaboradores." },
+                      { href: "/admin/configuracion/conexiones", icon: FileUp, t: "Importar clientes", d: "Desde Tango o desde un archivo." },
+                      { href: "/admin/configuracion/equipo", icon: UserPlus, t: "Invitar a tu equipo", d: "Contadores y colaboradores." },
                     ]
                   : kind === "personal"
                     ? [

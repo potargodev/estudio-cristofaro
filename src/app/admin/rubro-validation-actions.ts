@@ -13,12 +13,12 @@ const s = (fd: FormData, k: string) => {
 /** El dueño o un contador marca la plantilla vigente como validada por el estudio (auditado) */
 export async function validateTemplateForStudioAction(fd: FormData) {
   const me = await requireTenant("studio", ["dueno", "contador"]);
-  const back = s(fd, "back").startsWith("/admin/") ? s(fd, "back") : "/admin/rubros";
+  const back = s(fd, "back").startsWith("/admin/") ? s(fd, "back") : "/admin/configuracion/rubros";
   try {
     if (s(fd, "undo") === "1") await revokeStudioValidation(me.studioId, me, s(fd, "key"));
     else await validateForStudio(me.studioId, me, s(fd, "key"), s(fd, "note"));
   } catch (e) {
-    if (e instanceof IndustryError) redirect(`/admin/rubros?error=${encodeURIComponent(e.message)}`);
+    if (e instanceof IndustryError) redirect(`/admin/configuracion/rubros?error=${encodeURIComponent(e.message)}`);
     throw e;
   }
   revalidatePath("/admin", "layout");

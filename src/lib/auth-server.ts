@@ -133,7 +133,7 @@ function createAuth() {
     }),
     emailAndPassword: {
       enabled: true,
-      // Sin registro público: los usuarios del estudio los crea un admin desde /admin/usuarios
+      // Sin registro público: los usuarios del estudio los crea un admin desde /admin/configuracion/equipo
       disableSignUp: true,
       minPasswordLength: 8,
     },
@@ -152,7 +152,7 @@ function createAuth() {
       user: {
         create: {
           // Solo se crean usuarios por Google o enlace mágico con una invitación vigente.
-          // (Los del estudio se insertan directo en la base desde /admin/usuarios y el seed.)
+          // (Los del estudio se insertan directo en la base desde /admin/configuracion/equipo y el seed.)
           before: async (user) => {
             const access = await hasAccessByEmail(user.email);
             // Autoregistro sin contraseña (persona o autónomo): el tenant se crea al entrar

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 /** Vuelta de Google: valida el state, guarda los tokens cifrados y vuelve a la conexión */
 export async function GET(request: NextRequest) {
-  const back = (q: string) => NextResponse.redirect(new URL(`/admin/conexiones/google-drive?${q}`, getSiteUrl()));
+  const back = (q: string) => NextResponse.redirect(new URL(`/admin/configuracion/conexiones/google-drive?${q}`, getSiteUrl()));
   const user = await getCurrentUser();
   if (!user || user.role !== "dueno" || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
   const sp = request.nextUrl.searchParams;

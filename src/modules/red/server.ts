@@ -293,7 +293,7 @@ export async function requestProposal(input: { studioId: string; name: string; e
       html: mailLayout(
         "Pedido de propuesta",
         `<p><strong>${esc(input.name)}</strong> (${esc(input.email)}) pidió una propuesta desde la Red de estudios de Faro.</p>${input.message ? `<p>${esc(input.message.slice(0, 600))}</p>` : ""}`,
-        { href: `${getSiteUrl()}/admin/consultas/${lead.id}`, label: "Ver la consulta" },
+        { href: `${getSiteUrl()}/admin/comercial/consultas/${lead.id}`, label: "Ver la consulta" },
         "Faro",
       ),
     }).catch(() => undefined);

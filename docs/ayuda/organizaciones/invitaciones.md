@@ -3,7 +3,7 @@ titulo: Cómo invitar personas al portal de una organización
 resumen: El portal es solo con invitación; quién puede invitar, cómo se entra con Google o con un enlace y por qué algunos roles los confirma el estudio.
 perfiles: [estudio, organizacion]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [organizaciones/roles, primeros-pasos/primeros-pasos-estudio, documentos/subir-documentos]
 ---
 
@@ -12,7 +12,7 @@ Al portal de una organización **solo se entra con invitación**. No hay registr
 ## Si sos del estudio
 
 1. En el menú, entrá a **Organizaciones** y abrí la organización.
-2. Andá a la pestaña **Miembros e invitaciones**.
+2. Andá a **Resumen → Miembros del portal**.
 3. Escribí el email y elegí el rol (ver [Roles](/ayuda/organizaciones/roles)).
 4. Enviá la invitación. A la persona le llega un mail para entrar.
 

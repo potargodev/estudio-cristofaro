@@ -19,13 +19,13 @@ check("faro_owner entra a Faro Manager", (await go(d.cookies.adminA, "/faro-mana
 
 // Tenant estudio y tenant personal
 check("el titular entra al Asistente", (await go(d.cookies.titular, "/admin/asistente")).status === 200);
-check("el titular configura su IA", (await go(d.cookies.titular, "/admin/ia/configuracion")).status === 200);
+check("el titular configura su IA", (await go(d.cookies.titular, "/admin/configuracion/ia")).status === 200);
 check("el titular crea accesos MCP", (await go(d.cookies.titular, "/admin/mcp")).status === 200);
 const t1 = await go(d.cookies.titular, "/admin/organizaciones");
 check("el titular no entra a la cartera de un estudio", t1.status >= 300 && t1.to.includes("/personal"), t1.to);
 const t2 = await go(d.cookies.titular, "/admin");
 check("el titular no ve el resumen del estudio", t2.status >= 300 && t2.to.includes("/personal"), t2.to);
-const c1 = await go(d.cookies.colaboradorA, "/admin/ia/configuracion");
+const c1 = await go(d.cookies.colaboradorA, "/admin/configuracion/ia");
 check("un colaborador no configura la IA del estudio", c1.status >= 300 && c1.to.includes("sin-permiso"), c1.to);
 check("un estudio no entra al panel personal", blocked(await go(d.cookies.contadorA, "/personal"), "/personal"));
 

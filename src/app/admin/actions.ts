@@ -125,7 +125,7 @@ export async function moveLead(leadId: string, status: LeadStatus) {
     .returning({ id: leads.id });
   if (rows.length)
     await audit({ studioId: staff.studioId, actor: staff, action: "consultas.estado", entityType: "lead", entityId: leadId, metadata: { estado: status } });
-  revalidatePath("/admin/consultas");
+  revalidatePath("/admin/comercial/consultas");
   revalidatePath("/admin");
   return { ok: rows.length > 0 };
 }
@@ -133,7 +133,7 @@ export async function moveLead(leadId: string, status: LeadStatus) {
 export async function createLead(fd: FormData) {
   const user = await requireOperator();
   const name = s(fd, "name");
-  if (!name) redirect("/admin/consultas/nueva?error=nombre");
+  if (!name) redirect("/admin/comercial/consultas/nueva?error=nombre");
   const source = s(fd, "source");
   let newId: string | null = null;
   try {
@@ -156,9 +156,9 @@ export async function createLead(fd: FormData) {
   } catch (error) {
     console.error("[admin] createLead", error);
   }
-  if (!newId) redirect("/admin/consultas/nueva?error=guardar");
-  revalidatePath("/admin/consultas");
-  redirect(`/admin/consultas/${newId}`);
+  if (!newId) redirect("/admin/comercial/consultas/nueva?error=guardar");
+  revalidatePath("/admin/comercial/consultas");
+  redirect(`/admin/comercial/consultas/${newId}`);
 }
 
 /** Responsable válido: un usuario activo del mismo estudio con rol de staff. */
@@ -192,11 +192,11 @@ export async function updateLead(fd: FormData) {
     })
     .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)))
     .returning({ id: leads.id });
-  if (rows.length === 0) redirect("/admin/consultas");
-  revalidatePath("/admin/consultas");
-  revalidatePath(`/admin/consultas/${leadId}`);
+  if (rows.length === 0) redirect("/admin/comercial/consultas");
+  revalidatePath("/admin/comercial/consultas");
+  revalidatePath(`/admin/comercial/consultas/${leadId}`);
   revalidatePath("/admin");
-  redirect(`/admin/consultas/${leadId}?guardado=1`);
+  redirect(`/admin/comercial/consultas/${leadId}?guardado=1`);
 }
 
 export async function deleteLead(fd: FormData) {
@@ -206,8 +206,8 @@ export async function deleteLead(fd: FormData) {
     await getDb()
       .delete(leads)
       .where(and(eq(leads.id, leadId), eq(leads.studio_id, studioId)));
-  revalidatePath("/admin/consultas");
-  redirect("/admin/consultas");
+  revalidatePath("/admin/comercial/consultas");
+  redirect("/admin/comercial/consultas");
 }
 
 // ───────────── novedades ─────────────
@@ -216,7 +216,7 @@ export async function savePost(fd: FormData) {
   const { studioId } = await requireOperator();
   const postId = id(fd);
   const title = s(fd, "title");
-  if (!title) redirect(postId ? `/admin/contenidos/novedades/${postId}?error=titulo` : "/admin/contenidos/novedades/nueva?error=titulo");
+  if (!title) redirect(postId ? `/admin/configuracion/sitio/novedades/${postId}?error=titulo` : "/admin/configuracion/sitio/novedades/nueva?error=titulo");
   const published = fd.get("published") !== null;
   const payload = {
     title,
@@ -232,7 +232,7 @@ export async function savePost(fd: FormData) {
       .select({ published_at: posts.published_at })
       .from(posts)
       .where(and(eq(posts.id, postId), eq(posts.studio_id, studioId)));
-    if (!current) redirect("/admin/contenidos/novedades");
+    if (!current) redirect("/admin/configuracion/sitio/novedades");
     let failed = false;
     try {
       await db
@@ -243,7 +243,7 @@ export async function savePost(fd: FormData) {
       failed = true; // slug repetido dentro del estudio
     }
     revalidateSite();
-    redirect(`/admin/contenidos/novedades/${postId}?${failed ? "error=slug" : "guardado=1"}`);
+    redirect(`/admin/configuracion/sitio/novedades/${postId}?${failed ? "error=slug" : "guardado=1"}`);
   }
 
   let newId: string | null = null;
@@ -256,9 +256,9 @@ export async function savePost(fd: FormData) {
   } catch {
     // slug repetido dentro del estudio
   }
-  if (!newId) redirect("/admin/contenidos/novedades/nueva?error=slug");
+  if (!newId) redirect("/admin/configuracion/sitio/novedades/nueva?error=slug");
   revalidateSite();
-  redirect(`/admin/contenidos/novedades/${newId}?guardado=1`);
+  redirect(`/admin/configuracion/sitio/novedades/${newId}?guardado=1`);
 }
 
 export async function deletePost(fd: FormData) {
@@ -269,7 +269,7 @@ export async function deletePost(fd: FormData) {
       .delete(posts)
       .where(and(eq(posts.id, postId), eq(posts.studio_id, studioId)));
   revalidateSite();
-  redirect("/admin/contenidos/novedades");
+  redirect("/admin/configuracion/sitio/novedades");
 }
 
 // ───────────── preguntas frecuentes ─────────────
@@ -279,7 +279,7 @@ export async function saveFaq(fd: FormData) {
   const faqId = id(fd);
   const question = s(fd, "question");
   const answer = s(fd, "answer");
-  if (!question || !answer) redirect("/admin/contenidos/preguntas?error=campos");
+  if (!question || !answer) redirect("/admin/configuracion/sitio/preguntas?error=campos");
   const payload = {
     question,
     answer,
@@ -294,7 +294,7 @@ export async function saveFaq(fd: FormData) {
       .where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
   else await db.insert(faqs).values({ studio_id: studioId, ...payload });
   revalidateSite();
-  redirect("/admin/contenidos/preguntas?guardado=1");
+  redirect("/admin/configuracion/sitio/preguntas?guardado=1");
 }
 
 export async function deleteFaq(fd: FormData) {
@@ -305,7 +305,7 @@ export async function deleteFaq(fd: FormData) {
       .delete(faqs)
       .where(and(eq(faqs.id, faqId), eq(faqs.studio_id, studioId)));
   revalidateSite();
-  redirect("/admin/contenidos/preguntas");
+  redirect("/admin/configuracion/sitio/preguntas");
 }
 
 // ───────────── planes ─────────────
@@ -314,7 +314,7 @@ export async function deleteFaq(fd: FormData) {
 export async function savePlanPrice(fd: FormData) {
   const user = await requireOperator();
   const planId = id(fd);
-  if (!planId) redirect("/admin/contenidos/planes");
+  if (!planId) redirect("/admin/configuracion/sitio/planes");
   const price = (s(fd, "price_label") ?? "").slice(0, 80) || null;
   const [row] = await getDb()
     .update(service_plans)
@@ -332,7 +332,7 @@ export async function savePlanPrice(fd: FormData) {
     ip: await requestIp(),
   });
   revalidateSite();
-  redirect("/admin/contenidos/planes?guardado=1");
+  redirect("/admin/configuracion/sitio/planes?guardado=1");
 }
 
 // ───────────── usuarios (solo admin) ─────────────
@@ -343,11 +343,11 @@ export async function createStaffUser(fd: FormData) {
   const email = s(fd, "email")?.toLowerCase() ?? null;
   const password = s(fd, "password");
   const role = s(fd, "role") as UserRole | null;
-  if (!name || !email || !password) redirect("/admin/usuarios?error=campos");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) redirect("/admin/usuarios?error=email");
-  if (password.length < 8) redirect("/admin/usuarios?error=password");
+  if (!name || !email || !password) redirect("/admin/configuracion/equipo?error=campos");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) redirect("/admin/configuracion/equipo?error=email");
+  if (password.length < 8) redirect("/admin/configuracion/equipo?error=password");
   const limit = await staffLimitError(admin.studioId);
-  if (limit) redirect(`/admin/usuarios?error=limite&msg=${encodeURIComponent(limit)}`);
+  if (limit) redirect(`/admin/configuracion/equipo?error=limite&msg=${encodeURIComponent(limit)}`);
 
   let result = "creado=1";
   try {
@@ -363,31 +363,31 @@ export async function createStaffUser(fd: FormData) {
     if (code !== "23505") console.error("[admin] createStaffUser", error);
     result = `error=${code === "23505" ? "repetido" : "guardar"}`;
   }
-  revalidatePath("/admin/usuarios");
-  redirect(`/admin/usuarios?${result}`);
+  revalidatePath("/admin/configuracion/equipo");
+  redirect(`/admin/configuracion/equipo?${result}`);
 }
 
 export async function updateUserRole(fd: FormData) {
   const admin = await requireAdmin();
   const userId = id(fd);
   const role = s(fd, "role") as UserRole | null;
-  if (!userId || !role || !STAFF_ROLES.includes(role)) redirect("/admin/usuarios?error=guardar");
+  if (!userId || !role || !STAFF_ROLES.includes(role)) redirect("/admin/configuracion/equipo?error=guardar");
   // Un admin no puede quitarse el rol a sí mismo (el estudio podría quedar sin admin)
-  if (userId === admin.id) redirect("/admin/usuarios?error=propio");
+  if (userId === admin.id) redirect("/admin/configuracion/equipo?error=propio");
   await getDb()
     .update(users)
     .set({ role })
     .where(and(eq(users.id, userId), eq(users.studioId, admin.studioId)));
-  revalidatePath("/admin/usuarios");
-  redirect("/admin/usuarios?guardado=1");
+  revalidatePath("/admin/configuracion/equipo");
+  redirect("/admin/configuracion/equipo?guardado=1");
 }
 
 export async function setUserActive(fd: FormData) {
   const admin = await requireAdmin();
   const userId = id(fd);
   const active = s(fd, "active") === "1";
-  if (!userId) redirect("/admin/usuarios?error=guardar");
-  if (userId === admin.id) redirect("/admin/usuarios?error=propio");
+  if (!userId) redirect("/admin/configuracion/equipo?error=guardar");
+  if (userId === admin.id) redirect("/admin/configuracion/equipo?error=propio");
   const db = getDb();
   const rows = await db
     .update(users)
@@ -396,6 +396,6 @@ export async function setUserActive(fd: FormData) {
     .returning({ id: users.id });
   // Al desactivar se cierran todas sus sesiones abiertas
   if (!active && rows.length > 0) await db.delete(sessions).where(eq(sessions.userId, userId));
-  revalidatePath("/admin/usuarios");
-  redirect(`/admin/usuarios?${active ? "activado=1" : "desactivado=1"}`);
+  revalidatePath("/admin/configuracion/equipo");
+  redirect(`/admin/configuracion/equipo?${active ? "activado=1" : "desactivado=1"}`);
 }

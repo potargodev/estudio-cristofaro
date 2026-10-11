@@ -75,7 +75,7 @@ export async function adminSearch(q: string): Promise<SearchHit[]> {
       id: l.id,
       title: l.name,
       detail: [l.company, l.email].filter(Boolean).join(" · ") || "Consulta",
-      href: `/admin/consultas/${l.id}`,
+      href: `/admin/comercial/consultas/${l.id}`,
     })),
     ...reqRows.map((r) => ({ group: "Solicitudes" as const, id: r.id, title: r.subject, detail: r.orgName, href: `/admin/solicitudes?id=${r.id}` })),
   ];

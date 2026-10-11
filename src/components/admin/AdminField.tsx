@@ -45,6 +45,6 @@ export function Notice({ tone = "ok", children }: { tone?: "ok" | "error"; child
 }
 
 /** Encabezado de las pantallas de formulario: mismo PageHeader del kit */
-export function AdminPageHeader({ title, description, children }: { title: string; description?: React.ReactNode; children?: React.ReactNode }) {
-  return <PageHeader title={title} description={description} actions={children} />;
+export function AdminPageHeader({ title, description, children, level }: { title: string; description?: React.ReactNode; children?: React.ReactNode; level?: 1 | 2 }) {
+  return <PageHeader title={title} description={description} actions={children} level={level} />;
 }

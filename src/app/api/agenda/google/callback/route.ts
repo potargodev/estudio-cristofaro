@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 /** Vuelta de Google: valida el state, guarda los tokens cifrados y vuelve a la agenda */
 export async function GET(request: NextRequest) {
-  const back = (q: string) => NextResponse.redirect(new URL(`/admin/agenda?tab=disponibilidad&${q}`, getSiteUrl()));
+  const back = (q: string) => NextResponse.redirect(new URL(`/admin/comercial/agenda?tab=disponibilidad&${q}`, getSiteUrl()));
   const user = await getCurrentUser();
   if (!user || !isStudioRole(user.role) || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
   const sp = request.nextUrl.searchParams;

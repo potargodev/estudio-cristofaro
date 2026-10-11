@@ -19,6 +19,7 @@ export default async function PersonalCuentaPage({ searchParams }: { searchParam
   const plan = getPlan(t?.plan_key);
   const links = [
     { href: "/personal/plan", label: "Plan y facturación", hint: plan ? planFullName(plan) : "" },
+    { href: "/admin/configuracion", label: "Configuración", hint: "Tus módulos, tu IA con tu clave y la seguridad" },
     { href: "/bienvenida", label: "Tus datos y tu actividad", hint: t?.kind === "personal" ? `CUIT ${formatCuit(t?.cuit)}` : "Qué querés hacer en Faro" },
     { href: "/ayuda", label: "Centro de ayuda", hint: "Artículos cortos para cada pantalla" },
     { href: "/legal/terminos", label: "Términos y privacidad", hint: "Textos legales y lo que aceptaste" },

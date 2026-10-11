@@ -214,7 +214,7 @@ export default async function OrganizacionPage({
                 <div className="border border-line bg-surface p-5">
                   <h2 className="text-[16px] font-medium">Origen</h2>
                   <p className="mt-1 text-[15px] text-muted">Llegó como consulta.</p>
-                  <Link href={`/admin/consultas/${org.lead_id}`} className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep">
+                  <Link href={`/admin/comercial/consultas/${org.lead_id}`} className="mt-2 inline-block text-[14px] text-ink underline underline-offset-4 hover:text-rose-deep">
                     Ver consulta original
                   </Link>
                 </div>

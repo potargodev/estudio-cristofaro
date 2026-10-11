@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { adminSearch, type SearchHit } from "@/app/admin/search-actions";
 import { cn } from "@/lib/utils";
-import { visibleGroups, type NavAccess } from "./nav";
+import { COMERCIAL_TABS, CONFIG_TABS, visibleGroups, visibleTabs, type NavAccess } from "./nav";
 
 const GROUP_ICON = { Organizaciones: Building2, "Razones sociales": FileText, Consultas: UserRound, Solicitudes: MessageSquare } as const;
 
@@ -46,9 +46,11 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
 
   const sections = useMemo(
     () =>
-      visibleGroups(access)
-        .flatMap((g) => g.items)
-        .map((i) => ({ group: "Ir a", id: i.href, title: i.label, detail: "", href: i.href })),
+      [
+        ...visibleGroups(access).flatMap((g) => g.items.map((i) => ({ ...i, detail: "" }))),
+        ...visibleTabs(COMERCIAL_TABS, access).map((i) => ({ ...i, detail: "Comercial" })),
+        ...visibleTabs(CONFIG_TABS, access).map((i) => ({ ...i, detail: "Configuración" })),
+      ].map((i) => ({ group: "Ir a", id: i.href, title: i.label, detail: i.detail, href: i.href })),
     [access],
   );
   const list = q.trim().length >= 2 ? hits : sections;

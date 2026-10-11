@@ -25,7 +25,7 @@ import { bottomFor, groupsFor, type Space, type SpaceInput } from "./spaces";
 
 const ROLE_LABEL: Record<string, string> = { dueno: "Dueño", contador: "Contador", colaborador: "Colaborador", titular: "Titular" };
 const HOME = SPACE_HOME;
-const PLAN_HREF = "/admin/plan";
+const PLAN_HREF = "/admin/configuracion/plan";
 
 /**
  * Marco de la app para cualquier pantalla con sesión: arma el menú del

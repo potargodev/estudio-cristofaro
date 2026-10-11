@@ -54,7 +54,7 @@ export const CONNECTORS: ConnectorDefinition[] = [
     reads: ["Clientes", "Empresas"],
     writes: [],
     perOrganization: true,
-    href: "/admin/conexiones/tango",
+    href: "/admin/configuracion/conexiones/tango",
   },
   {
     key: "xubio",
@@ -70,7 +70,7 @@ export const CONNECTORS: ConnectorDefinition[] = [
     reads: ["Clientes", "Comprobantes de venta", "Comprobantes de compra", "Asientos manuales"],
     writes: [],
     perOrganization: true,
-    href: "/admin/conexiones/xubio",
+    href: "/admin/configuracion/conexiones/xubio",
     docs: "https://xubio.com/API/documentation/index.html",
   },
   {
@@ -84,7 +84,7 @@ export const CONNECTORS: ConnectorDefinition[] = [
     reads: ["Archivos de cada carpeta"],
     writes: ["Carpetas por organización"],
     perOrganization: true,
-    href: "/admin/conexiones/google-drive",
+    href: "/admin/configuracion/conexiones/google-drive",
   },
   {
     key: "mcp_externo",
@@ -101,7 +101,7 @@ export const CONNECTORS: ConnectorDefinition[] = [
     reads: ["Herramientas del servidor"],
     writes: ["Solo las herramientas que habilites"],
     perOrganization: false,
-    href: "/admin/conexiones/mcp-externo",
+    href: "/admin/configuracion/conexiones/mcp-externo",
   },
   {
     key: "archivos",
@@ -114,7 +114,7 @@ export const CONNECTORS: ConnectorDefinition[] = [
     reads: ["Clientes", "Comprobantes", "Asientos"],
     writes: [],
     perOrganization: true,
-    href: "/admin/conexiones/archivos",
+    href: "/admin/configuracion/conexiones/archivos",
   },
   ...(
     [

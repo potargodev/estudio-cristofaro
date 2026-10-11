@@ -3,7 +3,7 @@ titulo: Rendiciones de gastos de empleados
 resumen: El empleado carga lo que gastó para la empresa con su ticket, Administración lo aprueba o rechaza y marca el reintegro.
 perfiles: [organizacion, empleado, estudio]
 modulo: shared_expenses
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [grupos-de-gastos/cargar-gastos, organizaciones/roles, grupos-de-gastos/crear-un-grupo]
 ---
 
@@ -37,7 +37,7 @@ Aprueban quienes tienen permiso para gestionar finanzas: **Administrador**, **Di
 3. **Aprobá** o **rechazá**. Al rechazar, podés escribir el motivo.
 4. Cuando devuelvas la plata, marcala como **reintegrada**. Solo se reintegra una rendición aprobada.
 
-Lo aprobado pasa a **Gastos de la empresa**, con su comprobante, y lo ve el estudio en la pestaña **Gastos** de la organización. Cada paso queda en la auditoría.
+Lo aprobado pasa a **Gastos de la empresa**, con su comprobante, y lo ve el estudio en **Resumen → Gastos**, en la ficha de la organización. Cada paso queda en la auditoría.
 
 ## Quién puede rendir
 

@@ -3,7 +3,7 @@ titulo: Cómo encontrar un estudio en la Red
 resumen: La Red de estudios es un directorio público y neutral de estudios y contadores que usan Faro; buscá por zona, rubro y servicio y pedí una propuesta.
 perfiles: [persona, autonomo, organizacion, flota]
 modulo: red_estudios
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [red-de-estudios/resenas, red-de-estudios/perfil-del-estudio, flotas/que-es-una-flota]
 ---
 
@@ -23,7 +23,7 @@ Si necesitás un contador, la **Red de estudios** te muestra los estudios y cont
 
 ## Cómo buscar
 
-1. Entrá a **Red de estudios** (en [/red](/red), o desde **Necesito un contador** en tu panel).
+1. Entrá a **Red de estudios** (en [/red](/red); con cuenta personal, en **Contador → Red de estudios** de tu espacio Personal).
 2. Filtrá por **zona** (localidad, barrio o provincia), **rubro**, **servicio**, **modalidad** o **tamaño**. Los estudios que trabajan en forma remota aparecen aunque estén en otra zona.
 3. Abrí la ficha del estudio que te interese.
 

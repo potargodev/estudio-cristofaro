@@ -24,6 +24,7 @@ export function PageHeader({
   actions,
   tabs,
   eyebrow,
+  level = 1,
   className,
 }: {
   title: React.ReactNode;
@@ -34,15 +35,17 @@ export function PageHeader({
   tabs?: PageTab[];
   /** Texto chico arriba del título (sección o volver) */
   eyebrow?: React.ReactNode;
+  /** 2: encabezado de una pestaña dentro de una sección (Configuración, Comercial) */
+  level?: 1 | 2;
   className?: string;
 }) {
   const items: TabItem[] | undefined = tabs?.map((t) => ({ href: t.href, label: t.label, active: t.active, count: t.count, match: t.match, icon: t.icon ? <t.icon strokeWidth={1.5} aria-hidden /> : undefined }));
   return (
-    <header className={cn("mb-6", className)}>
+    <header className={cn(level === 1 ? "mb-6" : "mb-5", className)}>
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
         <div className="min-w-0 flex-1">
           {eyebrow && <div className="mb-1 text-[13px] text-muted">{eyebrow}</div>}
-          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{title}</h1>
+          {level === 1 ? <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{title}</h1> : <h2 className="text-[18px] font-semibold leading-tight text-ink">{title}</h2>}
           {description && <p className="mt-1 max-w-3xl text-[15px] leading-snug text-muted">{description}</p>}
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}

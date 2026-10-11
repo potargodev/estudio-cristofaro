@@ -3,7 +3,7 @@ titulo: El perfil del estudio en la Red
 resumen: Cómo sumar tu estudio a la Red de estudios, verificar la matrícula y recibir pedidos de propuesta; es opcional y viene en Profesional y Avanzado.
 perfiles: [estudio]
 modulo: red_estudios
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [red-de-estudios/resenas, red-de-estudios/buscar-un-estudio, primeros-pasos/planes, flotas/pedir-propuestas]
 ---
 
@@ -17,7 +17,7 @@ La Red de estudios es un directorio público y neutral donde personas, autónomo
 
 ## Cómo sumarte
 
-1. En el menú, en **Comercial**, entrá a **Red de estudios**.
+1. En el menú, entrá a **Comercial → Perfil en la Red**.
 2. Completá la ficha: bajada, cómo trabajan, **provincia y localidad**, modalidad (presencial, remoto o ambas), **servicios**, **rubros** en los que se especializan, **tamaño**, idiomas, honorarios orientativos, un mail para los pedidos (opcional) y si toman clientes nuevos.
 3. Cargá la **matrícula**: consejo profesional, número y titular.
 4. Tocá **Guardar la ficha** y después **Publicar en la Red**. Para publicar hace falta al menos la localidad y un servicio.
@@ -38,7 +38,7 @@ Si cambiás el consejo, el número o el titular, la matrícula vuelve a **pendie
 
 ## Pedidos de propuesta
 
-Cuando alguien manda **Pedir propuesta** desde tu ficha, se crea un contacto en **Consultas** (tu CRM comercial) con origen «Red de estudios», y le llega un mail al dueño (y al mail de pedidos, si lo cargaste). Lo trabajás como cualquier otra consulta: respondés, agendás una llamada y, si se concreta, la convertís en organización. Los datos de la persona se comparten solo con su consentimiento.
+Cuando alguien manda **Pedir propuesta** desde tu ficha, se crea un contacto en **Comercial → Consultas** (tu CRM comercial) con origen «Red de estudios», y le llega un mail al dueño (y al mail de pedidos, si lo cargaste). Lo trabajás como cualquier otra consulta: respondés, agendás una llamada y, si se concreta, la convertís en organización. Los datos de la persona se comparten solo con su consentimiento.
 
 También vas a poder responder pedidos de [Flotas](/ayuda/flotas/pedir-propuestas) con un precio por integrante según su perfil.
 

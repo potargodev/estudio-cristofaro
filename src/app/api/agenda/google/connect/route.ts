@@ -13,7 +13,7 @@ export async function GET() {
   if (!user || !isStudioRole(user.role) || !user.twoFactorEnabled) {
     return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
   }
-  if (!calendarAvailable()) return NextResponse.redirect(new URL("/admin/agenda?tab=disponibilidad&google=no-configurado", getSiteUrl()));
+  if (!calendarAvailable()) return NextResponse.redirect(new URL("/admin/comercial/agenda?tab=disponibilidad&google=no-configurado", getSiteUrl()));
   const state = randomBytes(24).toString("base64url");
   const res = NextResponse.redirect(calendarAuthUrl(state));
   res.cookies.set("agenda_oauth_state", state, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/api/agenda/google", maxAge: 600 });

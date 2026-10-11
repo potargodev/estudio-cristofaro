@@ -3,7 +3,7 @@ titulo: Cómo pedir y comparar propuestas con tu Flota
 resumen: El Capitán publica el pedido en la Red de estudios, los estudios ofertan un precio por integrante y la Flota compara antes de que cada uno decida.
 perfiles: [persona, autonomo, flota, estudio]
 modulo: flotas
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [flotas/que-es-una-flota, flotas/acuerdos-y-salida, red-de-estudios/buscar-un-estudio]
 ---
 
@@ -38,4 +38,4 @@ Con la propuesta elegida, **cada integrante acepta o no**, por su cuenta. Nadie 
 
 ## Para el estudio
 
-Una Flota es un bloque de clientes con perfiles parecidos, ideal para estandarizar el trabajo. Los pedidos llegan a **Red de estudios → Pedidos de Flotas**, donde cargás el precio por perfil, qué incluye, el mínimo y el preaviso, y podés actualizar tu propuesta. Recibir pedidos requiere tener la ficha visible en la Red (planes Profesional y Avanzado). Ver [El perfil del estudio en la Red](/ayuda/red-de-estudios/perfil-del-estudio).
+Una Flota es un bloque de clientes con perfiles parecidos, ideal para estandarizar el trabajo. Los pedidos llegan a **Comercial → Perfil en la Red → Pedidos de Flotas**, donde cargás el precio por perfil, qué incluye, el mínimo y el preaviso, y podés actualizar tu propuesta. Recibir pedidos requiere tener la ficha visible en la Red (planes Profesional y Avanzado). Ver [El perfil del estudio en la Red](/ayuda/red-de-estudios/perfil-del-estudio).

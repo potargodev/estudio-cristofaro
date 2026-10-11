@@ -15,7 +15,7 @@ const s = (fd: FormData, k: string) => {
   const v = fd.get(k);
   return typeof v === "string" ? v.trim() : "";
 };
-const back = (q: string): never => redirect(`/admin/red?${q}`);
+const back = (q: string): never => redirect(`/admin/comercial/red?${q}`);
 
 async function owner() {
   const me = await requireTenant("studio", TENANT_OWNERS);
@@ -43,7 +43,7 @@ export async function saveRedProfileAction(fd: FormData) {
     licenseHolder: s(fd, "license_holder"),
   });
   await audit({ studioId: me.studioId, actor: me, action: "red.ficha", entityType: "ficha_red", entityId: me.studioId, metadata: { matricula_a_verificar: r.licenseChanged } });
-  revalidatePath("/admin/red");
+  revalidatePath("/admin/comercial/red");
   back(`ok=${encodeURIComponent(r.licenseChanged ? "Ficha guardada. La matrícula queda en verificación." : "Ficha guardada.")}`);
 }
 
@@ -58,7 +58,7 @@ export async function publishRedAction(fd: FormData) {
   }
   await audit({ studioId: me.studioId, actor: me, action: on ? "red.publicar" : "red.despublicar", entityType: "ficha_red", entityId: me.studioId });
   if (on) await recordAcceptance(me, ["red-de-estudios"]);
-  revalidatePath("/admin/red");
+  revalidatePath("/admin/comercial/red");
   back(`ok=${encodeURIComponent(on ? "Publicaste la ficha. Se ve en la Red cuando la matrícula está verificada." : "Sacaste la ficha de la Red.")}`);
 }
 
@@ -74,6 +74,6 @@ export async function respondReviewAction(fd: FormData) {
     throw e;
   }
   await audit({ studioId: me.studioId, actor: me, action: "red.resena_responder", entityType: "resena", entityId: id });
-  revalidatePath("/admin/red");
+  revalidatePath("/admin/comercial/red");
   back("ok=Respuesta%20guardada");
 }

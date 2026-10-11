@@ -146,7 +146,7 @@ async function Stats({ studioId, commercial }: { studioId: string; commercial: b
         delta={{ value: pct(thisMonth.length, prevMonth.length), goodWhen: "up", label: "vs. mes anterior" }}
         hint={`Conversión ${thisMonth.length ? Math.round((won / thisMonth.length) * 100) : 0}%`}
         spark={leadSpark}
-        href="/admin/consultas"
+        href="/admin/comercial/consultas"
       />}
     </div>
   );
@@ -380,7 +380,7 @@ async function Today({ studioId }: { studioId: string }) {
     .orderBy(asc(bookings.starts_at))
     .limit(6);
   return (
-    <Panel title="Agenda" icon={CalendarDays} action={<PanelLink href="/admin/agenda">Ver semana</PanelLink>} bodyClassName="p-0">
+    <Panel title="Agenda" icon={CalendarDays} action={<PanelLink href="/admin/comercial/agenda">Ver semana</PanelLink>} bodyClassName="p-0">
       {rows.length === 0 ? (
         <EmptyState icon={CalendarDays} title="Sin llamadas hoy ni mañana" text="Compartí el link de la agenda para que te reserven 20 minutos." action={{ href: "/agendar", label: "Ver la agenda pública" }} />
       ) : (
@@ -455,7 +455,7 @@ export default async function AdminHome() {
   const first = user.name ? user.name.split(" ")[0] : "";
   return (
     <>
-      <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que pasa hoy en el estudio y lo que necesita tu atención." actions={user.role !== "colaborador" ? <HeaderAction href="/admin/consultas/nueva" label="Cargar consulta" /> : undefined} />
+      <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que pasa hoy en el estudio y lo que necesita tu atención." actions={user.role !== "colaborador" ? <HeaderAction href="/admin/comercial/consultas/nueva" label="Cargar consulta" /> : undefined} />
       <FirstSteps className="mb-6" />
       <div className="grid gap-6">
         <Suspense fallback={<StatRowSkeleton />}>

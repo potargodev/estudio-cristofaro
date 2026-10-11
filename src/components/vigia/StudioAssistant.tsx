@@ -13,7 +13,7 @@ import { TENANT_OWNERS, type StaffUser } from "@/lib/auth";
 import { externalToolMeta } from "@/modules/connectors/mcp-externo/meta";
 import { maxLevel, TOOLS, toolAllowed, type StaffRole } from "@/modules/tools";
 
-const IA_CONFIG = "/admin/ia/configuracion";
+const IA_CONFIG = "/admin/configuracion/ia";
 
 /** Guía de 3 pasos para un estudio sin proveedor de IA */
 function SetupGuide({ isAdmin }: { isAdmin: boolean }) {

@@ -332,10 +332,10 @@ export async function convertLeadToOrganization(fd: FormData) {
     .select()
     .from(leads)
     .where(and(eq(leads.id, leadId), eq(leads.studio_id, staff.studioId)));
-  if (!lead) redirect("/admin/consultas");
+  if (!lead) redirect("/admin/comercial/consultas");
   if (lead.organization_id) redirect(ficha(lead.organization_id));
   const limit = await organizationLimitError(staff.studioId);
-  if (limit) redirect(`/admin/consultas/${lead.id}?error=${encodeURIComponent(limit)}`);
+  if (limit) redirect(`/admin/comercial/consultas/${lead.id}?error=${encodeURIComponent(limit)}`);
 
   let orgId: string | null = null;
   try {
@@ -358,7 +358,7 @@ export async function convertLeadToOrganization(fd: FormData) {
   } catch (error) {
     console.error("[admin] convertLeadToOrganization", error);
   }
-  if (!orgId) redirect(`/admin/consultas/${leadId}?error=convertir`);
+  if (!orgId) redirect(`/admin/comercial/consultas/${leadId}?error=convertir`);
   await audit({
     studioId: staff.studioId,
     organizationId: orgId,
@@ -368,7 +368,7 @@ export async function convertLeadToOrganization(fd: FormData) {
     entityId: orgId,
     metadata: { origen: "consulta", consulta: lead.id },
   });
-  revalidatePath("/admin/consultas");
+  revalidatePath("/admin/comercial/consultas");
   revalidateOrg(orgId);
   redirect(ficha(orgId, "general", "nueva=1"));
 }

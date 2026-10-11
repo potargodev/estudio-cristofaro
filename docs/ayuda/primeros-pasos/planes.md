@@ -3,7 +3,7 @@ titulo: Planes y precios de Faro
 resumen: Qué planes hay para personas, autónomos y estudios, cuánto cuestan, cómo funciona la prueba gratis y cómo pedir un cambio de plan.
 perfiles: [persona, autonomo, estudio]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [primeros-pasos/registro, primeros-pasos/primeros-pasos-estudio, red-de-estudios/perfil-del-estudio]
 ---
 
@@ -45,7 +45,7 @@ La facturación con ARCA, Bitácora y WhatsApp están **en camino**: en **Plan y
 
 ## Ver tu plan y pedir un cambio
 
-1. En el menú, entrá a **Plan y facturación** (en tu cuenta personal también está en **Mi cuenta**).
+1. Abrí el menú de tu cuenta (tus iniciales, arriba a la derecha) y entrá a **Plan y facturación**. En el estudio también está en **Configuración → Plan y módulos**.
 2. Ves tu plan, los días de prueba que quedan, el uso de cada límite y los otros planes en pesos.
 3. En el plan que querés, tocá **Quiero mejorar mi plan**.
 

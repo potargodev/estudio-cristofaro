@@ -9,5 +9,5 @@ import { moduleAvailability } from "./entitlements";
  */
 export async function requireModule(studioId: string, key: FaroModuleKey) {
   const a = await moduleAvailability(studioId, key);
-  if (a.state !== "activo") redirect(`/admin/modulos/${key}`);
+  if (a.state !== "activo") redirect(`/admin/configuracion/modulos/${key}`);
 }

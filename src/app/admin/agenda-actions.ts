@@ -35,7 +35,7 @@ export async function saveAvailability(fd: FormData) {
   const clamp = (v: string, min: number, max: number, def: number) =>
     Number.isFinite(Number(v)) && v !== "" ? Math.min(max, Math.max(min, Math.trunc(Number(v)))) : def;
   const url = s(fd, "manual_meeting_url");
-  if (url && !/^https:\/\/\S+$/i.test(url)) redirect("/admin/agenda?tab=disponibilidad&error=link");
+  if (url && !/^https:\/\/\S+$/i.test(url)) redirect("/admin/comercial/agenda?tab=disponibilidad&error=link");
   const values = {
     studio_id: staff.studioId,
     active: fd.get("active") !== null,
@@ -71,17 +71,17 @@ export async function saveAvailability(fd: FormData) {
       bloqueados: values.blocked_dates.length,
     },
   });
-  revalidatePath("/admin/agenda");
+  revalidatePath("/admin/comercial/agenda");
   revalidatePath("/agendar");
-  redirect("/admin/agenda?tab=disponibilidad&guardado=1");
+  redirect("/admin/comercial/agenda?tab=disponibilidad&guardado=1");
 }
 
 export async function disconnectGoogleCalendar() {
   const staff = await requireStaff();
   await disconnectCalendar(staff.id);
   await audit({ studioId: staff.studioId, actor: staff, action: "agenda.google_desconectar", entityType: "usuario", entityId: staff.id });
-  revalidatePath("/admin/agenda");
-  redirect("/admin/agenda?tab=disponibilidad&google=desconectado");
+  revalidatePath("/admin/comercial/agenda");
+  redirect("/admin/comercial/agenda?tab=disponibilidad&google=desconectado");
 }
 
 export async function cancelBookingAsStaff(fd: FormData) {
@@ -94,6 +94,6 @@ export async function cancelBookingAsStaff(fd: FormData) {
       .where(and(eq(bookings.id, id), eq(bookings.studio_id, staff.studioId)));
     if (b) await cancelBooking(b, null, staff.email, staff);
   }
-  revalidatePath("/admin/agenda");
-  redirect(`/admin/agenda?${s(fd, "back") || ""}&cancelada=1`);
+  revalidatePath("/admin/comercial/agenda");
+  redirect(`/admin/comercial/agenda?${s(fd, "back") || ""}&cancelada=1`);
 }

@@ -354,7 +354,7 @@ export async function signAgreement(me: Me, proposalId: string, signedName: stri
     await sendMail({
       to: owners.map((o) => o.email),
       subject: `${me.name} firmó un acuerdo por la Flota «${x.fleet.name}»`,
-      html: mailLayout("Nuevo acuerdo de servicio", `<p><strong>${esc(me.name)}</strong> (${esc(me.email)}) aceptó tu propuesta para la Flota <strong>${esc(x.fleet.name)}</strong> como ${esc(profileLabel(x.member.profile))}. Ya está en tus organizaciones.</p>`, { href: `${getSiteUrl()}/admin/red/flotas`, label: "Ver acuerdos" }, "Faro"),
+      html: mailLayout("Nuevo acuerdo de servicio", `<p><strong>${esc(me.name)}</strong> (${esc(me.email)}) aceptó tu propuesta para la Flota <strong>${esc(x.fleet.name)}</strong> como ${esc(profileLabel(x.member.profile))}. Ya está en tus organizaciones.</p>`, { href: `${getSiteUrl()}/admin/comercial/red/flotas`, label: "Ver acuerdos" }, "Faro"),
     }).catch(() => undefined);
   return { agreementId: a.id, organizationId: org.id, studioId: x.p.studio_id };
 }

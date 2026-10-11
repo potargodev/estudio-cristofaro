@@ -1,0 +1,57 @@
+import { and, eq } from "drizzle-orm";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { AdminPageHeader, Notice } from "@/components/admin/AdminField";
+import { PostForm } from "@/components/admin/PostForm";
+import { getDb } from "@/db";
+import { posts } from "@/db/schema";
+import { requireOperator } from "@/lib/auth";
+import { isUuid } from "@/lib/ids";
+import { adminButton } from "@/components/admin/styles";
+
+export const metadata: Metadata = { title: "Editar novedad" };
+
+export default async function EditarNovedadPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ guardado?: string; error?: string }>;
+}) {
+  const { id } = await params;
+  const { guardado, error } = await searchParams;
+  const { studioId } = await requireOperator();
+  if (!isUuid(id)) notFound();
+  const [post] = await getDb()
+    .select()
+    .from(posts)
+    .where(and(eq(posts.id, id), eq(posts.studio_id, studioId)));
+  if (!post) notFound();
+
+  return (
+    <div className="max-w-3xl">
+      <Link href="/admin/configuracion/sitio/novedades" className="text-sm text-ink underline underline-offset-4 hover:text-rose-deep">
+        Novedades
+      </Link>
+      <div className="mt-2">
+        <AdminPageHeader level={2} title="Editar novedad">
+          {post.published && (
+            <Link href={`/novedades/${post.slug}`} target="_blank" className={adminButton.secondary}>
+              Ver en la web
+            </Link>
+          )}
+        </AdminPageHeader>
+      </div>
+      {guardado && (
+        <Notice>Cambios guardados.</Notice>
+      )}
+      {error && (
+        <div className="mb-4">
+          <Notice tone="error">{error === "titulo" ? "El título es obligatorio." : "Ya existe una novedad con esa URL. Cambiala."}</Notice>
+        </div>
+      )}
+      <PostForm post={post} />
+    </div>
+  );
+}

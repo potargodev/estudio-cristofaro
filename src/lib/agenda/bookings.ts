@@ -121,7 +121,7 @@ async function mailHost(kind: "nueva" | "reprogramada" | "cancelada", b: Booking
     html: mailLayout(
       subject,
       `${details(b, h)}<p>${esc(b.name)} · ${esc(b.email)}${b.phone ? ` · ${esc(b.phone)}` : ""}</p>${b.meet_url ? meetBlock(b) : "<p>No hay link de videollamada: mandáselo al cliente.</p>"}`,
-      { href: `${getSiteUrl()}/admin/agenda`, label: "Ver la agenda" },
+      { href: `${getSiteUrl()}/admin/comercial/agenda`, label: "Ver la agenda" },
     ),
   });
 }
