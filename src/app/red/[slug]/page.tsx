@@ -1,4 +1,4 @@
-import { BadgeCheck, Clock, Languages, MapPin, Star, Users, Wallet } from "lucide-react";
+import { BadgeCheck, CalendarClock, Clock, Languages, MapPin, Star, Users, Wallet } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -119,6 +119,11 @@ export default async function EstudioRedPage({ params }: { params: Params }) {
             <p className="mt-1 text-[14px] text-muted">Este estudio no está tomando clientes nuevos por ahora.</p>
           )}
         </div>
+        {x.p.accepting_clients && (
+          <Link href={`/red/${x.slug}/agendar`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface text-[15px] font-medium text-ink hover:border-navy">
+            <CalendarClock className="size-4" aria-hidden /> Agendar llamada
+          </Link>
+        )}
       </aside>
     </div>
   );

@@ -65,3 +65,31 @@ export function responseLabel(h: number | null | undefined) {
   if (h <= 24) return `Responde en ${Math.round(h)} h en promedio`;
   return `Responde en ${Math.round(h / 24)} días en promedio`;
 }
+
+/** Centro aproximado de cada provincia (lat, lng) para el mapa de la Red */
+export const PROVINCE_COORDS: Record<(typeof PROVINCES)[number], [number, number]> = {
+  CABA: [-34.6, -58.4],
+  "Buenos Aires": [-36.7, -60.5],
+  Catamarca: [-27.3, -66.9],
+  Chaco: [-26.4, -60.8],
+  Chubut: [-43.8, -68.5],
+  Córdoba: [-31.4, -64.2],
+  Corrientes: [-28.8, -57.9],
+  "Entre Ríos": [-32.0, -59.2],
+  Formosa: [-24.9, -60.0],
+  Jujuy: [-23.3, -65.7],
+  "La Pampa": [-37.1, -65.4],
+  "La Rioja": [-29.7, -67.2],
+  Mendoza: [-34.6, -68.5],
+  Misiones: [-26.9, -54.6],
+  Neuquén: [-38.6, -70.1],
+  "Río Negro": [-40.0, -67.3],
+  Salta: [-24.8, -65.4],
+  "San Juan": [-30.9, -68.9],
+  "San Luis": [-33.7, -66.0],
+  "Santa Cruz": [-48.8, -69.9],
+  "Santa Fe": [-30.7, -60.9],
+  "Santiago del Estero": [-27.8, -63.3],
+  "Tierra del Fuego": [-54.3, -67.7],
+  Tucumán: [-26.9, -65.3],
+};

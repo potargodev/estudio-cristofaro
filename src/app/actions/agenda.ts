@@ -6,6 +6,7 @@ import { bookingByToken, cancelBooking, createBooking, rescheduleBooking } from 
 import { findSlot, getHosts } from "@/lib/agenda/slots";
 import { fmtDateTime, fmtTime } from "@/lib/agenda/time";
 import { getStudioId } from "@/lib/data";
+import { publicProfile } from "@/modules/red/server";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 // Agenda pública (/agendar y el link para reprogramar o cancelar). El horario
@@ -39,7 +40,9 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
   if (!rateLimit(`agenda:${clientIp(await headers())}`, 5, 10 * 60_000)) {
     return { ok: false, message: "Agendaste varias veces seguidas. Probá en unos minutos o escribinos por WhatsApp." };
   }
-  const studioId = await getStudioId();
+  // Desde la Red: el estudio sale del perfil público (verificado y visible), nunca de un ID del navegador
+  const red = s(fd, "red");
+  const studioId = red ? ((await publicProfile(red))?.studioId ?? null) : await getStudioId();
   if (!studioId) return { ok: false, message: "La agenda no está disponible en este momento." };
   const slot = await findSlot(await getHosts(studioId, { publicOnly: true }), start);
   if (!slot)
@@ -53,7 +56,7 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
     email: email!,
     phone: s(fd, "phone"),
     company: s(fd, "company"),
-    reason: s(fd, "reason"),
+    reason: red ? `Desde la Red de estudios${s(fd, "reason") ? `: ${s(fd, "reason")}` : ""}` : s(fd, "reason"),
     origin: "web",
   });
   if (fd.get("inline") === "1") {
@@ -63,7 +66,7 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
       booking: { when: fmtDateTime(slot.start), until: fmtTime(slot.end), email: email!, meetUrl: b?.meet_url ?? null, ics: `/api/agenda/ics/${token}`, manage: `/agenda/gestionar/${token}` },
     };
   }
-  redirect(`/agendar/confirmada?t=${token}`);
+  redirect(red ? `/red/${encodeURIComponent(red)}/agendar?t=${token}` : `/agendar/confirmada?t=${token}`);
 }
 
 export async function rescheduleCall(_prev: BookingState, fd: FormData): Promise<BookingState> {

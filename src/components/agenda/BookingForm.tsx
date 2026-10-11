@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { SlotPicker, type PickerDay } from "./SlotPicker";
 
 /** Formulario de /agendar: horario + datos de contacto */
-export function BookingForm({ days, initial }: { days: PickerDay[]; initial?: string }) {
+export function BookingForm({ days, initial, red }: { days: PickerDay[]; initial?: string; /** Slug del estudio cuando se agenda desde la Red */ red?: string }) {
   const [state, action, pending] = useActionState<BookingState, FormData>(bookCall, { ok: false });
   const e = state.errors ?? {};
   return (
     <form action={action} className="relative grid gap-8">
       <Honeypot />
+      {red && <input type="hidden" name="red" value={red} />}
       <section className="border-t border-line pt-8">
         <h2 className="mb-6 flex items-baseline gap-4 font-display text-3xl"><span className="tabular text-[13px] font-sans text-rose-deep">01</span>Elegí día y horario</h2>
         <SlotPicker days={days} error={e.start} initial={initial} />

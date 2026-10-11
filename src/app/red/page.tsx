@@ -6,6 +6,8 @@ import { FILE_TEMPLATES, INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { markStep } from "@/modules/onboarding/server";
 import { labelOf, MODALITIES, RED_SERVICES, responseLabel, TEAM_SIZES } from "@/modules/red/catalog";
 import { publicDirectory } from "@/modules/red/server";
+import { StudiosMap } from "@/components/red/StudiosMap";
+import { SectionTabs } from "@/components/app/SectionTabs";
 
 export const metadata: Metadata = { title: "Red de estudios", description: "Directorio neutral de estudios contables que usan Faro: matrícula verificada, reseñas de clientes reales y orden sin posiciones pagas." };
 export const dynamic = "force-dynamic";
@@ -21,6 +23,12 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
     servicio: pick("servicio", RED_SERVICES.map((s) => s.key)),
     modalidad: pick("modalidad", MODALITIES.map((m) => m.key)),
     tamano: pick("tamano", TEAM_SIZES.map((t) => t.key)),
+  };
+  const mapa = sp.vista === "mapa";
+  const viewHref = (v: "lista" | "mapa") => {
+    const q = new URLSearchParams(Object.entries(filters).filter((e): e is [string, string] => !!e[1]));
+    if (v === "mapa") q.set("vista", "mapa");
+    return `/red${q.size ? `?${q}` : ""}`;
   };
   const [list] = await Promise.all([publicDirectory(filters), markStep("red").catch(() => undefined)]);
   return (
@@ -74,6 +82,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
           </select>
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-6">
+          {mapa && <input type="hidden" name="vista" value="mapa" />}
           <button type="submit" className="h-10 rounded-md bg-navy px-5 text-[14px] font-medium text-paper hover:bg-night">
             Buscar
           </button>
@@ -89,6 +98,12 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
           Cómo ordenamos
         </Link>
       </p>
+      <SectionTabs label="Cómo ver los estudios" className="mt-4" tabs={[{ href: viewHref("lista"), label: "Lista", active: !mapa }, { href: viewHref("mapa"), label: "Mapa", active: mapa }]} />
+      {mapa ? (
+        <div className="mt-4">
+          <StudiosMap items={list.map((x) => ({ studioId: x.studioId, slug: x.slug, name: x.name, province: x.profile.province }))} />
+        </div>
+      ) : (
       <ul className="mt-4 grid gap-4 md:grid-cols-2">
         {list.map((x) => (
           <li key={x.studioId}>
@@ -128,6 +143,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
           </li>
         ))}
       </ul>
+      )}
       <section className="mt-12 rounded-lg border border-line bg-surface p-5 text-[14px] text-muted">
         <h2 className="text-[16px] font-semibold text-ink">¿Sos de un estudio?</h2>
         <p className="mt-1">
