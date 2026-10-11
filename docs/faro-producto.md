@@ -405,7 +405,7 @@ Los precios son de referencia y se editan desde el Faro Manager (USD con convers
 
 ## 6. Hoja de ruta
 
-**Orden de trabajo acordado (octubre 2026):** MVP personal (hecho) → esqueleto de navegación (§2.o, hecho) → F3 ARCA + Faro Personal (hecha) → F8 Bitácora completa (hecha) → F6 Lectura inteligente (hecha) → F7 Cobros → F5 Empleados → F4 Flujos → F9 → **pulido final de experiencia** (espaciados, densidad, ritmo visual y microinteracciones, sobre la app completa). Cada módulo nuevo entra respetando §2.o.
+**Orden de trabajo acordado (octubre 2026):** MVP personal (hecho) → esqueleto de navegación (§2.o, hecho) → F3 ARCA + Faro Personal (hecha) → F8 Bitácora completa (hecha) → F6 Lectura inteligente (hecha) → F7 Cobros (hecha) → F5 Empleados → F4 Flujos → F9 → **pulido final de experiencia** (espaciados, densidad, ritmo visual y microinteracciones, sobre la app completa). Cada módulo nuevo entra respetando §2.o.
 
 **Prioridad actual · MVP personal (antes de seguir con el resto):** Vigía (§2.m) + Bitácora básica (gastos e ingresos diarios, categorías, tablero simple) + Grupos de gastos con amigos, operativos de punta a punta en staging, más la landing de Faro en `app.estudiocristofaro.com/faro`. Precios de personas y autónomos de referencia: Plus USD 4/mes, Pro USD 9/mes.
 1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Inicial), landing de Faro y mención de Faro en la web de Cristofaro.
@@ -414,6 +414,6 @@ Los precios son de referencia y se editan desde el Faro Manager (USD con convers
 4. **F4 · Flujos:** canvas, motor de ejecución y plantillas.
 5. **F5 · Empleados:** legajo, recibos masivos con firma y comunicación interna.
 6. **F6 · Lectura inteligente** y conciliación bancaria ✅ *hecha (octubre 2026, contra simuladores; falta autorizar WSCDC en la CUIT de Faro y configurar un modelo con visión, ver docs/pendientes-configuracion.md)*.
-7. **F7 · Cobranza** de honorarios y suscripciones de Faro (Mercado Pago).
+7. **F7 · Cobranza** de honorarios y suscripciones de Faro (Mercado Pago) ✅ *hecha (octubre 2026, contra el simulador; faltan las credenciales y webhooks de producción de Faro y de cada estudio, ver docs/pendientes-configuracion.md)*. Incluye débito individual de flotas y links de pago en facturas de Faro Personal.
 8. **F8 · Bitácora** ✅ *hecha (octubre 2026, contra simuladores; faltan la app de Mercado Pago, la verificación de Gmail y la serie del IPC, ver docs/pendientes-configuracion.md)* (finanzas personales): captura por audio, mails, Mercado Pago, coach y metas; sobres, fijos, fugas, valores reales, importación, hogar compartido y planes Gratis y Plus.
 9. **F9 · Cartera y tareas**, WhatsApp y marca blanca.

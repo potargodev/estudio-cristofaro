@@ -67,3 +67,26 @@ Sin esto, la lectura funciona igual y valida el CUIT con el padrón y el CAE sol
 ### Importación en Tango y Xubio
 **Qué falta:** probar el archivo «Tango» en el asistente de importación de comprobantes de compras de una instalación real y ajustar el mapeo de columnas si hiciera falta; ídem la planilla en el importador de compras de Xubio.
 **Quién:** Estudio Cristofaro (cliente cero) con su Tango.
+
+## Cobros con Mercado Pago (F7)
+
+### Cuenta de Mercado Pago de Faro (suscripciones de los planes) — prioridad alta
+**Qué falta:** la aplicación de Mercado Pago de Faro en producción, con suscripciones (preapproval) y webhooks.
+**Quién:** el equipo de Faro (owner).
+**Paso a paso:**
+1. En https://www.mercadopago.com.ar/developers/panel/app crear (o reusar) la aplicación «Faro» y activar las credenciales de producción.
+2. En Webhooks configurar `https://app.estudiocristofaro.com/api/mercadopago/webhook?cuenta=faro` con los eventos «Pagos» y «Planes y suscripciones», y copiar la **clave secreta**.
+3. En Faro Manager → Plataforma → Mercado Pago pegar el access token de producción y la clave secreta y tocar **Guardar y probar** (o cargar `MP_ACCESS_TOKEN` y `MP_WEBHOOK_SECRET` en Easypanel).
+4. Hacer una suscripción real de prueba con un tenant propio y verificar en «Últimos webhooks» que llegue «procesado».
+5. Definir quién emite la factura de Faro por la suscripción (hoy el cobro no genera factura automática).
+
+### Cuenta de Mercado Pago de cada estudio (honorarios y débitos de flotas)
+**Qué falta:** que cada estudio conecte su cuenta.
+**Quién:** el dueño de cada estudio (para Estudio Cristofaro, el cliente cero).
+**Paso a paso:** Honorarios → Configuración → pegar el access token de su aplicación de Mercado Pago y la clave secreta de webhooks, y en Mercado Pago configurar la URL que muestra la pantalla (`…/api/mercadopago/webhook?cuenta=<id del estudio>`).
+
+### Autónomos que cobran sus facturas
+Igual que el estudio, desde Facturación → Ajustes → Cobrar tus facturas con Mercado Pago.
+
+### SMTP
+Los cobros, recordatorios y avisos de suscripción salen por mail: sin SMTP solo quedan en la campanita.

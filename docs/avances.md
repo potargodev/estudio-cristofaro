@@ -67,3 +67,23 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Autorizar `wscdc` en la CUIT de Faro, configurar un modelo con visión y probar los archivos de Tango y Xubio en instalaciones reales (ver pendientes).
+
+## F7 · Cobros (octubre 2026)
+
+**Qué quedó**
+- **Mercado Pago** (`src/modules/billing/mp.ts`): Checkout Pro (preferencias), suscripciones (preapproval), consulta de pagos; cuentas de Faro y de cada tenant cifradas (`mp_accounts`); simulador en `mocks/mercadopago` (ahora respeta `notification_url`).
+- **Webhooks** (`/api/mercadopago/webhook`): firma x-signature con antigüedad máxima, consulta del pago a la API, idempotencia por pago (`mp_payments`), registro de cada evento (`webhook_events`) y despacho por `external_reference` validando la cuenta dueña. Auditoría de cada cambio.
+- **Suscripciones de Faro** (`faro_subscriptions`): prueba de 30 días con el primer débito al terminar, mensual o anual (2 meses bonificados), subas inmediatas y bajas al final del período, cancelación al final del período, cobro fallido con 7 días de gracia, suspensión y reactivación pagando desde la pantalla de cuenta suspendida; personas y autónomos vuelven a Gratis. «Plan y facturación» con el panel de suscripción y pagos. Faro Manager: **Tenants → Suscripciones** (ingresos del mes, ingreso recurrente, altas, bajas, morosas, suspendidas) y **Plataforma → Mercado Pago** (cuenta y últimos webhooks).
+- **Honorarios** (ítem del grupo Negocio, módulo `billing`): abonos por organización con ajuste por porcentaje o IPC, cargos del mes (solos el día 1 o a mano) y sueltos, envío del cobro con link de Mercado Pago (cuenta del estudio), recordatorios escalonados, marcar pagado o anular, y **factura del estudio por ARCA** reusando F3 (borrador para emitir con confirmación).
+- **Portal → Empresa → Estado de cuenta** (con `finanzas.ver`): pendiente, vencido y pagado, con el botón Pagar.
+- **Flotas**: débito automático individual de la cuota en la cuenta del estudio y pago del saldo o de la liquidación final, solo por lo propio; la baja corta el débito.
+- **Faro Personal**: link de pago en las facturas autorizadas (PDF y mail) con la cuenta del autónomo; el webhook la marca pagada.
+- Vigía: `estado_de_cuenta`, `cobros_pendientes` (lectura) y `enviar_cobro` (sensible → Aprobaciones). Tareas cada hora (`COBROS_JOBS`). Dos artículos de ayuda nuevos (categoría Cobros y honorarios) y tres actualizados.
+
+**Qué se probó**
+- `npm test` (68): firma de webhooks, referencias, estados de la suscripción, fechas y precios, ajuste de abonos, recordatorios y liquidación de flotas.
+- `scripts/pruebas/cobros-navegador.mjs` (43/43, 390 px) contra el simulador: cuenta de Faro, suscripción completa (débito, pago, webhook repetido, rechazo, gracia, pago del saldo, cancelación), Faro Manager, honorarios (cuenta del estudio, abono con ajuste, cargos sin duplicar, envío, factura en ARCA, pago desde el portal), permisos del portal y del estudio, débito de una flota, link de pago de una factura personal, firma inválida y auditoría.
+- `scripts/pruebas/cobros-servidor.mts` (19/19): suspensión por mora, gracia, cancelación al final del período, vuelta a Gratis, aviso de fin de prueba sin repetir, recordatorios escalonados sin repetir y apagables, herramientas del Vigía con Aprobaciones, aislamiento forzando IDs y webhooks cruzados o repetidos.
+
+**Qué falta configurar**
+- Credenciales y webhooks de producción de la cuenta de Faro y de cada estudio; SMTP (ver pendientes).
