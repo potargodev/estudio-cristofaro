@@ -170,7 +170,7 @@ async function guardRead(s: DocScope) {
 }
 
 /** Sube un archivo y lo lee (o reusa la lectura si es exactamente el mismo archivo) */
-export async function readUpload(s: DocScope, actor: Actor, file: File, source: "subida" | "portal" | "vigia" = "subida") {
+export async function readUpload(s: DocScope, actor: Actor, file: File, source: "subida" | "portal" | "vigia" | "whatsapp" = "subida") {
   const check = await checkUpload(file);
   if (!check.ok) throw new SmartDocError(check.error);
   const data = new Uint8Array(await file.arrayBuffer());

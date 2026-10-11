@@ -27,7 +27,8 @@ export type NavIcon =
   | "configuracion"
   | "seguridad"
   | "honorarios"
-  | "tareas";
+  | "tareas"
+  | "avanzado";
 export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
 
 export interface NavItem {
@@ -88,6 +89,8 @@ export const CONFIG_TABS: NavItem[] = [
   { href: "/admin/configuracion/rubros", label: "Rubros y plantillas", icon: "rubros", module: "industries" },
   { href: "/admin/configuracion/sitio", label: "Sitio web", icon: "contenidos", operatorOnly: true, siteOnly: true },
   { href: "/admin/configuracion/seguridad", label: "Seguridad", icon: "seguridad", personal: true },
+  // F9: marca blanca y WhatsApp del estudio (plan Avanzado)
+  { href: "/admin/configuracion/avanzado", label: "Avanzado", icon: "avanzado", adminOnly: true },
 ];
 
 export const NAV_GROUPS: NavGroup[] = [

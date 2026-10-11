@@ -27,7 +27,7 @@ Si necesitás un contador, la **Red de estudios** te muestra los estudios y cont
 2. Filtrá por **zona** (localidad, barrio o provincia), **rubro**, **servicio**, **modalidad** o **tamaño**. Los estudios que trabajan en forma remota aparecen aunque estén en otra zona.
 3. Abrí la ficha del estudio que te interese.
 
-La vista de mapa llega más adelante.
+Con la pestaña **Mapa** ves los mismos resultados sobre el mapa de la Argentina, agrupados por provincia; tocá un punto o un nombre para abrir la ficha. Los filtros se mantienen al cambiar entre **Lista** y **Mapa**.
 
 ## Un orden neutral
 
@@ -35,7 +35,11 @@ El orden se basa **solo en criterios objetivos**: reseñas de clientes verificad
 
 ## Pedir una propuesta
 
-En la ficha, completá **Pedir propuesta**: tu nombre, email, teléfono (opcional), qué sos (monotributista, responsable inscripto, una sociedad…) y qué necesitás. Tenés que tildar que aceptás compartir esos datos con el estudio. El estudio recibe tu pedido como una consulta y te responde por mail. Agendar una llamada con la agenda del estudio llega más adelante.
+En la ficha, completá **Pedir propuesta**: tu nombre, email, teléfono (opcional), qué sos (monotributista, responsable inscripto, una sociedad…) y qué necesitás. Tenés que tildar que aceptás compartir esos datos con el estudio. El estudio recibe tu pedido como una consulta y te responde por mail.
+
+## Agendar una llamada
+
+Si el estudio toma clientes nuevos, en su ficha aparece **Agendar llamada**: elegís un día y un horario de su agenda, dejás tus datos y te llega la confirmación por mail con el link de la videollamada y un archivo para tu calendario. Desde ese mail podés reprogramarla o cancelarla. Si el estudio no tiene horarios libres, pedile una propuesta.
 
 Tus datos se comparten solo si vos lo aceptás, y podés revocar ese permiso. Si llegás a un acuerdo, pasás a ser cliente del estudio en Faro sin migrar nada: lo que ya cargaste sigue ahí.
 

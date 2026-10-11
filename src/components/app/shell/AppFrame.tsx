@@ -1,3 +1,4 @@
+import { portalBrand, type PortalBrand } from "@/modules/white-label/server";
 import { and, count, eq, gte, inArray, lte, notInArray } from "drizzle-orm";
 import { signOut } from "@/app/admin/actions";
 import { endAssistedAccess } from "@/app/faro-manager/actions";
@@ -42,6 +43,7 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
   const badges: Record<string, number> = {};
   let spaceName = "Faro";
   let studioBrand: string | null = null;
+  let brand: PortalBrand | null = null;
   let roleLabel = ROLE_LABEL[user.role] ?? user.role;
   const [studio] = await db.select({ name: studios.name, slug: studios.slug }).from(studios).where(eq(studios.id, user.studioId));
 
@@ -81,7 +83,9 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
       spaceName = current.organizationName;
       roleLabel = ORG_ROLE_LABELS[current.role];
     } else input.portal = { main: [], empresa: [] };
-    studioBrand = studio?.name ?? null;
+    // Marca blanca del estudio (si la tiene activa y está en su plan)
+    brand = await portalBrand(user.studioId);
+    studioBrand = brand?.name ?? studio?.name ?? null;
   } else {
     const [[pr], red] = await Promise.all([db.select({ n: count() }).from(plan_requests).where(eq(plan_requests.status, "pendiente")), moderationCounts()]);
     badges.planRequests = pr?.n ?? 0;
@@ -133,6 +137,8 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
         links={links}
         vigiaBadge={vigiaBadge}
         studioBrand={studioBrand}
+        studioLogo={brand?.logoUrl ?? null}
+        brandVars={brand?.vars ?? null}
         collapsedInitial={prefs.sidebar === "collapsed"}
         studioAccess={space === "studio" ? input.studio : null}
         assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}

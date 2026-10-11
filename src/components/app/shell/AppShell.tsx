@@ -144,6 +144,9 @@ export interface ShellProps {
   vigiaBadge: ShellBadge;
   /** Portal: la marca del estudio ("Con tecnología de Faro") */
   studioBrand?: string | null;
+  /** Marca blanca (F9): logo y colores del estudio en el portal */
+  studioLogo?: string | null;
+  brandVars?: Record<string, string> | null;
   collapsedInitial: boolean;
   /** Estudio: buscador (Cmd/Ctrl+K), "Preguntar a Faro" y acción principal */
   studioAccess?: NavAccess | null;
@@ -347,7 +350,12 @@ export function AppShell(p: ShellProps) {
     <Link href={p.home} className="flex min-w-0 items-center gap-3" aria-label={`${p.spaceName} · Inicio`}>
       {p.studioBrand ? (
         <span className="flex min-w-0 items-center gap-2.5">
-          <Sello className="size-9 shrink-0 text-rose-light" title={p.studioBrand} />
+          {p.studioLogo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={p.studioLogo} alt="" className="h-9 w-auto max-w-[120px] shrink-0 object-contain" />
+          ) : (
+            <Sello className="size-9 shrink-0 text-rose-light" title={p.studioBrand} />
+          )}
           {!small && (
             <span className="min-w-0 leading-tight">
               <span className="block truncate font-display text-[17px] text-paper">{p.studioBrand}</span>
@@ -366,7 +374,7 @@ export function AppShell(p: ShellProps) {
   const pad = cn("motion-safe:transition-[padding] motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "lg:pl-0" : "lg:pl-[248px]");
 
   return (
-    <div className={cn("admin-shell app-ui min-h-dvh bg-canvas text-ink", collapsed && "lg:[--app-top:calc(var(--header-h)*2)]")}>
+    <div className={cn("admin-shell app-ui min-h-dvh bg-canvas text-ink", collapsed && "lg:[--app-top:calc(var(--header-h)*2)]")} style={p.brandVars ? (p.brandVars as React.CSSProperties) : undefined}>
       {/* Escritorio expandido: barra lateral (siempre oscura) */}
       <LazyMotion features={domMax}>
       <LayoutGroup id="shell-nav">

@@ -14,6 +14,7 @@ import { flujosTools } from "./modulos/flujos";
 import { tareasTools } from "./modulos/tareas";
 import { consultasIaTools } from "./modulos/consultas-ia";
 import { indicadoresTools } from "./modulos/indicadores";
+import { whatsappTools } from "./modulos/whatsapp";
 import { gastosTools } from "./modulos/gastos";
 import { industriasTools } from "./modulos/industrias";
 import { organizacionesTools } from "./modulos/organizaciones";
@@ -43,6 +44,7 @@ export const TOOLS: ToolDefinition[] = [
   ...tareasTools,
   ...consultasIaTools,
   ...indicadoresTools,
+  ...whatsappTools,
 ];
 
 const BY_NAME = new Map(TOOLS.map((t) => [t.name, t]));

@@ -1,4 +1,4 @@
-import { Blocks, CalendarDays, Factory, Globe, Network, Plug, ShieldCheck, Sparkles, UserRound, Users, type LucideIcon } from "lucide-react";
+import { Blocks, CalendarDays, Factory, Globe, Network, Plug, ShieldCheck, SlidersHorizontal, Sparkles, UserRound, Users, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { itemEnabled, visibleTabs, type NavAccess, type NavIcon, type NavItem } from "@/components/admin/shell/nav";
 
@@ -13,6 +13,7 @@ const ICON: Partial<Record<NavIcon, LucideIcon>> = {
   rubros: Factory,
   contenidos: Globe,
   seguridad: ShieldCheck,
+  avanzado: SlidersHorizontal,
 };
 
 /**

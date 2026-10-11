@@ -41,6 +41,21 @@ function trustedOrigins(): string[] {
   return [...origins];
 }
 
+// Marca blanca (F9): los dominios propios verificados de los estudios también
+// son orígenes de confianza (el ingreso al portal se pide desde ahí). Caché corta.
+let customOrigins: { at: number; list: string[] } = { at: 0, list: [] };
+async function verifiedCustomOrigins() {
+  if (Date.now() - customOrigins.at < 60_000) return customOrigins.list;
+  try {
+    const { studio_branding } = await import("@/db/schema");
+    const rows = await getDb().select({ d: studio_branding.custom_domain }).from(studio_branding).where(eq(studio_branding.domain_status, "verificado"));
+    customOrigins = { at: Date.now(), list: rows.filter((r) => r.d).map((r) => `https://${r.d}`) };
+  } catch {
+    customOrigins = { at: Date.now(), list: customOrigins.list };
+  }
+  return customOrigins.list;
+}
+
 /** Códigos de error que ve la persona (los traducen las pantallas de login) */
 export const AUTH_ERRORS = {
   SIN_INVITACION: "Ese email no tiene una invitación vigente. Pedile a quien administra tu organización (o al estudio) que te invite.",
@@ -125,7 +140,7 @@ function createAuth() {
     appName: "Faro",
     // Sin BETTER_AUTH_URL se usa SITE_URL
     baseURL: process.env.BETTER_AUTH_URL?.trim() || getSiteUrl(),
-    trustedOrigins: trustedOrigins(),
+    trustedOrigins: async () => [...trustedOrigins(), ...(await verifiedCustomOrigins())],
     secret: process.env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
       provider: "pg",

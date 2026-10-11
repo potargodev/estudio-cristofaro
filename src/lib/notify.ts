@@ -60,6 +60,17 @@ const EVENT_PERMISSION: Record<ClientEvent["kind"], Permission> = {
 };
 
 export async function notifyOrganization(studioId: string, organizationId: string, event: ClientEvent) {
+  // WhatsApp (F9): el mismo aviso a quienes verificaron su número y aceptaron avisos
+  void import("@/modules/whatsapp/server")
+    .then((w) =>
+      w.notifyOrgWhatsApp(
+        studioId,
+        organizationId,
+        event.kind,
+        event.kind === "respuesta" ? event.subject : event.kind === "documento" ? `el estudio subió «${event.documentName}» a tu portal.` : event.items.length === 1 ? `cargamos ${event.items[0].tax} ${event.items[0].period}, que vence el ${event.items[0].dueDate.split("-").reverse().join("/")}.` : `cargamos ${event.items.length} vencimientos nuevos en tu portal.`,
+      ),
+    )
+    .catch((e) => console.error("[notify] WhatsApp", (e as Error).message));
   try {
     const to = await memberEmails(studioId, organizationId, EVENT_PERMISSION[event.kind]);
     if (to.length === 0) return;

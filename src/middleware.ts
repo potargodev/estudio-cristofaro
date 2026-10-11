@@ -10,6 +10,22 @@ function isFaroHost(host: string | null) {
   return !!host && hosts.includes(host.toLowerCase().split(":")[0]);
 }
 
+const hostsFrom = (v: string | undefined) => (v ?? "").split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
+
+/**
+ * Marca blanca (F9): con APP_HOSTS cargado, un host que no es de Faro ni de la
+ * app es el dominio propio de un estudio. Ahí solo vive el portal de sus
+ * clientes; la página valida en la base que el dominio esté verificado.
+ */
+function isCustomHost(host: string | null) {
+  const app = hostsFrom(process.env.APP_HOSTS);
+  if (!host || app.length === 0) return false;
+  const h = host.toLowerCase().split(":")[0];
+  if (h === "localhost" || /^[\d.]+$/.test(h) || h.includes("[")) return false;
+  return !app.includes(h) && !hostsFrom(process.env.FARO_HOSTS).includes(h);
+}
+const CUSTOM_ALLOWED = ["/portal", "/api/", "/invitacion", "/legal", "/oauth", "/offline", "/manifest.webmanifest", "/icon.svg", "/favicon"];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   let response: NextResponse;
@@ -19,7 +35,20 @@ export function middleware(request: NextRequest) {
   // requireStaff() y requireMember() en el servidor.
   const area = pathname.startsWith("/admin") ? "admin" : pathname.startsWith("/portal") ? "portal" : pathname.startsWith("/faro-manager") ? "faro" : pathname.startsWith("/personal") ? "personal" : null;
   const LOGIN = { admin: "/admin/login", portal: "/portal/login", faro: "/admin/login", personal: "/ingresar" } as const;
-  if (area && !pathname.startsWith(LOGIN[area]) && !SESSION_COOKIES.some((name) => request.cookies.get(name)?.value)) {
+  const custom = isCustomHost(request.headers.get("host"));
+  const hasSession = SESSION_COOKIES.some((name) => request.cookies.get(name)?.value);
+  if (custom && (pathname === "/" || !CUSTOM_ALLOWED.some((p) => pathname === p || pathname.startsWith(p.endsWith("/") ? p : `${p}/`) || pathname.startsWith(`${p}?`)))) {
+    // Dominio propio del estudio: la raíz es el portal (o su ingreso); lo demás de Faro no se sirve acá
+    const url = request.nextUrl.clone();
+    url.search = "";
+    if (pathname === "/" && !hasSession) {
+      url.pathname = "/portal/login";
+      response = NextResponse.rewrite(url);
+    } else {
+      url.pathname = "/portal";
+      response = NextResponse.redirect(url);
+    }
+  } else if (area && !pathname.startsWith(LOGIN[area]) && !hasSession) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = LOGIN[area];
     loginUrl.search = "";
