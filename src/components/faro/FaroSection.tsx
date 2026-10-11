@@ -1,4 +1,4 @@
-import { ClipboardList, Landmark, Factory, Gauge, MessageSquareText, MessagesSquare, ScrollText, Sparkles, Blocks, Tags, UserPlus, Building2, type LucideIcon } from "lucide-react";
+import { ClipboardList, Landmark, Factory, Gauge, MessageSquareText, MessagesSquare, ScrollText, Sparkles, Blocks, Tags, UserPlus, Building2, type LucideIcon, LineChart } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 
 // Secciones del Faro Manager (docs/faro-producto.md §2.o): Tenants, Catálogo
@@ -31,6 +31,7 @@ export const FARO_SECTIONS = {
       { href: "/faro-manager/plantillas", label: "Plantillas", icon: Factory },
       { href: "/faro-manager/ia", label: "IA de la plataforma", icon: Sparkles },
       { href: "/faro-manager/monotributo", label: "Monotributo", icon: Gauge },
+      { href: "/faro-manager/indices", label: "Índices", icon: LineChart },
     ],
   },
   plataforma: {

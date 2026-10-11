@@ -25,6 +25,7 @@ export const RED_SERVICES = [
   { key: "societario", label: "Trámites societarios" },
   { key: "planificacion", label: "Planificación fiscal" },
   { key: "exportaciones", label: "Exportación de servicios" },
+  { key: "asesoramiento_financiero", label: "Asesoramiento financiero (idóneo CNV)" },
 ] as const;
 
 export const PROVINCES = [

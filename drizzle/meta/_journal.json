@@ -204,6 +204,13 @@
       "when": 1791705152050,
       "tag": "0028_arca",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791707291630,
+      "tag": "0029_bitacora_completa",
+      "breakpoints": true
     }
   ]
 }

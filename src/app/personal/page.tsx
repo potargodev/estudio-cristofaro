@@ -9,6 +9,8 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { VigiaPrompt } from "@/components/copiloto/VigiaPrompt";
 import { money, monthLabel, monthOf } from "@/modules/bitacora/catalog";
 import { monthSummary } from "@/modules/bitacora/server";
+import { listInsights } from "@/modules/bitacora/recurring";
+import { Insights } from "@/components/bitacora/Insights";
 import { requireUser } from "@/modules/bitacora/session";
 import { getPlan, planFullName } from "@/lib/faro/plans";
 import { ownOrganization } from "@/lib/faro/tenants";
@@ -29,10 +31,11 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
   const me = await requireUser();
   const titular = me.role === "titular" && me.tenantKind !== "studio";
   const month = monthOf();
-  const [summary, t, own] = await Promise.all([
+  const [summary, t, own, insights] = await Promise.all([
     monthSummary(me.id, month),
     titular ? getDb().select().from(studios).where(eq(studios.id, me.studioId)).then((r) => r[0]) : null,
     titular ? ownOrganization(me.studioId) : null,
+    listInsights(me.id, 3),
   ]);
   // Gastos de la actividad: lo que marcó "de la empresa" o "deducible" en grupos conectados a su contabilidad
   const activity = titular
@@ -53,6 +56,8 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
       <PageHeader title={`Hola, ${first}.`} description={context} className="mb-0" />
 
       <VigiaPrompt />
+
+      <Insights items={insights} volver="/personal" />
 
       <section aria-labelledby="mes" className="rounded-md border border-line bg-surface p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">

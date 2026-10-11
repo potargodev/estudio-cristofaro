@@ -7,10 +7,12 @@
 //   (COPILOT_JOBS=off los apaga; cron externo: /api/copiloto/cron).
 // - Faro Personal (avisos del calendario y chequeos guiados) cada hora
 //   (ARCA_JOBS=off los apaga).
+// - Bitácora (dólar MEP del día, fijos, fugas, avisos y resumen semanal del
+//   domingo) cada hora (BITACORA_JOBS=off los apaga).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
-  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout };
+  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout; __bitacoraTimer?: NodeJS.Timeout };
 
   if (process.env.AGENDA_REMINDERS !== "off" && !g.__agendaTimer) {
     const { sendReminders } = await import("./lib/agenda/bookings");
@@ -62,5 +64,18 @@ export async function register() {
     g.__arcaTimer = setInterval(run, Number(process.env.ARCA_JOBS_MS) || 60 * 60_000);
     g.__arcaTimer.unref?.();
     setTimeout(run, 50_000).unref?.();
+  }
+
+  if (process.env.BITACORA_JOBS !== "off" && !g.__bitacoraTimer) {
+    const { runBitacoraJobs } = await import("./modules/bitacora/jobs");
+    const run = () =>
+      runBitacoraJobs()
+        .then((r) => {
+          if (r.avisos || r.resumenes) console.info(`[bitacora] ${r.avisos} avisos, ${r.resumenes} resúmenes semanales`);
+        })
+        .catch((error) => console.error("[bitacora] Tareas", (error as Error).message));
+    g.__bitacoraTimer = setInterval(run, Number(process.env.BITACORA_JOBS_MS) || 60 * 60_000);
+    g.__bitacoraTimer.unref?.();
+    setTimeout(run, 60_000).unref?.();
   }
 }

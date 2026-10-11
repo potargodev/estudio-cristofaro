@@ -385,13 +385,14 @@ FARO_MODULES.push(
     name: "Bitácora",
     icon: "NotebookPen",
     core: true,
-    description: "Tus finanzas personales: gastos e ingresos del mes, por categoría, cargados con el Vigía (texto, audio o foto) o a mano. Siempre privada.",
+    description: "Tus finanzas personales: movimientos, sobres, gastos fijos y suscripciones, fugas, metas, valores reales (inflación y dólar MEP), importación de resúmenes, conexiones con Mercado Pago y Gmail (Plus), hogar compartido y coach en el Vigía. Siempre privada. Gratis: 1 meta y 2 importaciones por mes; Plus (planes pagos): sin límite y con conexiones.",
     status: "disponible",
     minPlan: { studio: "inicial", persona: "persona_gratis", personal: "autonomo_gratis" },
     roles: [...ALL_STAFF, "titular"],
+    // Espacio Personal (§2.o): ítem Bitácora con pestañas Movimientos · Sobres · Fijos · Metas · Importar · Conexiones · Hogar
     nav: [{ href: "/bitacora", label: "Bitácora" }],
-    events: [],
-    tools: [],
+    events: ["bitacora.fijo_por_vencer", "bitacora.fuga_detectada", "bitacora.sobre_excedido", "bitacora.importacion_confirmada", "bitacora.resumen_semanal"],
+    tools: ["crear_movimiento", "consultar_bitacora", "coach_finanzas"],
   },
 );
 

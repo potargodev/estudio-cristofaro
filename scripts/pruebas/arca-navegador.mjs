@@ -15,7 +15,7 @@ const sql = postgres(process.env.DATABASE_URL);
 const [tit] = await sql`select id from studios where slug = 'prueba-personal'`;
 await sql`delete from invoices where studio_id = ${tit.id}`;
 await sql`delete from invoice_customers where studio_id = ${tit.id}`;
-await fetch("http://localhost:4030/__reset", { method: "POST" });
+await fetch("http://localhost:4060/__reset", { method: "POST" });
 await sql`delete from arca_tickets`;
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });

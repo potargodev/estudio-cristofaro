@@ -1969,6 +1969,8 @@ export interface UserPrefs {
   copilotAuto?: boolean;
   /** Primeros pasos: el widget del Inicio está oculto */
   hideFirstSteps?: boolean;
+  /** Bitácora: resumen semanal del domingo (sin valor: sí) */
+  weeklySummary?: boolean;
   /** Último espacio usado (personal, estudio, organización o Faro Manager): la app entra ahí */
   space?: "studio" | "personal" | "portal" | "faro";
 }
@@ -2020,6 +2022,16 @@ export const bitacora_entries = pgTable(
     copilot_message_id: uuid("copilot_message_id"),
     /** Borrado suave: Deshacer y la papelera */
     deleted_at: timestamp("deleted_at", { withTimezone: true }),
+    /** De la actividad profesional (autónomo) y deducible: se puede pasar a Faro Personal */
+    professional: boolean("professional").notNull().default(false),
+    deductible: boolean("deductible").notNull().default(false),
+    accounting_expense_id: uuid("accounting_expense_id"),
+    /** Importaciones y conexiones: lote, ID externo, registro original, validación y sincronización */
+    import_id: uuid("import_id"),
+    external_id: text("external_id"),
+    raw: jsonb("raw").$type<unknown>(),
+    validation: text("validation"),
+    synced_at: timestamp("synced_at", { withTimezone: true }),
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
@@ -2609,4 +2621,221 @@ export const guided_checks = pgTable(
     updated_at: updatedAt(),
   },
   (t) => [uniqueIndex("guided_checks_unique_idx").on(t.organization_id, t.check_key)],
+);
+
+// ───────────────────────── Bitácora completa (F8 · docs/faro-producto.md §2.g) ─────────────────────────
+// Todo es de la persona (user_id de la sesión); nunca lo ve su estudio, su
+// organización ni su empleador, salvo lo que comparta explícitamente.
+
+/** Presupuesto por categoría ("sobres"), sugerido a partir de los meses cargados */
+export const bitacora_budgets = pgTable(
+  "bitacora_budgets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    category_id: uuid("category_id")
+      .notNull()
+      .references(() => bitacora_categories.id, { onDelete: "cascade" }),
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    suggested: boolean("suggested").notNull().default(false),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("bitacora_budgets_cat_idx").on(t.user_id, t.category_id)],
+);
+
+/** Gastos fijos y suscripciones (detectados por recurrencia o cargados a mano) */
+export const bitacora_recurring = pgTable(
+  "bitacora_recurring",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    label: text("label").notNull(),
+    key: text("key").notNull(),
+    category_id: uuid("category_id").references(() => bitacora_categories.id, { onDelete: "set null" }),
+    kind: text("kind").notNull().default("fijo"), // fijo | suscripcion
+    currency: text("currency").notNull().default("ARS"),
+    avg_amount: bigint("avg_amount", { mode: "number" }).notNull(),
+    last_amount: bigint("last_amount", { mode: "number" }).notNull(),
+    last_date: date("last_date").notNull(),
+    next_date: date("next_date").notNull(),
+    months: integer("months").notNull().default(1),
+    price_change_pct: numeric("price_change_pct", { precision: 7, scale: 2 }),
+    status: text("status").notNull().default("detectado"), // detectado | confirmado | descartado
+    source: text("source").notNull().default("deteccion"),
+    still_used: boolean("still_used"),
+    notified_due_at: date("notified_due_at"),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("bitacora_recurring_key_idx").on(t.user_id, t.key)],
+);
+
+/** Metas de ahorro (viaje, fondo de emergencia) */
+export const bitacora_goals = pgTable(
+  "bitacora_goals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    kind: text("kind").notNull().default("otro"), // viaje | emergencia | otro
+    currency: text("currency").notNull().default("ARS"),
+    target: bigint("target", { mode: "number" }).notNull(),
+    saved: bigint("saved", { mode: "number" }).notNull().default(0),
+    deadline: date("deadline"),
+    archived: boolean("archived").notNull().default(false),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("bitacora_goals_user_idx").on(t.user_id)],
+);
+
+export const bitacora_goal_moves = pgTable("bitacora_goal_moves", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  goal_id: uuid("goal_id")
+    .notNull()
+    .references(() => bitacora_goals.id, { onDelete: "cascade" }),
+  amount: bigint("amount", { mode: "number" }).notNull(),
+  date: date("date").notNull(),
+  note: text("note"),
+  created_at: createdAt(),
+});
+
+/** Avisos de Bitácora: fugas, vencimientos de fijos, aumentos, sobres excedidos, resumen semanal */
+export const bitacora_insights = pgTable(
+  "bitacora_insights",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(),
+    ref: text("ref").notNull().default(""),
+    period: text("period").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    data: jsonb("data").$type<Record<string, unknown>>().notNull().default({}),
+    status: text("status").notNull().default("nuevo"), // nuevo | visto | descartado
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("bitacora_insights_once_idx").on(t.user_id, t.kind, t.period, t.ref)],
+);
+
+/** Serie del IPC (la carga el Faro Manager, con fuente y fecha) para valores reales */
+export const ipc_series = pgTable("ipc_series", {
+  month: text("month").primaryKey(), // AAAA-MM
+  value: numeric("value", { precision: 14, scale: 4 }).notNull(),
+  source: text("source").notNull(),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** Cotizaciones diarias guardadas (dólar MEP), para mostrar meses pasados en dólares */
+export const fx_snapshots = pgTable(
+  "fx_snapshots",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    date: date("date").notNull(),
+    currency: text("currency").notNull(),
+    kind: text("kind").notNull(), // mep | oficial
+    rate: numeric("rate", { precision: 14, scale: 4 }).notNull(),
+    source: text("source").notNull(),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("fx_snapshots_day_idx").on(t.date, t.currency, t.kind)],
+);
+
+/** Lotes de importación (resúmenes bancarios, tarjetas, Mercado Pago) con el archivo y el mapeo */
+export const bitacora_imports = pgTable(
+  "bitacora_imports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    source: text("source").notNull(), // csv | pdf | mercadopago_csv | mercadopago_api | gmail
+    file_name: text("file_name"),
+    mapping: jsonb("mapping").$type<Record<string, unknown>>(),
+    status: text("status").notNull().default("vista_previa"), // vista_previa | importado | descartado
+    rows: jsonb("rows").$type<unknown[]>().notNull().default([]),
+    total: integer("total").notNull().default(0),
+    imported: integer("imported").notNull().default(0),
+    duplicates: integer("duplicates").notNull().default(0),
+    created_at: createdAt(),
+  },
+  (t) => [index("bitacora_imports_user_idx").on(t.user_id, t.created_at)],
+);
+
+/** Conexiones de la persona (Mercado Pago, Gmail), con tokens cifrados */
+export const bitacora_connections = pgTable(
+  "bitacora_connections",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(), // mercadopago | gmail
+    account_label: text("account_label"),
+    external_user_id: text("external_user_id"),
+    access_token_enc: text("access_token_enc").notNull(),
+    refresh_token_enc: text("refresh_token_enc"),
+    expires_at: timestamp("expires_at", { withTimezone: true }),
+    status: text("status").notNull().default("activa"), // activa | error | desconectada
+    last_sync_at: timestamp("last_sync_at", { withTimezone: true }),
+    last_error: text("last_error"),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("bitacora_connections_provider_idx").on(t.user_id, t.provider)],
+);
+
+/** Propuestas de movimientos detectados (Gmail, Mercado Pago) que la persona acepta o descarta */
+export const bitacora_proposals = pgTable(
+  "bitacora_proposals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    source: text("source").notNull(),
+    external_id: text("external_id").notNull(),
+    kind: text("kind").notNull().default("gasto"),
+    detected: text("detected").notNull(), // servicio | suscripcion | resumen_tarjeta | factura
+    description: text("description").notNull(),
+    amount: bigint("amount", { mode: "number" }),
+    currency: text("currency").notNull().default("ARS"),
+    date: date("date"),
+    category_hint: text("category_hint"),
+    raw: jsonb("raw").$type<unknown>(),
+    status: text("status").notNull().default("pendiente"), // pendiente | aceptada | descartada
+    entry_id: uuid("entry_id"),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("bitacora_proposals_ext_idx").on(t.user_id, t.source, t.external_id)],
+);
+
+/** Bitácora compartida (hogar o pareja): permiso explícito y revocable de quien la comparte */
+export const bitacora_shares = pgTable(
+  "bitacora_shares",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    owner_id: uuid("owner_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    member_id: uuid("member_id").references(() => users.id, { onDelete: "cascade" }),
+    invited_email: text("invited_email").notNull(),
+    token: text("token").notNull(),
+    permission: text("permission").notNull().default("ver"), // ver | cargar
+    status: text("status").notNull().default("invitada"), // invitada | activa | revocada
+    accepted_at: timestamp("accepted_at", { withTimezone: true }),
+    revoked_at: timestamp("revoked_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("bitacora_shares_token_idx").on(t.token), index("bitacora_shares_member_idx").on(t.member_id)],
 );

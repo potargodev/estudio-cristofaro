@@ -1,4 +1,3 @@
-import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronRight, Download, Settings2, Users, WandSparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -6,6 +5,9 @@ import { EntryForm } from "@/components/bitacora/EntryForm";
 import { cn } from "@/lib/utils";
 import { isMonth, money, monthLabel, monthOf, PAYMENT_METHODS, prevMonth } from "@/modules/bitacora/catalog";
 import { listCategories, monthSummary } from "@/modules/bitacora/server";
+import { ipcFactor, mepFor } from "@/modules/bitacora/planning";
+import { listInsights } from "@/modules/bitacora/recurring";
+import { Insights } from "@/components/bitacora/Insights";
 import { requireUser } from "@/modules/bitacora/session";
 import { createEntryAction, restoreEntryAction } from "./actions";
 
@@ -35,12 +37,24 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
   const month = isMonth(sp.mes) ? sp.mes! : monthOf();
   const cats = await listCategories(me.id);
   const cat = sp.categoria && cats.some((c) => c.id === sp.categoria) ? sp.categoria : null;
-  const s = await monthSummary(me.id, month, cat);
+  const [s, insights, factor, mep] = await Promise.all([monthSummary(me.id, month, cat), listInsights(me.id, 4), sp.ver === "real" ? ipcFactor(month) : null, sp.ver === "mep" ? mepFor(month) : null]);
+  // Valores reales (IPC de Faro Manager) o en dólares MEP
+  const show = (c: number) => (sp.ver === "real" && factor ? money(factor.apply(c) ?? c) : sp.ver === "mep" && mep ? money(Math.round(c / mep.rate), "USD") : money(c));
+  const valueNote =
+    sp.ver === "real"
+      ? factor
+        ? `En pesos de ${monthLabel(factor.latestMonth)} según el IPC (${factor.source}).`
+        : "Todavía no hay serie de IPC cargada para ese mes: se muestran pesos corrientes."
+      : sp.ver === "mep"
+        ? mep
+          ? `A ${money(Math.round(mep.rate * 100))} por dólar · ${mep.source}.`
+          : "No pudimos obtener la cotización del dólar MEP."
+        : null;
   const ars = s.byCurrency.ARS;
   const usd = s.byCurrency.USD;
   const maxCat = Math.max(1, ...s.byCategory.map((c) => c.amount));
   const q = (extra: Record<string, string | null>) => {
-    const p = new URLSearchParams({ mes: month, ...(cat ? { categoria: cat } : {}) });
+    const p = new URLSearchParams({ mes: month, ...(cat ? { categoria: cat } : {}), ...(sp.ver ? { ver: sp.ver } : {}) });
     for (const [k, v] of Object.entries(extra)) (v === null ? p.delete(k) : p.set(k, v));
     return `/bitacora?${p.toString()}`;
   };
@@ -65,11 +79,19 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           {sp.error}
         </p>
       )}
-      <PageHeader
-        title="Bitácora"
-        description="Tu plata, a la vista. Privada: solo la ves vos."
-        className="mb-0"
-        actions={
+      <Insights items={insights} volver="/bitacora" />
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <nav aria-label="Ver los montos en" className="flex gap-1.5 text-[13px]">
+          {[
+            { k: "", l: "Pesos" },
+            { k: "real", l: "Ajustado por inflación" },
+            { k: "mep", l: "Dólares MEP" },
+          ].map((v) => (
+            <Link key={v.l} href={q({ ver: v.k || null })} aria-current={(sp.ver ?? "") === v.k ? "true" : undefined} className={cn("inline-flex h-8 items-center rounded-full px-3", (sp.ver ?? "") === v.k ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
+              {v.l}
+            </Link>
+          ))}
+        </nav>
         <div className="flex items-center gap-1">
           <Link href={q({ mes: prevMonth(month) })} aria-label="Mes anterior" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <ChevronLeft className="size-4" aria-hidden />
@@ -79,8 +101,8 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
             <ChevronRight className="size-4" aria-hidden />
           </Link>
         </div>
-      }
-      />
+      </div>
+      {valueNote && <p className="-mt-3 text-[12px] text-muted">{valueNote}</p>}
 
       <section aria-label="Resumen del mes" className="grid grid-cols-3 gap-2 sm:gap-3">
         {[
@@ -90,7 +112,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
         ].map((x) => (
           <div key={x.l} className="rounded-lg border border-line bg-surface p-3 sm:p-5">
             <p className="text-[12px] text-muted sm:text-[13px]">{x.l}</p>
-            <p className={cn("mt-1 num text-[20px] leading-tight sm:text-[32px]", x.tone)}>{money(x.v)}</p>
+            <p className={cn("mt-1 num text-[20px] leading-tight sm:text-[32px]", x.tone)}>{show(x.v)}</p>
             {x.b !== null && (
               <span className="hidden sm:block">
                 <Delta now={x.v} before={x.b} />

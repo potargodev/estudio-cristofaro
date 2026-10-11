@@ -3,12 +3,12 @@
 // FECAESolicitar, FECompConsultar, FEParamGet*) y la constancia de
 // inscripción (getPersona_v2), con las mismas formas SOAP que los oficiales.
 //
-//   node mocks/arca/server.mjs            → http://localhost:4030
+//   node mocks/arca/server.mjs            → http://localhost:4060
 //
 // En Faro:
-//   ARCA_WSAA_URL=http://localhost:4030/ws/services/LoginCms
-//   ARCA_WSFE_URL=http://localhost:4030/wsfev1/service.asmx
-//   ARCA_PADRON_URL=http://localhost:4030/sr-padron/webservices/personaServiceA5
+//   ARCA_WSAA_URL=http://localhost:4060/ws/services/LoginCms
+//   ARCA_WSFE_URL=http://localhost:4060/wsfev1/service.asmx
+//   ARCA_PADRON_URL=http://localhost:4060/sr-padron/webservices/personaServiceA5
 //
 // Reglas que valida (como ARCA): ticket vigente, CUIT representada con
 // delegación (DELEGADAS; vacío = todas), numeración correlativa, totales que
@@ -19,7 +19,7 @@ import { createServer } from "node:http";
 import { randomBytes } from "node:crypto";
 import forge from "node-forge";
 
-const PORT = Number(process.env.PORT ?? 4030);
+const PORT = Number(process.env.PORT ?? 4060);
 const tickets = new Map(); // token -> { service, exp }
 const last = new Map(); // cuit|pto|tipo -> nro
 const comps = new Map(); // cuit|pto|tipo|nro -> comprobante

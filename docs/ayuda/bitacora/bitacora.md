@@ -4,7 +4,7 @@ resumen: Cargá gastos e ingresos (a mano o con el Vigía), mirá cuánto entró
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: bitacora
 actualizado: 2026-10-11
-relacionados: [vigia/vigia, grupos-de-gastos/cargar-gastos, grupos-de-gastos/crear-un-grupo]
+relacionados: [bitacora/sobres-y-metas, bitacora/fijos-y-avisos, bitacora/importar-y-conectar, bitacora/hogar-compartido, vigia/vigia]
 ---
 
 **Bitácora** es tu registro personal de plata. Es **privada**: no la ve nadie más, ni tu estudio, ni tu organización, ni otros integrantes de tus grupos.
@@ -26,6 +26,18 @@ Tocá un movimiento para editarlo o borrarlo. Si lo borraste sin querer, tocá *
 - La comparación con el mes anterior.
 - **Gasto por categoría**, con barras, y el filtro por categoría.
 - Las flechas de arriba cambian de mes.
+- **Ver en:** pesos de cada mes, **ajustado por inflación** (pesos de hoy, con el IPC del INDEC) o **dólares MEP** (con la cotización guardada de ese mes). Abajo del tablero dice qué índice o cotización se usó.
+
+Las pestañas de arriba llevan a [Sobres y Metas](/ayuda/bitacora/sobres-y-metas), [Fijos](/ayuda/bitacora/fijos-y-avisos), [Importar y Conexiones](/ayuda/bitacora/importar-y-conectar) y [Hogar](/ayuda/bitacora/hogar-compartido).
+
+## Gratis y Plus
+
+- **Bitácora Gratis:** todo lo de esta página, sobres, fijos, avisos, 1 meta y 2 importaciones de resúmenes por mes.
+- **Bitácora Plus** (con cualquier plan pago de Faro, o si tu estudio te da un plan pago): metas e importaciones sin límite y conexiones con Mercado Pago y Gmail.
+
+## Gastos de tu actividad (autónomos)
+
+Si tenés Faro Personal, al abrir un gasto podés marcarlo como **de tu actividad** y **deducible**, y tocar **Pasar a Faro Personal**: queda en los gastos de tu actividad, con el origen, para tu contador. Lo personal sigue privado.
 
 ## Gastos de tus grupos
 

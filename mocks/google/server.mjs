@@ -7,6 +7,10 @@
 // redirige directo con un código. POST /__upload?folder=<id>&name=<archivo>
 // (cuerpo binario) simula que un cliente sube un archivo a su carpeta.
 //
+// Gmail (solo lectura, Bitácora): GET /gmail/v1/users/me/messages y
+// /gmail/v1/users/me/messages/<id> con mails de prueba (servicios, una
+// suscripción, un resumen de tarjeta y uno personal que no es un gasto).
+//
 // Login con Google (GOOGLE_OAUTH_MOCK_URL=http://localhost:4030): POST
 // /__login?email=<x>&name=<y> elige con qué cuenta "entra" el próximo
 // /authorize; /token y /userinfo devuelven esa identidad.
@@ -30,6 +34,14 @@ let nextLogin = { email: "persona@gmail.com", name: "Persona de Prueba" };
 const logins = new Map(); // code / token → identidad
 const MIME = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
+const day = (n) => Date.now() - n * 86400000;
+const MAILS = [
+  { id: "m1", from: "Edenor <facturas@edenor.com>", subject: "Tu factura de luz de octubre", snippet: "Total a pagar $ 25.430,10. Vence el 20/10.", at: day(2) },
+  { id: "m2", from: "Netflix <info@mailer.netflix.com>", subject: "Tu recibo de Netflix", snippet: "Cobramos $ 8.999,00 de tu tarjeta terminada en 1234.", at: day(5) },
+  { id: "m3", from: "Visa <resumen@visa.com.ar>", subject: "Tu resumen de tarjeta ya está disponible", snippet: "Saldo actual $ 345.000,00 · Pago mínimo $ 34.500,00", at: day(7) },
+  { id: "m4", from: "Juan <juan@gmail.com>", subject: "Asado del sábado", snippet: "¿Quién lleva el carbón?", at: day(1) },
+];
+
 createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const p = url.pathname;
@@ -39,6 +51,15 @@ createServer(async (req, res) => {
     back.searchParams.set("state", url.searchParams.get("state") ?? "");
     res.writeHead(302, { Location: back.toString() });
     return res.end();
+  }
+  if (p === "/gmail/v1/users/me/messages") {
+    if (!(req.headers.authorization ?? "").startsWith("Bearer ")) return json(res, 401, { error: { code: 401, message: "Sin token" } });
+    return json(res, 200, { messages: MAILS.map((m) => ({ id: m.id, threadId: m.id })), resultSizeEstimate: MAILS.length });
+  }
+  if (p.startsWith("/gmail/v1/users/me/messages/")) {
+    const m = MAILS.find((x) => x.id === p.split("/").pop());
+    if (!m) return json(res, 404, { error: { code: 404 } });
+    return json(res, 200, { id: m.id, threadId: m.id, snippet: m.snippet, internalDate: String(m.at), payload: { headers: [{ name: "From", value: m.from }, { name: "Subject", value: m.subject }, { name: "Date", value: new Date(m.at).toUTCString() }] } });
   }
   if (p === "/__login" && req.method === "POST") {
     nextLogin = { email: url.searchParams.get("email") ?? nextLogin.email, name: url.searchParams.get("name") ?? nextLogin.name };

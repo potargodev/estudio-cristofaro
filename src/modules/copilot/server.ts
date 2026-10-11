@@ -118,7 +118,8 @@ Qué hacés:
 - Grupos de la persona: ${ctx.groups.length ? ctx.groups.map((g) => `${g.name} (con ${g.members.join(", ") || "nadie más"})`).join("; ") : "todavía ninguno"}.
 - Consultas ("¿cuánto gasté en delivery este mes?", "¿cuánto le debo a Juan?"): usá consultar_bitacora o consultar_saldos_grupo y respondé corto, con el dato y un enlace markdown a la pantalla ([Ver en Bitácora](/bitacora) o el que te devuelva la herramienta).
 - Si algo es ambiguo (falta el monto, no sabés en qué grupo), NO llames herramientas: preguntá UNA sola cosa, corta.
-- Nunca inventes montos, personas ni grupos. Nada de asesoramiento de inversión personalizado.
+- Nunca inventes montos, personas ni grupos.
+- Coach (si la persona pide consejos, cómo ahorrar o en qué le conviene poner la plata): usá coach_finanzas, que te da sus números reales (sobres, fijos, fugas y metas). Explicá y sugerí hábitos. Podés comparar alternativas generales de ahorro (plazo fijo, fondos money market, dólar MEP) solo con fines educativos y sin recomendar una en particular. Nunca des una recomendación de inversión personalizada: es una actividad regulada por la CNV. Si la persona quiere asesoramiento, derivala a un asesor matriculado de la Red de estudios ([Buscar un asesor](/red?servicio=asesoramiento_financiero)).
 - Respondé en español rioplatense (voseo), muy breve: una línea como "Listo, te dejé 2 gastos para confirmar." Las tarjetas muestran el detalle.`;
 }
 
@@ -321,6 +322,31 @@ function queryTools(u: CopilotUser): ToolSet {
         const i = consultarBitacora.parse(raw ?? {});
         const r = await spentInCategory(u.id, i.mes ?? monthOf(), i.categoria);
         return { mes: i.mes ?? monthOf(), categoria: r.category ?? "todas", gastado: money(r.spent), ingresado: money(r.earned), movimientos: r.count, enlace: `/bitacora?mes=${i.mes ?? monthOf()}` };
+      },
+    }),
+    coach_finanzas: tool({
+      description: "Datos reales de la persona para aconsejar hábitos de ahorro: sobres del mes (presupuesto vs. gastado), gastos fijos y suscripciones, fugas detectadas y metas. También trae información general (educativa) sobre alternativas de ahorro.",
+      inputSchema: jsonSchema({ type: "object", properties: { tema: { type: "string", description: "Sobre qué quiere consejo (opcional)" } } } as never),
+      execute: async () => {
+        const { bitacoraPlan } = await import("@/modules/bitacora/plus");
+        if (!(await bitacoraPlan(u)).plus) return { plan: "gratis", mensaje: "El coach es de Bitácora Plus. Mientras tanto, podés mirar tus sobres y tus fijos en la Bitácora.", enlace: "/bitacora/presupuesto" };
+        const { budgetView, listGoals } = await import("@/modules/bitacora/planning");
+        const { listRecurring, listInsights } = await import("@/modules/bitacora/recurring");
+        const [b, rec, ins, goals] = await Promise.all([budgetView(u.id), listRecurring(u.id), listInsights(u.id, 6), listGoals(u.id)]);
+        return {
+          sobres: b.list.filter((x) => x.budget).map((x) => ({ categoria: x.name, presupuesto: money(x.budget!), gastado: money(x.spent) })),
+          fijos_y_suscripciones: rec.slice(0, 10).map((r) => ({ nombre: r.label, mensual: money(r.last_amount), aumento: r.price_change_pct ? `${r.price_change_pct}%` : null })),
+          avisos: ins.map((i) => i.title),
+          metas: goals.map((g) => ({ meta: g.name, avance: `${Math.round(g.progress * 100)}%`, ahorro_semanal_sugerido: money(g.weekly) })),
+          alternativas_educativas: [
+            "Plazo fijo: tasa fija por un plazo; la plata queda inmovilizada hasta el vencimiento.",
+            "Fondos comunes money market: rescate en el día, rinden una tasa variable; no están garantizados.",
+            "Dólar MEP: se compra con bonos en un broker o en el home banking; protege del tipo de cambio, no de la inflación en dólares.",
+          ],
+          aviso_legal: "Información general con fines educativos. No es una recomendación de inversión personalizada (actividad regulada por la CNV).",
+          asesor: "/red?servicio=asesoramiento_financiero",
+          enlaces: { sobres: "/bitacora/presupuesto", fijos: "/bitacora/fijos", metas: "/bitacora/metas" },
+        };
       },
     }),
     consultar_saldos_grupo: tool({

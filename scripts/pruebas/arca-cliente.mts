@@ -3,7 +3,7 @@
 // recuperación tras un corte) y constancia de inscripción.
 //
 //   node mocks/arca/server.mjs &
-//   ARCA_WSAA_URL=http://localhost:4030/ws/services/LoginCms ARCA_WSFE_URL=http://localhost:4030/wsfev1/service.asmx ARCA_PADRON_URL=http://localhost:4030/sr-padron/webservices/personaServiceA5 \
+//   ARCA_WSAA_URL=http://localhost:4060/ws/services/LoginCms ARCA_WSFE_URL=http://localhost:4060/wsfev1/service.asmx ARCA_PADRON_URL=http://localhost:4060/sr-padron/webservices/personaServiceA5 \
 //   node --conditions=react-server --env-file=.env.local --import tsx scripts/pruebas/arca-cliente.mts
 
 import forge from "node-forge";
@@ -36,7 +36,7 @@ const { certPem, keyPem } = selfSigned();
 const cred = { env: "homologacion" as const, cuit: "20111111112", certPem, keyPem };
 check("certificado y clave coinciden", keyMatchesCert(certPem, keyPem));
 check("datos del certificado", certInfo(certPem).subject === "faro-pruebas");
-await fetch("http://localhost:4030/__reset", { method: "POST" });
+await fetch("http://localhost:4060/__reset", { method: "POST" });
 
 const t1 = await getTicket(cred, "wsfe");
 const t2 = await getTicket(cred, "wsfe");
@@ -55,7 +55,7 @@ check("factura C con IVA: rechazo", !badIva.approved && badIva.observations.some
 const a = await solicitarCae(cred, emisor, { ...base, cbteTipo: 1, cbteNro: (await lastAuthorized(cred, emisor, 1, 1)) + 1, impNeto: 1000, impIva: 210, impTotal: 1210, iva: [{ id: 5, baseImp: 1000, importe: 210 }] });
 check("factura A con IVA 21%", a.approved, JSON.stringify(a.observations));
 // Corte después de autorizar: se recupera con FECompConsultar
-await fetch("http://localhost:4030/__caida", { method: "POST" });
+await fetch("http://localhost:4060/__caida", { method: "POST" });
 const n = (await lastAuthorized(cred, emisor, 1, 11)) + 1;
 let cut = false;
 try {

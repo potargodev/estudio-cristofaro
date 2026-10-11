@@ -15,12 +15,102 @@
   "modulo": "bitacora",
   "actualizado": "2026-10-11",
   "relacionados": [
-   "vigia/vigia",
-   "grupos-de-gastos/cargar-gastos",
+   "bitacora/sobres-y-metas",
+   "bitacora/fijos-y-avisos",
+   "bitacora/importar-y-conectar",
+   "bitacora/hogar-compartido",
+   "vigia/vigia"
+  ],
+  "body": "**Bitácora** es tu registro personal de plata. Es **privada**: no la ve nadie más, ni tu estudio, ni tu organización, ni otros integrantes de tus grupos.\n\n## Cargar un movimiento\n\n- **Con el Vigía** (lo más rápido): escribile o mandale un audio, como «ayer 5000 de nafta y 3200 en el chino», o una foto del ticket. Lo abrís con el botón **Vigía** de la barra de arriba, o desde la tarjeta **Contale al Vigía** del Inicio.\n- **A mano:** en **Bitácora**, abrí **Cargar a mano** y completá:\n  - gasto o ingreso;\n  - monto y moneda (pesos por defecto, o dólares);\n  - fecha, comercio o descripción y categoría;\n  - medio de pago (efectivo, débito, crédito, transferencia o Mercado Pago) y una nota si querés.\n\nTocá un movimiento para editarlo o borrarlo. Si lo borraste sin querer, tocá **Deshacer**.\n\n## El tablero del mes\n\n- **Entró, Salió y Queda**, en pesos (y aparte en dólares si tenés movimientos en USD).\n- La comparación con el mes anterior.\n- **Gasto por categoría**, con barras, y el filtro por categoría.\n- Las flechas de arriba cambian de mes.\n- **Ver en:** pesos de cada mes, **ajustado por inflación** (pesos de hoy, con el IPC del INDEC) o **dólares MEP** (con la cotización guardada de ese mes). Abajo del tablero dice qué índice o cotización se usó.\n\nLas pestañas de arriba llevan a [Sobres y Metas](/ayuda/bitacora/sobres-y-metas), [Fijos](/ayuda/bitacora/fijos-y-avisos), [Importar y Conexiones](/ayuda/bitacora/importar-y-conectar) y [Hogar](/ayuda/bitacora/hogar-compartido).\n\n## Gratis y Plus\n\n- **Bitácora Gratis:** todo lo de esta página, sobres, fijos, avisos, 1 meta y 2 importaciones de resúmenes por mes.\n- **Bitácora Plus** (con cualquier plan pago de Faro, o si tu estudio te da un plan pago): metas e importaciones sin límite y conexiones con Mercado Pago y Gmail.\n\n## Gastos de tu actividad (autónomos)\n\nSi tenés Faro Personal, al abrir un gasto podés marcarlo como **de tu actividad** y **deducible**, y tocar **Pasar a Faro Personal**: queda en los gastos de tu actividad, con el origen, para tu contador. Lo personal sigue privado.\n\n## Gastos de tus grupos\n\nLo que te toca de los gastos de tus [grupos de gastos](/ayuda/grupos-de-gastos/cargar-gastos) aparece solo, como **«Mi parte · nombre del grupo»**. No se duplica: si cargás el gasto en el grupo, no lo cargues de nuevo en Bitácora.\n\n## Categorías\n\nVienen armadas (Supermercado, Comida y delivery, Transporte, Casa y servicios, Salud, Salidas, Suscripciones, Ropa, Educación, Otros e Ingresos). En **Categorías** las renombrás, sumás nuevas o archivás las que no usás (los movimientos viejos no se pierden).\n\n## Exportar\n\nEl botón **CSV** descarga los movimientos del mes (y del filtro elegido) para abrir en una planilla.",
+  "text": "Bitácora es tu registro personal de plata. Es privada : no la ve nadie más, ni tu estudio, ni tu organización, ni otros integrantes de tus grupos. Cargar un movimiento Con el Vigía lo más rápido : escribile o mandale un audio, como «ayer 5000 de nafta y 3200 en el chino», o una foto del ticket. Lo abrís con el botón Vigía de la barra de arriba, o desde la tarjeta Contale al Vigía del Inicio. A mano: en Bitácora , abrí Cargar a mano y completá: gasto o ingreso; monto y moneda pesos por defecto, o dólares ; fecha, comercio o descripción y categoría; medio de pago efectivo, débito, crédito, transferencia o Mercado Pago y una nota si querés. Tocá un movimiento para editarlo o borrarlo. Si lo borraste sin querer, tocá Deshacer . El tablero del mes Entró, Salió y Queda , en pesos y aparte en dólares si tenés movimientos en USD . La comparación con el mes anterior. Gasto por categoría , con barras, y el filtro por categoría. Las flechas de arriba cambian de mes. Ver en: pesos de cada mes, ajustado por inflación pesos de hoy, con el IPC del INDEC o dólares MEP con la cotización guardada de ese mes . Abajo del tablero dice qué índice o cotización se usó. Las pestañas de arriba llevan a Sobres y Metas /ayuda/bitacora/sobres y metas , Fijos /ayuda/bitacora/fijos y avisos , Importar y Conexiones /ayuda/bitacora/importar y conectar y Hogar /ayuda/bitacora/hogar compartido . Gratis y Plus Bitácora Gratis: todo lo de esta página, sobres, fijos, avisos, 1 meta y 2 importaciones de resúmenes por mes. Bitácora Plus con cualquier plan pago de Faro, o si tu estudio te da un plan pago : metas e importaciones sin límite y conexiones con Mercado Pago y Gmail. Gastos de tu actividad autónomos Si tenés Faro Personal, al abrir un gasto podés marcarlo como de tu actividad y deducible , y tocar Pasar a Faro Personal : queda en los gastos de tu actividad, con el origen, para tu contador. Lo personal sigue privado. Gastos de tus grupos Lo que te toca de los gastos de tus grupos de gastos /ayuda/grupos de gastos/cargar gastos aparece solo, como «Mi parte · nombre del grupo» . No se duplica: si cargás el gasto en el grupo, no lo cargues de nuevo en Bitácora. Categorías Vienen armadas Supermercado, Comida y delivery, Transporte, Casa y servicios, Salud, Salidas, Suscripciones, Ropa, Educación, Otros e Ingresos . En Categorías las renombrás, sumás nuevas o archivás las que no usás los movimientos viejos no se pierden . Exportar El botón CSV descarga los movimientos del mes y del filtro elegido para abrir en una planilla."
+ },
+ {
+  "id": "bitacora/fijos-y-avisos",
+  "categoria": "bitacora",
+  "slug": "fijos-y-avisos",
+  "titulo": "Gastos fijos, suscripciones y avisos",
+  "resumen": "Faro detecta solo tus gastos fijos y suscripciones, te avisa antes de cada vencimiento y cuando suben, marca las fugas y te manda un resumen el domingo.",
+  "perfiles": [
+   "persona",
+   "autonomo",
+   "estudio",
+   "organizacion",
+   "empleado"
+  ],
+  "modulo": "bitacora",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "bitacora/bitacora",
+   "bitacora/sobres-y-metas"
+  ],
+  "body": "## Fijos y suscripciones\n\nEn **Bitácora → Fijos** aparecen los gastos que se repiten todos los meses (alquiler, expensas, servicios, streaming, gimnasio). Los detectamos solos cuando el mismo comercio aparece con montos parecidos en meses distintos.\n\n- **Es fijo / No es fijo:** confirmá o descartá lo que detectamos.\n- **La uso / No la uso:** para las suscripciones. Si decís que no la usás, te la recordamos antes de que se renueve.\n- **Agregar uno a mano:** con el monto y el día del mes.\n- Arriba ves cuánto suman por mes.\n\n## Avisos\n\nEn el Inicio y en Bitácora aparecen avisos que podés descartar:\n\n- un fijo que vence en los próximos días;\n- una suscripción que **subió de precio** (con el porcentaje);\n- **fugas**: gastos chicos y frecuentes que sumados pesan (por ejemplo, delivery o cafés) y gastos que crecieron mucho contra tu promedio;\n- un sobre que se está por terminar.\n\n## Resumen del domingo\n\nCada domingo te llega (en Faro y por mail) un resumen de la semana: cuánto gastaste, en qué categorías y cómo vas con tus sobres y metas. Lo apagás (o volvés a prender) al final de **Bitácora → Fijos**.",
+  "text": "Fijos y suscripciones En Bitácora → Fijos aparecen los gastos que se repiten todos los meses alquiler, expensas, servicios, streaming, gimnasio . Los detectamos solos cuando el mismo comercio aparece con montos parecidos en meses distintos. Es fijo / No es fijo: confirmá o descartá lo que detectamos. La uso / No la uso: para las suscripciones. Si decís que no la usás, te la recordamos antes de que se renueve. Agregar uno a mano: con el monto y el día del mes. Arriba ves cuánto suman por mes. Avisos En el Inicio y en Bitácora aparecen avisos que podés descartar: un fijo que vence en los próximos días; una suscripción que subió de precio con el porcentaje ; fugas : gastos chicos y frecuentes que sumados pesan por ejemplo, delivery o cafés y gastos que crecieron mucho contra tu promedio; un sobre que se está por terminar. Resumen del domingo Cada domingo te llega en Faro y por mail un resumen de la semana: cuánto gastaste, en qué categorías y cómo vas con tus sobres y metas. Lo apagás o volvés a prender al final de Bitácora → Fijos ."
+ },
+ {
+  "id": "bitacora/hogar-compartido",
+  "categoria": "bitacora",
+  "slug": "hogar-compartido",
+  "titulo": "Bitácora compartida (hogar o pareja)",
+  "resumen": "Compartí tu Bitácora con otra persona para llevar las cuentas del hogar: elegís si solo mira o también carga, y cualquiera puede dejar de compartir.",
+  "perfiles": [
+   "persona",
+   "autonomo",
+   "estudio",
+   "organizacion",
+   "empleado"
+  ],
+  "modulo": "bitacora",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "bitacora/bitacora",
    "grupos-de-gastos/crear-un-grupo"
   ],
-  "body": "**Bitácora** es tu registro personal de plata. Es **privada**: no la ve nadie más, ni tu estudio, ni tu organización, ni otros integrantes de tus grupos.\n\n## Cargar un movimiento\n\n- **Con el Vigía** (lo más rápido): escribile o mandale un audio, como «ayer 5000 de nafta y 3200 en el chino», o una foto del ticket. Lo abrís con el botón **Vigía** de la barra de arriba, o desde la tarjeta **Contale al Vigía** del Inicio.\n- **A mano:** en **Bitácora**, abrí **Cargar a mano** y completá:\n  - gasto o ingreso;\n  - monto y moneda (pesos por defecto, o dólares);\n  - fecha, comercio o descripción y categoría;\n  - medio de pago (efectivo, débito, crédito, transferencia o Mercado Pago) y una nota si querés.\n\nTocá un movimiento para editarlo o borrarlo. Si lo borraste sin querer, tocá **Deshacer**.\n\n## El tablero del mes\n\n- **Entró, Salió y Queda**, en pesos (y aparte en dólares si tenés movimientos en USD).\n- La comparación con el mes anterior.\n- **Gasto por categoría**, con barras, y el filtro por categoría.\n- Las flechas de arriba cambian de mes.\n\n## Gastos de tus grupos\n\nLo que te toca de los gastos de tus [grupos de gastos](/ayuda/grupos-de-gastos/cargar-gastos) aparece solo, como **«Mi parte · nombre del grupo»**. No se duplica: si cargás el gasto en el grupo, no lo cargues de nuevo en Bitácora.\n\n## Categorías\n\nVienen armadas (Supermercado, Comida y delivery, Transporte, Casa y servicios, Salud, Salidas, Suscripciones, Ropa, Educación, Otros e Ingresos). En **Categorías** las renombrás, sumás nuevas o archivás las que no usás (los movimientos viejos no se pierden).\n\n## Exportar\n\nEl botón **CSV** descarga los movimientos del mes (y del filtro elegido) para abrir en una planilla.",
-  "text": "Bitácora es tu registro personal de plata. Es privada : no la ve nadie más, ni tu estudio, ni tu organización, ni otros integrantes de tus grupos. Cargar un movimiento Con el Vigía lo más rápido : escribile o mandale un audio, como «ayer 5000 de nafta y 3200 en el chino», o una foto del ticket. Lo abrís con el botón Vigía de la barra de arriba, o desde la tarjeta Contale al Vigía del Inicio. A mano: en Bitácora , abrí Cargar a mano y completá: gasto o ingreso; monto y moneda pesos por defecto, o dólares ; fecha, comercio o descripción y categoría; medio de pago efectivo, débito, crédito, transferencia o Mercado Pago y una nota si querés. Tocá un movimiento para editarlo o borrarlo. Si lo borraste sin querer, tocá Deshacer . El tablero del mes Entró, Salió y Queda , en pesos y aparte en dólares si tenés movimientos en USD . La comparación con el mes anterior. Gasto por categoría , con barras, y el filtro por categoría. Las flechas de arriba cambian de mes. Gastos de tus grupos Lo que te toca de los gastos de tus grupos de gastos /ayuda/grupos de gastos/cargar gastos aparece solo, como «Mi parte · nombre del grupo» . No se duplica: si cargás el gasto en el grupo, no lo cargues de nuevo en Bitácora. Categorías Vienen armadas Supermercado, Comida y delivery, Transporte, Casa y servicios, Salud, Salidas, Suscripciones, Ropa, Educación, Otros e Ingresos . En Categorías las renombrás, sumás nuevas o archivás las que no usás los movimientos viejos no se pierden . Exportar El botón CSV descarga los movimientos del mes y del filtro elegido para abrir en una planilla."
+  "body": "Tu Bitácora es privada. Si querés que tu pareja o alguien de tu casa la vea, compartila desde **Bitácora → Hogar**:\n\n1. Escribí su mail y elegí qué puede hacer: **solo ver** o **ver y cargar** movimientos.\n2. Le llega una invitación. Tiene que aceptarla entrando a Faro con **ese mismo mail**.\n3. Desde ese momento ve tu Bitácora en su pestaña **Hogar**, con el tablero del mes y los movimientos. Si le diste permiso, también puede cargar (queda anotado quién lo cargó).\n\n**Dejar de compartir:** cualquiera de las dos personas lo corta en cualquier momento desde **Hogar**. Queda registrado.\n\nSi lo que quieren es dividir gastos entre varias personas y saber quién le debe a quién, usen un [grupo de gastos](/ayuda/grupos-de-gastos/crear-un-grupo).",
+  "text": "Tu Bitácora es privada. Si querés que tu pareja o alguien de tu casa la vea, compartila desde Bitácora → Hogar : 1. Escribí su mail y elegí qué puede hacer: solo ver o ver y cargar movimientos. 2. Le llega una invitación. Tiene que aceptarla entrando a Faro con ese mismo mail . 3. Desde ese momento ve tu Bitácora en su pestaña Hogar , con el tablero del mes y los movimientos. Si le diste permiso, también puede cargar queda anotado quién lo cargó . Dejar de compartir: cualquiera de las dos personas lo corta en cualquier momento desde Hogar . Queda registrado. Si lo que quieren es dividir gastos entre varias personas y saber quién le debe a quién, usen un grupo de gastos /ayuda/grupos de gastos/crear un grupo ."
+ },
+ {
+  "id": "bitacora/importar-y-conectar",
+  "categoria": "bitacora",
+  "slug": "importar-y-conectar",
+  "titulo": "Importar resúmenes y conectar Mercado Pago o Gmail",
+  "resumen": "Subí el resumen del banco o la tarjeta (CSV o PDF) con vista previa y sin duplicados, o conectá Mercado Pago y Gmail para que tus gastos entren solos.",
+  "perfiles": [
+   "persona",
+   "autonomo",
+   "estudio",
+   "organizacion",
+   "empleado"
+  ],
+  "modulo": "bitacora",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "bitacora/bitacora",
+   "bitacora/fijos-y-avisos"
+  ],
+  "body": "## Importar un resumen\n\nEn **Bitácora → Importar**:\n\n1. Subí el archivo: el **CSV** o el **PDF** (con texto, no escaneado) del resumen de tu banco o tarjeta, o el **CSV de movimientos de Mercado Pago** (desde la app de Mercado Pago: Tu dinero → Movimientos → Descargar).\n2. Mirá la **vista previa**. Si algo quedó mal, abrí **Qué columna es qué** y elegí cuál es la fecha, la descripción y el importe (o débito y crédito). Si es de tarjeta, marcá que los gastos vienen en positivo.\n3. Destildá lo que no quieras cargar. Lo que **ya estaba** en tu Bitácora aparece marcado y no se duplica.\n4. Tocá **Importar**. Las categorías se completan según lo que cargaste antes en el mismo comercio.\n\nSi te equivocaste, tocá **Deshacer** en la lista de importaciones. Con Bitácora Gratis podés importar 2 resúmenes por mes.\n\n## Conectar Mercado Pago (Plus)\n\nEn **Bitácora → Conexiones → Conectar Mercado Pago** autorizás a Faro a **leer** tus movimientos (no puede mover plata). Después tocá **Traer movimientos**: entran los pagos (como gastos) y los cobros (como ingresos) de los últimos 30 días, sin duplicar. Podés desconectar cuando quieras; lo que ya entró queda.\n\n## Conectar Gmail (Plus)\n\nCon **Conectar Gmail** Faro lee en modo solo lectura los mails de facturas de servicios, suscripciones y resúmenes de tarjeta. **No carga nada solo**: cada mail aparece en **Para confirmar** con el importe que encontró; tocá **Cargar** (corrigiendo el importe si hace falta) o **Descartar**.\n\nCada movimiento importado o conectado guarda de dónde vino, cuándo y el registro original.",
+  "text": "Importar un resumen En Bitácora → Importar : 1. Subí el archivo: el CSV o el PDF con texto, no escaneado del resumen de tu banco o tarjeta, o el CSV de movimientos de Mercado Pago desde la app de Mercado Pago: Tu dinero → Movimientos → Descargar . 2. Mirá la vista previa . Si algo quedó mal, abrí Qué columna es qué y elegí cuál es la fecha, la descripción y el importe o débito y crédito . Si es de tarjeta, marcá que los gastos vienen en positivo. 3. Destildá lo que no quieras cargar. Lo que ya estaba en tu Bitácora aparece marcado y no se duplica. 4. Tocá Importar . Las categorías se completan según lo que cargaste antes en el mismo comercio. Si te equivocaste, tocá Deshacer en la lista de importaciones. Con Bitácora Gratis podés importar 2 resúmenes por mes. Conectar Mercado Pago Plus En Bitácora → Conexiones → Conectar Mercado Pago autorizás a Faro a leer tus movimientos no puede mover plata . Después tocá Traer movimientos : entran los pagos como gastos y los cobros como ingresos de los últimos 30 días, sin duplicar. Podés desconectar cuando quieras; lo que ya entró queda. Conectar Gmail Plus Con Conectar Gmail Faro lee en modo solo lectura los mails de facturas de servicios, suscripciones y resúmenes de tarjeta. No carga nada solo : cada mail aparece en Para confirmar con el importe que encontró; tocá Cargar corrigiendo el importe si hace falta o Descartar . Cada movimiento importado o conectado guarda de dónde vino, cuándo y el registro original."
+ },
+ {
+  "id": "bitacora/sobres-y-metas",
+  "categoria": "bitacora",
+  "slug": "sobres-y-metas",
+  "titulo": "Sobres y metas de ahorro",
+  "resumen": "Poné un tope por categoría (sobres) con sugerencias a partir de lo que gastás, y armá metas de ahorro con el monto por semana para llegar.",
+  "perfiles": [
+   "persona",
+   "autonomo",
+   "estudio",
+   "organizacion",
+   "empleado"
+  ],
+  "modulo": "bitacora",
+  "actualizado": "2026-10-11",
+  "relacionados": [
+   "bitacora/bitacora",
+   "bitacora/fijos-y-avisos"
+  ],
+  "body": "## Sobres\n\nEn **Bitácora → Sobres** ves, por categoría, cuánto pusiste de tope este mes y cuánto llevás gastado, con una barra que se pone en rojo cuando te pasás.\n\n- **Sugerencia:** si tenés al menos un par de meses cargados, Faro te propone un sobre por categoría con lo que solés gastar. Tocá **Usar los sugeridos** y después ajustalos.\n- **A mano:** escribí el monto al lado de la categoría y guardá. Dejalo vacío para sacar el sobre.\n- Si un sobre se está por terminar antes de fin de mes, te avisamos en el Inicio.\n\n## Metas\n\nEn **Bitácora → Metas** creás una meta (un viaje, un fondo de emergencia u otra cosa) con el monto y, si querés, la fecha.\n\n- Faro calcula **cuánto guardar por semana** para llegar (si no ponés fecha, en seis meses).\n- Sumá o sacá plata de la meta cuando quieras; la barra muestra el avance.\n- Con Bitácora Gratis tenés una meta activa; con Plus, todas las que quieras.\n\n## El coach del Vigía\n\nPreguntale al Vigía «¿cómo puedo ahorrar más?» o «¿qué hago con mi aguinaldo?»: mira tus sobres, fijos, fugas y metas y te sugiere hábitos con tus números. Puede explicarte en general cómo funcionan un plazo fijo, un fondo money market o el dólar MEP, pero **no te recomienda inversiones**: eso es asesoramiento financiero, regulado por la CNV. Para eso te deriva a un asesor matriculado de la [Red de estudios](/red?servicio=asesoramiento_financiero).",
+  "text": "Sobres En Bitácora → Sobres ves, por categoría, cuánto pusiste de tope este mes y cuánto llevás gastado, con una barra que se pone en rojo cuando te pasás. Sugerencia: si tenés al menos un par de meses cargados, Faro te propone un sobre por categoría con lo que solés gastar. Tocá Usar los sugeridos y después ajustalos. A mano: escribí el monto al lado de la categoría y guardá. Dejalo vacío para sacar el sobre. Si un sobre se está por terminar antes de fin de mes, te avisamos en el Inicio. Metas En Bitácora → Metas creás una meta un viaje, un fondo de emergencia u otra cosa con el monto y, si querés, la fecha. Faro calcula cuánto guardar por semana para llegar si no ponés fecha, en seis meses . Sumá o sacá plata de la meta cuando quieras; la barra muestra el avance. Con Bitácora Gratis tenés una meta activa; con Plus, todas las que quieras. El coach del Vigía Preguntale al Vigía «¿cómo puedo ahorrar más?» o «¿qué hago con mi aguinaldo?»: mira tus sobres, fijos, fugas y metas y te sugiere hábitos con tus números. Puede explicarte en general cómo funcionan un plazo fijo, un fondo money market o el dólar MEP, pero no te recomienda inversiones : eso es asesoramiento financiero, regulado por la CNV. Para eso te deriva a un asesor matriculado de la Red de estudios /red?servicio=asesoramiento financiero ."
  },
  {
   "id": "conexiones/conexiones",
