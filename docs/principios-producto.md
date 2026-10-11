@@ -204,6 +204,33 @@ Usan la misma lógica de cajas compartidas y sueldo (§10 y §11), aplicada a us
 - Cada caja tiene un **propósito** que adapta lo que muestra: reparto justo entre integrantes, metas de ahorro, gastos del negocio, o facturación y lo fiscal cuando es de una actividad.
 - **Unifica lo que hoy está separado en la app:** Bitácora (movimientos, sobres, fijos, metas), Hogar, Grupos de gastos, Flotas y los gastos "de mi actividad" de Faro Personal pasan a ser cajas bajo esta misma lógica. La migración a este modelo se planifica aparte, sin perder datos.
 
+## 18. Registro compartido (distinto de Grupos de gastos)
+
+Precisa §16 y §17.
+
+1. **Diferencia clave.**
+   - **Grupos de gastos** divide un gasto y genera deuda: quién le debe a quién.
+   - El **registro compartido** no genera deuda por sí solo: es **llevar la cuenta juntos**. Cada integrante carga lo que gasta y también lo que ahorra, y la app muestra un desglose de **quién se hizo cargo de qué, cuánto y cuándo**, para ver que todos ponen parejo.
+2. **Opciones prearmadas.** El usuario no configura ni le pone nombre a nada desde cero: elige una opción ya armada, porque la mayoría de la gente no sabe o no quiere organizarse. Las opciones son:
+   - pareja;
+   - familia;
+   - amigos;
+   - negocio;
+   - padres y abuelos.
+
+   "Padres y abuelos" se define por el **fin** (por ejemplo, mantener a los abuelos), no por el parentesco: adentro puede participar cualquiera (hermanos, cuñado, primo, sobrino, nieto).
+3. **Personal y compartido con una sola carga.** El usuario lleva el control de sus finanzas personales. Cuando carga un gasto, **con una sola carga** puede reflejarlo en su registro personal y en el registro compartido que corresponda. No es doble carga: es una carga con uno o más destinos.
+4. **Dos finales posibles para el mismo gasto**, que elige quien paga en el momento:
+   - **"Solo registrar":** queda anotado que esa persona puso ese monto. No genera deuda y sirve para ver que cada uno pone parejo.
+   - **"Dividir":** lo pagó uno, pero se reparte. El sistema calcula cuánto le tiene que devolver cada uno (la lógica de Grupos de gastos) y ahí sí aparece la deuda.
+
+   Nunca se carga dos veces: es el mismo movimiento, que puede o no generar deuda.
+5. **Confirmación de pago.** Un gasto o aporte no cuenta en el seguimiento del registro compartido de una persona hasta que esa persona confirma que efectivamente lo pagó. Hasta entonces queda pendiente.
+
+**Ejemplo:** una pareja sale a comer y uno paga $3.000. Lo carga una vez en la caja de la pareja y elige:
+- **"Solo registrar":** queda que puso $3.000 y nadie le debe nada.
+- **"Dividir":** la pareja le debe $1.500, pendiente hasta que se los pase.
+
 ---
 
 ## Decisiones abiertas
@@ -211,6 +238,7 @@ Usan la misma lógica de cajas compartidas y sueldo (§10 y §11), aplicada a us
 - **(a) Exposición pública de las calificaciones.** Falta definir cuánto de las calificaciones (durante la relación y al cierre) se muestra públicamente como reputación del estudio en la Red. Hay que equilibrar el poder del cliente con no espantar a los estudios de la Red. No se implementa ningún cambio sobre esto hasta decidirlo.
 - **(b) Nombre de la Red Contable.** "Red Contable" es provisorio. Criterio del usuario: claro y descriptivo (que se entienda al toque, como Zonaprop), sin copiar "Zona".
 - **(c) Terminología interna.** Faro es la marca, pero los nombres de adentro tienen que ser claros y directos, no metáforas náuticas que obliguen a aprender un idioma nuevo. Falta decidir si se renombran los nombres actuales (Bitácora, Vigía, Flotas). No se cambian hasta decidirlo. Preferencia del usuario: no le gusta la terminología náutica, así que "Flotas" probablemente cambie de nombre.
+- **(d) El valor emocional del registro compartido.** Falta definir dónde está el valor emocional (que no sea solo una meta de ahorro fría), para que la gente se encariñe y quiera invitar a otros. El motor de crecimiento es que, para compartir una caja, la otra persona también tiene que usar la app.
 
 El resto de los puntos de este documento quedaron cerrados.
 
