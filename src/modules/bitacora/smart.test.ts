@@ -72,6 +72,7 @@ test("Mercado Pago CSV", () => {
   const rows = parseCsv("RELEASE_DATE,TRANSACTION_TYPE,REFERENCE_ID,TRANSACTION_NET_AMOUNT\n2026-10-02,Pago a Kiosco,123,-1500.00\n2026-10-03,Transferencia recibida,124,20000.00");
   const map = mercadoPagoMapping(rows[0])!;
   assert.deepEqual(mapRows(rows, map).map((r) => r.kind), ["gasto", "ingreso"]);
+  assert.equal(mercadoPagoMapping(["Fecha", "Descripción", "Importe"]), null);
 });
 
 test("PDF de resumen: fecha, descripción e importe", () => {

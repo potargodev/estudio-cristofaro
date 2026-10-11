@@ -335,6 +335,8 @@ export function mercadoPagoMapping(header: string[]): Mapping | null {
   const desc = h.findIndex((x) => x === "TRANSACTION_TYPE" || x === "DESCRIPTION" || x === "DESCRIPCIÓN" || x === "DETALLE");
   const amount = h.findIndex((x) => x === "TRANSACTION_NET_AMOUNT" || x === "NET_AMOUNT" || x === "IMPORTE" || x === "MONTO");
   if (date < 0 || desc < 0 || amount < 0) return null;
+  // Columnas propias del reporte de Mercado Pago (las genéricas solas son de cualquier banco)
+  if (!h.some((x) => ["RELEASE_DATE", "TRANSACTION_TYPE", "TRANSACTION_NET_AMOUNT", "NET_AMOUNT", "REFERENCE_ID", "SOURCE_ID"].includes(x))) return null;
   return { date, description: desc, amount, skipHeader: true };
 }
 

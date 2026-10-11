@@ -24,3 +24,26 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Certificado de homologación y de producción de la CUIT operadora, y validar la escala de monotributo vigente (ver pendientes).
+
+## F8 · Bitácora completa (octubre 2026)
+
+**Qué quedó**
+- Pestañas de la sección Bitácora (espacio Personal, §2.o): Movimientos · Sobres · Fijos · Metas · Importar · Conexiones · Hogar.
+- **Sobres** por categoría con sugerencia por la mediana de los meses anteriores; **fijos y suscripciones** detectados por recurrencia (confirmar, descartar, «la uso / no la uso», alta manual) con aviso antes del vencimiento y de aumentos; **fugas** (gastos chicos y frecuentes, crecimiento contra el promedio); **metas** con ahorro semanal sugerido.
+- **Valores reales**: ver el mes en pesos, ajustado por IPC (serie en Faro Manager → Catálogo → Índices) o en dólares MEP (cotización guardada a diario).
+- **Resumen semanal** cada domingo (campanita y mail), con interruptor en Fijos; avisos descartables en Bitácora y en el Inicio personal.
+- **Importación** de CSV y PDF con texto (y CSV de Mercado Pago) con vista previa, mapeo de columnas, duplicados marcados, categoría por comercio y «Deshacer» por lote.
+- **Conexiones (Plus)**: Mercado Pago por OAuth (solo lectura, carga pagos y cobros sin duplicar) y Gmail solo lectura (propone servicios, suscripciones y resúmenes en «Para confirmar»). Tokens cifrados; simuladores en `mocks/mercadopago` (4070) y `mocks/google` (4030).
+- **Coach** en el Vigía (`coach_finanzas`) con sus números reales, sin recomendaciones de inversión (CNV) y derivación a la Red con el servicio «Asesoramiento financiero».
+- **Hogar**: compartir la Bitácora con otra persona (ver o ver y cargar), revocable por las dos y auditado.
+- **Autónomos**: marcar un gasto como de la actividad y deducible y pasarlo a Faro Personal.
+- **Planes**: Gratis (1 meta, 2 importaciones por mes) y Plus (planes pagos: sin límite y con conexiones).
+- Todo movimiento importado o conectado guarda fuente, fecha de sincronización, ID externo, estado de validación y registro original. Módulo actualizado en el registro (eventos y herramientas). Cuatro artículos de ayuda nuevos y el de Bitácora actualizado.
+
+**Qué se probó**
+- `npm test` (52): detección de fijos, fugas, sobres sugeridos, ahorro semanal, valor real, CSV/PDF/Mercado Pago, mapeo y mails.
+- `scripts/pruebas/bitacora-navegador.mjs` (43/43, 390 px): todo el recorrido con los simuladores, límites de Gratis, Plus, propuestas, profesional → Faro Personal, hogar con aislamiento y auditoría, e IDs forzados (importación, movimiento e invitación ajenos → 404).
+- `scripts/pruebas/bitacora-servidor.mts` (15/15): cada función que recibe un ID del navegador probada con el usuario equivocado, y el resumen semanal.
+
+**Qué falta configurar**
+- Aplicación de Mercado Pago, verificación de Google para Gmail y la serie del IPC (ver pendientes).
