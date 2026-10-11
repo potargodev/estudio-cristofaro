@@ -76,6 +76,8 @@ export interface NavAccess {
 export const COMERCIAL_TABS: NavItem[] = [
   { href: "/admin/comercial/consultas", label: "Consultas", icon: "consultas", badge: "leads", operatorOnly: true },
   { href: "/admin/comercial/agenda", label: "Agenda", icon: "agenda" },
+  // Conexión con un contador (principios §7): solicitudes, invitaciones, admisión y calificaciones
+  { href: "/admin/comercial/conexiones", label: "Conexiones", icon: "usuarios", operatorOnly: true },
   { href: "/admin/comercial/red", label: "Perfil en la Red", icon: "red", operatorOnly: true, module: "red_estudios" },
 ];
 

@@ -149,3 +149,8 @@ Los cobros, recordatorios y avisos de suscripción salen por mail: sin SMTP solo
 **Qué falta:** que un contador matriculado valide la lista de tareas que requieren un matriculado y los umbrales del disparador de derivación (80 % del tope, primer empleado, comprobantes E, actividades, monto de la changa).
 **Quién:** Estudio Cristofaro (cliente cero), con el owner de Faro.
 **Paso a paso:** Faro Manager → Catálogo → **Escudo**. Revisar cada tarea (título y frases que la identifican) y cada regla (texto y umbral), y marcarlas «Validada por un contador» con nombre y matrícula. Hasta entonces se muestran «a validar».
+
+## Conexión con un contador (principios §4 a §9)
+
+**Qué falta:** revisar con un abogado y con Estudio Cristofaro el texto de las políticas que la persona acepta al conectar (`/legal/terminos` y el resumen de la pantalla del acuerdo) y el modelo de acuerdo de servicio (versión `conexion-2026-10`). Hasta entonces el acuerdo usa las condiciones que carga cada estudio (servicios, honorarios y preaviso).
+**Quién:** owner de Faro con asesoría legal.

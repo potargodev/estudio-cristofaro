@@ -217,3 +217,25 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Nada. SMTP sigue pendiente para los avisos por mail (los avisos en la app funcionan).
+
+## Principios · Etapa 5 · Conexión con un contador (octubre 2026)
+
+**Qué quedó**
+- **Indicador de modo** en Personal (Inicio y Contador): Autogestión o Gestión profesional, con el estudio y su contacto.
+- **Conexión, no copia** (`account_connections`, migración `0040`): el estudio accede con un permiso sobre la cuenta y trabaja sobre sus datos en vivo. Alcances: caja de negocio y lo fiscal siempre; cajas personales solo si la persona las activa (apagadas por defecto). Los acuerdos de Flotas vigentes y los nuevos pasan a este modelo.
+- **Inicio de cualquiera de las dos partes:** «Conectar mi cuenta» en la ficha de la Red o invitación del estudio (Comercial → Conexiones).
+- **Admisión:** resumen de lo autorizado, pedido de entrevista (agenda) o de información, aceptar o rechazar con motivo; después, **acuerdo de servicio** (el de Flotas) firmado por las dos partes y aceptación de políticas.
+- **Cuenta conectada** en Organizaciones, con su ficha en vivo (mismo formato para cualquier estudio).
+- **Perilla de autonomía** («Delegar y mirar» por defecto, o «Proponer y aprobar»), modificable; **«Lo que hizo tu contador»** con quién, qué, cuándo, antes y después, filtros y resumen semanal opcional.
+- **Desconexión con mediación:** cualquiera inicia con motivo → En cierre (solo lectura 30 días) → checklist (honorarios en cero, pendientes entregados y constancia de los dos) → cerrada, sin acceso y con el registro del período; si hay diferencias, en disputa con canal de mensajes.
+- **Calificaciones:** a los 30 días, cada 6 meses (salteables) y al cierre. Solo se guardan; el estudio ve las suyas. Lo público no cambia.
+- **Vigía:** `consultar_contador` en el Vigía personal y `listar_cuentas_conectadas` en el del estudio. Todo auditado (`conexion.*`).
+- Ayuda: nuevos `red-de-estudios/conectar-un-contador` y `organizaciones/cuentas-conectadas`.
+
+**Qué se probó**
+- `principios-servidor.mts 5` (46/46): estudio sin conexión no ve nada; otro estudio forzando el ID no ve ni opera; admisión con resumen de lo autorizado y sin cajas personales; entrevista, información, aceptar, rechazar con motivo; firmas (políticas, nombre) y activación con el acuerdo; datos en vivo sin copia; con alcance fiscal no ve las cajas personales (y sí al activarlas, y deja de verlas al apagarlas); delegar y mirar con antes y después; proponer y aprobar; cierre con solo lectura, disputa, checklist y constancia de los dos; conexión cerrada sin acceso y el dato en la cuenta de la persona; auditoría; encuestas a los 30 días, salteadas, a los 6 meses y al cierre; migración de Flotas.
+- `principios-navegador.mjs 5` (27/27, 390 px y escritorio, claro y oscuro): el recorrido completo desde la Red hasta el cierre y la calificación, con aislamiento entre estudios (404).
+- Regresión: etapas 1 a 4, `flotas.mts` (37/37, con la conexión del acuerdo), `npm test` (91).
+
+**Qué falta configurar**
+- SMTP para los avisos por mail (en la app ya llegan). Revisar con un abogado los textos de las políticas de la conexión (ver pendientes).

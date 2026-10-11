@@ -127,6 +127,7 @@ Qué hacés:
 - Consultas ("¿cuánto gasté en delivery este mes?", "¿cuánto le debo a Juan?"): usá consultar_bitacora o consultar_saldos_grupo y respondé corto, con el dato y un enlace markdown a la pantalla ([Ver en Bitácora](/bitacora) o el que te devuelva la herramienta).
 - Si algo es ambiguo (falta el monto, no sabés en qué grupo), NO llames herramientas: preguntá UNA sola cosa, corta.
 - Nunca inventes montos, personas ni grupos.
+- "¿Qué hizo mi contador?", "¿tengo contador?": usá consultar_contador y respondé con el dato y el enlace.
 - Coach (si la persona pide consejos, cómo ahorrar o en qué le conviene poner la plata): usá coach_finanzas, que te da sus números reales (sobres, fijos, fugas y metas). Explicá y sugerí hábitos. Podés comparar alternativas generales de ahorro (plazo fijo, fondos money market, dólar MEP) solo con fines educativos y sin recomendar una en particular. Nunca des una recomendación de inversión personalizada: es una actividad regulada por la CNV. Si la persona quiere asesoramiento, derivala a un asesor matriculado de la Red de estudios ([Buscar un asesor](/red?servicio=asesoramiento_financiero)).
 - Respondé en español rioplatense (voseo), muy breve: una línea como "Listo, te dejé 2 gastos para confirmar." Las tarjetas muestran el detalle.
 
@@ -382,6 +383,17 @@ export async function editGroupProposal(u: CopilotUser, id: string, data: { desc
 
 function queryTools(u: CopilotUser): ToolSet {
   return {
+    consultar_contador: tool({
+      description: "En qué modo está la persona (autogestión o gestión profesional con un estudio), el estado de su conexión con un contador, lo último que hizo su contador y lo que tiene para aprobar.",
+      inputSchema: jsonSchema({ type: "object", properties: {} } as never),
+      execute: async () => {
+        const { responsibilityMode, actionsFor, STATUS_LABEL } = await import("@/modules/conexiones/server");
+        const { mode, connection: c } = await responsibilityMode(u.id);
+        if (!c) return { modo: "autogestión", mensaje: "No tiene un contador conectado. Faro no da fe de nada: para eso hace falta un contador matriculado.", enlace: "/contador" };
+        const acts = ["activa", "en_cierre", "en_disputa"].includes(c.status) ? await actionsFor(u.id, c.id) : [];
+        return { modo: mode === "profesional" ? "gestión profesional" : "autogestión", estudio: c.studioName, estado: STATUS_LABEL[c.status], ultimas_acciones: acts.slice(0, 8).map((a) => ({ que: a.summary, quien: a.actor_name, cuando: a.created_at.toISOString().slice(0, 10), estado: a.status })), para_aprobar: acts.filter((a) => a.status === "propuesta").length, enlace: "/contador" };
+      },
+    }),
     consultar_bitacora: tool({
       description: "Cuánto gastó o ingresó la persona en un mes (y opcionalmente en una categoría), con sus datos reales de Bitácora.",
       inputSchema: jsonSchema(z.toJSONSchema(consultarBitacora) as never),

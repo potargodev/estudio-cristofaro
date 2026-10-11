@@ -419,6 +419,131 @@ if (stage("4")) {
   }
 }
 
+// ─── Etapa 5 · Conexión con un contador (§2, §4 a §9) ───
+if (stage("5")) {
+  const cx = await import("../../src/modules/conexiones/server.ts");
+  const cj = await import("../../src/modules/cajas/server.ts");
+  const { createTenant } = await import("../../src/lib/faro/tenants.ts");
+  const ts = Date.now();
+  const r = await createTenant({ kind: "personal", name: "Lola Autonoma", cuit: "27333333339", owner: { name: "Lola Autonoma", email: `lola-${ts}@prueba.local`, password: "clave-larga-123" }, via: "manual" } as never);
+  if (!r.ok) throw new Error(r.message);
+  const L = { id: r.userId, studioId: r.studioId, name: "Lola Autonoma", email: `lola-${ts}@prueba.local`, role: "titular", tenantKind: "personal" };
+  const [slugA] = await sql`select slug from studios where id = ${d.studios.A}`;
+  const staffA = { id: d.users.adminA, name: "Admin A", email: "a@ejemplo.com", studioId: d.studios.A, role: "dueno", tenantKind: "studio" };
+  const staffB = { id: d.users.adminB, name: "Admin B", email: "b@ejemplo.com", studioId: d.studios.B, role: "dueno", tenantKind: "studio" };
+  const colab = { id: d.users.colaboradorA, name: "Coco", email: "c@ejemplo.com", studioId: d.studios.A, role: "colaborador", tenantKind: "studio" };
+  const err = (fn: () => Promise<unknown>) => fn().then(() => false, (e) => e instanceof cx.ConexionError);
+  const biz = await cj.openBusinessBox(L);
+  await cj.addBusinessEntry(L, biz.id, { kind: "ingreso", amount: 9000000, date: new Date().toISOString().slice(0, 10), category: "ventas", description: "Proyecto web", invoiced: true });
+  await sql`insert into bitacora_entries (user_id, kind, amount, date, description) values (${L.id}, 'gasto', 450000, current_date, 'Gimnasio')`;
+  const month = new Date().toISOString().slice(0, 7);
+
+  check("modo: autogestión sin contador", (await cx.responsibilityMode(L.id)).mode === "autogestion");
+  // Un estudio sin conexión no ve nada
+  const ghost = "00000000-0000-4000-8000-000000000000";
+  check("estudio sin conexión: no ve nada (ID inventado)", (await cx.liveView(staffA, ghost, month)) === null);
+
+  // Solicitud desde la Red (alcance fiscal: personal apagado por defecto)
+  const c = await cx.requestConnection(L, slugA.slug, { message: "Necesito contador para el monotributo" });
+  check("solicitud: en admisión, personal apagado y «delegar y mirar» por defecto", c.status === "admision" && !c.scope_personal && c.autonomy === "delegar");
+  check("una sola conexión en curso por persona", await err(() => cx.requestConnection(L, slugA.slug, {})));
+  check("otro estudio, forzando el ID: no ve nada", (await cx.liveView(staffB, c.id, month)) === null && (await cx.studioAccess(staffB, c.id)) === null);
+  const adm = await cx.liveView(staffA, c.id, month);
+  check("admisión: el estudio ve el resumen de lo autorizado (caja de negocio)", adm?.level === "admision" && adm.summary?.income === 9000000);
+  check("con alcance fiscal no ve las cajas personales", adm?.personal === null);
+  check("en admisión el estudio no puede operar", await err(() => cx.studioAct(staffA, c.id, { op: "crear_movimiento", kind: "gasto", amount: 100, date: "2026-10-01", category: "otros", description: "x" })));
+  await cx.requestInterview(staffA, c.id, "Charlemos 15 minutos");
+  await cx.requestInfo(staffA, c.id, "¿Facturás al exterior?");
+  await cx.answerInfo(L, c.id, "No, solo en el país.");
+  check("admisión: entrevista e información pedidas y respondidas", (await sql`select interview_requested_at, info_response from account_connections where id = ${c.id}`)[0].info_response === "No, solo en el país.");
+  check("un colaborador no decide la admisión", await err(() => cx.decide(colab, c.id, { accept: true, reason: "", services: "Monotributo", monthlyPrice: 1 })));
+  check("rechazar exige motivo", await err(() => cx.decide(staffA, c.id, { accept: false, reason: "" })));
+  await cx.decide(staffA, c.id, { accept: true, reason: "Bienvenida", services: "Monotributo, recategorización y facturación", monthlyPrice: 45000, noticeDays: 30 });
+  check("aceptada: falta el acuerdo", (await sql`select status from account_connections where id = ${c.id}`)[0].status === "acuerdo");
+  check("firmar exige aceptar las políticas", await err(() => cx.signAsUser(L, c.id, "Lola Autonoma", false)));
+  check("firmar exige el nombre de la cuenta", await err(() => cx.signAsUser(L, c.id, "Otra Persona", true)));
+  await cx.signAsUser(L, c.id, "lola autónoma", true);
+  check("con una sola firma no se activa", (await sql`select status from account_connections where id = ${c.id}`)[0].status === "acuerdo");
+  await cx.signAsStudio(staffA, c.id, "Admin A");
+  const [act] = await sql`select status, agreement_id from account_connections where id = ${c.id}`;
+  const [ag] = act.agreement_id ? await sql`select status, signed_name from service_agreements where id = ${act.agreement_id}` : [];
+  check("las dos firmas: conexión activa y acuerdo de servicio (el de Flotas)", act.status === "activa" && ag?.status === "activo");
+  check("modo: gestión profesional con el estudio", (await cx.responsibilityMode(L.id)).mode === "profesional");
+
+  // Datos en vivo, sin copia
+  const before = await sql`select count(*)::int n from organizations where studio_id = ${d.studios.A}`;
+  const live = await cx.liveView(staffA, c.id, month);
+  check("conectada: el estudio ve la caja de negocio en vivo", live?.level === "total" && live.entries.some((e) => e.description === "Proyecto web"));
+  check("conectada con alcance fiscal: no ve las cajas personales", live?.personal === null);
+  await cj.addBusinessEntry(L, biz.id, { kind: "gasto", amount: 120000, date: new Date().toISOString().slice(0, 10), category: "software", description: "Hosting" });
+  check("en vivo: lo que carga Lola aparece sin copiar nada", (await cx.liveView(staffA, c.id, month))!.entries.some((e) => e.description === "Hosting") && (await sql`select count(*)::int n from organizations where studio_id = ${d.studios.A}`)[0].n === before[0].n);
+  await cx.setScopes(L, c.id, true);
+  check("si Lola activa lo personal, el estudio lo ve", (await cx.liveView(staffA, c.id, month))!.personal?.some((e) => e.description === "Gimnasio") === true);
+  await cx.setScopes(L, c.id, false);
+  check("y si lo apaga, deja de verlo", (await cx.liveView(staffA, c.id, month))!.personal === null);
+
+  // Delegar y mirar: opera y queda a la vista con antes y después
+  const host = (await sql`select id from box_entries where box_id = ${biz.id} and description = 'Hosting'`)[0];
+  const a1 = await cx.studioAct(staffA, c.id, { op: "editar_movimiento", entryId: host.id, deductible: true });
+  const log1 = await cx.actionsFor(L.id, c.id);
+  check("delegar y mirar: el contador opera y queda con antes y después", a1.status === "aplicada" && log1[0].before?.deducible === false && log1[0].after?.deducible === true && (await sql`select deductible from box_entries where id = ${host.id}`)[0].deductible === true);
+  check("el estudio no toca un movimiento de otra caja (forzando el ID)", await err(() => cx.studioAct(staffA, c.id, { op: "editar_movimiento", entryId: ghost, deductible: true })));
+  check("otro estudio no puede operar", await err(() => cx.studioAct(staffB, c.id, { op: "crear_movimiento", kind: "gasto", amount: 100, date: "2026-10-01", category: "otros", description: "x" })));
+  // Proponer y aprobar
+  await cx.setAutonomy(L, c.id, "proponer");
+  const a2 = await cx.studioAct(staffA, c.id, { op: "crear_movimiento", kind: "gasto", amount: 300000, date: new Date().toISOString().slice(0, 10), category: "impuestos", description: "Monotributo octubre" });
+  check("proponer y aprobar: queda para aprobar y no se aplica", a2.status === "propuesta" && (await sql`select count(*)::int n from box_entries where box_id = ${biz.id} and description = 'Monotributo octubre'`)[0].n === 0);
+  check("otra persona no aprueba (forzando el ID)", await cx.decideAction({ ...L, id: d.users.titular } as never, a2.id, true).then(() => false, () => true));
+  await cx.decideAction(L, a2.id, true);
+  check("al aprobar se aplica", (await sql`select count(*)::int n from box_entries where box_id = ${biz.id} and description = 'Monotributo octubre'`)[0].n === 1);
+  check("filtros: solo las aprobadas", (await cx.actionsFor(L.id, c.id, { status: "aprobada" })).length === 1);
+
+  // Desconexión con mediación
+  check("cierre sin motivo: error", await err(() => cx.startClosing(L, "usuario", c.id, "")));
+  await cx.startClosing(L, "usuario", c.id, "Me mudo de ciudad");
+  const ro = await cx.liveView(staffA, c.id, month);
+  check("en cierre: el estudio solo lectura", ro?.level === "lectura" && (await err(() => cx.studioAct(staffA, c.id, { op: "editar_movimiento", entryId: host.id, deductible: false }))));
+  await cx.closingCheck(staffA, "estudio", c.id, "honorarios");
+  check("el usuario no confirma los honorarios por el estudio", await err(() => cx.closingCheck(L, "usuario", c.id, "honorarios")));
+  await cx.openDispute(L, "usuario", c.id, "Me cobraron dos veces septiembre");
+  check("en disputa, con canal de mensajes", (await sql`select status from account_connections where id = ${c.id}`)[0].status === "en_disputa" && (await cx.disputeMessages(c.id)).length === 1);
+  check("en disputa no se puede cerrar", await err(() => cx.closingCheck(staffA, "estudio", c.id, "constancia")));
+  await cx.postDisputeMessage(staffA, "estudio", c.id, "Tenés razón, te devolvemos el pago.");
+  await cx.resolveDispute(staffA, "estudio", c.id);
+  await cx.closingCheck(staffA, "estudio", c.id, "pendientes");
+  await cx.closingCheck(staffA, "estudio", c.id, "constancia");
+  check("con una sola constancia no se cierra", (await sql`select status from account_connections where id = ${c.id}`)[0].status === "en_cierre");
+  await cx.closingCheck(L, "usuario", c.id, "constancia");
+  const [closed] = await sql`select status, started_at, closed_at, agreement_id from account_connections where id = ${c.id}`;
+  check("constancia de los dos: cerrada, con el registro del período", closed.status === "cerrada" && !!closed.started_at && !!closed.closed_at && (await sql`select status from service_agreements where id = ${closed.agreement_id}`)[0].status === "finalizado");
+  check("conexión cerrada: el estudio pierde todo acceso", (await cx.liveView(staffA, c.id, month)) === null && (await cx.studioAccess(staffA, c.id)) === null);
+  check("el dato sigue en la cuenta de Lola", (await sql`select count(*)::int n from box_entries where box_id = ${biz.id} and deleted_at is null`)[0].n >= 3);
+  check("todo el recorrido quedó en la auditoría", (await sql`select count(*)::int n from audit_log where entity_id = ${c.id} and action like 'conexion.%'`)[0].n >= 12);
+
+  // Calificaciones: al cerrar, y durante la relación a los 30 días
+  const due = await cx.surveyDue(L.id);
+  check("encuesta de cierre pendiente", due?.kind === "cierre" && due.connId === c.id);
+  await cx.rate(L, c.id, "cierre", { score: 4, comment: "Bien" });
+  check("calificación guardada y el estudio ve la suya", (await cx.studioRatings(staffA)).some((x) => x.r.connection_id === c.id && x.r.score === 4) && (await cx.studioRatings(staffB)).every((x) => x.r.connection_id !== c.id));
+  // Invitación del estudio + encuesta a los 30 días (salteable)
+  const inv = await cx.inviteClient(staffB, L.email);
+  check("invitación del estudio: la persona elige y pasa a admisión", inv.status === "invitada");
+  await cx.acceptInvitation(L, inv.id, { scopePersonal: false });
+  await cx.decide(staffB, inv.id, { accept: true, reason: "", services: "Todo lo del monotributo", monthlyPrice: 1, noticeDays: 10 });
+  await cx.signAsUser(L, inv.id, "Lola Autonoma", true);
+  await cx.signAsStudio(staffB, inv.id, "Admin B");
+  await sql`update account_connections set started_at = now() - interval '31 days' where id = ${inv.id}`;
+  check("encuesta a los 30 días", (await cx.surveyDue(L.id))?.kind === "periodica");
+  await cx.rate(L, inv.id, "periodica", { skip: true });
+  check("salteada: no vuelve hasta dentro de 6 meses", (await cx.surveyDue(L.id)) === null);
+  await sql`update connection_ratings set created_at = now() - interval '183 days' where connection_id = ${inv.id}`;
+  check("y vuelve a los 6 meses", (await cx.surveyDue(L.id))?.kind === "periodica");
+  // Flotas: los acuerdos vigentes pasaron al modelo de permiso
+  check("migración de Flotas: cada acuerdo vigente tiene su conexión", (await sql`select count(*)::int n from service_agreements a where a.status = 'activo' and a.profile <> 'conexion' and not exists (select 1 from account_connections c where c.agreement_id = a.id)`)[0].n === 0);
+  await sql`delete from studios where id = ${L.studioId}`;
+  await sql`delete from users where id = ${L.id}`;
+}
+
 console.log(fails ? `\n${fails} fallas` : "\nTodo bien");
 await sql.end();
 process.exit(fails ? 1 : 0);

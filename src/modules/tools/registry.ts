@@ -3,6 +3,7 @@ import { z } from "zod/v4";
 import { agendaTools } from "./modulos/agenda";
 import { ayudaTools } from "./modulos/ayuda";
 import { conexionesTools } from "./modulos/conexiones";
+import { cuentasTools } from "./modulos/cuentas";
 import { consultasTools } from "./modulos/consultas";
 import { documentosTools } from "./modulos/documentos";
 import { estudioTools } from "./modulos/estudio";
@@ -33,6 +34,7 @@ export const TOOLS: ToolDefinition[] = [
   ...consultasTools,
   ...estudioTools,
   ...conexionesTools,
+  ...cuentasTools,
   ...gastosTools,
   ...industriasTools,
   ...ayudaTools,

@@ -225,6 +225,106 @@ if (stage("4")) {
   check("Mis cajas muestra la caja de pareja con su gente", await seen(p, "Pareja · 2 personas"));
 }
 
+// ─── Etapa 5 · Conexión con un contador ───
+if (stage("5")) {
+  const T = d.users.titular;
+  const A = d.studios.A;
+  const [{ slug, plan_key }] = await sql`select slug, plan_key from studios where id = ${A}`;
+  await sql`update studios set plan_key = 'profesional' where id = ${A}`;
+  await sql`insert into directory_profiles (studio_id, published, accepting_clients, headline, province, city, contact_email, license_body, license_number, license_holder, license_status) values (${A}, true, true, 'Estudio de prueba', 'Santa Fe', 'Rosario', 'hola@estudio.test', 'CPCE Santa Fe', '123', 'Admin', 'verificada') on conflict (studio_id) do update set published = true, accepting_clients = true, license_status = 'verificada', contact_email = 'hola@estudio.test'`;
+  await sql`delete from account_connections where user_id = ${T}`;
+  const t = await as(d.cookies.titular);
+  await t.goto(`${BASE}/personal`);
+  check("Personal: indicador «Autogestión»", (await seen(t, "Autogestión")) && (await t.locator('[data-modo="autogestion"]').count()) === 1);
+  await t.goto(`${BASE}/red/${slug}`);
+  check("Red: «Conectar mi cuenta» (conexión, no copia; personal apagado)", (await seen(t, "Conectar mi cuenta")) && !(await t.locator('[data-conectar] input[name="personal"]').isChecked()));
+  await t.locator("[data-conectar] textarea[name=message]").fill("Necesito contador para el monotributo");
+  await t.getByRole("button", { name: "Pedir la conexión" }).click();
+  check("solicitud enviada: en admisión", (await seen(t, "Ahora hace su admisión")) && (await seen(t, "En admisión")));
+  const [c] = await sql`select id from account_connections where user_id = ${T} order by created_at desc limit 1`;
+  const a = await as(d.cookies.adminA, { width: 1280 });
+  await a.goto(`${BASE}/admin/comercial/conexiones`);
+  check("Comercial → Conexiones: el pedido para revisar", (await seen(a, "Para revisar")) && (await seen(a, "En admisión")));
+  await a.goto(`${BASE}/admin/comercial/conexiones/${c.id}`);
+  check("admisión: resumen de lo autorizado, sin cajas personales", (await seen(a, "Lo que autorizó a ver")) && (await seen(a, "No compartidas")));
+  await a.locator("input[name=question]").fill("¿Facturás al exterior?");
+  await a.getByRole("button", { name: "Pedir", exact: true }).click();
+  await seen(a, "Le pediste más información");
+  await t.goto(`${BASE}/contador`);
+  await t.locator("textarea[name=answer]").fill("No, solo en el país.");
+  await t.getByRole("button", { name: "Responder" }).click();
+  check("la persona responde la información pedida", await seen(t, "Respuesta enviada al estudio."));
+  await a.goto(`${BASE}/admin/comercial/conexiones/${c.id}`);
+  await a.locator("textarea[name=services]").fill("Monotributo, recategorización y vencimientos");
+  await a.locator("input[name=price]").fill("45.000");
+  await a.getByRole("button", { name: "Aceptar y pasar al acuerdo" }).click();
+  check("el estudio acepta: pasa al acuerdo", await seen(a, "Aceptada: falta que firmen el acuerdo."));
+  await a.getByRole("button", { name: "Firmar" }).click();
+  await seen(a, "Firmaste el acuerdo.");
+  await t.goto(`${BASE}/contador`);
+  check("la persona ve el acuerdo de servicio (honorarios y preaviso)", (await seen(t, "Acuerdo de servicio con")) && (await seen(t, "$ 45.000")));
+  await t.locator("input[name=policies]").check();
+  const [tu] = await sql`select name from users where id = ${T}`;
+  await t.locator("input[name=signed_name]").fill(tu.name);
+  await t.getByRole("button", { name: "Firmar", exact: true }).click();
+  check("con las dos firmas: conectados", (await seen(t, "Firmaste el acuerdo.")) && (await seen(t, "Conectada")));
+  await t.goto(`${BASE}/personal`);
+  check("Personal: «Gestión profesional» con el estudio y su contacto", (await seen(t, "Gestión profesional")) && (await seen(t, "hola@estudio.test")));
+  await a.goto(`${BASE}/admin/organizaciones`);
+  check("Organizaciones: aparece con la marca «Cuenta conectada»", (await a.locator("[data-cuenta-conectada]").count()) === 1 && (await seen(a, "Cuenta conectada")));
+  await a.goto(`${BASE}/admin/organizaciones/cuenta/${c.id}`);
+  check("cuenta en vivo: caja de negocio y lo fiscal; personal no compartido", (await seen(a, "Caja de negocio")) && (await seen(a, "No compartidas")));
+  await a.locator("input[name=amount]").fill("12.000");
+  await a.locator("input[name=description]").fill("Monotributo de octubre");
+  await a.locator("form", { has: a.locator("input[name=description]") }).locator("select[name=category]").selectOption("impuestos");
+  await a.getByRole("button", { name: "Cargar", exact: true }).click();
+  check("delegar y mirar: el contador carga y se aplica", await seen(a, "Monotributo de octubre"));
+  await t.goto(`${BASE}/contador`);
+  check("«Lo que hizo tu contador»: quién, qué y cuándo", (await seen(t, "Lo que hizo tu contador")) && (await seen(t, "Monotributo de octubre")));
+  await t.locator("select[name=autonomy]").selectOption("proponer");
+  await t.getByRole("button", { name: "Cambiar" }).click();
+  await seen(t, "Guardado.");
+  await a.goto(`${BASE}/admin/organizaciones/cuenta/${c.id}`);
+  await a.locator("input[name=amount]").fill("8.000");
+  await a.locator("input[name=description]").fill("Licencia contable");
+  await a.getByRole("button", { name: "Cargar", exact: true }).click();
+  await seen(a, "Listo.");
+  await t.goto(`${BASE}/contador`);
+  check("proponer y aprobar: queda «Para aprobar»", (await seen(t, "Para aprobar")) && (await seen(t, "Licencia contable")));
+  await t.getByRole("button", { name: "Aprobar" }).click();
+  check("al aprobar se aplica", (await seen(t, "Aprobado: ya se aplicó.")) && (await sql`select count(*)::int n from box_entries where description = 'Licencia contable' and deleted_at is null`)[0].n === 1);
+  // Aislamiento: otro estudio forzando el ID
+  const b = await as(d.cookies.adminB);
+  check("otro estudio, forzando el ID: no ve la cuenta", (await b.goto(`${BASE}/admin/organizaciones/cuenta/${c.id}`)).status() === 404 && (await b.goto(`${BASE}/admin/comercial/conexiones/${c.id}`)).status() === 404);
+  // Desconexión con mediación
+  await t.goto(`${BASE}/contador`);
+  await t.locator("textarea[name=reason]").fill("Me mudo de ciudad");
+  await t.getByRole("button", { name: "Iniciar el cierre" }).click();
+  check("cierre: «En cierre», solo lectura 30 días", (await seen(t, "El estudio queda en solo lectura por 30 días.")) && (await seen(t, "Checklist de cierre")));
+  await a.goto(`${BASE}/admin/organizaciones/cuenta/${c.id}`);
+  check("el estudio ve solo lectura (sin cargar)", (await seen(a, "En cierre: solo lectura")) && (await a.getByRole("button", { name: "Cargar", exact: true }).count()) === 0);
+  for (let i = 0; i < 3; i++) {
+    await a.getByRole("button", { name: "Confirmar" }).first().click();
+    await seen(a, "Guardado en el checklist.");
+  }
+  await t.goto(`${BASE}/contador`);
+  await t.getByRole("button", { name: "Nadie le debe nada a nadie" }).click();
+  check("constancia de los dos: cerrada, con el registro del período", (await seen(t, "Relaciones anteriores")) && (await sql`select status from account_connections where id = ${c.id}`)[0].status === "cerrada");
+  check("encuesta al cerrar la relación", await seen(t, "¿Cómo fue tu relación con"));
+  await t.getByRole("button", { name: "Enviar" }).click();
+  check("calificación guardada (no pública)", await seen(t, "Tu opinión queda guardada"));
+  await a.goto(`${BASE}/admin/organizaciones/cuenta/${c.id}`);
+  check("conexión cerrada: el estudio no ve nada", (await seen(a, "el estudio no tiene acceso a los datos")) && !(await a.evaluate(() => document.body.innerText.includes("Caja de negocio"))));
+  await a.goto(`${BASE}/admin/comercial/conexiones`);
+  check("el estudio ve su calificación en Conexiones", await seen(a, "Tus calificaciones"));
+  for (const dark of [false, true]) {
+    const v = await as(d.cookies.titular, { dark, width: dark ? 1280 : 390 });
+    await v.goto(`${BASE}/contador`);
+    check(`Contador (${dark ? "oscuro, escritorio" : "claro, 390 px"}): sin scroll horizontal`, (await seen(v, "Relaciones anteriores")) && (await noHScroll(v)));
+  }
+  await sql`update studios set plan_key = ${plan_key} where id = ${A}`;
+}
+
 check("sin errores de JavaScript", errors.length === 0, errors.slice(0, 3).join(" | "));
 await browser.close();
 await sql.end();

@@ -281,6 +281,13 @@
       "when": 1791749764362,
       "tag": "0039_cajas_claves",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1791751270621,
+      "tag": "0040_conexion_contador",
+      "breakpoints": true
     }
   ]
 }

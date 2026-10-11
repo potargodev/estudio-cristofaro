@@ -3819,3 +3819,121 @@ export const box_salaries = pgTable("box_salaries", {
   active: boolean("active").notNull().default(true),
   updated_at: updatedAt(),
 });
+
+// ───────────────────────── Conexión con un contador (principios §2, §4 a §9) ─────────────────────────
+
+/**
+ * Conexión, no copia: el estudio accede con un permiso sobre la cuenta del
+ * usuario y trabaja sobre sus datos en vivo; nada se copia a su espacio.
+ * Estados: invitada (la inició el estudio y falta el sí del usuario) →
+ * admision (el estudio revisa) → acuerdo (firman las dos partes) → activa →
+ * en_cierre / en_disputa → cerrada. También rechazada o cancelada.
+ */
+export const account_connections = pgTable(
+  "account_connections",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** La persona o el autónomo dueño de los datos */
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    user_studio_id: uuid("user_studio_id").references(() => studios.id, { onDelete: "set null" }),
+    /** El estudio que pide o recibe el permiso */
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    status: text("status").notNull(),
+    initiated_by: text("initiated_by").notNull(), // usuario | estudio
+    /** Alcances: caja de negocio y lo fiscal siempre; las cajas personales solo si el usuario las activa */
+    scope_personal: boolean("scope_personal").notNull().default(false),
+    /** delegar (por defecto: el contador opera y el usuario mira) | proponer (cada acción queda para aprobar) */
+    autonomy: text("autonomy").notNull().default("delegar"),
+    message: text("message"),
+    /** Admisión */
+    interview_requested_at: timestamp("interview_requested_at", { withTimezone: true }),
+    interview_note: text("interview_note"),
+    info_request: text("info_request"),
+    info_response: text("info_response"),
+    decision_reason: text("decision_reason"),
+    decided_by: uuid("decided_by").references(() => users.id, { onDelete: "set null" }),
+    decided_at: timestamp("decided_at", { withTimezone: true }),
+    /** Acuerdo de servicio (el de Flotas) firmado por las dos partes y políticas aceptadas */
+    terms: jsonb("terms").$type<{ services: string; monthlyPrice: number; noticeDays: number; version: string }>(),
+    agreement_id: uuid("agreement_id"),
+    studio_signed_by: uuid("studio_signed_by").references(() => users.id, { onDelete: "set null" }),
+    studio_signed_name: text("studio_signed_name"),
+    studio_signed_at: timestamp("studio_signed_at", { withTimezone: true }),
+    user_signed_name: text("user_signed_name"),
+    user_signed_at: timestamp("user_signed_at", { withTimezone: true }),
+    policies_accepted_at: timestamp("policies_accepted_at", { withTimezone: true }),
+    started_at: timestamp("started_at", { withTimezone: true }),
+    /** Desconexión con mediación */
+    closing_started_at: timestamp("closing_started_at", { withTimezone: true }),
+    closing_initiated_by: text("closing_initiated_by"),
+    closing_reason: text("closing_reason"),
+    readonly_until: timestamp("readonly_until", { withTimezone: true }),
+    fees_zero_at: timestamp("fees_zero_at", { withTimezone: true }),
+    pending_delivered_at: timestamp("pending_delivered_at", { withTimezone: true }),
+    user_clear_at: timestamp("user_clear_at", { withTimezone: true }),
+    studio_clear_at: timestamp("studio_clear_at", { withTimezone: true }),
+    closed_at: timestamp("closed_at", { withTimezone: true }),
+    /** Resumen semanal opcional de «Lo que hizo tu contador» */
+    weekly_summary: boolean("weekly_summary").notNull().default(false),
+    weekly_sent_at: timestamp("weekly_sent_at", { withTimezone: true }),
+    /** Origen: flota (acuerdo existente), red, invitación */
+    source: text("source").notNull().default("red"),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("account_connections_user_idx").on(t.user_id), index("account_connections_studio_idx").on(t.studio_id, t.status)],
+);
+
+/** «Lo que hizo tu contador»: cada acción con quién, qué, cuándo, y antes y después (o la propuesta para aprobar) */
+export const connection_actions = pgTable(
+  "connection_actions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    connection_id: uuid("connection_id")
+      .notNull()
+      .references(() => account_connections.id, { onDelete: "cascade" }),
+    actor_id: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    actor_name: text("actor_name").notNull(),
+    action: text("action").notNull(),
+    summary: text("summary").notNull(),
+    entity_type: text("entity_type"),
+    entity_id: text("entity_id"),
+    before: jsonb("before"),
+    after: jsonb("after"),
+    /** Lo que hay que hacer si se aprueba (modo «proponer y aprobar») */
+    payload: jsonb("payload"),
+    status: text("status").notNull().default("aplicada"), // aplicada | propuesta | aprobada | rechazada
+    decided_at: timestamp("decided_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("connection_actions_conn_idx").on(t.connection_id, t.created_at)],
+);
+
+/** Canal de mensajes de la desconexión en disputa */
+export const connection_messages = pgTable("connection_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  connection_id: uuid("connection_id")
+    .notNull()
+    .references(() => account_connections.id, { onDelete: "cascade" }),
+  author_id: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
+  side: text("side").notNull(), // usuario | estudio
+  body: text("body").notNull(),
+  created_at: createdAt(),
+});
+
+/** Calificaciones: durante la relación (a los 30 días y cada 6 meses, salteables) y al cierre. Solo se guardan */
+export const connection_ratings = pgTable("connection_ratings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  connection_id: uuid("connection_id")
+    .notNull()
+    .references(() => account_connections.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(), // periodica | cierre
+  score: integer("score"),
+  comment: text("comment"),
+  skipped: boolean("skipped").notNull().default(false),
+  created_at: createdAt(),
+});

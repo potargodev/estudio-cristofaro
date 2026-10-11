@@ -11,7 +11,7 @@ export default async function ComercialLayout({ children }: { children: React.Re
   const me = await requireStaff();
   const [access, [nuevas]] = await Promise.all([studioAccess(me), getDb().select({ n: count() }).from(leads).where(and(eq(leads.studio_id, me.studioId), eq(leads.status, "nuevo")))]);
   return (
-    <SectionLayout title="Comercial" description="Las consultas que llegan, tu agenda de llamadas y cómo te ven en la Red de estudios." tabs={COMERCIAL_TABS} access={access} counts={{ leads: access.isOperator ? (nuevas?.n ?? 0) : 0 }}>
+    <SectionLayout title="Comercial" description="Las consultas que llegan, tu agenda de llamadas, las cuentas que se conectan con el estudio y cómo te ven en la Red de estudios." tabs={COMERCIAL_TABS} access={access} counts={{ leads: access.isOperator ? (nuevas?.n ?? 0) : 0 }}>
       {children}
     </SectionLayout>
   );

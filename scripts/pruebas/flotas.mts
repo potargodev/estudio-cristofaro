@@ -4,7 +4,7 @@
 //   npx tsx --conditions=react-server --env-file=.env.local scripts/pruebas/flotas.mts
 import { eq, inArray } from "drizzle-orm";
 import { getDb } from "../../src/db";
-import { directory_profiles, fleet_members, fleet_proposals, fleets, organizations, service_agreements, studios, users } from "../../src/db/schema";
+import { account_connections, directory_profiles, fleet_members, fleet_proposals, fleets, organizations, service_agreements, studios, users } from "../../src/db/schema";
 import { createTenant } from "../../src/lib/faro/tenants";
 import { fleetNameIssue } from "../../src/modules/flotas/catalog";
 import * as fl from "../../src/modules/flotas/server";
@@ -80,6 +80,8 @@ check("Segunda firma por la misma Flota → rechazada", await fails(() => fl.sig
 const [a1] = await db.select().from(service_agreements).where(eq(service_agreements.id, s1.agreementId));
 const [o1] = await db.select().from(organizations).where(eq(organizations.id, s1.organizationId));
 check("Acuerdo con la tarifa del perfil y organización en el estudio", a1.monthly_price === 60000 && o1.studio_id === A && a1.studio_id === A);
+const [cx1] = await db.select().from(account_connections).where(eq(account_connections.agreement_id, s1.agreementId));
+check("Conexión, no copia: el acuerdo es también el permiso (activa, sin cajas personales)", cx1?.status === "activa" && cx1.studio_id === A && !cx1.scope_personal);
 const [a2] = await db.select().from(service_agreements).where(eq(service_agreements.id, s2.agreementId));
 check("Cada uno con su precio (RI)", a2.monthly_price === 120000);
 

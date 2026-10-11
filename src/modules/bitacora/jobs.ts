@@ -38,5 +38,8 @@ export async function runBitacoraJobs(now = new Date()) {
   // Cajas: el sueldo del dueño que vence hoy pasa del negocio a lo personal
   const { runSalaryJobs } = await import("@/modules/cajas/server");
   const sueldos = await runSalaryJobs(day).catch((e) => (console.error("[cajas] sueldos", (e as Error).message), 0));
-  return { avisos, resumenes, sueldos, activos: active.length };
+  // Conexiones: resumen semanal opcional de «Lo que hizo tu contador»
+  const conexiones = await import("@/modules/conexiones/server");
+  const contador = await conexiones.sendWeeklySummaries(now).catch((e) => (console.error("[conexiones] resumen", (e as Error).message), 0));
+  return { avisos, resumenes, sueldos, contador, activos: active.length };
 }

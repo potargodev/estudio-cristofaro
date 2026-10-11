@@ -8,6 +8,7 @@ import { categoryName, formatMoney } from "@/modules/gastos/constants";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { VigiaPrompt } from "@/components/copiloto/VigiaPrompt";
 import { Derivaciones } from "@/components/escudo/Derivaciones";
+import { ModeBadge } from "@/components/conexiones/ModeBadge";
 import { money, monthLabel, monthOf } from "@/modules/bitacora/catalog";
 import { monthSummary } from "@/modules/bitacora/server";
 import { listInsights } from "@/modules/bitacora/recurring";
@@ -61,6 +62,8 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
       <PageHeader title={`Hola, ${first}.`} description={context} className="mb-0" />
 
       <VigiaPrompt />
+
+      {titular && <ModeBadge userId={me.id} />}
 
       {titular && <Derivaciones me={me} volver="/personal" />}
 

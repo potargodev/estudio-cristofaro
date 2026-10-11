@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { ProposalForm } from "@/components/red/ProposalForm";
 import { getCurrentUser } from "@/lib/auth";
 import { contextMessage, ownSuggestion } from "@/modules/escudo/server";
+import { currentConnection } from "@/modules/conexiones/server";
+import { requestConnectionAction } from "@/app/contador/actions";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { labelOf, MODALITIES, RED_SERVICES, responseLabel, TEAM_SIZES } from "@/modules/red/catalog";
 import { publicProfile } from "@/modules/red/server";
@@ -24,6 +26,9 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
   if (!x) notFound();
   const user = await getCurrentUser().catch(() => null);
   const derivacion = user ? await ownSuggestion(user.id, (await searchParams).derivacion) : null;
+  // Conectar la cuenta (§7): personas y autónomos titulares, una conexión a la vez
+  const canConnect = !!user && user.role === "titular" && user.tenantKind !== "studio" && !user.assisted;
+  const pending = canConnect ? await currentConnection(user!.id) : null;
   const facts = [
     { icon: BadgeCheck, text: `Matrícula verificada · ${x.p.license_body}` },
     { icon: MapPin, text: `${[x.p.city, x.p.province].filter(Boolean).join(", ")} · ${labelOf(MODALITIES, x.p.modality)}` },
@@ -121,6 +126,41 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
             <p className="mt-1 text-[14px] text-muted">Este estudio no está tomando clientes nuevos por ahora.</p>
           )}
         </div>
+        {x.p.accepting_clients && canConnect && (
+          <div className="mt-3 rounded-lg border border-line bg-surface p-5" data-conectar>
+            <h2 className="text-[18px] font-semibold">Conectar mi cuenta</h2>
+            {pending ? (
+              <p className="mt-1 text-[14px] text-muted">
+                Ya tenés una conexión en curso. Mirala en{" "}
+                <Link href="/contador" className="underline underline-offset-4">
+                  Contador
+                </Link>
+                .
+              </p>
+            ) : (
+              <form action={requestConnectionAction} className="mt-2 grid gap-2 text-[14px]">
+                <input type="hidden" name="studio" value={x.slug} />
+                <p className="text-[13px] text-muted">El estudio no se lleva una copia: se conecta a tu cuenta con un permiso que podés revocar. Ve tu caja de negocio y lo fiscal; lo personal, solo si lo activás. Antes hace su admisión.</p>
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" name="personal" className="size-4 accent-navy" /> Compartir también mis cajas personales
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="autonomy" value="delegar" defaultChecked className="size-4 accent-navy" /> Delegar y mirar
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="autonomy" value="proponer" className="size-4 accent-navy" /> Proponer y aprobar
+                </label>
+                <label className="text-[13px] text-muted">
+                  ¿Qué necesitás?
+                  <textarea name="message" rows={3} maxLength={2000} defaultValue={derivacion ? contextMessage(derivacion) : ""} className="mt-1 block w-full rounded-md border border-line bg-canvas px-3 py-2 text-[14px] text-ink" />
+                </label>
+                <button type="submit" className="h-11 rounded-md bg-navy px-5 text-[15px] font-medium text-paper hover:bg-night">
+                  Pedir la conexión
+                </button>
+              </form>
+            )}
+          </div>
+        )}
         {x.p.accepting_clients && (
           <Link href={`/red/${x.slug}/agendar`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface text-[15px] font-medium text-ink hover:border-navy">
             <CalendarClock className="size-4" aria-hidden /> Agendar llamada

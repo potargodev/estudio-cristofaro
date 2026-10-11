@@ -12,6 +12,7 @@ import { StatusBadge, Tag } from "@/components/admin/kit/StatusBadge";
 import { getDb } from "@/db";
 import { audit_log, documents, invitations, legal_entities, memberships, obligations, organization_modules, organizations, requests, service_plans } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
+import { studioConnections } from "@/modules/conexiones/server";
 import { getModule } from "@/lib/modules/catalog";
 import { awaitingApproval, getLeadsFor } from "@/lib/organizations";
 import { ORGANIZATION_STATUSES, formatCuit } from "@/lib/types";
@@ -34,7 +35,10 @@ function ago(d: Date | null, now: Date) {
 
 export default async function OrganizacionesPage({ searchParams }: { searchParams: Promise<{ q?: string; estado?: string; plan?: string }> }) {
   const { q, estado = "vigentes", plan: planParam } = await searchParams;
-  const { studioId, role } = await requireStaff();
+  const staff = await requireStaff();
+  const { studioId, role } = staff;
+  // Cuentas conectadas (principios §4): conexión, no copia; con la conexión cerrada no aparecen
+  const connected = (await studioConnections(staff)).filter((r) => ["activa", "en_cierre", "en_disputa"].includes(r.c.status));
   const db = getDb();
   const now = new Date();
   const today = iso(now);
@@ -311,6 +315,26 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
   return (
     <>
       <PageHeader title="Organizaciones" description="Clientes del estudio con su plan, responsable, módulos y estado de salud. Los vencimientos cuentan los próximos 14 días y los atrasados." actions={role !== "colaborador" ? <HeaderAction href="/admin/organizaciones/nueva" label="Nueva organización" tour="accion" /> : undefined} />
+      {connected.length > 0 && (
+        <section aria-labelledby="conectadas" className="mb-5 rounded-lg border border-line bg-surface">
+          <h2 id="conectadas" className="px-5 pt-4 text-[15px] font-semibold">
+            Cuentas conectadas <span className="font-normal text-muted">· trabajás sobre sus datos en vivo, con su permiso</span>
+          </h2>
+          <ul className="mt-2 divide-y divide-line">
+            {connected.map(({ c, name, email }) => (
+              <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3" data-cuenta-conectada>
+                <Link href={`/admin/organizaciones/cuenta/${c.id}`} className="min-w-0 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
+                  {name} <span className="block text-[13px] font-normal text-muted">{email}</span>
+                </Link>
+                <span className="flex items-center gap-2">
+                  {c.status !== "activa" && <StatusBadge status="pausada" label="En cierre" />}
+                  <Tag>Cuenta conectada</Tag>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {orgs.length === 0 ? (
         <div className="border border-line bg-surface">
           <EmptyState icon={Building2} title="Todavía no hay organizaciones" text="Creá la primera o convertí una consulta ganada." action={{ href: "/admin/organizaciones/nueva", label: "Nueva organización" }} />

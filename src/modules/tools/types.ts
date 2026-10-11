@@ -18,6 +18,7 @@ export const TOOL_MODULES = {
   solicitudes: "Solicitudes",
   agenda: "Agenda",
   consultas: "Consultas comerciales",
+  cuentas: "Cuentas conectadas",
   estudio: "Resumen del estudio",
   conexiones: "Conexiones (Tango, Xubio, archivos)",
   gastos: "Grupos de gastos",

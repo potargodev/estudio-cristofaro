@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { agreement_payments, fleet_events, fleet_members, fleet_proposals, fleet_votes, fleets, organizations, service_agreements, studios, users } from "@/db/schema";
+import { account_connections, agreement_payments, fleet_events, fleet_members, fleet_proposals, fleet_votes, fleets, organizations, service_agreements, studios, users } from "@/db/schema";
 import { esc, sendMail } from "@/lib/email";
 import { hasModule } from "@/lib/faro/entitlements";
 import { mailLayout } from "@/lib/notify";
@@ -349,6 +349,14 @@ export async function signAgreement(me: Me, proposalId: string, signedName: stri
     })
     .returning({ id: service_agreements.id });
   await event(x.fleet.id, `${me.name} aceptó la propuesta de ${x.studio} y firmó su acuerdo individual.`, me);
+  // Conexión, no copia (principios §4): el acuerdo de la Flota es también el permiso del estudio sobre la cuenta
+  // (caja de negocio y lo fiscal; lo personal apagado), con la propuesta publicada como firma del estudio.
+  // Si la persona ya tenía otra conexión en curso, la de la Flota no se abre sola.
+  const { currentConnection } = await import("@/modules/conexiones/server");
+  if (!(await currentConnection(me.id))) {
+    const now = new Date();
+    await db().insert(account_connections).values({ user_id: me.id, user_studio_id: (await db().select({ s: users.studioId }).from(users).where(eq(users.id, me.id)))[0]?.s ?? null, studio_id: x.p.studio_id, status: "activa", initiated_by: "usuario", terms: { services: x.p.includes ?? "", monthlyPrice: x.price, noticeDays: x.p.notice_days, version: AGREEMENT_VERSION }, agreement_id: a.id, studio_signed_name: "Propuesta grupal publicada por el estudio", studio_signed_at: now, user_signed_name: signedName.trim(), user_signed_at: now, policies_accepted_at: now, started_at: now, source: "flota" });
+  }
   const owners = await db().select({ email: users.email }).from(users).where(and(eq(users.studioId, x.p.studio_id), eq(users.role, "dueno"), eq(users.active, true)));
   if (owners.length)
     await sendMail({
