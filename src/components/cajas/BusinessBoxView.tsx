@@ -1,4 +1,4 @@
-import { ArrowDownLeft, ArrowUpRight, Briefcase, ChevronLeft, ChevronRight, HandCoins, PiggyBank, Wallet } from "lucide-react";
+import { Eye, ArrowDownLeft, ArrowUpRight, Briefcase, ChevronLeft, ChevronRight, HandCoins, PiggyBank, Wallet } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { SubmitButton } from "@/components/admin/ui";
@@ -9,7 +9,9 @@ import { money, monthLabel, prevMonth } from "@/modules/bitacora/catalog";
 import { BUSINESS_CATEGORIES, categoryName, SALARY_FREQUENCIES, TRANSFER_KINDS } from "@/modules/cajas/catalog";
 import { boxEntries, businessSummary, salaryOf, salarySuggestion, type Box } from "@/modules/cajas/server";
 import { todayAR } from "@/modules/gastos/constants";
-import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
+import { CHANGA_CONTEXT, NO_REEMPLAZA } from "@/modules/escudo/catalog";
+import { grayZone } from "@/modules/escudo/server";
+import { Derivaciones } from "@/components/escudo/Derivaciones";
 
 const field = "mt-1 h-10 w-full rounded-md border border-line bg-surface px-2.5 text-[14px] text-ink";
 const lbl = "block text-[13px] text-muted";
@@ -21,11 +23,11 @@ const nextMonth = (m: string) => {
 const day = (iso: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
 const amountText = (c: number) => (c / 100).toLocaleString("es-AR", { maximumFractionDigits: 2 });
 
-type Me = { id: string; name: string; email: string; studioId: string };
+type Me = { id: string; name: string; email: string; studioId: string; role: string; tenantKind: string };
 
 /** Caja de negocio (§10 y §11): lo de la actividad, el sueldo del dueño y los aportes */
 export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box; month: string; sp: Record<string, string | undefined> }) {
-  const [s, list, salary, suggestion] = await Promise.all([businessSummary(me, box.id, month), boxEntries(me, box.id, month), salaryOf(me, box.id), salarySuggestion(me, box.id)]);
+  const [s, list, salary, suggestion, gray] = await Promise.all([businessSummary(me, box.id, month), boxEntries(me, box.id, month), salaryOf(me, box.id), salarySuggestion(me, box.id), grayZone(me)]);
   const owner = box.owner_id === me.id;
   const today = todayAR();
   const hidden = (
@@ -41,6 +43,25 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
       </Link>
       <PageHeader title={box.name} description="Caja de negocio: lo de tu actividad, separado de lo personal. Tu contador, si lo conectás, ve esta caja y lo fiscal; lo personal, no." className="mb-0" />
       <Feedback sp={sp} />
+
+      {gray && gray.withoutRegime && gray.total > 0 && (
+        <section aria-labelledby="foto" data-zona-gris className="rounded-lg border border-rose/40 bg-rose-soft p-5">
+          <h2 id="foto" className="flex items-center gap-2 text-[16px] font-semibold text-ink">
+            <Eye className="size-5 text-rose-deep" aria-hidden /> Esto ya es una actividad
+          </h2>
+          <p className="mt-1 text-[14px] text-ink">
+            Según lo que registraste, en los últimos 12 meses cobraste <span className="num font-medium">{money(gray.total)}</span> sin facturar, en {gray.months} {gray.months === 1 ? "mes" : "meses"}. No es un juicio: es la foto de lo que cargaste.
+          </p>
+          <p className="mt-2 text-[13px] text-muted">{CHANGA_CONTEXT}</p>
+          <p className="mt-2 text-[13px] text-muted">
+            Cuando crece, lo que corresponde es anotarse en el monotributo con un contador.{" "}
+            <Link href="/red-contable?necesito=changa_actividad" className="font-medium text-rose-deep underline underline-offset-4">
+              Buscar un contador
+            </Link>
+          </p>
+        </section>
+      )}
+      <Derivaciones me={me} volver={`/cajas/${box.id}`} max={1} />
 
       <nav aria-label="Mes" className="flex items-center justify-between gap-2">
         <Link href={`/cajas/${box.id}?mes=${prevMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-[14px]">

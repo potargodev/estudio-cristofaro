@@ -1,10 +1,11 @@
 import "server-only";
-import { and, count, eq, inArray } from "drizzle-orm";
+import { and, count, eq, gte, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db";
-import { derivation_rules, derivation_suggestions, employees, invoices, professional_tasks, users } from "@/db/schema";
+import { box_entries, derivation_rules, derivation_suggestions, employees, invoices, professional_tasks, studios, users } from "@/db/schema";
+import { money } from "@/modules/bitacora/catalog";
 import { audit } from "@/lib/audit";
 import { ownOrganization } from "@/lib/faro/tenants";
-import { DERIVATION_RULES, matchProfessionalTask, PROFESSIONAL_TASKS, type DerivationRule, type ProfessionalTask, type RuleKey, type ValidationState } from "./catalog";
+import { CHANGA_CONTEXT, DERIVATION_RULES, matchProfessionalTask, PROFESSIONAL_TASKS, type DerivationRule, type ProfessionalTask, type RuleKey, type ValidationState } from "./catalog";
 
 // Escudo de responsabilidad del lado del servidor: la lista de tareas de
 // matriculados y las reglas de derivación vigentes (configuración del Faro
@@ -156,6 +157,24 @@ export function contextMessage(s: Pick<Suggestion, "context">) {
 }
 
 /**
+ * La foto real de la changa (§13): lo cobrado sin facturar en la caja de
+ * negocio en los últimos 12 meses y si la cuenta tiene un régimen inscripto.
+ */
+export async function grayZone(user: { id: string; studioId: string; tenantKind: string }) {
+  const { businessBoxOf } = await import("@/modules/cajas/server");
+  const box = await businessBoxOf(user.id);
+  if (!box) return null;
+  const since = new Date(Date.now() - 365 * 86400000).toISOString().slice(0, 10);
+  const rows = await db()
+    .select({ amount: box_entries.amount, date: box_entries.date })
+    .from(box_entries)
+    .where(and(eq(box_entries.box_id, box.id), eq(box_entries.kind, "ingreso"), eq(box_entries.invoiced, false), eq(box_entries.currency, "ARS"), isNull(box_entries.deleted_at), gte(box_entries.date, since)));
+  const [t] = await db().select({ kind: studios.kind, regime: studios.tax_regime, cuit: studios.cuit }).from(studios).where(eq(studios.id, user.studioId));
+  const withoutRegime = !t?.regime;
+  return { boxId: box.id, total: rows.reduce((s, r) => s + r.amount, 0), months: new Set(rows.map((r) => r.date.slice(0, 7))).size, withoutRegime };
+}
+
+/**
  * Evalúa las reglas que se pueden calcular con los datos de la cuenta
  * (monotributo, empleados, facturación al exterior y actividades). Las que
  * dependen de un momento (simulación, preguntas al Vigía, changa) se
@@ -179,6 +198,13 @@ export async function evaluateDerivations(user: { id: string; role: string; stud
       .from(invoices)
       .where(and(eq(invoices.studio_id, user.studioId), inArray(invoices.cbte_type, [19, 20, 21]), inArray(invoices.status, ["borrador", "autorizando", "autorizada"])));
     if (n >= (ext.threshold ?? 1)) await suggest(user.id, "facturacion_exterior", `Según lo que cargaste, tenés ${n} ${n === 1 ? "comprobante E" : "comprobantes E"} (exportación).`, { comprobantes_e: n });
+  }
+  // §13: la changa en zona gris. Sin monotributo, lo cobrado sin facturar en la caja de negocio ya es una actividad
+  const changa = on("changa_actividad");
+  if (changa) {
+    const g = await grayZone(user);
+    if (g && g.withoutRegime && g.total >= (changa.threshold ?? 1_500_000) * 100)
+      await suggest(user.id, "changa_actividad", `Según lo que registraste, en los últimos 12 meses cobraste ${money(g.total)} sin facturar en tu caja de negocio, en ${g.months} ${g.months === 1 ? "mes" : "meses"}. Eso ya es una actividad.`, { sin_facturar: g.total / 100, meses: g.months, contexto: CHANGA_CONTEXT });
   }
   if (user.tenantKind !== "personal") return;
   const { personalIssuer, semaforoFor, latestSituation } = await import("@/modules/arca/server");

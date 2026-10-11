@@ -596,6 +596,42 @@ if (stage("6")) {
   await sql`delete from users where id = ${P.id}`;
 }
 
+// ─── Etapa 7 · La changa en zona gris (§12, §13) ───
+if (stage("7")) {
+  const es = await import("../../src/modules/escudo/server.ts");
+  const cj = await import("../../src/modules/cajas/server.ts");
+  const { CHANGA_CONTEXT } = await import("../../src/modules/escudo/catalog.ts");
+  const { createTenant } = await import("../../src/lib/faro/tenants.ts");
+  const ts = Date.now();
+  const r = await createTenant({ kind: "persona", name: "Cami Changa", owner: { name: "Cami Changa", email: `cami-${ts}@prueba.local`, password: "clave-larga-123" }, via: "manual" });
+  if (!r.ok) throw new Error(r.message);
+  const P = { id: r.userId, studioId: r.studioId, name: "Cami Changa", email: `cami-${ts}@prueba.local`, role: "titular", tenantKind: "persona" };
+  const box = await cj.openBusinessBox(P);
+  const day = (n: number) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
+  await cj.addBusinessEntry(P, box.id, { kind: "ingreso", amount: 100000000, date: day(60), category: "changa", description: "Diseño de logo" });
+  check("sin monotributo se registra la changa sin facturar", (await cj.businessSummary(P, box.id, day(60).slice(0, 7))).uninvoiced === 100000000);
+  await es.evaluateDerivations(P);
+  check("debajo del umbral: sin sugerencia", !(await es.activeSuggestions(P.id)).some((x) => x.rule_key === "changa_actividad"));
+  const g = await es.grayZone(P);
+  check("la foto real: cuánto cobró sin facturar y en cuántos meses", !!g && g.total === 100000000 && g.months === 1 && g.withoutRegime);
+  await cj.addBusinessEntry(P, box.id, { kind: "ingreso", amount: 60000000, date: day(10), category: "changa", description: "Página web" });
+  await es.evaluateDerivations(P);
+  const sg = (await es.activeSuggestions(P.id)).find((x) => x.rule_key === "changa_actividad");
+  check("al pasar el umbral: sugiere anotarse en el monotributo con un contador", !!sg && /ya es una actividad/.test(sg.context.why) && /monotributo/i.test(sg.context.need));
+  check("con el contexto de §13 marcado «a confirmar por un contador»", (sg?.context.data as { contexto?: string })?.contexto === CHANGA_CONTEXT && CHANGA_CONTEXT.startsWith("Dato de contexto, a confirmar por un contador"));
+  // Umbral configurable
+  await sql`delete from derivation_suggestions where user_id = ${P.id}`;
+  await es.saveDerivationRule({ id: d.users.adminA }, "changa_actividad", { title: "Changa", message: "Mensaje", need: "Monotributo", threshold: 5_000_000, snoozeDays: 30, active: true, validation: "a_validar", validatedBy: null });
+  await es.evaluateDerivations(P);
+  check("umbral configurable: con uno más alto, no se dispara", !(await es.activeSuggestions(P.id)).some((x) => x.rule_key === "changa_actividad"));
+  await sql`delete from derivation_rules where key = 'changa_actividad'`;
+  // Facturado o con régimen: no es zona gris
+  await sql`update studios set tax_regime = 'monotributo' where id = ${P.studioId}`;
+  check("con monotributo ya no es zona gris", (await es.grayZone(P))?.withoutRegime === false);
+  await sql`delete from studios where id = ${P.studioId}`;
+  await sql`delete from users where id = ${P.id}`;
+}
+
 console.log(fails ? `\n${fails} fallas` : "\nTodo bien");
 await sql.end();
 process.exit(fails ? 1 : 0);

@@ -45,3 +45,11 @@ Faro te muestra una cifra posible a partir de los números que cargaste (el resu
 ## Tu contador
 
 Si conectás un contador, ve tu caja de negocio y lo fiscal. Tus cajas personales nunca se exponen, salvo que vos lo actives.
+
+## La changa o el freelance (sin monotributo)
+
+Si trabajás en relación de dependencia y tenés una changa o un freelance al costado, podés registrar lo que cobrás en tu caja de negocio aunque todavía no lo factures (categoría **Changa o freelance**, sin marcar «Ingreso con factura»).
+
+Faro te muestra la foto real: **«Esto ya es una actividad»**, con lo que cobraste sin facturar en los últimos 12 meses. Cuando pasa un umbral (que define el equipo de Faro y valida un contador), te sugiere anotarte en el monotributo **con un contador**, con el contexto ya armado para la Red Contable.
+
+Ese contexto (que se puede ser empleado y monotributista a la vez, sin pagar el componente previsional) está marcado **a confirmar por un contador**: si tu changa es de verdad independiente lo evalúa un profesional, no Faro.

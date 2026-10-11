@@ -371,6 +371,37 @@ if (stage("6")) {
   await sql`update studios set plan_key = ${plan_key} where id = ${A}`;
 }
 
+// ─── Etapa 7 · La changa en zona gris ───
+if (stage("7")) {
+  const u = await persona("changa.prueba@prueba.local", "Cami Changa");
+  await sql`delete from boxes where owner_id = ${u.id}`;
+  await sql`delete from derivation_suggestions where user_id = ${u.id}`;
+  const p = await as(await cookieFor(u.id));
+  await p.goto(`${BASE}/cajas`);
+  await p.getByRole("button", { name: "Abrir caja de negocio" }).click();
+  await p.waitForURL(/\/cajas\/[0-9a-f-]{36}/);
+  for (const [monto, desc] of [["1.000.000", "Diseño de logo"], ["700.000", "Página web"]]) {
+    await p.getByRole("radio", { name: "Ingreso" }).check();
+    await p.getByLabel("Monto").first().fill(monto);
+    await p.getByLabel("En qué fue").fill(desc);
+    await p.locator("select[name=category]").selectOption("changa");
+    await p.getByRole("button", { name: "Cargar", exact: true }).click();
+    await seen(p, "Cargado en la caja de negocio.");
+  }
+  check("sin monotributo: la changa queda «sin facturar»", await seen(p, "sin facturar"));
+  check("la foto real: «Esto ya es una actividad»", (await seen(p, "Esto ya es una actividad")) && (await seen(p, "$ 1.700.000")));
+  check("contexto de §13 marcado «a confirmar por un contador»", await seen(p, "Dato de contexto, a confirmar por un contador"));
+  check("pasado el umbral: sugerencia de anotarse en el monotributo con un contador", (await p.locator('[data-derivacion="changa_actividad"]').count()) === 1);
+  await p.locator('[data-derivacion="changa_actividad"]').getByRole("link", { name: "Sumar un contador" }).click();
+  check("lleva a la Red Contable con el contexto armado", await seen(p, "Inscripción en el monotributo"));
+  for (const dark of [false, true]) {
+    const v = await as(await cookieFor(u.id), { dark, width: dark ? 1280 : 390 });
+    await v.goto(`${BASE}/cajas`);
+    await v.locator('[data-caja="negocio"]').click();
+    check(`caja de negocio con la changa (${dark ? "oscuro" : "claro, 390 px"}): sin scroll horizontal`, (await seen(v, "Esto ya es una actividad")) && (await noHScroll(v)));
+  }
+}
+
 check("sin errores de JavaScript", errors.length === 0, errors.slice(0, 3).join(" | "));
 await browser.close();
 await sql.end();

@@ -230,6 +230,13 @@ export const DERIVATION_RULES: DerivationRule[] = [
   },
 ];
 
+/**
+ * §13, dato de contexto de la changa en zona gris. Marcado «a confirmar por
+ * un contador»: Faro no lo afirma, lo muestra como contexto.
+ */
+export const CHANGA_CONTEXT =
+  "Dato de contexto, a confirmar por un contador: en Argentina se puede estar en relación de dependencia y ser monotributista al mismo tiempo por una actividad independiente. En ese caso no se paga el componente previsional del monotributo, porque ya se aporta por el empleo, y se paga el impositivo. Si tu changa es de verdad independiente (y no un empleo encubierto) lo evalúa un contador, no Faro.";
+
 /** Minúsculas, sin tildes ni signos: para comparar frases */
 export function normalizeText(t: string) {
   return ` ${t

@@ -256,3 +256,18 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Nada. Si se confirma el nombre definitivo de la Red (decisión abierta b), cambiar textos y la ruta pública.
+
+## Principios · Etapa 7 · La changa en zona gris (octubre 2026)
+
+**Qué quedó**
+- Sin monotributo, la caja de negocio registra ingresos de una changa o freelance **sin facturar** (categoría «Changa o freelance»; el Vigía la reconoce: «cobré 50000 de una changa»).
+- **«Esto ya es una actividad»:** la foto real en la caja de negocio, con lo cobrado sin facturar en los últimos 12 meses y en cuántos meses, y el dato de contexto de §13 marcado «a confirmar por un contador».
+- Al superar el umbral configurable (regla `changa_actividad` de la etapa 2), la sugerencia de anotarse en el monotributo con un contador, que lleva a la Red Contable con el contexto armado.
+- Ayuda: `bitacora/mis-cajas` (sección de la changa).
+
+**Qué se probó**
+- `principios-servidor.mts 7` (7/7): registro sin facturar, debajo del umbral sin sugerencia, foto real, sugerencia con el contexto de §13, umbral configurable y que con monotributo ya no es zona gris.
+- `principios-navegador.mjs 7` (8/8): abrir la caja, cargar dos changas, la foto real, el contexto, la sugerencia y la Red con el contexto, en 390 px y oscuro.
+
+**Qué falta configurar**
+- Que un contador valide el umbral y el texto de §13 (Faro Manager → Escudo; ver pendientes).
