@@ -57,17 +57,18 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { setSidebarPref } from "@/app/actions/prefs";
 import { CommandPalette } from "@/components/admin/shell/CommandPalette";
-import { askFaroHref, primaryAction, type NavAccess } from "@/components/admin/shell/nav";
+import type { NavAccess } from "@/components/admin/shell/nav";
 import { Avatar } from "@/components/admin/kit/Avatar";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
 import { Sello } from "@/components/admin/kit/Sello";
-import { GuideButton, HelpLink } from "@/components/app/Guide";
+import { HelpMenu } from "@/components/app/HelpMenu";
+import { openVigia } from "@/components/vigia/events";
+import { AccountMenu, type AccountLinks } from "./AccountMenu";
 import { RouteReveal } from "@/components/app/RouteReveal";
-import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { SpaceSwitcher, type ShellSpace } from "./SpaceSwitcher";
 import { activeItem, BADGE_TEXT, type ShellBadge, type ShellGroup, type ShellIcon, type ShellItem, type Space } from "./spaces";
@@ -133,7 +134,10 @@ export interface ShellProps {
   spaceName: string;
   spaces: ShellSpace[];
   home: string;
-  account: string;
+  /** Menú de la cuenta: Mi cuenta, Plan y facturación, Accesos MCP, Mi equipo */
+  links: AccountLinks;
+  /** Badge del botón Vigía: propuestas para aprobar (estudio) o respuestas nuevas */
+  vigiaBadge: ShellBadge;
   /** Portal: la marca del estudio ("Con tecnología de Faro") */
   studioBrand?: string | null;
   collapsedInitial: boolean;
@@ -299,51 +303,8 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
   );
 }
 
-function UserMenu({ user, spaceName, account, signOut, up = true }: Pick<ShellProps, "user" | "spaceName" | "account" | "signOut"> & { up?: boolean }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !ref.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [open]);
-  return (
-    <div ref={ref} className="relative">
-      <button type="button" aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-3 rounded-md p-1.5 text-left hover:bg-paper/[0.05]">
-        <Avatar name={user.name || user.email} size="sm" tone="dark" className="size-8" />
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-[14px] text-paper">{user.name || user.email}</span>
-          <span className="block truncate text-[12px] text-slate-light">
-            {user.roleLabel} · {spaceName}
-          </span>
-        </span>
-      </button>
-      {open && (
-        <div role="menu" className={cn("absolute left-0 z-50 w-64 rounded-md border border-paper/15 bg-night py-1 text-[14px] shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)]", up ? "bottom-full mb-2" : "top-full mt-2")}>
-          <Link role="menuitem" href={account} onClick={() => setOpen(false)} className="flex items-center gap-2.5 px-3 py-2.5 text-paper/85 hover:bg-paper/[0.06] hover:text-paper">
-            <KeyRound className="size-4" strokeWidth={1.5} aria-hidden /> Mi cuenta
-          </Link>
-          <form action={signOut}>
-            <button role="menuitem" type="submit" className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-paper/85 hover:bg-paper/[0.06] hover:text-paper">
-              <LogOut className="size-4" strokeWidth={1.5} aria-hidden /> Cerrar sesión
-            </button>
-          </form>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function AppShell(p: ShellProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [collapsed, setCollapsed] = useState(p.collapsedInitial);
   const reduce = useReducedMotion();
   const [drawer, setDrawer] = useState(false);
@@ -373,8 +334,7 @@ export function AppShell(p: ShellProps) {
   }, [toggle, p.studioAccess]);
   useEffect(() => setDrawer(false), [pathname]);
 
-  const action = p.space === "studio" && p.studioAccess && !p.studioAccess.isPersonal ? primaryAction(pathname, p.studioAccess.isOperator) : null;
-  const ask = p.space === "studio" && p.studioAccess && !pathname.startsWith("/admin/asistente") ? askFaroHref(pathname, searchParams) : null;
+  const vigiaCount = p.badges[p.vigiaBadge] ?? 0;
   const trail = active ? [{ label: p.groups.find((g) => g.items.some((i) => i.href === active.href))?.title ?? "" }, { label: active.label, href: active.href }] : [{ label: p.spaceName }];
 
   const brand = (small: boolean) => (
@@ -425,9 +385,6 @@ export function AppShell(p: ShellProps) {
             <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} />
           </div>
           <SideNav groups={p.groups} badges={p.badges} active={active} shared />
-          <div className="border-t border-paper/10 p-3">
-            <UserMenu {...p} />
-          </div>
           </div>
         </m.aside>
       )}
@@ -445,7 +402,7 @@ export function AppShell(p: ShellProps) {
               <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} compact className="w-auto xl:w-56" />
             </span>
           }
-          right={<UserMenu {...p} up={false} />}
+          right={null}
         />
       )}
       </AnimatePresence>
@@ -467,13 +424,6 @@ export function AppShell(p: ShellProps) {
               <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} />
             </div>
             <SideNav groups={p.groups} badges={p.badges} active={active} onNavigate={() => setDrawer(false)} />
-            <div className="border-t border-paper/10 p-3">
-              <div className="mb-2 flex items-center justify-between px-1.5 text-[13px] text-paper/70">
-                Tema
-                <ThemeToggle withLabel className="text-paper/80 hover:text-paper" />
-              </div>
-              <UserMenu {...p} />
-            </div>
           </aside>
         </div>
       )}
@@ -501,30 +451,33 @@ export function AppShell(p: ShellProps) {
               ))}
             </ol>
           </nav>
-          {ask && (
-            <Link href={ask} className="hidden h-9 items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 text-[13px] font-medium text-ink hover:border-muted md:inline-flex" title="Preguntar a Faro sobre esta pantalla">
-              <Sparkles className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden />
-              Preguntar a Faro
-            </Link>
-          )}
           {p.studioAccess && (
-            <button type="button" onClick={() => setSearch(true)} className="hidden h-9 items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-[13px] text-muted hover:border-muted sm:flex sm:w-56" aria-label="Buscar (Ctrl o Cmd + K)">
+            <button type="button" onClick={() => setSearch(true)} className="hidden h-9 items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-[13px] text-muted hover:border-muted md:flex md:w-48 xl:w-56" aria-label="Buscar (Ctrl o Cmd + K)">
               <Search className="size-4" aria-hidden />
-              <span className="hidden flex-1 text-left sm:inline">Buscar…</span>
-              <kbd className="hidden rounded border border-line px-1 text-[11px] sm:inline">⌘K</kbd>
+              <span className="flex-1 text-left">Buscar…</span>
+              <kbd className="rounded border border-line px-1 text-[11px]">⌘K</kbd>
             </button>
           )}
-          {p.notices && <NoticesBell items={p.notices.items} unread={p.notices.unread} className="rounded-md border border-line bg-surface text-ink hover:border-muted" />}
-          <GuideButton className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
-          <HelpLink compact className="rounded-md border border-line bg-surface text-ink hover:border-muted" />
-          <ThemeToggle className="hidden rounded-md border border-line bg-surface text-ink hover:border-muted sm:inline-flex" />
-          {action && (
-            <Link href={action.href} data-tour="accion" className="inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-3 text-[13px] font-medium text-paper hover:bg-navy-deep sm:px-4">
-              <Plus className="size-4" aria-hidden />
-              <span className="hidden sm:inline">{action.label}</span>
-              <span className="sr-only sm:hidden">{action.label}</span>
-            </Link>
-          )}
+          <a
+            href="/vigia"
+            onClick={(e) => {
+              if (openVigia()) e.preventDefault();
+            }}
+            data-tour="vigia"
+            aria-label={`Vigía${vigiaCount ? ` · ${vigiaCount} ${BADGE_TEXT[p.vigiaBadge]}` : ""}`}
+            className="relative inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-2.5 text-[13px] font-medium text-paper shadow-sm hover:bg-navy-deep sm:px-3"
+          >
+            <WandSparkles className="size-4 text-gold" strokeWidth={1.6} aria-hidden />
+            <span className="hidden sm:inline">Vigía</span>
+            {vigiaCount > 0 && <span aria-hidden className="num absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-[11px] leading-[18px] text-night ring-2 ring-canvas">{vigiaCount}</span>}
+          </a>
+          <Link href="/mensajes" aria-label={`Mensajes${p.badges.unread ? ` · ${p.badges.unread} sin leer` : ""}`} title="Mensajes" className={cn("relative grid size-9 place-items-center rounded-md text-ink hover:bg-surface", pathname.startsWith("/mensajes") && "bg-surface")}>
+            <MessagesSquare className="size-[18px]" strokeWidth={1.6} aria-hidden />
+            {(p.badges.unread ?? 0) > 0 && <span aria-hidden className="num absolute -right-0.5 -top-0.5 min-w-[17px] rounded-full bg-rose-light px-1 text-center text-[10px] leading-[17px] text-night ring-2 ring-canvas">{p.badges.unread}</span>}
+          </Link>
+          {p.notices && <NoticesBell items={p.notices.items} unread={p.notices.unread} className="rounded-md text-ink hover:bg-surface" />}
+          <HelpMenu className="rounded-md text-ink hover:bg-surface" />
+          <AccountMenu user={p.user} spaceName={p.spaceName} links={p.links} spaces={p.spaces} switchOrg={p.switchOrg} signOut={p.signOut} />
         </header>
         {p.assisted && (
           <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2 text-[13px] text-[#7a5410] sm:px-6 lg:px-8">

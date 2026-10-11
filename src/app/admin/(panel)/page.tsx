@@ -1,3 +1,4 @@
+import { HeaderAction } from "@/components/admin/kit/HeaderAction";
 import { and, asc, count, desc, eq, gte, inArray, isNull, lt, lte, notInArray, sql } from "drizzle-orm";
 import {
   Activity,
@@ -454,7 +455,7 @@ export default async function AdminHome() {
   const first = user.name ? user.name.split(" ")[0] : "";
   return (
     <>
-      <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que pasa hoy en el estudio y lo que necesita tu atención." />
+      <PageHeader title={`Hola${first ? `, ${first}` : ""}`} description="Lo que pasa hoy en el estudio y lo que necesita tu atención." actions={user.role !== "colaborador" ? <HeaderAction href="/admin/consultas/nueva" label="Cargar consulta" /> : undefined} />
       <FirstSteps className="mb-6" />
       <div className="grid gap-6">
         <Suspense fallback={<StatRowSkeleton />}>

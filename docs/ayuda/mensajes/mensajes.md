@@ -3,7 +3,7 @@ titulo: Mensajes: chateá con tu estudio, tus grupos y tus Flotas
 resumen: Escribile a quien comparte un espacio con vos, en privado o en grupo. Cada grupo de gastos y cada Flota tiene su conversación.
 perfiles: [persona, autonomo, estudio, organizacion, empleado, flota]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [grupos-de-gastos/invitar, vigia/vigia]
 ---
 
@@ -39,7 +39,7 @@ Cada **grupo de gastos** y cada **Flota** tiene su conversación automática: ap
 
 ## Avisos
 
-- El número en el menú son los mensajes sin leer, y en la campanita te llega un aviso por conversación.
+- El número sobre el ícono de **Mensajes**, en la barra de arriba, son los mensajes sin leer, y en la campanita te llega un aviso por conversación.
 - **Avisos en el teléfono:** en **Mensajes**, tocá **Activar avisos**. En iPhone, primero instalá Faro en la pantalla de inicio.
 - **Silenciar:** en el menú **⋮** de la conversación. No te llegan avisos ni suma al número.
 

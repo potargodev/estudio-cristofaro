@@ -117,9 +117,10 @@ export const TOURS: Tour[] = [
     path: "/admin",
     steps: [
       { title: "Este es el panel del estudio", text: "Lo urgente de hoy: vencimientos, solicitudes y aprobaciones pendientes." },
-      { target: t("nav"), title: "El menú", text: "Organizaciones, vencimientos, documentos y todo lo demás. Se repliega con el botón de arriba." },
-      { target: t("guia"), title: "La guía", text: "Tus primeros pasos y este recorrido están siempre acá. La podés apagar cuando quieras." },
-      { target: t("ayuda"), title: "Ayuda", text: "Artículos cortos para cada pantalla, y el asistente los cita cuando le preguntás." },
+      { target: t("espacio"), title: "Tus espacios", text: "El menú muestra un espacio a la vez. Desde acá pasás a tu espacio Personal (Bitácora y Grupos) o a Faro Manager." },
+      { target: t("nav"), title: "El menú", text: "Operación (organizaciones, vencimientos, solicitudes), Negocio y, abajo, Configuración. Se repliega con el botón de arriba." },
+      { target: t("vigia"), title: "El Vigía", text: "Tu asistente: se abre al costado sin salir de la pantalla y sabe dónde estás. Ahí también están las propuestas para aprobar." },
+      { target: t("ayuda"), title: "Ayuda y guía", text: "El tour de cada pantalla, tus primeros pasos, el Centro de ayuda y el interruptor de la guía." },
     ],
   },
   {
@@ -137,7 +138,8 @@ export const TOURS: Tour[] = [
     steps: [
       { title: "Tu espacio en Faro", text: "Tus números, sin ser contador. Arrancá por los grupos de gastos." },
       { target: t("grupos"), title: "Grupos de gastos", text: "Dividí con amigos, socios o clientes. Lo de tu actividad queda listo para la contabilidad." },
-      { target: t("guia"), title: "Tus primeros pasos", text: "Desde «Guía» ves qué te falta. Cada paso se marca solo cuando lo hacés." },
+      { target: t("vigia"), title: "Tu Vigía", text: "Contale tus gastos como se los contarías a alguien: se abre al costado, sin salir de la pantalla." },
+      { target: t("ayuda"), title: "Tus primeros pasos", text: "Desde el «?» ves qué te falta. Cada paso se marca solo cuando lo hacés." },
     ],
   },
   {
@@ -174,7 +176,7 @@ export const TOURS: Tour[] = [
     steps: [
       { title: "Tu portal", text: "Lo que tenés con el estudio: vencimientos, documentos y consultas." },
       { target: t("nav"), title: "Secciones", text: "Ves solo lo que tu rol permite." },
-      { target: t("guia"), title: "La guía", text: "Tus primeros pasos y la ayuda, siempre a mano." },
+      { target: t("ayuda"), title: "Ayuda y guía", text: "Tus primeros pasos, el tour de cada pantalla y la ayuda, siempre a mano en el «?»." },
     ],
   },
 ];

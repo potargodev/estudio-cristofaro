@@ -1,7 +1,8 @@
+import { HeaderAction } from "@/components/admin/kit/HeaderAction";
 import { and, asc, eq, gte, lte } from "drizzle-orm";
 import { markStep } from "@/modules/onboarding/server";
 import { alias } from "drizzle-orm/pg-core";
-import { CalendarDays, ChevronLeft, ChevronRight, List } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, List, Upload } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { setObligationsStatus } from "@/app/admin/obligation-actions";
@@ -125,6 +126,7 @@ export default async function VencimientosPage({ searchParams }: { searchParams:
       <PageHeader
         title="Vencimientos"
         description="Todas las obligaciones de las organizaciones, por semana. Elegí varias para marcarlas presentadas o pagadas."
+        actions={<HeaderAction href="/admin/vencimientos/importar" label="Importar vencimientos" icon={Upload} secondary />}
         tabs={[
           { href: "/admin/vencimientos", label: "Lista", icon: List, active: view === "lista" },
           { href: `/admin/vencimientos?vista=calendario&mes=${month}`, label: "Calendario", icon: CalendarDays, active: view === "calendario" },

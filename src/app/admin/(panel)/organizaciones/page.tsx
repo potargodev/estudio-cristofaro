@@ -1,3 +1,4 @@
+import { HeaderAction } from "@/components/admin/kit/HeaderAction";
 import { and, asc, count, eq, gt, inArray, isNull, max, ne, sql } from "drizzle-orm";
 import { Building2 } from "lucide-react";
 import type { Metadata } from "next";
@@ -33,7 +34,7 @@ function ago(d: Date | null, now: Date) {
 
 export default async function OrganizacionesPage({ searchParams }: { searchParams: Promise<{ q?: string; estado?: string; plan?: string }> }) {
   const { q, estado = "vigentes", plan: planParam } = await searchParams;
-  const { studioId } = await requireStaff();
+  const { studioId, role } = await requireStaff();
   const db = getDb();
   const now = new Date();
   const today = iso(now);
@@ -309,7 +310,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
 
   return (
     <>
-      <PageHeader title="Organizaciones" description="Clientes del estudio con su plan, responsable, módulos y estado de salud. Los vencimientos cuentan los próximos 14 días y los atrasados." />
+      <PageHeader title="Organizaciones" description="Clientes del estudio con su plan, responsable, módulos y estado de salud. Los vencimientos cuentan los próximos 14 días y los atrasados." actions={role !== "colaborador" ? <HeaderAction href="/admin/organizaciones/nueva" label="Nueva organización" tour="accion" /> : undefined} />
       {orgs.length === 0 ? (
         <div className="border border-line bg-surface">
           <EmptyState icon={Building2} title="Todavía no hay organizaciones" text="Creá la primera o convertí una consulta ganada." action={{ href: "/admin/organizaciones/nueva", label: "Nueva organización" }} />

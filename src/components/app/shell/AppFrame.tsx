@@ -10,7 +10,7 @@ import { approvals, leads, message_reports, obligations, organization_modules, p
 import { getCurrentUser, TENANT_OWNERS } from "@/lib/auth";
 import { getEntitlements } from "@/lib/faro/entitlements";
 import { SITE_STUDIO_SLUG } from "@/lib/faro/tenants";
-import { ORG_ROLE_LABELS } from "@/lib/permissions";
+import { can, ORG_ROLE_LABELS } from "@/lib/permissions";
 import { buildPortalNav } from "@/lib/portal-nav";
 import { getPrefs } from "@/lib/prefs";
 import { availableSpaces, currentMembership, resolveSpace, SPACE_HOME } from "@/lib/spaces";
@@ -25,6 +25,7 @@ import { bottomFor, groupsFor, type Space, type SpaceInput } from "./spaces";
 
 const ROLE_LABEL: Record<string, string> = { dueno: "Dueño", contador: "Contador", colaborador: "Colaborador", titular: "Titular" };
 const HOME = SPACE_HOME;
+const PLAN_HREF = "/admin/plan";
 
 /**
  * Marco de la app para cualquier pantalla con sesión: arma el menú del
@@ -100,17 +101,24 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
   badges.copilot = copilotNew;
 
   // Espacios a los que puede entrar (selector de arriba de la barra lateral)
-  const can = availableSpaces(user);
+  const allowed = availableSpaces(user);
   const spaces: ShellSpace[] = [];
-  if (can.has("studio")) spaces.push({ key: "studio", label: studio?.name ?? "Estudio", kind: "Estudio", href: HOME.studio, current: space === "studio", icon: "studio" });
+  if (allowed.has("studio")) spaces.push({ key: "studio", label: studio?.name ?? "Estudio", kind: "Estudio", href: HOME.studio, current: space === "studio", icon: "studio" });
   for (const m of membership?.list ?? [])
     spaces.push({ key: m.organizationId, label: m.organizationName, kind: `Organización · ${ORG_ROLE_LABELS[m.role]}`, href: "/portal", current: space === "portal" && membership?.current?.organizationId === m.organizationId, orgId: m.organizationId, icon: "org" });
   spaces.push({ key: "personal", label: user.tenantKind === "personal" && user.role === "titular" ? "Faro Personal" : "Personal", kind: user.tenantKind === "personal" && user.role === "titular" ? "Autónomo" : "Tu Bitácora y tus grupos", href: HOME.personal, current: space === "personal", icon: "personal" });
-  if (can.has("faro")) spaces.push({ key: "faro", label: "Faro Manager", kind: "Plataforma", href: HOME.faro, current: space === "faro", icon: "faro" });
+  if (allowed.has("faro")) spaces.push({ key: "faro", label: "Faro Manager", kind: "Plataforma", href: HOME.faro, current: space === "faro", icon: "faro" });
 
   const groups = groupsFor(input);
   const prefs = await getPrefs(user.id);
-  const account = user.role === "cliente" ? "/portal/mas" : user.role === "titular" ? "/personal/cuenta" : "/admin/cuenta";
+  const links = {
+    account: user.role === "cliente" ? "/portal/mas" : user.role === "titular" ? "/personal/cuenta" : "/admin/cuenta",
+    plan: user.role === "dueno" ? PLAN_HREF : user.role === "titular" ? "/personal/plan" : undefined,
+    mcp: user.role !== "cliente" ? "/admin/mcp" : undefined,
+    team: membership?.current && can(membership.current.role, "equipo.gestionar") ? "/portal/equipo" : undefined,
+  };
+  // Studio (y la cuenta personal con su IA): propuestas para aprobar; si no, respuestas nuevas del Vigía
+  const vigiaBadge = space === "studio" ? "approvals" : "copilot";
   return (
     <>
       <AppShell
@@ -122,7 +130,8 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
         spaceName={spaceName}
         spaces={spaces}
         home={HOME[space]}
-        account={account}
+        links={links}
+        vigiaBadge={vigiaBadge}
         studioBrand={studioBrand}
         collapsedInitial={prefs.sidebar === "collapsed"}
         studioAccess={space === "studio" ? input.studio : null}

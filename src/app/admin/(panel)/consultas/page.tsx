@@ -1,3 +1,4 @@
+import { HeaderAction } from "@/components/admin/kit/HeaderAction";
 import { and, desc, eq, ilike, inArray, max, or } from "drizzle-orm";
 import { Columns3, Inbox, Search, Table2 } from "lucide-react";
 import type { Metadata } from "next";
@@ -126,6 +127,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
         }
         actions={
           view === "tablero" ? (
+            <>
             <form className="relative" role="search">
               <label htmlFor="q" className="sr-only">
                 Buscar consultas
@@ -140,7 +142,11 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
                 className="h-9 w-64 rounded-md border border-line bg-surface pl-9 pr-3 text-[14px] placeholder:text-muted focus:border-navy focus:outline-none"
               />
             </form>
-          ) : undefined
+            <HeaderAction href="/admin/consultas/nueva" label="Cargar consulta" />
+            </>
+          ) : (
+            <HeaderAction href="/admin/consultas/nueva" label="Cargar consulta" />
+          )
         }
         tabs={[
           { href: "/admin/consultas", label: "Tablero", icon: Columns3, active: view === "tablero" },

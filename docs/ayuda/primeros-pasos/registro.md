@@ -3,7 +3,7 @@ titulo: Cómo crear tu cuenta en Faro
 resumen: Elegí qué sos, entrá con Google, con un enlace a tu mail o con contraseña y segundo factor si sos un estudio, y seguí la guía de primeros pasos.
 perfiles: [persona, autonomo, estudio]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [primeros-pasos/planes, primeros-pasos/primeros-pasos-estudio, grupos-de-gastos/crear-un-grupo]
 ---
 
@@ -28,23 +28,26 @@ Después de entrar, Faro te hace unas preguntas cortas para dejar todo listo. Lo
 
 - **Estudio:** el nombre del estudio, los rubros que atendés y por dónde seguir.
 - **Autónomo:** tus datos (con tu CUIT armamos tu calendario), tu rubro y por dónde seguir.
-- **Persona:** qué querés hacer primero: anotar tus gastos con el Vigía, dividir gastos, encontrar un contador o armar una Flota. Al terminar, el **Vigía** te saluda y te explica cómo usarlo: es tu pantalla de inicio.
+- **Persona:** qué querés hacer primero: anotar tus gastos con el Vigía, dividir gastos, encontrar un contador o armar una Flota. Al terminar, el **Vigía** te saluda y te explica cómo usarlo. Tu pantalla de inicio es **Inicio**, con el resumen del mes y el Vigía arriba.
 
 ## 4. Primeros pasos y la Guía
 
-Arriba siempre tenés el botón **Guía**. Al tocarlo se abre un menú con:
+Arriba a la derecha siempre tenés el botón **?** (ayuda). Al tocarlo se abre un menú con:
 
 - **Guía prendida / apagada:** el interruptor. Con la guía prendida, la primera vez que entrás a cada pantalla aparece un recorrido corto (una sola vez: queda guardado cuando lo cerrás o lo terminás). Con la guía apagada no aparece nada solo.
 - **Ver el tour de esta pantalla:** lo volvés a ver cuando quieras, aunque la guía esté apagada.
+- **Centro de ayuda** y **Ayuda sobre esta pantalla:** los artículos cortos como este.
 - **Primeros pasos:** tu lista de pasos con el progreso («2 de 5 listos»). Cada paso tiene un botón **Hacer este paso**, y **se marca solo** cuando hacés la acción de verdad: no hay que tildar nada.
 
-En el **Inicio** ves un aviso corto, «Te faltan 3 pasos», que podés cerrar con la **X** (los pasos siguen en **Guía** → **Primeros pasos**). Los recorridos se pueden saltear en cualquier momento, también con la tecla **Esc**.
+En el **Inicio** ves un aviso corto, «Te faltan 3 pasos», que podés cerrar con la **X** (los pasos siguen en **?** → **Primeros pasos**). Los recorridos se pueden saltear en cualquier momento, también con la tecla **Esc**.
 
-La guía viene prendida en las cuentas nuevas. Si tu cuenta ya tenía un tiempo, viene apagada: prendela desde el menú si la querés. También la manejás desde **Mi cuenta** (en el portal de clientes, desde **Más**), donde además podés volver a ver los recorridos que ya viste.
+La guía viene prendida en las cuentas nuevas. Si tu cuenta ya tenía un tiempo, viene apagada: prendela desde el **?** si la querés. También la manejás desde **Mi cuenta** (en el portal de clientes, desde **Más**), donde además podés volver a ver los recorridos que ya viste.
 
-## El menú
+## El menú y la barra de arriba
 
-Todo Faro vive en el mismo marco: Vigía, Bitácora, Grupos de gastos, Mensajes, Flotas, la Red y la Ayuda aparecen en el menú de cualquier espacio (tu cuenta personal, tu estudio, tu organización o el Faro Manager).
+El menú muestra **un espacio a la vez** (Personal, tu estudio, tu organización o el Faro Manager) y cambiás de espacio con el selector de arriba del menú. Ver [Tus espacios y el menú](/ayuda/primeros-pasos/espacios-y-menu).
+
+La **barra de arriba** es igual en todos los espacios: el **Vigía**, **Mensajes**, los avisos (la campanita), la ayuda (**?**) y tu cuenta (tu foto o tus iniciales).
 
 - En la computadora, el botón de arriba del menú lo **colapsa**: pasa a una barra horizontal de íconos arriba (pasá el mouse para ver el nombre). El botón de la izquierda lo vuelve a expandir. Faro recuerda tu elección. Atajo: tecla **[**.
 - En el celular, la barra de abajo tiene los accesos de todos los días y **Más** abre el menú completo.

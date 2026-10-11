@@ -3,15 +3,15 @@ titulo: Primeros pasos para el dueño del estudio
 resumen: Lo que conviene hacer en tus primeros días con Faro, en orden, desde el segundo factor hasta sumar a tu equipo.
 perfiles: [estudio]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [organizaciones/invitaciones, organizaciones/rubros, vencimientos/calendario, organizaciones/roles]
 ---
 
-Estos son los mismos pasos que ves en el botón **Guía**, arriba en el menú. Se marcan solos a medida que los hacés.
+Estos son los mismos pasos que ves en el botón **?** de la barra de arriba, en **Primeros pasos**. Se marcan solos a medida que los hacés.
 
 ## 1. Activá el segundo factor
 
-Es obligatorio para entrar al estudio. Si no lo hiciste al registrarte, entrá a **Mi cuenta y 2FA** (en el menú de tu usuario) y seguí los tres pasos: escaneá el QR, guardá los códigos de respaldo y confirmá con el código de la app.
+Es obligatorio para entrar al estudio. Si no lo hiciste al registrarte, entrá a **Mi cuenta** (en el menú de tu cuenta, arriba a la derecha) y seguí los tres pasos: escaneá el QR, guardá los códigos de respaldo y confirmá con el código de la app.
 
 ## 2. Creá tu primera organización
 

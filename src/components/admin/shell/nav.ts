@@ -161,17 +161,6 @@ export function crumbs(pathname: string): { label: string; href?: string }[] {
   return out;
 }
 
-/** Acción principal de la barra superior según la sección */
-export function primaryAction(pathname: string, isOperator = true): { href: string; label: string } | null {
-  if (!isOperator) return null;
-  if (pathname === "/admin" || pathname === "/admin/consultas") return { href: "/admin/consultas/nueva", label: "Cargar consulta" };
-  if (pathname === "/admin/organizaciones") return { href: "/admin/organizaciones/nueva", label: "Nueva organización" };
-  if (pathname === "/admin/vencimientos") return { href: "/admin/vencimientos/importar", label: "Importar vencimientos" };
-  if (pathname === "/admin/agenda") return { href: "/admin/agenda?tab=disponibilidad", label: "Mi disponibilidad" };
-  if (pathname === "/admin/contenidos" || pathname === "/admin/contenidos/novedades") return { href: "/admin/contenidos/novedades/nueva", label: "Nueva novedad" };
-  return null;
-}
-
 /**
  * Contexto de la pantalla actual para "Preguntar a Faro": la ficha de una
  * organización o la solicitud abierta. Solo IDs: el servidor los valida.

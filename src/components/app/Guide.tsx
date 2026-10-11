@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleHelp, Compass, ListChecks } from "lucide-react";
+import { CircleHelp } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -9,8 +9,8 @@ import { tourFor, type Tour } from "@/modules/onboarding/catalog";
 import { helpFor } from "@/lib/help-map";
 import { cn } from "@/lib/utils";
 
-// Onboarding guiado: el botón "Guía" (siempre visible arriba) abre un menú con
-// el interruptor de la guía, el tour de la pantalla y los primeros pasos.
+// Onboarding guiado: el "?" de la barra superior (HelpMenu) tiene el
+// interruptor de la guía, el tour de la pantalla y los primeros pasos.
 // GuideHost va una sola vez por layout y muestra los tours (salteables, con
 // teclado y sin animaciones si la persona pidió menos movimiento). El progreso
 // y la preferencia viven en la base.
@@ -42,69 +42,6 @@ export async function toggleGuide() {
 
 /** Muestra el tour de la pantalla actual */
 export const startTour = () => window.dispatchEvent(new Event(START_TOUR));
-
-/** Botón «Guía»: menú con el interruptor, el tour de esta pantalla y los primeros pasos */
-export function GuideButton({ className, compact }: { className?: string; compact?: boolean }) {
-  const g = useGuide();
-  const [open, setOpen] = useState(false);
-  const box = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [open]);
-  const toggle = async () => {
-    const disabled = !g.disabled;
-    setState({ disabled });
-    await setGuideDisabledAction(disabled, window.location.pathname);
-  };
-  return (
-    <div ref={box} className="relative">
-      <button type="button" data-tour="guia" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-haspopup="menu" className={cn("inline-flex h-9 items-center gap-1.5 px-2.5 text-[13px]", className)} aria-label="Guía: recorridos y primeros pasos">
-        <Compass className="size-4" aria-hidden />
-        <span className={cn(compact ? "sr-only" : "hidden sm:inline")}>Guía</span>
-      </button>
-      {open && (
-        <div role="menu" aria-label="Guía" className="app-ui absolute right-0 top-full z-50 mt-2 w-72 rounded-md border border-line bg-surface p-1.5 text-[14px] text-ink shadow-[0_16px_40px_-16px_rgba(0,0,0,0.35)]">
-          <button type="button" role="menuitemcheckbox" aria-checked={!g.disabled} onClick={toggle} className="flex w-full items-center justify-between gap-3 rounded-[4px] px-3 py-2.5 text-left hover:bg-canvas">
-            <span>
-              <span className="block font-medium">Guía {g.disabled ? "apagada" : "prendida"}</span>
-              <span className="block text-[12px] text-muted">{g.disabled ? "No aparece nada solo." : "Un recorrido corto la primera vez que entrás a cada pantalla."}</span>
-            </span>
-            <span aria-hidden className={cn("relative h-5 w-9 shrink-0 rounded-full transition-colors", g.disabled ? "bg-line" : "bg-navy")}>
-              <span className={cn("absolute top-0.5 size-4 rounded-full bg-surface shadow transition-[left]", g.disabled ? "left-0.5" : "left-[18px]")} />
-            </span>
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            disabled={!g.hasTour}
-            onClick={() => {
-              setOpen(false);
-              window.dispatchEvent(new Event(START_TOUR));
-            }}
-            className="flex w-full items-center gap-2.5 rounded-[4px] px-3 py-2.5 text-left hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Compass className="size-4 text-muted" aria-hidden /> {g.hasTour ? "Ver el tour de esta pantalla" : "Esta pantalla no tiene tour"}
-          </button>
-          <Link href="/primeros-pasos" role="menuitem" onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-[4px] px-3 py-2.5 hover:bg-canvas">
-            <ListChecks className="size-4 text-muted" aria-hidden /> Primeros pasos
-          </Link>
-          <Link href="/ayuda" role="menuitem" onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-[4px] px-3 py-2.5 hover:bg-canvas">
-            <CircleHelp className="size-4 text-muted" aria-hidden /> Centro de ayuda
-          </Link>
-        </div>
-      )}
-    </div>
-  );
-}
 
 /**
  * Tours: cada uno se muestra una sola vez por pantalla y por usuario (se marca

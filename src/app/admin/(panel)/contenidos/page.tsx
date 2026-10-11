@@ -1,3 +1,4 @@
+import { HeaderAction } from "@/components/admin/kit/HeaderAction";
 import { count, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { ArrowRight, HelpCircle, Layers, Newspaper } from "lucide-react";
@@ -26,7 +27,9 @@ export default async function ContenidosPage() {
 
   return (
     <>
-      <AdminPageHeader title="Contenidos de la web" description="Lo que cambies acá se publica en el sitio en pocos segundos." />
+      <AdminPageHeader title="Contenidos de la web" description="Lo que cambies acá se publica en el sitio en pocos segundos.">
+        <HeaderAction href="/admin/contenidos/novedades/nueva" label="Nueva novedad" />
+      </AdminPageHeader>
       <div className="grid gap-4 md:grid-cols-3">
         {sections.map((s) => (
           <Link key={s.href} href={s.href} className="group flex flex-col border border-line bg-surface p-5 transition-colors hover:border-muted">

@@ -24,6 +24,20 @@ Faro **recuerda el último espacio que usaste**: la próxima vez que entres, arr
 
 Las pantallas que son de todos los espacios (Mensajes, la Ayuda) se abren en el espacio en el que estabas.
 
+## La barra de arriba
+
+Es igual en todos los espacios y te sigue a donde vayas:
+
+- **Vigía:** tu asistente. El número son las propuestas para aprobar (en el estudio) o las respuestas nuevas.
+- **Mensajes:** con el número de mensajes sin leer.
+- **La campanita:** tus avisos.
+- **?:** el tour de esta pantalla, Primeros pasos, el Centro de ayuda y el interruptor de la Guía.
+- **Tu cuenta** (tus iniciales): Mi cuenta, Plan y facturación, Accesos MCP, el tema claro u oscuro, Cambiar de espacio y Salir. En el portal, quien administra el equipo de la organización también ve **Mi equipo**.
+
+La acción principal de cada pantalla (por ejemplo, **Nueva organización**) está a la derecha del título.
+
 ## Qué cambió de lugar
 
-Lo personal (Bitácora y Grupos) ya no aparece dentro del menú del estudio ni de la organización: está en tu espacio **Personal**. Nada se borró: todo cambió de lugar.
+- La **Ayuda** y la **Guía** salieron del menú: están en el **?** de arriba.
+- **Mensajes** pasó a la barra de arriba.
+- Lo personal (Bitácora y Grupos) ya no aparece dentro del menú del estudio ni de la organización: está en tu espacio **Personal**. Nada se borró: todo cambió de lugar.
