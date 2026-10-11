@@ -1,6 +1,6 @@
 // Rutas viejas → su nuevo lugar en el esqueleto de navegación
 // (docs/faro-producto.md §2.o). Las usa next.config.ts (redirects) y el script
-// que las verifica (scripts/verificar-redirecciones.mjs). Nada se borró: todo
+// que las verifica (scripts/verificar-redirecciones.mts). Nada se borró: todo
 // cambió de lugar.
 
 /** La ruta y todo lo que cuelga de ella */
