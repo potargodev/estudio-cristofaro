@@ -36,7 +36,7 @@ export default async function AuditoriaPage({ searchParams }: { searchParams: Pr
     .limit(300);
   return (
     <>
-      <PageHeader title="Auditoría de plataforma" description="Cada acción del equipo de Faro (planes, módulos, accesos asistidos, plantillas) y los accesos denegados, con quién, cuándo y en qué tenant." />
+      <PageHeader level={2} title="Auditoría de plataforma" description="Cada acción del equipo de Faro (planes, módulos, accesos asistidos, plantillas) y los accesos denegados, con quién, cuándo y en qué tenant." />
       <div className="mb-4 flex flex-wrap items-center gap-2">
         {FILTERS.map(([k, label]) => (
           <Link key={k} href={`/faro-manager/auditoria${k ? `?f=${encodeURIComponent(k)}` : ""}`} className={cn("rounded-md border px-3 py-1.5 text-[13px]", f === k ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-muted")}>

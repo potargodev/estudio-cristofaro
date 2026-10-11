@@ -17,7 +17,7 @@ export default async function PlantillasPage() {
   ]);
   return (
     <>
-      <PageHeader title="Plantillas de industria" description="Rubros con su configuración típica. Las que están en borrador se muestran como sugerencia a revisar hasta que las valide un profesional." />
+      <PageHeader level={2} title="Plantillas de industria" description="Rubros con su configuración típica. Las que están en borrador se muestran como sugerencia a revisar hasta que las valide un profesional." />
       <div className="overflow-x-auto rounded-lg border border-line bg-surface">
         <table className="w-full min-w-[720px] text-left text-[14px]">
           <thead className="border-b border-line text-[12px] uppercase tracking-wide text-muted">

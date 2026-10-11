@@ -26,7 +26,7 @@ export default async function AyudaOpiniones() {
   const rows = ARTICLES.map((a) => ({ a, s: by.get(a.id) ?? { si: 0, no: 0 } })).sort((x, y) => y.s.no - x.s.no || y.s.si + y.s.no - (x.s.si + x.s.no));
   return (
     <>
-      <PageHeader title="Opiniones de la ayuda" description={`${ARTICLES.length} artículos en docs/ayuda. Arriba, los que más «no me sirvió» tienen.`} />
+      <PageHeader level={2} title="Opiniones de la ayuda" description={`${ARTICLES.length} artículos en docs/ayuda. Arriba, los que más «no me sirvió» tienen.`} />
       <div className="overflow-x-auto rounded-lg border border-line bg-surface">
         <table className="w-full min-w-[640px] text-left text-[14px]">
           <thead className="border-b border-line text-[12px] text-muted">

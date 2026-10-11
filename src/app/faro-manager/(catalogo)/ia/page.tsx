@@ -8,7 +8,7 @@ import { PLANS, planFullName } from "@/lib/faro/plans";
 import { cn } from "@/lib/utils";
 import { platformSpend, usageByUser } from "@/modules/copilot/limits";
 import { getPlatformAi, isConfigured, limitsFor, PLATFORM_PROVIDERS } from "@/modules/copilot/platform";
-import { forgetPlatformKeyAction, savePlatformAiAction } from "../ia-actions";
+import { forgetPlatformKeyAction, savePlatformAiAction } from "@/app/faro-manager/ia-actions";
 
 export const metadata: Metadata = { title: "IA de la plataforma" };
 
@@ -28,7 +28,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
     <>
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader title="IA de la plataforma" description="El modelo que usa el Vigía de las personas y los autónomos. La clave se guarda cifrada y nunca se vuelve a mostrar: solo sus últimos 4 caracteres." />
+      <PageHeader level={2} title="IA de la plataforma" description="El modelo que usa el Vigía de las personas y los autónomos. La clave se guarda cifrada y nunca se vuelve a mostrar: solo sus últimos 4 caracteres." />
 
       {!ready && (
         <div className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-[14px]">

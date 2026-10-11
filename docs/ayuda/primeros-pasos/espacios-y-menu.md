@@ -19,7 +19,7 @@ Faro junta varias cosas en una sola cuenta: tus finanzas personales, el estudio 
   - La ficha de cada organización tiene las pestañas **Resumen** (datos, rubro, plan, miembros del portal, equipo, gastos y actividad), **Vencimientos**, **Documentos**, **Solicitudes** y **Conexiones**.
 - **Organización:** el portal de la empresa que atiende el estudio. Lo ve cada persona según su rol: **Inicio**, **Vencimientos**, **Documentos**, **Solicitudes** y **Empresa** (con las pestañas Gastos de la empresa, Rendiciones y los módulos activos). **Agendar una llamada** y **Reseñar al estudio** están en la tarjeta del estudio del Inicio, y **Mi equipo**, en el menú de tu cuenta.
 - **Empleado:** **Inicio**, **Rendiciones** y **Grupos**. Nada más.
-- **Faro Manager:** la administración de la plataforma. Solo para el equipo de Faro.
+- **Faro Manager:** la administración de la plataforma. Solo para el equipo de Faro: **Resumen**, **Tenants** (lista, pedidos de plan y alta manual), **Catálogo** (planes y precios, módulos, plantillas e IA de la plataforma), **Red** y **Plataforma** (auditoría, opiniones de la ayuda, mensajes reportados y uso y costos de IA).
 
 ## Cambiar de espacio
 

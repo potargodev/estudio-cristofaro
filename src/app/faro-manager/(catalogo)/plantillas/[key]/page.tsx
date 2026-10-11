@@ -8,7 +8,7 @@ import { SubmitButton } from "@/components/admin/ui";
 import { requireFaro } from "@/lib/auth";
 import { ITEM_KINDS, templateItems, type ItemKind } from "@/modules/industries/catalog";
 import { getTemplate, templateHistory } from "@/modules/industries/server";
-import { saveTemplateAction, validateTemplateAction } from "../../template-actions";
+import { saveTemplateAction, validateTemplateAction } from "@/app/faro-manager/template-actions";
 
 export const metadata: Metadata = { title: "Plantilla" };
 
@@ -32,7 +32,7 @@ export default async function PlantillaPage({ params, searchParams }: { params: 
       <Link href="/faro-manager/plantillas" className="inline-flex items-center gap-1.5 text-[14px] text-muted hover:text-ink">
         <ArrowLeft className="size-4" aria-hidden /> Plantillas
       </Link>
-      <PageHeader className="mt-4" title={t.nombre} description={`${t.descripcion} · Versión ${t.version} · ${t.estado === "validada" ? `validada por ${t.validado_por?.nombre} (${t.validado_por?.matricula}) el ${t.validado_el}` : "borrador"}`} />
+      <PageHeader level={2} className="mt-4" title={t.nombre} description={`${t.descripcion} · Versión ${t.version} · ${t.estado === "validada" ? `validada por ${t.validado_por?.nombre} (${t.validado_por?.matricula}) el ${t.validado_el}` : "borrador"}`} />
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="grid content-start gap-6">
           <section className="rounded-lg border border-line bg-surface p-5">

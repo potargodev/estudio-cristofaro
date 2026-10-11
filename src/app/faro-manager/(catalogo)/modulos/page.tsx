@@ -6,7 +6,7 @@ import { requireFaro } from "@/lib/auth";
 import { getModuleStatuses, getPlans } from "@/lib/faro/entitlements";
 import { cn } from "@/lib/utils";
 import { FARO_MODULES } from "@/modules/registry";
-import { setModuleReleaseAction } from "../catalog-actions";
+import { setModuleReleaseAction } from "@/app/faro-manager/catalog-actions";
 
 export const metadata: Metadata = { title: "Módulos" };
 
@@ -26,7 +26,7 @@ export default async function ModulosPage({ searchParams }: { searchParams: Prom
     <>
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader title="Módulos" description="El registro de src/modules/registry.ts. Liberar un módulo lo habilita para todos los tenants cuyo plan lo incluye." />
+      <PageHeader level={2} title="Módulos" description="El registro de src/modules/registry.ts. Liberar un módulo lo habilita para todos los tenants cuyo plan lo incluye." />
       <ul className="grid gap-3">
         {FARO_MODULES.map((m) => {
           const st = statuses[m.key];

@@ -9,7 +9,7 @@ import { annualUsd, formatArs, formatUsd, KIND_PLANS_LABEL, type PlanLimits } fr
 import { getUsdArs } from "@/lib/faro/pricing";
 import { cn } from "@/lib/utils";
 import { PLAN_MODULES } from "@/modules/registry";
-import { savePlanAction, setUsdArsAction, togglePlanModuleAction } from "../catalog-actions";
+import { savePlanAction, setUsdArsAction, togglePlanModuleAction } from "@/app/faro-manager/catalog-actions";
 
 export const metadata: Metadata = { title: "Planes y precios" };
 
@@ -32,7 +32,7 @@ export default async function PlanesPage({ searchParams }: { searchParams: Promi
     <>
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader title="Planes y precios" description="Precios de referencia en USD con su conversión a pesos, límites y módulos de cada plan. Lo que se cambia acá aplica a todos los tenants del plan (los overrides van en la ficha de cada uno)." />
+      <PageHeader level={2} title="Planes y precios" description="Precios de referencia en USD con su conversión a pesos, límites y módulos de cada plan. Lo que se cambia acá aplica a todos los tenants del plan (los overrides van en la ficha de cada uno)." />
 
       <section className="mb-6 flex flex-wrap items-end justify-between gap-4 rounded-lg border border-line bg-surface p-5">
         <div>

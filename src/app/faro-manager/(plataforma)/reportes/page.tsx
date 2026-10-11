@@ -4,7 +4,7 @@ import { Notice } from "@/components/admin/AdminField";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { requireFaro } from "@/lib/auth";
 import { listReports, REPORT_REASONS } from "@/modules/messages/server";
-import { resolveReportAction } from "../reportes-actions";
+import { resolveReportAction } from "@/app/faro-manager/reportes-actions";
 
 export const metadata: Metadata = { title: "Mensajes reportados" };
 
@@ -20,7 +20,7 @@ export default async function ReportesPage({ searchParams }: { searchParams: Pro
     <>
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader title="Mensajes reportados" description="Solo ves el mensaje que alguien reportó, tal como estaba al reportarlo. Las conversaciones son privadas: no se pueden abrir desde acá." />
+      <PageHeader level={2} title="Mensajes reportados" description="Solo ves el mensaje que alguien reportó, tal como estaba al reportarlo. Las conversaciones son privadas: no se pueden abrir desde acá." />
       <p className="mb-4 text-[14px]">
         <Link href={all ? "/faro-manager/reportes" : "/faro-manager/reportes?ver=todos"} className="underline underline-offset-4">
           {all ? "Ver solo los abiertos" : "Ver también los revisados"}

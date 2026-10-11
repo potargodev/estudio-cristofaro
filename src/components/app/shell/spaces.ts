@@ -150,33 +150,16 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
     const conv = (i: PortalNavItem): ShellItem => ({ href: i.href, label: i.label, icon: PORTAL_ICON[i.icon] ?? "modulos", exact: i.exact, match: i.match, badge: i.href === "/portal/solicitudes" ? "portalRequests" : undefined });
     return [{ title: "", items: x.portal.main.map(conv) }].filter((g) => g.items.length);
   }
-  // Faro Manager
+  // Faro Manager: Resumen · Tenants · Catálogo · Red · Plataforma
   return [
-    { title: "General", items: [{ href: "/faro-manager", label: "Resumen", icon: "resumen", exact: true }] },
     {
-      title: "Tenants",
+      title: "",
       items: [
-        { href: "/faro-manager/tenants", label: "Tenants", icon: "tenants" },
-        ...(x.faroOwner ? [{ href: "/faro-manager/nuevo", label: "Alta manual", icon: "alta" as const }] : []),
-        { href: "/faro-manager/pedidos", label: "Pedidos de plan", icon: "pedidos", badge: "planRequests" },
-      ],
-    },
-    {
-      title: "Catálogo",
-      items: [
-        { href: "/faro-manager/planes", label: "Planes y precios", icon: "plan" },
-        { href: "/faro-manager/modulos", label: "Módulos", icon: "modulos" },
-        { href: "/faro-manager/plantillas", label: "Plantillas de industria", icon: "plantillas" },
-        { href: "/faro-manager/ia", label: "IA de la plataforma", icon: "ia" },
-      ],
-    },
-    { title: "Red", items: [{ href: "/faro-manager/red", label: "Red de estudios", icon: "red", badge: "verifications" }] },
-    {
-      title: "Plataforma",
-      items: [
-        { href: "/faro-manager/auditoria", label: "Auditoría", icon: "auditoria" },
-        { href: "/faro-manager/ayuda", label: "Opiniones de la ayuda", icon: "opiniones" },
-        { href: "/faro-manager/reportes", label: "Mensajes reportados", icon: "mensajes", badge: "reports" },
+        { href: "/faro-manager", label: "Resumen", icon: "resumen", exact: true },
+        { href: "/faro-manager/tenants", label: "Tenants", icon: "tenants", badge: "planRequests", match: ["/faro-manager/pedidos", "/faro-manager/nuevo", "/faro-manager"] },
+        { href: "/faro-manager/planes", label: "Catálogo", icon: "catalogo", match: ["/faro-manager/modulos", "/faro-manager/plantillas", "/faro-manager/ia"] },
+        { href: "/faro-manager/red", label: "Red", icon: "red", badge: "verifications" },
+        { href: "/faro-manager/auditoria", label: "Plataforma", icon: "plataforma", badge: "reports", match: ["/faro-manager/ayuda", "/faro-manager/reportes", "/faro-manager/uso-ia"] },
       ],
     },
   ];
@@ -189,7 +172,7 @@ export function bottomFor(x: SpaceInput, groups: ShellGroup[]): ShellItem[] {
   if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos", "/admin/solicitudes").slice(0, 4);
   if (x.space === "personal") return pick("/personal", "/bitacora", "/grupos", "/red");
   if (x.space === "portal") return all.slice(0, 4);
-  return pick("/faro-manager", "/faro-manager/tenants", "/faro-manager/pedidos", "/faro-manager/red");
+  return pick("/faro-manager", "/faro-manager/tenants", "/faro-manager/red", "/faro-manager/auditoria");
 }
 
 const hit = (pathname: string, href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));

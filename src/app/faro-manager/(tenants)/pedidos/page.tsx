@@ -8,7 +8,7 @@ import { plan_requests, studios, users } from "@/db/schema";
 import { requireFaro } from "@/lib/auth";
 import { getPlans } from "@/lib/faro/entitlements";
 import { planFullName } from "@/lib/faro/plans";
-import { resolvePlanRequestAction } from "../catalog-actions";
+import { resolvePlanRequestAction } from "@/app/faro-manager/catalog-actions";
 
 export const metadata: Metadata = { title: "Pedidos de plan" };
 
@@ -36,7 +36,7 @@ export default async function PedidosPage({ searchParams }: { searchParams: Prom
     <>
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
-      <PageHeader title="Pedidos de plan" description="Tenants que pidieron mejorar su plan. Aplicarlo cambia el plan ahora (los planes pagos arrancan con su prueba)." />
+      <PageHeader level={2} title="Pedidos de plan" description="Tenants que pidieron mejorar su plan. Aplicarlo cambia el plan ahora (los planes pagos arrancan con su prueba)." />
       <ul className="grid gap-3">
         {rows.length === 0 && <li className="text-muted">No hay pedidos.</li>}
         {rows.map(({ r, tenant, email }) => (

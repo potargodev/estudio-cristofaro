@@ -51,7 +51,7 @@ La **barra de arriba** es igual en todos los espacios: el **Vigía**, **Mensajes
 
 - En la computadora, el botón de arriba del menú lo **colapsa**: pasa a una barra horizontal de íconos arriba (pasá el mouse para ver el nombre). El botón de la izquierda lo vuelve a expandir. Faro recuerda tu elección. Atajo: tecla **[**.
 - En el celular, la barra de abajo tiene los accesos de todos los días y **Más** abre el menú completo.
-- Si tenés más de un espacio (por ejemplo, tu estudio y el Faro Manager, o varias organizaciones), cambiás desde tu nombre, abajo del menú.
+- Si tenés más de un espacio (por ejemplo, tu estudio y tu espacio Personal, o varias organizaciones), cambiás desde el selector de arriba del menú o desde **Cambiar de espacio**, en el menú de tu cuenta.
 
 ## Instalar Faro en el teléfono
 
