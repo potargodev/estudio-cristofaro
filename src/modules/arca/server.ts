@@ -543,6 +543,8 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
       const r = await finish({ status: "autorizada", cae: res.cae, cae_due: fromArcaDate(res.caeDue ?? ""), observations: res.observations, raw_request: { xml: res.request }, raw_response: { xml: res.raw }, authorized_by: actor.id, authorized_at: new Date(), public_token: randomBytes(18).toString("base64url"), error: null });
       await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.emitida", entityType: "factura", entityId: inv.id, metadata: { tipo: CBTE_TYPES[inv.cbte_type].label, numero: number, cae: res.cae, total: Number(inv.total), origen: origin, ambiente: cred.env } });
       await emitEvent(scope.studioId, "factura.emitida", { factura_id: inv.id, organizacion_id: scope.organizationId, total: Number(inv.total), cliente: inv.customer_name, tipo: CBTE_TYPES[inv.cbte_type].label }, inv.id);
+      // Una sola verdad con Tango: lo facturado en Faro se escribe allá (si el estudio lo habilitó)
+      void syncToTango(scope.studioId, inv.id);
       return r;
     }
     const detail = [...res.errors, ...res.observations].map((o) => `${o.code}: ${o.msg}`).join(" · ") || "ARCA rechazó el comprobante.";
@@ -702,3 +704,12 @@ export async function checksDue() {
 }
 
 export { actorOf };
+
+async function syncToTango(studioId: string, invoiceId: string) {
+  try {
+    const { enqueueInvoice, pushPending } = await import("@/modules/tango-sync/server");
+    if (await enqueueInvoice(studioId, invoiceId)) await pushPending(studioId);
+  } catch (e) {
+    console.error("[tango] Sincronización de la factura", (e as Error).message);
+  }
+}

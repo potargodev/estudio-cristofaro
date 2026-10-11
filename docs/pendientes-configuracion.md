@@ -154,3 +154,14 @@ Los cobros, recordatorios y avisos de suscripción salen por mail: sin SMTP solo
 
 **Qué falta:** revisar con un abogado y con Estudio Cristofaro el texto de las políticas que la persona acepta al conectar (`/legal/terminos` y el resumen de la pantalla del acuerdo) y el modelo de acuerdo de servicio (versión `conexion-2026-10`). Hasta entonces el acuerdo usa las condiciones que carga cada estudio (servicios, honorarios y preaviso).
 **Quién:** owner de Faro con asesoría legal.
+
+## Tango en los dos sentidos (principios §14)
+
+**Qué falta:** probar el motor con una cuenta real de Tango. Hoy se probó contra el simulador `mocks/tango/server.mjs` (`node mocks/tango/server.mjs`, puerto 4080), que imita la API Delta (headers `ApiAuthorization` y `Company`, `?process=20412`). Validar con Axoft o el partner del estudio:
+- **Qué se puede escribir por la API:** si `Create`/`Update` del proceso 20412 (comprobantes de venta) existen en la versión del estudio, qué campos son obligatorios (talonario, condición de venta, alícuotas, código de cliente en vez de razón social) y si se puede escribir un comprobante con CAE ya otorgado sin que Tango lo vuelva a numerar. Ajustar `toTango()` y `fieldsOf()` en `src/modules/tango-sync/server.ts` al formato real.
+- **Webhooks:** si la versión del estudio (Delta local o Tango en la nube) los ofrece, cómo se registran, cómo firma (el simulador usa `X-Tango-Signature: sha256=<HMAC del cuerpo>`) y qué eventos manda. Si no hay webhooks, queda el sondeo cada 15 minutos (`TANGO_JOBS_MS`), que necesita algún filtro «modificado desde» en `/Api/Get` (el simulador usa `desde=<ISO>`).
+- **Costo:** si la API (y la escritura) tiene costo de licencia o por llamada en el abono del estudio.
+- **Local vs nube:** con Tango Delta local la API vive en la red del estudio y la plataforma no entra a esa red; para escribir hace falta exponerla por HTTPS (túnel o publicación) o sumar la escritura al conector local, que hoy solo lee. Con Tango en la nube alcanza la URL pública.
+- Variables: `TANGO_JOBS=off` apaga la tarea periódica; `ENCRYPTION_KEY` cifra el token y el secreto (no cambiarla).
+**Quién:** Estudio Cristofaro (cliente cero) con su partner de Tango.
+

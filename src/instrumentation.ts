@@ -15,10 +15,12 @@
 // - Flujos: motor de la cola cada minuto y escaneo de eventos por tiempo
 //   (vencimientos, monotributo, recibos sin firmar) cada hora, más las tareas
 //   de cada vencimiento (FLOWS_JOBS=off).
+// - Tango en los dos sentidos: bandeja de salida y sondeo de los enlaces sin
+//   webhooks cada 15 minutos (TANGO_JOBS=off).
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || !process.env.DATABASE_URL) return;
-  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout; __bitacoraTimer?: NodeJS.Timeout; __cobrosTimer?: NodeJS.Timeout; __flowsTimer?: NodeJS.Timeout; __flowScanTimer?: NodeJS.Timeout };
+  const g = globalThis as unknown as { __agendaTimer?: NodeJS.Timeout; __gastosTimer?: NodeJS.Timeout; __copilotTimer?: NodeJS.Timeout; __arcaTimer?: NodeJS.Timeout; __bitacoraTimer?: NodeJS.Timeout; __cobrosTimer?: NodeJS.Timeout; __flowsTimer?: NodeJS.Timeout; __flowScanTimer?: NodeJS.Timeout; __tangoTimer?: NodeJS.Timeout };
 
   if (process.env.AGENDA_REMINDERS !== "off" && !g.__agendaTimer) {
     const { sendReminders } = await import("./lib/agenda/bookings");
@@ -123,5 +125,18 @@ export async function register() {
     g.__flowScanTimer = setInterval(scan, 60 * 60_000);
     g.__flowScanTimer.unref?.();
     setTimeout(scan, 120_000).unref?.();
+  }
+
+  if (process.env.TANGO_JOBS !== "off" && !g.__tangoTimer) {
+    const { runTangoJobs } = await import("./modules/tango-sync/server");
+    const run = () =>
+      runTangoJobs()
+        .then((r) => {
+          if (r.sent || r.polled) console.info(`[tango] ${r.sent} comprobantes escritos en Tango, ${r.polled} revisados desde Tango`);
+        })
+        .catch((error) => console.error("[tango] Sincronización", (error as Error).message));
+    g.__tangoTimer = setInterval(run, Number(process.env.TANGO_JOBS_MS) || 15 * 60_000);
+    g.__tangoTimer.unref?.();
+    setTimeout(run, 150_000).unref?.();
   }
 }

@@ -632,6 +632,134 @@ if (stage("7")) {
   await sql`delete from users where id = ${P.id}`;
 }
 
+// ─── Etapa 8 · Tango en los dos sentidos (§14) ───
+if (stage("8")) {
+  const { spawn } = await import("node:child_process");
+  const http = await import("node:http");
+  const ts = await import("../../src/modules/tango-sync/server.ts");
+  const A = d.studios.A;
+  const MOCK = "http://127.0.0.1:4080";
+  const mock = spawn(process.execPath, ["mocks/tango/server.mjs"], { stdio: "ignore" });
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  for (let i = 0; i < 40; i++) {
+    if (await fetch(`${MOCK}/__estado`).then((r) => r.ok, () => false)) break;
+    await wait(100);
+  }
+  const t = (path: string, body?: unknown) => fetch(`${MOCK}${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body ?? {}) }).then((r) => r.json());
+  await t("/__reset");
+  // Un receptor local hace de la ruta /api/integrations/tango/webhook/[link]
+  let linkId = "";
+  const hook = http.createServer((req, res) => {
+    let b = "";
+    req.on("data", (c) => (b += c));
+    req.on("end", async () => {
+      const r = await ts.handleWebhook(linkId, b, (req.headers["x-tango-signature"] as string) ?? null);
+      res.writeHead(r.status).end();
+    });
+  });
+  await new Promise<void>((r) => hook.listen(4081, "127.0.0.1", r));
+  const actorA = { id: d.users.adminA, email: "a@prueba.local", studioId: A };
+  const actorB = { id: d.users.adminB, email: "b@prueba.local", studioId: SB };
+  const err = (fn: () => Promise<unknown>) => fn().then(() => false, (e) => e instanceof ts.TangoSyncError);
+  try {
+    await sql`delete from tango_documents where studio_id in (${A}, ${SB})`;
+    await sql`delete from tango_norm_rules where studio_id in (${A}, ${SB})`;
+    await sql`delete from tango_links where studio_id in (${A}, ${SB})`;
+    check("enlace: sin token no se guarda", await err(() => ts.saveLink(actorA, { apiUrl: MOCK, writeEnabled: true })));
+    await ts.saveLink(actorA, { apiUrl: MOCK, token: "tango-token-de-prueba", webhookSecret: "secreto-de-prueba", writeEnabled: true });
+    const link = (await ts.getLink(A))!;
+    linkId = link.id;
+    const [enc] = await sql`select token_enc from tango_links where id = ${link.id}`;
+    check("el token queda cifrado", enc.token_enc !== "tango-token-de-prueba" && !enc.token_enc.includes("tango-token"));
+    // Versión sin webhooks → queda en sondeo
+    await t("/__sin_webhooks", { on: true });
+    check("versión sin webhooks: queda la sincronización periódica", (await ts.registerWebhook(actorA, "http://127.0.0.1:4081/")) === false && !(await ts.getLink(A))!.webhooks);
+    await t("/__sin_webhooks", { on: false });
+    check("con webhooks: se registra", (await ts.registerWebhook(actorA, "http://127.0.0.1:4081/")) === true);
+
+    // De Faro a Tango: una factura autorizada se escribe sola, con el nombre estándar
+    await ts.addRule(actorA, "cliente", "ACME S A", "Acme S.A.");
+    const [inv] = await sql`insert into invoices (studio_id, organization_id, cuit, environment, point_of_sale, cbte_type, number, issue_date, customer_doc_type, customer_doc_number, customer_name, customer_iva_condition, items, net, total, status, currency)
+      values (${A}, ${d.orgs.norte}, '20111111112', 'homologacion', 3, 11, 77, current_date, 80, '30712345678', 'ACME S A', 'responsable_inscripto', '[]'::jsonb, 1000, 1000, 'autorizada', 'PES') returning id`;
+    await t("/__fallar", { n: 1 });
+    const queued = await ts.enqueueInvoice(A, inv.id);
+    check("la factura autorizada entra en la bandeja de salida (una sola vez)", !!queued && (await ts.enqueueInvoice(A, inv.id)) === null);
+    check("con el nombre estándar y el original guardado", queued?.customer_std === "Acme S.A." && queued?.customer_raw === "ACME S A" && queued.origin === "faro");
+    await ts.pushPending(A);
+    const [e1] = await sql`select status, attempts, last_error from tango_documents where id = ${queued!.id}`;
+    check("si Tango no responde queda con error para reintentar", e1.status === "error" && e1.attempts === 1);
+    await ts.pushPending(A);
+    const [s1] = await sql`select status, external_id, synced_at from tango_documents where id = ${queued!.id}`;
+    const st = await (await fetch(`${MOCK}/__estado`)).json();
+    const inTango = st.resultData.docs.find((x: { N_COMP: string }) => x.N_COMP === "00003-00000077");
+    check("al reintentar se escribe en Tango, con su ID externo y fecha", s1.status === "sincronizado" && !!s1.external_id && !!s1.synced_at && inTango?.RAZON_SOCI === "Acme S.A." && inTango?.ORIGEN === "Faro");
+    check("sin duplicar en Tango", st.resultData.docs.filter((x: { N_COMP: string }) => x.N_COMP === "00003-00000077").length === 1);
+
+    // De Tango a Faro por webhook firmado
+    await t("/__crear", { TIPO_COMP: "Factura B", N_COMP: "00001-00000500", FECHA_EMIS: "2026-10-01", RAZON_SOCI: "acme sa", IMPORTE_TOTAL: 2500, CATEGORIA: "Servicios" });
+    await wait(300);
+    const [w] = await sql`select origin, customer_raw, customer_std, raw, external_id, synced_at from tango_documents where studio_id = ${A} and number = '00001-00000500'`;
+    check("lo cargado en Tango llega por webhook, normalizado y con el original", w?.origin === "tango" && w.customer_raw === "acme sa" && w.customer_std === "Acme S.A." && w.raw?.RAZON_SOCI === "acme sa" && !!w.external_id && !!w.synced_at);
+    check("webhook sin firma válida: rechazado y auditado", (await ts.handleWebhook(link.id, JSON.stringify({ event: "comprobante.creado", data: { ID_GVA12: "9" } }), "sha256=00")).status === 401 && (await sql`select count(*)::int n from audit_log where studio_id = ${A} and action = 'tango.webhook_rechazado'`)[0].n >= 1);
+    check("webhook a un enlace inexistente: 404", (await ts.handleWebhook("00000000-0000-0000-0000-000000000000", "{}", "x")).status === 404);
+
+    // Conflicto: alguien cambia en Tango el total de un comprobante de Faro
+    await t("/__modificar", { id: s1.external_id, IMPORTE_TOTAL: 1200 });
+    await wait(300);
+    const conf = await ts.openConflicts(A);
+    check("si no coincide queda en conflicto (no se pisa en silencio)", conf.length === 1 && conf[0].c.fields.some((f) => f.field === "total") && Number(conf[0].d.total) === 1000);
+    check("otro estudio no resuelve el conflicto (forzando el ID)", await err(() => ts.resolveConflict(actorB, conf[0].c.id, "tango")));
+    check("otro estudio no ve los comprobantes ni los conflictos", (await ts.documentsFor(SB)).length === 0 && (await ts.openConflicts(SB)).length === 0);
+    await ts.resolveConflict(actorA, conf[0].c.id, "faro");
+    const st2 = await (await fetch(`${MOCK}/__estado`)).json();
+    check("quedarse con Faro: se vuelve a escribir en Tango", Number(st2.resultData.docs.find((x: { ID_GVA12: string }) => x.ID_GVA12 === s1.external_id).IMPORTE_TOTAL) === 1000);
+    check("la factura autorizada no se tocó", Number((await sql`select total from invoices where id = ${inv.id}`)[0].total) === 1000);
+    check("resolución auditada", (await sql`select count(*)::int n from audit_log where studio_id = ${A} and action = 'tango.conflicto_resuelto'`)[0].n >= 1);
+
+    // Ya existía en Tango (cargado a mano): conflicto en vez de duplicar
+    await t("/__crear", { TIPO_COMP: "Factura C", N_COMP: "00003-00000078", RAZON_SOCI: "Otro", IMPORTE_TOTAL: 50 });
+    await wait(200);
+    await sql`delete from tango_documents where studio_id = ${A} and number = '00003-00000078'`;
+    const [inv2] = await sql`insert into invoices (studio_id, organization_id, cuit, environment, point_of_sale, cbte_type, number, issue_date, customer_doc_type, customer_doc_number, customer_name, customer_iva_condition, items, net, total, status, currency)
+      values (${A}, ${d.orgs.norte}, '20111111112', 'homologacion', 3, 11, 78, current_date, 80, '30712345678', 'Otro', 'responsable_inscripto', '[]'::jsonb, 50, 50, 'autorizada', 'PES') returning id`;
+    await ts.enqueueInvoice(A, inv2.id);
+    await ts.pushPending(A);
+    check("si ya existe en Tango: conflicto, no duplicado", (await sql`select status from tango_documents where invoice_id = ${inv2.id}`)[0].status === "conflicto");
+
+    // Sondeo (sin webhooks) y normalización con revisión
+    await sql`update tango_links set webhooks = false where id = ${link.id}`;
+    await t("/__sin_webhooks", { on: true });
+    await sql`delete from tango_documents where studio_id = ${A} and number = '00001-00000500'`;
+    await ts.pollTango(A);
+    check("sondeo: trae lo que cambió en Tango", (await sql`select count(*)::int n from tango_documents where studio_id = ${A} and number = '00001-00000500'`)[0].n === 1);
+    await t("/__crear", { TIPO_COMP: "Factura B", N_COMP: "00001-00000501", RAZON_SOCI: "Pérez Juan", IMPORTE_TOTAL: 10 });
+    await t("/__crear", { TIPO_COMP: "Factura B", N_COMP: "00001-00000502", RAZON_SOCI: "PEREZ JUAN.", IMPORTE_TOTAL: 20 });
+    await ts.pollTango(A);
+    await ts.suggestRules(actorA);
+    const sug = (await ts.listRules(A)).find((r) => r.status === "sugerida" && r.examples.some((x) => /perez/i.test(x)));
+    check("sugiere unificar variantes del mismo cliente", !!sug && sug.examples.length >= 2);
+    const before = await sql`select customer_std from tango_documents where studio_id = ${A} and number in ('00001-00000501','00001-00000502')`;
+    check("sin aprobar no se aplica", new Set(before.map((x) => x.customer_std)).size === 2);
+    check("otro estudio no aprueba la regla (forzando el ID)", await err(() => ts.reviewRule(actorB, sug!.id, "aprobada")));
+    await ts.reviewRule(actorA, sug!.id, "aprobada", "Juan Pérez");
+    const after = await sql`select customer_std, customer_raw from tango_documents where studio_id = ${A} and number in ('00001-00000501','00001-00000502')`;
+    check("aprobada: se aplica y el original queda", after.every((x) => x.customer_std === "Juan Pérez") && after.some((x) => x.customer_raw === "PEREZ JUAN."));
+    // Archivos: todo sigue funcionando sin API
+    const csv = await ts.exportCsv(A);
+    check("exportación CSV con nombres estándar, origen e ID de Tango", csv.startsWith("TIPO_COMP;") && csv.includes("Juan Pérez") && csv.includes(";faro;") && !csv.includes("PEREZ JUAN."));
+    check("la exportación de otro estudio no trae nada de A", !(await ts.exportCsv(SB)).includes("Acme"));
+    await sql`update tango_links set status = 'pausado' where id = ${link.id}`;
+    check("pausado: no se escribe ni se consulta", (await ts.pollTango(A)) === 0);
+    await sql`delete from invoices where id in (${inv.id}, ${inv2.id})`;
+    await sql`delete from tango_documents where studio_id = ${A}`;
+    await sql`delete from tango_norm_rules where studio_id = ${A}`;
+    await sql`delete from tango_links where studio_id = ${A}`;
+  } finally {
+    hook.close();
+    mock.kill();
+  }
+}
+
 console.log(fails ? `\n${fails} fallas` : "\nTodo bien");
 await sql.end();
 process.exit(fails ? 1 : 0);

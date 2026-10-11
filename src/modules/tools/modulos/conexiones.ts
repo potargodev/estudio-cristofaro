@@ -148,4 +148,29 @@ export const conexionesTools = [
       return { organizacion: org.name, desde: input.desde ?? null, hasta: input.hasta ?? null, totales: rows.map((r) => ({ ...r, total: Number(r.total) })) };
     },
   }),
+  defineTool({
+    name: "estado_sincronizacion_tango",
+    title: "Tango en los dos sentidos",
+    description:
+      "Estado de la sincronización con Tango: comprobantes pendientes, con error o en conflicto (diferencias entre Faro y Tango que tiene que decidir una persona) y nombres sugeridos para unificar. Solo lectura: los conflictos y las reglas se aprueban en Configuración → Conexiones → Tango → Tango en los dos sentidos.",
+    module: "conexiones",
+    level: "lectura",
+    roles: ["dueno", "contador", "colaborador"],
+    input: z.object({}),
+    async handler(_input, ctx) {
+      const { getLink, listRules, openConflicts, syncCounts } = await import("@/modules/tango-sync/server");
+      const [link, counts, conflicts, rules] = await Promise.all([getLink(ctx.studioId), syncCounts(ctx.studioId), openConflicts(ctx.studioId), listRules(ctx.studioId)]);
+      if (!link) return { enlazado: false, nota: "El estudio no tiene enlace con la API de Tango. Sigue funcionando la importación por archivo y el conector local." };
+      return {
+        enlazado: true,
+        modo: link.webhooks ? "webhooks (al instante)" : "sondeo cada 15 minutos",
+        escritura_en_tango: link.write_enabled,
+        ultimo_error: link.last_error,
+        comprobantes: counts.map((c) => ({ estado: c.status, origen: c.origin, cantidad: c.n })),
+        conflictos: conflicts.slice(0, 20).map(({ c, d }) => ({ comprobante: `${d.doc_type} ${d.number}`, cliente: d.customer_std, diferencias: c.fields })),
+        nombres_para_revisar: rules.filter((r) => r.status === "sugerida").slice(0, 20).map((r) => ({ como_viene: r.examples, sugerido: r.standard })),
+        enlace: "/admin/configuracion/conexiones/tango/sincronizacion",
+      };
+    },
+  }),
 ];

@@ -271,3 +271,25 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Que un contador valide el umbral y el texto de §13 (Faro Manager → Escudo; ver pendientes).
+
+## Principios · Etapa 8 · Tango en los dos sentidos (octubre 2026)
+
+**Qué quedó**
+- **Enlace con la API de Tango** (migración `0042`) en Configuración → Conexiones → Tango → Tango en los dos sentidos: URL, empresa, token y secreto cifrados; escritura prendida o apagada.
+- **De Faro a Tango:** cada factura autorizada entra en una bandeja de salida y se escribe en Tango con el nombre estándar, con reintentos y sin duplicar.
+- **De Tango a Faro:** webhooks firmados (`/api/integrations/tango/webhook/<enlace>`) o sondeo cada 15 minutos si la versión no los ofrece (`instrumentation.ts`, `TANGO_JOBS`). Cada comprobante guarda origen, ID externo, fecha de sincronización y registro original.
+- **Diferencias para decidir:** si algo no coincide, queda en conflicto con las dos versiones; la persona elige Faro o Tango. Auditado.
+- **Nombres estándar:** sugerencias automáticas de unificación con revisión humana y reglas manuales (cliente, cuenta, categoría); el original queda.
+- **Archivos:** exportación CSV con nombres estándar; la importación por archivos y el conector local siguen igual.
+- **Vigía:** herramienta `estado_sincronizacion_tango` (solo lectura).
+- Simulador ampliado: `mocks/tango/server.mjs` (escritura, webhooks, versión sin webhooks y fallas).
+- Ayuda: `conexiones/conexiones` (sección «Tango en los dos sentidos»).
+
+**Qué se probó**
+- `normalize.test.ts` (3/3).
+- `principios-servidor.mts 8` (27/27) contra el simulador: enlace y token cifrado, versión sin webhooks, bandeja de salida con falla y reintento, sin duplicar, webhook firmado, firma inválida y enlace inexistente, conflicto sin pisar, aislamiento forzando IDs (otro estudio no ve, no resuelve, no aprueba ni exporta), quedarse con Faro reescribe en Tango sin tocar la factura, comprobante ya existente → conflicto, sondeo, sugerencias, aprobación con original guardado, CSV y enlace pausado.
+- `principios-navegador.mjs 8` (13/13): enlace, versión sin webhooks, sincronizar, unificar nombres, conflicto, 390 px y oscuro, CSV, colaborador sin acceso y otro estudio sin datos.
+
+**Qué falta configurar**
+- Validar con la cuenta real de Tango qué se puede escribir, si hay webhooks, el costo y local vs nube (ver pendientes).
+

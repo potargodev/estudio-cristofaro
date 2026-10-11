@@ -402,6 +402,72 @@ if (stage("7")) {
   }
 }
 
+// ─── Etapa 8 · Tango en los dos sentidos ───
+if (stage("8")) {
+  const { spawn } = await import("node:child_process");
+  const MOCK = "http://127.0.0.1:4080";
+  const mock = spawn(process.execPath, ["mocks/tango/server.mjs"], { stdio: "ignore" });
+  for (let i = 0; i < 40 && !(await fetch(`${MOCK}/__estado`).then((r) => r.ok, () => false)); i++) await new Promise((r) => setTimeout(r, 100));
+  const t = (path, body) => fetch(`${MOCK}${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body ?? {}) });
+  const A = d.studios.A;
+  const URL8 = `${BASE}/admin/configuracion/conexiones/tango/sincronizacion`;
+  try {
+    await t("/__reset");
+    await sql`delete from tango_documents where studio_id = ${A}`;
+    await sql`delete from tango_norm_rules where studio_id = ${A}`;
+    await sql`delete from tango_links where studio_id = ${A}`;
+    await t("/__crear", { TIPO_COMP: "Factura B", N_COMP: "00001-00000901", RAZON_SOCI: "Pérez Juan", IMPORTE_TOTAL: 1500 });
+    await t("/__crear", { TIPO_COMP: "Factura B", N_COMP: "00001-00000902", RAZON_SOCI: "PEREZ JUAN.", IMPORTE_TOTAL: 2500 });
+    const p = await as(d.cookies.adminA);
+    await p.goto(`${BASE}/admin/configuracion/conexiones/tango`);
+    await p.getByRole("link", { name: /Tango en los dos sentidos/ }).click();
+    await p.waitForURL(/sincronizacion/);
+    await p.getByLabel("URL de la API").fill(MOCK);
+    await p.getByLabel(/Token de la API/).fill("tango-token-de-prueba");
+    await p.getByLabel(/Secreto de los webhooks/).fill("secreto");
+    await p.getByRole("button", { name: "Guardar enlace" }).click();
+    check("Tango: guardar el enlace", await seen(p, "Enlace guardado."));
+    await t("/__sin_webhooks", { on: true });
+    await p.getByRole("button", { name: "Registrar webhook" }).click();
+    check("versión sin webhooks: avisa que consulta cada 15 minutos", await seen(p, "Faro va a consultar los cambios cada 15 minutos"));
+    await p.getByRole("button", { name: /Sincronizar ahora/ }).click();
+    check("sincronizar ahora: trae los comprobantes de Tango", (await seen(p, "Sincronizado:")) && (await seen(p, "00001-00000901")) && (await seen(p, "Nació en Tango")));
+    await p.getByRole("button", { name: "Buscar nombres para unificar" }).click();
+    await seen(p, "sugerencias nuevas");
+    const regla = p.locator("[data-regla]").first();
+    check("sugiere unificar el mismo cliente escrito distinto", (await regla.count()) === 1);
+    await regla.getByLabel("Queda como").fill("Juan Pérez");
+    await regla.getByRole("button", { name: "Aprobar" }).click();
+    check("aprobada: los comprobantes muestran el nombre estándar y el original", (await seen(p, "Regla aprobada y aplicada.")) && (await seen(p, "Factura B 00001-00000902 · Juan Pérez")) && (await seen(p, "original: PEREZ JUAN.")));
+    // Diferencia para decidir
+    const [doc] = await sql`select id, external_id from tango_documents where studio_id = ${A} and number = '00001-00000901'`;
+    await sql`update tango_documents set status = 'conflicto' where id = ${doc.id}`;
+    await sql`insert into tango_conflicts (studio_id, document_id, fields, tango_raw) values (${A}, ${doc.id}, ${sql.json([{ field: "total", faro: 1500, tango: 1800 }])}, ${sql.json({ ID_GVA12: doc.external_id, TIPO_COMP: "Factura B", N_COMP: "00001-00000901", RAZON_SOCI: "Pérez Juan", IMPORTE_TOTAL: 1800 })})`;
+    await p.goto(URL8);
+    check("conflicto: muestra las dos versiones", (await seen(p, "Faro: 1500")) && (await seen(p, "Tango: 1800")));
+    for (const dark of [false, true]) {
+      const v = await as(d.cookies.adminA, { dark, width: dark ? 1280 : 390 });
+      await v.goto(URL8);
+      check(`Tango en los dos sentidos (${dark ? "oscuro, escritorio" : "claro, 390 px"}): sin scroll horizontal`, (await seen(v, "Diferencias para decidir")) && (await noHScroll(v)));
+    }
+    await p.locator("[data-conflicto]").getByRole("button", { name: "Quedarme con Tango" }).click();
+    check("quedarse con Tango: se resuelve", (await seen(p, "Quedó lo de Tango.")) && (await seen(p, "No hay diferencias abiertas.")));
+    const csv = await p.request.get(`${BASE}/api/integrations/tango/exportar`);
+    check("exportar CSV para Tango (archivos sin API)", csv.ok() && (await csv.text()).includes("Juan Pérez"));
+    const col = await as(d.cookies.colaboradorA);
+    await col.goto(URL8);
+    check("un colaborador no entra a la sincronización", !(await col.evaluate(() => document.body.innerText.includes("Diferencias para decidir"))));
+    const b = await as(d.cookies.adminB);
+    const r = await b.request.get(`${BASE}/api/integrations/tango/exportar`);
+    check("otro estudio no exporta lo de A", !(await r.text()).includes("Juan Pérez"));
+  } finally {
+    await sql`delete from tango_documents where studio_id = ${A}`;
+    await sql`delete from tango_norm_rules where studio_id = ${A}`;
+    await sql`delete from tango_links where studio_id = ${A}`;
+    mock.kill();
+  }
+}
+
 check("sin errores de JavaScript", errors.length === 0, errors.slice(0, 3).join(" | "));
 await browser.close();
 await sql.end();

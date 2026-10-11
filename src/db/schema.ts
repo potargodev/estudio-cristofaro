@@ -3988,3 +3988,109 @@ export const seeker_contacts = pgTable(
   },
   (t) => [uniqueIndex("seeker_contacts_seeker_studio_idx").on(t.seeker_id, t.studio_id)],
 );
+
+// ───────────────────────── Tango: capa de orden y sincronización en los dos sentidos (principios §14) ─────────────────────────
+
+/** Enlace del estudio con la API de Tango (escritura y avisos). Credenciales cifradas */
+export const tango_links = pgTable("tango_links", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .unique()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  api_url: text("api_url").notNull(),
+  token_enc: text("token_enc").notNull(),
+  company_id: text("company_id").notNull().default("1"),
+  /** Secreto con el que Tango firma los webhooks (si la versión los ofrece) */
+  webhook_secret_enc: text("webhook_secret_enc"),
+  webhooks: boolean("webhooks").notNull().default(false),
+  /** Escribir en Tango lo que se factura en Faro */
+  write_enabled: boolean("write_enabled").notNull().default(true),
+  status: text("status").notNull().default("activo"), // activo | pausado | error
+  last_error: text("last_error"),
+  last_poll_at: timestamp("last_poll_at", { withTimezone: true }),
+  created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+  updated_at: updatedAt(),
+});
+
+/**
+ * Reglas de normalización: un nombre como lo carga cada persona en Tango →
+ * el nombre estándar. Las automáticas quedan «sugerida» hasta que una persona
+ * las aprueba. field: cliente | cuenta | categoria.
+ */
+export const tango_norm_rules = pgTable(
+  "tango_norm_rules",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    field: text("field").notNull(),
+    raw_key: text("raw_key").notNull(),
+    examples: text("examples").array().notNull().default(sql`'{}'::text[]`),
+    standard: text("standard").notNull(),
+    status: text("status").notNull().default("sugerida"), // sugerida | aprobada | rechazada
+    origin: text("origin").notNull().default("auto"), // auto | manual
+    reviewed_by: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+    reviewed_at: timestamp("reviewed_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("tango_norm_rules_key").on(t.studio_id, t.field, t.raw_key)],
+);
+
+/**
+ * Comprobantes en los dos sistemas: dónde nació (faro | tango), su ID en el
+ * otro sistema, cuándo se sincronizó, el registro original y el normalizado.
+ * Si algo no coincide queda en conflicto para una persona: nunca se pisa.
+ */
+export const tango_documents = pgTable(
+  "tango_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+    origin: text("origin").notNull(), // faro | tango
+    invoice_id: uuid("invoice_id").references(() => invoices.id, { onDelete: "set null" }),
+    external_id: text("external_id"),
+    company_id: text("company_id"),
+    doc_type: text("doc_type").notNull(),
+    number: text("number").notNull(),
+    date: date("date").notNull(),
+    customer_raw: text("customer_raw").notNull(),
+    customer_std: text("customer_std").notNull(),
+    customer_cuit: text("customer_cuit"),
+    category_raw: text("category_raw"),
+    category_std: text("category_std"),
+    total: numeric("total", { precision: 16, scale: 2 }).notNull(),
+    currency: text("currency").notNull().default("ARS"),
+    raw: jsonb("raw"),
+    status: text("status").notNull().default("pendiente"), // pendiente | sincronizado | error | conflicto
+    attempts: integer("attempts").notNull().default(0),
+    last_error: text("last_error"),
+    synced_at: timestamp("synced_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("tango_documents_external_idx").on(t.studio_id, t.external_id), uniqueIndex("tango_documents_invoice_idx").on(t.invoice_id), index("tango_documents_status_idx").on(t.studio_id, t.status)],
+);
+
+/** Diferencias entre Faro y Tango para que las resuelva una persona */
+export const tango_conflicts = pgTable("tango_conflicts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  document_id: uuid("document_id")
+    .notNull()
+    .references(() => tango_documents.id, { onDelete: "cascade" }),
+  fields: jsonb("fields").$type<{ field: string; faro: unknown; tango: unknown }[]>().notNull(),
+  tango_raw: jsonb("tango_raw"),
+  status: text("status").notNull().default("abierto"), // abierto | resuelto
+  resolution: text("resolution"), // faro | tango
+  resolved_by: uuid("resolved_by").references(() => users.id, { onDelete: "set null" }),
+  resolved_at: timestamp("resolved_at", { withTimezone: true }),
+  created_at: createdAt(),
+});

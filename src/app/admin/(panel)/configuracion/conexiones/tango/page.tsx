@@ -64,6 +64,10 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
       <AdminPageHeader level={2} title="Tango Gestión" description="Conector local de Tango dentro del hub de Conexiones. Todo lo que llega guarda origen, fecha de sincronización e ID externo; si Tango no está, se puede importar por archivo." />
       {guardado && <Notice>Cambios guardados.</Notice>}
       {error && <Notice tone="error">No se pudo guardar. Revisá los datos.</Notice>}
+      <Link href="/admin/configuracion/conexiones/tango/sincronizacion" className="block rounded-md border border-line bg-surface p-4 hover:bg-canvas">
+        <span className="font-medium">Tango en los dos sentidos</span>
+        <span className="mt-1 block text-[14px] text-muted">Escribí en Tango lo que facturás en Faro, recibí sus cambios, unificá nombres y resolvé diferencias.</span>
+      </Link>
 
       <section className="border border-line bg-surface p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
