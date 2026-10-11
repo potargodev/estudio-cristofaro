@@ -8,6 +8,8 @@ Este documento manda sobre `docs/brief-producto.md` en todo lo que sea plataform
 
 ## 0. Posicionamiento
 
+> **Principios de producto:** ver `docs/principios-producto.md` (ley conceptual de Faro: qué hace y qué nunca hace, autogestión vs. gestión profesional, el dato es del usuario y cómo se conecta un contador). Manda sobre todo lo demás.
+
 - **Faro es una herramienta, no un estudio contable.** Nunca se presenta como un estudio ni compite con los estudios: los potencia, los automatiza y los hace evolucionar.
 - **Faro es para todos, no solo para estudios.** La puerta de entrada universal es **Bitácora**, gratis, para llevar tus finanzas personales. Desde ahí cada uno escala según quién es:
   - **Persona:** Bitácora gratis. Si necesita un contador, lo encuentra en la Red de estudios Faro (§2.i), con estudios confiables, calificados, puntuados y reseñados, y lo contrata desde ahí.
