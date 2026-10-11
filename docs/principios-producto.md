@@ -257,7 +257,10 @@ Las personas sueltas, que llegan por la Bitácora y el registro compartido, se d
   | Autónomos | Gratis · Pro USD 9 |
 
   Ya está actualizado en `docs/faro-producto.md` (§2.k y §3). **Falta aplicarlo en la app:** hoy el plan Inicial del código y de Faro Manager sigue en USD 49, con 10 organizaciones y prueba de 30 días.
-- **Sigue abierto:** si Faro le cobra una comisión al estudio por los clientes que le llegan desde la Red Contable.
+- **Sin comisión por clientes de la Red Contable (decisión firme).** Faro no le cobra una comisión al estudio por los clientes que le llegan desde la Red Contable. La Red es gratuita y funciona como imán para que los estudios se sumen sin miedo; la plata viene de los planes, no de una parte de cada cliente. Por qué:
+  - En la etapa inicial hay que seducir a los estudios, no asustarlos.
+  - Cobrar comisión obligaría a controlar quién contrató a quién, y eso genera más conflicto que ingresos.
+- *Posibilidad futura, no es una decisión:* cuando la Red ya mueva clientes de verdad, se podría evaluar una comisión chica o un plan premium para aparecer destacado. Ojo: aparecer destacado chocaría con el ranking neutral sin posiciones pagas (§15). Si algún día se evalúa, hay que resolver ese choque.
 
 ## 21. Primer paso al mercado
 
@@ -292,7 +295,7 @@ El resto de los puntos de este documento quedaron cerrados.
 
 ## Temas pendientes de charlar
 
-Se anotan para no perderlos. Los puntos 2, 3 y 4 ya están resueltos; sigue abierto cerrar los escalones 1 y 4 (punto 1) y la comisión por clientes de la Red Contable (§20).
+Se anotan para no perderlos. Los puntos 2, 3 y 4 ya están resueltos; sigue abierto cerrar los escalones 1 y 4 (punto 1). La comisión por clientes de la Red quedó resuelta en §20: sin comisión.
 
 1. **El recorrido completo en cuatro escalones**:
    - persona;
@@ -301,6 +304,6 @@ Se anotan para no perderlos. Los puntos 2, 3 y 4 ya están resueltos; sigue abie
    - el estudio puertas adentro.
 
    Falta cerrar el **escalón 1** (cómo se engancha y crece la persona) y el **escalón 4** (cómo vive todo esto el estudio desde su lado).
-2. ~~**Modelo de negocio**~~ **Resuelto en §20:** paga el estudio; las personas entran gratis; el autónomo, gratis al arrancar y Pro cuando factura. (Queda abierto si se cobra una comisión por clientes derivados desde la Red Contable; ver §20.)
+2. ~~**Modelo de negocio**~~ **Resuelto en §20:** paga el estudio; las personas entran gratis; el autónomo, gratis al arrancar y Pro cuando factura. Sin comisión por clientes de la Red Contable (§20).
 3. ~~**Los primeros usuarios (el huevo y la gallina)**~~ **Resuelto en §19:** se arranca por los estudios, con Estudio Cristofaro como fundador.
 4. ~~**Primer paso real al mercado**~~ **Resuelto en §21:** Cristofaro adentro, su Tango conectado y 2 o 3 clientes reales probando.
