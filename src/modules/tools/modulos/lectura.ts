@@ -85,7 +85,8 @@ export const lecturaTools = [
     async handler(input, ctx) {
       const org = await ctx.organization(input.organizacion_id);
       const scope = { studioId: ctx.studioId, organizationId: org.id };
-      const [status, [last]] = await Promise.all([orgStatus(scope), listStatements(scope)]);
+      const [status, list] = await Promise.all([orgStatus(scope), listStatements(scope)]);
+      const last = list.find((x) => x.total > 0) ?? list[0];
       const view = last ? await statementView(scope, last.id) : null;
       const pesos = (c: number) => Math.round(c) / 100;
       return {

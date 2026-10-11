@@ -47,3 +47,23 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Aplicación de Mercado Pago, verificación de Google para Gmail y la serie del IPC (ver pendientes).
+
+## F6 · Lectura inteligente y conciliación bancaria (octubre 2026)
+
+**Qué quedó**
+- **Lectura inteligente** (`smart_docs`, `src/modules/smart-docs`): PDF y fotos leídos con un modelo con visión (el del estudio o la IA de la plataforma) con salida tipada y validada (CUIT, razón social, tipo, punto de venta y número, fecha, neto, no gravado, exento, IVA por alícuota, percepciones, total, CAE y vencimiento) y confianza por campo.
+- Validaciones: dígito verificador del CUIT, formato y vigencia del CAE, suma de importes y, con el certificado de Faro, padrón y **constatación del CAE por WSCDC** (cliente nuevo en `src/modules/arca/wscdc.ts` y en el simulador).
+- Bandeja **Para confirmar** con campos de baja confianza marcados, correcciones, cuenta sugerida por CUIT, aviso de **repetido** (huella o mismo archivo, que no vuelve a la IA) y confirmación que crea el gasto (organización o actividad) o el movimiento de Bitácora.
+- Ubicaciones según §2.o: ficha → Documentos → Lectura inteligente (y «Leer con IA» en cada documento), Facturación → Recibidos (autónomo) y Bitácora → Importar → Tickets.
+- **Exportación**: CSV, XLSX con una hoja por cuenta, archivo para Tango y planilla para Xubio. Descarga del archivo por ruta autenticada con alcance.
+- **Límite por plan** (`smartDocsPerMonth` ahora se cuenta de verdad, también en Plan y facturación) y **costo de IA** por documento y del mes.
+- **Conciliación bancaria** (`bank_rec`, `src/modules/bank-rec`): pestaña Conciliación de la ficha (dueños y contadores, Avanzado). Importa extractos CSV/PDF sin duplicar, clasifica (cobro, pago, comisión, impuesto, transferencia propia), sugiere cruces con facturas emitidas y comprobantes confirmados con puntaje y motivos, confirmación, «cruzar con otro», «sin factura», «ignorar», «deshacer», reglas guardables (por organización o para todo el estudio) y resumen: pagadas, pendientes, en tránsito, pagos sin factura, comisiones e impuestos.
+- Vigía: `leer_comprobante` (escritura, deja para confirmar), `comprobantes_para_confirmar` y `estado_conciliacion` (lectura). Módulos `smart_docs` y `bank_rec` disponibles en el registro con eventos, herramientas y límites. Auditoría de cada lectura, confirmación, descarte, descarga, exportación, importación, conciliación y regla. Dos artículos de ayuda nuevos.
+
+**Qué se probó**
+- `npm test` (61): núcleo de lectura (esquema, validaciones, huella, cuentas, exportaciones) y de conciliación (clasificación, reglas, puntaje, sugerencias, resumen).
+- `scripts/pruebas/lectura-navegador.mjs` (50/50, 390 px) contra los simuladores de IA y ARCA: lectura, validación ARCA, repetidos, mismo archivo sin IA, datos dudosos corregidos, archivo ilegible, exportaciones, «Leer con IA» desde Documentos, Faro Personal, Bitácora, límite del plan Inicial, conciliación completa con reglas y resumen, reimportación sin duplicar, aislamiento entre estudios, organizaciones, personas y por rol, y auditoría.
+- `scripts/pruebas/lectura-servidor.mts` (14/14): herramientas del Vigía con roles y estudios, y cada función que recibe IDs probada con el estudio u organización equivocados.
+
+**Qué falta configurar**
+- Autorizar `wscdc` en la CUIT de Faro, configurar un modelo con visión y probar los archivos de Tango y Xubio en instalaciones reales (ver pendientes).

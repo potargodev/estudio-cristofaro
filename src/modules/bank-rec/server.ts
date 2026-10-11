@@ -134,7 +134,9 @@ export async function statementView(s: RecScope, id: string) {
     db().select({ id: bank_movements.match_id }).from(bank_movements).where(and(eq(bank_movements.studio_id, s.studioId), eq(bank_movements.organization_id, s.organizationId), eq(bank_movements.status, "conciliado"))),
   ]);
   const matched = new Set(allMatched.map((m) => m.id).filter(Boolean));
-  const inPeriod = cands.filter((c) => (!st.period_from || c.date >= addDays(st.period_from, -45)) && (!st.period_to || c.date <= st.period_to));
+  // Los cruzados con movimientos de este extracto, más los sin cruzar del período (y 45 días antes)
+  const here = new Set(movs.filter((m) => m.status === "conciliado" && m.match_id).map((m) => m.match_id!));
+  const inPeriod = cands.filter((c) => here.has(c.id) || (!matched.has(c.id) && (!st.period_from || c.date >= addDays(st.period_from, -45)) && (!st.period_to || c.date <= st.period_to)));
   const summary = summarize(
     movs.map((m) => ({ amount: m.amount, cls: m.cls as MovementClass, status: m.status as MovStatus })),
     inPeriod.map((c) => ({ id: c.id, date: c.date, matched: matched.has(c.id) })),

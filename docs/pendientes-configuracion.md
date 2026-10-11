@@ -48,3 +48,22 @@ Lo que falta para que cada módulo funcione con los servicios reales. Cada uno y
 
 ### Resumen del domingo
 Usa SMTP (pendiente general); sin SMTP queda en la campanita. Las tareas corren cada hora (`BITACORA_JOBS=off` las apaga).
+
+## Lectura inteligente y conciliación (F6)
+
+### Constatación de comprobantes en ARCA (WSCDC)
+**Qué falta:** autorizar el servicio `wscdc` (Constatación de Comprobantes) para el certificado de la CUIT operadora de Faro, en homologación y en producción.
+**Quién:** el equipo de Faro (owner), con la clave fiscal de la CUIT operadora.
+**Paso a paso:**
+1. En WSASS (homologación) o en el Administrador de Relaciones (producción), asociar el certificado de Faro al servicio **wscdc**.
+2. No hace falta cargar nada nuevo en Faro: usa el mismo certificado de Faro Manager → Plataforma → ARCA.
+3. Probar leyendo una factura real: en la revisión tiene que aparecer «CAE: válido · ARCA: autorizado».
+Sin esto, la lectura funciona igual y valida el CUIT con el padrón y el CAE solo por formato y vencimiento.
+
+### Modelo de IA con visión
+**Qué falta:** un modelo con visión para la tarea «Extracción» (estudios: IA → Proveedores; personas y autónomos: Faro Manager → IA de la plataforma, por ejemplo Gemini Flash o GPT-4o mini) y su precio por millón de tokens para medir el costo.
+**Quién:** cada estudio (su proveedor) y el equipo de Faro (la IA de la plataforma).
+
+### Importación en Tango y Xubio
+**Qué falta:** probar el archivo «Tango» en el asistente de importación de comprobantes de compras de una instalación real y ajustar el mapeo de columnas si hiciera falta; ídem la planilla en el importador de compras de Xubio.
+**Quién:** Estudio Cristofaro (cliente cero) con su Tango.
