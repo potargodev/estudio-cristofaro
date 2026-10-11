@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const TABS: { kind: TenantKind; label: string; intro: string }[] = [
   { kind: "persona", label: "Para personas", intro: "Bitácora gratis para tus finanzas, tus grupos de gastos y para encontrar un contador cuando lo necesites." },
   { kind: "personal", label: "Para autónomos", intro: "Faro Personal para monotributistas y responsables inscriptos que llevan sus números solos." },
-  { kind: "studio", label: "Para estudios", intro: "30 días de prueba gratis en todos los planes. Profesional y Avanzado suman automatización, módulos, equipo y la Red de estudios." },
+  { kind: "studio", label: "Para estudios", intro: "Inicial es gratis, para el contador que arranca. Profesional y Avanzado suman automatización, módulos, equipo y la Red de estudios, con 30 días de prueba." },
 ];
 
 /** "$ 68.600 / mes" (lo que ve la persona) y la referencia "USD 49 · anual …" */

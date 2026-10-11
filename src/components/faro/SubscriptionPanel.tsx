@@ -21,6 +21,8 @@ export async function SubscriptionPanel({ studioId }: { studioId: string }) {
   const [sub, faroMp, plans] = await Promise.all([ensureSubscription(studioId), accountSummary(null), getPlans()]);
   const payments = await getDb().select().from(mp_payments).where(and(eq(mp_payments.account, "faro"), eq(mp_payments.studio_id, studioId))).orderBy(desc(mp_payments.created_at)).limit(12);
   const name = (k: string | null) => plans.find((p) => p.key === k)?.name ?? k;
+  // Plan gratis (Inicial incluido): sin prueba, sin vencimiento y sin débito
+  const free = !!plans.find((p) => p.key === sub.plan_key)?.free && !sub.pending_plan_key;
   return (
     <Panel title="Suscripción y pagos" icon={CreditCard}>
       <dl className="grid gap-3 text-[14px] sm:grid-cols-3">
@@ -31,12 +33,12 @@ export async function SubscriptionPanel({ studioId }: { studioId: string }) {
           </dd>
         </div>
         <div>
-          <dt className="text-[12px] text-muted">{sub.status === "prueba" ? "La prueba termina" : "Pagado hasta"}</dt>
-          <dd className="num">{day(sub.status === "prueba" ? sub.trial_ends_at : sub.current_period_end)}</dd>
+          <dt className="text-[12px] text-muted">{free ? "Precio" : sub.status === "prueba" ? "La prueba termina" : "Pagado hasta"}</dt>
+          <dd className="num">{free ? "Gratis, sin vencimiento" : day(sub.status === "prueba" ? sub.trial_ends_at : sub.current_period_end)}</dd>
         </div>
         <div>
           <dt className="text-[12px] text-muted">Débito automático</dt>
-          <dd>{sub.mp_status === "authorized" ? `Autorizado · ${ars(sub.amount)} ${sub.interval === "anual" ? "por año" : "por mes"}` : sub.mp_status === "pending" ? "Falta autorizarlo" : sub.mp_status === "cancelled" ? "Cancelado" : "Sin débito"}</dd>
+          <dd>{free ? "Sin débito (plan gratis)" : sub.mp_status === "authorized" ? `Autorizado · ${ars(sub.amount)} ${sub.interval === "anual" ? "por año" : "por mes"}` : sub.mp_status === "pending" ? "Falta autorizarlo" : sub.mp_status === "cancelled" ? "Cancelado" : "Sin débito"}</dd>
         </div>
       </dl>
       {sub.pending_plan_key && sub.pending_plan_key !== sub.plan_key && (

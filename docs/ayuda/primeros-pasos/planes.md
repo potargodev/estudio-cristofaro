@@ -28,19 +28,21 @@ Los precios son **de referencia en dólares**; en la app los ves **en pesos**, c
 
 | Plan | Precio | Organizaciones | Personas del estudio |
 |---|---|---|---|
-| **Inicial** | USD 49 / mes | Hasta 10 | 1 |
+| **Inicial** | **Gratis** | Hasta 5 | 1 |
 | **Profesional** (recomendado) | USD 119 / mes | Hasta 40 | Hasta 5 |
 | **Avanzado** | USD 249 / mes | Hasta 120 | Hasta 25 |
 
-- **Organización extra:** USD 2 por mes cada una, por encima de las incluidas.
+- **Inicial es gratis de verdad:** sin prueba, sin tarjeta y sin débito. No tiene organizaciones extra: para sumar más organizaciones o personas del equipo, pasás a Profesional.
+- **Organización extra (Profesional y Avanzado):** USD 2 por mes cada una, por encima de las incluidas.
 - En Inicial la IA hace consultas; en Profesional, consultas y acciones con aprobación; en Avanzado, acciones avanzadas y agentes.
 - Profesional y Avanzado incluyen aparecer en la [Red de estudios](/ayuda/red-de-estudios/perfil-del-estudio).
 
 ## Prueba gratis y pago anual
 
-- Los planes pagos tienen **30 días de prueba gratis**. Los estudios arrancan en Inicial con la prueba activa.
-- **Pagando el año, tenés 2 meses de regalo**: pagás 10 de 12. Por ejemplo, Inicial anual queda en USD 490.
-- Ejemplo: con 1 USD = $ 1.400, Inicial queda en $ 68.600 por mes.
+- Los planes pagos (Plus, Pro, Profesional y Avanzado) tienen **30 días de prueba gratis** cuando creás la cuenta con ese plan. Los estudios arrancan en **Inicial, que es gratis** y no tiene prueba ni aviso de fin de prueba.
+- Si estás en Inicial y pasás a Profesional o Avanzado desde **Plan y facturación**, el débito arranca cuando lo autorizás en Mercado Pago.
+- **Pagando el año, tenés 2 meses de regalo**: pagás 10 de 12. Por ejemplo, Profesional anual queda en USD 1.190.
+- Ejemplo: con 1 USD = $ 1.400, Profesional queda en $ 166.600 por mes.
 
 ## Pagar, cambiar o cancelar tu plan
 
@@ -51,7 +53,8 @@ Los precios son **de referencia en dólares**; en la app los ves **en pesos**, c
 
 - **Subir de plan:** se aplica en el momento; el nuevo importe se debita desde el próximo período.
 - **Bajar de plan:** se aplica cuando termina el período que ya pagaste.
-- **Cancelar:** tocá **Cancelar suscripción**. Seguís con tu plan hasta el final del período pago; después, las personas y los autónomos vuelven al plan Gratis y la cuenta de un estudio queda suspendida (sin borrar nada).
+- **Cancelar:** tocá **Cancelar suscripción**. Seguís con tu plan hasta el final del período pago; después volvés al plan gratis de tu tipo de cuenta: Gratis para personas y autónomos, **Inicial** para estudios. No se borra nada; si tenés más organizaciones que las de Inicial, siguen ahí, pero no podés sumar nuevas hasta volver a Profesional.
+- **Si tu estudio estaba en Inicial cuando era pago:** pasó solo a Inicial gratis, sin cobro: cancelamos el débito de Mercado Pago y quedó registrado en la auditoría.
 - **Si un débito falla:** te avisamos por mail y en la campanita, y tenés **7 días de gracia** para regularizarlo con **Pagar ahora**. Pasado ese plazo la cuenta se suspende; desde la pantalla de cuenta suspendida podés pagar y se reactiva sola.
 
 Solo el dueño de la cuenta (dueño del estudio o titular) paga y cambia el plan. Si Faro todavía no tiene el cobro en línea activo, el botón es **Quiero mejorar mi plan** y el equipo te contacta.

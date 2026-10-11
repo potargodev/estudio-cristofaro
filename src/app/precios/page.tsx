@@ -14,7 +14,8 @@ export default async function PreciosPage() {
   const extra = plans.find((p) => p.kind === "studio" && p.extraOrgUsd != null)?.extraOrgUsd ?? null;
   const faqs = [
     { q: "¿Por qué los precios están en dólares y en pesos?", a: `Los fijamos en dólares de referencia y los mostramos en pesos con la conversión del día (hoy, 1 USD = ${formatArs(usdArs)}). Pagás en pesos.` },
-    { q: "¿Cómo funciona la prueba gratis?", a: "Los planes pagos de estudios arrancan con 30 días gratis, sin tarjeta. Antes de que termine te avisamos y elegís si seguís." },
+    { q: "¿El plan Inicial es gratis de verdad?", a: "Sí: sin prueba, sin tarjeta y sin débito. Incluye hasta 5 organizaciones y 1 usuario. Para sumar más organizaciones o personas del equipo, pasás a Profesional." },
+    { q: "¿Cómo funciona la prueba gratis?", a: "Profesional y Avanzado arrancan con 30 días gratis, sin tarjeta. Antes de que termine te avisamos y elegís si seguís; si no seguís, quedás en Inicial con tus datos intactos." },
     { q: "¿Hay descuento por pagar el año?", a: `Sí: pagando el año completo tenés ${ANNUAL_FREE_MONTHS} meses de regalo (pagás 10 de 12).` },
     ...(extra != null ? [{ q: "¿Qué pasa si tengo más organizaciones que las del plan?", a: `Cada organización extra suma ${formatArs(extra * usdArs)} por mes (${formatUsd(extra)}). No se corta nada: te avisamos al acercarte al límite.` }] : []),
     { q: "¿Puedo cambiar de plan?", a: "Cuando quieras, desde «Plan y facturación» con «Quiero mejorar mi plan». El cobro en línea llega pronto; mientras tanto el equipo de Faro te contacta para activarlo." },
@@ -27,7 +28,7 @@ export default async function PreciosPage() {
           <p className="text-[13px] text-gold">Precios</p>
           <h1 className="display-md mt-6 max-w-3xl text-paper">Un plan para cada forma de llevar los números.</h1>
           <p className="mt-6 max-w-2xl text-[17px] text-paper/70">
-            Gratis para personas y autónomos que arrancan. Para estudios, 30 días de prueba en todos los planes y {ANNUAL_FREE_MONTHS} meses de regalo pagando el año.
+            Gratis para personas y autónomos que arrancan, y para el contador que empieza con el plan Inicial. Profesional y Avanzado tienen 30 días de prueba y {ANNUAL_FREE_MONTHS} meses de regalo pagando el año.
           </p>
           <p className="mt-4 text-[13px] text-paper/50">
             Precios de referencia en pesos al {day.format(new Date())} (1 USD = {formatArs(usdArs)}). Pueden cambiar con la cotización.

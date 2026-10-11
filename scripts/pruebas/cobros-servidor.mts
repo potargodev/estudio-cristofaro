@@ -43,8 +43,9 @@ check("dentro de la gracia: sigue morosa", s.status === "morosa");
 await sql`update faro_subscriptions set status = 'activa', past_due_since = null, cancel_at_period_end = true, current_period_end = ${ago(1)} where studio_id = ${SB}`;
 await runSubscriptionJobs();
 [s] = await sql`select status from faro_subscriptions where studio_id = ${SB}`;
-[t] = await sql`select status from studios where id = ${SB}`;
-check("cancelada al terminar el período: el estudio queda suspendido", s.status === "cancelada" && t.status === "suspendido");
+[t] = await sql`select status, plan_key from studios where id = ${SB}`;
+// Con Inicial gratis (principios §20), un estudio que cancela vuelve a Inicial en vez de suspenderse
+check("cancelada al terminar el período: el estudio vuelve a Inicial gratis", s.status === "cancelada" && t.status === "activo" && t.plan_key === "inicial", JSON.stringify(t));
 await sql`update studios set status = 'activo', suspended_reason = null, plan_key = 'inicial' where id = ${SB}`;
 // Autónomo en prueba de Pro que no pagó: vuelve a Gratis
 await sql`delete from faro_subscriptions where studio_id = ${P}`;

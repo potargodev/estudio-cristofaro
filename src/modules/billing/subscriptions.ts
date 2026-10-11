@@ -36,7 +36,8 @@ export async function ensureSubscription(studioId: string): Promise<Subscription
   if (s) return s;
   const t = await tenant(studioId);
   const plan = (await getPlans()).find((p) => p.key === t.plan_key);
-  const status: SubStatus = t.status === "prueba" ? "prueba" : t.status === "suspendido" ? "suspendida" : "activa";
+  // Un plan gratis (Inicial incluido) nunca tiene prueba ni débito
+  const status: SubStatus = plan?.free ? "activa" : t.status === "prueba" ? "prueba" : t.status === "suspendido" ? "suspendida" : "activa";
   const [row] = await db()
     .insert(faro_subscriptions)
     .values({ studio_id: studioId, plan_key: t.plan_key, status, amount: 0, trial_ends_at: t.trial_ends_at ?? (status === "prueba" ? new Date(Date.now() + TRIAL_DAYS * DAY) : null) })
@@ -105,8 +106,10 @@ export async function choosePlan(studioId: string, actor: Actor, planKey: string
 async function cancelPreapproval(id: string) {
   try {
     await updatePreapproval(await loadAccount(null), id, { status: "cancelled" });
+    return true;
   } catch (e) {
     console.error("[suscripciones] no se pudo cancelar el débito", id, (e as Error).message);
+    return false;
   }
 }
 
@@ -122,7 +125,7 @@ export async function cancelSubscription(studioId: string, actor: Actor) {
   return immediate ? "Cancelaste la suscripción." : `Cancelaste la suscripción: seguís con tu plan hasta el ${sub.current_period_end!.toLocaleDateString("es-AR")}.`;
 }
 
-/** Al cancelar: personas y autónomos vuelven al plan gratis; un estudio queda suspendido */
+/** Al cancelar se vuelve al plan gratis del tipo de cuenta (estudios: Inicial); si no hubiera, se suspende */
 async function applyCanceled(studioId: string) {
   const t = await tenant(studioId);
   const free = (await getPlans()).find((p) => p.kind === t.kind && p.free);
@@ -198,11 +201,50 @@ export async function applyPreapprovalStatus(subId: string, status: string) {
   return "aplicado";
 }
 
+/**
+ * Un plan gratis no se cobra nunca: si una suscripción quedó en un plan gratis
+ * con prueba, mora o un débito de Mercado Pago (por ejemplo, los estudios que
+ * estaban en Inicial cuando era pago), pasa a activa sin cobro, se cancela el
+ * débito y queda auditado. Devuelve cuántas se normalizaron.
+ */
+export async function normalizeFreeSubscriptions() {
+  const plans = await getPlans();
+  const freeKeys = plans.filter((p) => p.free).map((p) => p.key);
+  if (!freeKeys.length) return 0;
+  const subs = await db().select().from(faro_subscriptions).where(inArray(faro_subscriptions.plan_key, freeKeys));
+  let n = 0;
+  for (const s of subs) {
+    const pendingPaid = s.pending_plan_key && !freeKeys.includes(s.pending_plan_key);
+    // Con un pase a un plan pago en curso, el débito es de ese plan: no se toca
+    if (pendingPaid) continue;
+    const dirty = s.status === "prueba" || s.status === "morosa" || s.status === "suspendida" || s.amount > 0 || (s.mp_preapproval_id && s.mp_status !== "cancelled") || s.trial_ends_at;
+    if (!dirty) continue;
+    // Si Mercado Pago no responde, el débito queda marcado y se reintenta en la próxima corrida
+    const hadDebit = !!s.mp_preapproval_id && s.mp_status !== "cancelled";
+    const canceled = hadDebit ? await cancelPreapproval(s.mp_preapproval_id!) : false;
+    const first = !s.notices.includes("plan-gratis");
+    await db()
+      .update(faro_subscriptions)
+      .set({ status: "activa", amount: 0, trial_ends_at: null, past_due_since: null, mp_status: hadDebit && canceled ? "cancelled" : s.mp_status, init_point: null, pending_plan_key: null, pending_interval: null, cancel_at_period_end: false, notices: first ? [...s.notices, "plan-gratis"] : s.notices })
+      .where(eq(faro_subscriptions.id, s.id));
+    const [t] = await db().select().from(studios).where(eq(studios.id, s.studio_id));
+    if (t && (t.status !== "activo" || t.trial_ends_at)) await db().update(studios).set({ status: "activo", trial_ends_at: null, suspended_reason: null }).where(eq(studios.id, s.studio_id));
+    if (first || canceled)
+      await audit({ studioId: s.studio_id, actorLabel: "Faro", action: "suscripcion.plan_gratis", entityType: "suscripcion", entityId: s.id, metadata: { plan: s.plan_key, estado_anterior: s.status, importe_anterior: s.amount / 100, debito_cancelado: canceled, debito_pendiente_de_cancelar: hadDebit && !canceled }, ip: null });
+    n++;
+  }
+  return n;
+}
+
 /** Tarea periódica: vencimiento de pruebas, gracia, suspensión, cancelaciones y avisos */
 export async function runSubscriptionJobs(now = new Date()) {
+  await normalizeFreeSubscriptions();
+  const freeKeys = new Set((await getPlans()).filter((p) => p.free).map((p) => p.key));
   const subs = await db().select().from(faro_subscriptions).where(inArray(faro_subscriptions.status, ["prueba", "activa", "morosa"]));
   let changed = 0;
   for (const s of subs) {
+    // Plan gratis: sin avisos de prueba ni cobros
+    if (freeKeys.has(s.plan_key) && !s.pending_plan_key) continue;
     const t = await tenant(s.studio_id);
     const href = t.kind === "studio" ? "/admin/configuracion/plan" : "/personal/plan";
     // Aviso de fin de prueba (7 y 1 días antes), una sola vez cada uno
@@ -225,7 +267,7 @@ export async function runSubscriptionJobs(now = new Date()) {
     if (next === "suspendida") {
       const free = (await getPlans()).find((p) => p.kind === t.kind && p.free);
       if (free && s.status === "prueba") {
-        // Personas y autónomos: al terminar la prueba sin pagar vuelven al plan gratis
+        // Al terminar la prueba sin pagar se vuelve al plan gratis (estudios: Inicial)
         await db().update(faro_subscriptions).set({ status: "activa", plan_key: free.key, amount: 0, trial_ends_at: null }).where(eq(faro_subscriptions.id, s.id));
         await db().update(studios).set({ plan_key: free.key, status: "activo", trial_ends_at: null }).where(eq(studios.id, s.studio_id));
       } else {

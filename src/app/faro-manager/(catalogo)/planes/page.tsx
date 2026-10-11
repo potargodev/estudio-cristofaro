@@ -72,16 +72,20 @@ export default async function PlanesPage({ searchParams }: { searchParams: Promi
                 Bajada
                 <input name="tagline" defaultValue={p.tagline} disabled={!owner} className={input} />
               </label>
-              {p.kind === "studio" && (
+              {p.kind === "studio" && !p.free && (
                 <label className="grid gap-1 text-[13px] text-muted">
                   Organización extra (USD / mes)
                   <input name="extra_org_usd" defaultValue={p.extraOrgUsd ?? ""} inputMode="decimal" disabled={!owner} className={input} />
                 </label>
               )}
-              <label className="grid gap-1 text-[13px] text-muted">
-                Días de prueba
-                <input name="trial_days" defaultValue={p.trialDays} inputMode="numeric" disabled={!owner} className={input} />
-              </label>
+              {p.free ? (
+                <p className="self-end pb-2 text-[13px] text-muted">Plan gratis: sin prueba, sin débito ni organizaciones extra.</p>
+              ) : (
+                <label className="grid gap-1 text-[13px] text-muted">
+                  Días de prueba
+                  <input name="trial_days" defaultValue={p.trialDays} inputMode="numeric" disabled={!owner} className={input} />
+                </label>
+              )}
               <label className="grid gap-1 text-[13px] text-muted">
                 IA
                 <select name="ai" defaultValue={p.ai} disabled={!owner} className={input}>

@@ -71,8 +71,9 @@ export async function savePlanAction(fd: FormData) {
     tagline: s(fd, "tagline").slice(0, 160) || current!.tagline,
     priceUsd: price!,
     free: price === 0,
-    extraOrgUsd: current!.kind === "studio" ? num(s(fd, "extra_org_usd")) : null,
-    trialDays: Math.min(90, Math.max(0, Math.round(Number(s(fd, "trial_days")) || 0))),
+    // Un plan gratis no tiene prueba ni organizaciones extra (para crecer se pasa a un plan pago)
+    extraOrgUsd: current!.kind === "studio" && price !== 0 ? num(s(fd, "extra_org_usd")) : null,
+    trialDays: price === 0 ? 0 : Math.min(90, Math.max(0, Math.round(Number(s(fd, "trial_days")) || 0))),
     recommended: fd.get("recommended") === "on",
     ai: (["consultas", "acciones", "avanzado"].includes(s(fd, "ai")) ? s(fd, "ai") : current!.ai) as FaroPlan["ai"],
     limits,

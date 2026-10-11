@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Crear una cuenta" };
 const PERKS = [
   "Personas: gratis, con grupos de gastos, Flotas y la Red de estudios (Bitácora, muy pronto)",
   "Autónomos: gratis, con tu panel y, muy pronto, facturación y semáforo de monotributo",
-  "Estudios: 30 días de prueba gratis, hasta 10 organizaciones con Inicial",
+  "Estudios: Inicial gratis, hasta 5 organizaciones y 1 usuario",
   "Asistente IA con tu propia clave y grupos de gastos incluidos",
 ];
 

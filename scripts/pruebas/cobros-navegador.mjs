@@ -40,7 +40,8 @@ await sql`delete from fee_plans where studio_id in ${sql([A, SB])}`;
 await sql`delete from billing_settings where studio_id in ${sql([A, SB])}`;
 await sql`delete from agreement_payments where agreement_id in (select id from service_agreements where member_email = 'cobros@prueba.local')`;
 await sql`delete from service_agreements where member_email = 'cobros@prueba.local'`;
-await sql`update studios set plan_key = 'inicial', status = 'prueba', trial_ends_at = now() + interval '20 days', suspended_reason = null where id = ${SB}`;
+// Inicial es gratis (sin prueba): la prueba se ensaya con Profesional y el pase a Avanzado
+await sql`update studios set plan_key = 'profesional', status = 'prueba', trial_ends_at = now() + interval '20 days', suspended_reason = null where id = ${SB}`;
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
 async function as(cookie) {
@@ -73,12 +74,12 @@ await b.getByRole("button", { name: "Elegir mensual" }).first().click();
 await b.waitForURL(/localhost:4070\/checkout/, { timeout: 20000 }).catch(() => {});
 check("redirige a autorizar el débito en Mercado Pago", b.url().includes("localhost:4070/checkout"), b.url());
 const [sub] = await sql`select * from faro_subscriptions where studio_id = ${SB}`;
-check("suscripción con débito pendiente y plan elegido", sub.mp_status === "pending" && !!sub.mp_preapproval_id && sub.pending_plan_key === "profesional" && sub.amount > 0, JSON.stringify({ s: sub.mp_status, p: sub.pending_plan_key }));
+check("suscripción con débito pendiente y plan elegido", sub.mp_status === "pending" && !!sub.mp_preapproval_id && sub.pending_plan_key === "avanzado" && sub.amount > 0, JSON.stringify({ s: sub.mp_status, p: sub.pending_plan_key }));
 await pay({ preapproval_id: sub.mp_preapproval_id, authorize: true });
 check("webhook: débito autorizado y pago aprobado → activa", await until(async () => (await sql`select status from faro_subscriptions where studio_id = ${SB}`)[0].status === "activa"));
 const [sub2] = await sql`select * from faro_subscriptions where studio_id = ${SB}`;
 const [stB] = await sql`select plan_key, status from studios where id = ${SB}`;
-check("plan aplicado al tenant con período pago", stB.plan_key === "profesional" && stB.status === "activo" && !!sub2.current_period_end && sub2.mp_status === "authorized");
+check("plan aplicado al tenant con período pago", stB.plan_key === "avanzado" && stB.status === "activo" && !!sub2.current_period_end && sub2.mp_status === "authorized");
 const [mpp] = await sql`select * from mp_payments where studio_id = ${SB}`;
 check("pago guardado con ID externo, registro original y aplicado", !!mpp && mpp.applied && !!mpp.raw && mpp.kind === "sub");
 // Webhook repetido

@@ -27,15 +27,15 @@ const TYPES: { key: Key; label: string; icon: typeof Building2; benefit: string;
     icon: Building2,
     benefit: "Más clientes con el mismo equipo: cartera ordenada, automatizaciones, IA y portal para los clientes.",
     features: ["Cartera con la salud de cada cliente", "Vencimientos y solicitudes en bandejas con prioridad", "Asistente IA que propone y vos aprobás", "Portal y app para cada cliente y su equipo"],
-    cta: { href: "/faro/registro?tipo=studio", label: "Probar 30 días gratis" },
+    cta: { href: "/faro/registro?tipo=studio", label: "Empezá gratis" },
   },
   {
     key: "contadores",
     label: "Contadores independientes",
     icon: Briefcase,
     benefit: "Un estudio entero en una sola herramienta, sin depender de planillas.",
-    features: ["Hasta 10 organizaciones con el plan Inicial, 30 días gratis", "El calendario de toda tu cartera en una vista", "Tu rubro ya configurado con las plantillas por industria", "Llamadas con Meet desde tu agenda"],
-    cta: { href: "/faro/registro?tipo=studio", label: "Probar 30 días gratis" },
+    features: ["Hasta 5 organizaciones gratis con el plan Inicial", "El calendario de toda tu cartera en una vista", "Tu rubro ya configurado con las plantillas por industria", "Llamadas con Meet desde tu agenda"],
+    cta: { href: "/faro/registro?tipo=studio", label: "Empezá gratis" },
   },
   {
     key: "autonomos",

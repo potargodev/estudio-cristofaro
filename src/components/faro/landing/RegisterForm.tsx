@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const KINDS: { kind: TenantKind; title: string; text: string; plan: string; icon: typeof Building2 }[] = [
   { kind: "persona", title: "Una persona", text: "Querés llevar tus finanzas, dividir gastos o encontrar un contador.", plan: "Personas · Gratis", icon: NotebookPen },
   { kind: "personal", title: "Autónomo", text: "Llevás tus números solo: facturación, monotributo y vencimientos.", plan: "Autónomos · Gratis", icon: UserRound },
-  { kind: "studio", title: "Un estudio o un contador", text: "Gestionás clientes: organizaciones, vencimientos, documentos y equipo.", plan: "Estudios · Inicial, 30 días gratis", icon: Building2 },
+  { kind: "studio", title: "Un estudio o un contador", text: "Gestionás clientes: organizaciones, vencimientos, documentos y equipo.", plan: "Estudios · Inicial, gratis", icon: Building2 },
 ];
 
 const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-[15px] text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
@@ -123,7 +123,7 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
           )}
           {kind === "studio" ? (
             <button type="submit" disabled={pending} className="mt-2 h-12 rounded-[2px] bg-gold px-6 text-[15px] font-medium text-night transition-colors duration-300 hover:bg-paper disabled:opacity-60">
-              {pending ? "Creando tu cuenta…" : "Probar 30 días gratis"}
+              {pending ? "Creando tu cuenta…" : "Crear mi cuenta gratis"}
             </button>
           ) : state.ok && state.message ? (
             <p role="status" className="border border-gold/40 bg-gold/10 px-3 py-3 text-[14px] text-paper">

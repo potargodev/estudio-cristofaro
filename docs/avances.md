@@ -143,3 +143,19 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Verificación de Meta, número y plantillas de WhatsApp de Faro (prioridad alta); `APP_HOSTS` y el dominio de cada estudio en Easypanel; modelo de redacción e IA de la plataforma; agenda pública de los estudios en la Red (ver pendientes).
+
+## Principios · Etapa 1 · Plan Inicial gratis (octubre 2026)
+
+**Qué quedó**
+- `src/lib/faro/plans.ts`: Inicial con `priceUsd 0`, `free true`, sin prueba, sin organización extra, hasta 5 organizaciones y 1 usuario. Migración `0035_inicial_gratis` para `faro_plans` y los estudios en Inicial (con auditoría `plan.inicial_gratis`).
+- Suscripciones: `normalizeFreeSubscriptions()` (al arrancar y cada hora) deja sin cobro ni débito cualquier suscripción en un plan gratis y lo audita (`suscripcion.plan_gratis`); los planes gratis no reciben avisos de fin de prueba; cancelar o terminar la prueba de un plan de estudio vuelve a Inicial.
+- Plan y facturación: «Gratis, sin vencimiento» y «Sin débito (plan gratis)». Faro Manager → Planes: un plan gratis no muestra prueba ni organización extra y al guardarlo quedan en cero. `/precios`, `/faro`, el registro y la comparación de planes dicen que Inicial es gratis.
+- Ayuda: `primeros-pasos/planes` y `primeros-pasos/registro`.
+
+**Qué se probó**
+- `scripts/pruebas/principios-servidor.mts 1` (15/15): plan en código y en la base, migración desde el estado viejo (prueba, suspendido por prueba, suspensión manual respetada), débito cancelado o pendiente de reintento sin duplicar la auditoría, sin avisos de prueba, alta de estudio sin prueba y límite de 5 organizaciones.
+- `scripts/pruebas/principios-navegador.mjs 1` (11/11, 390 px y escritorio, claro y oscuro): /precios, /faro, registro, Plan y facturación y Faro Manager, sin scroll horizontal ni errores.
+- `npm test` (86) y `npm run build`. Se ajustaron `cobros-servidor.mts` y `cobros-navegador.mjs` (la prueba de débito ahora usa Profesional → Avanzado).
+
+**Qué falta configurar**
+- Nada nuevo. Con la cuenta real de Mercado Pago, revisar en el Faro Manager → Auditoría que los débitos de Inicial quedaron cancelados (`debito_pendiente_de_cancelar` = false).

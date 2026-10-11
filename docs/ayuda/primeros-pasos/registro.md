@@ -15,7 +15,7 @@ Si te invitaron a un grupo de gastos, también podés crear la cuenta desde el e
 
 - **Una persona:** querés llevar tus finanzas, dividir gastos o encontrar un contador. Arrancás en **Personas · Gratis**.
 - **Autónomo:** llevás tus números solo. Te pedimos tu CUIT y tu régimen (monotributo o responsable inscripto). Arrancás en **Autónomos · Gratis**.
-- **Un estudio o un contador:** gestionás clientes. Arrancás en **Estudios · Inicial**, con 30 días de prueba gratis.
+- **Un estudio o un contador:** gestionás clientes. Arrancás en **Estudios · Inicial**, que es **gratis** (hasta 5 organizaciones y 1 usuario), sin prueba ni tarjeta. Para crecer, pasás a Profesional desde **Plan y facturación**.
 
 ## 2. Cómo vas a entrar
 
