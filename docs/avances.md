@@ -42,7 +42,7 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué se probó**
 - `npm test` (52): detección de fijos, fugas, sobres sugeridos, ahorro semanal, valor real, CSV/PDF/Mercado Pago, mapeo y mails.
-- `scripts/pruebas/bitacora-navegador.mjs` (43/43, 390 px): todo el recorrido con los simuladores, límites de Gratis, Plus, propuestas, profesional → Faro Personal, hogar con aislamiento y auditoría, e IDs forzados (importación, movimiento e invitación ajenos → 404).
+- `scripts/pruebas/bitacora-navegador.mjs` (44/44, 390 px): todo el recorrido con los simuladores, límites de Gratis, Plus, propuestas, profesional → Faro Personal, hogar con aislamiento y auditoría, e IDs forzados (importación, movimiento e invitación ajenos → 404).
 - `scripts/pruebas/bitacora-servidor.mts` (15/15): cada función que recibe un ID del navegador probada con el usuario equivocado, y el resumen semanal.
 
 **Qué falta configurar**
