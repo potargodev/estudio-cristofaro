@@ -242,6 +242,14 @@ Por qué:
 
 Las personas sueltas, que llegan por la Bitácora y el registro compartido, se dejan crecer de forma orgánica al principio. El esfuerzo inicial no va ahí.
 
+## 20. Modelo de negocio: quién paga qué
+
+- **Paga el estudio.** Es quien gana plata con Faro: le ordena la cartera, le reemplaza herramientas caras como Tango y le trae clientes nuevos. Para el estudio es una herramienta de trabajo que le hace ganar o ahorrar, y por eso paga sin problema. Es el ingreso principal: los planes de estudio Inicial (gratis), Profesional y Avanzado.
+- **La persona no paga, o casi.** La Bitácora y el registro compartido son gratis. La persona es el volumen y la puerta de entrada, no la fuente de ingresos: si se le cobra, no entra, y se pierde la masa que hace atractivo el sistema para los estudios. Como mucho, más adelante, un plan Plus barato y opcional con funciones extra.
+- **El autónomo está en el medio:** gratis para arrancar y un plan Pro accesible cuando ya factura en serio.
+- **En una frase:** la plata grande viene de los estudios; las personas entran gratis y generan el volumen.
+- **Pendiente de ajuste:** hoy `docs/faro-producto.md` (§2.k y §3) y la app tienen el plan Inicial a USD 49 por mes con hasta 10 organizaciones. Con esta decisión, Inicial pasa a ser **gratis** (la puerta del contador independiente), así que hay que redefinir sus límites y actualizar los precios en el documento y en Faro Manager.
+
 ---
 
 ## Decisiones abiertas
@@ -255,7 +263,7 @@ El resto de los puntos de este documento quedaron cerrados.
 
 ## Temas pendientes de charlar
 
-Se anotan para no perderlos. Siguen abiertos el modelo de negocio (2) y el primer paso concreto al mercado (4).
+Se anotan para no perderlos. Sigue abierto el primer paso concreto al mercado (4).
 
 1. **El recorrido completo en cuatro escalones**:
    - persona;
@@ -264,6 +272,6 @@ Se anotan para no perderlos. Siguen abiertos el modelo de negocio (2) y el prime
    - el estudio puertas adentro.
 
    Falta cerrar el **escalón 1** (cómo se engancha y crece la persona) y el **escalón 4** (cómo vive todo esto el estudio desde su lado).
-2. **Modelo de negocio:** cómo gana plata Faro y quién paga qué (personas, autónomos, estudios, comisión o no por clientes derivados desde la Red).
+2. ~~**Modelo de negocio**~~ **Resuelto en §20:** paga el estudio; las personas entran gratis; el autónomo, gratis al arrancar y Pro cuando factura. (Queda abierto si se cobra una comisión por clientes derivados desde la Red Contable.)
 3. ~~**Los primeros usuarios (el huevo y la gallina)**~~ **Resuelto en §19:** se arranca por los estudios, con Estudio Cristofaro como fundador.
 4. **Primer paso real al mercado:** qué se lanza primero, sin querer abrir todos los frentes a la vez.
