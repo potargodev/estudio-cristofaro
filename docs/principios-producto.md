@@ -133,6 +133,7 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
 - También es un usuario objetivo y es la **base ancha de la pirámide**: masa crítica barata y en volumen.
 - No factura ni necesita contador. Entra por la Bitácora (ordenar su sueldo y sus gastos) y se queda por los Grupos de gastos.
 - Muchos tienen una changa o un trabajo freelance al costado: son el candidato perfecto para pasar del escalón 1 al 2.
+- **No hay un "contador para relación de dependencia"** como servicio aparte. Solo si crece una changa pasa al monotributo con un contador (§13).
 
 ## 13. La changa en zona gris
 
@@ -179,13 +180,23 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
 - Lo que ya existe se mantiene: ranking neutral sin posiciones pagas, matrícula verificada y reseñas solo de clientes reales (la exposición pública de las calificaciones sigue abierta, ver (a)).
 - **Observación:** si en el futuro se suman servicios que no son estrictamente contables (laboral, legal), "Contable" puede quedar corto.
 
+## 16. Cuentas compartidas de la vida cotidiana
+
+Usan la misma lógica de cajas compartidas y sueldo (§10 y §11), aplicada a usos de todos los días. No son productos nuevos desde cero. Alimentan el escalón 1 (gente que no factura ni necesita contador) y, si la pareja o la familia arma un negocio, ya están adentro para dar el salto a un contador.
+
+1. **Pareja.** Cada integrante tiene su billetera personal más una **billetera compartida**. Ahí van los gastos del fin de semana, los ahorros en común y el reparto justo de lo compartido: qué parte del alquiler le toca a cada uno, cuánto pone cada uno para la mascota y en qué se gastó. Resuelve el "quién puso qué y si estamos a mano".
+2. **Familia.** La contabilidad de la familia, con ahorros e inversiones separados por **meta**: la facultad de los chicos, el auto, los quince. Son billeteras compartidas pensadas para objetivos, no solo para gastos, y por eso enganchan y retienen.
+3. **Hermanos (para padres o abuelos).** Un lugar común donde los hermanos registran la plata que pone cada uno para los gastos de sus padres o abuelos (remedios, cuidadora). Queda claro quién puso cuánto, en qué se gastó y si están a mano.
+
+**Observación de diseño:** no llenar la app de "billeteras" distintas (personal, negocio, pareja, familia, hermanos, grupo de amigos) que mareen. Conviene unificar todo bajo una sola lógica de cajas compartidas, con un nombre según el uso. Ya hay piezas en la app (Grupos de gastos, Hogar en Bitácora, Metas) que sirven de base.
+
 ---
 
 ## Decisiones abiertas
 
 - **(a) Exposición pública de las calificaciones.** Falta definir cuánto de las calificaciones (durante la relación y al cierre) se muestra públicamente como reputación del estudio en la Red. Hay que equilibrar el poder del cliente con no espantar a los estudios de la Red. No se implementa ningún cambio sobre esto hasta decidirlo.
 - **(b) Nombre de la Red Contable.** "Red Contable" es provisorio. Criterio del usuario: claro y descriptivo (que se entienda al toque, como Zonaprop), sin copiar "Zona".
-- **(c) Terminología interna.** Faro es la marca, pero los nombres de adentro tienen que ser claros y directos, no metáforas náuticas que obliguen a aprender un idioma nuevo. Falta decidir si se renombran los nombres actuales (Bitácora, Vigía, Flotas). No se cambian hasta decidirlo.
+- **(c) Terminología interna.** Faro es la marca, pero los nombres de adentro tienen que ser claros y directos, no metáforas náuticas que obliguen a aprender un idioma nuevo. Falta decidir si se renombran los nombres actuales (Bitácora, Vigía, Flotas). No se cambian hasta decidirlo. Preferencia del usuario: no le gusta la terminología náutica, así que "Flotas" probablemente cambie de nombre.
 
 El resto de los puntos de este documento quedaron cerrados.
 
