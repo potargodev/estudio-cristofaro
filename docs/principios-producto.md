@@ -188,7 +188,21 @@ Usan la misma lógica de cajas compartidas y sueldo (§10 y §11), aplicada a us
 2. **Familia.** La contabilidad de la familia, con ahorros e inversiones separados por **meta**: la facultad de los chicos, el auto, los quince. Son billeteras compartidas pensadas para objetivos, no solo para gastos, y por eso enganchan y retienen.
 3. **Hermanos (para padres o abuelos).** Un lugar común donde los hermanos registran la plata que pone cada uno para los gastos de sus padres o abuelos (remedios, cuidadora). Queda claro quién puso cuánto, en qué se gastó y si están a mano.
 
-**Observación de diseño:** no llenar la app de "billeteras" distintas (personal, negocio, pareja, familia, hermanos, grupo de amigos) que mareen. Conviene unificar todo bajo una sola lógica de cajas compartidas, con un nombre según el uso. Ya hay piezas en la app (Grupos de gastos, Hogar en Bitácora, Metas) que sirven de base.
+**Observación de diseño:** no llenar la app de "billeteras" distintas (personal, negocio, pareja, familia, hermanos, grupo de amigos) que mareen. Conviene unificar todo bajo una sola lógica de cajas compartidas, con un nombre según el uso. Ya hay piezas en la app (Grupos de gastos, Hogar en Bitácora, Metas) que sirven de base. **Resuelto en §17.**
+
+## 17. Modelo unificado de cajas (decisión central)
+
+- Faro **no** hace un producto distinto para cada situación. Es **un solo producto personal y adaptativo**: el usuario tiene **una sola cuenta** y adentro conviven todas sus situaciones.
+- La pieza única es la **caja**, que puede ser de dos tipos:
+  - **Individual:** solo del usuario (su plata personal, su negocio si trabaja solo).
+  - **Compartida:** con otras personas.
+- Pareja, familia, hermanos, amigos o negocio **no son productos separados**: son cajas compartidas con distinta gente y distinto propósito. Son configuraciones de la misma caja, no cuentas distintas.
+- **Pantalla única "Mis cajas"**: el usuario ve todas juntas (personal, negocio, pareja, hermanos, amigos), entra a la que quiere, y cada una tiene su gente, su plata y su propósito.
+- **Dos reglas que evitan el caos:**
+  1. **Cada caja es un mundo cerrado.** La plata y la gente de una no se mezclan con las de otra. Lo único que pasa de una caja a otra es un movimiento explícito (por ejemplo, el sueldo del dueño de §11, o el aporte a una caja compartida).
+  2. **El usuario elige qué comparte de cada caja y con quién.** Al contador le abre solo la caja del negocio; a un hermano, solo la de los padres.
+- Cada caja tiene un **propósito** que adapta lo que muestra: reparto justo entre integrantes, metas de ahorro, gastos del negocio, o facturación y lo fiscal cuando es de una actividad.
+- **Unifica lo que hoy está separado en la app:** Bitácora (movimientos, sobres, fijos, metas), Hogar, Grupos de gastos, Flotas y los gastos "de mi actividad" de Faro Personal pasan a ser cajas bajo esta misma lógica. La migración a este modelo se planifica aparte, sin perder datos.
 
 ---
 
