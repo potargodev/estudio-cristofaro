@@ -53,7 +53,7 @@ export async function verifySecondFactor(_prev: VerifyState, fd: FormData): Prom
       message: backup ? "Código de respaldo incorrecto o ya usado." : "Código incorrecto. Revisá la hora del teléfono y probá con el código nuevo.",
     };
   }
-  redirect(await takeAfterLogin());
+  redirect(await takeAfterLogin("/app"));
 }
 
 export interface SetupState {

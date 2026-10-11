@@ -1,5 +1,4 @@
 import { and, count, eq, gte, inArray, lte, notInArray } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { signOut } from "@/app/admin/actions";
 import { endAssistedAccess } from "@/app/faro-manager/actions";
 import { portalSignOut, switchOrganization } from "@/app/portal/actions";
@@ -8,40 +7,36 @@ import { LegalGate } from "@/components/app/LegalGate";
 import { Toaster } from "@/components/ui/sonner";
 import { getDb } from "@/db";
 import { approvals, leads, message_reports, obligations, organization_modules, plan_requests, requests, studios } from "@/db/schema";
-import { getCurrentUser, getMemberships, ORG_COOKIE, TENANT_OWNERS, type StaffUser } from "@/lib/auth";
+import { getCurrentUser, TENANT_OWNERS } from "@/lib/auth";
 import { getEntitlements } from "@/lib/faro/entitlements";
 import { SITE_STUDIO_SLUG } from "@/lib/faro/tenants";
 import { ORG_ROLE_LABELS } from "@/lib/permissions";
 import { buildPortalNav } from "@/lib/portal-nav";
 import { getPrefs } from "@/lib/prefs";
+import { availableSpaces, currentMembership, resolveSpace, SPACE_HOME } from "@/lib/spaces";
 import { unseenCount } from "@/modules/copilot/server";
 import { unreadCount } from "@/modules/messages/unread";
 import { listNotices, unreadNotices } from "@/modules/notifications/server";
 import { guideBoot } from "@/modules/onboarding/server";
 import { moderationCounts } from "@/modules/red/server";
-import { AppShell, type ShellSpace } from "./AppShell";
+import { AppShell } from "./AppShell";
+import type { ShellSpace } from "./SpaceSwitcher";
 import { bottomFor, groupsFor, type Space, type SpaceInput } from "./spaces";
 
 const ROLE_LABEL: Record<string, string> = { dueno: "Dueño", contador: "Contador", colaborador: "Colaborador", titular: "Titular" };
-const HOME: Record<Space, string> = { studio: "/admin", personal: "/vigia", portal: "/portal", faro: "/faro-manager" };
-
-/** Espacio por defecto de la sesión (las rutas compartidas, como /grupos o /bitacora, usan este) */
-export function homeSpace(user: StaffUser): Space {
-  if (user.role === "cliente") return "portal";
-  if (user.role === "titular" || user.tenantKind !== "studio") return "personal";
-  return "studio";
-}
+const HOME = SPACE_HOME;
 
 /**
  * Marco de la app para cualquier pantalla con sesión: arma el menú del
  * espacio, los badges, el selector de espacio y la preferencia de la barra.
  * Todo sale de la sesión; sin sesión, muestra el contenido solo.
  */
-export async function AppFrame({ space: forced, children }: { space?: Space; children: React.ReactNode }) {
+export async function AppFrame({ space: forced, employeeGroups, children }: { space?: Space; employeeGroups?: boolean; children: React.ReactNode }) {
   const user = await getCurrentUser().catch(() => null);
   if (!user) return <>{children}</>;
   const db = getDb();
-  const space: Space = forced ?? homeSpace(user);
+  const space: Space = await resolveSpace(user, forced, { employeeGroups });
+  const membership = await currentMembership(user);
   const input: SpaceInput = { space, isFaro: Boolean(user.faroRole), faroOwner: user.faroRole === "faro_owner" };
   const badges: Record<string, number> = {};
   let spaceName = "Faro";
@@ -70,11 +65,11 @@ export async function AppFrame({ space: forced, children }: { space?: Space; chi
     };
     spaceName = studio?.name ?? "Estudio";
   } else if (space === "personal") {
-    spaceName = user.tenantKind === "persona" ? "Tu espacio" : "Faro Personal";
+    const titular = user.role === "titular" && user.tenantKind !== "studio";
+    input.personal = { titular, autonomo: titular && user.tenantKind === "personal" };
+    spaceName = user.tenantKind === "personal" && titular ? "Faro Personal" : "Personal";
   } else if (space === "portal") {
-    const list = await getMemberships(user.id, user.studioId);
-    const wanted = (await cookies()).get(ORG_COOKIE)?.value;
-    const current = list.find((m) => m.organizationId === wanted) ?? list[0];
+    const current = membership?.current;
     if (current) {
       const [mods, [open]] = await Promise.all([
         db.select({ key: organization_modules.module_key }).from(organization_modules).where(and(eq(organization_modules.organization_id, current.organizationId), eq(organization_modules.active, true))),
@@ -104,22 +99,18 @@ export async function AppFrame({ space: forced, children }: { space?: Space; chi
   badges.unread = unreadMsgs;
   badges.copilot = copilotNew;
 
-  // Espacios a los que puede entrar
+  // Espacios a los que puede entrar (selector de arriba de la barra lateral)
+  const can = availableSpaces(user);
   const spaces: ShellSpace[] = [];
-  if (user.role === "cliente") {
-    const list = await getMemberships(user.id, user.studioId);
-    const wanted = (await cookies()).get(ORG_COOKIE)?.value;
-    const cur = list.find((m) => m.organizationId === wanted) ?? list[0];
-    for (const m of list) spaces.push({ key: m.organizationId, label: m.organizationName, href: "/portal", current: space === "portal" && cur?.organizationId === m.organizationId, orgId: m.organizationId });
-  } else {
-    const home = homeSpace(user);
-    spaces.push({ key: "home", label: home === "studio" ? (studio?.name ?? "Estudio") : "Mi cuenta personal", href: HOME[home], current: space === home });
-  }
-  if (user.faroRole) spaces.push({ key: "faro", label: "Faro Manager", href: "/faro-manager", current: space === "faro" });
+  if (can.has("studio")) spaces.push({ key: "studio", label: studio?.name ?? "Estudio", kind: "Estudio", href: HOME.studio, current: space === "studio", icon: "studio" });
+  for (const m of membership?.list ?? [])
+    spaces.push({ key: m.organizationId, label: m.organizationName, kind: `Organización · ${ORG_ROLE_LABELS[m.role]}`, href: "/portal", current: space === "portal" && membership?.current?.organizationId === m.organizationId, orgId: m.organizationId, icon: "org" });
+  spaces.push({ key: "personal", label: user.tenantKind === "personal" && user.role === "titular" ? "Faro Personal" : "Personal", kind: user.tenantKind === "personal" && user.role === "titular" ? "Autónomo" : "Tu Bitácora y tus grupos", href: HOME.personal, current: space === "personal", icon: "personal" });
+  if (can.has("faro")) spaces.push({ key: "faro", label: "Faro Manager", kind: "Plataforma", href: HOME.faro, current: space === "faro", icon: "faro" });
 
   const groups = groupsFor(input);
   const prefs = await getPrefs(user.id);
-  const account = space === "portal" ? "/portal/mas" : space === "personal" ? "/personal/cuenta" : "/admin/cuenta";
+  const account = user.role === "cliente" ? "/portal/mas" : user.role === "titular" ? "/personal/cuenta" : "/admin/cuenta";
   return (
     <>
       <AppShell

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { NAV_REDIRECTS } from "./src/lib/nav-redirects";
 
 const nextConfig: NextConfig = {
   // Servidor autocontenido para la imagen Docker (Easypanel)
@@ -45,6 +46,8 @@ const nextConfig: NextConfig = {
       // Rutas del panel del estudio con el nombre de la visión de Faro (/estudio/…)
       { source: "/estudio", destination: "/admin", permanent: false },
       { source: "/estudio/:path*", destination: "/admin/:path*", permanent: false },
+      // Esqueleto de navegación (§2.o): cada cosa en su nuevo lugar
+      ...NAV_REDIRECTS.map((r) => ({ ...r, permanent: false })),
     ];
   },
 };

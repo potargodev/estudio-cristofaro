@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ContadorTabs } from "@/components/app/ContadorTabs";
 import { AppFrame } from "@/components/app/shell/AppFrame";
 import { requirePersonal } from "@/lib/auth";
 
@@ -8,5 +9,10 @@ export const dynamic = "force-dynamic";
 /** Flotas: grupos informales que piden juntos una propuesta a un estudio */
 export default async function FlotasLayout({ children }: { children: React.ReactNode }) {
   await requirePersonal();
-  return <AppFrame>{children}</AppFrame>;
+  return (
+    <AppFrame space="personal">
+      <ContadorTabs />
+      {children}
+    </AppFrame>
+  );
 }

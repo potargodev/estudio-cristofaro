@@ -23,7 +23,7 @@ export default async function GastosLayout({ children }: { children: React.React
   const user = await getCurrentUser().catch(() => null);
   if (user)
     return (
-      <AppFrame>
+      <AppFrame space="personal" employeeGroups>
         <div className="mx-auto w-full max-w-3xl">{children}</div>
       </AppFrame>
     );

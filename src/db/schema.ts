@@ -1966,6 +1966,8 @@ export interface UserPrefs {
   copilotAuto?: boolean;
   /** Primeros pasos: el widget del Inicio está oculto */
   hideFirstSteps?: boolean;
+  /** Último espacio usado (personal, estudio, organización o Faro Manager): la app entra ahí */
+  space?: "studio" | "personal" | "portal" | "faro";
 }
 
 // ───────────────────────── Bitácora (docs/faro-producto.md §2.g) ─────────────────────────

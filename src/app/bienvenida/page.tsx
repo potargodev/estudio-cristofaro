@@ -39,7 +39,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
   const steps = kind === "persona" ? ["Qué querés hacer", "Listo"] : ["Tus datos", kind === "studio" ? "Rubros que atendés" : "Tu actividad", "Por dónde seguir"];
   let paso = Math.min(steps.length, Math.max(1, Number(sp.paso) || 1));
   if (kind === "persona") paso = Number(sp.paso) >= 3 ? 2 : 1;
-  const home = kind === "studio" ? "/admin" : kind === "persona" ? "/vigia" : "/personal";
+  const home = kind === "studio" ? "/admin" : "/personal";
   const first = me.name.split(" ")[0];
   const finalStep = paso === steps.length;
 

@@ -2,6 +2,10 @@
 // organización y Faro Manager), para el mismo AppShell. Archivo sin
 // "use client": lo usan el servidor (AppFrame) y el cliente (AppShell).
 // Es solo presentación: cada página vuelve a validar el acceso en el servidor.
+//
+// Regla (docs/faro-producto.md §2.o): un espacio a la vez, 7 ítems o menos en
+// no más de 3 grupos. Lo demás va como pestaña, en Configuración o en el menú
+// de la cuenta.
 
 import { visibleGroups, type NavAccess } from "@/components/admin/shell/nav";
 import type { PortalNavItem } from "@/lib/portal-nav";
@@ -44,7 +48,14 @@ export type ShellIcon =
   | "plantillas"
   | "auditoria"
   | "opiniones"
-  | "pasos";
+  | "pasos"
+  | "contador"
+  | "comercial"
+  | "configuracion"
+  | "empresa"
+  | "catalogo"
+  | "plataforma"
+  | "facturacion";
 
 export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
 
@@ -56,11 +67,16 @@ export interface ShellItem {
   badge?: ShellBadge;
   /** No incluido en el plan: lleva a la pantalla del módulo */
   locked?: boolean;
+  /** Otras rutas que también marcan el ítem como activo (sus pestañas) */
+  match?: string[];
 }
 
 export interface ShellGroup {
+  /** Sin título: el grupo va sin encabezado */
   title: string;
   items: ShellItem[];
+  /** Fijo abajo de la barra lateral (Configuración) */
+  pinned?: boolean;
 }
 
 export const BADGE_TEXT: Record<ShellBadge, string> = {
@@ -74,25 +90,6 @@ export const BADGE_TEXT: Record<ShellBadge, string> = {
   planRequests: "pedidos de plan",
   verifications: "matrículas y reseñas por revisar",
   portalRequests: "solicitudes abiertas",
-};
-
-/** Lo de cada persona, en todos los espacios: su Vigía, su Bitácora, sus grupos y sus mensajes */
-export const PERSONAL_GROUP: ShellGroup = {
-  title: "Para vos",
-  items: [
-    { href: "/vigia", label: "Vigía", icon: "copiloto", badge: "copilot" },
-    { href: "/bitacora", label: "Bitácora", icon: "bitacora" },
-    { href: "/grupos", label: "Grupos de gastos", icon: "gastos" },
-    { href: "/mensajes", label: "Mensajes", icon: "mensajes", badge: "unread" },
-  ],
-};
-
-const HELP_GROUP: ShellGroup = {
-  title: "Ayuda",
-  items: [
-    { href: "/primeros-pasos", label: "Primeros pasos", icon: "pasos" },
-    { href: "/ayuda", label: "Centro de ayuda", icon: "ayuda" },
-  ],
 };
 
 const PORTAL_ICON: Record<string, ShellIcon> = {
@@ -114,9 +111,14 @@ export interface SpaceInput {
   space: Space;
   studio?: NavAccess;
   portal?: { main: PortalNavItem[]; extra: PortalNavItem[] };
+  /** Espacio personal: titular de una cuenta personal (persona o autónomo) */
+  personal?: { titular: boolean; autonomo: boolean };
   faroOwner?: boolean;
   isFaro?: boolean;
 }
+
+/** Facturación del autónomo (F3): el lugar queda reservado en el menú personal */
+const FACTURACION_LISTA = false;
 
 /** Grupos del menú del espacio */
 export function groupsFor(x: SpaceInput): ShellGroup[] {
@@ -130,46 +132,24 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
           return { href: locked ? `/admin/modulos/${i.module}` : i.href, label: i.label, icon: i.icon as ShellIcon, exact: i.exact, badge: locked ? undefined : (i.badge as ShellBadge | undefined), locked };
         }),
     }));
-    const general = studio.filter((g) => g.items.length && g.title !== "Ayuda" && g.title !== "Faro");
-    return [...general.slice(0, 1), PERSONAL_GROUP, ...general.slice(1), ...(x.isFaro ? [{ title: "Faro", items: [{ href: "/faro-manager", label: "Faro Manager", icon: "faro" as const }] }] : []), HELP_GROUP];
+    return studio.filter((g) => g.items.length && g.title !== "Ayuda" && g.title !== "Faro");
   }
-  if (x.space === "personal")
-    return [
-      {
-        title: "Inicio",
-        items: [
-          { href: "/vigia", label: "Vigía", icon: "copiloto", badge: "copilot" },
-          { href: "/personal", label: "Mi panel", icon: "resumen", exact: true },
-        ],
-      },
-      {
-        title: "Tus finanzas",
-        items: [
-          { href: "/bitacora", label: "Bitácora", icon: "bitacora" },
-          { href: "/grupos", label: "Grupos de gastos", icon: "gastos" },
-          { href: "/flotas", label: "Flotas", icon: "flotas" },
-          { href: "/red", label: "Red de estudios", icon: "red" },
-        ],
-      },
-      { title: "Personas", items: [{ href: "/mensajes", label: "Mensajes", icon: "mensajes", badge: "unread" }] },
-      {
-        title: "Cuenta",
-        items: [
-          { href: "/personal/plan", label: "Plan y facturación", icon: "plan" },
-          { href: "/admin/mcp", label: "Accesos MCP", icon: "mcp" },
-          { href: "/personal/cuenta", label: "Mi cuenta", icon: "cuenta" },
-        ],
-      },
-      ...(x.isFaro ? [{ title: "Faro", items: [{ href: "/faro-manager", label: "Faro Manager", icon: "faro" as const }] }] : []),
-      HELP_GROUP,
+  if (x.space === "personal") {
+    const items: ShellItem[] = [
+      { href: "/personal", label: "Inicio", icon: "resumen", exact: true },
+      { href: "/bitacora", label: "Bitácora", icon: "bitacora" },
+      { href: "/grupos", label: "Grupos", icon: "gastos" },
     ];
+    // Contador: Red de estudios, Flotas y "mi estudio" (solo cuentas personales)
+    if (x.personal?.titular) items.push({ href: "/red", label: "Contador", icon: "contador", match: ["/flotas", "/contador"] });
+    if (x.personal?.autonomo && FACTURACION_LISTA) items.push({ href: "/facturacion", label: "Facturación", icon: "facturacion" });
+    return [{ title: "", items }];
+  }
   if (x.space === "portal" && x.portal) {
     const conv = (i: PortalNavItem): ShellItem => ({ href: i.href, label: i.label, icon: PORTAL_ICON[i.icon] ?? "modulos", exact: i.exact, badge: i.href === "/portal/solicitudes" ? "portalRequests" : undefined });
     return [
       { title: "Tu organización", items: x.portal.main.map(conv) },
-      PERSONAL_GROUP,
       { title: "Más", items: x.portal.extra.filter((i) => i.href !== "/ayuda" && i.href !== "/grupos").map(conv) },
-      HELP_GROUP,
     ].filter((g) => g.items.length);
   }
   // Faro Manager
@@ -201,9 +181,6 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
         { href: "/faro-manager/reportes", label: "Mensajes reportados", icon: "mensajes", badge: "reports" },
       ],
     },
-    PERSONAL_GROUP,
-    { title: "Volver", items: [{ href: "/admin", label: "Mi espacio", icon: "faro" }] },
-    HELP_GROUP,
   ];
 }
 
@@ -211,14 +188,24 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
 export function bottomFor(x: SpaceInput, groups: ShellGroup[]): ShellItem[] {
   const all = groups.flatMap((g) => g.items);
   const pick = (...hrefs: string[]) => hrefs.map((h) => all.find((i) => i.href === h)).filter((i): i is ShellItem => !!i);
-  if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos", "/vigia").slice(0, 4);
-  if (x.space === "personal") return pick("/vigia", "/bitacora", "/grupos", "/mensajes");
-  if (x.space === "portal") return [...(x.portal?.main.slice(0, 2) ?? []).map((i) => all.find((a) => a.href === i.href)!).filter(Boolean), ...pick("/vigia", "/mensajes")].slice(0, 4);
+  if (x.space === "studio") return pick("/admin", "/admin/organizaciones", "/admin/vencimientos", "/admin/solicitudes").slice(0, 4);
+  if (x.space === "personal") return pick("/personal", "/bitacora", "/grupos", "/red");
+  if (x.space === "portal") return all.slice(0, 4);
   return pick("/faro-manager", "/faro-manager/tenants", "/faro-manager/pedidos", "/faro-manager/red");
 }
 
-/** Ítem activo: el de href más largo que coincide */
+const hit = (pathname: string, href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
+
+/** Ítem activo: el de ruta más larga que coincide (con sus pestañas) */
 export function activeItem(groups: ShellGroup[], pathname: string) {
-  const all = groups.flatMap((g) => g.items.map((i) => ({ ...i, group: g.title })));
-  return [...all].sort((a, b) => b.href.length - a.href.length).find((i) => (i.exact ? pathname === i.href : pathname === i.href || pathname.startsWith(`${i.href}/`))) ?? null;
+  let best: (ShellItem & { group: string }) | null = null;
+  let len = -1;
+  for (const g of groups)
+    for (const i of g.items)
+      for (const [href, exact] of [[i.href, i.exact] as const, ...(i.match ?? []).map((m) => [m, false] as const)])
+        if (hit(pathname, href, exact) && href.length > len) {
+          best = { ...i, group: g.title };
+          len = href.length;
+        }
+  return best;
 }

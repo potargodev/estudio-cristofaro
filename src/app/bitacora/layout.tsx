@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function BitacoraLayout({ children }: { children: React.ReactNode }) {
   await requireUser();
   return (
-    <AppFrame>
+    <AppFrame space="personal">
       <div className="mx-auto w-full max-w-4xl">{children}</div>
     </AppFrame>
   );

@@ -101,7 +101,7 @@ export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionSt
   }
   if (twoFactor) redirect("/admin/login/verificar");
   const [u] = await getDb().select({ role: users.role }).from(users).where(eq(users.email, email));
-  redirect(await takeAfterLogin(homeFor(u?.role)));
+  redirect(await takeAfterLogin(u?.role === "cliente" ? homeFor(u.role) : "/app"));
 }
 
 export async function signOut() {

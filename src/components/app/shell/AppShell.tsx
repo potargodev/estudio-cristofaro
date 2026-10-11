@@ -2,8 +2,15 @@
 
 import { AnimatePresence, LayoutGroup, LazyMotion, domMax, m, useReducedMotion } from "motion/react";
 import { NoticesBell, type Notice } from "./NoticesBell";
+export type { ShellSpace } from "./SpaceSwitcher";
 import {
   ArrowLeftRight,
+  Briefcase,
+  Calculator,
+  Handshake,
+  LibraryBig,
+  ServerCog,
+  Settings,
   ListChecks,
   Blocks,
   Bot,
@@ -62,6 +69,7 @@ import { GuideButton, HelpLink } from "@/components/app/Guide";
 import { RouteReveal } from "@/components/app/RouteReveal";
 import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { cn } from "@/lib/utils";
+import { SpaceSwitcher, type ShellSpace } from "./SpaceSwitcher";
 import { activeItem, BADGE_TEXT, type ShellBadge, type ShellGroup, type ShellIcon, type ShellItem, type Space } from "./spaces";
 
 // Estructura única de la app para todos los espacios (estudio, cuenta
@@ -107,16 +115,14 @@ const ICONS: Record<ShellIcon, LucideIcon> = {
   auditoria: ScrollText,
   opiniones: MessageSquareText,
   pasos: ListChecks,
+  contador: Calculator,
+  comercial: Handshake,
+  configuracion: Settings,
+  empresa: Briefcase,
+  catalogo: LibraryBig,
+  plataforma: ServerCog,
+  facturacion: ReceiptText,
 };
-
-export interface ShellSpace {
-  key: string;
-  label: string;
-  href: string;
-  current: boolean;
-  /** Cambiar de organización del portal (form con el id; el servidor valida la membresía) */
-  orgId?: string;
-}
 
 export interface ShellProps {
   space: Space;
@@ -158,11 +164,13 @@ function Count({ n, badge, className }: { n: number; badge: ShellBadge; classNam
 
 function SideNav({ groups, badges, active, onNavigate, shared = false }: { groups: ShellGroup[]; badges: ShellProps["badges"]; active: ShellItem | null; onNavigate?: () => void; shared?: boolean }) {
   let order = 0;
+  const main = groups.filter((g) => !g.pinned);
+  const pinned = groups.filter((g) => g.pinned);
   return (
-    <nav aria-label="Menú" data-tour="nav" className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2">
-      {groups.map((g) => (
-        <div key={g.title} className="mb-4">
-          <p className="mb-1 h-5 px-3 text-[12px] text-slate-light">{g.title}</p>
+    <nav aria-label="Menú" data-tour="nav" className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-3 py-2">
+      {[...main, ...pinned].map((g, gi) => (
+        <div key={g.title || `g${gi}`} className={cn("mb-4", g.pinned && "mb-0 mt-auto border-t border-paper/10 pt-2", g.pinned && pinned[0] !== g && "mt-0 border-t-0 pt-0")}>
+          {g.title && !g.pinned && <p className="mb-1 h-5 px-3 text-[12px] text-slate-light">{g.title}</p>}
           <ul>
             {g.items.map((i) => {
               const Icon = ICONS[i.icon];
@@ -291,7 +299,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
   );
 }
 
-function UserMenu({ user, spaceName, spaces, account, signOut, switchOrg, up = true }: Pick<ShellProps, "user" | "spaceName" | "spaces" | "account" | "signOut" | "switchOrg"> & { up?: boolean }) {
+function UserMenu({ user, spaceName, account, signOut, up = true }: Pick<ShellProps, "user" | "spaceName" | "account" | "signOut"> & { up?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -319,26 +327,6 @@ function UserMenu({ user, spaceName, spaces, account, signOut, switchOrg, up = t
       </button>
       {open && (
         <div role="menu" className={cn("absolute left-0 z-50 w-64 rounded-md border border-paper/15 bg-night py-1 text-[14px] shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)]", up ? "bottom-full mb-2" : "top-full mt-2")}>
-          {spaces.length > 1 && (
-            <>
-              <p className="px-3 pb-1 pt-2 text-[11px] uppercase tracking-[0.12em] text-paper/45">Cambiar de espacio</p>
-              {spaces.map((s) =>
-                s.orgId && switchOrg ? (
-                  <form key={s.key} action={switchOrg}>
-                    <input type="hidden" name="organization_id" value={s.orgId} />
-                    <button role="menuitem" type="submit" className={cn("flex w-full items-center gap-2.5 px-3 py-2 text-left", s.current ? "text-paper" : "text-paper/75 hover:bg-paper/[0.06] hover:text-paper")}>
-                      <ArrowLeftRight className="size-4" strokeWidth={1.5} aria-hidden /> <span className="truncate">{s.label}</span>
-                    </button>
-                  </form>
-                ) : (
-                  <Link key={s.key} role="menuitem" href={s.href} onClick={() => setOpen(false)} aria-current={s.current ? "true" : undefined} className={cn("flex items-center gap-2.5 px-3 py-2", s.current ? "text-paper" : "text-paper/75 hover:bg-paper/[0.06] hover:text-paper")}>
-                    <ArrowLeftRight className="size-4" strokeWidth={1.5} aria-hidden /> <span className="truncate">{s.label}</span>
-                  </Link>
-                ),
-              )}
-              <div className="my-1 border-t border-paper/10" />
-            </>
-          )}
           <Link role="menuitem" href={account} onClick={() => setOpen(false)} className="flex items-center gap-2.5 px-3 py-2.5 text-paper/85 hover:bg-paper/[0.06] hover:text-paper">
             <KeyRound className="size-4" strokeWidth={1.5} aria-hidden /> Mi cuenta
           </Link>
@@ -433,6 +421,9 @@ export function AppShell(p: ShellProps) {
               <ChevronsLeft className="size-[18px]" strokeWidth={1.6} aria-hidden />
             </button>
           </div>
+          <div className="px-3 pt-3">
+            <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} />
+          </div>
           <SideNav groups={p.groups} badges={p.badges} active={active} shared />
           <div className="border-t border-paper/10 p-3">
             <UserMenu {...p} />
@@ -448,7 +439,12 @@ export function AppShell(p: ShellProps) {
           badges={p.badges}
           active={active}
           onExpand={toggle}
-          brand={<span className="mr-2 flex items-center">{brand(true)}</span>}
+          brand={
+            <span className="mr-2 flex items-center gap-2">
+              {brand(true)}
+              <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} compact className="w-auto xl:w-56" />
+            </span>
+          }
           right={<UserMenu {...p} up={false} />}
         />
       )}
@@ -466,6 +462,9 @@ export function AppShell(p: ShellProps) {
               <button type="button" onClick={() => setDrawer(false)} aria-label="Cerrar menú" className="grid size-9 place-items-center text-paper/80" autoFocus>
                 <X className="size-5" aria-hidden />
               </button>
+            </div>
+            <div className="px-3 pt-3">
+              <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} />
             </div>
             <SideNav groups={p.groups} badges={p.badges} active={active} onNavigate={() => setDrawer(false)} />
             <div className="border-t border-paper/10 p-3">
@@ -566,7 +565,7 @@ export function AppShell(p: ShellProps) {
                       </span>
                     )}
                   </span>
-                  <span className="max-w-full truncate px-1">{i.label.replace(/ de gastos$/, "")}</span>
+                  <span className="max-w-full truncate px-1">{i.label}</span>
                 </Link>
               </li>
             );
