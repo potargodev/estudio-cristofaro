@@ -64,8 +64,8 @@ const issue = (user) => {
 };
 
 /** Webhook firmado como Mercado Pago: x-signature "ts=…,v1=HMAC(id:<id>;request-id:<rid>;ts:<ts>;)" */
-async function webhook(type, id) {
-  const url = process.env.MP_MOCK_WEBHOOK_URL;
+async function webhook(type, id, notificationUrl) {
+  const url = notificationUrl || process.env.MP_MOCK_WEBHOOK_URL;
   if (!url) return;
   const ts = String(Date.now());
   const rid = randomUUID();
@@ -159,7 +159,7 @@ createServer(async (req, res) => {
     if (req.method === "PUT") {
       const b = await read(req);
       Object.assign(pa, b);
-      setTimeout(() => webhook("subscription_preapproval", id), 50);
+      setTimeout(() => webhook("subscription_preapproval", id, pa.notification_url), 50);
     }
     return json(res, 200, pa);
   }
@@ -177,12 +177,14 @@ createServer(async (req, res) => {
       if (!pa) return json(res, 404, { message: "suscripción inexistente" });
       if (b.authorize) pa.status = "authorized";
       pay = { id: ++seq, status, status_detail: status === "approved" ? "accredited" : "cc_rejected_insufficient_amount", transaction_amount: pa.auto_recurring.transaction_amount, currency_id: pa.auto_recurring.currency_id ?? "ARS", external_reference: pa.external_reference, metadata: { preapproval_id: pa.id }, date_approved: status === "approved" ? new Date().toISOString() : null, date_created: new Date().toISOString(), operation_type: "recurring_payment", preapproval_id: pa.id };
-      if (b.authorize) setTimeout(() => webhook("subscription_preapproval", pa.id), 20);
+      if (b.authorize) setTimeout(() => webhook("subscription_preapproval", pa.id, pa.notification_url), 20);
     } else return json(res, 400, { message: "preference_id o preapproval_id" });
     payments.set(pay.id, pay);
     stats.payments++;
-    await webhook("payment", pay.id);
-    if (b.duplicate) await webhook("payment", pay.id);
+    const nurl = b.preference_id ? preferences.get(b.preference_id)?.notification_url : preapprovals.get(b.preapproval_id)?.notification_url;
+    if (b.preapproval_id) pay.notification_url = nurl;
+    await webhook("payment", pay.id, nurl);
+    if (b.duplicate) await webhook("payment", pay.id, nurl);
     return json(res, 200, pay);
   }
   json(res, 404, { message: `no encontrado: ${p}` });
