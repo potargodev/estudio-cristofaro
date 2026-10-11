@@ -1,10 +1,8 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { Bot, Building2, CheckCircle2, ShieldCheck, Waypoints, Workflow, XCircle } from "lucide-react";
-import type { Metadata } from "next";
+import { Bot, Building2, ShieldCheck, Waypoints, Workflow, XCircle } from "lucide-react";
 import Link from "next/link";
 import { decideApprovalAction } from "@/app/admin/approval-actions";
 import { Notice } from "@/components/admin/AdminField";
-import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { EmptyState } from "@/components/admin/kit/Panel";
 import { StatusBadge, Tag } from "@/components/admin/kit/StatusBadge";
 import { SubmitButton } from "@/components/admin/ui";
@@ -12,10 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
 import { approvals, documents, leads, mcp_accesses, organizations, requests, users } from "@/db/schema";
-import { requireTenant } from "@/lib/auth";
+import type { StaffUser } from "@/lib/auth";
 import { getTool } from "@/modules/tools";
-
-export const metadata: Metadata = { title: "Aprobaciones" };
 
 const ORIGIN = {
   asistente: { label: "Asistente", icon: Bot },
@@ -82,9 +78,11 @@ function DraftField({ id, k, v }: { id: string; k: string; v: unknown }) {
   );
 }
 
-export default async function AprobacionesPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
-  const sp = await searchParams;
-  const user = await requireTenant();
+/**
+ * Propuestas para aprobar (pestaña del Vigía): lo que propone la IA y no se
+ * ejecuta sin una persona. Todo filtrado por el tenant de la sesión.
+ */
+export async function ApprovalsInbox({ user, sp, back, embedded }: { user: StaffUser; sp: Record<string, string | undefined>; back: string; embedded: boolean }) {
   const tab = sp.ver === "historial" ? "historial" : "pendientes";
   const rows = await getDb()
     .select({ a: approvals, org: organizations.name, requester: users.name, access: mcp_accesses.name })
@@ -118,21 +116,27 @@ export default async function AprobacionesPage({ searchParams }: { searchParams:
   const display = (k: string, v: unknown) => (k.endsWith("_id") && typeof v === "string" && names.has(v) ? names.get(v)! : show(v));
 
   return (
-    <div className="max-w-4xl">
-      <PageHeader
-        title="Aprobaciones"
-        description="Lo que propone la IA (desde el Asistente, un cliente MCP o los Flujos) y no se ejecuta sin una persona: comunicaciones a clientes, pagos y datos fiscales. Revisá el borrador, editalo si hace falta y aprobá o rechazá."
-        tabs={[
-          { href: "/admin/aprobaciones", label: "Pendientes", icon: ShieldCheck, active: tab === "pendientes", count: pendingCount },
-          { href: "/admin/aprobaciones?ver=historial", label: "Historial", icon: CheckCircle2, active: tab === "historial" },
-        ]}
-      />
+    <div className={embedded ? "pb-6" : "max-w-4xl pb-6"}>
+      <p className="mb-3 text-[14px] text-muted">
+        Lo que propone la IA (desde el Asistente, un cliente MCP o los Flujos) y no se ejecuta sin una persona: comunicaciones a clientes, pagos y datos fiscales. Revisá el borrador, editalo si hace falta y aprobá o rechazá.
+      </p>
+      <div className="mb-4 flex gap-1.5" role="group" aria-label="Ver">
+        {[
+          { href: back, label: "Pendientes", on: tab === "pendientes", n: pendingCount },
+          { href: `${back}&ver=historial`, label: "Historial", on: tab === "historial" },
+        ].map((v) => (
+          <Link key={v.label} href={v.href} aria-current={v.on ? "page" : undefined} className={v.on ? "inline-flex h-8 items-center gap-1.5 rounded-full bg-navy px-3 text-[13px] font-medium text-paper" : "inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-[13px] text-ink hover:border-muted"}>
+            {v.label}
+            {!!v.n && <span className="num">{v.n}</span>}
+          </Link>
+        ))}
+      </div>
       {sp.aprobada && <Notice>Aprobada y ejecutada.</Notice>}
       {sp.rechazada && <Notice>Propuesta rechazada.</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
 
       {rows.length === 0 ? (
-        <div className="border border-line bg-surface">
+        <div className="rounded-md border border-line bg-surface">
           <EmptyState icon={ShieldCheck} title={tab === "pendientes" ? "No hay nada para aprobar" : "Todavía no hay historial"} text="Cuando el Asistente o un cliente MCP propongan una acción sensible, aparece acá." />
         </div>
       ) : (
@@ -193,6 +197,7 @@ export default async function AprobacionesPage({ searchParams }: { searchParams:
                     <div className="flex flex-wrap gap-2">
                       <form action={decideApprovalAction}>
                         <input type="hidden" name="id" value={a.id} />
+                        <input type="hidden" name="volver" value={back} />
                         <input type="hidden" name="mode" value="aprobar" />
                         <SubmitButton pendingText="Ejecutando…" confirm={`¿Aprobar y ejecutar? ${a.title}`} confirmLabel="Aprobar y ejecutar">
                           Aprobar
@@ -203,6 +208,7 @@ export default async function AprobacionesPage({ searchParams }: { searchParams:
                       <summary className="cursor-pointer text-[14px] font-medium text-ink">Editar y aprobar</summary>
                       <form action={decideApprovalAction} className="mt-3 grid gap-3 sm:grid-cols-2">
                         <input type="hidden" name="id" value={a.id} />
+                        <input type="hidden" name="volver" value={back} />
                         <input type="hidden" name="mode" value="editar" />
                         {Object.entries(input).map(([k, v]) => (
                           <DraftField key={k} id={a.id} k={k} v={v} />
@@ -216,6 +222,7 @@ export default async function AprobacionesPage({ searchParams }: { searchParams:
                       <summary className="cursor-pointer text-[14px] font-medium text-ink">Rechazar</summary>
                       <form action={decideApprovalAction} className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
                         <input type="hidden" name="id" value={a.id} />
+                        <input type="hidden" name="volver" value={back} />
                         <input type="hidden" name="mode" value="rechazar" />
                         <div className="flex-1">
                           <label htmlFor={`${a.id}-reason`} className="text-[13px] font-medium text-ink/80">

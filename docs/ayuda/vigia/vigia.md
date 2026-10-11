@@ -3,11 +3,11 @@ titulo: Vigía: contale tus gastos y él los anota
 resumen: Escribile, mandale un audio o una foto del ticket. Te propone el registro en una tarjeta para que lo confirmes, lo edites o lo deshagas.
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: copiloto
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [bitacora/bitacora, grupos-de-gastos/cargar-gastos]
 ---
 
-El **Vigía** es un chat para anotar tus gastos e ingresos y preguntar por tu plata, como si se lo contaras a alguien. Lo abrís desde **Vigía** en el menú (en el celular, es el primer botón de abajo).
+El **Vigía** es un chat para anotar tus gastos e ingresos y preguntar por tu plata, como si se lo contaras a alguien. Lo abrís con el botón **Vigía** de la barra de arriba: se abre al costado, sin salir de la pantalla en la que estás (en el celular, a pantalla completa, con el botón del medio de la barra de abajo). Con **Abrir en pantalla completa** lo ves más grande. Es el mismo Vigía en todos tus espacios: en tu espacio Personal, tu organización o Faro Manager te ayuda con tu Bitácora y tus grupos; en el estudio es el asistente del estudio (ver [El Vigía del estudio](/ayuda/ia/ia-y-aprobaciones)).
 
 ## Qué le podés mandar
 

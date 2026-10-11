@@ -1,9 +1,9 @@
 ---
-titulo: El Asistente IA y la bandeja de Aprobaciones
+titulo: El Vigía del estudio y las Propuestas para aprobar
 resumen: Cómo configurar la IA con la clave propia del estudio, qué puede hacer el Asistente y por qué lo sensible siempre lo aprueba una persona.
 perfiles: [estudio, autonomo, persona]
 modulo: ai
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [ia/mcp, solicitudes/solicitudes, organizaciones/rubros, conexiones/conexiones]
 ---
 
@@ -21,7 +21,7 @@ Podés poner un **límite de gasto mensual** en dólares: al llegar, el Asistent
 
 ## Usar el Asistente
 
-En el menú, entrá a **Asistente** y preguntá en lenguaje natural: "¿Qué vencimientos hay esta semana?", "Resumime las solicitudes abiertas". Con **@** mencionás una organización y podés adjuntar archivos como contexto.
+Tocá **Vigía** en la barra de arriba: se abre un panel al costado (a pantalla completa en el celular) **sin salir de la pantalla en la que estás**, con la pestaña **Asistente**. Si estás en la ficha de una organización o en una solicitud, el Vigía ya la toma como contexto. Con **Abrir en pantalla completa** lo ves más grande. Preguntá en lenguaje natural: "¿Qué vencimientos hay esta semana?", "Resumime las solicitudes abiertas". Con **@** mencionás una organización y podés adjuntar archivos como contexto.
 
 El Asistente consulta organizaciones, vencimientos, documentos, solicitudes, agenda y conexiones, y responde con lo que encontró. Debajo de cada respuesta ves **qué consultó** y **qué devolvió**. Puede equivocarse: revisá los datos importantes.
 
@@ -37,9 +37,9 @@ El Asistente consulta organizaciones, vencimientos, documentos, solicitudes, age
 - **Cambiar algo** (por ejemplo, crear una solicitud): te pide que lo confirmes en el chat. Solo quien lo pidió puede confirmarlo.
 - **Lo sensible nunca se ejecuta solo:** comunicaciones a clientes, pagos y datos fiscales. Por ejemplo, responderle a un cliente, aplicar la plantilla de un rubro o cargar un vencimiento con monto, link de pago o aviso al cliente. Todo eso queda como propuesta en **Aprobaciones**.
 
-## La bandeja de Aprobaciones
+## Propuestas para aprobar
 
-En el menú, entrá a **Aprobaciones**. El número indica cuántas propuestas esperan. Llegan del Asistente, de los clientes MCP y, cuando estén, de los Flujos. Para cada una podés:
+Están en el **Vigía**, en la pestaña **Propuestas para aprobar** (antes, la bandeja de Aprobaciones del menú). El número sobre el botón **Vigía** indica cuántas propuestas esperan. Llegan del Asistente, de los clientes MCP y, cuando estén, de los Flujos. Para cada una podés:
 
 1. **Aprobar:** se ejecuta y queda registrado.
 2. **Editar y aprobar:** corregís el borrador antes.

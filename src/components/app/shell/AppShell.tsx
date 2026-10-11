@@ -58,7 +58,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { setSidebarPref } from "@/app/actions/prefs";
 import { CommandPalette } from "@/components/admin/shell/CommandPalette";
 import type { NavAccess } from "@/components/admin/shell/nav";
@@ -67,6 +67,7 @@ import { FaroLogo } from "@/components/admin/kit/FaroLogo";
 import { Sello } from "@/components/admin/kit/Sello";
 import { HelpMenu } from "@/components/app/HelpMenu";
 import { openVigia } from "@/components/vigia/events";
+import { VigiaPanel } from "@/components/vigia/VigiaPanel";
 import { AccountMenu, type AccountLinks } from "./AccountMenu";
 import { RouteReveal } from "@/components/app/RouteReveal";
 import { cn } from "@/lib/utils";
@@ -531,6 +532,9 @@ export function AppShell(p: ShellProps) {
           </li>
         </ul>
       </nav>
+      <Suspense>
+        <VigiaPanel space={p.space} label={p.spaceName} />
+      </Suspense>
       {p.studioAccess && <CommandPalette open={search} onClose={() => setSearch(false)} access={p.studioAccess} />}
     </div>
   );

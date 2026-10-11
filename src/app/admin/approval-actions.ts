@@ -9,7 +9,11 @@ import { decideApproval, type StaffRole } from "@/modules/tools";
 // rechazar con motivo. La validación de estudio, rol y organización la hace
 // decideApproval en el servidor.
 
-const BASE = "/admin/aprobaciones";
+/** A dónde volver: la pestaña "Propuestas para aprobar" del Vigía (pantalla completa o panel) */
+function backOf(fd: FormData) {
+  const v = String(fd.get("volver") ?? "");
+  return /^\/(admin\/vigia|vigia-panel|vigia)\?[\w=&%-]*$/.test(v) ? v : "/admin/vigia?tab=propuestas";
+}
 
 /** Reconstruye el borrador editado a partir de los campos f:<clave> y su tipo t:<clave> */
 function editedInput(fd: FormData): { ok: true; input: Record<string, unknown> } | { ok: false; error: string } {
@@ -43,21 +47,22 @@ export async function decideApprovalAction(fd: FormData) {
   const user = await requireTenant();
   const id = String(fd.get("id") ?? "");
   const mode = String(fd.get("mode") ?? "");
+  const BASE = backOf(fd);
   const actor = { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole, studioId: user.studioId };
   let r;
   if (mode === "rechazar") {
     const reason = String(fd.get("reason") ?? "").trim();
-    if (reason.length < 3) redirect(`${BASE}?error=${encodeURIComponent("Escribí el motivo del rechazo.")}#${id}`);
+    if (reason.length < 3) redirect(`${BASE}&error=${encodeURIComponent("Escribí el motivo del rechazo.")}#${id}`);
     r = await decideApproval(id, actor, { approve: false, reason });
   } else if (mode === "editar") {
     const edited = editedInput(fd);
-    if (!edited.ok) redirect(`${BASE}?error=${encodeURIComponent(edited.error)}#${id}`);
+    if (!edited.ok) redirect(`${BASE}&error=${encodeURIComponent(edited.error)}#${id}`);
     r = await decideApproval(id, actor, { approve: true, input: edited.input });
   } else {
     r = await decideApproval(id, actor, { approve: true });
   }
-  revalidatePath(BASE);
   revalidatePath("/admin", "layout");
-  if (!r.ok) redirect(`${BASE}?error=${encodeURIComponent(r.message)}#${id}`);
-  redirect(`${BASE}?${r.status === "ejecutada" ? "aprobada" : "rechazada"}=1`);
+  revalidatePath("/vigia-panel");
+  if (!r.ok) redirect(`${BASE}&error=${encodeURIComponent(r.message)}#${id}`);
+  redirect(`${BASE}&${r.status === "ejecutada" ? "aprobada" : "rechazada"}=1`);
 }

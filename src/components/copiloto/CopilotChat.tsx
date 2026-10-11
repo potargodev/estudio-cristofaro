@@ -276,7 +276,7 @@ function pickMime() {
   return "";
 }
 
-export function CopilotChat({ messages, categories, aiReady, auto }: { messages: ChatMessage[]; categories: { id: string; name: string }[]; aiReady: boolean; auto: boolean }) {
+export function CopilotChat({ messages, categories, aiReady, auto, embedded = false }: { messages: ChatMessage[]; categories: { id: string; name: string }[]; aiReady: boolean; auto: boolean; embedded?: boolean }) {
   const router = useRouter();
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -386,7 +386,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
   }, [rec]);
 
   return (
-    <div className="flex min-h-[calc(100dvh-14rem)] flex-col">
+    <div className={cn("flex flex-col", embedded ? "min-h-[calc(100dvh-7rem)]" : "min-h-[calc(100dvh-14rem)]")}>
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <span aria-hidden className="grid size-10 place-items-center rounded-full bg-gold text-night">
@@ -425,7 +425,7 @@ export function CopilotChat({ messages, categories, aiReady, auto }: { messages:
         ))}
       </ol>
       <div ref={end} />
-      <div className="sticky bottom-[calc(64px+env(safe-area-inset-bottom))] z-20 -mx-4 border-t border-line bg-canvas/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6 lg:bottom-0 lg:mx-0 lg:rounded-lg lg:border lg:px-3">
+      <div className={cn("sticky z-20 -mx-4 border-t border-line bg-canvas/95 px-4 py-2.5 backdrop-blur", embedded ? "bottom-0 pb-[calc(0.625rem+env(safe-area-inset-bottom))]" : "bottom-[var(--app-bottom,0px)] sm:-mx-6 sm:px-6 lg:bottom-0 lg:mx-0 lg:rounded-lg lg:border lg:px-3")}>
         {error && (
           <p role="alert" className="mb-2 text-[13px] text-danger">
             {error}

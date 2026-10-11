@@ -49,7 +49,7 @@ export const CHECKLISTS: Record<OnboardingProfile, ChecklistStep[]> = {
     { key: "datos", title: "Confirmá tu CUIT y régimen", text: "Con eso armamos tu calendario de vencimientos.", href: "/personal", help: "primeros-pasos/registro" },
     { key: "grupo", title: "Creá un grupo de gastos", text: "Con socios o clientes. Lo deducible queda marcado para tu contabilidad.", href: "/grupos/nuevo", help: "grupos-de-gastos/crear-un-grupo" },
     { key: "gasto_actividad", title: "Marcá un gasto de tu actividad", text: "Al cargar un gasto, tildá «es de mi actividad» o «deducible».", href: "/grupos", help: "grupos-de-gastos/cargar-gastos" },
-    { key: "asistente", title: "Probá el asistente", text: "Preguntale por tus gastos o tus vencimientos.", href: "/admin/asistente", help: "ia/ia-y-aprobaciones" },
+    { key: "asistente", title: "Probá el asistente", text: "Preguntale por tus gastos o tus vencimientos.", href: "/admin/vigia?tab=asistente", help: "ia/ia-y-aprobaciones" },
     { key: "red", title: "Conocé la Red de estudios", text: "Para cuando quieras que un contador lleve tus números.", href: "/red", help: "red-de-estudios/buscar-un-estudio" },
   ],
   estudio_dueno: [
@@ -65,7 +65,7 @@ export const CHECKLISTS: Record<OnboardingProfile, ChecklistStep[]> = {
     { key: "organizacion_abierta", title: "Abrí la ficha de una organización", text: "Ahí está todo: datos, vencimientos, documentos y solicitudes.", href: "/admin/organizaciones", help: "organizaciones/roles" },
     { key: "vencimientos_vistos", title: "Revisá los vencimientos", text: "Lo que vence esta semana, por organización y responsable.", href: "/admin/vencimientos", help: "vencimientos/calendario" },
     { key: "solicitud", title: "Respondé una solicitud", text: "Las consultas y pedidos de los clientes llegan a la bandeja.", href: "/admin/solicitudes", help: "solicitudes/solicitudes" },
-    { key: "asistente", title: "Probá el asistente", text: "Propone; una persona aprueba lo sensible.", href: "/admin/asistente", help: "ia/ia-y-aprobaciones" },
+    { key: "asistente", title: "Probá el asistente", text: "Propone; una persona aprueba lo sensible.", href: "/admin/vigia?tab=asistente", help: "ia/ia-y-aprobaciones" },
   ],
   org_dueno: [
     { key: "vencimientos_vistos", title: "Mirá tus vencimientos", text: "Qué vence, cuánto y cómo pagarlo.", href: "/portal/vencimientos", help: "vencimientos/calendario" },

@@ -131,8 +131,8 @@ export const FARO_MODULES: FaroModule[] = [
     minPlan: { studio: "inicial", personal: "autonomo_gratis" , persona: "persona_gratis" },
     roles: [...ALL_STAFF, "titular"],
     nav: [
-      { href: "/admin/asistente", label: "Asistente" },
-      { href: "/admin/aprobaciones", label: "Aprobaciones" },
+      { href: "/admin/vigia?tab=asistente", label: "Vigía · Asistente" },
+      { href: "/admin/vigia?tab=propuestas", label: "Propuestas para aprobar" },
       { href: "/admin/mcp", label: "Accesos MCP" },
     ],
     events: ["aprobacion.propuesta", "aprobacion.resuelta"],

@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import type { Space } from "@/components/app/shell/spaces";
+import { PARAM_SPACE } from "@/components/vigia/space-param";
 import { getCurrentUser, getMemberships, ORG_COOKIE, type StaffUser } from "./auth";
 import { getPrefs, setPrefs } from "./prefs";
 import { isStudioRole } from "./roles";
@@ -53,6 +54,13 @@ export async function resolveSpace(user: StaffUser, forced?: Space | null, opts:
   }
   if (forced && space !== prefs.space && !user.assisted) await setPrefs(user.id, { space }).catch(() => undefined);
   return space;
+}
+
+/** Espacio del Vigía: el pedido (?espacio=, si la sesión puede entrar) o el actual. No cambia el último espacio */
+export async function vigiaSpace(user: StaffUser, param?: string | null): Promise<Space> {
+  const wanted = param ? PARAM_SPACE[param] : undefined;
+  if (wanted && availableSpaces(user).has(wanted)) return wanted;
+  return resolveSpace(user);
 }
 
 /** Pantalla de entrada: el último espacio usado (o el natural) */

@@ -117,7 +117,9 @@ function ToolCard({
   approval,
   onDecide,
   busy,
+  approvalsHref,
 }: {
+  approvalsHref: string;
   part: ToolPart;
   meta?: ToolMeta;
   approval?: ApprovalStates[string];
@@ -214,8 +216,8 @@ function ToolCard({
           <p className="min-w-0 flex-1 text-ink [overflow-wrap:anywhere]">
             <strong className="font-medium">Enviado a aprobación.</strong> {output?.resumen}
           </p>
-          <Link href="/admin/aprobaciones" className="font-medium underline underline-offset-4">
-            {status && status !== "pendiente" ? (status === "ejecutada" ? "Aprobada" : status === "rechazada" ? "Rechazada" : "Ver") : "Ver en Aprobaciones"}
+          <Link href={approvalsHref} className="font-medium underline underline-offset-4">
+            {status && status !== "pendiente" ? (status === "ejecutada" ? "Aprobada" : status === "rechazada" ? "Rechazada" : "Ver") : "Ver en Propuestas para aprobar"}
           </Link>
         </div>
       )}
@@ -297,6 +299,8 @@ export function AssistantChat({
   initialContext,
   toolMeta,
   approvals: initialApprovals,
+  basePath = "/admin/vigia?tab=asistente",
+  embedded = false,
 }: {
   conversationId: string;
   isNew: boolean;
@@ -308,6 +312,10 @@ export function AssistantChat({
   initialContext: ContextItem[];
   toolMeta: Record<string, ToolMeta>;
   approvals: ApprovalStates;
+  /** URL de esta vista dentro del Vigía (pantalla completa o panel), con su ?tab= */
+  basePath?: string;
+  /** Dentro del panel lateral: alto completo y el historial como capa */
+  embedded?: boolean;
 }) {
   const router = useRouter();
   const [model, setModel] = useState(defaultModel);
@@ -346,10 +354,10 @@ export function AssistantChat({
   useEffect(() => {
     if (status === "ready" && messages.length && !started.current) {
       started.current = true;
-      window.history.replaceState(null, "", `/admin/asistente?c=${conversationId}`);
+      window.history.replaceState(null, "", `${basePath}&c=${conversationId}`);
       router.refresh();
     }
-  }, [status, messages.length, conversationId, router]);
+  }, [status, messages.length, conversationId, router, basePath]);
 
   const mentionMatches = useMemo(() => {
     if (!mention) return [];
@@ -421,21 +429,22 @@ export function AssistantChat({
   const noModels = models.length === 0;
 
   return (
-    <div className="relative -mt-2 flex h-[calc(100dvh-11rem)] min-h-[480px] border border-line bg-surface sm:h-[calc(100dvh-12rem)] lg:h-[calc(100dvh-7.5rem)]">
+    <div className={cn("relative flex border border-line bg-surface", embedded ? "-mx-4 h-[calc(100dvh-3.5rem)] min-h-[420px] border-x-0 border-b-0" : "h-[calc(100dvh-14rem)] min-h-[480px] rounded-md sm:h-[calc(100dvh-15rem)] lg:h-[calc(100dvh-13rem)]")}>
       {/* Historial */}
       <aside
         className={cn(
-          "absolute inset-y-0 left-0 z-30 w-72 shrink-0 flex-col border-r border-line bg-canvas lg:static lg:flex",
+          "absolute inset-y-0 left-0 z-30 w-72 shrink-0 flex-col border-r border-line bg-canvas",
+          !embedded && "lg:static lg:flex",
           history ? "flex shadow-xl" : "hidden",
         )}
         aria-label="Conversaciones"
       >
         <div className="flex items-center gap-2 border-b border-line p-3">
-          <Link href="/admin/asistente?nueva=1" className="inline-flex h-9 flex-1 items-center justify-center gap-2 bg-navy text-[14px] font-medium text-paper hover:bg-navy-deep">
+          <Link href={`${basePath}&nueva=1`} className="inline-flex h-9 flex-1 items-center justify-center gap-2 bg-navy text-[14px] font-medium text-paper hover:bg-navy-deep">
             <MessageSquarePlus className="size-4" aria-hidden />
             Conversación nueva
           </Link>
-          <button type="button" onClick={() => setHistory(false)} aria-label="Cerrar historial" className="grid size-9 place-items-center border border-line lg:hidden">
+          <button type="button" onClick={() => setHistory(false)} aria-label="Cerrar historial" className={cn("grid size-9 place-items-center border border-line", !embedded && "lg:hidden")}>
             <X className="size-4" aria-hidden />
           </button>
         </div>
@@ -444,7 +453,7 @@ export function AssistantChat({
           {conversations.map((c) => (
             <li key={c.id} className="group flex items-center">
               <Link
-                href={`/admin/asistente?c=${c.id}`}
+                href={`${basePath}&c=${c.id}`}
                 aria-current={c.id === conversationId ? "page" : undefined}
                 className={cn("min-w-0 flex-1 truncate px-2 py-2 text-[14px]", c.id === conversationId ? "bg-navy-soft text-ink" : "text-ink/80 hover:bg-surface")}
               >
@@ -452,6 +461,7 @@ export function AssistantChat({
               </Link>
               <form action={deleteConversation}>
                 <input type="hidden" name="id" value={c.id} />
+                <input type="hidden" name="volver" value={basePath} />
                 <button type="submit" aria-label={`Borrar ${c.title}`} className="grid size-8 place-items-center text-muted opacity-60 hover:text-danger group-hover:opacity-100">
                   <Trash2 className="size-3.5" aria-hidden />
                 </button>
@@ -464,7 +474,7 @@ export function AssistantChat({
       {/* Chat */}
       <section className="relative flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-line px-3 py-2 sm:px-4">
-          <button type="button" onClick={() => setHistory(true)} className="inline-flex h-8 items-center gap-1.5 border border-line px-2 text-[13px] lg:hidden" aria-label="Ver conversaciones">
+          <button type="button" onClick={() => setHistory(true)} className={cn("inline-flex h-8 items-center gap-1.5 border border-line px-2 text-[13px]", !embedded && "lg:hidden")} aria-label="Ver conversaciones">
             <History className="size-4" aria-hidden />
           </button>
           <p className="flex min-w-0 flex-1 items-center gap-2 text-[14px] font-medium text-ink">
@@ -547,7 +557,7 @@ export function AssistantChat({
                       if (p.type === "text") return p.text ? <Markdown key={i} text={p.text} /> : null;
                       if (isToolUIPart(p)) {
                         const id = ((p as { output?: { aprobacion_id?: string } }).output?.aprobacion_id) ?? "";
-                        return <ToolCard key={i} part={p as ToolPart} meta={toolMeta[getToolName(p)]} approval={approvals[id]} onDecide={decide} busy={deciding || busy} />;
+                        return <ToolCard key={i} part={p as ToolPart} meta={toolMeta[getToolName(p)]} approval={approvals[id]} onDecide={decide} busy={deciding || busy} approvalsHref={basePath.replace("tab=asistente", "tab=propuestas")} />;
                       }
                       return null;
                     })}

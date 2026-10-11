@@ -162,13 +162,12 @@ export function crumbs(pathname: string): { label: string; href?: string }[] {
 }
 
 /**
- * Contexto de la pantalla actual para "Preguntar a Faro": la ficha de una
+ * Contexto de la pantalla actual para el Vigía del estudio: la ficha de una
  * organización o la solicitud abierta. Solo IDs: el servidor los valida.
  */
-export function askFaroHref(pathname: string, search: URLSearchParams) {
+export function askFaroContext(pathname: string, search: URLSearchParams) {
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const org = /^\/admin\/organizaciones\/([^/]+)/.exec(pathname)?.[1];
   const req = pathname === "/admin/solicitudes" ? search.get("id") : null;
-  const ctx = org && uuid.test(org) ? `organizacion:${org}` : req && uuid.test(req) ? `solicitud:${req}` : null;
-  return `/admin/asistente?nueva=1${ctx ? `&contexto=${ctx}` : ""}`;
+  return org && uuid.test(org) ? `organizacion:${org}` : req && uuid.test(req) ? `solicitud:${req}` : null;
 }

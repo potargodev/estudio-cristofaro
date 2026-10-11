@@ -12,6 +12,12 @@ import { requireTenant } from "@/lib/auth";
 import { likeTerm } from "@/lib/search";
 import { decideApproval, type StaffRole } from "@/modules/tools";
 
+/** A dónde volver dentro del Vigía (solo sus rutas: nunca una URL del navegador) */
+function vigiaBack(fd: FormData, tab: string) {
+  const v = String(fd.get("volver") ?? "");
+  return /^\/(admin\/vigia|vigia-panel|vigia)\?[\w=&%-]*$/.test(v) ? v : `/admin/vigia?tab=${tab}`;
+}
+
 // Acciones del Asistente. Todo se valida contra la sesión: estudio y persona.
 
 /** Confirmar o cancelar una acción de escritura que pidió el Asistente (solo quien la pidió) */
@@ -22,7 +28,8 @@ export async function decideInlineAction(approvalId: string, approve: boolean): 
     { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole, studioId: user.studioId },
     approve ? { approve: true } : { approve: false, reason: "Cancelada en el Asistente" },
   );
-  revalidatePath("/admin/aprobaciones");
+  revalidatePath("/admin/vigia");
+  revalidatePath("/vigia-panel");
   return r.ok ? { ok: true, status: r.status } : { ok: false, message: r.message };
 }
 
@@ -67,6 +74,7 @@ export async function deleteConversation(fd: FormData) {
     await getDb().delete(ai_conversations).where(and(eq(ai_conversations.id, c.id), eq(ai_conversations.user_id, user.id)));
     await audit({ studioId: user.studioId, actor: user, action: "asistente.borrar_conversacion", entityType: "conversacion", entityId: c.id });
   }
-  revalidatePath("/admin/asistente");
-  redirect("/admin/asistente");
+  revalidatePath("/admin/vigia");
+  revalidatePath("/vigia-panel");
+  redirect(vigiaBack(fd, "asistente"));
 }

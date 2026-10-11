@@ -1,9 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { ArrowRight, KeyRound, PlugZap, Sparkles } from "lucide-react";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { AssistantChat, type ApprovalStates } from "@/components/admin/ai/AssistantChat";
-import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { adminButton } from "@/components/admin/styles";
 import { getDb } from "@/db";
 import { ai_conversations, organizations } from "@/db/schema";
@@ -11,12 +9,11 @@ import { approvalStates, loadMessages, ownConversation, resolveContext } from "@
 import { PROVIDERS, modelKey } from "@/lib/ai/catalog";
 import { parseContextParam } from "@/lib/ai/context";
 import { getProviders, resolveModel } from "@/lib/ai/models";
-import { requireTenant, TENANT_OWNERS } from "@/lib/auth";
+import { TENANT_OWNERS, type StaffUser } from "@/lib/auth";
 import { externalToolMeta } from "@/modules/connectors/mcp-externo/meta";
 import { maxLevel, TOOLS, toolAllowed, type StaffRole } from "@/modules/tools";
-import { iaTabs } from "../ia/tabs";
 
-export const metadata: Metadata = { title: "Asistente" };
+const IA_CONFIG = "/admin/ia/configuracion";
 
 /** Guía de 3 pasos para un estudio sin proveedor de IA */
 function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
@@ -30,11 +27,11 @@ function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
     { icon: Sparkles, title: "Probá la conexión y elegí el modelo", text: "Con un clic verificás que funciona y elegís el modelo para el chat, la extracción y la redacción." },
   ];
   return (
-    <div className="max-w-4xl">
-      <PageHeader title="Asistente" description="Faro trabaja con la IA que elija el estudio. Configurala en tres pasos." tabs={iaTabs("asistente")} />
+    <div className="max-w-4xl pb-6">
+      <p className="mb-4 text-[15px] text-muted">El asistente trabaja con la IA que elija el estudio. Configurala en tres pasos.</p>
       <ol className="grid gap-4 md:grid-cols-3">
         {steps.map((s, i) => (
-          <li key={s.title} className="border border-line bg-surface p-5">
+          <li key={s.title} className="rounded-md border border-line bg-surface p-5">
             <span className="flex items-center gap-3">
               <span className="num text-[32px] leading-none text-rose-deep">{i + 1}</span>
               <s.icon className="size-5 text-ink" strokeWidth={1.5} aria-hidden />
@@ -44,32 +41,35 @@ function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
           </li>
         ))}
       </ol>
-      <div className="mt-6 border border-line bg-surface p-5">
+      <div className="mt-6 rounded-md border border-line bg-surface p-5">
         {isAdmin ? (
           <>
             <p className="font-medium text-ink">Empezá por el proveedor:</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {(["anthropic", "openai", "google", "openrouter", "azure", "openai_compatible"] as const).map((k) => (
-                <Link key={k} href={`/admin/ia/configuracion?tipo=${k}#agregar`} className={adminButton.secondary}>
+                <Link key={k} href={`${IA_CONFIG}?tipo=${k}#agregar`} className={adminButton.secondary}>
                   {PROVIDERS[k].label}
                 </Link>
               ))}
             </div>
-            <Link href="/admin/ia/configuracion" className={`${adminButton.primary} mt-4 inline-flex items-center gap-2`}>
+            <Link href={IA_CONFIG} className={`${adminButton.primary} mt-4 inline-flex items-center gap-2`}>
               Ir a la configuración de IA <ArrowRight className="size-4" aria-hidden />
             </Link>
           </>
         ) : (
-          <p className="text-[15px] text-muted">La configuración la hace un administrador del estudio en IA → Configuración. Avisale para que la active.</p>
+          <p className="text-[15px] text-muted">La configuración la hace el dueño del estudio en Configuración → IA. Avisale para que la active.</p>
         )}
       </div>
     </div>
   );
 }
 
-export default async function AsistentePage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
-  const sp = await searchParams;
-  const user = await requireTenant();
+/**
+ * Asistente del tenant (estudio o cuenta personal) dentro del Vigía: su clave,
+ * sus herramientas según el rol y el contexto de la pantalla (organización o
+ * solicitud, que resolveContext valida dentro del estudio).
+ */
+export async function StudioAssistant({ user, sp, basePath, embedded }: { user: StaffUser; sp: Record<string, string | undefined>; basePath: string; embedded: boolean }) {
   const providers = (await getProviders(user.studioId)).filter((p) => p.active);
   const models = providers.flatMap((p) => (p.settings.models ?? []).map((m) => ({ value: modelKey(p.id, m), label: `${m} · ${p.name}` })));
   if (!models.length) return <SetupGuide isAdmin={TENANT_OWNERS.includes(user.role)} />;
@@ -111,6 +111,8 @@ export default async function AsistentePage({ searchParams }: { searchParams: Pr
       initialContext={initialContext}
       toolMeta={toolMeta}
       approvals={approvals}
+      basePath={basePath}
+      embedded={embedded}
     />
   );
 }

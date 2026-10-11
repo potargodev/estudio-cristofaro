@@ -3,7 +3,7 @@ titulo: Conectar Faro desde Claude, ChatGPT u otro cliente MCP
 resumen: Usá Faro desde tu IA favorita con un acceso MCP que tiene los permisos de tu rol, alcances elegidos, vencimiento y revocación al instante.
 perfiles: [estudio, autonomo, persona]
 modulo: ai
-actualizado: 2026-10-10
+actualizado: 2026-10-11
 relacionados: [ia/ia-y-aprobaciones, conexiones/conexiones]
 ---
 
@@ -11,7 +11,7 @@ MCP es un estándar que permite que una IA externa use las herramientas de Faro.
 
 ## Dónde está
 
-En el menú, entrá a **Accesos MCP**. Ahí está la **URL del servidor MCP** (Streamable HTTP) y las instrucciones para cada cliente.
+Abrí el menú de tu cuenta (tus iniciales, arriba a la derecha) y entrá a **Accesos MCP**. Ahí está la **URL del servidor MCP** (Streamable HTTP) y las instrucciones para cada cliente.
 
 ## Conectar con OAuth (recomendado)
 
@@ -44,7 +44,7 @@ Para otros clientes MCP, usá **Nuevo acceso con token**:
 ## Reglas de seguridad
 
 - Cada acceso usa **los permisos de tu rol**, nunca más.
-- Aunque tenga escritura, **las acciones sensibles no se ejecutan**: quedan en [Aprobaciones](/ayuda/ia/ia-y-aprobaciones).
+- Aunque tenga escritura, **las acciones sensibles no se ejecutan**: quedan en las [Propuestas para aprobar del Vigía](/ayuda/ia/ia-y-aprobaciones).
 - En Inicial y en los planes gratis, el acceso es de consultas.
 - Toda llamada queda registrada: en **Accesos MCP** ves la herramienta, el resultado y la duración.
 
