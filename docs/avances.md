@@ -87,3 +87,22 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Credenciales y webhooks de producción de la cuenta de Faro y de cada estudio; SMTP (ver pendientes).
+
+## F5 · Empleados (octubre 2026)
+
+**Qué quedó**
+- **Legajo** (`employees` ampliado, `employee_documents`, `employee_events`): datos (CUIL validado, DNI, puesto, área, ingreso, contratación, convenio), documentos, altas, bajas, cambios, licencias, horas extra y notas, con historial.
+- **Recibos de sueldo** (`payslip_batches`, `payslips`): carga masiva de PDFs individuales (CUIL en el nombre o en el texto) o de un PDF único dividido por CUIL, asignación automática con revisión y asignación manual, publicación con aviso (campanita y mail), **firma conforme / no conforme** con constancia (fecha y hora, IP, dispositivo, user agent, hash del PDF verificado y sello), estado por empleado y recordatorios (manuales y a los 3, 7 y 14 días).
+- **Mis recibos** para el empleado y su Inicio con recibos por firmar y comunicados.
+- **Comunicación interna** (`announcements`, `announcement_reads`): a todos o por área, con adjuntos, aviso y confirmación de lectura por persona; el estudio puede enviarlos en nombre de la organización.
+- **Novedades de personal** como solicitudes tipificadas (`requests.data`) y «Aplicar al legajo».
+- Ubicación (§2.o): pestaña **Sueldos** de la ficha; en el portal, **Empresa → Sueldos y empleados**; empleado: **Inicio · Mis recibos · Rendiciones · Grupos**. Rutas autenticadas para recibos, documentos del legajo y adjuntos.
+- Vigía: `listar_empleados`, `estado_recibos` (lectura), `recordar_firma_recibos` y `publicar_comunicado` (sensibles → Aprobaciones). Módulos `employees`, `payroll` y `comms` disponibles en el registro con eventos y herramientas. Tres artículos de ayuda (categoría Empleados y recibos).
+
+**Qué se probó**
+- `npm test` (72): CUIL, división por CUIL (con recibos de dos hojas), período, sello y recordatorios.
+- `scripts/pruebas/empleados-navegador.mjs` (36/36, 390 px): legajo con CUIL inválido rechazado, alta, documento, PDF único dividido y asignado, publicación, firma con constancia, acceso al PDF propio y no al ajeno, recordatorio, comunicados por área con adjunto y confirmación, portal de la organización, novedad informada y aplicada, y aislamiento entre estudios, organizaciones y roles, con auditoría.
+- `scripts/pruebas/empleados-servidor.mts` (17/17): recordatorio automático sin repetir, PDF alterado no se firma, no conforme sin motivo, IDs forzados entre organizaciones y estudios, y herramientas del Vigía con Aprobaciones.
+
+**Qué falta configurar**
+- Activar el módulo por organización, invitar a los empleados y validar el texto de conformidad (ver pendientes).

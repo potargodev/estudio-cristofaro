@@ -90,3 +90,10 @@ Igual que el estudio, desde Facturación → Ajustes → Cobrar tus facturas con
 
 ### SMTP
 Los cobros, recordatorios y avisos de suscripción salen por mail: sin SMTP solo quedan en la campanita.
+
+## Empleados (F5)
+
+- **Activar el módulo por organización:** el estudio activa «Sueldos y empleados» en la ficha → Plan y módulos para que la organización lo vea en el portal (los empleados ven Mis recibos igual, porque se les publica desde el estudio).
+- **Invitar a los empleados al portal** con el rol Empleado (Mi equipo): sin cuenta reciben los avisos por mail, pero para firmar necesitan entrar.
+- **Validación legal de la firma:** revisar con el estudio (cliente cero) el texto de conformidad y, si alguna organización lo exige, registrar la plataforma ante la autoridad laboral de su jurisdicción.
+- **SMTP:** los avisos de recibos y comunicados salen por mail.
