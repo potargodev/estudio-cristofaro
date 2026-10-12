@@ -105,17 +105,19 @@ async function rateOne(fd: FormData, skip: boolean) {
 
 const seekerInput = (fd: FormData) => ({ kind: s(fd, "kind"), industry: s(fd, "industry") || null, size: s(fd, "size") || null, province: s(fd, "province") || null, city: s(fd, "city") || null, needs: fd.getAll("needs").map(String), note: s(fd, "note") || null });
 
+const backTo = (fd: FormData) => (s(fd, "volver") === "/contador/disponible" ? "/contador/disponible" : "/contador");
+
 export async function seekerAction(fd: FormData) {
   const me = await requirePersonal();
   const active = fd.get("active") === "on";
   try {
     await setSeeker(me, active, seekerInput(fd));
   } catch (e) {
-    if (e instanceof SeekerError) go({ error: e.message });
+    if (e instanceof SeekerError) go({ error: e.message }, backTo(fd));
     throw e;
   }
-  revalidatePath("/contador");
-  go({ ok: active ? "Listo: los estudios de la Red Contable te ven sin tu nombre ni tus datos. Vos decidís a quién responder." : "Ya no aparecés en el listado." });
+  revalidatePath("/contador", "layout");
+  go({ ok: active ? "Listo: los estudios de la Red Contable te ven sin tu nombre ni tus datos. Vos decidís a quién responder." : "Ya no aparecés en el listado." }, backTo(fd));
 }
 
 export async function answerContactAction(fd: FormData) {
@@ -129,9 +131,9 @@ async function answerOne(fd: FormData, accept: boolean) {
   try {
     await answerContact(me, s(fd, "id"), accept);
   } catch (e) {
-    if (e instanceof SeekerError) go({ error: e.message });
+    if (e instanceof SeekerError) go({ error: e.message }, backTo(fd));
     throw e;
   }
-  revalidatePath("/contador");
-  go({ ok: accept ? "Aceptaste: el estudio ya ve tus datos y empieza su admisión." : "Listo, no aceptaste." });
+  revalidatePath("/contador", "layout");
+  go({ ok: accept ? "Aceptaste: el estudio ya ve tus datos y empieza su admisión." : "Listo, no aceptaste." }, backTo(fd));
 }

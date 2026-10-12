@@ -1,13 +1,14 @@
 import { count, eq } from "drizzle-orm";
-import { Network, Ship, Store } from "lucide-react";
+import { Network, Ship, Store, UserRound } from "lucide-react";
 import { getDb } from "@/db";
 import { service_agreements } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { SectionTabs } from "./SectionTabs";
 
 /**
- * "Contador" del espacio personal (docs/faro-producto.md §2.o): Red de
- * estudios, Flotas y "mi estudio" (tus acuerdos con un estudio, si tenés).
+ * "Contador" del espacio personal (docs/faro-producto.md §2.o): tu contador
+ * (la conexión), la Red Contable (estudios y tu postulación), Flotas y "mi
+ * estudio" (tus acuerdos con un estudio, si tenés).
  * Solo para cuentas personales; sin sesión, la Red se ve sola.
  */
 export async function ContadorTabs() {
@@ -19,7 +20,8 @@ export async function ContadorTabs() {
       label="Contador"
       className="mb-6"
       tabs={[
-        { href: "/red-contable", label: "Red Contable", icon: <Network strokeWidth={1.5} aria-hidden /> },
+        { href: "/contador", label: "Mi contador", icon: <UserRound strokeWidth={1.5} aria-hidden />, match: [] },
+        { href: "/red-contable", label: "Red Contable", icon: <Network strokeWidth={1.5} aria-hidden />, match: ["/contador/disponible"] },
         { href: "/flotas", label: "Flotas", icon: <Ship strokeWidth={1.5} aria-hidden /> },
         ...((mine?.n ?? 0) > 0 ? [{ href: "/flotas/servicios", label: "Mi estudio", icon: <Store strokeWidth={1.5} aria-hidden /> }] : []),
       ]}

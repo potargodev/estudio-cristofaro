@@ -60,7 +60,7 @@ export type ShellIcon =
   | "honorarios"
   | "tareas";
 
-export type ShellBadge = "requests" | "leads" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
+export type ShellBadge = "requests" | "leads" | "candidates" | "comercial" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
 
 export interface ShellItem {
   href: string;
@@ -85,6 +85,8 @@ export interface ShellGroup {
 export const BADGE_TEXT: Record<ShellBadge, string> = {
   requests: "solicitudes abiertas",
   leads: "consultas nuevas",
+  candidates: "candidatos nuevos en la Red Contable",
+  comercial: "novedades en Comercial (consultas y candidatos)",
   obligations: "vencimientos esta semana",
   approvals: "propuestas para aprobar",
   unread: "mensajes sin leer",
@@ -109,6 +111,7 @@ const PORTAL_ICON: Record<string, ShellIcon> = {
   resena: "resena",
   mas: "modulos",
   empresa: "empresa",
+  red: "red",
 };
 
 export interface SpaceInput {
@@ -133,7 +136,7 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
       pinned: g.pinned,
       items: g.items.map((i) => {
         const locked = !!i.module && !!x.studio!.modules && !x.studio!.modules.includes(i.module);
-        const badge = i.badge === "leads" && !x.studio!.isOperator ? undefined : (i.badge as ShellBadge | undefined);
+        const badge = (i.badge === "leads" || i.badge === "comercial") && !x.studio!.isOperator ? undefined : (i.badge as ShellBadge | undefined);
         return { href: locked ? `/admin/configuracion/modulos/${i.module}` : i.href, label: i.label, icon: i.icon as ShellIcon, exact: i.exact, badge: locked ? undefined : badge, locked };
       }),
     }));

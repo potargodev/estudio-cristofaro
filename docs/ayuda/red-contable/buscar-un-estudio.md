@@ -3,7 +3,7 @@ titulo: Cómo encontrar un estudio en la Red
 resumen: La Red Contable es un directorio público y neutral de estudios y contadores que usan Faro; buscá por zona, rubro y servicio y pedí una propuesta.
 perfiles: [persona, autonomo, organizacion, flota]
 modulo: red_estudios
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [red-contable/resenas, red-contable/perfil-del-estudio, flotas/que-es-una-flota]
 ---
 
@@ -51,10 +51,14 @@ Si querés conseguir mejores condiciones con otras personas, armá una [Flota](/
 
 La Red Contable es de doble mano: además de buscar vos, podés dejar que los estudios te encuentren. Nadie aparece por estar dado de alta: es una decisión tuya.
 
-1. En **Contador**, sección **Que los estudios te encuentren**, prendé **Disponible, busco contador**.
+1. Entrá a **Contador → Red Contable → Mi postulación** (también llegás desde la tarjeta **Que los estudios te encuentren** de Contador) y prendé **Disponible, busco contador**. Arriba ves si estás **Visible en la Red**.
 2. Elegí qué mostrar: si sos persona, autónomo o empresa, tu rubro, tu tamaño, tu zona y qué necesitás. **Nunca se muestra tu nombre ni tus datos de contacto** (si escribís un mail o un teléfono en la nota, se borra).
-3. Si un estudio te contacta, te aparece en **Estudios que quieren ser tu contador** con el link a su ficha. Elegís **Aceptar** o **No, gracias**.
+3. Si un estudio te contacta, te avisamos y aparece en **Estudios que quieren ser tu contador** con el link a su ficha. Elegís **Aceptar** o **No, gracias**. En **Contactos** queda el historial con el estado de cada uno.
 4. Recién al aceptar el estudio ve tu nombre y tus datos y empieza su **admisión** (ver [Conectar tu cuenta con un contador](/ayuda/red-contable/conectar-un-contador)).
+
+La Red Contable tiene dos vistas: **Estudios y contadores** (para elegir uno) y **Mi postulación** (para que te encuentren).
+
+Las **empresas** clientes de un estudio también pueden postularse: quien la administra lo activa en el portal, en **Empresa → Red Contable**. El listado la muestra como «Empresa», sin su nombre; al aceptar un contacto, el estudio ve el nombre y el mail de quien la administra.
 
 Las **Flotas** también pueden aparecer: lo activa el Capitán desde la Flota. Al aceptar, el estudio ve el nombre de la Flota y del Capitán y manda su propuesta grupal.
 

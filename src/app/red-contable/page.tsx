@@ -1,10 +1,12 @@
 import { PageHeader } from "@/components/admin/kit/PageHeader";
-import { BadgeCheck, Clock, MapPin, Star } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FILE_TEMPLATES, INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { markStep } from "@/modules/onboarding/server";
-import { labelOf, MODALITIES, RED_SERVICES, responseLabel, TEAM_SIZES } from "@/modules/red/catalog";
+import { MODALITIES, RED_SERVICES, TEAM_SIZES } from "@/modules/red/catalog";
+import { StudioCard } from "@/components/red/StudioCard";
+import { ViewSwitch } from "@/components/ds/primitives";
+import { mySeeker } from "@/modules/red/seekers";
 import { publicDirectory } from "@/modules/red/server";
 import { getCurrentUser } from "@/lib/auth";
 import { getDerivationRules, ownSuggestion } from "@/modules/escudo/server";
@@ -31,16 +33,28 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
   const viewHref = (v: "lista" | "mapa") => {
     const q = new URLSearchParams(Object.entries(filters).filter((e): e is [string, string] => !!e[1]));
     if (v === "mapa") q.set("vista", "mapa");
-    return `/red${q.size ? `?${q}` : ""}`;
+    return `/red-contable${q.size ? `?${q}` : ""}`;
   };
   const [list, user] = await Promise.all([publicDirectory(filters), getCurrentUser().catch(() => null), markStep("red").catch(() => undefined)]);
+  const titular = user?.role === "titular" && user.tenantKind !== "studio";
+  const seeker = titular ? await mySeeker(user!.id) : null;
   // Derivación (§1.c): la persona llega con el contexto armado (solo el propio, validado en el servidor)
   const derivacion = user ? await ownSuggestion(user.id, sp.derivacion) : null;
   const necesito = !derivacion && sp.necesito ? (await getDerivationRules()).find((r) => r.key === sp.necesito) : undefined;
   const q = derivacion ? `?derivacion=${derivacion.id}` : "";
   return (
     <>
-      <PageHeader title="Encontrá tu estudio contable" description="Estudios y contadores que trabajan con Faro, con la matrícula verificada y reseñas de clientes reales. Nadie paga por aparecer primero." className="mb-0" />
+      <PageHeader title="Red Contable" description="Estudios y contadores que trabajan con Faro, con la matrícula verificada y reseñas de clientes reales. Nadie paga por aparecer primero." className="mb-0" />
+      {titular && (
+        <ViewSwitch
+          label="Vistas de la Red Contable"
+          className="mt-5"
+          views={[
+            { href: "/red-contable", label: "Estudios y contadores", active: true, hint: "Elegí un estudio y pedile una propuesta, o conectá tu cuenta. Tus números no se comparten hasta que vos lo autorices." },
+            { href: "/contador/disponible", label: seeker?.active ? "Mi postulación · activa" : "Mi postulación", active: false },
+          ]}
+        />
+      )}
 
       {(derivacion || necesito) && (
         <section aria-label="Lo que necesitás" data-contexto className="mt-6 rounded-md border border-rose/40 bg-rose-soft p-4 text-ui text-ink">
@@ -50,7 +64,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
         </section>
       )}
 
-      <form method="get" className="mt-8 grid gap-3 rounded-lg border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-6" role="search" aria-label="Filtrar estudios">
+      <form method="get" className="mt-6 grid gap-3 rounded-md border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-6" role="search" aria-label="Filtrar estudios">
         <label className="text-meta text-muted lg:col-span-2">
           Zona (localidad, barrio o provincia)
           <input name="zona" defaultValue={filters.zona ?? ""} placeholder="Ej.: Rosario" className={field} />
@@ -98,10 +112,10 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-6">
           {mapa && <input type="hidden" name="vista" value="mapa" />}
-          <button type="submit" className="h-10 rounded-md bg-navy px-5 text-ui font-medium text-paper hover:bg-night">
+          <button type="submit" className="h-(--control-h) rounded-md bg-navy px-5 text-ui font-medium text-paper hover:bg-night">
             Buscar
           </button>
-          <Link href="/red-contable" className="h-10 px-3 text-ui leading-10 text-muted underline-offset-4 hover:underline">
+          <Link href="/red-contable" className="inline-flex h-(--control-h) items-center px-3 text-ui text-muted underline-offset-4 hover:underline">
             Limpiar
           </Link>
         </div>
@@ -122,45 +136,13 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
       <ul className="mt-4 grid gap-4 md:grid-cols-2">
         {list.map((x) => (
           <li key={x.studioId}>
-            <Link href={`/red-contable/${x.slug}${q}`} className="block h-full rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
-              <div className="flex items-start gap-3">
-                <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-md bg-navy font-display text-headline text-gold">
-                  {x.name.charAt(0)}
-                </span>
-                <div className="min-w-0">
-                  <h2 className="text-title font-semibold text-ink">{x.name}</h2>
-                  <p className="text-ui text-muted">{x.profile.headline}</p>
-                </div>
-              </div>
-              <ul className="mt-4 grid gap-1.5 text-meta text-ink">
-                <li className="flex items-center gap-1.5">
-                  <BadgeCheck className="size-4 text-rose-deep" aria-hidden /> Matrícula verificada · {x.profile.license_body}
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <MapPin className="size-4 text-muted" aria-hidden /> {[x.profile.city, x.profile.province].filter(Boolean).join(", ")} · {labelOf(MODALITIES, x.profile.modality)}
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <Star className="size-4 text-muted" aria-hidden /> {x.rating ? `${x.rating.avg.toFixed(1)} de 5 · ${x.rating.n} ${x.rating.n === 1 ? "reseña" : "reseñas"}` : "Sin reseñas todavía"}
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <Clock className="size-4 text-muted" aria-hidden /> {responseLabel(x.responseHours)}
-                </li>
-              </ul>
-              <p className="mt-3 flex flex-wrap gap-1.5">
-                {x.profile.services.slice(0, 4).map((s) => (
-                  <span key={s} className="rounded border border-line px-2 py-0.5 text-caption text-muted">
-                    {labelOf(RED_SERVICES, s)}
-                  </span>
-                ))}
-                {!x.profile.accepting_clients && <span className="rounded border border-line bg-canvas px-2 py-0.5 text-caption text-muted">Sin cupo por ahora</span>}
-              </p>
-            </Link>
+            <StudioCard x={x} href={`/red-contable/${x.slug}${q}`} />
           </li>
         ))}
       </ul>
       )}
-      <section className="mt-12 rounded-lg border border-line bg-surface p-5 text-ui text-muted">
-        <h2 className="text-lead font-semibold text-ink">¿Sos de un estudio?</h2>
+      <section className="mt-12 rounded-md border border-line bg-surface p-4 text-ui text-muted sm:p-5">
+        <h2 className="text-title font-semibold text-ink">¿Sos de un estudio?</h2>
         <p className="mt-1">
           Sumarte a la Red es opcional y está incluido en los planes Profesional y Avanzado. Verificamos la matrícula antes de publicar.{" "}
           <Link href="/ayuda/red-contable/perfil-del-estudio" className="underline underline-offset-4">

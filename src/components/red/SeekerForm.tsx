@@ -10,7 +10,7 @@ const lbl = "block text-meta text-muted";
 type Seeker = { active: boolean; kind: string; industry: string | null; size: string | null; province: string | null; city: string | null; needs: string[]; note: string | null } | null;
 
 /** «Disponible, busco contador» (§15): qué mostrar, sin nombre ni contacto */
-export function SeekerForm({ action, seeker, fleet, hidden }: { action: (fd: FormData) => void | Promise<void>; seeker: Seeker; fleet?: boolean; hidden?: Record<string, string> }) {
+export function SeekerForm({ action, seeker, fleet, hidden, company }: { action: (fd: FormData) => void | Promise<void>; seeker: Seeker; fleet?: boolean; hidden?: Record<string, string>; company?: boolean }) {
   return (
     <form action={action} className="grid gap-3 sm:grid-cols-2">
       {Object.entries(hidden ?? {}).map(([k, v]) => (
@@ -19,8 +19,8 @@ export function SeekerForm({ action, seeker, fleet, hidden }: { action: (fd: For
       <label className="flex items-center gap-2 text-body font-medium sm:col-span-2">
         <input type="checkbox" name="active" defaultChecked={!!seeker?.active} className="size-5 accent-navy" /> Disponible, busco contador
       </label>
-      <p className="text-meta text-muted sm:col-span-2">Aparecés en el listado de los estudios solo con lo que elijas acá, sin {fleet ? "el nombre de la Flota ni de sus integrantes" : "tu nombre"} ni datos de contacto. Si un estudio te contacta, decidís vos; recién al aceptar ve tus datos.</p>
-      {!fleet && (
+      <p className="text-meta text-muted sm:col-span-2">Aparecés en el listado de los estudios solo con lo que elijas acá, sin {fleet ? "el nombre de la Flota ni de sus integrantes" : company ? "el nombre de la empresa" : "tu nombre"} ni datos de contacto. Si un estudio te contacta, decidís vos; recién al aceptar ve tus datos.</p>
+      {!fleet && !company && (
         <label>
           <span className={lbl}>Sos</span>
           <select name="kind" defaultValue={seeker?.kind ?? "persona"} className={field}>

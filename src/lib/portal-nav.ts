@@ -7,7 +7,7 @@ import { can, canSeeRequests, type OrgRole } from "./permissions";
 // Rendiciones · Grupos. Es solo presentación: cada página vuelve a validar
 // el permiso en el servidor.
 
-export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas" | "gastos" | "rendiciones" | "ayuda" | "resena" | "empresa";
+export type PortalIcon = "inicio" | "vencimientos" | "documentos" | "solicitudes" | "modulo" | "equipo" | "agenda" | "mas" | "gastos" | "rendiciones" | "ayuda" | "resena" | "empresa" | "red";
 
 export interface PortalNavItem {
   href: string;
@@ -24,6 +24,8 @@ export function empresaTabs(role: OrgRole, activeModules: string[]): PortalNavIt
   if (can(role, "finanzas.ver")) tabs.push({ href: "/portal/gastos-empresa", label: "Gastos de la empresa", icon: "gastos" });
   if (can(role, "finanzas.ver")) tabs.push({ href: "/portal/estado-de-cuenta", label: "Estado de cuenta", icon: "gastos" });
   if (can(role, "gastos.rendir") || can(role, "finanzas.gestionar")) tabs.push({ href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" });
+  // Red Contable (principios §15): la empresa puede activar «Disponible, busco contador»
+  if (role === "administrador" || role === "direccion") tabs.push({ href: "/portal/red-contable", label: "Red Contable", icon: "red" });
   for (const m of MODULES) {
     if (!activeModules.includes(m.key) || !can(role, m.permissions.view)) continue;
     for (const item of m.nav) tabs.push({ href: moduleHref(m.key, item.path), label: item.label, icon: "modulo" });

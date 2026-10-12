@@ -760,6 +760,30 @@ if (stage("8")) {
   }
 }
 
+// ─── Diseño 6 · La empresa en la Red Contable (portal) ───
+if (stage("9")) {
+  const sk = await import("../../src/modules/red/seekers.ts");
+  const A = d.studios.A;
+  const [dn] = await sql`select id, name, email, "studio_id" as "studioId", role from users where id = ${d.users.duenaNorte}`;
+  const [em] = await sql`select id, name, email, "studio_id" as "studioId", role from users where id = ${d.users.empleadaNorte}`;
+  const P = { ...dn, tenantKind: "studio" };
+  const E = { ...em, tenantKind: "studio" };
+  const err = (fn: () => Promise<unknown>) => fn().then(() => false, (e) => e instanceof sk.SeekerError);
+  await sql`delete from seeker_profiles where user_id in (${dn.id}, ${em.id})`;
+  check("una empleada no activa la postulación de la empresa", await err(() => sk.setOrgSeeker(E, d.orgs.norte, true, { kind: "empresa", needs: ["sueldos"] })));
+  check("la dueña no activa la de otra organización (forzando el ID)", await err(() => sk.setOrgSeeker(P, d.orgs.ajena, true, { kind: "empresa", needs: ["sueldos"] })));
+  await sk.setOrgSeeker(P, d.orgs.norte, true, { kind: "persona", needs: ["sueldos"], note: "Escribime a dana@x.com" });
+  const s1 = await sk.mySeeker(dn.id);
+  check("la empresa queda como «empresa», sin datos de contacto en la nota", s1?.active === true && s1.kind === "empresa" && !s1.note?.includes("@"));
+  const [c] = await sql`insert into seeker_contacts (seeker_id, studio_id, message) values (${s1!.id}, ${d.studios.B}, 'Hola') returning id`;
+  check("otra persona no responde por la empresa (forzando el ID)", await err(() => sk.answerOrgContact(E, d.orgs.norte, c.id, true)));
+  await sk.answerOrgContact(P, d.orgs.norte, c.id, true);
+  check("la dueña acepta: queda aceptado y sin crear una conexión de cuenta personal", (await sql`select status, connection_id from seeker_contacts where id = ${c.id}`)[0].status === "aceptado" && !(await sql`select connection_id from seeker_contacts where id = ${c.id}`)[0].connection_id);
+  check("auditado", (await sql`select count(*)::int n from audit_log where actor_id = ${dn.id} and action in ('red.disponible', 'red.contacto_aceptado')`)[0].n >= 2);
+  await sql`delete from seeker_profiles where user_id = ${dn.id}`;
+  void A;
+}
+
 console.log(fails ? `\n${fails} fallas` : "\nTodo bien");
 await sql.end();
 process.exit(fails ? 1 : 0);

@@ -1,7 +1,7 @@
 import "server-only";
-import { and, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db";
-import { fleet_members, fleets, seeker_contacts, seeker_profiles, studios, users } from "@/db/schema";
+import { fleet_members, fleets, memberships, seeker_contacts, seeker_profiles, studios, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { notify } from "@/modules/notifications/server";
@@ -112,6 +112,7 @@ export async function searchSeekers(staff: Staff, f: { tipo?: string; rubro?: st
   const contacted = rows.length ? await db().select().from(seeker_contacts).where(and(eq(seeker_contacts.studio_id, staff.studioId), inArray(seeker_contacts.seeker_id, rows.map((r) => r.id)))) : [];
   const fleetIds = rows.map((r) => r.fleet_id).filter((x): x is string => !!x);
   const members = fleetIds.length ? await db().select({ fleet: fleet_members.fleet_id }).from(fleet_members).where(and(inArray(fleet_members.fleet_id, fleetIds), eq(fleet_members.status, "activo"))) : [];
+  const profile = await getProfile(staff.studioId);
   const list = rows
     .filter((r) => r.user_id !== staff.id)
     .filter((r) => (!f.tipo || r.kind === f.tipo) && (!f.rubro || r.industry === f.rubro) && (!f.provincia || r.province === f.provincia) && (!f.necesidad || r.needs.includes(f.necesidad)))
@@ -126,7 +127,10 @@ export async function searchSeekers(staff: Staff, f: { tipo?: string; rubro?: st
       note: r.note,
       since: r.activated_at,
       contact: contacted.find((c) => c.seeker_id === r.id) ?? null,
-    }));
+      match: matchesProfile(r, profile),
+    }))
+    // Primero los que coinciden con el perfil del estudio (sin pagar nada: es el mismo orden para todos)
+    .sort((a, b) => Number(b.match) - Number(a.match));
   return { issue: null, list };
 }
 
@@ -198,4 +202,58 @@ export async function acceptedContacts(staff: Staff) {
     .where(and(eq(seeker_contacts.studio_id, staff.studioId), eq(seeker_contacts.status, "aceptado")))
     .orderBy(desc(seeker_contacts.decided_at));
   return rows;
+}
+
+type Profile = Awaited<ReturnType<typeof getProfile>>;
+
+/** ¿Coincide con lo que ofrece el estudio? (algún servicio, el rubro o la provincia) */
+export function matchesProfile(r: { needs: string[]; industry: string | null; province: string | null }, p: Profile) {
+  if (!p) return false;
+  return r.needs.some((n) => p.services.includes(n)) || (!!r.industry && p.industries.includes(r.industry)) || (!!r.province && !!p.province && r.province === p.province && p.modality !== "remoto");
+}
+
+/**
+ * Candidatos nuevos para el badge de Comercial: disponibles que coinciden con
+ * el perfil del estudio, que el estudio todavía no contactó y que aparecieron
+ * después de la última vez que miró el listado (o en los últimos 14 días).
+ */
+export async function newCandidates(staff: Staff, seenAt?: string | null) {
+  if (staff.tenantKind !== "studio" || !["dueno", "contador"].includes(staff.role)) return 0;
+  const profile = await getProfile(staff.studioId);
+  if (await visibilityIssue(staff.studioId, profile)) return 0;
+  const since = seenAt && !Number.isNaN(Date.parse(seenAt)) ? new Date(seenAt) : new Date(Date.now() - 14 * 86400_000);
+  const rows = await db().select().from(seeker_profiles).where(and(eq(seeker_profiles.active, true), gt(seeker_profiles.activated_at, since))).limit(300);
+  if (!rows.length) return 0;
+  const contacted = await db().select({ id: seeker_contacts.seeker_id }).from(seeker_contacts).where(and(eq(seeker_contacts.studio_id, staff.studioId), inArray(seeker_contacts.seeker_id, rows.map((r) => r.id))));
+  return rows.filter((r) => r.user_id !== staff.id && !contacted.some((c) => c.id === r.id) && matchesProfile(r, profile)).length;
+}
+
+/** Postulación de una organización (portal): la decide quien la administra */
+async function orgAdmin(me: Person, organizationId: string) {
+  if (me.role !== "cliente" || !UUID.test(organizationId)) throw new SeekerError("Esto es para quien administra la empresa.");
+  const [m] = await db().select({ role: memberships.role }).from(memberships).where(and(eq(memberships.user_id, me.id), eq(memberships.organization_id, organizationId), eq(memberships.status, "activa")));
+  if (!m || !["administrador", "direccion"].includes(m.role)) throw new SeekerError("Solo quien administra la empresa lo decide.");
+}
+
+export async function setOrgSeeker(me: Person, organizationId: string, active: boolean, i: SeekerInput) {
+  await orgAdmin(me, organizationId);
+  const v = { ...clean(i, false), kind: "empresa" };
+  const existing = await mySeeker(me.id);
+  const values = { ...v, active, activated_at: active ? (existing?.active ? existing.activated_at : new Date()) : null };
+  if (existing) await db().update(seeker_profiles).set(values).where(eq(seeker_profiles.id, existing.id));
+  else await db().insert(seeker_profiles).values({ user_id: me.id, ...values });
+  await audit({ studioId: me.studioId, organizationId, actor: me, action: active ? "red.disponible" : "red.no_disponible", entityType: "red_busqueda", metadata: { tipo: "empresa", rubro: v.industry, zona: v.province, necesita: v.needs } });
+}
+
+/** La empresa acepta o rechaza un contacto: al aceptar, el estudio ve sus datos (no hay conexión de cuenta personal) */
+export async function answerOrgContact(me: Person, organizationId: string, contactId: string, accept: boolean) {
+  await orgAdmin(me, organizationId);
+  if (!UUID.test(contactId)) throw new SeekerError("Contacto inválido.");
+  const [r] = await db().select({ c: seeker_contacts }).from(seeker_contacts).innerJoin(seeker_profiles, eq(seeker_profiles.id, seeker_contacts.seeker_id)).where(and(eq(seeker_contacts.id, contactId), eq(seeker_profiles.user_id, me.id)));
+  if (!r) throw new SeekerError("No encontramos ese contacto.");
+  if (r.c.status !== "pendiente") throw new SeekerError("Ya respondiste.");
+  await db().update(seeker_contacts).set({ status: accept ? "aceptado" : "rechazado", decided_at: new Date() }).where(eq(seeker_contacts.id, r.c.id));
+  await audit({ studioId: me.studioId, organizationId, actor: me, action: accept ? "red.contacto_aceptado" : "red.contacto_rechazado", entityType: "red_busqueda", entityId: r.c.id });
+  const staff = await db().select({ id: users.id }).from(users).where(and(eq(users.studioId, r.c.studio_id), inArray(users.role, ["dueno", "contador"]), eq(users.active, true)));
+  await notify(staff.map((u) => u.id), { kind: "aviso", title: accept ? `${me.name} aceptó tu contacto` : "Una empresa del listado no aceptó tu contacto", href: "/admin/comercial/buscar-clientes", refId: r.c.id }).catch(() => undefined);
 }

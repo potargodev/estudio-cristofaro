@@ -3,7 +3,7 @@ titulo: El perfil del estudio en la Red
 resumen: Cómo sumar tu estudio a la Red Contable, verificar la matrícula y recibir pedidos de propuesta; es opcional y viene en Profesional y Avanzado.
 perfiles: [estudio]
 modulo: red_estudios
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [red-contable/resenas, red-contable/buscar-un-estudio, primeros-pasos/planes, flotas/pedir-propuestas]
 ---
 
@@ -48,7 +48,12 @@ El orden es neutral: reseñas, tiempo de primera respuesta a las solicitudes med
 
 ## Buscar clientes
 
-Además de esperar que te encuentren, podés salir a buscar clientes en **Comercial → Buscar clientes**. Ves personas, autónomos, empresas y Flotas que activaron «Disponible, busco contador», con lo que eligieron mostrar (tipo, rubro, tamaño, zona y qué necesitan), **sin nombre ni datos de contacto**.
+Además de esperar que te encuentren, podés salir a buscar clientes en **Comercial → Buscar clientes** (la segunda pestaña). La pantalla tiene dos vistas:
+
+- **Postulaciones:** personas, autónomos, empresas y Flotas que activaron «Disponible, busco contador», con lo que eligieron mostrar (tipo, rubro, tamaño, zona y qué necesitan), **sin nombre ni datos de contacto**. Las que **coinciden con tu perfil** (un servicio, un rubro o tu provincia) van primero y llevan la marca.
+- **Estudios y contadores:** la Red tal como la ve quien busca contador.
+
+Cuando aparecen postulaciones nuevas que coinciden con tu perfil, **Comercial** y la pestaña **Buscar clientes** muestran un número. Se apaga cuando mirás las postulaciones.
 
 - Filtrá por tipo, rubro, provincia y necesidad.
 - Tocá **Contactar** (con un mensaje corto si querés). La persona decide.

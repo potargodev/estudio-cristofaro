@@ -348,8 +348,8 @@ if (stage("6")) {
   await pub.goto(`${BASE}/ayuda/red-de-estudios/buscar-un-estudio`);
   check("la ayuda vieja redirige", pub.url().includes("/ayuda/red-contable/buscar-un-estudio") && (await seen(pub, "Disponible, busco contador")));
   const t = await as(d.cookies.titular);
-  await t.goto(`${BASE}/contador`);
-  await t.getByLabel("Disponible, busco contador").check();
+  await t.goto(`${BASE}/contador/disponible`);
+  await t.getByRole("checkbox", { name: "Disponible, busco contador" }).check();
   await t.locator("select[name=province]").selectOption("Santa Fe");
   await t.locator('input[name=needs][value="monotributo"]').check();
   await t.locator("input[name=note]").fill("Arranco a facturar, mail yo@mail.com");

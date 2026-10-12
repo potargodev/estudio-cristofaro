@@ -5,13 +5,12 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import { ModeBadge } from "@/components/conexiones/ModeBadge";
-import { SeekerForm } from "@/components/red/SeekerForm";
 import { myContacts, mySeeker } from "@/modules/red/seekers";
 import { requirePersonal } from "@/lib/auth";
 import { money } from "@/modules/bitacora/catalog";
 import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { actionsFor, AUTONOMY_LABEL, connectionHistory, currentConnection, disputeMessages, READONLY_DAYS, STATUS_LABEL, surveyDue } from "@/modules/conexiones/server";
-import { acceptInvitationAction, answerInfoAction, autonomyAction, closingClearAction, declineAction, approveActionAction, rejectActionAction, disputeAction, disputeMessageAction, rateAction, skipRatingAction, seekerAction, answerContactAction, rejectContactAction, resolveDisputeAction, scopesAction, signAction, startClosingAction, weeklyAction } from "./actions";
+import { acceptInvitationAction, answerInfoAction, autonomyAction, closingClearAction, declineAction, approveActionAction, rejectActionAction, disputeAction, disputeMessageAction, rateAction, skipRatingAction, answerContactAction, rejectContactAction, resolveDisputeAction, scopesAction, signAction, startClosingAction, weeklyAction } from "./actions";
 import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: { absolute: "Contador · Faro" } };
@@ -447,12 +446,15 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
 
       {titular && (!c || !["activa", "en_cierre", "en_disputa"].includes(c.status)) && (
         <section aria-labelledby="disponible" className={card}>
-          <h2 id="disponible" className="text-lead font-semibold">
+          <h2 id="disponible" className="text-title font-semibold">
             Que los estudios te encuentren
           </h2>
-          <div className="mt-3">
-            <SeekerForm action={seekerAction} seeker={seeker} />
-          </div>
+          <p className="mt-1 text-ui text-muted">
+            {seeker?.active ? "Estás disponible en la Red Contable: los estudios ven lo que elegiste mostrar, sin tu nombre ni tus datos." : "Activá «Disponible, busco contador» y los estudios de la Red te van a poder contactar. Vos decidís a quién responder."}
+          </p>
+          <Link href="/contador/disponible" className="mt-3 inline-flex h-(--control-h) items-center rounded-md border border-navy/30 px-4 text-ui font-medium text-navy hover:border-navy/60 hover:bg-navy-soft">
+            {seeker?.active ? "Ver mi postulación" : "Activar «Disponible, busco contador»"}
+          </Link>
         </section>
       )}
 

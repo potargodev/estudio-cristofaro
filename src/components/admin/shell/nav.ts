@@ -29,7 +29,7 @@ export type NavIcon =
   | "honorarios"
   | "tareas"
   | "avanzado";
-export type BadgeKey = "requests" | "leads" | "obligations" | "approvals";
+export type BadgeKey = "requests" | "leads" | "obligations" | "approvals" | "candidates" | "comercial";
 
 export interface NavItem {
   href: string;
@@ -75,12 +75,12 @@ export interface NavAccess {
 /** Pestañas de Comercial: Consultas, Agenda y Perfil en la Red */
 export const COMERCIAL_TABS: NavItem[] = [
   { href: "/admin/comercial/consultas", label: "Consultas", icon: "consultas", badge: "leads", operatorOnly: true },
+  // Red Contable de doble mano (principios §15), destacada: postulaciones y estudios, con candidatos nuevos
+  { href: "/admin/comercial/buscar-clientes", label: "Buscar clientes", icon: "red", badge: "candidates", operatorOnly: true, module: "red_estudios" },
   { href: "/admin/comercial/agenda", label: "Agenda", icon: "agenda" },
   // Conexión con un contador (principios §7): solicitudes, invitaciones, admisión y calificaciones
   { href: "/admin/comercial/conexiones", label: "Conexiones", icon: "usuarios", operatorOnly: true },
   { href: "/admin/comercial/red", label: "Perfil en la Red", icon: "red", operatorOnly: true, module: "red_estudios" },
-  // Red Contable de doble mano (principios §15): el estudio sale a buscar clientes
-  { href: "/admin/comercial/buscar-clientes", label: "Buscar clientes", icon: "consultas", operatorOnly: true, module: "red_estudios" },
 ];
 
 /** Pestañas de Configuración (una sola entrada del menú, regla 6) */
@@ -111,7 +111,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     title: "Negocio",
     items: [
-      { href: "/admin/comercial", label: "Comercial", icon: "comercial", badge: "leads" },
+      { href: "/admin/comercial", label: "Comercial", icon: "comercial", badge: "comercial" },
       { href: "/admin/honorarios", label: "Honorarios", icon: "honorarios", module: "billing", operatorOnly: true, hideWhenLocked: true },
     ],
   },
@@ -155,6 +155,8 @@ export const BADGE_LABEL: Record<BadgeKey, string> = {
   leads: "consultas nuevas",
   obligations: "vencimientos esta semana",
   approvals: "propuestas para aprobar",
+  candidates: "candidatos nuevos en la Red Contable",
+  comercial: "novedades en Comercial (consultas y candidatos)",
 };
 
 /**

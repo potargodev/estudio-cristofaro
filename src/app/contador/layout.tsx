@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppFrame } from "@/components/app/shell/AppFrame";
+import { ContadorTabs } from "@/components/app/ContadorTabs";
 import { requirePersonal } from "@/lib/auth";
 import { FARO_APP_METADATA } from "@/lib/faro/pwa";
 
@@ -11,7 +12,10 @@ export default async function ContadorLayout({ children }: { children: React.Rea
   await requirePersonal();
   return (
     <AppFrame space="personal">
-      <div className="w-full">{children}</div>
+      <div className="w-full">
+        <ContadorTabs />
+        {children}
+      </div>
     </AppFrame>
   );
 }

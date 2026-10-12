@@ -100,3 +100,29 @@ export function ErrorState({ title = "No pudimos cargar esto", text, action, cla
     </div>
   );
 }
+
+/**
+ * Selector de vistas de una misma pantalla (segmentado): dos o tres maneras de
+ * ver lo mismo. Distinto de las pestañas de sección, que cambian de pantalla.
+ */
+export function ViewSwitch({ label, views, className }: { label: string; views: { href: string; label: string; active: boolean; count?: number; hint?: string }[]; className?: string }) {
+  const on = views.find((v) => v.active);
+  return (
+    <div className={cn("grid gap-2", className)}>
+      <nav aria-label={label} className="inline-flex w-full rounded-md border border-line bg-surface p-1 sm:w-auto sm:self-start">
+        {views.map((v) => (
+          <Link
+            key={v.href}
+            href={v.href}
+            aria-current={v.active ? "page" : undefined}
+            className={cn("flex h-(--control-h-sm) flex-1 items-center justify-center gap-2 rounded-[4px] px-3 text-ui transition-colors sm:flex-none", v.active ? "bg-navy font-semibold text-paper" : "text-muted hover:text-ink")}
+          >
+            {v.label}
+            {!!v.count && <span className={cn("num rounded-md px-1.5 text-caption leading-5", v.active ? "bg-paper/15 text-paper" : "bg-rose-soft text-rose-deep")}>{v.count}</span>}
+          </Link>
+        ))}
+      </nav>
+      {on?.hint && <p className="max-w-3xl text-meta text-muted">{on.hint}</p>}
+    </div>
+  );
+}

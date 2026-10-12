@@ -1988,6 +1988,8 @@ export interface UserPrefs {
   guide?: boolean;
   /** expanded | collapsed (en escritorio, colapsado = barra horizontal de íconos) */
   sidebar?: "expanded" | "collapsed";
+  /** Última vez que el estudio miró las postulaciones de la Red Contable (badge de candidatos nuevos) */
+  redSeenAt?: string;
   /** Vigía: registrar solo los movimientos personales (siempre con Deshacer) */
   copilotAuto?: boolean;
   /** Primeros pasos: el widget del Inicio está oculto */

@@ -5,6 +5,7 @@ import { endAssistedAccess } from "@/app/faro-manager/actions";
 import { portalSignOut, switchOrganization } from "@/app/portal/actions";
 import { GuideHost } from "@/components/app/Guide";
 import { LegalGate } from "@/components/app/LegalGate";
+import { newCandidates } from "@/modules/red/seekers";
 import { Toaster } from "@/components/ui/sonner";
 import { getDb } from "@/db";
 import { approvals, leads, message_reports, obligations, organization_modules, plan_requests, requests, studios } from "@/db/schema";
@@ -57,7 +58,9 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
       db.select({ n: count() }).from(approvals).where(and(eq(approvals.studio_id, user.studioId), eq(approvals.status, "pendiente"), eq(approvals.level, "sensible"))),
       getEntitlements(user.studioId),
     ]);
-    Object.assign(badges, { requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0, approvals: appr?.n ?? 0 });
+    // Red Contable: candidatos nuevos que coinciden con el perfil del estudio
+    const candidates = await newCandidates(user, (await getPrefs(user.id)).redSeenAt).catch(() => 0);
+    Object.assign(badges, { requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0, approvals: appr?.n ?? 0, candidates, comercial: (lead?.n ?? 0) + candidates });
     input.studio = {
       isAdmin: TENANT_OWNERS.includes(user.role),
       isOperator: user.role !== "colaborador",
