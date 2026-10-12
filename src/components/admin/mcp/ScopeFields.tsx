@@ -12,14 +12,14 @@ export function ScopeFields({ modules, orgs, idPrefix = "scope" }: { modules: Re
       <fieldset>
         <legend className="text-ui font-medium text-ink/80">Módulos</legend>
         <label className="mt-2 flex items-center gap-2 text-body">
-          <input type="checkbox" name="modules_all" checked={allModules} onChange={(e) => setAllModules(e.target.checked)} className="size-4 accent-[#1c2235]" />
+          <input type="checkbox" name="modules_all" checked={allModules} onChange={(e) => setAllModules(e.target.checked)} className="size-4 accent-navy" />
           Todos los módulos
         </label>
         {!allModules && (
           <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
             {Object.entries(modules).map(([k, label]) => (
               <label key={k} className="flex items-center gap-2 text-ui">
-                <input type="checkbox" name="modules" value={k} defaultChecked className="size-4 accent-[#1c2235]" />
+                <input type="checkbox" name="modules" value={k} defaultChecked className="size-4 accent-navy" />
                 {label}
               </label>
             ))}
@@ -29,7 +29,7 @@ export function ScopeFields({ modules, orgs, idPrefix = "scope" }: { modules: Re
       <fieldset>
         <legend className="text-ui font-medium text-ink/80">Permisos</legend>
         <label className="mt-2 flex items-start gap-2 text-body">
-          <input type="checkbox" name="can_write" className="mt-1 size-4 accent-[#1c2235]" />
+          <input type="checkbox" name="can_write" className="mt-1 size-4 accent-navy" />
           <span>
             Lectura y escritura
             <span className="block text-meta text-muted">Sin tildar es solo lectura. Con escritura, las acciones sensibles igual quedan en Aprobaciones.</span>
@@ -40,11 +40,11 @@ export function ScopeFields({ modules, orgs, idPrefix = "scope" }: { modules: Re
         <legend className="text-ui font-medium text-ink/80">Organizaciones</legend>
         <div className="mt-2 flex flex-wrap gap-4 text-body">
           <label className="flex items-center gap-2">
-            <input type="radio" name="orgs" value="todas" checked={orgMode === "todas"} onChange={() => setOrgMode("todas")} className="accent-[#1c2235]" />
+            <input type="radio" name="orgs" value="todas" checked={orgMode === "todas"} onChange={() => setOrgMode("todas")} className="accent-navy" />
             Todas
           </label>
           <label className="flex items-center gap-2">
-            <input type="radio" name="orgs" value="algunas" checked={orgMode === "algunas"} onChange={() => setOrgMode("algunas")} className="accent-[#1c2235]" />
+            <input type="radio" name="orgs" value="algunas" checked={orgMode === "algunas"} onChange={() => setOrgMode("algunas")} className="accent-navy" />
             Algunas
           </label>
         </div>
@@ -53,7 +53,7 @@ export function ScopeFields({ modules, orgs, idPrefix = "scope" }: { modules: Re
             {orgs.length === 0 && <p className="text-meta text-muted">No hay organizaciones.</p>}
             {orgs.map((o) => (
               <label key={o.id} className="flex items-center gap-2 py-1 text-ui">
-                <input type="checkbox" name="organization_ids" value={o.id} className="size-4 accent-[#1c2235]" />
+                <input type="checkbox" name="organization_ids" value={o.id} className="size-4 accent-navy" />
                 {o.name}
               </label>
             ))}
@@ -64,7 +64,7 @@ export function ScopeFields({ modules, orgs, idPrefix = "scope" }: { modules: Re
         <label htmlFor={`${idPrefix}-expires`} className="text-ui font-medium text-ink/80">
           Vencimiento
         </label>
-        <select id={`${idPrefix}-expires`} name="expires" defaultValue="90" className="mt-1 h-9 w-full max-w-xs border border-line bg-surface px-2 text-body">
+        <select id={`${idPrefix}-expires`} name="expires" defaultValue="90" className="mt-1 h-(--control-h) w-full max-w-xs border border-line bg-surface px-2 text-body">
           {Object.entries(EXPIRY_LABELS).map(([k, v]) => (
             <option key={k} value={k}>
               {v}

@@ -16,7 +16,7 @@ import { formatDate, formatMoney, formatNumber, formatPeriod, todayAR } from "@/
 
 const field = `mt-1 ${fieldClass}`;
 const lbl = "block text-meta text-muted";
-const card = "rounded-lg border border-line bg-surface p-5";
+const card = "rounded-md border border-line bg-surface p-5";
 const nextMonth = (m: string) => {
   const [y, mm] = m.split("-").map(Number);
   return mm === 12 ? `${y + 1}-01` : `${y}-${String(mm + 1).padStart(2, "0")}`;
@@ -44,7 +44,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
       <Feedback sp={sp} />
 
       {gray && gray.withoutRegime && gray.total > 0 && (
-        <section aria-labelledby="foto" data-zona-gris className="rounded-lg border border-rose/40 bg-rose-soft p-5">
+        <section aria-labelledby="foto" data-zona-gris className="rounded-md border border-rose/40 bg-rose-soft p-5">
           <h2 id="foto" className="flex items-center gap-2 text-lead font-semibold text-ink">
             <Eye className="size-5 text-rose-deep" aria-hidden /> Esto ya es una actividad
           </h2>
@@ -63,11 +63,11 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
       <Derivaciones me={me} volver={`/cajas/${box.id}`} max={1} />
 
       <nav aria-label="Mes" className="flex items-center justify-between gap-2">
-        <Link href={`/cajas/${box.id}?mes=${prevMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-ui">
+        <Link href={`/cajas/${box.id}?mes=${prevMonth(month)}`} className="inline-flex h-(--control-h) items-center gap-1 rounded-md border border-line px-3 text-ui">
           <ChevronLeft className="size-4" aria-hidden /> <span className="sr-only sm:not-sr-only">Anterior</span>
         </Link>
         <p className="text-lead font-medium capitalize text-ink">{formatPeriod(month)}</p>
-        <Link href={`/cajas/${box.id}?mes=${nextMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-ui">
+        <Link href={`/cajas/${box.id}?mes=${nextMonth(month)}`} className="inline-flex h-(--control-h) items-center gap-1 rounded-md border border-line px-3 text-ui">
           <span className="sr-only sm:not-sr-only">Siguiente</span> <ChevronRight className="size-4" aria-hidden />
         </Link>
       </nav>
@@ -145,7 +145,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
         </form>
       </section>
 
-      <section aria-labelledby="movs" className="rounded-lg border border-line bg-surface">
+      <section aria-labelledby="movs" className="rounded-md border border-line bg-surface">
         <h2 id="movs" className="px-5 pt-4 text-lead font-semibold">
           Movimientos de {formatPeriod(month)}
         </h2>
@@ -158,7 +158,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
               const Icon = e.kind === "ingreso" || e.kind === "aporte" ? ArrowDownLeft : ArrowUpRight;
               return (
                 <li key={e.id} className="flex items-center gap-3 px-5 py-3" data-kind={e.kind}>
-                  <Icon className={cn("size-4 shrink-0", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#2f7a4c]" : "text-muted")} aria-hidden />
+                  <Icon className={cn("size-4 shrink-0", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#1f7a43]" : "text-muted")} aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-body text-ink">{e.description}</span>
                     <span className="block text-meta text-muted">
@@ -167,14 +167,14 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
                       {e.source === "bitacora" ? " · movido de lo personal" : ""}
                     </span>
                   </span>
-                  <span className={cn("num shrink-0 text-body", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#2f7a4c]" : "text-ink")}>
+                  <span className={cn("num shrink-0 text-body", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#1f7a43]" : "text-ink")}>
                     {e.kind === "ingreso" || e.kind === "aporte" ? "+" : "−"}
                     {formatMoney(e.amount, e.currency, { decimals: "auto" })}
                   </span>
                   <form action={deleteBoxEntryAction}>
                     {hidden}
                     <input type="hidden" name="id" value={e.id} />
-                    <button type="submit" className="h-9 rounded-md px-2 text-meta text-muted hover:text-danger" aria-label={`Borrar ${e.description}`}>
+                    <button type="submit" className="h-(--control-h) rounded-md px-2 text-meta text-muted hover:text-danger" aria-label={`Borrar ${e.description}`}>
                       Borrar
                     </button>
                   </form>

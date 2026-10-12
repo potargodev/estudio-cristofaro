@@ -6,6 +6,7 @@ import { HelpFeedback } from "@/components/help/HelpFeedback";
 import { HelpMarkdown } from "@/components/help/HelpMarkdown";
 import { articleUrl, categoryName, getArticle, PROFILE_LABELS, relatedOf } from "@/modules/help/catalog";
 import { formatDate } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 type Params = Promise<{ categoria: string; slug: string }>;
 
@@ -31,7 +32,7 @@ export default async function ArticuloPage({ params }: { params: Params }) {
           <ChevronRight className="size-3.5" aria-hidden />
           <span>{categoryName(a.categoria)}</span>
         </nav>
-        <h1 className="mt-3 font-display text-[34px] leading-tight sm:text-[44px]">{a.titulo}</h1>
+        <h1 className={`mt-3 ${pageTitleClass}`}>{a.titulo}</h1>
         <p className="mt-2 text-title text-muted">{a.resumen}</p>
         <p className="mt-4 flex flex-wrap gap-2 text-caption text-muted">
           {a.perfiles.map((p) => (

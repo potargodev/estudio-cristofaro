@@ -17,7 +17,7 @@ import { formatDate } from "@/lib/format";
 export const metadata: Metadata = { title: "Cuenta conectada" };
 
 const field = `mt-1 py-2 ${fieldClass}`;
-const card = "rounded-lg border border-line bg-surface p-5";
+const card = "rounded-md border border-line bg-surface p-5";
 
 /**
  * Cuenta conectada (Organizaciones): el estudio trabaja sobre los datos de la
@@ -73,7 +73,7 @@ export default async function CuentaConectadaPage({ params, searchParams }: { pa
           Mes
           <input type="month" name="mes" defaultValue={month} className={field} />
         </label>
-        <button className="h-10 rounded-md border border-line px-3 text-ui">Ver</button>
+        <button className="h-(--control-h) rounded-md border border-line px-3 text-ui">Ver</button>
       </form>
       <LiveAccount v={v} volver={volver} canAct={operator} />
 

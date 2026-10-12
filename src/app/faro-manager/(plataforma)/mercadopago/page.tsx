@@ -33,7 +33,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 <span>
                   {formatDate(e.created_at, "timestamp")} · {e.account === "faro" ? "Faro" : "estudio"} · {e.topic ?? "—"} {e.data_id ?? ""}
                 </span>
-                <span className={e.result === "rechazado" || e.result === "error" ? "text-[#8f2a1c]" : "text-muted"}>
+                <span className={e.result === "rechazado" || e.result === "error" ? "text-danger" : "text-muted"}>
                   {e.result}
                   {e.error ? ` · ${e.error}` : ""}
                 </span>

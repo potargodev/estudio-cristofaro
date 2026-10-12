@@ -51,7 +51,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             Webhook: <span className="break-all font-mono text-caption text-ink">{getSiteUrl()}/api/whatsapp/webhook</span> · token de verificación <span className="font-mono text-caption text-ink">{a.verify_token}</span>
           </p>
         )}
-        {a?.last_error && <p className="mt-2 text-meta text-[#8f2a1c]">Último error: {a.last_error}</p>}
+        {a?.last_error && <p className="mt-2 text-meta text-danger">Último error: {a.last_error}</p>}
         {a && owner && (
           <div className="mt-3 flex flex-wrap gap-2">
             <form action={syncFaroWaAction}>
@@ -90,7 +90,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 <span>
                   {formatDate(e.created_at, "timestamp")} · {e.account === "faro" ? "Faro" : "estudio"} · {e.topic ?? "—"}
                 </span>
-                <span className={e.result === "rechazado" || e.result === "error" ? "text-[#8f2a1c]" : "text-muted"}>
+                <span className={e.result === "rechazado" || e.result === "error" ? "text-danger" : "text-muted"}>
                   {e.result}
                   {e.error ? ` · ${e.error}` : ""}
                 </span>

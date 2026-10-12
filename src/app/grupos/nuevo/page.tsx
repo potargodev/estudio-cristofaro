@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { NewGroupForm } from "@/components/gastos/NewGroupForm";
 import { requireGastos } from "@/modules/gastos/server/session";
 import { contextOptions } from "@/modules/gastos/server/service";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata = { title: "Nuevo grupo" };
 
@@ -16,7 +17,7 @@ export default async function NuevoGrupo() {
       <Link href="/grupos" className="text-ui text-rose-deep underline-offset-4 hover:underline">
         ← Tus grupos
       </Link>
-      <h1 className="mt-3 font-display text-[28px] leading-tight text-ink sm:text-[32px]">Nuevo grupo</h1>
+      <h1 className={`mt-3 ${pageTitleClass}`}>Nuevo grupo</h1>
       <p className="mb-8 mt-2 text-muted">Después sumás a las personas: con cuenta de Faro o invitadas por un enlace.</p>
       <NewGroupForm contexts={contexts} />
     </>

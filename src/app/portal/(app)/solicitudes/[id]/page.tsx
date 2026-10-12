@@ -13,6 +13,7 @@ import { REQUEST_STATUS, REQUEST_TYPES } from "@/lib/portal-types";
 import { cn } from "@/lib/utils";
 import { replyRequestAsClient } from "../../../actions";
 import { formatDate } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Solicitud" };
 
@@ -39,7 +40,7 @@ export default async function SolicitudPage({
       </Link>
       <div className="mb-6 mt-2 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{r.subject}</h1>
+          <h1 className={pageTitleClass}>{r.subject}</h1>
           <p className="mt-1 text-ui text-muted">{REQUEST_TYPES[r.type]}</p>
         </div>
         <Badge tone={requestTone(r.status)}>{REQUEST_STATUS[r.status]}</Badge>
@@ -48,7 +49,7 @@ export default async function SolicitudPage({
       <ol className="space-y-3">
         {messages.map((m) => (
           <li key={m.id} className={cn("flex", m.from_client ? "justify-end" : "justify-start")}>
-            <div className={cn("max-w-[85%] rounded-lg px-4 py-3", m.from_client ? "bg-navy text-paper" : "border border-line bg-surface")}>
+            <div className={cn("max-w-[85%] rounded-md px-4 py-3", m.from_client ? "bg-navy text-paper" : "border border-line bg-surface")}>
               <p className={cn("text-caption", m.from_client ? "text-paper/70" : "text-muted")}>
                 {m.from_client ? "Vos" : "Estudio Cristofaro"} · {formatDate(m.created_at, "shortTime")}
               </p>

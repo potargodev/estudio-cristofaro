@@ -42,7 +42,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               Monto
               <input name="amount" inputMode="decimal" required className={`${field} w-36`} />
             </label>
-            <select name="op" aria-label="Sumar o sacar" className="h-9 rounded-md border border-line bg-surface px-2 text-ui">
+            <select name="op" aria-label="Sumar o sacar" className="h-(--control-h) rounded-md border border-line bg-surface px-2 text-ui">
               <option value="sumar">Sumar</option>
               <option value="sacar">Sacar</option>
             </select>

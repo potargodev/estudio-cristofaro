@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils";
 export const fieldClass = "block w-full rounded-md border border-line bg-surface px-3 text-ink placeholder:text-(--color-placeholder) focus-visible:border-navy";
 /** Campo en línea (filtros y tablas): mismo estilo, sin ancho completo */
 export const fieldInlineClass = "rounded-md border border-line bg-surface px-3 text-ink placeholder:text-(--color-placeholder) focus-visible:border-navy";
+/** Título de pantalla (Gilda Display, 28 px en el celular y 32 px en escritorio). Lo usa PageHeader;
+ *  las pantallas con un encabezado propio lo toman de acá en vez de escribir el tamaño a mano. */
+export const pageTitleClass = "font-display text-page text-ink";
 /** Etiqueta de un campo */
 export const labelClass = "text-ui font-medium text-ink/80";
 
@@ -115,7 +118,7 @@ export function ViewSwitch({ label, views, className }: { label: string; views: 
             key={v.href}
             href={v.href}
             aria-current={v.active ? "page" : undefined}
-            className={cn("flex h-(--control-h-sm) flex-1 items-center justify-center gap-2 rounded-[4px] px-3 text-ui transition-colors sm:flex-none", v.active ? "bg-navy font-semibold text-paper" : "text-muted hover:text-ink")}
+            className={cn("flex h-(--control-h-sm) flex-1 items-center justify-center gap-2 rounded-md px-3 text-ui transition-colors sm:flex-none", v.active ? "bg-navy font-semibold text-paper" : "text-muted hover:text-ink")}
           >
             {v.label}
             {!!v.count && <span className={cn("num rounded-md px-1.5 text-caption leading-5", v.active ? "bg-paper/15 text-paper" : "bg-rose-soft text-rose-deep")}>{v.count}</span>}

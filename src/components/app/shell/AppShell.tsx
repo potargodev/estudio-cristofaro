@@ -481,7 +481,7 @@ export function AppShell(p: ShellProps) {
             </ol>
           </nav>
           {p.studioAccess && (
-            <button type="button" onClick={() => setSearch(true)} className="hidden h-9 items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-meta text-muted hover:border-muted md:flex md:w-48 xl:w-56" aria-label="Buscar (Ctrl o Cmd + K)">
+            <button type="button" onClick={() => setSearch(true)} className="hidden h-(--control-h) items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-meta text-muted hover:border-muted md:flex md:w-48 xl:w-56" aria-label="Buscar (Ctrl o Cmd + K)">
               <Search className="size-4" aria-hidden />
               <span className="flex-1 text-left">Buscar…</span>
               <kbd className="rounded border border-line px-1 text-micro">⌘K</kbd>
@@ -494,7 +494,7 @@ export function AppShell(p: ShellProps) {
             }}
             data-tour="vigia"
             aria-label={`Vigía${vigiaCount ? ` · ${vigiaCount} ${BADGE_TEXT[p.vigiaBadge]}` : ""}`}
-            className="relative inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-2.5 text-meta font-medium text-paper hover:bg-navy-deep sm:px-3"
+            className="relative inline-flex h-(--control-h) items-center gap-1.5 rounded-md bg-navy px-2.5 text-meta font-medium text-paper hover:bg-navy-deep sm:px-3"
           >
             <WandSparkles className="size-4 text-gold" strokeWidth={1.6} aria-hidden />
             <span className="hidden sm:inline">Vigía</span>

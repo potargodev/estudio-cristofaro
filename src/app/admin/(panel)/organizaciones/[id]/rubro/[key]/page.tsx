@@ -38,7 +38,7 @@ export default async function PreviewRubro({ params, searchParams }: { params: P
       </Link>
       <PageHeader className="mt-4" title={`Rubro: ${p.template.nombre}`} description={`Vista previa de lo que se va a crear en ${p.organization.name}. Todo queda editable.`} />
       {status.state === "en_revision" && (
-        <div role="note" className="mb-6 flex flex-wrap items-start gap-3 rounded-lg border border-[#e3cf9f] bg-[#fbf5e6] p-4 text-ui text-[#7a5410]">
+        <div role="note" className="mb-6 flex flex-wrap items-start gap-3 rounded-md border border-[#e3cf9f] bg-[#fbf5e6] p-4 text-ui text-[#7a5410]">
           <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
           <p className="min-w-0 flex-1">
             <strong className="font-semibold">Plantilla en revisión por el estudio.</strong> Esta plantilla (versión {p.template.version}) es una sugerencia: todavía nadie del estudio la revisó. Los datos normativos marcados &quot;a validar&quot; dependen de la
@@ -48,7 +48,7 @@ export default async function PreviewRubro({ params, searchParams }: { params: P
             <form action={validateTemplateForStudioAction}>
               <input type="hidden" name="key" value={key} />
               <input type="hidden" name="back" value={`/admin/organizaciones/${p.organization.id}/rubro/${key}`} />
-              <button type="submit" className="h-9 rounded-md border border-[#c9a54f] bg-surface px-3 text-meta font-medium text-ink">
+              <button type="submit" className="h-(--control-h) rounded-md border border-[#e3cf9f] bg-surface px-3 text-meta font-medium text-ink">
                 Marcar como validada
               </button>
             </form>
@@ -62,7 +62,7 @@ export default async function PreviewRubro({ params, searchParams }: { params: P
           const list = p.items.filter((i) => i.kind === k);
           if (!list.length) return null;
           return (
-            <section key={k} className="rounded-lg border border-line bg-surface">
+            <section key={k} className="rounded-md border border-line bg-surface">
               <h2 className="border-b border-line px-5 py-3 text-lead font-semibold">
                 {ITEM_KINDS[k]} <span className="text-meta font-normal text-muted">· {list.filter((i) => !i.exists).length} nuevos</span>
               </h2>

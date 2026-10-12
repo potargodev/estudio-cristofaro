@@ -104,7 +104,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
         ),
         days: <span className="tabular text-meta text-ink">{daysLabel(l.stageDays)}</span>,
         next: l.next_action ? (
-          <span className={`block max-w-[16rem] truncate text-meta ${overdue ? "font-medium text-[#8f2a1c]" : "text-ink"}`}>
+          <span className={`block max-w-[16rem] truncate text-meta ${overdue ? "font-medium text-danger" : "text-ink"}`}>
             {l.next_action}
             {l.next_action_at && <span className="tabular"> · {formatDate(l.next_action_at, "short")}</span>}
           </span>
@@ -139,7 +139,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
                 type="search"
                 defaultValue={q}
                 placeholder="Nombre, email, empresa…"
-                className="h-9 w-64 rounded-md border border-line bg-surface pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
+                className="h-(--control-h) w-64 rounded-md border border-line bg-surface pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
               />
             </form>
             <HeaderAction href="/admin/comercial/consultas/nueva" label="Cargar consulta" />
@@ -154,7 +154,7 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
         ]}
       />
       {error ? (
-        <p className="border border-line bg-surface p-4 text-ui text-[#8f2a1c]">No se pudieron cargar las consultas: {error}</p>
+        <p className="border border-line bg-surface p-4 text-ui text-danger">No se pudieron cargar las consultas: {error}</p>
       ) : view === "tablero" ? (
         <LeadBoard leads={rows} />
       ) : (

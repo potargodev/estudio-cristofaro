@@ -26,7 +26,7 @@ export function ObligationsImport() {
           </Label>
           <Input id="import-file" name="file" type="file" accept=".csv,.xlsx" required className="h-auto w-80 max-w-full py-1.5" />
         </div>
-        <Button type="submit" variant="outline" disabled={previewing} className="h-9">
+        <Button type="submit" variant="outline" disabled={previewing}>
           {previewing ? "Leyendo…" : "Ver vista previa"}
         </Button>
         {preview.message && !preview.ok && (
@@ -51,7 +51,7 @@ export function ObligationsImport() {
             </p>
             <form action={confirmAction}>
               <input type="hidden" name="rows" value={JSON.stringify(valid)} />
-              <Button type="submit" disabled={confirming || valid.length === 0} className="h-9">
+              <Button type="submit" disabled={confirming || valid.length === 0}>
                 {confirming ? "Importando…" : `Confirmar e importar ${valid.length}`}
               </Button>
             </form>

@@ -21,7 +21,7 @@ export function SetupForm() {
         <label htmlFor="password" className="block text-ui font-medium">
           Contraseña
         </label>
-        <Input id="password" name="password" type="password" required autoComplete="current-password" className="mt-1 h-11 bg-surface" />
+        <Input id="password" name="password" type="password" required autoComplete="current-password" className="mt-1 h-(--control-h) bg-surface" />
         {setup.message && (
           <p role="alert" className="mt-4 text-ui text-danger">
             {setup.message}
@@ -85,7 +85,7 @@ export function SetupForm() {
           inputMode="numeric"
           autoComplete="one-time-code"
           placeholder="123456"
-          className="mt-2 h-11 bg-surface text-center font-mono text-title tracking-[0.3em]"
+          className="mt-2 h-(--control-h) bg-surface text-center font-mono text-title tracking-[0.3em]"
         />
         {confirm.message && (
           <p role="alert" className="mt-3 text-ui text-danger">

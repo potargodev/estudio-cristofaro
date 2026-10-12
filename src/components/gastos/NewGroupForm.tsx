@@ -81,7 +81,7 @@ export function NewGroupForm({ contexts }: { contexts: { value: string; label: s
           {state.message}
         </p>
       )}
-      <button type="submit" disabled={pending} className="h-12 bg-navy px-6 text-lead text-paper hover:bg-navy-deep disabled:opacity-60 sm:justify-self-start">
+      <button type="submit" disabled={pending} className="h-(--control-h) bg-navy px-6 text-lead text-paper hover:bg-navy-deep disabled:opacity-60 sm:justify-self-start">
         {pending ? "Creando…" : "Crear grupo"}
       </button>
     </form>

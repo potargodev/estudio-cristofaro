@@ -9,6 +9,7 @@ import { DRAFT_NOTICE, isLegalKey, LEGAL_DOCS, legalDoc } from "@/modules/legal/
 import { acceptanceOf } from "@/modules/legal/server";
 import { acceptLegalAction } from "../actions";
 import { formatDate } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 type Params = Promise<{ doc: string }>;
 
@@ -31,13 +32,13 @@ export default async function LegalPage({ params }: { params: Params }) {
         <p role="note" className="inline-block rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-3 py-1.5 text-meta font-medium text-[#7a5410]">
           {DRAFT_NOTICE} · {formatDate(d.fecha, "long")}
         </p>
-        <h1 className="mt-4 font-display text-[34px] leading-tight sm:text-[46px]">{d.titulo}</h1>
+        <h1 className={`mt-4 ${pageTitleClass}`}>{d.titulo}</h1>
         <p className="mt-2 text-ui text-muted">Versión {d.version}</p>
         <div className="mt-6 border-t border-line pt-2">
           <HelpMarkdown text={d.body} />
         </div>
         {user && !user.assisted && (
-          <div className="mt-10 rounded-lg border border-line bg-surface p-5 text-body">
+          <div className="mt-10 rounded-md border border-line bg-surface p-5 text-body">
             {accepted ? (
               <p>Aceptaste esta versión el {formatDate(accepted.accepted_at, "long")}.</p>
             ) : (

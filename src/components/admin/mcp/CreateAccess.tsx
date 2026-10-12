@@ -33,7 +33,7 @@ function CopyButton({ text, label = "Copiar" }: { text: string; label?: string }
 export function CodeLine({ text }: { text: string }) {
   return (
     <div className="flex min-w-0 items-start gap-2">
-      <code className="min-w-0 flex-1 overflow-x-auto whitespace-pre bg-navy-soft px-3 py-2 font-mono text-[12.5px] text-ink">{text}</code>
+      <code className="min-w-0 flex-1 overflow-x-auto whitespace-pre bg-navy-soft px-3 py-2 font-mono text-caption text-ink">{text}</code>
       <CopyButton text={text} />
     </div>
   );
@@ -54,7 +54,7 @@ export function CreateAccess({ modules, orgs, endpoint }: { modules: Record<stri
           <p className="font-medium text-ink">Cualquier cliente MCP (config JSON)</p>
           <CodeLine text={JSON.stringify({ mcpServers: { faro: { type: "http", url: endpoint, headers: { Authorization: `Bearer ${state.token}` } } } }, null, 2)} />
         </div>
-        <Button type="button" variant="outline" className="h-9 w-fit" onClick={() => window.location.reload()}>
+        <Button type="button" variant="outline" className="w-fit" onClick={() => window.location.reload()}>
           Listo, ya lo guardé
         </Button>
       </div>
@@ -71,7 +71,7 @@ export function CreateAccess({ modules, orgs, endpoint }: { modules: Record<stri
           {state.message}
         </p>
       )}
-      <Button type="submit" disabled={pending} className="h-9 w-fit px-4 text-body">
+      <Button type="submit" disabled={pending} className="w-fit px-4 text-body">
         {pending ? "Creando…" : "Crear acceso y ver el token"}
       </Button>
     </form>

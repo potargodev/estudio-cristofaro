@@ -96,7 +96,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                     {r.duplicate && " · ya estaba cargado"}
                   </p>
                 </div>
-                <span className={`num text-ui ${r.kind === "ingreso" ? "text-[#1f6b3d]" : ""}`}>
+                <span className={`num text-ui ${r.kind === "ingreso" ? "text-[#1f5f36]" : ""}`}>
                   {r.kind === "ingreso" ? "+" : "−"}
                   {formatMoney(r.amount, "ARS", { decimals: "auto" })}
                 </span>

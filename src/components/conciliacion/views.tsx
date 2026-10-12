@@ -136,9 +136,9 @@ function RulesSection({ orgId, rules, statement }: { orgId: string; rules: Await
 }
 
 const STATUS: Record<string, { label: string; tone: string }> = {
-  sin_conciliar: { label: "Sin conciliar", tone: "text-[#8f2a1c]" },
+  sin_conciliar: { label: "Sin conciliar", tone: "text-danger" },
   sugerido: { label: "Sugerido", tone: "text-[#7a5410]" },
-  conciliado: { label: "Conciliado", tone: "text-[#1f6b3d]" },
+  conciliado: { label: "Conciliado", tone: "text-[#1f5f36]" },
   sin_factura: { label: "Pago sin factura", tone: "text-muted" },
   ignorado: { label: "Ignorado", tone: "text-muted" },
 };
@@ -168,7 +168,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
       <p className="text-ui text-muted">
         {v.st.bank}
         {v.st.account_label ? ` · ${v.st.account_label}` : ""} · del {formatDate(v.st.period_from, "numeric")} al {formatDate(v.st.period_to, "numeric")} · {v.st.file_name}
-        {v.summary.sinConciliar > 0 && <span className="text-[#8f2a1c]"> · {v.summary.sinConciliar} sin conciliar</span>}
+        {v.summary.sinConciliar > 0 && <span className="text-danger"> · {v.summary.sinConciliar} sin conciliar</span>}
       </p>
       <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {cards.map(([k, val, hint]) => (
@@ -189,7 +189,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
             return (
               <li key={m.id} className="grid gap-2 px-4 py-3" aria-label={m.description}>
                 <div className="flex items-start gap-3">
-                  {m.amount > 0 ? <ArrowDownLeft className="mt-0.5 size-4 shrink-0 text-[#1f6b3d]" aria-hidden /> : <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />}
+                  {m.amount > 0 ? <ArrowDownLeft className="mt-0.5 size-4 shrink-0 text-[#1f5f36]" aria-hidden /> : <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />}
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-ui">{m.description}</p>
                     <p className="text-caption text-muted">
@@ -197,7 +197,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
                       {m.status === "sugerido" && m.match_score && ` (${Math.round(Number(m.match_score) * 100)}%)`}
                     </p>
                   </div>
-                  <span className={`num text-ui ${m.amount > 0 ? "text-[#1f6b3d]" : ""}`}>{formatMoney(m.amount)}</span>
+                  <span className={`num text-ui ${m.amount > 0 ? "text-[#1f5f36]" : ""}`}>{formatMoney(m.amount)}</span>
                 </div>
                 {(m.status === "sugerido" || m.status === "conciliado") && (
                   <p className="pl-7 text-meta">
@@ -222,7 +222,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
                       <input type="hidden" name="statement" value={v.st.id} />
                       <input type="hidden" name="id" value={m.id} />
                       <input type="hidden" name="op" value="conciliar" />
-                      <select name="candidate" aria-label="Elegir comprobante" className="h-9 max-w-[16rem] rounded-md border border-line bg-surface px-2 text-meta">
+                      <select name="candidate" aria-label="Elegir comprobante" className="h-(--control-h) max-w-[16rem] rounded-md border border-line bg-surface px-2 text-meta">
                         {options(m.amount).map((c) => (
                           <option key={c.id} value={c.id}>
                             {label(c.id)}

@@ -36,7 +36,7 @@ export default async function PlantillaPage({ params, searchParams }: { params: 
       <PageHeader level={2} className="mt-4" title={t.nombre} description={`${t.descripcion} · Versión ${t.version} · ${t.estado === "validada" ? `validada por ${t.validado_por?.nombre} (${t.validado_por?.matricula}) el ${t.validado_el}` : "borrador"}`} />
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="grid content-start gap-6">
-          <section className="rounded-lg border border-line bg-surface p-5">
+          <section className="rounded-md border border-line bg-surface p-5">
             <h2 className="text-lead font-semibold">Qué trae</h2>
             <ul className="mt-3 grid gap-1.5 text-ui sm:grid-cols-2">
               {(Object.keys(ITEM_KINDS) as ItemKind[]).map((k) => (
@@ -49,14 +49,14 @@ export default async function PlantillaPage({ params, searchParams }: { params: 
             <p className="mt-3 text-meta text-[#7a5410]">{toValidate} datos normativos marcados &quot;a validar&quot;.</p>
           </section>
           {owner && (
-            <form action={saveTemplateAction} className="grid gap-3 rounded-lg border border-line bg-surface p-5">
+            <form action={saveTemplateAction} className="grid gap-3 rounded-md border border-line bg-surface p-5">
               <h2 className="text-lead font-semibold">Editar (crea la versión {t.version + 1})</h2>
               <input type="hidden" name="key" value={t.clave} />
               <label htmlFor="content" className="text-meta text-muted">
                 Contenido en JSON (se valida con el esquema; versión, estado y validación los maneja Faro)
               </label>
               <textarea id="content" name="content" rows={24} spellCheck={false} defaultValue={JSON.stringify(editable, null, 2)} className="w-full rounded-md border border-line bg-canvas p-3 font-mono text-caption leading-relaxed" />
-              <input name="note" maxLength={300} placeholder="Qué cambió (opcional)" aria-label="Qué cambió" className="h-10 rounded-md border border-line bg-surface px-3 text-ui" />
+              <input name="note" maxLength={300} placeholder="Qué cambió (opcional)" aria-label="Qué cambió" className="h-(--control-h) rounded-md border border-line bg-surface px-3 text-ui" />
               <div>
                 <SubmitButton pendingText="Guardando…">Guardar versión nueva</SubmitButton>
               </div>
@@ -65,20 +65,20 @@ export default async function PlantillaPage({ params, searchParams }: { params: 
         </div>
         <div className="grid content-start gap-6">
           {owner && t.estado !== "validada" && (
-            <form action={validateTemplateAction} className="grid gap-3 rounded-lg border border-line bg-surface p-5">
+            <form action={validateTemplateAction} className="grid gap-3 rounded-md border border-line bg-surface p-5">
               <h2 className="flex items-center gap-2 text-lead font-semibold">
                 <ShieldCheck className="size-4 text-gold-ink" aria-hidden /> Marcar como validada
               </h2>
               <p className="text-meta text-muted">Un contador revisó alícuotas, convenios y regímenes de esta versión.</p>
               <input type="hidden" name="key" value={t.clave} />
-              <input name="name" required minLength={3} placeholder="Nombre y apellido" aria-label="Nombre de quien valida" className="h-10 rounded-md border border-line bg-surface px-3 text-ui" />
-              <input name="license" required minLength={2} placeholder="Matrícula (ej. CPCECABA T° 300 F° 12)" aria-label="Matrícula" className="h-10 rounded-md border border-line bg-surface px-3 text-ui" />
+              <input name="name" required minLength={3} placeholder="Nombre y apellido" aria-label="Nombre de quien valida" className="h-(--control-h) rounded-md border border-line bg-surface px-3 text-ui" />
+              <input name="license" required minLength={2} placeholder="Matrícula (ej. CPCECABA T° 300 F° 12)" aria-label="Matrícula" className="h-(--control-h) rounded-md border border-line bg-surface px-3 text-ui" />
               <div>
                 <SubmitButton pendingText="Validando…">Validar versión {t.version}</SubmitButton>
               </div>
             </form>
           )}
-          <section className="rounded-lg border border-line bg-surface p-5">
+          <section className="rounded-md border border-line bg-surface p-5">
             <h2 className="text-lead font-semibold">Historial de versiones</h2>
             <ul className="mt-3 grid gap-2 text-ui">
               {history.map((h) => (

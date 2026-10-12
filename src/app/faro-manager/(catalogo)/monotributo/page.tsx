@@ -31,7 +31,7 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-body font-semibold">
                 Vigente desde el {formatDate(s.valid_from, "numeric")} ·{" "}
-                <span className={s.status === "validada" ? "text-[#1f6b3d]" : "text-[#7a5410]"}>{s.status === "validada" ? "validada" : "a validar"}</span>
+                <span className={s.status === "validada" ? "text-[#1f5f36]" : "text-[#7a5410]"}>{s.status === "validada" ? "validada" : "a validar"}</span>
               </p>
               {me.faroRole === "faro_owner" && scales.length > 1 && (
                 <form action={deleteScaleAction}>
@@ -79,18 +79,18 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
           <p className="text-body font-semibold sm:col-span-2">Cargar o actualizar una escala</p>
           <label className="text-meta">
             Vigente desde
-            <input name="valid_from" type="date" required className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3" />
+            <input name="valid_from" type="date" required className="mt-1 h-(--control-h) w-full rounded-md border border-line bg-surface px-3" />
           </label>
           <label className="text-meta">
             Estado
-            <select name="status" defaultValue="a_validar" className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-2">
+            <select name="status" defaultValue="a_validar" className="mt-1 h-(--control-h) w-full rounded-md border border-line bg-surface px-2">
               <option value="a_validar">A validar</option>
               <option value="validada">Validada contra la fuente oficial</option>
             </select>
           </label>
           <label className="text-meta sm:col-span-2">
             Fuente
-            <input name="source" placeholder="URL o resolución de ARCA" className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3" />
+            <input name="source" placeholder="URL o resolución de ARCA" className="mt-1 h-(--control-h) w-full rounded-md border border-line bg-surface px-3" />
           </label>
           <label className="text-meta sm:col-span-2">
             Categorías (una por línea: letra;tope anual;superficie;energía;alquiler;cuota servicios;cuota bienes)
@@ -98,7 +98,7 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
           </label>
           <label className="text-meta sm:col-span-2">
             Notas
-            <input name="notes" className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3" />
+            <input name="notes" className="mt-1 h-(--control-h) w-full rounded-md border border-line bg-surface px-3" />
           </label>
           <div>
             <SubmitButton pendingText="Guardando…">Guardar escala</SubmitButton>

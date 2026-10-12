@@ -80,7 +80,7 @@ export function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedScope; 
               return (
                 <li key={d.id}>
                   <Link href={`${r.base}/${d.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-canvas">
-                    {warn ? <AlertTriangle className="size-4 shrink-0 text-[#b7791f]" aria-hidden /> : <CheckCircle2 className="size-4 shrink-0 text-[#1f6b3d]" aria-hidden />}
+                    {warn ? <AlertTriangle className="size-4 shrink-0 text-[#7a5410]" aria-hidden /> : <CheckCircle2 className="size-4 shrink-0 text-[#1f5f36]" aria-hidden />}
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-ui">{title(d)}</p>
                       <p className="text-caption text-muted">
@@ -105,7 +105,7 @@ export function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedScope; 
               <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-ui">{d.file_name}</p>
-                  <p className="text-caption text-[#8f2a1c]">{d.error}</p>
+                  <p className="text-caption text-danger">{d.error}</p>
                 </div>
                 {r.scope.canConfirm && (
                   <form action={discardDocAction}>
@@ -164,8 +164,8 @@ export function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedScope; 
 }
 
 const CHECK: Record<string, { label: string; tone: string }> = {
-  ok: { label: "válido", tone: "text-[#1f6b3d]" },
-  error: { label: "con error", tone: "text-[#8f2a1c]" },
+  ok: { label: "válido", tone: "text-[#1f5f36]" },
+  error: { label: "con error", tone: "text-danger" },
   sin_dato: { label: "sin dato", tone: "text-muted" },
   no_verificado: { label: "sin verificar", tone: "text-muted" },
 };
@@ -198,7 +198,7 @@ export function LecturaReview({ r, d, sp }: { r: ResolvedScope; d: SmartDoc; sp:
         {d.confidence && ` · confianza ${Math.round(Number(d.confidence) * 100)}%`}
       </p>
       {d.duplicate_of && (
-        <p role="alert" className="flex gap-2 rounded-md border border-[#ecd6a8] bg-[#fbf3e2] px-4 py-3 text-ui text-[#7a5410]">
+        <p role="alert" className="flex gap-2 rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-3 text-ui text-[#7a5410]">
           <Copy className="mt-0.5 size-4 shrink-0" aria-hidden /> Parece el mismo comprobante que{" "}
           <Link href={`${r.base}/${d.duplicate_of}`} className="underline">
             otro ya leído
@@ -221,7 +221,7 @@ export function LecturaReview({ r, d, sp }: { r: ResolvedScope; d: SmartDoc; sp:
             Totales: <span className={CHECK[v.totales]?.tone}>{CHECK[v.totales]?.label}</span>
           </p>
           {v.mensajes.map((m) => (
-            <p key={m} className="flex gap-1.5 text-meta text-[#8f2a1c]">
+            <p key={m} className="flex gap-1.5 text-meta text-danger">
               <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden /> {m}
             </p>
           ))}
@@ -279,7 +279,7 @@ export function LecturaReview({ r, d, sp }: { r: ResolvedScope; d: SmartDoc; sp:
           <SubmitButton variant="danger" pendingText="…">Descartar</SubmitButton>
         </form>
       )}
-      {d.status === "error" && <p className="text-ui text-[#8f2a1c]">{d.error}</p>}
+      {d.status === "error" && <p className="text-ui text-danger">{d.error}</p>}
     </div>
   );
 }

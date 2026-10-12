@@ -42,7 +42,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
           const href = b.kind === "personal" ? "/bitacora" : `/cajas/${b.id}`;
           return (
             <li key={b.id}>
-              <Link href={href} data-caja={b.kind} className="flex h-full flex-col gap-3 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
+              <Link href={href} data-caja={b.kind} className="flex h-full flex-col gap-3 rounded-md border border-line bg-surface p-5 transition-colors hover:border-navy">
                 <span className="flex items-center gap-3">
                   <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" />
                   <span className="min-w-0">
@@ -66,7 +66,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
           );
         })}
         {!business && (
-          <li className="flex flex-col gap-3 rounded-lg border border-dashed border-line bg-surface p-5">
+          <li className="flex flex-col gap-3 rounded-md border border-dashed border-line bg-surface p-5">
             <span className="flex items-center gap-2 text-lead font-medium text-ink">
               <Briefcase className="size-5 text-rose-deep" aria-hidden /> Caja de negocio
             </span>
@@ -79,7 +79,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
           </li>
         )}
         <li>
-          <Link href="/cajas/nueva" className="flex h-full min-h-28 items-center justify-center gap-2 rounded-lg border border-dashed border-line bg-surface p-5 text-body font-medium text-rose-deep hover:border-navy">
+          <Link href="/cajas/nueva" className="flex h-full min-h-28 items-center justify-center gap-2 rounded-md border border-dashed border-line bg-surface p-5 text-body font-medium text-rose-deep hover:border-navy">
             <Plus className="size-5" aria-hidden /> Caja compartida
             <HeartHandshake className="size-5" aria-hidden />
           </Link>
@@ -87,7 +87,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
       </ul>
 
       {hints.length > 0 && (
-        <section aria-labelledby="parece" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
+        <section aria-labelledby="parece" className="rounded-md border border-rose/40 bg-rose-soft p-5">
           <h2 id="parece" className="flex items-center gap-2 text-lead font-semibold text-ink">
             <Lightbulb className="size-5 text-rose-deep" aria-hidden /> Esto parece de tu negocio
           </h2>
@@ -109,7 +109,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
                   </form>
                   <form action={dismissHintAction}>
                     <input type="hidden" name="id" value={entry.id} />
-                    <button type="submit" className="h-10 rounded-md px-3 text-meta text-muted hover:text-ink">
+                    <button type="submit" className="h-(--control-h) rounded-md px-3 text-meta text-muted hover:text-ink">
                       Es personal
                     </button>
                   </form>

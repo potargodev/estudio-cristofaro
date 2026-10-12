@@ -27,7 +27,7 @@ export function AuthShell({
     <div className="grid min-h-dvh place-items-center bg-navy-deep px-4 py-10" style={vars ? (vars as React.CSSProperties) : undefined}>
       <div className={wide ? "w-full max-w-lg" : "w-full max-w-sm"}>
         {brand === "faro" && <FaroLogo className="mb-6" />}
-        <div className="app-ui rounded-lg border-t-2 border-rose-light bg-paper p-7 shadow-brand-lg">
+        <div className="app-ui rounded-md border-t-2 border-rose-light bg-paper p-7 shadow-brand-lg">
           <div className="mb-6 flex items-center gap-2.5">
             {brand === "studio" && logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element

@@ -174,7 +174,7 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-meta text-muted">Gasto estimado este mes</p>
-              <p className="num text-[36px] leading-none text-ink">{formatUsd(spend.usd, spend.usd < 1 ? 4 : 2)}</p>
+              <p className="num text-metric text-ink">{formatUsd(spend.usd, spend.usd < 1 ? 4 : 2)}</p>
               <p className="mt-1 text-meta text-muted">
                 {formatNumber(spend.tokens)} tokens{budget ? ` · límite ${formatUsd(budget, budget < 1 ? 4 : 2)}` : " · sin límite"}
               </p>

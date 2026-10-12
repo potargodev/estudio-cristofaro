@@ -20,16 +20,16 @@ function Metric({ label, value, hint, icon: Icon, href }: { label: string; value
     <>
       <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" strokeWidth={1.6} aria-hidden />
       <p className="mt-4 text-ui font-medium text-muted">{label}</p>
-      <p className="mt-1 num text-[44px] leading-none text-ink">{value}</p>
+      <p className="mt-1 num text-metric text-ink">{value}</p>
       {hint && <p className="mt-2 text-meta text-muted">{hint}</p>}
     </>
   );
   return href ? (
-    <Link href={href} className="block rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
+    <Link href={href} className="block rounded-md border border-line bg-surface p-5 transition-colors hover:border-muted">
       {body}
     </Link>
   ) : (
-    <div className="rounded-lg border border-line bg-surface p-5">{body}</div>
+    <div className="rounded-md border border-line bg-surface p-5">{body}</div>
   );
 }
 
@@ -94,7 +94,7 @@ export default async function FaroResumen() {
         <Metric icon={ClipboardList} label="Pedidos de plan" value={pending?.n ?? 0} hint="Pendientes de responder" href="/faro-manager/pedidos" />
       </section>
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <section className="rounded-lg border border-line bg-surface p-5">
+        <section className="rounded-md border border-line bg-surface p-5">
           <h2 className="text-title font-semibold">Tenants por plan</h2>
           <ul className="mt-4 grid gap-2 text-ui">
             {plans.map((p) => {
@@ -110,7 +110,7 @@ export default async function FaroResumen() {
             })}
           </ul>
         </section>
-        <section className="rounded-lg border border-line bg-surface p-5">
+        <section className="rounded-md border border-line bg-surface p-5">
           <h2 className="text-title font-semibold">Uso de módulos</h2>
           <p className="text-meta text-muted">Tenants que lo tienen activo (por plan u override).</p>
           <ul className="mt-4 grid gap-2.5 text-ui">

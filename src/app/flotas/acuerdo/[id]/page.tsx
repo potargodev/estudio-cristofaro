@@ -8,6 +8,7 @@ import { BELOW_MIN_NOTICE_DAYS, INFORMAL_NOTICE, profileLabel } from "@/modules/
 import { FleetError, proposalForMember } from "@/modules/flotas/server";
 import { signAgreementAction } from "../../actions";
 import { formatAmount } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Tu acuerdo de servicio" };
 
@@ -28,11 +29,11 @@ export default async function AcuerdoPage({ params, searchParams }: { params: Pr
       <Link href={`/flotas/${x.fleet.id}`} className="text-meta text-muted hover:text-ink">
         ← {x.fleet.name}
       </Link>
-      <h1 className="mt-3 font-display text-[28px] leading-tight text-ink sm:text-[32px]">Acuerdo de servicio con {x.studio}</h1>
+      <h1 className={`mt-3 ${pageTitleClass}`}>Acuerdo de servicio con {x.studio}</h1>
       <p className="mt-2 text-body text-muted">
         Es un acuerdo <strong className="font-semibold text-ink">individual</strong> entre vos y el estudio. La Flota no firma nada ni tiene un pozo común.
       </p>
-      <article className="mt-6 grid gap-4 rounded-lg border border-line bg-surface p-5 text-body">
+      <article className="mt-6 grid gap-4 rounded-md border border-line bg-surface p-5 text-body">
         <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-[180px_1fr]">
           <dt className="text-muted">Partes</dt>
           <dd>
@@ -68,7 +69,7 @@ export default async function AcuerdoPage({ params, searchParams }: { params: Pr
           </label>
           <label className="text-meta text-muted">
             Firmá escribiendo tu nombre completo ({u.name})
-            <input name="signed_name" required autoComplete="name" className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-body text-ink" />
+            <input name="signed_name" required autoComplete="name" className="mt-1.5 h-(--control-h) w-full rounded-md border border-line bg-surface px-3 text-body text-ink" />
           </label>
           <div>
             <SubmitButton pendingText="Firmando…">Firmar mi acuerdo</SubmitButton>

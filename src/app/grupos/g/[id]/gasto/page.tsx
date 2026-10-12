@@ -4,6 +4,7 @@ import { ExpenseForm } from "@/components/gastos/ExpenseForm";
 import { requireGastos } from "@/modules/gastos/server/session";
 import { receiptReadingAvailable } from "@/modules/gastos/server/receipt";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata = { title: "Agregar gasto" };
 
@@ -23,7 +24,7 @@ export default async function NuevoGasto({ params }: { params: Promise<{ id: str
       <Link href={`/grupos/g/${v.group.id}`} className="text-ui text-rose-deep underline-offset-4 hover:underline">
         ← {v.group.name}
       </Link>
-      <h1 className="mb-6 mt-3 font-display text-[28px] leading-tight text-ink sm:text-[32px]">Agregar gasto</h1>
+      <h1 className={`mb-6 mt-3 ${pageTitleClass}`}>Agregar gasto</h1>
       <ExpenseForm
         groupId={v.group.id}
         members={v.members.map((m) => ({ id: m.id, name: m.name }))}

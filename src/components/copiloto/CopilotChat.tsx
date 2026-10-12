@@ -63,9 +63,9 @@ function CardForm({ action, id, children, className }: { action: (p: CardState, 
 function Card({ p, categories }: { p: ChatProposal; categories: { id: string; name: string }[] }) {
   const [editing, setEditing] = useState(false);
   const d = p.data as Record<string, string | number | null>;
-  const btn = "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-meta font-medium";
+  const btn = "inline-flex h-(--control-h) items-center gap-1.5 rounded-md px-3 text-meta font-medium";
   return (
-    <div className={cn("mt-2 rounded-lg border bg-surface p-3", p.status === "propuesta" ? "border-rose-light" : "border-line", (p.status === "deshecha" || p.status === "descartada") && "opacity-60")}>
+    <div className={cn("mt-2 rounded-md border bg-surface p-3", p.status === "propuesta" ? "border-rose-light" : "border-line", (p.status === "deshecha" || p.status === "descartada") && "opacity-60")}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-micro uppercase tracking-[0.12em] text-muted">{p.title.startsWith("Negocio ·") ? "Caja de negocio" : (TOOL_LABEL[p.tool] ?? "Registro")}</p>
@@ -195,10 +195,10 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
           </label>
           <input type="hidden" name="note" value={String(d.note ?? "")} />
           <div className="col-span-2 flex gap-2">
-            <button type="submit" className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-meta font-medium text-paper">
+            <button type="submit" className="inline-flex h-(--control-h) items-center rounded-md bg-navy px-3 text-meta font-medium text-paper">
               {p.status === "propuesta" ? "Guardar y confirmar" : "Guardar"}
             </button>
-            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-9 items-center rounded-md border border-line px-3 text-meta">
+            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-(--control-h) items-center rounded-md border border-line px-3 text-meta">
               Cancelar
             </button>
           </div>
@@ -220,10 +220,10 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
           </label>
           <p className="col-span-2">El reparto se recalcula en la misma proporción. Para cambiar quién participa, editalo después en el grupo.</p>
           <div className="col-span-2 flex gap-2">
-            <button type="submit" className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-meta font-medium text-paper" onClick={() => setTimeout(() => setEditing(false), 400)}>
+            <button type="submit" className="inline-flex h-(--control-h) items-center rounded-md bg-navy px-3 text-meta font-medium text-paper" onClick={() => setTimeout(() => setEditing(false), 400)}>
               Actualizar
             </button>
-            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-9 items-center rounded-md border border-line px-3 text-meta">
+            <button type="button" onClick={() => setEditing(false)} className="inline-flex h-(--control-h) items-center rounded-md border border-line px-3 text-meta">
               Cancelar
             </button>
           </div>
@@ -245,12 +245,12 @@ function Bubble({ m, categories }: { m: ChatMessage; categories: { id: string; n
           </span>
         )}
         <div className="min-w-0">
-          <div className={cn("rounded-2xl px-3.5 py-2.5 text-body leading-snug", mine ? "rounded-br-md bg-navy text-paper" : "rounded-bl-md border border-line bg-surface text-ink")}>
+          <div className={cn("rounded-md px-3.5 py-2.5 text-body leading-snug", mine ? "rounded-br-xs bg-navy text-paper" : "rounded-bl-xs border border-line bg-surface text-ink")}>
             {file && m.kind === "audio" && <audio controls preload="none" src={file} className="mb-1 h-10 w-60 max-w-full" aria-label="Audio que mandaste" />}
             {file && m.kind === "imagen" && (
               <a href={file} target="_blank" rel="noreferrer">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={file} alt="Imagen que mandaste" className="mb-1 max-h-60 rounded-lg object-cover" />
+                <img src={file} alt="Imagen que mandaste" className="mb-1 max-h-60 rounded-md object-cover" />
               </a>
             )}
             {file && m.kind === "pdf" && (
@@ -448,7 +448,7 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
         ))}
       </ol>
       <div ref={end} />
-      <div className={cn("sticky z-20 -mx-4 border-t border-line bg-canvas/95 px-4 py-2.5 backdrop-blur", embedded ? "bottom-0 pb-[calc(0.625rem+env(safe-area-inset-bottom))]" : "bottom-[var(--app-bottom,0px)] sm:-mx-6 sm:px-6 lg:bottom-0 lg:mx-0 lg:rounded-lg lg:border lg:px-3")}>
+      <div className={cn("sticky z-20 -mx-4 border-t border-line bg-canvas/95 px-4 py-2.5 backdrop-blur", embedded ? "bottom-0 pb-[calc(0.625rem+env(safe-area-inset-bottom))]" : "bottom-[var(--app-bottom,0px)] sm:-mx-6 sm:px-6 lg:bottom-0 lg:mx-0 lg:rounded-md lg:border lg:px-3")}>
         {error && (
           <p role="alert" className="mb-2 text-meta text-danger">
             {error}
@@ -466,7 +466,7 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
           <div className="flex items-center gap-3" role="status">
             <span className="size-3 animate-pulse rounded-full bg-danger motion-reduce:animate-none" aria-hidden />
             <span className="flex-1 text-body tabular-nums">Grabando… {elapsed}s · soltá para mandar</span>
-            <button type="button" onClick={() => stopRec(true)} className="h-10 rounded-md border border-line px-3 text-meta">
+            <button type="button" onClick={() => stopRec(true)} className="h-(--control-h) rounded-md border border-line px-3 text-meta">
               Cancelar
             </button>
             <button type="button" onClick={() => stopRec(false)} aria-label="Terminar y mandar" className="grid size-11 place-items-center rounded-full bg-navy text-paper">
@@ -506,7 +506,7 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
               rows={1}
               maxLength={2000}
               placeholder="Contame un gasto…"
-              className="max-h-32 min-h-11 flex-1 resize-none rounded-3xl border border-line bg-surface px-4 py-2.5 text-body text-ink placeholder:text-muted focus:border-navy focus:outline-none"
+              className="max-h-32 min-h-11 flex-1 resize-none rounded-md border border-line bg-surface px-4 py-2.5 text-body text-ink placeholder:text-muted focus:border-navy focus:outline-none"
             />
             {text.trim() || file ? (
               <button type="submit" disabled={sending} aria-label="Mandar" className="grid size-11 shrink-0 place-items-center rounded-full bg-navy text-paper disabled:opacity-60">

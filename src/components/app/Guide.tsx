@@ -149,7 +149,7 @@ function TourOverlay({ tour, onEnd }: { tour: Tour; onEnd: () => void }) {
       ) : (
         <div aria-hidden className="fixed inset-0 bg-night/55" />
       )}
-      <div ref={card} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="tour-titulo" aria-describedby="tour-texto" className="app-ui fixed rounded-lg border border-line bg-surface p-5 text-ink shadow-overlay outline-none motion-safe:transition-[top,left] motion-safe:duration-200" style={style}>
+      <div ref={card} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="tour-titulo" aria-describedby="tour-texto" className="app-ui fixed rounded-md border border-line bg-surface p-5 text-ink shadow-overlay outline-none motion-safe:transition-[top,left] motion-safe:duration-200" style={style}>
         <p className="text-caption text-muted">
           Paso {i + 1} de {tour.steps.length}
         </p>
@@ -165,11 +165,11 @@ function TourOverlay({ tour, onEnd }: { tour: Tour; onEnd: () => void }) {
           </button>
           <div className="flex gap-2">
             {i > 0 && (
-              <button type="button" onClick={() => setI(i - 1)} className="h-9 rounded-md border border-line px-3 text-ui hover:border-muted">
+              <button type="button" onClick={() => setI(i - 1)} className="h-(--control-h) rounded-md border border-line px-3 text-ui hover:border-muted">
                 Atrás
               </button>
             )}
-            <button type="button" onClick={() => (last ? onEnd() : setI(i + 1))} className="h-9 rounded-md bg-navy px-4 text-ui font-medium text-paper hover:bg-night">
+            <button type="button" onClick={() => (last ? onEnd() : setI(i + 1))} className="h-(--control-h) rounded-md bg-navy px-4 text-ui font-medium text-paper hover:bg-night">
               {last ? "Listo" : "Siguiente"}
             </button>
           </div>
@@ -183,7 +183,7 @@ function TourOverlay({ tour, onEnd }: { tour: Tour; onEnd: () => void }) {
 export function HelpLink({ className, compact }: { className?: string; compact?: boolean }) {
   const pathname = usePathname();
   return (
-    <Link href={helpFor(pathname)} data-tour="ayuda" className={cn("inline-flex h-9 items-center gap-1.5 px-2.5 text-meta", className)} aria-label="Ayuda sobre esta pantalla" title="Ayuda sobre esta pantalla">
+    <Link href={helpFor(pathname)} data-tour="ayuda" className={cn("inline-flex h-(--control-h) items-center gap-1.5 px-2.5 text-meta", className)} aria-label="Ayuda sobre esta pantalla" title="Ayuda sobre esta pantalla">
       <CircleHelp className="size-4" aria-hidden />
       <span className={cn(compact ? "sr-only" : "hidden lg:inline")}>Ayuda</span>
     </Link>

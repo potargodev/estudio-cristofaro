@@ -49,7 +49,7 @@ export default async function RubrosPage({ searchParams }: { searchParams: Promi
                     {st.state === "validada_estudio" ? (
                       <>
                         <input type="hidden" name="undo" value="1" />
-                        <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
+                        <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-meta hover:border-muted">
                           Quitar validación
                         </button>
                       </>

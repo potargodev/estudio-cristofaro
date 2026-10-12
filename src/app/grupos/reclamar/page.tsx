@@ -6,6 +6,7 @@ import { googleEnabled } from "@/lib/auth-server";
 import { getSessionUser } from "@/lib/auth";
 import { GUEST_COOKIE, guestByToken } from "@/modules/gastos/server/actor";
 import { claimGuestAction } from "../invitacion-actions";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Guardá el grupo en tu cuenta", robots: { index: false, follow: false } };
 
@@ -18,9 +19,9 @@ export default async function ClaimPage({ searchParams }: { searchParams: Promis
   if (!g)
     return (
       <div className="mx-auto max-w-md pt-6">
-        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">No hay un grupo para guardar</h1>
+        <h1 className={pageTitleClass}>No hay un grupo para guardar</h1>
         <p className="mt-3 text-muted">Abrí primero el enlace personal que te pasaron y después volvé acá.</p>
-        <Link href="/grupos" className="mt-6 inline-flex h-11 items-center rounded-md bg-navy px-5 text-paper">
+        <Link href="/grupos" className="mt-6 inline-flex h-(--control-h) items-center rounded-md bg-navy px-5 text-paper">
           Ir a mis grupos
         </Link>
       </div>
@@ -28,7 +29,7 @@ export default async function ClaimPage({ searchParams }: { searchParams: Promis
   return (
     <div className="mx-auto grid max-w-md gap-6 pt-2">
       <header>
-        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Guardá el grupo en tu cuenta</h1>
+        <h1 className={pageTitleClass}>Guardá el grupo en tu cuenta</h1>
         <p className="mt-2 text-muted">Entrás como {g.name}. Con una cuenta, ves el grupo desde cualquier dispositivo y tus gastos se suman a tu Bitácora.</p>
       </header>
       {sp.error && (
@@ -38,7 +39,7 @@ export default async function ClaimPage({ searchParams }: { searchParams: Promis
       )}
       {user ? (
         <form action={claimGuestAction} className="grid gap-3">
-          <button className="inline-flex h-12 items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Guardar en la cuenta de {user.name}</button>
+          <button className="inline-flex h-(--control-h) items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Guardar en la cuenta de {user.name}</button>
           <p className="text-meta text-muted">Tus gastos y saldos en el grupo quedan igual.</p>
         </form>
       ) : (

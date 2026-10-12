@@ -116,7 +116,7 @@ export default async function McpExternoPage({ searchParams }: { searchParams: P
                   </div>
                 )}
                 <label className="mt-4 flex items-center gap-2 text-body">
-                  <input type="checkbox" name="active" defaultChecked={c.status === "activa"} className="size-4 accent-[#1c2235]" />
+                  <input type="checkbox" name="active" defaultChecked={c.status === "activa"} className="size-4 accent-navy" />
                   Sumar estas herramientas al Asistente
                 </label>
                 <div className="mt-3">

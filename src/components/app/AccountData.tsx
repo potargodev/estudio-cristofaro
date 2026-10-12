@@ -4,7 +4,7 @@ import { requestAccountClosureAction } from "@/app/actions/account";
 /** Mis datos: exportarlos y pedir la baja de la cuenta (términos §10, Ley 25.326) */
 export function AccountData({ status }: { status?: string }) {
   return (
-    <section aria-labelledby="mis-datos" className="rounded-lg border border-line bg-surface p-5">
+    <section aria-labelledby="mis-datos" className="rounded-md border border-line bg-surface p-5">
       <h2 id="mis-datos" className="text-title font-semibold text-ink">
         Tus datos
       </h2>
@@ -12,7 +12,7 @@ export function AccountData({ status }: { status?: string }) {
       {status === "1" && <p role="status" className="mt-3 rounded-md bg-navy-soft px-3 py-2 text-ui">Recibimos tu pedido de baja. Te escribimos para confirmarlo; antes podés descargar tus datos.</p>}
       {status === "error" && <p role="alert" className="mt-3 text-ui text-danger">Confirmá que querés dar de baja la cuenta.</p>}
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- ruta /api (descarga u OAuth): necesita navegación completa */}
-      <a href="/api/cuenta/exportar" className="mt-4 inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-ui font-medium hover:border-muted">
+      <a href="/api/cuenta/exportar" className="mt-4 inline-flex h-(--control-h) items-center gap-2 rounded-md border border-line px-4 text-ui font-medium hover:border-muted">
         <Download className="size-4" aria-hidden /> Descargar mis datos
       </a>
       <details className="mt-4">
@@ -26,7 +26,7 @@ export function AccountData({ status }: { status?: string }) {
             <input type="checkbox" name="confirm" required className="mt-0.5 size-4 accent-navy" /> Quiero dar de baja mi cuenta. Entiendo que después se borran mis datos, salvo lo que la ley obliga a conservar.
           </label>
           <div>
-            <button type="submit" className="inline-flex h-10 items-center gap-2 rounded-md border border-danger/40 px-4 text-ui font-medium text-danger hover:bg-danger/10">
+            <button type="submit" className="inline-flex h-(--control-h) items-center gap-2 rounded-md border border-danger/40 px-4 text-ui font-medium text-danger hover:bg-danger/10">
               <LogOut className="size-4" aria-hidden /> Pedir la baja
             </button>
           </div>

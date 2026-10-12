@@ -37,7 +37,7 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
 
-      <section aria-labelledby="invitar" className="rounded-lg border border-line bg-surface p-5">
+      <section aria-labelledby="invitar" className="rounded-md border border-line bg-surface p-5">
         <h3 id="invitar" className="flex items-center gap-2 text-lead font-semibold">
           <UserPlus className="size-5 text-rose-deep" aria-hidden /> Invitar a un cliente
         </h3>
@@ -59,7 +59,7 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
         const rows = list.filter((r) => g.states.includes(r.c.status));
         if (!rows.length) return null;
         return (
-          <section key={g.title} aria-label={g.title} className="rounded-lg border border-line bg-surface">
+          <section key={g.title} aria-label={g.title} className="rounded-md border border-line bg-surface">
             <h3 className="px-5 pt-4 text-body font-semibold">
               {g.title} <span className="font-normal text-muted">· {rows.length}</span>
             </h3>
@@ -83,7 +83,7 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
       })}
       {list.length === 0 && <p className="text-ui text-muted">Todavía no hay conexiones. Llegan desde la Red Contable o invitando a tus clientes.</p>}
 
-      <section aria-labelledby="calificaciones" className="rounded-lg border border-line bg-surface p-5">
+      <section aria-labelledby="calificaciones" className="rounded-md border border-line bg-surface p-5">
         <h3 id="calificaciones" className="flex items-center gap-2 text-lead font-semibold">
           <Star className="size-5 text-rose-deep" aria-hidden /> Tus calificaciones
         </h3>

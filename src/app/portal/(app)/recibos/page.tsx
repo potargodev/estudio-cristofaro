@@ -53,7 +53,7 @@ export default async function MisRecibos({ searchParams }: { searchParams: Promi
                       <input type="hidden" name="decision" value="no_conforme" />
                       <label className="text-meta text-muted">
                         Motivo
-                        <input name="reason" required className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
+                        <input name="reason" required className="mt-1 block h-(--control-h) w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
                       </label>
                       <label className="flex items-start gap-2 text-ui">
                         <input type="checkbox" name="confirm" required className="mt-0.5" /> Revisé el recibo

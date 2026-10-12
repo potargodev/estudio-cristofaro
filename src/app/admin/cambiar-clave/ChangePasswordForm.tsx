@@ -8,7 +8,7 @@ import { changeTemporaryPassword, type ChangeState } from "./actions";
 
 export function ChangePasswordForm({ email }: { email: string }) {
   const [state, action, pending] = useActionState(changeTemporaryPassword, { ok: false } as ChangeState);
-  const field = "mt-1 h-11 bg-surface text-lead";
+  const field = "mt-1 h-(--control-h) bg-surface text-lead";
   return (
     <div className="grid min-h-dvh place-items-center bg-navy-deep px-4">
       <form action={action} className="w-full max-w-sm border-t border-rose-light bg-canvas p-7">

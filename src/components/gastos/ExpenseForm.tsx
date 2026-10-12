@@ -155,7 +155,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
             placeholder="0"
             value={amountText}
             onChange={(e) => setAmountText(e.target.value.replace(/[^\d.,]/g, ""))}
-            className="h-14 min-w-0 flex-1 bg-transparent num text-[40px] leading-none focus:outline-none"
+            className="h-14 min-w-0 flex-1 bg-transparent num text-metric focus:outline-none"
           />
         </div>
         {foreign && (
@@ -178,7 +178,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
                 }}
                 placeholder={fxLoading ? "Buscando…" : "Cotización"}
                 aria-label="Cotización"
-                className="h-10 w-32 border border-line bg-canvas px-2 tabular-nums"
+                className="h-(--control-h) w-32 border border-line bg-canvas px-2 tabular-nums"
               />
               {baseCurrency}
             </label>
@@ -229,7 +229,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
             {members.map((m) => (
               <li key={m.id} className="flex items-center gap-3">
                 <span className="flex-1 text-body">{m.id === meId ? "Yo" : m.name}</span>
-                <input inputMode="decimal" aria-label={`Pagó ${m.name}`} value={payerAmounts[m.id] ?? ""} onChange={(e) => setPayerAmounts((x) => ({ ...x, [m.id]: e.target.value }))} placeholder="0" className="h-11 w-36 border border-line bg-surface px-3 text-right tabular-nums" />
+                <input inputMode="decimal" aria-label={`Pagó ${m.name}`} value={payerAmounts[m.id] ?? ""} onChange={(e) => setPayerAmounts((x) => ({ ...x, [m.id]: e.target.value }))} placeholder="0" className="h-(--control-h) w-36 border border-line bg-surface px-3 text-right tabular-nums" />
               </li>
             ))}
           </ul>
@@ -268,7 +268,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
             {members.map((m) => (
               <li key={m.id} className="flex items-center gap-3">
                 <span className="flex-1 text-body">{m.id === meId ? "Yo" : m.name}</span>
-                <input inputMode="decimal" aria-label={`${SPLIT_METHODS[method]}: ${m.name}`} value={values[m.id] ?? ""} onChange={(e) => setVal(m.id, e.target.value)} placeholder={method === "porcentaje" ? "%" : method === "partes" ? "partes" : "0"} className="h-11 w-32 border border-line bg-surface px-3 text-right tabular-nums" />
+                <input inputMode="decimal" aria-label={`${SPLIT_METHODS[method]}: ${m.name}`} value={values[m.id] ?? ""} onChange={(e) => setVal(m.id, e.target.value)} placeholder={method === "porcentaje" ? "%" : method === "partes" ? "partes" : "0"} className="h-(--control-h) w-32 border border-line bg-surface px-3 text-right tabular-nums" />
               </li>
             ))}
             {valueHint && <li className="text-right text-meta text-muted">{valueHint}</li>}
@@ -280,7 +280,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
               <div key={i} className="grid gap-2 border border-line bg-surface p-3">
                 <div className="flex gap-2">
                   <input aria-label={`Ítem ${i + 1}`} placeholder="Ítem" value={it.description} onChange={(e) => setItems((x) => x.map((y, j) => (j === i ? { ...y, description: e.target.value } : y)))} className={input} />
-                  <input aria-label={`Importe ítem ${i + 1}`} inputMode="decimal" placeholder="0" value={it.amount} onChange={(e) => setItems((x) => x.map((y, j) => (j === i ? { ...y, amount: e.target.value } : y)))} className="h-11 w-28 border border-line bg-canvas px-2 text-right tabular-nums" />
+                  <input aria-label={`Importe ítem ${i + 1}`} inputMode="decimal" placeholder="0" value={it.amount} onChange={(e) => setItems((x) => x.map((y, j) => (j === i ? { ...y, amount: e.target.value } : y)))} className="h-(--control-h) w-28 border border-line bg-canvas px-2 text-right tabular-nums" />
                   <button type="button" aria-label="Quitar ítem" onClick={() => setItems((x) => x.filter((_, j) => j !== i))} className="px-2 text-muted hover:text-danger">
                     <Trash2 className="size-4" />
                   </button>

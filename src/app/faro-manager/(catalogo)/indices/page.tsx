@@ -26,7 +26,7 @@ export default async function IndicesPage({ searchParams }: { searchParams: Prom
           </label>
           <label className="text-meta text-muted">
             Fuente
-            <input name="source" placeholder="INDEC · IPC nivel general (base dic-2016 = 100)" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
+            <input name="source" placeholder="INDEC · IPC nivel general (base dic-2016 = 100)" className="mt-1 block h-(--control-h) w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
           </label>
           <div>
             <SubmitButton>Guardar</SubmitButton>

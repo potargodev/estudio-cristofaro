@@ -10,7 +10,7 @@ import { fieldClass } from "@/components/ds/primitives";
 import { todayAR } from "@/lib/format";
 
 export const inputCls = fieldClass;
-const btn = "inline-flex h-11 items-center justify-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep disabled:opacity-60";
+const btn = "inline-flex h-(--control-h) items-center justify-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep disabled:opacity-60";
 
 export function CopyButton({ value, label = "Copiar", className }: { value: string; label?: string; className?: string }) {
   const [done, setDone] = useState(false);
@@ -26,7 +26,7 @@ export function CopyButton({ value, label = "Copiar", className }: { value: stri
           toast.error("No pudimos copiar. Seleccionalo a mano.");
         }
       }}
-      className={cn("inline-flex h-9 items-center gap-1.5 border border-navy/30 px-3 text-meta text-navy hover:bg-navy-soft", className)}
+      className={cn("inline-flex h-(--control-h) items-center gap-1.5 border border-navy/30 px-3 text-meta text-navy hover:bg-navy-soft", className)}
     >
       {done ? <Check className="size-3.5" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
       {done ? "Copiado" : label}
@@ -56,7 +56,7 @@ function LinkBox({ link }: { link: string }) {
         {link}
       </code>
       <div className="flex flex-wrap gap-2">
-        <a href={`https://wa.me/?text=${encodeURIComponent(`Te sumé a un grupo de gastos en Faro. Entrá con este enlace: ${link}`)}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 bg-[#1f7a4d] px-3 text-meta text-white hover:bg-[#186540]">
+        <a href={`https://wa.me/?text=${encodeURIComponent(`Te sumé a un grupo de gastos en Faro. Entrá con este enlace: ${link}`)}`} target="_blank" rel="noreferrer" className="inline-flex h-(--control-h) items-center gap-1.5 bg-[#1f7a4d] px-3 text-meta text-white hover:bg-[#186540]">
           <MessageCircle className="size-3.5" aria-hidden /> Mandar por WhatsApp
         </a>
         <CopyButton value={link} label="Copiar enlace" />

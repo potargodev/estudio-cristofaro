@@ -17,8 +17,8 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
   const available = Object.entries(INDUSTRY_NAMES).filter(([k]) => !s.industries.some((i) => i.key === k));
   return (
     <div className="grid gap-6">
-      {notice && <p className="rounded-lg border border-[#a9d1b5] bg-[#ecf6ef] px-4 py-3 text-ui text-[#1f5f36]">{notice}</p>}
-      <section className="rounded-lg border border-line bg-surface p-5">
+      {notice && <p className="rounded-md border border-[#a9d1b5] bg-[#ecf6ef] px-4 py-3 text-ui text-[#1f5f36]">{notice}</p>}
+      <section className="rounded-md border border-line bg-surface p-5">
         <h2 className="flex items-center gap-2.5 text-title font-semibold">
           <Factory className="size-5 shrink-0 text-rose-deep mt-0.5" aria-hidden />
           Rubros
@@ -50,7 +50,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
             <label htmlFor="pick-industry" className="sr-only">
               Rubro
             </label>
-            <select id="pick-industry" name="rubro" required className="h-10 min-w-56 rounded-md border border-line bg-surface px-3 text-ui" defaultValue="">
+            <select id="pick-industry" name="rubro" required className="h-(--control-h) min-w-56 rounded-md border border-line bg-surface px-3 text-ui" defaultValue="">
               <option value="" disabled>
                 Agregar un rubro…
               </option>
@@ -60,7 +60,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
                 </option>
               ))}
             </select>
-            <button className="h-10 rounded-md bg-navy px-4 text-ui text-paper hover:bg-navy-deep">Ver qué trae</button>
+            <button className="h-(--control-h) rounded-md bg-navy px-4 text-ui text-paper hover:bg-navy-deep">Ver qué trae</button>
           </form>
         )}
       </section>
@@ -69,7 +69,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
         const list = s.items.filter((i) => i.kind === k);
         if (!list.length) return null;
         return (
-          <section key={k} className="rounded-lg border border-line bg-surface">
+          <section key={k} className="rounded-md border border-line bg-surface">
             <h3 className="border-b border-line px-5 py-3 text-body font-semibold">
               {ITEM_KINDS[k]} <span className="text-meta font-normal text-muted">· {list.length}</span>
             </h3>

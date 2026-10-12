@@ -48,6 +48,7 @@ import { requireStaff } from "@/lib/auth";
 import { getOrgLimits, getOrgStaff, studioOrganization } from "@/lib/organizations";
 import { formatCuit } from "@/lib/types";
 import { formatDate } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Organización" };
 
@@ -142,7 +143,7 @@ export default async function OrganizacionPage({
       <header className="mb-6 flex flex-wrap items-start gap-4">
         <Avatar name={org.name} size="lg" />
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{org.name}</h1>
+          <h1 className={pageTitleClass}>{org.name}</h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-meta text-muted">
             <StatusBadge status={org.status} />
             {limits.planName ? <Tag>{limits.planName}</Tag> : <span>Sin plan</span>}

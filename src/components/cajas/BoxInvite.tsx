@@ -13,7 +13,7 @@ export function BoxInvite({ boxId, boxName, owner }: { boxId: string; boxName: s
       {!state.link && (
         <form action={action}>
           <input type="hidden" name="box" value={boxId} />
-          <button disabled={pending} className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-navy-deep disabled:opacity-60">
+          <button disabled={pending} className="inline-flex h-(--control-h) items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-navy-deep disabled:opacity-60">
             <Link2 className="size-4" aria-hidden /> {pending ? "Generando…" : "Invitar con un enlace"}
           </button>
         </form>

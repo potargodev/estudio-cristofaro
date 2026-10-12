@@ -63,7 +63,7 @@ export function RendicionForm() {
           {state.message}
         </p>
       )}
-      <button disabled={pending} className="h-12 bg-navy px-6 text-paper hover:bg-navy-deep disabled:opacity-60 sm:justify-self-start">
+      <button disabled={pending} className="h-(--control-h) bg-navy px-6 text-paper hover:bg-navy-deep disabled:opacity-60 sm:justify-self-start">
         {pending ? "Enviando…" : "Enviar a rendir"}
       </button>
     </form>
@@ -81,21 +81,21 @@ export function DecideButtons({ id }: { id: string }) {
       {rejecting && <input name="reason" required placeholder="Motivo del rechazo" aria-label="Motivo del rechazo" className={input} />}
       <div className="flex flex-wrap gap-2">
         {!rejecting && (
-          <button disabled={pending} className="h-10 bg-navy px-4 text-ui text-paper hover:bg-navy-deep">
+          <button disabled={pending} className="h-(--control-h) bg-navy px-4 text-ui text-paper hover:bg-navy-deep">
             Aprobar
           </button>
         )}
         {rejecting ? (
           <>
-            <button disabled={pending} className="h-10 bg-danger px-4 text-ui text-white">
+            <button disabled={pending} className="h-(--control-h) bg-danger px-4 text-ui text-white">
               Confirmar rechazo
             </button>
-            <button type="button" onClick={() => setRejecting(false)} className="h-10 px-3 text-ui text-muted">
+            <button type="button" onClick={() => setRejecting(false)} className="h-(--control-h) px-3 text-ui text-muted">
               Cancelar
             </button>
           </>
         ) : (
-          <button type="button" onClick={() => setRejecting(true)} className="h-10 border border-line px-4 text-ui hover:bg-navy-soft">
+          <button type="button" onClick={() => setRejecting(true)} className="h-(--control-h) border border-line px-4 text-ui hover:bg-navy-soft">
             Rechazar
           </button>
         )}
@@ -110,7 +110,7 @@ export function ReimburseButton({ id }: { id: string }) {
   return (
     <form action={action}>
       <input type="hidden" name="id" value={id} />
-      <button disabled={pending} className="h-10 border border-navy/30 px-4 text-ui text-navy hover:bg-navy-soft">
+      <button disabled={pending} className="h-(--control-h) border border-navy/30 px-4 text-ui text-navy hover:bg-navy-soft">
         Marcar reintegrada
       </button>
     </form>

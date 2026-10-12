@@ -5,6 +5,7 @@ import { listCategories } from "@/modules/bitacora/server";
 import { requireUser } from "@/modules/bitacora/session";
 import { archiveCategoryAction, saveCategoryAction } from "../actions";
 import { fieldInlineClass } from "@/components/ds/primitives";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Categorías" };
 
@@ -20,10 +21,10 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
       <Link href="/bitacora" className="text-meta text-muted hover:text-ink">
         ← Bitácora
       </Link>
-      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Categorías</h1>
+      <h1 className={pageTitleClass}>Categorías</h1>
       {sp.ok && <p role="status" className="rounded-md bg-navy-soft px-4 py-2.5 text-ui">{sp.ok}</p>}
       {sp.error && <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-ui text-danger">{sp.error}</p>}
-      <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-line rounded-md border border-line bg-surface">
         {cats.map((c) => (
           <li key={c.id} className="flex flex-wrap items-center gap-2 px-4 py-3">
             <form action={saveCategoryAction} className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
@@ -41,14 +42,14 @@ export default async function CategoriasPage({ searchParams }: { searchParams: P
             <form action={archiveCategoryAction}>
               <input type="hidden" name="id" value={c.id} />
               <input type="hidden" name="archived" value={c.archived ? "0" : "1"} />
-              <button type="submit" className="h-10 rounded-md border border-line px-3 text-meta hover:border-muted">
+              <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-meta hover:border-muted">
                 {c.archived ? "Recuperar" : "Archivar"}
               </button>
             </form>
           </li>
         ))}
       </ul>
-      <form action={saveCategoryAction} className="flex flex-wrap items-end gap-2 rounded-lg border border-line bg-surface p-4">
+      <form action={saveCategoryAction} className="flex flex-wrap items-end gap-2 rounded-md border border-line bg-surface p-4">
         <label className="grid flex-1 gap-1 text-meta text-muted">
           Nueva categoría
           <input name="name" required maxLength={40} className={field} />

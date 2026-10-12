@@ -7,7 +7,7 @@ import { fieldInlineClass } from "@/components/ds/primitives";
 import { formatMoney } from "@/lib/format";
 
 type View = NonNullable<Awaited<ReturnType<typeof liveView>>>;
-const card = "rounded-lg border border-line bg-surface p-5";
+const card = "rounded-md border border-line bg-surface p-5";
 const field = fieldInlineClass;
 
 /**
@@ -100,7 +100,7 @@ export function LiveAccount({ v, volver, canAct }: { v: View; volver: string; ca
                             <input type="checkbox" name="invoiced" defaultChecked={e.invoiced} className="size-4 accent-navy" /> Facturado
                           </label>
                         )}
-                        <button className="h-9 rounded-md border border-line px-2 text-caption hover:border-muted">Guardar</button>
+                        <button className="h-(--control-h) rounded-md border border-line px-2 text-caption hover:border-muted">Guardar</button>
                       </form>
                     )}
                   </span>

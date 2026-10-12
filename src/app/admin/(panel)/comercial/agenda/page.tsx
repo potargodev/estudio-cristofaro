@@ -26,9 +26,9 @@ export const metadata: Metadata = { title: "Agenda" };
 
 // Colores por tipo de llamada (todos con texto AA sobre su fondo)
 const CALL_TYPES = {
-  web: { label: "Primera reunión (web)", card: "border-[#1c2235] bg-[#eceef3] text-ink hover:bg-[#e2e5ed]", dot: "bg-[#1c2235]" },
+  web: { label: "Primera reunión (web)", card: "border-navy bg-navy-soft text-ink hover:bg-navy/10", dot: "bg-navy" },
   portal: { label: "Cliente (portal)", card: "border-[#3f7f57] bg-[#ecf6ef] text-[#1d4a2f] hover:bg-[#e1f0e6]", dot: "bg-[#3f7f57]" },
-  estudio: { label: "Cargada por el estudio", card: "border-[#a57c6d] bg-[#f6efeb] text-[#6d4a3c] hover:bg-[#efe3dd]", dot: "bg-[#a57c6d]" },
+  estudio: { label: "Cargada por el estudio", card: "border-rose bg-rose-soft text-rose-deep hover:bg-rose-light/25", dot: "bg-rose" },
 } as const;
 
 const DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];

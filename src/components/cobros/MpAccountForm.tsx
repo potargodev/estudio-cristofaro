@@ -14,15 +14,15 @@ export function MpAccountForm({ summary, save, remove, webhookUrl, canEdit = tru
       <p className="text-ui">
         {summary ? (
           <>
-            Cuenta de Mercado Pago: <strong>{summary.nickname ?? "conectada"}</strong> · {summary.status === "ok" ? "funciona" : summary.status === "error" ? <span className="text-[#8f2a1c]">con error</span> : "sin probar"}
+            Cuenta de Mercado Pago: <strong>{summary.nickname ?? "conectada"}</strong> · {summary.status === "ok" ? "funciona" : summary.status === "error" ? <span className="text-danger">con error</span> : "sin probar"}
             {summary.testedAt && ` · probada el ${formatDate(summary.testedAt, "numericTime")}`}
-            {!summary.hasSecret && <span className="text-[#8f2a1c]"> · falta la clave secreta de webhooks (sin ella no se acreditan los pagos)</span>}
+            {!summary.hasSecret && <span className="text-danger"> · falta la clave secreta de webhooks (sin ella no se acreditan los pagos)</span>}
           </>
         ) : (
           "Todavía no hay una cuenta de Mercado Pago conectada."
         )}
       </p>
-      {summary?.lastError && <p className="text-meta text-[#8f2a1c]">{summary.lastError}</p>}
+      {summary?.lastError && <p className="text-meta text-danger">{summary.lastError}</p>}
       <p className="text-meta text-muted">
         En Mercado Pago → Tus integraciones → tu aplicación: copiá el <strong>Access Token</strong> de producción y, en Webhooks, configurá la URL <code className="break-all">{webhookUrl}</code> con los eventos «Pagos» y «Planes y suscripciones», y copiá la <strong>clave secreta</strong>.
       </p>

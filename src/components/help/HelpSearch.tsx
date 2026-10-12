@@ -50,11 +50,11 @@ export function HelpSearch({ items, initial = "" }: { items: HelpSearchItem[]; i
           onChange={(e) => setQ(e.target.value)}
           placeholder="¿Qué querés hacer? Ej.: invitar a un cliente, dividir un gasto"
           autoComplete="off"
-          className="h-14 w-full rounded-lg border border-line bg-surface pl-12 pr-4 text-lead text-ink placeholder:text-muted focus:border-navy focus:outline-none"
+          className="h-14 w-full rounded-md border border-line bg-surface pl-12 pr-4 text-lead text-ink placeholder:text-muted focus:border-navy focus:outline-none"
         />
       </form>
       {results && (
-        <div aria-live="polite" className="mt-3 rounded-lg border border-line bg-surface">
+        <div aria-live="polite" className="mt-3 rounded-md border border-line bg-surface">
           {results.length === 0 ? (
             <p className="px-5 py-4 text-ui text-muted">No encontramos artículos con esas palabras. Probá con otras o preguntale al asistente.</p>
           ) : (

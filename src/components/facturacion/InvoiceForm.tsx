@@ -255,7 +255,7 @@ export function InvoiceForm({
                 const p = products.find((x) => x.id === e.target.value);
                 if (p) setLines((ls) => [...ls.filter((l) => l.description || l.unitPrice), { description: p.description, quantity: "1", unitPrice: String(p.unitPrice), ivaRate: String(p.ivaRate ?? 21) }]);
               }}
-              className="h-9 rounded-md border border-line bg-surface px-2 text-ui"
+              className="h-(--control-h) rounded-md border border-line bg-surface px-2 text-ui"
             >
               <option value="">+ Producto frecuente</option>
               {products.map((p) => (
@@ -299,7 +299,7 @@ export function InvoiceForm({
             </li>
           ))}
         </ul>
-        <button type="button" onClick={() => setLines((ls) => [...ls, { description: "", quantity: "1", unitPrice: "", ivaRate: "21" }])} className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-ui hover:border-muted">
+        <button type="button" onClick={() => setLines((ls) => [...ls, { description: "", quantity: "1", unitPrice: "", ivaRate: "21" }])} className="mt-3 inline-flex h-(--control-h) items-center gap-1.5 rounded-md border border-line px-3 text-ui hover:border-muted">
           <Plus className="size-4" aria-hidden /> Agregar ítem
         </button>
         <dl className="mt-4 grid justify-end gap-1 text-right text-ui">

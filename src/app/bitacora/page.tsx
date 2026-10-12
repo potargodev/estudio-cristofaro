@@ -24,7 +24,7 @@ function Delta({ now, before }: { now: number; before: number }) {
   if (!before) return <span className="text-caption text-muted">Sin datos del mes anterior</span>;
   const pct = Math.round(((now - before) / before) * 100);
   return (
-    <span className={cn("text-caption", pct > 0 ? "text-danger" : "text-[#2f7a4c]")}>
+    <span className={cn("text-caption", pct > 0 ? "text-danger" : "text-[#1f7a43]")}>
       {pct > 0 ? "+" : ""}
       {pct}% vs. mes anterior
     </span>
@@ -110,13 +110,13 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
 
       <section aria-label="Resumen del mes" className="grid grid-cols-3 gap-2 sm:gap-3">
         {[
-          { l: "Entró", v: ars.now.in, b: ars.before.in, tone: "text-[#2f7a4c]" },
+          { l: "Entró", v: ars.now.in, b: ars.before.in, tone: "text-[#1f7a43]" },
           { l: "Salió", v: ars.now.out, b: ars.before.out, tone: "text-ink" },
           { l: "Queda", v: ars.now.left, b: null, tone: ars.now.left < 0 ? "text-danger" : "text-ink" },
         ].map((x) => (
-          <div key={x.l} className="rounded-lg border border-line bg-surface p-3 sm:p-5">
+          <div key={x.l} className="rounded-md border border-line bg-surface p-3 sm:p-5">
             <p className="text-caption text-muted sm:text-meta">{x.l}</p>
-            <p className={cn("mt-1 num text-section leading-tight sm:text-[32px]", x.tone)}>{show(x.v)}</p>
+            <p className={cn("mt-1 num text-section sm:text-metric", x.tone)}>{show(x.v)}</p>
             {x.b !== null && (
               <span className="hidden sm:block">
                 <Delta now={x.v} before={x.b} />
@@ -134,7 +134,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
         </p>
       )}
 
-      <details data-tour="bitacora-cargar" className="rounded-lg border border-line bg-surface" open={!!sp.cargar}>
+      <details data-tour="bitacora-cargar" className="rounded-md border border-line bg-surface" open={!!sp.cargar}>
         <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 text-lead font-semibold">
           Cargar a mano
           <span className="text-meta font-normal text-muted">
@@ -149,7 +149,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
         </div>
       </details>
 
-      <section aria-labelledby="por-categoria" className="rounded-lg border border-line bg-surface p-5">
+      <section aria-labelledby="por-categoria" className="rounded-md border border-line bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="por-categoria" className="text-title font-semibold">
             Gasto por categoría
@@ -159,7 +159,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
             <label htmlFor="cat" className="sr-only">
               Filtrar por categoría
             </label>
-            <select id="cat" name="categoria" defaultValue={cat ?? ""} className="h-9 rounded-md border border-line bg-surface px-2 text-ui">
+            <select id="cat" name="categoria" defaultValue={cat ?? ""} className="h-(--control-h) rounded-md border border-line bg-surface px-2 text-ui">
               <option value="">Todas</option>
               {cats.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -167,7 +167,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
                 </option>
               ))}
             </select>
-            <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
+            <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-meta hover:border-muted">
               Filtrar
             </button>
           </form>
@@ -193,16 +193,16 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
         )}
       </section>
 
-      <section aria-labelledby="movimientos" className="rounded-lg border border-line bg-surface">
+      <section aria-labelledby="movimientos" className="rounded-md border border-line bg-surface">
         <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-4">
           <h2 id="movimientos" className="text-title font-semibold">
             Movimientos
           </h2>
           <div className="flex gap-2">
-            <Link href="/bitacora/categorias" data-tour="bitacora-categorias" className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
+            <Link href="/bitacora/categorias" data-tour="bitacora-categorias" className="inline-flex h-(--control-h) items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
               <Settings2 className="size-4" aria-hidden /> Categorías
             </Link>
-            <a href={`/api/bitacora/csv?mes=${month}${cat ? `&categoria=${cat}` : ""}`} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
+            <a href={`/api/bitacora/csv?mes=${month}${cat ? `&categoria=${cat}` : ""}`} className="inline-flex h-(--control-h) items-center gap-1.5 rounded-md border border-line px-3 text-meta hover:border-muted">
               <Download className="size-4" aria-hidden /> CSV
             </a>
           </div>
@@ -216,7 +216,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
               return (
                 <li key={m.id}>
                   <Link href={href} className={cn("flex items-center gap-3 px-5 py-3 hover:bg-canvas", sp.nuevo === m.id && "bg-navy-soft")}>
-                    <span className={cn("grid size-9 shrink-0 place-items-center rounded-md", m.kind === "ingreso" ? "bg-[#e3f1e8] text-[#2f7a4c]" : "bg-navy text-gold")}>
+                    <span className={cn("grid size-9 shrink-0 place-items-center rounded-md", m.kind === "ingreso" ? "bg-[#ecf6ef] text-[#1f7a43]" : "bg-navy text-gold")}>
                       {m.source === "grupo" ? <Users className="size-4" aria-hidden /> : m.kind === "ingreso" ? <ArrowDownLeft className="size-4" aria-hidden /> : <ArrowUpRight className="size-4" aria-hidden />}
                     </span>
                     <span className="min-w-0 flex-1">
@@ -229,7 +229,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
                         {m.paymentMethod && ` · ${PAYMENT_METHODS[m.paymentMethod as keyof typeof PAYMENT_METHODS]}`}
                       </span>
                     </span>
-                    <span className={cn("shrink-0 tabular-nums text-body", m.kind === "ingreso" ? "text-[#2f7a4c]" : "text-ink")}>
+                    <span className={cn("shrink-0 tabular-nums text-body", m.kind === "ingreso" ? "text-[#1f7a43]" : "text-ink")}>
                       {m.kind === "ingreso" ? "+" : "−"}
                       {formatMoney(m.amount, m.currency, { decimals: "auto" })}
                     </span>

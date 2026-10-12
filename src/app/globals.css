@@ -103,6 +103,8 @@
   --text-section--line-height: 1.25;
   --text-headline: 24px; /* números de resumen, títulos de diálogo */
   --text-headline--line-height: 1.2;
+  --text-page: clamp(28px, 2vw + 20px, 32px); /* título de la pantalla (Gilda Display, PageHeader) */
+  --text-page--line-height: 1.15;
   --text-metric: 32px; /* el número de una tarjeta de indicador */
   --text-metric--line-height: 1.05;
 

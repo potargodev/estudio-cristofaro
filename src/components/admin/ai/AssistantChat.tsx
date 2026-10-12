@@ -137,7 +137,7 @@ function ToolCard({
   const status = approval?.status;
 
   return (
-    <div className={cn("my-2 border bg-surface", sentToApproval ? "border-[#e2cdc4]" : needsConfirm ? "border-[#e3cf9f]" : "border-line")}>
+    <div className={cn("my-2 border bg-surface", sentToApproval ? "border-rose-light/50" : needsConfirm ? "border-[#e3cf9f]" : "border-line")}>
       <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="flex w-full items-center gap-2 px-3 py-2 text-left text-meta">
         {running ? (
           <Loader2 className="size-4 shrink-0 animate-spin text-muted motion-reduce:animate-none" aria-hidden />
@@ -211,8 +211,8 @@ function ToolCard({
         </div>
       )}
       {sentToApproval && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-line bg-[#f6efeb] px-3 py-2 text-meta">
-          <ShieldCheck className="size-4 text-[#6d4a3c]" strokeWidth={1.5} aria-hidden />
+        <div className="flex flex-wrap items-center gap-2 border-t border-line bg-rose-soft px-3 py-2 text-meta">
+          <ShieldCheck className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden />
           <p className="min-w-0 flex-1 text-ink [overflow-wrap:anywhere]">
             <strong className="font-medium">Enviado a aprobación.</strong> {output?.resumen}
           </p>
@@ -268,7 +268,7 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={`Buscar ${CONTEXT_LABEL[kind].toLowerCase()}…`}
-          className="h-9 w-full border border-line bg-canvas px-2 text-ui outline-none focus:border-muted"
+          className="h-(--control-h) w-full border border-line bg-canvas px-2 text-ui outline-none focus:border-muted"
         />
         <ul className="mt-2 max-h-60 overflow-y-auto">
           {items.map((it) => (
@@ -440,7 +440,7 @@ export function AssistantChat({
         aria-label="Conversaciones"
       >
         <div className="flex items-center gap-2 border-b border-line p-3">
-          <Link href={`${basePath}&nueva=1`} className="inline-flex h-9 flex-1 items-center justify-center gap-2 bg-navy text-ui font-medium text-paper hover:bg-navy-deep">
+          <Link href={`${basePath}&nueva=1`} className="inline-flex h-(--control-h) flex-1 items-center justify-center gap-2 bg-navy text-ui font-medium text-paper hover:bg-navy-deep">
             <MessageSquarePlus className="size-4" aria-hidden />
             Conversación nueva
           </Link>
@@ -502,7 +502,7 @@ export function AssistantChat({
         <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-3 py-5 sm:px-6" aria-live="polite">
           {messages.length === 0 && (
             <div className="mx-auto max-w-2xl pt-6 text-center sm:pt-12">
-              <p className="font-display text-[32px] leading-tight text-ink sm:text-[40px]">¿En qué te ayudo?</p>
+              <p className="font-display text-metric text-ink">¿En qué te ayudo?</p>
               <p className="mt-2 text-body text-muted">Consulto organizaciones, vencimientos, documentos, solicitudes, agenda y conexiones. Lo sensible pasa siempre por tu aprobación.</p>
               <div className="mt-6 grid gap-2 sm:grid-cols-2">
                 {SUGGESTIONS.map((s) => (

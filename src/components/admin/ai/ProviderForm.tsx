@@ -35,7 +35,7 @@ export function ProviderForm({ action, current, defaultKind }: { action: (fd: Fo
             name="kind"
             value={kind}
             onChange={(e) => setKind(e.target.value as AiProviderKind)}
-            className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body"
+            className="mt-1 h-(--control-h) w-full border border-line bg-surface px-2 text-body"
           >
             {AI_PROVIDER_KINDS.map((k) => (
               <option key={k} value={k}>

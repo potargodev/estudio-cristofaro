@@ -27,7 +27,7 @@ export function FileImport({ orgs }: { orgs: { id: string; name: string }[] }) {
     <form ref={form} onSubmit={(e) => (e.preventDefault(), run("preview"))} className="grid gap-4 [&>*]:min-w-0">
       <div className="grid gap-4 sm:grid-cols-2">
         <AdminField label="Plantilla" htmlFor="tpl">
-          <select id="tpl" name="template" value={tpl} onChange={(e) => setTpl(e.target.value)} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body">
+          <select id="tpl" name="template" value={tpl} onChange={(e) => setTpl(e.target.value)} className="mt-1 h-(--control-h) w-full border border-line bg-surface px-2 text-body">
             {TEMPLATES.map((t) => (
               <option key={t.key} value={t.key}>
                 {t.label}
@@ -36,7 +36,7 @@ export function FileImport({ orgs }: { orgs: { id: string; name: string }[] }) {
           </select>
         </AdminField>
         <AdminField label="Organización (opcional)" htmlFor="imp-org" hint="Para comprobantes y asientos de una sola organización. Los clientes se cruzan por CUIT.">
-          <select id="imp-org" name="organization_id" defaultValue="" className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body">
+          <select id="imp-org" name="organization_id" defaultValue="" className="mt-1 h-(--control-h) w-full border border-line bg-surface px-2 text-body">
             <option value="">Cruzar por CUIT</option>
             {orgs.map((o) => (
               <option key={o.id} value={o.id}>
@@ -63,10 +63,10 @@ export function FileImport({ orgs }: { orgs: { id: string; name: string }[] }) {
         </div>
       </details>
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" variant="outline" disabled={pending} className="h-9 bg-surface px-4">
+        <Button type="submit" variant="outline" disabled={pending} className="bg-surface px-4">
           {pending ? "Leyendo…" : "Vista previa"}
         </Button>
-        <Button type="button" disabled={pending || !state?.ok || !state.preview?.length} onClick={() => run("importar")} className="h-9 px-4">
+        <Button type="button" disabled={pending || !state?.ok || !state.preview?.length} onClick={() => run("importar")} className="px-4">
           Importar
         </Button>
       </div>

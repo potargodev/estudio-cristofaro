@@ -61,7 +61,7 @@ export default async function FlotasPage({ searchParams }: { searchParams: Promi
           </h2>
           <ul className="mt-3 grid gap-3">
             {invites.map((i) => (
-              <li key={i.id} className="rounded-lg border border-navy bg-surface p-5">
+              <li key={i.id} className="rounded-md border border-navy bg-surface p-5">
                 <FleetLabel />
                 <p className="mt-2 text-title font-semibold">{i.name}</p>
                 {i.description && <p className="text-ui text-muted">{i.description}</p>}
@@ -100,7 +100,7 @@ export default async function FlotasPage({ searchParams }: { searchParams: Promi
         {mine.length === 0 ? (
           <p className="mt-2 text-ui text-muted">Todavía no estás en ninguna Flota.</p>
         ) : (
-          <ul className="mt-3 divide-y divide-line rounded-lg border border-line bg-surface">
+          <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
             {mine.map((f) => (
               <li key={f.id}>
                 <Link href={`/flotas/${f.id}`} className="flex items-center gap-3 px-5 py-4 hover:bg-canvas">
@@ -119,7 +119,7 @@ export default async function FlotasPage({ searchParams }: { searchParams: Promi
         )}
       </section>
 
-      <section aria-labelledby="crear" className="mt-8 rounded-lg border border-line bg-surface p-5">
+      <section aria-labelledby="crear" className="mt-8 rounded-md border border-line bg-surface p-5">
         <h2 id="crear" className="text-title font-semibold">
           Crear una Flota
         </h2>

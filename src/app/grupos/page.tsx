@@ -49,7 +49,7 @@ export default async function GastosHome() {
           <p className="text-title font-semibold">Todavía no tenés grupos</p>
           <p className="mx-auto mt-2 max-w-sm text-muted">Armá uno para un viaje, la oficina, un proyecto o tus socios, y sumá a las personas (aunque no tengan cuenta).</p>
           {actor.kind === "user" && (
-            <Link href="/grupos/nuevo" className="mt-6 inline-flex h-11 items-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep">
+            <Link href="/grupos/nuevo" className="mt-6 inline-flex h-(--control-h) items-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep">
               <Plus className="size-4" aria-hidden />
               Crear el primer grupo
             </Link>

@@ -29,11 +29,11 @@ export function LoginCard({
         <label htmlFor="email" className="block text-ui font-medium">
           Email
         </label>
-        <Input id="email" name="email" type="email" autoComplete="email" required className="mt-1 h-11 bg-surface text-lead" />
+        <Input id="email" name="email" type="email" autoComplete="email" required className="mt-1 h-(--control-h) bg-surface text-lead" />
         <label htmlFor="password" className="mt-4 block text-ui font-medium">
           Contraseña
         </label>
-        <Input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 h-11 bg-surface text-lead" />
+        <Input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 h-(--control-h) bg-surface text-lead" />
         {state.message && (
           <p role="alert" className="mt-4 text-ui text-danger">
             {state.message}

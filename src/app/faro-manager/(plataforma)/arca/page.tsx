@@ -30,7 +30,7 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
         </p>
         {owner && (
           <>
-            <select name="environment" defaultValue={env} className="h-9 rounded-md border border-line bg-surface px-2 text-ui">
+            <select name="environment" defaultValue={env} className="h-(--control-h) rounded-md border border-line bg-surface px-2 text-ui">
               <option value="homologacion">Homologación</option>
               <option value="produccion">Producción</option>
             </select>
@@ -56,9 +56,9 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
                   <dt className="text-muted">Certificado</dt>
                   <dd>{c.subject}</dd>
                   <dt className="text-muted">Vence</dt>
-                  <dd className={c.notAfter && c.notAfter.getTime() - Date.now() < 30 * 86400000 ? "text-[#8f2a1c]" : ""}>{formatDate(c.notAfter, "numeric")}</dd>
+                  <dd className={c.notAfter && c.notAfter.getTime() - Date.now() < 30 * 86400000 ? "text-danger" : ""}>{formatDate(c.notAfter, "numeric")}</dd>
                   <dt className="text-muted">Última prueba</dt>
-                  <dd className={c.lastTestOk === false ? "text-[#8f2a1c]" : c.lastTestOk ? "text-[#1f6b3d]" : ""}>{c.lastTestAt ? `${formatDate(c.lastTestAt, "numericTime")} · ${c.lastTestDetail}` : "Sin probar"}</dd>
+                  <dd className={c.lastTestOk === false ? "text-danger" : c.lastTestOk ? "text-[#1f5f36]" : ""}>{c.lastTestAt ? `${formatDate(c.lastTestAt, "numericTime")} · ${c.lastTestDetail}` : "Sin probar"}</dd>
                 </dl>
               ) : (
                 <p className="text-ui text-muted">Sin certificado cargado.</p>

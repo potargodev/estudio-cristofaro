@@ -123,7 +123,7 @@ async function Stats({ studioId, commercial }: { studioId: string; commercial: b
         label="Vencimientos de esta semana"
         value={weekDue.length}
         tone={risk > 0 ? "alert" : "default"}
-        hint={risk > 0 ? <span className="font-medium text-[#8f2a1c]">{risk} en riesgo (vencen en 48 h)</span> : "Ninguno en riesgo"}
+        hint={risk > 0 ? <span className="font-medium text-danger">{risk} en riesgo (vencen en 48 h)</span> : "Ninguno en riesgo"}
         href="/admin/vencimientos"
       />
       <StatCard
@@ -134,7 +134,7 @@ async function Stats({ studioId, commercial }: { studioId: string; commercial: b
           avgHours === null ? (
             "Sin respuestas en 30 días"
           ) : (
-            <span className={avgHours <= 24 ? "text-[#1f7a43]" : "text-[#b42318]"}>
+            <span className={avgHours <= 24 ? "text-[#1f7a43]" : "text-danger"}>
               1.ª respuesta: {avgHours}{"\u00a0"}h promedio · objetivo 24{"\u00a0"}h
             </span>
           )

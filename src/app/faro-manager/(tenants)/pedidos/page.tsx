@@ -40,7 +40,7 @@ export default async function PedidosPage({ searchParams }: { searchParams: Prom
       <ul className="grid gap-3">
         {rows.length === 0 && <li className="text-muted">No hay pedidos.</li>}
         {rows.map(({ r, tenant, email }) => (
-          <li key={r.id} className="flex flex-wrap items-center gap-4 rounded-lg border border-line bg-surface p-4" data-testid="pedido">
+          <li key={r.id} className="flex flex-wrap items-center gap-4 rounded-md border border-line bg-surface p-4" data-testid="pedido">
             <div className="min-w-0 flex-1">
               <p className="font-semibold">
                 <Link href={`/faro-manager/${r.studio_id}`} className="hover:underline">
@@ -61,12 +61,12 @@ export default async function PedidosPage({ searchParams }: { searchParams: Prom
                 <form action={resolvePlanRequestAction}>
                   <input type="hidden" name="id" value={r.id} />
                   <input type="hidden" name="decision" value="aplicar" />
-                  <button className="h-9 rounded-md bg-navy px-4 text-meta text-paper hover:bg-navy-deep">Aplicar el cambio</button>
+                  <button className="h-(--control-h) rounded-md bg-navy px-4 text-meta text-paper hover:bg-navy-deep">Aplicar el cambio</button>
                 </form>
                 <form action={resolvePlanRequestAction}>
                   <input type="hidden" name="id" value={r.id} />
                   <input type="hidden" name="decision" value="descartar" />
-                  <button className="h-9 rounded-md border border-line px-4 text-meta hover:border-muted">Descartar</button>
+                  <button className="h-(--control-h) rounded-md border border-line px-4 text-meta hover:border-muted">Descartar</button>
                 </form>
               </div>
             ) : (

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { HelpSearch } from "@/components/help/HelpSearch";
 import { cn } from "@/lib/utils";
 import { ARTICLES, articleUrl, CATEGORIES, categoryName, PROFILE_LABELS, type HelpProfile } from "@/modules/help/catalog";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Centro de ayuda" };
 
@@ -21,7 +22,7 @@ export default async function AyudaPage({ searchParams }: { searchParams: Promis
   const items = pool.map((a) => ({ url: articleUrl(a), titulo: a.titulo, resumen: a.resumen, categoria: categoryName(a.categoria), title: norm(a.titulo), haystack: norm(`${a.titulo} ${a.resumen} ${a.text}`) }));
   return (
     <>
-      <h1 className="font-display text-[40px] leading-tight sm:text-[56px]">¿En qué te ayudamos?</h1>
+      <h1 className={pageTitleClass}>¿En qué te ayudamos?</h1>
       <p className="mt-2 max-w-2xl text-lead text-muted">Guías cortas para cada pantalla de Faro. Si no encontrás lo que buscás, preguntale al asistente: responde citando estos artículos.</p>
       <div className="mt-8">
         <HelpSearch items={items} initial={sp.q ?? ""} />
@@ -46,7 +47,7 @@ export default async function AyudaPage({ searchParams }: { searchParams: Promis
           if (!list.length) return null;
           const Icon = ICONS[c.icon] ?? Compass;
           return (
-            <section key={c.key} aria-labelledby={`cat-${c.key}`} className="rounded-lg border border-line bg-surface p-5">
+            <section key={c.key} aria-labelledby={`cat-${c.key}`} className="rounded-md border border-line bg-surface p-5">
               <div className="flex items-center gap-3">
                 <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" strokeWidth={1.5} aria-hidden />
                 <div>

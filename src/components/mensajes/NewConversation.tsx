@@ -27,7 +27,7 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
             ["grupo", staff ? "Grupo o canal" : "Grupo"],
           ] as const
         ).map(([k, t]) => (
-          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={cn("h-10 rounded-[4px] text-ui", tab === k ? "bg-navy text-paper" : "text-muted hover:text-ink")}>
+          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={cn("h-(--control-h) rounded-md text-ui", tab === k ? "bg-navy text-paper" : "text-muted hover:text-ink")}>
             {t}
           </button>
         ))}
@@ -47,7 +47,7 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
               </span>
               <form action={openDirectAction}>
                 <input type="hidden" name="user" value={c.id} />
-                <button className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">Escribir</button>
+                <button className="h-(--control-h) rounded-md border border-line px-3 text-meta hover:border-muted">Escribir</button>
               </form>
             </li>
           ))}
@@ -87,7 +87,7 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
               {state.message}
             </p>
           )}
-          <button disabled={pending} className="h-11 rounded-md bg-navy px-5 text-paper hover:bg-night disabled:opacity-60 sm:justify-self-start">
+          <button disabled={pending} className="h-(--control-h) rounded-md bg-navy px-5 text-paper hover:bg-night disabled:opacity-60 sm:justify-self-start">
             {pending ? "Creando…" : canal ? "Crear el canal" : "Crear la conversación"}
           </button>
         </form>

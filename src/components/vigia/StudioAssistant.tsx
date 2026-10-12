@@ -33,7 +33,7 @@ function SetupGuide({ isAdmin }: { isAdmin: boolean }) {
         {steps.map((s, i) => (
           <li key={s.title} className="rounded-md border border-line bg-surface p-5">
             <span className="flex items-center gap-3">
-              <span className="num text-[32px] leading-none text-rose-deep">{i + 1}</span>
+              <span className="num text-metric text-rose-deep">{i + 1}</span>
               <s.icon className="size-5 text-ink" strokeWidth={1.5} aria-hidden />
             </span>
             <p className="mt-3 font-medium text-ink">{s.title}</p>

@@ -22,7 +22,7 @@ export function ThemeToggle({ className, withLabel = false }: { className?: stri
   };
   const label = dark ? "Pasar a modo claro" : "Pasar a modo oscuro";
   return (
-    <button type="button" onClick={toggle} aria-label={label} title={label} className={cn("inline-flex h-9 items-center justify-center gap-2 px-2.5 text-meta", className)}>
+    <button type="button" onClick={toggle} aria-label={label} title={label} className={cn("inline-flex h-(--control-h) items-center justify-center gap-2 px-2.5 text-meta", className)}>
       {dark ? <Sun className="size-[18px]" strokeWidth={1.6} aria-hidden /> : <Moon className="size-[18px]" strokeWidth={1.6} aria-hidden />}
       {withLabel && <span>{dark ? "Modo claro" : "Modo oscuro"}</span>}
     </button>

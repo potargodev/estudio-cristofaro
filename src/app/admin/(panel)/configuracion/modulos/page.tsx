@@ -30,7 +30,7 @@ export default async function ModulosPage() {
             const href = st === "activo" && m.nav[0] ? m.nav[0].href : `/admin/configuracion/modulos/${m.key}`;
             return (
               <li key={m.key}>
-                <Link href={href} className={cn("group flex h-full flex-col rounded-lg border bg-surface p-5 transition-colors hover:border-muted", st === "activo" ? "border-line" : "border-dashed border-line")}>
+                <Link href={href} className={cn("group flex h-full flex-col rounded-md border bg-surface p-5 transition-colors hover:border-muted", st === "activo" ? "border-line" : "border-dashed border-line")}>
                   <div className="flex items-start justify-between gap-3">
                     <span className={cn("grid size-10 place-items-center rounded-md", st === "activo" ? "bg-navy text-gold" : "bg-navy-soft text-muted")}>
                       <ModuleIcon name={m.icon} className="size-5" />

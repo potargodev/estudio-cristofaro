@@ -74,7 +74,7 @@ export function PortalAccess({
             required
             defaultValue={email}
             readOnly={Boolean(email)}
-            className="mt-1 h-11 bg-surface text-lead read-only:bg-paper"
+            className="mt-1 h-(--control-h) bg-surface text-lead read-only:bg-paper"
           />
           {state.message && (
             <p role="alert" className="mt-3 text-ui text-danger">

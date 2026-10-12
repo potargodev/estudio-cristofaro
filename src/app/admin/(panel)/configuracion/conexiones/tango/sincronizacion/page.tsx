@@ -61,7 +61,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
       {sp.ok && <Notice>{sp.ok}</Notice>}
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
 
-      <section aria-labelledby="enlace" className="rounded-lg border border-line bg-surface p-5">
+      <section aria-labelledby="enlace" className="rounded-md border border-line bg-surface p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h3 id="enlace" className="text-lead font-semibold">
             Enlace con la API de Tango
@@ -129,7 +129,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
         ))}
       </section>
 
-      <section aria-labelledby="conflictos" className="rounded-lg border border-line bg-surface p-5">
+      <section aria-labelledby="conflictos" className="rounded-md border border-line bg-surface p-5">
         <h3 id="conflictos" className="flex items-center gap-2 text-lead font-semibold">
           <ArrowLeftRight className="size-5 text-rose-deep" aria-hidden /> Diferencias para decidir
         </h3>
@@ -167,7 +167,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
         )}
       </section>
 
-      <section aria-labelledby="normalizacion" className="rounded-lg border border-line bg-surface p-5">
+      <section aria-labelledby="normalizacion" className="rounded-md border border-line bg-surface p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 id="normalizacion" className="text-lead font-semibold">

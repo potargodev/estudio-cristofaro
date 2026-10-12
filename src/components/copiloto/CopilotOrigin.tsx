@@ -19,7 +19,7 @@ const KIND: Record<string, string> = { texto: "Mensaje", audio: "Audio", imagen:
 /** De qué mensaje del Vigía salió un registro: el original, la transcripción, el modelo y la fecha */
 export function CopilotOrigin({ o }: { o: Origin }) {
   return (
-    <section aria-labelledby="origen" className="rounded-lg border border-line bg-surface p-5">
+    <section aria-labelledby="origen" className="rounded-md border border-line bg-surface p-5">
       <h2 id="origen" className="flex items-center gap-2 text-body font-semibold">
         <WandSparkles className="size-4 text-rose-deep" aria-hidden /> Lo registró el Vigía
       </h2>

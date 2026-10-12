@@ -53,7 +53,7 @@ export function StatCard({
       </p>
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
         {delta && (
-          <span className={cn("num inline-flex items-center gap-0.5 font-medium", good === null ? "text-muted" : good ? "text-[#1f7a43]" : "text-[#b42318]")}>
+          <span className={cn("num inline-flex items-center gap-0.5 font-medium", good === null ? "text-muted" : good ? "text-[#1f7a43]" : "text-danger")}>
             <Arrow className="size-3.5" strokeWidth={2} aria-hidden />
             {delta.value > 0 ? "+" : ""}
             {delta.value}% <span className="font-normal text-muted">{delta.label ?? "vs. período anterior"}</span>

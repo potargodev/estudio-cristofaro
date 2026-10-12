@@ -170,7 +170,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
               <button
                 type="button"
                 role="menuitem"
-                className="flex w-full items-center gap-2 rounded-[4px] px-3 py-2 text-left hover:bg-canvas"
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-canvas"
                 onClick={async () => {
                   setMenu(false);
                   const r = await muteAction(convId, !view.muted);
@@ -184,7 +184,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                 <button
                   type="button"
                   role="menuitem"
-                  className="flex w-full items-center gap-2 rounded-[4px] px-3 py-2 text-left text-danger hover:bg-canvas"
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-danger hover:bg-canvas"
                   onClick={async () => {
                     setMenu(false);
                     if (!confirm(`¿Bloquear a ${view.title}? No te va a poder escribir y no vas a ver sus mensajes.`)) return;
@@ -200,7 +200,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                 <button
                   type="button"
                   role="menuitem"
-                  className="flex w-full items-center gap-2 rounded-[4px] px-3 py-2 text-left hover:bg-canvas"
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-canvas"
                   onClick={() => {
                     setMenu(false);
                     if (confirm("¿Salir de esta conversación?")) void leaveAction(convId);
@@ -231,9 +231,9 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                 )}
                 <div className={cn("max-w-[80%] sm:max-w-[70%]")}>
                   {showName && <p className="mb-0.5 ml-1 text-caption font-medium text-rose-deep">{m.authorName}</p>}
-                  <div className={cn("rounded-[14px] border px-3 py-2 text-body leading-snug", m.mine ? "rounded-br-[4px] border-rose-light/50 bg-rose-soft" : "rounded-bl-[4px] border-line bg-surface", m.deleted && "italic text-muted")}>
+                  <div className={cn("rounded-md border px-3 py-2 text-body leading-snug", m.mine ? "rounded-br-xs border-rose-light/50 bg-rose-soft" : "rounded-bl-xs border-line bg-surface", m.deleted && "italic text-muted")}>
                     {m.replyTo && (
-                      <a href={`#msg-${m.replyTo.id}`} className="mb-1.5 block rounded-[6px] border-l-2 border-rose-deep bg-canvas/70 px-2 py-1 text-caption text-muted">
+                      <a href={`#msg-${m.replyTo.id}`} className="mb-1.5 block rounded-md border-l-2 border-rose-deep bg-canvas/70 px-2 py-1 text-caption text-muted">
                         <span className="font-medium text-ink">{m.replyTo.authorName}</span>: {m.replyTo.body?.slice(0, 90) ?? "Mensaje borrado"}
                       </a>
                     )}
@@ -320,7 +320,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
             {emoji && (
               <div className="mb-2 grid grid-cols-8 gap-1 rounded-md border border-line bg-surface p-2" role="listbox" aria-label="Emojis">
                 {EMOJIS.map((e) => (
-                  <button key={e} type="button" role="option" aria-selected={false} onClick={() => (setText((t) => t + e), area.current?.focus())} className="h-9 rounded text-section hover:bg-canvas">
+                  <button key={e} type="button" role="option" aria-selected={false} onClick={() => (setText((t) => t + e), area.current?.focus())} className="h-(--control-h) rounded-md text-section hover:bg-canvas">
                     {e}
                   </button>
                 ))}
@@ -377,7 +377,7 @@ function ReportDialog({ m, onClose }: { m: MessageView; onClose: () => void }) {
   const [busy, setBusy] = useState(false);
   return (
     <div className="fixed inset-0 z-[70] grid place-items-center bg-night/50 p-4" role="presentation" onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-labelledby="reporte-titulo" className="w-full max-w-sm rounded-lg border border-line bg-surface p-5" onClick={(e) => e.stopPropagation()}>
+      <div role="dialog" aria-modal="true" aria-labelledby="reporte-titulo" className="w-full max-w-sm rounded-md border border-line bg-surface p-5" onClick={(e) => e.stopPropagation()}>
         <h2 id="reporte-titulo" className="text-title font-semibold">
           Reportar mensaje
         </h2>
@@ -393,7 +393,7 @@ function ReportDialog({ m, onClose }: { m: MessageView; onClose: () => void }) {
         </fieldset>
         <textarea value={detail} onChange={(e) => setDetail(e.target.value)} maxLength={500} rows={2} placeholder="Contanos algo más (opcional)" className="mt-3 w-full rounded-md border border-line bg-surface px-3 py-2 text-ui" />
         <div className="mt-4 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="h-10 rounded-md border border-line px-4 text-ui">
+          <button type="button" onClick={onClose} className="h-(--control-h) rounded-md border border-line px-4 text-ui">
             Cancelar
           </button>
           <button
@@ -407,7 +407,7 @@ function ReportDialog({ m, onClose }: { m: MessageView; onClose: () => void }) {
               else toast.error(r.message ?? "No pudimos reportarlo.");
               onClose();
             }}
-            className="h-10 rounded-md bg-navy px-4 text-ui font-medium text-paper disabled:opacity-60"
+            className="h-(--control-h) rounded-md bg-navy px-4 text-ui font-medium text-paper disabled:opacity-60"
           >
             Reportar
           </button>

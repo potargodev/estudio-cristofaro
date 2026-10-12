@@ -156,7 +156,7 @@ export function InstallPanel({ tone = "dark", className }: { tone?: "dark" | "li
               aria-selected={on}
               onClick={() => setChosen(p.key)}
               className={cn(
-                "inline-flex h-10 items-center gap-2 border px-3.5 text-ui transition-colors",
+                "inline-flex h-(--control-h) items-center gap-2 border px-3.5 text-ui transition-colors",
                 dark
                   ? on
                     ? "border-rose-light bg-rose-light text-night"
@@ -185,7 +185,7 @@ export function InstallPanel({ tone = "dark", className }: { tone?: "dark" | "li
             <button
               type="button"
               onClick={() => void install()}
-              className={cn("inline-flex h-12 items-center gap-2 px-6 text-body font-medium transition-colors", dark ? "bg-rose-light text-night hover:bg-paper" : "bg-navy text-paper hover:bg-night")}
+              className={cn("inline-flex h-(--control-h) items-center gap-2 px-6 text-body font-medium transition-colors", dark ? "bg-rose-light text-night hover:bg-paper" : "bg-navy text-paper hover:bg-night")}
             >
               <Download className="size-5" aria-hidden />
               Instalar en {P.label}

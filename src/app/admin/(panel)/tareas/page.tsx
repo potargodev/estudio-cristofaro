@@ -101,7 +101,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
               ))}
             </select>
             {vista === "calendario" && <input type="month" name="mes" defaultValue={month} aria-label="Mes" className={field} />}
-            <button className="h-9 rounded-md border border-line px-3 text-meta">Filtrar</button>
+            <button className="h-(--control-h) rounded-md border border-line px-3 text-meta">Filtrar</button>
           </form>
           <form action={syncTasksAction} className="ml-auto">
             <input type="hidden" name="volver" value={volver} />
@@ -130,7 +130,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
                       {t.source !== "manual" && <span className="ml-1 text-micro text-muted">({t.source === "obligacion" ? "vencimiento" : "flujo"})</span>}
                     </td>
                     <td>{org ?? "—"}</td>
-                    <td className={cn("num", t.status !== "hecha" && t.due_date && t.due_date < today && "text-[#8f2a1c]")}>{d(t.due_date)}</td>
+                    <td className={cn("num", t.status !== "hecha" && t.due_date && t.due_date < today && "text-danger")}>{d(t.due_date)}</td>
                     <td>
                       <form action={updateTaskAction} className="inline-flex gap-1">
                         <input type="hidden" name="id" value={t.id} />
@@ -154,7 +154,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
                       <form action={deleteTaskAction}>
                         <input type="hidden" name="id" value={t.id} />
                         <input type="hidden" name="volver" value={volver} />
-                        <button aria-label={`Borrar ${t.title}`} className="px-2 text-muted hover:text-[#8f2a1c]">
+                        <button aria-label={`Borrar ${t.title}`} className="px-2 text-muted hover:text-danger">
                           ×
                         </button>
                       </form>

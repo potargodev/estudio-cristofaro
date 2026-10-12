@@ -163,7 +163,7 @@ export function DataTable({
                 setPage(0);
               }}
               placeholder={searchPlaceholder}
-              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
+              className="h-(--control-h) w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
             />
           </label>
           <p className="tabular text-meta text-muted" aria-live="polite">
@@ -174,7 +174,7 @@ export function DataTable({
               type="button"
               aria-expanded={showFilters}
               onClick={() => setShowFilters((v) => !v)}
-              className="ml-auto inline-flex h-9 items-center gap-2 rounded-md border border-line px-3 text-meta text-ink md:hidden"
+              className="ml-auto inline-flex h-(--control-h) items-center gap-2 rounded-md border border-line px-3 text-meta text-ink md:hidden"
             >
               <SlidersHorizontal className="size-4" strokeWidth={1.5} aria-hidden />
               Filtros{activeChips.length > 0 && <span className="tabular rounded-md bg-navy px-1.5 text-caption text-paper">{activeChips.length}</span>}

@@ -15,7 +15,7 @@ import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: { absolute: "Contador · Faro" } };
 
-const card = "rounded-lg border border-line bg-surface p-5";
+const card = "rounded-md border border-line bg-surface p-5";
 const field = `mt-1 py-2 ${fieldClass}`;
 const lbl = "block text-meta text-muted";
 const show = (v: unknown) => (v == null ? "—" : typeof v === "boolean" ? (v ? "sí" : "no") : typeof v === "object" ? Object.entries(v as Record<string, unknown>).map(([k, x]) => `${k}: ${typeof x === "boolean" ? (x ? "sí" : "no") : String(x)}`).join(" · ") : String(v));
@@ -103,7 +103,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
             <div className="flex flex-wrap gap-2">
               <SubmitButton pendingText="…">Enviar</SubmitButton>
               {survey.kind === "periodica" && (
-                <button type="submit" formAction={skipRatingAction} formNoValidate className="h-10 rounded-md px-3 text-ui text-muted hover:text-ink">
+                <button type="submit" formAction={skipRatingAction} formNoValidate className="h-(--control-h) rounded-md px-3 text-ui text-muted hover:text-ink">
                   Ahora no
                 </button>
               )}
@@ -121,10 +121,10 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
             Faro te ordena y te deja hacer lo básico, pero no da fe de nada: el único que puede hacerlo es un contador matriculado. {NO_REEMPLAZA}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/red-contable" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
+            <Link href="/red-contable" className="inline-flex h-(--control-h) items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
               <Search className="size-4" aria-hidden /> Buscar en la Red Contable
             </Link>
-            <Link href="/flotas" className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-ui hover:border-muted">
+            <Link href="/flotas" className="inline-flex h-(--control-h) items-center gap-2 rounded-md border border-line px-4 text-ui hover:border-muted">
               <Ship className="size-4" aria-hidden /> Flotas
             </Link>
           </div>
@@ -143,7 +143,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
               <ChooseScopesAndAutonomy />
               <div className="flex flex-wrap gap-2">
                 <SubmitButton pendingText="…">Aceptar y pasar a la admisión</SubmitButton>
-                <button formAction={declineAction} className="h-10 rounded-md px-3 text-ui text-muted hover:text-danger">
+                <button formAction={declineAction} className="h-(--control-h) rounded-md px-3 text-ui text-muted hover:text-danger">
                   No, gracias
                 </button>
               </div>
@@ -247,7 +247,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
       )}
 
       {proposals.length > 0 && (
-        <section aria-labelledby="aprobar" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
+        <section aria-labelledby="aprobar" className="rounded-md border border-rose/40 bg-rose-soft p-5">
           <h2 id="aprobar" className="text-lead font-semibold">
             Para aprobar
           </h2>
@@ -259,10 +259,10 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
                 </span>
                 <form action={approveActionAction} className="flex gap-2">
                   <input type="hidden" name="action" value={a.id} />
-                  <button className="h-10 rounded-md bg-navy px-3 text-ui text-paper hover:bg-night">
+                  <button className="h-(--control-h) rounded-md bg-navy px-3 text-ui text-paper hover:bg-night">
                     Aprobar
                   </button>
-                  <button formAction={rejectActionAction} className="h-10 rounded-md border border-line px-3 text-ui hover:border-muted">
+                  <button formAction={rejectActionAction} className="h-(--control-h) rounded-md border border-line px-3 text-ui hover:border-muted">
                     Rechazar
                   </button>
                 </form>
@@ -296,7 +296,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
               <span className={lbl}>Hasta</span>
               <input type="date" name="hasta" defaultValue={sp.hasta ?? ""} className={field} />
             </label>
-            <button className="h-10 rounded-md border border-line px-3 text-ui">Filtrar</button>
+            <button className="h-(--control-h) rounded-md border border-line px-3 text-ui">Filtrar</button>
           </form>
           {actions.length === 0 ? (
             <p className="mt-3 text-ui text-muted">Todavía no hay acciones{sp.estado || sp.desde || sp.hasta ? " con esos filtros" : ""}.</p>
@@ -413,7 +413,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
       )}
 
       {contacts.some((x) => x.c.status === "pendiente" && !x.fleetId) && (
-        <section aria-labelledby="contactos" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
+        <section aria-labelledby="contactos" className="rounded-md border border-rose/40 bg-rose-soft p-5">
           <h2 id="contactos" className="text-lead font-semibold">
             Estudios que quieren ser tu contador
           </h2>
@@ -430,8 +430,8 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
                   </span>
                   <form action={answerContactAction} className="flex gap-2">
                     <input type="hidden" name="id" value={x.c.id} />
-                    <button className="h-10 rounded-md bg-navy px-3 text-ui text-paper hover:bg-night">Aceptar</button>
-                    <button formAction={rejectContactAction} className="h-10 rounded-md border border-line px-3 text-ui hover:border-muted">
+                    <button className="h-(--control-h) rounded-md bg-navy px-3 text-ui text-paper hover:bg-night">Aceptar</button>
+                    <button formAction={rejectContactAction} className="h-(--control-h) rounded-md border border-line px-3 text-ui hover:border-muted">
                       No, gracias
                     </button>
                   </form>

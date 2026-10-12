@@ -52,12 +52,12 @@ export function PushToggle() {
               : "Activá los avisos para enterarte de los mensajes nuevos aunque no tengas Faro abierto."}
       </p>
       {state === "off" && (
-        <button type="button" onClick={turnOn} className="h-9 rounded-md bg-navy px-3.5 text-meta font-medium text-paper hover:bg-night">
+        <button type="button" onClick={turnOn} className="h-(--control-h) rounded-md bg-navy px-3.5 text-meta font-medium text-paper hover:bg-night">
           Activar avisos
         </button>
       )}
       {state === "on" && (
-        <button type="button" onClick={turnOff} className="h-9 rounded-md border border-line px-3.5 text-meta hover:border-muted">
+        <button type="button" onClick={turnOff} className="h-(--control-h) rounded-md border border-line px-3.5 text-meta hover:border-muted">
           Desactivar
         </button>
       )}

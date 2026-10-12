@@ -14,7 +14,7 @@ import { formatMoney } from "@/lib/format";
 export const metadata: Metadata = { title: "Admisión" };
 
 const field = `mt-1 py-2 ${fieldClass}`;
-const card = "rounded-lg border border-line bg-surface p-5";
+const card = "rounded-md border border-line bg-surface p-5";
 
 /** Admisión (§7): resumen de lo autorizado, entrevista o información, aceptar o rechazar con motivo y firmar el acuerdo */
 export default async function AdmisionPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
@@ -86,10 +86,10 @@ export default async function AdmisionPage({ params, searchParams }: { params: P
               <input name="reason" maxLength={1000} className={field} />
             </label>
             <div className="flex flex-wrap gap-2 sm:col-span-2">
-              <button className="h-10 rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
+              <button className="h-(--control-h) rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
                 Aceptar y pasar al acuerdo
               </button>
-              <button formAction={rejectConnectionAction} className="h-10 rounded-md border border-danger/40 px-4 text-ui text-danger hover:bg-danger/10">
+              <button formAction={rejectConnectionAction} className="h-(--control-h) rounded-md border border-danger/40 px-4 text-ui text-danger hover:bg-danger/10">
                 Rechazar
               </button>
             </div>

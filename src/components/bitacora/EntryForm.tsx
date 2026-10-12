@@ -50,7 +50,7 @@ export function EntryForm({
               ["ingreso", "Ingreso"],
             ] as const
           ).map(([v, l]) => (
-            <label key={v} className="flex h-11 cursor-pointer items-center justify-center rounded-md border border-line text-body has-[:checked]:border-navy has-[:checked]:bg-navy has-[:checked]:text-paper">
+            <label key={v} className="flex h-(--control-h) cursor-pointer items-center justify-center rounded-md border border-line text-body has-[:checked]:border-navy has-[:checked]:bg-navy has-[:checked]:text-paper">
               <input type="radio" name="kind" value={v} defaultChecked={(d.kind ?? "gasto") === v} className="sr-only" />
               {l}
             </label>

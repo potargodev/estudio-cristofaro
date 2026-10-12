@@ -37,7 +37,7 @@ export function CreateTenantForm() {
             ] as const
           ).map(([k, label]) => (
             <label key={k} className="flex items-center gap-2">
-              <input type="radio" name="kind" value={k} checked={kind === k} onChange={() => setKind(k)} className="accent-[#1c2235]" />
+              <input type="radio" name="kind" value={k} checked={kind === k} onChange={() => setKind(k)} className="accent-navy" />
               {label}
             </label>
           ))}
@@ -47,7 +47,7 @@ export function CreateTenantForm() {
         <Input id="t-name" name="name" required className="mt-1" />
       </AdminField>
       <AdminField label="Plan" htmlFor="t-plan">
-        <select key={kind} id="t-plan" name="plan" className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body">
+        <select key={kind} id="t-plan" name="plan" className="mt-1 h-(--control-h) w-full border border-line bg-surface px-2 text-body">
           {plansFor(kind).map((p) => (
             <option key={p.key} value={p.key}>
               {p.name}
@@ -71,7 +71,7 @@ export function CreateTenantForm() {
         </p>
       )}
       <div className="sm:col-span-2">
-        <Button type="submit" disabled={pending} className="h-9 px-4">
+        <Button type="submit" disabled={pending} className="px-4">
           {pending ? "Creando…" : "Crear y generar contraseña temporal"}
         </Button>
       </div>

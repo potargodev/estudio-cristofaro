@@ -55,7 +55,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           )}
           <form action={testFlowAction} className="flex flex-wrap items-center gap-2">
             <input type="hidden" name="id" value={f.id} />
-            <input name="datos" aria-label="Datos de prueba (JSON)" placeholder='{"organizacion_id": "…", "total": 1500}' className="h-9 w-64 rounded-md border border-line bg-surface px-2 font-mono text-caption" />
+            <input name="datos" aria-label="Datos de prueba (JSON)" placeholder='{"organizacion_id": "…", "total": 1500}' className="h-(--control-h) w-64 rounded-md border border-line bg-surface px-2 font-mono text-caption" />
             <SubmitButton variant="secondary" pendingText="…">Probar</SubmitButton>
           </form>
           <form action={deleteFlowAction} className="ml-auto">
@@ -66,7 +66,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           </form>
         </div>
         {issues.length > 0 && (
-          <ul role="alert" className="grid gap-1 rounded-md border border-[#ecd6a8] bg-[#fbf3e2] px-4 py-3 text-meta text-[#7a5410]">
+          <ul role="alert" className="grid gap-1 rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-3 text-meta text-[#7a5410]">
             {issues.map((i, k) => (
               <li key={k}>{i.message}</li>
             ))}
@@ -96,7 +96,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                     <span>
                       {formatDate(r.created_at, "timestamp")} · {r.source}
                     </span>
-                    <span className={r.status === "error" || r.status === "rechazada" ? "text-[#8f2a1c]" : r.status === "completada" ? "text-[#1f6b3d]" : "text-muted"}>{RUN[r.status] ?? r.status}</span>
+                    <span className={r.status === "error" || r.status === "rechazada" ? "text-danger" : r.status === "completada" ? "text-[#1f5f36]" : "text-muted"}>{RUN[r.status] ?? r.status}</span>
                   </Link>
                 </li>
               ))}

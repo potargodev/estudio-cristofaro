@@ -230,7 +230,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
     );
     const dueCell = soon || late ? (
       <Link href={`/admin/vencimientos?org=${org.id}`} className="tabular block text-ui underline-offset-4 hover:underline">
-        <span className={late ? "font-medium text-[#8f2a1c]" : "text-ink"}>{soon + late}</span>
+        <span className={late ? "font-medium text-danger" : "text-ink"}>{soon + late}</span>
         <span className="ml-1.5 text-caption text-muted">{due?.next ? `próx. ${formatDate(due.next, "short")}` : "vencidos"}</span>
       </Link>
     ) : (
@@ -293,7 +293,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
           </p>
           <p className="tabular flex flex-wrap gap-x-4 gap-y-1 pl-12 text-meta text-muted">
             <span>
-              <span className={late ? "font-medium text-[#8f2a1c]" : "text-ink"}>{soon + late}</span> vencimientos
+              <span className={late ? "font-medium text-danger" : "text-ink"}>{soon + late}</span> vencimientos
             </span>
             <span>
               <span className="text-ink">{reqs}</span> solicitudes
@@ -316,7 +316,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
     <>
       <PageHeader title="Organizaciones" description="Clientes del estudio con su plan, responsable, módulos y estado de salud. Los vencimientos cuentan los próximos 14 días y los atrasados." actions={role !== "colaborador" ? <HeaderAction href="/admin/organizaciones/nueva" label="Nueva organización" tour="accion" /> : undefined} />
       {connected.length > 0 && (
-        <section aria-labelledby="conectadas" className="mb-5 rounded-lg border border-line bg-surface">
+        <section aria-labelledby="conectadas" className="mb-5 rounded-md border border-line bg-surface">
           <h2 id="conectadas" className="px-5 pt-4 text-body font-semibold">
             Cuentas conectadas <span className="font-normal text-muted">· trabajás sobre sus datos en vivo, con su permiso</span>
           </h2>

@@ -95,7 +95,7 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
             aria-controls="cmdk-list"
             aria-activedescendant={list[active] ? `cmdk-${active}` : undefined}
             placeholder="Buscar organización, CUIT, consulta o solicitud…"
-            className="h-12 flex-1 bg-transparent text-body text-ink placeholder:text-muted focus:outline-none"
+            className="h-(--control-h) flex-1 bg-transparent text-body text-ink placeholder:text-muted focus:outline-none"
           />
           <kbd className="border border-line px-1.5 py-0.5 text-micro text-muted">Esc</kbd>
         </div>

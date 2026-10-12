@@ -16,11 +16,11 @@ export type BoardLead = Pick<
 > & { stageDays: number };
 
 const COLUMN_ACCENT: Record<LeadStatus, string> = {
-  nuevo: "before:bg-[#1c2235]",
-  contactado: "before:bg-[#6b7a99]",
-  presupuesto: "before:bg-[#a57c6d]",
+  nuevo: "before:bg-navy",
+  contactado: "before:bg-slate-light",
+  presupuesto: "before:bg-rose",
   ganado: "before:bg-[#3f7f57]",
-  perdido: "before:bg-[#a57c6d]",
+  perdido: "before:bg-rose",
 };
 
 export function LeadBoard({ leads }: { leads: BoardLead[] }) {
@@ -97,7 +97,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                         </p>
                       )}
                       {l.next_action ? (
-                        <p className={`mt-2 flex items-start gap-1.5 text-caption ${overdue ? "font-medium text-[#8f2a1c]" : "text-ink/80"}`}>
+                        <p className={`mt-2 flex items-start gap-1.5 text-caption ${overdue ? "font-medium text-danger" : "text-ink/80"}`}>
                           <CalendarClock className="mt-px size-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
                           <span>
                             {l.next_action}

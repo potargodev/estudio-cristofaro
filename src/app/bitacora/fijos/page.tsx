@@ -36,8 +36,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 </p>
                 <p className="text-meta text-muted">
                   <span className="num">{formatMoney(r.last_amount, "ARS", { decimals: "auto" })}</span> · próximo el {formatDate(r.next_date, "short")}
-                  {r.price_change_pct && <span className="text-[#8f2a1c]"> · subió {Number(r.price_change_pct)}%</span>}
-                  {r.still_used === false && <span className="text-[#8f2a1c]"> · dijiste que no la usás</span>}
+                  {r.price_change_pct && <span className="text-danger"> · subió {Number(r.price_change_pct)}%</span>}
+                  {r.still_used === false && <span className="text-danger"> · dijiste que no la usás</span>}
                 </p>
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -76,19 +76,19 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         <p className="text-ui font-medium sm:col-span-5">Agregar uno a mano</p>
         <label className="text-meta text-muted">
           Qué es
-          <input name="label" required placeholder="Ej.: Alquiler" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
+          <input name="label" required placeholder="Ej.: Alquiler" className="mt-1 block h-(--control-h) w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
         </label>
         <label className="text-meta text-muted">
           Monto
-          <input name="amount" inputMode="decimal" required className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
+          <input name="amount" inputMode="decimal" required className="mt-1 block h-(--control-h) w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
         </label>
         <label className="text-meta text-muted">
           Día
-          <input name="day" type="number" min={1} max={28} defaultValue={10} className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
+          <input name="day" type="number" min={1} max={28} defaultValue={10} className="mt-1 block h-(--control-h) w-full rounded-md border border-line bg-surface px-2 text-ui text-ink" />
         </label>
         <label className="text-meta text-muted">
           Tipo
-          <select name="kind" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink">
+          <select name="kind" className="mt-1 block h-(--control-h) w-full rounded-md border border-line bg-surface px-2 text-ui text-ink">
             <option value="fijo">Gasto fijo</option>
             <option value="suscripcion">Suscripción</option>
           </select>

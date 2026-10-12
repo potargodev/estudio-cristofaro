@@ -19,11 +19,11 @@ const field = `mt-1 ${fieldClass}`;
 const lbl = "text-meta text-muted";
 const per = (p: string) => `${p.slice(5)}/${p.slice(0, 4)}`;
 const SLIP: Record<string, { label: string; tone: string }> = {
-  sin_asignar: { label: "Sin asignar", tone: "text-[#8f2a1c]" },
+  sin_asignar: { label: "Sin asignar", tone: "text-danger" },
   asignado: { label: "Listo para publicar", tone: "text-muted" },
   publicado: { label: "Falta firmar", tone: "text-[#7a5410]" },
-  conforme: { label: "Firmado conforme", tone: "text-[#1f6b3d]" },
-  no_conforme: { label: "Firmado no conforme", tone: "text-[#8f2a1c]" },
+  conforme: { label: "Firmado conforme", tone: "text-[#1f5f36]" },
+  no_conforme: { label: "Firmado no conforme", tone: "text-danger" },
 };
 
 function Hidden({ r }: { r: ResolvedPayroll }) {
@@ -201,7 +201,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
             <Hidden r={r} />
             <input type="hidden" name="id" value={e.id} />
             <input type="file" name="file" required aria-label="Documento" className="text-meta" />
-            <select name="kind" aria-label="Tipo de documento" className="h-9 rounded-md border border-line bg-surface px-2 text-meta">
+            <select name="kind" aria-label="Tipo de documento" className="h-(--control-h) rounded-md border border-line bg-surface px-2 text-meta">
               <option value="dni">DNI</option>
               <option value="alta">Alta temprana</option>
               <option value="contrato">Contrato</option>
@@ -406,7 +406,7 @@ async function BatchView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp: SP
                 <Hidden r={r} />
                 <input type="hidden" name="batch" value={v.b.id} />
                 <input type="hidden" name="id" value={p.id} />
-                <select name="employee" defaultValue={p.employee_id ?? ""} aria-label="Empleado" className="h-9 max-w-[16rem] rounded-md border border-line bg-surface px-2 text-meta">
+                <select name="employee" defaultValue={p.employee_id ?? ""} aria-label="Empleado" className="h-(--control-h) max-w-[16rem] rounded-md border border-line bg-surface px-2 text-meta">
                   <option value="" disabled>
                     Elegí el empleado
                   </option>
@@ -521,7 +521,7 @@ async function AnnouncementView({ r, id, sp }: { r: ResolvedPayroll; id: string;
             <span>
               {first} {last}
             </span>
-            <span className={rd.ack_at ? "text-[#1f6b3d]" : "text-muted"}>
+            <span className={rd.ack_at ? "text-[#1f5f36]" : "text-muted"}>
               {rd.ack_at ? `Confirmó el ${formatDate(rd.ack_at, "numericTime")}` : rd.read_at ? "Leído" : "Sin leer"}
             </span>
           </li>

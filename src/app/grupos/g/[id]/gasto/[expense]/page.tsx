@@ -7,6 +7,7 @@ import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 import { deleteExpenseAction, stopRecurrenceAction } from "../../../../actions";
 import { formatDate, formatMoney, formatNumber } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata = { title: "Gasto" };
 
@@ -35,8 +36,8 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
       <p className="mt-4 text-meta text-muted">
         {CATEGORIES[e.category as Category] ?? "Otros"} · {date}
       </p>
-      <h1 className="mt-1 font-display text-[28px] leading-tight text-ink sm:text-[32px]">{e.description}</h1>
-      <p className="mt-2 num text-[44px] leading-none">{formatMoney(e.amount, e.currency)}</p>
+      <h1 className={`mt-1 ${pageTitleClass}`}>{e.description}</h1>
+      <p className="mt-2 num text-metric">{formatMoney(e.amount, e.currency)}</p>
       {e.fx_rate && (
         <p className="mt-2 text-ui text-muted">
           ≈ {formatMoney(Math.round(e.amount * Number(e.fx_rate)), v.group.base_currency)} · 1 {e.currency} = {formatNumber(Number(e.fx_rate), 4)} {v.group.base_currency} ({FX_SOURCES[e.fx_source as keyof typeof FX_SOURCES] ?? e.fx_source}, {e.fx_date})
@@ -101,14 +102,14 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
           <form action={stopRecurrenceAction}>
             <input type="hidden" name="group" value={v.group.id} />
             <input type="hidden" name="expense" value={e.id} />
-            <button className="h-11 border border-line px-4 text-ui hover:bg-navy-soft">Dejar de repetir</button>
+            <button className="h-(--control-h) border border-line px-4 text-ui hover:bg-navy-soft">Dejar de repetir</button>
           </form>
         )}
         {canDelete && (
           <form action={deleteExpenseAction}>
             <input type="hidden" name="group" value={v.group.id} />
             <input type="hidden" name="expense" value={e.id} />
-            <button className="h-11 border border-danger/40 px-4 text-ui text-danger hover:bg-danger/5">Borrar gasto</button>
+            <button className="h-(--control-h) border border-danger/40 px-4 text-ui text-danger hover:bg-danger/5">Borrar gasto</button>
           </form>
         )}
       </div>

@@ -72,13 +72,13 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
 
   return (
     <div>
-      <PageHeader level={2} title="Tenants" description="Estudios, autónomos y personas que usan Faro, con su plan, estado y uso. Sin datos de clientes: para entrar a un tenant, pedí un acceso asistido desde su ficha." actions={<Link href="/faro-manager/nuevo" className="inline-flex h-9 items-center rounded-md bg-navy px-4 text-meta text-paper hover:bg-navy-deep">Alta manual</Link>} />
+      <PageHeader level={2} title="Tenants" description="Estudios, autónomos y personas que usan Faro, con su plan, estado y uso. Sin datos de clientes: para entrar a un tenant, pedí un acceso asistido desde su ficha." actions={<Link href="/faro-manager/nuevo" className="inline-flex h-(--control-h) items-center rounded-md bg-navy px-4 text-meta text-paper hover:bg-navy-deep">Alta manual</Link>} />
       <section aria-label="Por plan" className="mt-3 grid gap-3 sm:grid-cols-3 xl:grid-cols-5">
         {PLANS.map((p) => (
           <Link key={p.key} href={href("plan", plan === p.key ? null : p.key)} className={cn("border bg-surface px-4 py-3 hover:border-muted", plan === p.key ? "border-navy" : "border-line")}>
             <p className="text-caption text-muted">{KIND_LABEL[p.kind]}</p>
             <p className="font-medium text-ink">{p.name}</p>
-            <p className="num text-[26px] leading-tight text-ink">{byKind.find((r) => r.plan === p.key)?.n ?? 0}</p>
+            <p className="num text-headline text-ink">{byKind.find((r) => r.plan === p.key)?.n ?? 0}</p>
           </Link>
         ))}
       </section>
@@ -98,7 +98,7 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
           <label htmlFor="q" className="sr-only">
             Buscar
           </label>
-          <input id="q" name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por nombre" className="h-9 w-56 border border-line bg-surface px-2 text-ui" />
+          <input id="q" name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por nombre" className="h-(--control-h) w-56 border border-line bg-surface px-2 text-ui" />
         </form>
       </div>
 

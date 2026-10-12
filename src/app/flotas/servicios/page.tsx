@@ -43,7 +43,7 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
       ) : (
         <ul className="mt-6 grid gap-4">
           {list.map(({ a, account }) => (
-            <li key={a.id} className="rounded-lg border border-line bg-surface p-5">
+            <li key={a.id} className="rounded-md border border-line bg-surface p-5">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <p className="text-title font-semibold">{a.terms.studioName}</p>
@@ -91,7 +91,7 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                   )}
                   {a.status === "activo" && a.debit_status !== "autorizado" &&
                     (a.debit_status === "pendiente" && a.debit_url ? (
-                      <a href={a.debit_url} className="inline-flex h-10 items-center rounded-md border border-line px-4 text-ui">
+                      <a href={a.debit_url} className="inline-flex h-(--control-h) items-center rounded-md border border-line px-4 text-ui">
                         Autorizar el débito
                       </a>
                     ) : (
@@ -137,7 +137,7 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                   </label>
                   <div className="flex gap-3">
                     <SubmitButton pendingText="…">Confirmar la baja</SubmitButton>
-                    <Link href="/flotas/servicios" className="h-10 px-2 text-ui leading-10 text-muted underline-offset-4 hover:underline">
+                    <Link href="/flotas/servicios" className="inline-flex h-(--control-h) items-center px-2 text-ui text-muted underline-offset-4 hover:underline">
                       Cancelar
                     </Link>
                   </div>

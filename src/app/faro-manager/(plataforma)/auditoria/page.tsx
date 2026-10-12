@@ -45,10 +45,10 @@ export default async function AuditoriaPage({ searchParams }: { searchParams: Pr
         ))}
         <form className="ml-auto" action="/faro-manager/auditoria">
           {f && <input type="hidden" name="f" value={f} />}
-          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por persona" aria-label="Buscar por persona" className="h-9 w-56 rounded-md border border-line bg-surface px-2 text-ui" />
+          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por persona" aria-label="Buscar por persona" className="h-(--control-h) w-56 rounded-md border border-line bg-surface px-2 text-ui" />
         </form>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+      <div className="overflow-x-auto rounded-md border border-line bg-surface">
         <table className="w-full min-w-[820px] text-left text-meta">
           <thead className="border-b border-line text-caption text-muted">
             <tr>
@@ -61,7 +61,7 @@ export default async function AuditoriaPage({ searchParams }: { searchParams: Pr
           </thead>
           <tbody className="divide-y divide-line">
             {rows.map(({ a, tenant }) => (
-              <tr key={a.id} className={a.result === "denegado" ? "bg-[#fbecea]" : undefined}>
+              <tr key={a.id} className={a.result === "denegado" ? "bg-danger/10" : undefined}>
                 <td className="whitespace-nowrap px-4 py-2 tabular-nums">{formatDate(a.created_at, "timestamp")}</td>
                 <td className="py-2">
                   {auditLabel(a.action)} <code className="ml-1 text-micro text-muted">{a.action}</code>

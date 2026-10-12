@@ -24,7 +24,7 @@ export default async function EstadoDeCuentaPage({ searchParams }: { searchParam
       <EmpresaHeader me={me} />
       <PageTitle level={2} title="Estado de cuenta" intro="Los honorarios de tu estudio: qué está pendiente y qué ya pagaste." />
       {sp.pago && <p className="mb-4 rounded-md border border-line bg-navy-soft px-4 py-3 text-ui">Volviste de Mercado Pago. Cuando se acredite el pago lo vas a ver acá como pagado.</p>}
-      {sp.error && <p role="alert" className="mb-4 rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-ui text-[#8f2a1c]">{sp.error}</p>}
+      {sp.error && <p role="alert" className="mb-4 rounded-md border border-danger/30 bg-danger/10 px-4 py-3 text-ui text-danger">{sp.error}</p>}
       {!st ? (
         <Empty>Tu estudio todavía no publica cobros en Faro.</Empty>
       ) : (
@@ -33,7 +33,7 @@ export default async function EstadoDeCuentaPage({ searchParams }: { searchParam
             <Card className="min-w-48">
               <p className="text-ui text-muted">Pendiente</p>
               <p className="num text-3xl">{formatMoney(st.pending)}</p>
-              {st.overdue > 0 && <p className="text-ui text-[#8f2a1c]">{formatMoney(st.overdue)} vencido</p>}
+              {st.overdue > 0 && <p className="text-ui text-danger">{formatMoney(st.overdue)} vencido</p>}
             </Card>
             <Card className="min-w-48">
               <p className="text-ui text-muted">Pagado</p>

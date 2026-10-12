@@ -63,7 +63,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
         ].map(([t, v, s]) => (
           <div key={t} className="rounded-md border border-line bg-surface p-4">
             <p className="text-caption text-muted">{t}</p>
-            <p className="num text-[26px]">{v}</p>
+            <p className="num text-headline">{v}</p>
             <p className="text-caption text-muted">{s}</p>
           </div>
         ))}

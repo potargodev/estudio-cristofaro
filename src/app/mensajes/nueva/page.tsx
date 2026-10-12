@@ -4,6 +4,7 @@ import { NewConversation } from "@/components/mensajes/NewConversation";
 import { isStudioRole } from "@/lib/roles";
 import { contacts } from "@/modules/messages/server";
 import { requireChatUser } from "@/modules/messages/session";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Nueva conversación" };
 
@@ -16,7 +17,7 @@ export default async function NuevaPage({ searchParams }: { searchParams: Promis
       <Link href="/mensajes" className="text-meta text-muted hover:text-ink">
         ← Mensajes
       </Link>
-      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Nueva conversación</h1>
+      <h1 className={pageTitleClass}>Nueva conversación</h1>
       {sp.error && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger/5 px-4 py-3 text-ui text-danger">
           {sp.error.slice(0, 200)}

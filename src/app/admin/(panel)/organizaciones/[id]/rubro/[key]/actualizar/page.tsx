@@ -41,7 +41,7 @@ export default async function ActualizarRubro({ params }: { params: Promise<{ id
         <form action={incorporateIndustryAction} className="grid gap-4">
           <input type="hidden" name="organization" value={d.organization.id} />
           <input type="hidden" name="industry" value={key} />
-          <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-line rounded-md border border-line bg-surface">
             {d.entries.map((e) => (
               <li key={`${e.kind}:${e.key}`}>
                 <label className="flex cursor-pointer gap-3 px-5 py-3 text-ui">

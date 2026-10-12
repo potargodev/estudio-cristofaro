@@ -29,7 +29,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
     return (
       <div className="grid gap-4 border border-gold/60 bg-rose-soft p-5">
         <p className="text-body">{state.message}</p>
-        <a href={state.link} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center justify-center gap-2 bg-[#009ee3] px-5 text-white hover:opacity-90" data-testid="mp-link">
+        <a href={state.link} target="_blank" rel="noopener noreferrer" className="inline-flex h-(--control-h) items-center justify-center gap-2 bg-[#009ee3] px-5 text-white hover:opacity-90" data-testid="mp-link">
           Pagar con Mercado Pago
           <ExternalLink className="size-4" aria-hidden />
         </a>
@@ -71,7 +71,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
             <option key={c}>{c}</option>
           ))}
         </select>
-        <input name="amount" inputMode="decimal" required defaultValue={initial.amount} aria-label="Importe" placeholder="0" className="h-14 min-w-0 flex-1 bg-transparent num text-[36px] focus:outline-none" />
+        <input name="amount" inputMode="decimal" required defaultValue={initial.amount} aria-label="Importe" placeholder="0" className="h-14 min-w-0 flex-1 bg-transparent num text-metric focus:outline-none" />
       </div>
       <fieldset>
         <legend className="mb-2 text-ui font-medium">¿Cómo?</legend>

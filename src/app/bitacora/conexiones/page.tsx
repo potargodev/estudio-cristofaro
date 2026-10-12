@@ -36,14 +36,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               <p className="text-lead font-semibold">{INFO[p].name}</p>
               {c && (
                 <p className="text-meta text-muted">
-                  {c.status === "error" ? <span className="text-[#8f2a1c]">Con error</span> : "Conectado"}
+                  {c.status === "error" ? <span className="text-danger">Con error</span> : "Conectado"}
                   {c.label ? ` · ${c.label}` : ""}
                   {c.lastSync ? ` · última lectura ${formatDate(c.lastSync, "numericTime")}` : ""}
                 </p>
               )}
             </div>
             <p className="text-ui text-muted">{INFO[p].text}</p>
-            {c?.lastError && <p className="text-meta text-[#8f2a1c]">{c.lastError}</p>}
+            {c?.lastError && <p className="text-meta text-danger">{c.lastError}</p>}
             <div className="flex flex-wrap gap-2">
               {c ? (
                 <>
@@ -84,7 +84,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                   <form action={proposalAction} className="flex items-center gap-1.5">
                     <input type="hidden" name="id" value={p.id} />
                     <input type="hidden" name="op" value="aceptar" />
-                    <input name="amount" inputMode="decimal" aria-label="Importe" placeholder="Importe" defaultValue={p.amount ? formatNumber(p.amount / 100, 2) : ""} className="h-9 w-28 rounded-md border border-line bg-surface px-2 text-ui" />
+                    <input name="amount" inputMode="decimal" aria-label="Importe" placeholder="Importe" defaultValue={p.amount ? formatNumber(p.amount / 100, 2) : ""} className="h-(--control-h) w-28 rounded-md border border-line bg-surface px-2 text-ui" />
                     <SubmitButton pendingText="…">Cargar</SubmitButton>
                   </form>
                   <form action={proposalAction}>

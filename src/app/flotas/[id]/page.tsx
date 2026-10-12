@@ -30,6 +30,7 @@ import { SeekerForm } from "@/components/red/SeekerForm";
 import { fleetSeeker, myContacts } from "@/modules/red/seekers";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatAmount, formatDate } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Flota" };
 
@@ -56,12 +57,12 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
     <>
       <Feedback ok={sp.ok} error={sp.error} />
       <div className="flex items-start gap-4">
-        <span className="grid size-14 shrink-0 place-items-center rounded-lg bg-navy text-gold">
+        <span className="grid size-14 shrink-0 place-items-center rounded-md bg-navy text-gold">
           <Ship className="size-7" strokeWidth={1.5} aria-hidden />
         </span>
         <div className="min-w-0">
           <FleetLabel />
-          <h1 className="mt-1 font-display text-[28px] leading-tight text-ink sm:text-[32px]">{x.fleet.name}</h1>
+          <h1 className={`mt-1 ${pageTitleClass}`}>{x.fleet.name}</h1>
           {x.fleet.description && <p className="text-body text-muted">{x.fleet.description}</p>}
         </div>
       </div>
@@ -77,7 +78,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
             Mínimo {FLEET_MIN} para pedir propuestas. Cada uno ve nombre, perfil y estado; nunca finanzas.
           </p>
         </div>
-        <ul className="mt-3 divide-y divide-line rounded-lg border border-line bg-surface">
+        <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
           {x.members.map((m) => (
             <li key={m.id} className="flex flex-wrap items-center gap-3 px-5 py-3">
               <span className="min-w-0 flex-1">
@@ -115,7 +116,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           ))}
         </ul>
         {isCaptain && (
-          <section aria-labelledby="red-disponible" className="mt-4 rounded-lg border border-line bg-surface p-4">
+          <section aria-labelledby="red-disponible" className="mt-4 rounded-md border border-line bg-surface p-4">
             <p id="red-disponible" className="text-body font-semibold">
               Que los estudios encuentren a la Flota
             </p>
@@ -130,8 +131,8 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                   quiere hacerles una propuesta.
                 </span>
                 <span className="flex gap-2">
-                  <button className="h-9 rounded-md bg-navy px-3 text-meta text-paper">Aceptar</button>
-                  <button formAction={fleetRejectContactAction} className="h-9 rounded-md border border-line px-3 text-meta">
+                  <button className="h-(--control-h) rounded-md bg-navy px-3 text-meta text-paper">Aceptar</button>
+                  <button formAction={fleetRejectContactAction} className="h-(--control-h) rounded-md border border-line px-3 text-meta">
                     No, gracias
                   </button>
                 </span>
@@ -144,7 +145,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         )}
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {isCaptain && (
-            <form action={inviteAction} className="rounded-lg border border-line bg-surface p-4">
+            <form action={inviteAction} className="rounded-md border border-line bg-surface p-4">
               {hidden}
               <p className="text-body font-semibold">Invitar</p>
               <div className="mt-2 grid gap-2 sm:grid-cols-2">
@@ -162,7 +163,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
               </div>
             </form>
           )}
-          <form action={setProfileAction} className="rounded-lg border border-line bg-surface p-4">
+          <form action={setProfileAction} className="rounded-md border border-line bg-surface p-4">
             {hidden}
             <p className="text-body font-semibold">Tu perfil</p>
             <label className="text-meta text-muted">
@@ -187,21 +188,21 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           Pedido de propuesta
         </h2>
         {x.fleet.request_status === "publicado" ? (
-          <div className="mt-3 rounded-lg border border-line bg-surface p-4 text-ui">
+          <div className="mt-3 rounded-md border border-line bg-surface p-4 text-ui">
             <p>
               Publicado en la Red Contable{x.fleet.request_zone ? ` · zona ${x.fleet.request_zone}` : ""}. Los estudios ven cuántos son por perfil y la zona, sin datos personales.
             </p>
             {isCaptain && (
               <form action={closeRequestAction} className="mt-3">
                 {hidden}
-                <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
+                <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-meta hover:border-muted">
                   Cerrar el pedido
                 </button>
               </form>
             )}
           </div>
         ) : isCaptain ? (
-          <form action={publishRequestAction} className="mt-3 grid gap-3 rounded-lg border border-line bg-surface p-4">
+          <form action={publishRequestAction} className="mt-3 grid gap-3 rounded-md border border-line bg-surface p-4">
             {hidden}
             <label className="text-meta text-muted">
               Zona (para estudios presenciales)
@@ -239,7 +240,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           <p className="mt-2 text-ui text-muted">Cuando los estudios respondan, las comparan acá.</p>
         ) : (
           <>
-            <div className="mt-3 overflow-x-auto rounded-lg border border-line bg-surface">
+            <div className="mt-3 overflow-x-auto rounded-md border border-line bg-surface">
               <table className="w-full min-w-[640px] text-left text-ui">
                 <caption className="sr-only">Comparación de propuestas: precio mensual por integrante según perfil</caption>
                 <thead className="border-b border-line text-caption text-muted">
@@ -282,7 +283,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
             <p className="mt-2 text-caption text-muted">Precios en pesos por mes y por integrante, pago mensual por adelantado. En negrita, tu perfil. La votación no es vinculante: cada uno decide si acepta.</p>
             <ul className="mt-4 grid gap-3">
               {x.proposals.map(({ p, studio, myVote, accepted }) => (
-                <li key={p.id} className="rounded-lg border border-line bg-surface p-4">
+                <li key={p.id} className="rounded-md border border-line bg-surface p-4">
                   <p className="text-body font-semibold">{studio}</p>
                   <p className="mt-1 whitespace-pre-line text-ui">{p.includes}</p>
                   {p.below_min_since && <p className="mt-2 text-meta text-danger">La Flota quedó debajo del mínimo de esta propuesta: el precio grupal tiene 30 días de aviso.</p>}
@@ -292,13 +293,13 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                       <form action={voteAction}>
                         {hidden}
                         <input type="hidden" name="proposal" value={p.id} />
-                        <button type="submit" className="h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
+                        <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-meta hover:border-muted">
                           Votar esta
                         </button>
                       </form>
                     )}
                     {!x.myAgreement && (
-                      <Link href={`/flotas/acuerdo/${p.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-4 text-meta font-medium text-paper hover:bg-night">
+                      <Link href={`/flotas/acuerdo/${p.id}`} className="inline-flex h-(--control-h) items-center rounded-md bg-navy px-4 text-meta font-medium text-paper hover:bg-night">
                         Ver y aceptar mi acuerdo
                       </Link>
                     )}
@@ -342,7 +343,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
         </ol>
       </section>
 
-      <section className="mt-10 rounded-lg border border-line bg-surface p-5">
+      <section className="mt-10 rounded-md border border-line bg-surface p-5">
         <h2 className="flex items-center gap-2 text-title font-semibold">
           <Anchor className="size-5 text-rose-deep" aria-hidden /> Configuración
         </h2>
@@ -368,7 +369,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
             Salir de la Flota no da de baja tu acuerdo con el estudio: lo mantenés con la tarifa grupal o lo das de baja desde Mis servicios.
             {isCaptain && " Si salís, el rol de Capitán pasa al integrante más antiguo."}
           </p>
-          <button type="submit" className="mt-2 h-9 rounded-md border border-line px-3 text-meta hover:border-muted">
+          <button type="submit" className="mt-2 h-(--control-h) rounded-md border border-line px-3 text-meta hover:border-muted">
             Salir de la Flota
           </button>
         </form>

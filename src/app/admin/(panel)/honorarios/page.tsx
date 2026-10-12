@@ -61,7 +61,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 <p className="truncate text-ui font-medium">{org}</p>
                 <p className="text-meta text-muted">
                   {c.concept} · vence el {formatDate(c.due_date, "numeric")}
-                  {c.status === "pendiente" && c.due_date < today && <span className="text-[#8f2a1c]"> · vencido</span>}
+                  {c.status === "pendiente" && c.due_date < today && <span className="text-danger"> · vencido</span>}
                   {c.reminders_sent.length > 0 && ` · ${c.reminders_sent.length} recordatorio${c.reminders_sent.length === 1 ? "" : "s"}`}
                   {c.status === "pagado" && c.paid_at && ` · pagado el ${formatDate(c.paid_at, "numeric")} (${c.payment_method})`}
                 </p>
@@ -84,7 +84,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 <form action={chargeAction} className="flex items-center gap-1.5">
                   <input type="hidden" name="id" value={c.id} />
                   <input type="hidden" name="op" value="pagado" />
-                  <select name="method" aria-label="Medio de pago" className="h-9 rounded-md border border-line bg-surface px-2 text-meta">
+                  <select name="method" aria-label="Medio de pago" className="h-(--control-h) rounded-md border border-line bg-surface px-2 text-meta">
                     <option value="transferencia">Transferencia</option>
                     <option value="efectivo">Efectivo</option>
                     <option value="otro">Otro</option>

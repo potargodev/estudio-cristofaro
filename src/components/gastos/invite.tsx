@@ -6,8 +6,8 @@ import { groupAccountAction, groupLinkAction, joinAsGuestAction, type JoinState 
 import { cn } from "@/lib/utils";
 import { CopyButton, inputCls } from "./forms";
 
-const btn = "inline-flex h-11 items-center justify-center gap-2 rounded-md bg-navy px-5 text-paper hover:bg-navy-deep disabled:opacity-60";
-const ghost = "inline-flex h-11 items-center justify-center gap-2 rounded-md border border-line px-4 text-ui hover:border-muted";
+const btn = "inline-flex h-(--control-h) items-center justify-center gap-2 rounded-md bg-navy px-5 text-paper hover:bg-navy-deep disabled:opacity-60";
+const ghost = "inline-flex h-(--control-h) items-center justify-center gap-2 rounded-md border border-line px-4 text-ui hover:border-muted";
 
 /** WhatsApp (sin depender del mail) y el menú de compartir del teléfono */
 export function ShareLink({ link, text }: { link: string; text: string }) {
@@ -20,12 +20,12 @@ export function ShareLink({ link, text }: { link: string; text: string }) {
         {link}
       </code>
       <div className="flex flex-wrap gap-2">
-        <a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-md bg-[#1f7a4d] px-3 text-meta text-white hover:bg-[#186540]">
+        <a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noreferrer" className="inline-flex h-(--control-h) items-center gap-1.5 rounded-md bg-[#1f7a4d] px-3 text-meta text-white hover:bg-[#186540]">
           <MessageCircle className="size-3.5" aria-hidden /> Mandar por WhatsApp
         </a>
         <CopyButton value={link} label="Copiar enlace" className="rounded-md" />
         {canShare && (
-          <button type="button" onClick={() => navigator.share({ text, url: link }).catch(() => undefined)} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-navy/30 px-3 text-meta text-navy hover:bg-navy-soft">
+          <button type="button" onClick={() => navigator.share({ text, url: link }).catch(() => undefined)} className="inline-flex h-(--control-h) items-center gap-1.5 rounded-md border border-navy/30 px-3 text-meta text-navy hover:bg-navy-soft">
             <Share2 className="size-3.5" aria-hidden /> Compartir
           </button>
         )}
@@ -89,7 +89,7 @@ export function JoinChoices({ token, google, next, error, accountOnly }: { token
             ["invitado", "Sin cuenta"],
           ] as const
         ).map(([k, t]) => (
-          <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={cn("h-10 rounded-[4px] text-ui", mode === k ? "bg-navy text-paper" : "text-muted hover:text-ink")}>
+          <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={cn("h-(--control-h) rounded-md text-ui", mode === k ? "bg-navy text-paper" : "text-muted hover:text-ink")}>
             {t}
           </button>
         ))}

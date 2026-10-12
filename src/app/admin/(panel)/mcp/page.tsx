@@ -125,7 +125,7 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Link href={`/admin/mcp?acceso=${a.id}#llamadas`} className="inline-flex h-9 items-center gap-1.5 border border-line bg-surface px-3 text-ui hover:border-muted">
+                      <Link href={`/admin/mcp?acceso=${a.id}#llamadas`} className="inline-flex h-(--control-h) items-center gap-1.5 border border-line bg-surface px-3 text-ui hover:border-muted">
                         <Activity className="size-4" aria-hidden /> Llamadas
                       </Link>
                       {st.key === "activa" && (

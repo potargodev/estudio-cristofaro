@@ -24,7 +24,7 @@ const isUuid = (v?: string) => !!v && /^[0-9a-f-]{36}$/i.test(v);
 
 type Priority = "alta" | "media" | "baja";
 const PRIORITY: Record<Priority, { label: string; className: string }> = {
-  alta: { label: "Prioridad alta", className: "text-[#8f2a1c]" },
+  alta: { label: "Prioridad alta", className: "text-danger" },
   media: { label: "Prioridad media", className: "text-[#7a5a12]" },
   baja: { label: "Prioridad baja", className: "text-muted" },
 };
@@ -50,7 +50,7 @@ function SlaChip({ s }: { s: ReturnType<typeof sla> }) {
     <span
       className={cn(
         "tabular inline-flex items-center gap-1 text-caption",
-        !s.waiting ? "text-muted" : s.remaining! < 0 ? "font-medium text-[#8f2a1c]" : s.priority === "alta" ? "font-medium text-[#7a5a12]" : "text-ink",
+        !s.waiting ? "text-muted" : s.remaining! < 0 ? "font-medium text-danger" : s.priority === "alta" ? "font-medium text-[#7a5a12]" : "text-ink",
       )}
     >
       <Clock className="size-3.5" strokeWidth={1.5} aria-hidden />
@@ -160,7 +160,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
               ))}
               <span className="tabular ml-auto text-meta text-muted">
                 {visible.length}
-                {overdue > 0 && estado !== "resueltas" && <span className="ml-2 font-medium text-[#8f2a1c]">{overdue} fuera de término</span>}
+                {overdue > 0 && estado !== "resueltas" && <span className="ml-2 font-medium text-danger">{overdue} fuera de término</span>}
               </span>
             </div>
             {toReview.size > 0 && (

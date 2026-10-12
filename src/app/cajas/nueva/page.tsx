@@ -29,7 +29,7 @@ export default async function NuevaCajaPage({ searchParams }: { searchParams: Pr
             <li key={t.purpose}>
               <form action={createSharedBoxAction} className="h-full">
                 <input type="hidden" name="purpose" value={t.purpose} />
-                <button type="submit" data-opcion={t.purpose} className="flex h-full w-full flex-col items-start gap-2 rounded-lg border border-line bg-surface p-5 text-left transition-colors hover:border-navy">
+                <button type="submit" data-opcion={t.purpose} className="flex h-full w-full flex-col items-start gap-2 rounded-md border border-line bg-surface p-5 text-left transition-colors hover:border-navy">
                   <span className="flex items-center gap-3">
                     <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" />
                     <span className="text-title font-medium text-ink">{t.name}</span>

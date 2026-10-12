@@ -213,7 +213,7 @@ export function DonutChart({
             })}
         </svg>
         <div className="absolute inset-0 grid place-content-center text-center">
-          <span className="tabular num text-[28px] leading-none text-ink">{hover !== null ? data[hover].value : total}</span>
+          <span className="tabular num text-headline text-ink">{hover !== null ? data[hover].value : total}</span>
           <span className="mt-1 text-caption text-muted">{hover !== null ? data[hover].label : centerLabel}</span>
         </div>
       </div>

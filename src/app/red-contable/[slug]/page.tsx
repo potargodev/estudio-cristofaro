@@ -11,6 +11,7 @@ import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { labelOf, MODALITIES, RED_SERVICES, responseLabel, TEAM_SIZES } from "@/modules/red/catalog";
 import { publicProfile } from "@/modules/red/server";
 import { formatDate, formatNumber } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 type Params = Promise<{ slug: string }>;
 export const dynamic = "force-dynamic";
@@ -46,11 +47,11 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           ← Red Contable
         </Link>
         <div className="mt-4 flex items-start gap-4">
-          <span aria-hidden className="grid size-16 shrink-0 place-items-center rounded-lg bg-navy font-display text-[30px] text-gold">
+          <span aria-hidden className="grid size-16 shrink-0 place-items-center rounded-md bg-navy font-display text-metric text-gold">
             {x.name.charAt(0)}
           </span>
           <div>
-            <h1 className="font-display text-[34px] leading-tight sm:text-[44px]">{x.name}</h1>
+            <h1 className={pageTitleClass}>{x.name}</h1>
             {x.p.headline && <p className="mt-1 text-lead text-muted">{x.p.headline}</p>}
           </div>
         </div>
@@ -94,7 +95,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           ) : (
             <ul className="mt-4 grid gap-3">
               {x.reviews.map((r) => (
-                <li key={r.id} className="rounded-lg border border-line bg-surface p-4">
+                <li key={r.id} className="rounded-md border border-line bg-surface p-4">
                   <p className="text-meta text-muted">
                     <span className="text-body text-ink" aria-label={`${r.rating} de 5`}>
                       {"★".repeat(r.rating)}
@@ -116,7 +117,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
         </section>
       </div>
       <aside className="lg:sticky lg:top-20 lg:self-start">
-        <div className="rounded-lg border border-line bg-surface p-5">
+        <div className="rounded-md border border-line bg-surface p-5">
           <h2 className="text-title font-semibold">Pedir propuesta</h2>
           {x.p.accepting_clients ? (
             <>
@@ -128,7 +129,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           )}
         </div>
         {x.p.accepting_clients && canConnect && (
-          <div className="mt-3 rounded-lg border border-line bg-surface p-5" data-conectar>
+          <div className="mt-3 rounded-md border border-line bg-surface p-5" data-conectar>
             <h2 className="text-title font-semibold">Conectar mi cuenta</h2>
             {pending ? (
               <p className="mt-1 text-ui text-muted">
@@ -155,7 +156,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
                   ¿Qué necesitás?
                   <textarea name="message" rows={3} maxLength={2000} defaultValue={derivacion ? contextMessage(derivacion) : ""} className="mt-1 block w-full rounded-md border border-line bg-canvas px-3 py-2 text-ui text-ink" />
                 </label>
-                <button type="submit" className="h-11 rounded-md bg-navy px-5 text-body font-medium text-paper hover:bg-night">
+                <button type="submit" className="h-(--control-h) rounded-md bg-navy px-5 text-body font-medium text-paper hover:bg-night">
                   Pedir la conexión
                 </button>
               </form>
@@ -163,7 +164,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
           </div>
         )}
         {x.p.accepting_clients && (
-          <Link href={`/red-contable/${x.slug}/agendar`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface text-body font-medium text-ink hover:border-navy">
+          <Link href={`/red-contable/${x.slug}/agendar`} className="mt-3 flex h-(--control-h) items-center justify-center gap-2 rounded-md border border-line bg-surface text-body font-medium text-ink hover:border-navy">
             <CalendarClock className="size-4" aria-hidden /> Agendar llamada
           </Link>
         )}

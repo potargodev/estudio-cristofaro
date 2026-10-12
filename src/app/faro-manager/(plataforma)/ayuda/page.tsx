@@ -27,7 +27,7 @@ export default async function AyudaOpiniones() {
   return (
     <>
       <PageHeader level={2} title="Opiniones de la ayuda" description={`${ARTICLES.length} artículos en docs/ayuda. Arriba, los que más «no me sirvió» tienen.`} />
-      <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+      <div className="overflow-x-auto rounded-md border border-line bg-surface">
         <table className="w-full min-w-[640px] text-left text-ui">
           <thead className="border-b border-line text-caption text-muted">
             <tr>

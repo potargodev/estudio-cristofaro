@@ -23,7 +23,7 @@ function Usage({ label, used, max }: { label: string; used: number; max: number 
   return (
     <div className="rounded-md border border-line bg-canvas px-4 py-3">
       <p className="text-meta text-muted">{label}</p>
-      <p className="font-display text-[30px] leading-tight text-ink">
+      <p className="num text-metric text-ink">
         {used}
         <span className="text-title text-muted"> / {max ?? "∞"}</span>
       </p>
@@ -112,7 +112,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
             const asked = pending.some((r) => r.to === p.key);
             const upgrade = !current && p.priceUsd > e.plan.priceUsd;
             return (
-              <article key={p.key} className={cn("flex flex-col rounded-lg border bg-surface p-5", current ? "border-navy ring-1 ring-navy" : "border-line")}>
+              <article key={p.key} className={cn("flex flex-col rounded-md border bg-surface p-5", current ? "border-navy ring-1 ring-navy" : "border-line")}>
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-section font-semibold text-ink">{p.name}</h3>
                   {current ? <StatusBadge status="activa" label="Tu plan" /> : p.recommended ? <Tag>Recomendado</Tag> : null}

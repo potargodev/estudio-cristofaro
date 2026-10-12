@@ -24,7 +24,7 @@ export function VerifyForm() {
         autoComplete="one-time-code"
         inputMode={mode === "totp" ? "numeric" : "text"}
         pattern={mode === "totp" ? "[0-9 ]{6,7}" : undefined}
-        className="mt-1 h-11 bg-surface text-center font-mono text-title tracking-[0.3em]"
+        className="mt-1 h-(--control-h) bg-surface text-center font-mono text-title tracking-[0.3em]"
       />
       {state.message && (
         <p role="alert" className="mt-4 text-ui text-danger">

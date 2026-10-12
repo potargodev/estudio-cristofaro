@@ -12,6 +12,7 @@ import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 import { answerSettlementAction, archiveGroupAction, removeMemberAction, toggleSimplifyAction } from "../../actions";
 import { formatDate, formatMoney } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata = { title: "Grupo" };
 
@@ -56,7 +57,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       <header className="mt-4 flex items-start gap-4">
         <GroupDot color={group.color} name={group.name} size="lg" />
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{group.name}</h1>
+          <h1 className={pageTitleClass}>{group.name}</h1>
           <p className="mt-1 text-ui text-muted">
             {GROUP_TYPES[group.type as GroupType]} · {v.members.length} {v.members.length === 1 ? "persona" : "personas"} · en {group.base_currency}
             {v.organizationName && <> · Contabilidad de {v.organizationName}</>}
@@ -68,7 +69,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
       {actor.kind === "guest" && (
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-gold/60 bg-rose-soft p-4 text-ui">
           <p className="min-w-0 flex-1">Entrás sin cuenta, solo desde este teléfono. Creá tu cuenta gratis y el grupo queda guardado, con tu parte en tu Bitácora.</p>
-          <Link href="/grupos/reclamar" className="inline-flex h-10 items-center bg-navy px-4 text-paper hover:bg-navy-deep">
+          <Link href="/grupos/reclamar" className="inline-flex h-(--control-h) items-center bg-navy px-4 text-paper hover:bg-navy-deep">
             Crear mi cuenta
           </Link>
         </div>
@@ -76,20 +77,20 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
 
       <section aria-label="Tu saldo" className="mt-5 border border-line bg-surface p-5">
         <p className="text-meta text-muted">Tu saldo en este grupo</p>
-        <p className="mt-1 num text-[30px] leading-tight">
+        <p className="mt-1 num text-metric">
           {myCurrencies.length === 0 ? <span className="text-muted">Estás al día</span> : myCurrencies.map(([cur, b]) => <BalanceLine key={cur} cents={b[me.id]} currency={cur} className="block" />)}
         </p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:flex">
-          <Link href={`/grupos/g/${group.id}/gasto`} className="col-span-2 inline-flex h-14 items-center justify-center gap-2 bg-navy px-6 text-title text-paper hover:bg-navy-deep sm:h-12 sm:text-lead">
+          <Link href={`/grupos/g/${group.id}/gasto`} className="col-span-2 inline-flex h-14 items-center justify-center gap-2 bg-navy px-6 text-title text-paper hover:bg-navy-deep sm:h-(--control-h) sm:text-ui">
             <Plus className="size-5" aria-hidden />
             Agregar gasto
           </Link>
-          <Link href={`/grupos/g/${group.id}/saldar`} className="inline-flex h-12 items-center justify-center gap-2 border border-navy/30 px-5 text-navy hover:bg-navy-soft">
+          <Link href={`/grupos/g/${group.id}/saldar`} className="inline-flex h-(--control-h) items-center justify-center gap-2 border border-navy/30 px-5 text-navy hover:bg-navy-soft">
             <ArrowRightLeft className="size-4" aria-hidden />
             Saldar
           </Link>
           <details className="relative">
-            <summary className="inline-flex h-12 w-full cursor-pointer list-none items-center justify-center gap-2 border border-navy/30 px-5 text-navy hover:bg-navy-soft">
+            <summary className="inline-flex h-(--control-h) w-full cursor-pointer list-none items-center justify-center gap-2 border border-navy/30 px-5 text-navy hover:bg-navy-soft">
               <Download className="size-4" aria-hidden />
               Exportar
             </summary>
@@ -117,8 +118,8 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
               </p>
               <div className="flex gap-2">
                 {[
-                  ["1", "Confirmar", "h-10 bg-navy px-4 text-ui text-paper hover:bg-navy-deep"],
-                  ["0", "Rechazar", "h-10 border border-line px-4 text-ui hover:bg-navy-soft"],
+                  ["1", "Confirmar", "h-(--control-h) bg-navy px-4 text-ui text-paper hover:bg-navy-deep"],
+                  ["0", "Rechazar", "h-(--control-h) border border-line px-4 text-ui hover:bg-navy-soft"],
                 ].map(([accept, label, cls]) => (
                   <form key={accept} action={answerSettlementAction}>
                     <input type="hidden" name="group" value={group.id} />
@@ -237,7 +238,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                           )}
                         </p>
                         {canSettle && (
-                          <Link href={`/grupos/g/${group.id}/saldar?from=${t.from}&to=${t.to}&monto=${t.amount}&moneda=${cur}`} className="inline-flex h-10 items-center bg-navy px-4 text-ui text-paper hover:bg-navy-deep">
+                          <Link href={`/grupos/g/${group.id}/saldar?from=${t.from}&to=${t.to}&monto=${t.amount}&moneda=${cur}`} className="inline-flex h-(--control-h) items-center bg-navy px-4 text-ui text-paper hover:bg-navy-deep">
                             Saldar
                           </Link>
                         )}
@@ -411,7 +412,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                 <p className="mb-3 text-ui text-muted">Están todos al día.</p>
               )}
               <p className="mb-3 text-ui text-muted">Cerrarlo lo saca de la lista de todos y apaga el enlace de invitación. Los datos quedan guardados y se pueden exportar antes.</p>
-              <button className="h-11 border border-danger/40 px-5 text-danger hover:bg-danger/5">Cerrar el grupo</button>
+              <button className="h-(--control-h) border border-danger/40 px-5 text-danger hover:bg-danger/5">Cerrar el grupo</button>
             </form>
           </div>
         )}

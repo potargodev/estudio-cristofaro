@@ -115,13 +115,13 @@ export default async function PortalHome() {
             {(can(me.orgRole, "agenda.reservar") || canReview) && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {can(me.orgRole, "agenda.reservar") && (
-                  <Link href="/portal/agendar" className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-body font-medium text-paper transition-colors hover:bg-navy-deep">
+                  <Link href="/portal/agendar" className="inline-flex h-(--control-h) items-center gap-2 rounded-md bg-navy px-4 text-body font-medium text-paper transition-colors hover:bg-navy-deep">
                     <CalendarDays className="size-4" aria-hidden />
                     Agendar una llamada
                   </Link>
                 )}
                 {canReview && (
-                  <Link href="/portal/resena" className="inline-flex h-10 items-center gap-2 rounded-md border border-line bg-surface px-4 text-body font-medium text-ink transition-colors hover:border-muted">
+                  <Link href="/portal/resena" className="inline-flex h-(--control-h) items-center gap-2 rounded-md border border-line bg-surface px-4 text-body font-medium text-ink transition-colors hover:border-muted">
                     <Star className="size-4" aria-hidden />
                     Reseñar al estudio
                   </Link>

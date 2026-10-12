@@ -179,7 +179,7 @@ async function WhatsApp({ studioId }: { studioId: string }) {
             )}
           </div>
         )}
-        {account?.last_error && <p className="mt-3 text-meta text-[#8f2a1c]">Último error de WhatsApp: {account.last_error}</p>}
+        {account?.last_error && <p className="mt-3 text-meta text-danger">Último error de WhatsApp: {account.last_error}</p>}
       </Panel>
       <Panel title="Plantillas aprobadas" bodyClassName="p-0">
         {templates.length === 0 ? (
@@ -210,7 +210,7 @@ async function WhatsApp({ studioId }: { studioId: string }) {
                   {m.direction === "entrante" ? "← " : "→ "}
                   {org ?? "Sin organización"} · {m.template ?? m.kind} {m.body ? `· ${m.body.slice(0, 80)}` : ""}
                 </span>
-                <span className={m.status === "fallido" || m.status === "sin_contacto" ? "text-[#8f2a1c]" : "text-muted"}>
+                <span className={m.status === "fallido" || m.status === "sin_contacto" ? "text-danger" : "text-muted"}>
                   {m.status.replace("_", " ")} · {formatDate(m.created_at, "numericTime")}
                   {m.error ? ` · ${m.error}` : ""}
                 </span>

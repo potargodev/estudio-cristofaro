@@ -15,6 +15,7 @@ import { FILE_TEMPLATES } from "@/modules/industries/catalog";
 import { saveWelcomeData, saveWelcomeIndustries } from "./actions";
 import { FARO_APP_METADATA } from "@/lib/faro/pwa";
 import { fieldClass } from "@/components/ds/primitives";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { ...FARO_APP_METADATA, title: { absolute: "Bienvenida · Faro" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -59,7 +60,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
       </header>
       <main className="mx-auto max-w-3xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12">
         <p className="text-meta font-semibold uppercase tracking-[0.12em] text-rose-deep">Bienvenida</p>
-        <h1 className="mt-2 font-display text-[36px] leading-tight sm:text-[48px]">Hola, {first}.</h1>
+        <h1 className={`mt-2 ${pageTitleClass}`}>Hola, {first}.</h1>
         <p className="mt-2 max-w-xl text-lead text-muted">
           {kind === "studio" ? "Dejemos el estudio listo en tres pasos. Lo podés cambiar después." : kind === "personal" ? "Tres pasos y tu panel queda armado con tu CUIT y tu actividad." : "Contanos qué querés hacer primero y te llevamos ahí."}
         </p>
@@ -79,7 +80,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
           </p>
         )}
 
-        <section className="mt-6 rounded-lg border border-line bg-surface p-5 sm:p-7">
+        <section className="mt-6 rounded-md border border-line bg-surface p-5 sm:p-7">
           {kind !== "persona" && paso === 1 && (
             <form action={saveWelcomeData} className="grid gap-4 sm:grid-cols-2">
               <label className={cn(label, "sm:col-span-2")}>

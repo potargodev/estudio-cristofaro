@@ -7,7 +7,7 @@ import { Sello } from "./Sello";
 
 export function FaroLogo({ className, size = "md", sub, tone = "dark" }: { className?: string; size?: "sm" | "md" | "lg"; sub?: string | null; tone?: "dark" | "light" }) {
   const seal = size === "sm" ? "size-8" : size === "lg" ? "size-14" : "size-10";
-  const word = size === "sm" ? "text-title" : size === "lg" ? "text-[30px]" : "text-section";
+  const word = size === "sm" ? "text-title" : size === "lg" ? "text-metric" : "text-section";
   return (
     <span className={cn("inline-flex min-w-0 items-center gap-3", className)}>
       <Sello className={cn("shrink-0", seal, tone === "dark" ? "text-gold" : "text-navy")} title="Faro" />

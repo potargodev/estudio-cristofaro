@@ -65,7 +65,7 @@ function Calendar({ rows, month }: { rows: ObligationRow[]; month: string }) {
   const byDay = new Map<string, ObligationRow[]>();
   for (const r of rows) byDay.set(r.due, [...(byDay.get(r.due) ?? []), r]);
   const tone = (s: string) =>
-    s === "vencido" ? "border-l-[#b42318] bg-[#fbecea]" : s === "pagado" || s === "presentado" ? "border-l-[#3f7f57] bg-[#ecf6ef]" : "border-l-navy bg-navy-soft";
+    s === "vencido" ? "border-l-danger bg-danger/10" : s === "pagado" || s === "presentado" ? "border-l-[#3f7f57] bg-[#ecf6ef]" : "border-l-navy bg-navy-soft";
   return (
     <div className="border border-line bg-surface">
       <div className="hidden grid-cols-7 border-b border-line bg-canvas text-caption text-muted md:grid">

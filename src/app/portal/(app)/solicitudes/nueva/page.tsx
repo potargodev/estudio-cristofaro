@@ -42,7 +42,7 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
             <label htmlFor="type" className="block text-ui font-medium">
               Tipo
             </label>
-            <select id="type" name="type" defaultValue={types[0][0]} className={`${field} h-11`}>
+            <select id="type" name="type" defaultValue={types[0][0]} className={`${field} h-(--control-h)`}>
               {types.map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
@@ -55,7 +55,7 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
               <label htmlFor="tema" className="block text-ui font-medium">
                 Tema de la consulta (opcional)
               </label>
-              <select id="tema" name="tema" defaultValue="" className={`${field} h-11`}>
+              <select id="tema" name="tema" defaultValue="" className={`${field} h-(--control-h)`}>
                 <option value="">General</option>
                 {Object.entries(CONSULT_TOPICS).map(([v, l]) => (
                   <option key={v} value={v}>
@@ -70,7 +70,7 @@ export default async function NuevaSolicitudPage({ searchParams }: { searchParam
             <label htmlFor="subject" className="block text-ui font-medium">
               Asunto
             </label>
-            <input id="subject" name="subject" required maxLength={140} className={`${field} h-11`} />
+            <input id="subject" name="subject" required maxLength={140} className={`${field} h-(--control-h)`} />
           </div>
           <div>
             <label htmlFor="body" className="block text-ui font-medium">

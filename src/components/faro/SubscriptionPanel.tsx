@@ -47,13 +47,13 @@ export async function SubscriptionPanel({ studioId }: { studioId: string }) {
       )}
       {sub.cancel_at_period_end && sub.status === "activa" && <p className="mt-3 text-meta text-[#7a5410]">Cancelaste la suscripción: el plan sigue hasta el {formatDate(sub.current_period_end, "numeric")}.</p>}
       {sub.status === "morosa" && sub.past_due_since && (
-        <p role="alert" className="mt-3 rounded-md border border-[#efc4bd] bg-[#fbecea] px-3 py-2 text-meta text-[#8f2a1c]">
+        <p role="alert" className="mt-3 rounded-md border border-danger/30 bg-danger/10 px-3 py-2 text-meta text-danger">
           Mercado Pago no pudo cobrar el plan. Regularizalo antes del {formatDate(graceEnds(sub.past_due_since), "numeric")} para que la cuenta no se suspenda.
         </p>
       )}
       <div className="mt-4 flex flex-wrap gap-2">
         {sub.mp_status === "pending" && sub.init_point && (
-          <a href={sub.init_point} className="inline-flex h-10 items-center rounded-md bg-navy px-4 text-ui font-medium text-paper">
+          <a href={sub.init_point} className="inline-flex h-(--control-h) items-center rounded-md bg-navy px-4 text-ui font-medium text-paper">
             Autorizar el débito en Mercado Pago
           </a>
         )}

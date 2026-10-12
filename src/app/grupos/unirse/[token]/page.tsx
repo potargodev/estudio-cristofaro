@@ -6,6 +6,7 @@ import { googleEnabled } from "@/lib/auth-server";
 import { getGastosActor } from "@/modules/gastos/server/session";
 import { inviteByToken } from "@/modules/gastos/server/service";
 import { joinGroupAction } from "../../invitacion-actions";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Sumate al grupo", robots: { index: false, follow: false } };
 
@@ -27,9 +28,9 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
   if (!inv)
     return (
       <div className="mx-auto max-w-md pt-6">
-        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">Ese enlace ya no sirve</h1>
+        <h1 className={pageTitleClass}>Ese enlace ya no sirve</h1>
         <p className="mt-3 text-muted">Puede que lo hayan renovado o que el grupo esté cerrado. Pedile a quien te invitó un enlace nuevo.</p>
-        <Link href="/grupos" className="mt-6 inline-flex h-11 items-center rounded-md bg-navy px-5 text-paper">
+        <Link href="/grupos" className="mt-6 inline-flex h-(--control-h) items-center rounded-md bg-navy px-5 text-paper">
           Ir a mis grupos
         </Link>
       </div>
@@ -43,7 +44,7 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
           <Users className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <p className="mt-4 text-meta text-muted">{inv.inviter ? `${inv.inviter} te invita a` : "Te invitan a"}</p>
-        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{inv.name}</h1>
+        <h1 className={pageTitleClass}>{inv.name}</h1>
         <p className="mt-1 text-ui text-muted">
           {inv.members} {inv.members === 1 ? "integrante" : "integrantes"} · un grupo de gastos de Faro: quién pagó qué y cuánto debe cada uno.
         </p>
@@ -56,7 +57,7 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
               {error}
             </p>
           )}
-          <button className="inline-flex h-12 items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Sumarme como {actor.name}</button>
+          <button className="inline-flex h-(--control-h) items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Sumarme como {actor.name}</button>
           <p className="text-meta text-muted">El grupo va a aparecer en tus Grupos de gastos. Tu Bitácora sigue siendo privada: ahí solo se suma tu parte.</p>
         </form>
       ) : (

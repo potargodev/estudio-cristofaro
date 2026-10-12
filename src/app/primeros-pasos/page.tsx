@@ -58,7 +58,7 @@ export default async function FirstStepsPage() {
                 <p className="mt-1 text-ui text-muted">{s.text}</p>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   {!s.done && (
-                    <Link href={s.href} className={cn("inline-flex h-10 items-center gap-1.5 rounded-md px-4 text-ui font-medium", status === "actual" ? "bg-navy text-paper hover:bg-night" : "border border-line hover:border-muted")}>
+                    <Link href={s.href} className={cn("inline-flex h-(--control-h) items-center gap-1.5 rounded-md px-4 text-ui font-medium", status === "actual" ? "bg-navy text-paper hover:bg-night" : "border border-line hover:border-muted")}>
                       Hacer este paso <ArrowRight className="size-4" aria-hidden />
                     </Link>
                   )}

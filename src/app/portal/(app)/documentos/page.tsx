@@ -53,7 +53,7 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
                 id="category"
                 name="category"
                 defaultValue="comprobantes"
-                className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-body"
+                className="mt-1.5 h-(--control-h) w-full rounded-md border border-line bg-surface px-3 text-body"
               >
                 <option value="comprobantes">Comprobantes</option>
                 <option value="recibos">Recibos de sueldo</option>
@@ -69,7 +69,7 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
                 id="period"
                 name="period"
                 type="month"
-                className="mt-1.5 h-11 w-full rounded-md border border-line bg-surface px-3 text-body"
+                className="mt-1.5 h-(--control-h) w-full rounded-md border border-line bg-surface px-3 text-body"
               />
             </div>
             <div className="sm:col-span-3">

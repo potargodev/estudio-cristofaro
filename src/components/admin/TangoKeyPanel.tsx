@@ -38,12 +38,12 @@ export function TangoKeyPanel({ hasKey, platformUrl }: { hasKey: boolean; platfo
     <div>
       <form id="tango-key-form" action={action}>
         {hasKey ? (
-          <Button type="button" variant="outline" disabled={pending} onClick={() => setConfirm(true)} className="h-9">
+          <Button type="button" variant="outline" disabled={pending} onClick={() => setConfirm(true)}>
             <KeyRound />
             {pending ? "Generando…" : "Regenerar clave"}
           </Button>
         ) : (
-          <Button type="submit" disabled={pending} className="h-9">
+          <Button type="submit" disabled={pending}>
             <KeyRound />
             {pending ? "Activando…" : "Activar Tango y generar clave"}
           </Button>
@@ -71,14 +71,13 @@ export function TangoKeyPanel({ hasKey, platformUrl }: { hasKey: boolean; platfo
           <p className="text-ui font-semibold">Clave del conector. Copiala o bajá el config.json ahora: no se vuelve a mostrar.</p>
           <p className="mt-2 break-all rounded bg-surface px-3 py-2 font-mono text-ui">{state.key}</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Button type="button" onClick={download} className="h-9">
+            <Button type="button" onClick={download}>
               <Download />
               Descargar config.json
             </Button>
             <Button
               type="button"
               variant="outline"
-              className="h-9"
               onClick={async () => {
                 await navigator.clipboard.writeText(state.key!);
                 setCopied(true);

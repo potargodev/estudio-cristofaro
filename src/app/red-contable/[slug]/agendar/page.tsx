@@ -39,14 +39,14 @@ export default async function AgendarRedPage({ params, searchParams }: { params:
         </p>
         <div className="flex flex-wrap gap-2">
           {b.meet_url && (
-            <a href={b.meet_url} className="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
+            <a href={b.meet_url} className="inline-flex h-(--control-h) items-center gap-2 rounded-md bg-navy px-4 text-ui text-paper hover:bg-night">
               <Video className="size-4" aria-hidden /> Link de la videollamada
             </a>
           )}
-          <a href={`/api/agenda/ics/${t}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-ui text-ink hover:border-navy">
+          <a href={`/api/agenda/ics/${t}`} className="inline-flex h-(--control-h) items-center gap-2 rounded-md border border-line px-4 text-ui text-ink hover:border-navy">
             <CalendarPlus className="size-4" aria-hidden /> Agregar a mi calendario (.ics)
           </a>
-          <Link href={`/agenda/gestionar/${t}`} className="inline-flex h-10 items-center px-2 text-ui text-muted underline underline-offset-4">
+          <Link href={`/agenda/gestionar/${t}`} className="inline-flex h-(--control-h) items-center px-2 text-ui text-muted underline underline-offset-4">
             Reprogramar o cancelar
           </Link>
         </div>

@@ -180,7 +180,7 @@ La paleta de `StatusBadge` es la única para estados, en toda la app: neutral, i
 
 ### Hierarchy
 Utilidades de Tailwind (`text-<rol>`); nunca `text-[Npx]`.
-- **Título de pantalla** (`PageHeader`, Gilda Display, 28 px en el celular y 32 px en escritorio): una por pantalla.
+- **Título de pantalla** (`PageHeader` o `pageTitleClass`, rol `text-page`, Gilda Display, 28 px en el celular y 32 px en escritorio): una por pantalla.
 - **headline** (24 px): un número de resumen o el título de un diálogo grande.
 - **section** (20 px, semibold): una sección dentro de una pantalla larga.
 - **title** (18 px, semibold): el título de una tarjeta, un panel o un bloque (h2/h3).

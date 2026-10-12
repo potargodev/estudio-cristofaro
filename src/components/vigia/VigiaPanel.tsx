@@ -114,7 +114,7 @@ export function VigiaPanel({ space, label }: { space: SpaceKey; label: string })
             <span className="block text-body font-semibold">Vigía</span>
             <span className="block truncate text-caption text-muted">{label}</span>
           </p>
-          <Link href={full} onClick={() => setOpen(false)} className="inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 text-meta text-ink hover:bg-surface" title="Abrir en pantalla completa">
+          <Link href={full} onClick={() => setOpen(false)} className="inline-flex h-(--control-h) items-center gap-1.5 rounded-md px-2.5 text-meta text-ink hover:bg-surface" title="Abrir en pantalla completa">
             <Maximize2 className="size-4" aria-hidden />
             <span className="hidden sm:inline">Abrir en pantalla completa</span>
             <span className="sr-only sm:hidden">Abrir en pantalla completa</span>

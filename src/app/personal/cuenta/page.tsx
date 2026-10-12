@@ -28,7 +28,7 @@ export default async function PersonalCuentaPage({ searchParams }: { searchParam
   return (
     <div className="grid gap-6 pb-10">
       <PageHeader title="Mi cuenta" description="Tus datos, tu plan, tu configuración y la ayuda." className="mb-0" />
-      <section className="rounded-lg border border-line bg-surface p-5">
+      <section className="rounded-md border border-line bg-surface p-5">
         <h2 className="flex items-center gap-2 text-title font-semibold text-ink">
           <UserRound className="size-5 text-rose-deep" strokeWidth={1.5} aria-hidden /> {me.name}
         </h2>
@@ -37,7 +37,7 @@ export default async function PersonalCuentaPage({ searchParams }: { searchParam
         </p>
         <p className="mt-3 text-ui text-muted">Entrás sin contraseña: con Google o con un enlace a este mail.</p>
       </section>
-      <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-line rounded-md border border-line bg-surface">
         {links.map((l) => (
           <li key={l.href}>
             <Link href={l.href} className="flex items-center justify-between gap-3 px-5 py-4 hover:bg-canvas">

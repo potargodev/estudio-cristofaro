@@ -116,12 +116,12 @@ export function ObligationsBoard({
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Buscar organización, impuesto o período…"
-              className="h-9 w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
+              className="h-(--control-h) w-full rounded-md border border-line bg-canvas pl-9 pr-3 text-ui placeholder:text-muted focus:border-navy focus:outline-none"
             />
           </label>
           <label className="flex items-center gap-2 text-meta text-muted">
             Organización
-            <select value={org} onChange={(e) => setOrg(e.target.value)} className="h-9 max-w-56 rounded-md border border-line bg-surface px-2 text-ui text-ink">
+            <select value={org} onChange={(e) => setOrg(e.target.value)} className="h-(--control-h) max-w-56 rounded-md border border-line bg-surface px-2 text-ui text-ink">
               <option value="">Todas</option>
               {orgs.map(([id, name]) => (
                 <option key={id} value={id}>
@@ -218,7 +218,7 @@ export function ObligationsBoard({
                     )}
                   >
                     <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggleRow(r.id)} aria-label={`Elegir ${r.tax} ${r.period} de ${r.org}`} className="size-4 accent-[var(--color-navy)]" />
-                    <span className={cn("tabular hidden text-meta md:block", r.status === "vencido" ? "font-medium text-[#8f2a1c]" : "text-muted")}>
+                    <span className={cn("tabular hidden text-meta md:block", r.status === "vencido" ? "font-medium text-danger" : "text-muted")}>
                       {formatDate(r.due, "weekdayShort")}
                     </span>
                     <span className="min-w-0">
@@ -230,7 +230,7 @@ export function ObligationsBoard({
                       </Link>
                       {/* Celular: fecha, importe y responsable en una línea */}
                       <span className="tabular mt-0.5 block truncate text-meta text-muted md:hidden">
-                        <span className={r.status === "vencido" ? "font-medium text-[#8f2a1c]" : ""}>{formatDate(r.due, "weekdayShort")}</span>
+                        <span className={r.status === "vencido" ? "font-medium text-danger" : ""}>{formatDate(r.due, "weekdayShort")}</span>
                         {" · "}
                         {r.amount != null ? formatAmount(r.amount, "ARS", { decimals: "none" }) : "sin importe"}
                         {" · "}

@@ -7,6 +7,7 @@ import { googleEnabled } from "@/lib/auth-server";
 import { templateOf } from "@/modules/cajas/catalog";
 import { boxByInvite } from "@/modules/cajas/shared";
 import { joinBoxAction } from "@/app/cajas/actions";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Sumate a la caja", robots: { index: false, follow: false } };
 
@@ -21,9 +22,9 @@ export default async function UnirsePage({ params, searchParams }: { params: Pro
   if (!inv)
     return (
       <div className="mx-auto max-w-md px-4 pt-10">
-        <h1 className="font-display text-[28px] leading-tight text-ink">Ese enlace ya no sirve</h1>
+        <h1 className={pageTitleClass}>Ese enlace ya no sirve</h1>
         <p className="mt-3 text-muted">Puede que lo hayan renovado. Pedile a quien te invitó un enlace nuevo.</p>
-        <Link href="/cajas" className="mt-6 inline-flex h-11 items-center rounded-md bg-navy px-5 text-paper">
+        <Link href="/cajas" className="mt-6 inline-flex h-(--control-h) items-center rounded-md bg-navy px-5 text-paper">
           Ir a Mis cajas
         </Link>
       </div>
@@ -38,7 +39,7 @@ export default async function UnirsePage({ params, searchParams }: { params: Pro
           <Users className="size-6" strokeWidth={1.5} aria-hidden />
         </span>
         <p className="mt-4 text-meta text-muted">{inv.inviter ? `${inv.inviter} te invita a una caja compartida` : "Te invitan a una caja compartida"}</p>
-        <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{inv.box.name}</h1>
+        <h1 className={pageTitleClass}>{inv.box.name}</h1>
         <p className="mt-1 text-ui text-muted">
           {inv.members} {inv.members === 1 ? "integrante" : "integrantes"} · {t?.description} Llevan la cuenta juntos en Faro: quién puso qué, cuánto y cuándo.
         </p>
@@ -51,7 +52,7 @@ export default async function UnirsePage({ params, searchParams }: { params: Pro
       {user ? (
         <form action={joinBoxAction} className="grid gap-3">
           <input type="hidden" name="token" value={token} />
-          <button className="inline-flex h-12 items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Sumarme como {user.name}</button>
+          <button className="inline-flex h-(--control-h) items-center justify-center rounded-md bg-navy px-5 text-paper hover:bg-navy-deep">Sumarme como {user.name}</button>
           <p className="text-meta text-muted">La caja aparece en Mis cajas. Lo demás sigue siendo tuyo: nadie de esta caja ve tu caja personal.</p>
         </form>
       ) : (

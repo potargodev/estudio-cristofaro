@@ -8,7 +8,7 @@ export async function GuidePreference() {
   const boot = await guideBoot();
   if (!boot) return null;
   return (
-    <section aria-labelledby="guia-pref" className="rounded-lg border border-line bg-surface p-5">
+    <section aria-labelledby="guia-pref" className="rounded-md border border-line bg-surface p-5">
       <h2 id="guia-pref" className="flex items-center gap-2 text-title font-semibold text-ink">
         <Compass className="size-5 shrink-0 text-rose-deep mt-0.5" aria-hidden />
         Guía y recorridos

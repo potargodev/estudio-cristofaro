@@ -43,14 +43,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               </div>
               {x.budget ? (
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-canvas" role="progressbar" aria-label={`Uso del sobre ${x.name}`} aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100}>
-                  <div className={cn("h-full rounded-full", pct > 1 ? "bg-[#c4482f]" : pct > 0.8 ? "bg-[#d6a32a]" : "bg-navy")} style={{ width: `${Math.min(100, pct * 100)}%` }} />
+                  <div className={cn("h-full rounded-full", pct > 1 ? "bg-danger" : pct > 0.8 ? "bg-[#d6a32a]" : "bg-navy")} style={{ width: `${Math.min(100, pct * 100)}%` }} />
                 </div>
               ) : null}
               <form action={saveBudgetAction} className="mt-3 flex flex-wrap items-end gap-2">
                 <input type="hidden" name="category_id" value={x.categoryId} />
                 <label className="text-meta text-muted">
                   Sobre por mes
-                  <input name="amount" inputMode="decimal" defaultValue={x.budget ? String(x.budget / 100) : ""} placeholder={x.suggested ? `Sugerido: ${x.suggested / 100}` : "Sin sobre"} className="mt-1 block h-9 w-40 rounded-md border border-line bg-surface px-2 text-ui text-ink" />
+                  <input name="amount" inputMode="decimal" defaultValue={x.budget ? String(x.budget / 100) : ""} placeholder={x.suggested ? `Sugerido: ${x.suggested / 100}` : "Sin sobre"} className="mt-1 block h-(--control-h) w-40 rounded-md border border-line bg-surface px-2 text-ui text-ink" />
                 </label>
                 <SubmitButton variant="secondary" pendingText="…">Guardar</SubmitButton>
                 {x.suggested && <span className="text-caption text-muted">Sugerido: {formatMoney(x.suggested, "ARS", { decimals: "auto" })} (mediana de los últimos meses)</span>}

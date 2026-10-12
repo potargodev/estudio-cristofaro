@@ -36,7 +36,7 @@ export default async function PlanesPage({ searchParams }: { searchParams: Promi
       {sp.error && <Notice tone="error">{sp.error}</Notice>}
       <PageHeader level={2} title="Planes y precios" description="Precios de referencia en USD con su conversión a pesos, límites y módulos de cada plan. Lo que se cambia acá aplica a todos los tenants del plan (los overrides van en la ficha de cada uno)." />
 
-      <section className="mb-6 flex flex-wrap items-end justify-between gap-4 rounded-lg border border-line bg-surface p-5">
+      <section className="mb-6 flex flex-wrap items-end justify-between gap-4 rounded-md border border-line bg-surface p-5">
         <div>
           <h2 className="text-title font-semibold">Conversión a pesos</h2>
           <p className="text-ui text-muted">El usuario ve el precio en ARS: USD × esta cotización. Pago anual: 2 meses de regalo.</p>
@@ -53,7 +53,7 @@ export default async function PlanesPage({ searchParams }: { searchParams: Promi
 
       <div className="grid gap-4 xl:grid-cols-2">
         {plans.map((p) => (
-          <form key={p.key} id={`plan-${p.key}`} action={savePlanAction} className="scroll-mt-20 rounded-lg border border-line bg-surface p-5">
+          <form key={p.key} id={`plan-${p.key}`} action={savePlanAction} className="scroll-mt-20 rounded-md border border-line bg-surface p-5">
             <input type="hidden" name="key" value={p.key} />
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <p className="text-caption font-semibold uppercase tracking-[0.12em] text-rose-deep">{KIND_PLANS_LABEL[p.kind]}</p>
@@ -121,7 +121,7 @@ export default async function PlanesPage({ searchParams }: { searchParams: Promi
       <section id="matriz" className="mt-8 scroll-mt-20">
         <h2 className="text-section font-semibold">Matriz plan × módulo</h2>
         <p className="mb-4 text-ui text-muted">El núcleo (organizaciones, conexiones, IA, grupos de gastos, rubros, Flotas) está en todos los planes.</p>
-        <div className="overflow-x-auto rounded-lg border border-line bg-surface">
+        <div className="overflow-x-auto rounded-md border border-line bg-surface">
           <table className="w-full min-w-[960px] text-left text-meta">
             <thead className="border-b border-line text-caption text-muted">
               <tr>

@@ -32,7 +32,7 @@ export default async function ModulosPage({ searchParams }: { searchParams: Prom
           const st = statuses[m.key];
           const inPlans = plans.filter((p) => p.modules.includes(m.key)).map((p) => p.name);
           return (
-            <li key={m.key} className="flex flex-wrap items-center gap-4 rounded-lg border border-line bg-surface p-4">
+            <li key={m.key} className="flex flex-wrap items-center gap-4 rounded-md border border-line bg-surface p-4">
               <ModuleIcon name={m.icon} className="size-5 shrink-0 text-rose-deep mt-0.5" />
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-ink">

@@ -52,7 +52,7 @@ export default async function ReportesPage({ searchParams }: { searchParams: Pro
                     <form key={a} action={resolveReportAction}>
                       <input type="hidden" name="report" value={r.id} />
                       <input type="hidden" name="accion" value={a} />
-                      <button className={`h-9 rounded-md px-3 text-meta ${cls}`}>{l}</button>
+                      <button className={`h-(--control-h) rounded-md px-3 text-meta ${cls}`}>{l}</button>
                     </form>
                   ))}
                 </div>

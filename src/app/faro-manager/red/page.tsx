@@ -51,7 +51,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
         ) : (
           <ul className="mt-3 grid gap-3">
             {licenses.map(({ p, name }) => (
-              <li key={p.studio_id} className="rounded-lg border border-line bg-surface p-4">
+              <li key={p.studio_id} className="rounded-md border border-line bg-surface p-4">
                 <p className="text-body font-medium">{name}</p>
                 <p className="text-ui text-muted">
                   {p.license_holder} · Matrícula {p.license_number} · {p.license_body}
@@ -70,7 +70,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
                       Motivo del rechazo
                       <input name="note" maxLength={500} className={`${input} w-64`} />
                     </label>
-                    <button type="submit" className="h-9 rounded-md border border-line px-3 text-ui hover:border-muted">
+                    <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-ui hover:border-muted">
                       Rechazar
                     </button>
                   </form>
@@ -90,7 +90,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
         ) : (
           <ul className="mt-3 grid gap-3">
             {pending.map(({ r, studio, org }) => (
-              <li key={r.id} className="rounded-lg border border-line bg-surface p-4">
+              <li key={r.id} className="rounded-md border border-line bg-surface p-4">
                 <p className="text-meta text-muted">
                   {studio} · de {org} · {formatDate(r.created_at)} · <span className="text-ink">{"★".repeat(r.rating)}</span>
                 </p>
@@ -108,7 +108,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
                       Motivo (interno)
                       <input name="note" maxLength={500} className={`${input} w-64`} />
                     </label>
-                    <button type="submit" className="h-9 rounded-md border border-line px-3 text-ui hover:border-muted">
+                    <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-ui hover:border-muted">
                       Rechazar
                     </button>
                   </form>
@@ -123,7 +123,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
         <h2 id="fichas" className="text-title font-semibold">
           Fichas ({profiles.length})
         </h2>
-        <div className="mt-3 overflow-x-auto rounded-lg border border-line bg-surface">
+        <div className="mt-3 overflow-x-auto rounded-md border border-line bg-surface">
           <table className="w-full min-w-[640px] text-left text-ui">
             <thead className="border-b border-line text-caption text-muted">
               <tr>

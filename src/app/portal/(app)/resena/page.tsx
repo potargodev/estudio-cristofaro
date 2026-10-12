@@ -34,7 +34,7 @@ export default async function ResenaPage({ searchParams }: { searchParams: Promi
       {!inRed ? (
         <p className="text-body text-muted">Tu estudio todavía no está en la Red Contable de Faro, así que por ahora no se pueden dejar reseñas.</p>
       ) : !e.ok ? (
-        <div className="rounded-lg border border-line bg-surface p-5 text-body">
+        <div className="rounded-md border border-line bg-surface p-5 text-body">
           <p>{e.reason}</p>
           {"review" in e && e.review && (
             <p className="mt-2 text-ui text-muted">
@@ -48,7 +48,7 @@ export default async function ResenaPage({ searchParams }: { searchParams: Promi
           )}
         </div>
       ) : (
-        <form action={submitReviewAction} className="grid max-w-xl gap-4 rounded-lg border border-line bg-surface p-5">
+        <form action={submitReviewAction} className="grid max-w-xl gap-4 rounded-md border border-line bg-surface p-5">
           <fieldset>
             <legend className="text-body font-semibold">¿Cómo calificás al estudio?</legend>
             <div className="mt-2 flex flex-wrap gap-2">

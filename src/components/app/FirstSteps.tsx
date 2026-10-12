@@ -32,7 +32,7 @@ export async function FirstSteps({ className, path }: { className?: string; path
           <span className="truncate text-caption text-muted">Ahora: {next.title}</span>
         </div>
       </div>
-      <Link href={path ? next.href : "/primeros-pasos"} className="inline-flex h-9 items-center rounded-md bg-navy px-3.5 text-meta font-medium text-paper hover:bg-night">
+      <Link href={path ? next.href : "/primeros-pasos"} className="inline-flex h-(--control-h) items-center rounded-md bg-navy px-3.5 text-meta font-medium text-paper hover:bg-night">
         {path ? "Hacer este paso" : "Ver los pasos"}
       </Link>
       {!path && <HideFirstSteps />}

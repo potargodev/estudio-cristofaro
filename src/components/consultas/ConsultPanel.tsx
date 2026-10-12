@@ -19,7 +19,7 @@ export function ConsultPanel({ c, volver, reviewer }: { c: AiConsult; volver: st
         <span className="text-caption text-muted">{CONSULT_STATUS[c.status as ConsultStatus] ?? c.status}</span>
       </div>
       {c.status === "generando" && <p className="mt-2 text-ui text-muted">La IA está preparando el borrador. Recargá en unos segundos.</p>}
-      {c.status === "error" && <p className="mt-2 text-ui text-[#8f2a1c]">{c.error}</p>}
+      {c.status === "error" && <p className="mt-2 text-ui text-danger">{c.error}</p>}
       {open && (
         <form action={approveConsultAction} className="mt-3 grid gap-3">
           <input type="hidden" name="id" value={c.id} />

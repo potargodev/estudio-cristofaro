@@ -59,7 +59,7 @@ export function AccountMenu({
     setOpen(false);
     setSpacesOpen(false);
   }, [pathname]);
-  const row = "flex w-full items-center gap-2.5 rounded-[4px] px-3 py-2.5 text-left text-ink hover:bg-canvas";
+  const row = "flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-ink hover:bg-canvas";
   return (
     <div ref={ref} className="relative">
       <button type="button" aria-expanded={open} aria-haspopup="menu" aria-label={`Tu cuenta: ${user.name || user.email}`} onClick={() => setOpen((o) => !o)} className="grid size-9 place-items-center rounded-full ring-offset-2 ring-offset-canvas hover:ring-2 hover:ring-line">

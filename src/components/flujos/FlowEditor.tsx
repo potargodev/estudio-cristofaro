@@ -295,7 +295,7 @@ export function FlowEditor(p: Props) {
           )}
           {!p.readOnly && selected.type !== "disparador" && (
             <div className="sm:col-span-2">
-              <button type="button" onClick={remove} className="h-9 rounded-md border border-[#efc4bd] px-3 text-meta text-[#8f2a1c]">
+              <button type="button" onClick={remove} className="h-(--control-h) rounded-md border border-danger/30 px-3 text-meta text-danger">
                 Quitar este paso
               </button>
             </div>
@@ -304,7 +304,7 @@ export function FlowEditor(p: Props) {
       )}
       {!p.readOnly && (
         <div>
-          <button type="submit" className="h-10 rounded-md bg-navy px-4 text-ui font-medium text-paper">
+          <button type="submit" className="h-(--control-h) rounded-md bg-navy px-4 text-ui font-medium text-paper">
             Guardar
           </button>
         </div>

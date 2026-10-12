@@ -31,8 +31,8 @@ export default async function ModuloGate({ params, searchParams }: { params: Pro
       <Link href="/admin/configuracion/modulos" className="inline-flex items-center gap-1.5 text-ui text-muted hover:text-ink">
         <ArrowLeft className="size-4" aria-hidden /> Módulos
       </Link>
-      <div className="mt-6 rounded-lg border border-line bg-surface p-7 sm:p-9">
-        <span className="grid size-14 place-items-center rounded-lg bg-navy text-gold">
+      <div className="mt-6 rounded-md border border-line bg-surface p-7 sm:p-9">
+        <span className="grid size-14 place-items-center rounded-md bg-navy text-gold">
           <ModuleIcon name={m.icon} className="size-7" />
         </span>
         <p className="mt-6 inline-flex items-center gap-1.5 text-meta font-semibold uppercase tracking-[0.14em] text-rose-deep">
@@ -44,7 +44,7 @@ export default async function ModuloGate({ params, searchParams }: { params: Pro
         {a.state === "proximamente" ? (
           <p className="mt-6 text-body text-muted">Lo estamos construyendo. {plan ? `Va a estar incluido desde el plan ${plan.name}.` : ""} Te avisamos cuando esté listo.</p>
         ) : plan ? (
-          <div className="mt-7 rounded-lg border border-line bg-canvas p-5">
+          <div className="mt-7 rounded-md border border-line bg-canvas p-5">
             <p className="text-body font-semibold text-ink">
               Plan {plan.name} · {priceLabel(plan)}
             </p>

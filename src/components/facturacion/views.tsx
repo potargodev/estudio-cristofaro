@@ -59,9 +59,9 @@ const card = "rounded-md border border-line bg-surface p-4 sm:p-5";
 const STATUS: Record<string, { label: string; tone: string }> = {
   borrador: { label: "Borrador", tone: "bg-canvas text-muted border-line" },
   autorizando: { label: "Emitiendo…", tone: "bg-[#fbf5e6] text-[#7a5410] border-[#e3cf9f]" },
-  autorizada: { label: "Autorizada", tone: "bg-[#e9f5ee] text-[#1f6b3d] border-[#bfdcc9]" },
-  rechazada: { label: "Rechazada", tone: "bg-[#fbecea] text-[#8f2a1c] border-[#efc4bd]" },
-  error: { label: "Con error", tone: "bg-[#fbecea] text-[#8f2a1c] border-[#efc4bd]" },
+  autorizada: { label: "Autorizada", tone: "bg-[#ecf6ef] text-[#1f5f36] border-[#a9d1b5]" },
+  rechazada: { label: "Rechazada", tone: "bg-danger/10 text-danger border-danger/30" },
+  error: { label: "Con error", tone: "bg-danger/10 text-danger border-danger/30" },
 };
 
 /** Campos ocultos del alcance (en el estudio, la organización y la CUIT) */
@@ -78,14 +78,14 @@ function ScopeFields({ scope, volver }: { scope: IssuerScope; volver?: string })
 export function Feedback({ sp }: { sp: SP }) {
   if (sp.error)
     return (
-      <p role="alert" className="mb-4 flex gap-2 rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-ui text-[#8f2a1c]">
+      <p role="alert" className="mb-4 flex gap-2 rounded-md border border-danger/30 bg-danger/10 px-4 py-3 text-ui text-danger">
         <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden /> {sp.error}
       </p>
     );
   if (sp.ok)
     return (
       <p role="status" className="mb-4 flex gap-2 rounded-md border border-line bg-navy-soft px-4 py-3 text-ui text-ink">
-        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#1f6b3d]" aria-hidden /> {sp.ok}
+        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#1f5f36]" aria-hidden /> {sp.ok}
       </p>
     );
   return null;
@@ -108,15 +108,15 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
       <div className="flex flex-wrap items-end justify-between gap-3">
         <form method="get" className="flex flex-wrap gap-2" role="search">
           {scope.kind === "studio" && <input type="hidden" name="tab" value="arca" />}
-          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por cliente" className="h-9 w-48 rounded-md border border-line bg-surface px-3 text-ui" />
-          <select name="estado" defaultValue={sp.estado ?? ""} className="h-9 rounded-md border border-line bg-surface px-2 text-ui">
+          <input name="q" defaultValue={sp.q ?? ""} placeholder="Buscar por cliente" className="h-(--control-h) w-48 rounded-md border border-line bg-surface px-3 text-ui" />
+          <select name="estado" defaultValue={sp.estado ?? ""} className="h-(--control-h) rounded-md border border-line bg-surface px-2 text-ui">
             <option value="">Todos</option>
             <option value="borrador">Borradores</option>
             <option value="autorizada">Autorizados</option>
             <option value="rechazada">Rechazados</option>
             <option value="error">Con error</option>
           </select>
-          <button type="submit" className="h-9 rounded-md border border-line px-3 text-ui">
+          <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-ui">
             Filtrar
           </button>
         </form>
@@ -231,20 +231,20 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           ))}
         </ul>
         {inv.status === "autorizada" && (
-          <p className="mt-3 flex items-center gap-2 text-ui text-[#1f6b3d]">
+          <p className="mt-3 flex items-center gap-2 text-ui text-[#1f5f36]">
             <ShieldCheck className="size-4" aria-hidden /> CAE {inv.cae} · vence el {formatDate(inv.cae_due, "numeric")}
-            {inv.environment === "homologacion" && <span className="text-[#8f2a1c]"> · homologación (sin validez fiscal)</span>}
+            {inv.environment === "homologacion" && <span className="text-danger"> · homologación (sin validez fiscal)</span>}
           </p>
         )}
-        {inv.error && <p className="mt-3 text-ui text-[#8f2a1c]">{inv.error}</p>}
+        {inv.error && <p className="mt-3 text-ui text-danger">{inv.error}</p>}
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <a href={pdf} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-1.5 rounded-md border border-line bg-surface px-4 text-ui hover:border-muted">
+        <a href={pdf} target="_blank" rel="noreferrer" className="inline-flex h-(--control-h) items-center gap-1.5 rounded-md border border-line bg-surface px-4 text-ui hover:border-muted">
           <FileText className="size-4" aria-hidden /> {inv.status === "autorizada" ? "Ver PDF" : "Vista previa (borrador)"}
         </a>
         {editable && (
-          <Link href={`${scope.base}/${inv.id}/editar`} className="inline-flex h-10 items-center rounded-md border border-line bg-surface px-4 text-ui hover:border-muted">
+          <Link href={`${scope.base}/${inv.id}/editar`} className="inline-flex h-(--control-h) items-center rounded-md border border-line bg-surface px-4 text-ui hover:border-muted">
             Editar
           </Link>
         )}
@@ -427,8 +427,8 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
 const LIGHT = {
   verde: { label: "Lejos del tope", dot: "bg-[#2f8a55]" },
   amarillo: { label: "Te acercás al tope", dot: "bg-[#d6a32a]" },
-  rojo: { label: "Muy cerca del tope", dot: "bg-[#c4482f]" },
-  excluido: { label: "Riesgo de exclusión", dot: "bg-[#8f2a1c]" },
+  rojo: { label: "Muy cerca del tope", dot: "bg-danger" },
+  excluido: { label: "Riesgo de exclusión", dot: "bg-danger" },
 } as const;
 
 export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; sp: SP; volver: string }) {
@@ -519,7 +519,7 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
             <span className={lbl}>Compras con IVA en 12 meses (opcional)</span>
             <input name="compras" inputMode="numeric" defaultValue={sp.compras ?? ""} className={cn(field, "w-56")} />
           </label>
-          <button type="submit" className="h-10 rounded-md border border-line px-3 text-ui">
+          <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-ui">
             Recalcular
           </button>
         </form>
@@ -568,7 +568,7 @@ export async function CalendarView({ scope, sp, volver }: { scope: IssuerScope; 
                   </span>
                   <span className="text-right">
                     <span className="num block text-body">{formatDate(o.due_date, "numeric")}</span>
-                    <span className={cn("block text-caption", days <= 3 && days >= 0 ? "text-[#8f2a1c]" : "text-muted")}>{days < 0 ? "Pasó" : days === 0 ? "Vence hoy" : `En ${days} día${days === 1 ? "" : "s"}`}</span>
+                    <span className={cn("block text-caption", days <= 3 && days >= 0 ? "text-danger" : "text-muted")}>{days < 0 ? "Pasó" : days === 0 ? "Vence hoy" : `En ${days} día${days === 1 ? "" : "s"}`}</span>
                   </span>
                 </li>
               );
@@ -639,7 +639,7 @@ export async function ChecksView({ scope, sp, volver }: { scope: IssuerScope; sp
         <details key={c.key} className={card} open={!c.state}>
           <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2">
             <span className="text-body font-semibold">{c.title}</span>
-            <span className={cn("text-meta", c.state?.status === "con_novedades" ? "text-[#8f2a1c]" : c.state?.status === "ok" ? "text-[#1f6b3d]" : "text-muted")}>
+            <span className={cn("text-meta", c.state?.status === "con_novedades" ? "text-danger" : c.state?.status === "ok" ? "text-[#1f5f36]" : "text-muted")}>
               {c.state?.status === "ok" ? `Sin novedades según lo que viste · ${formatDate(c.state.checked_at, "numeric")}` : c.state?.status === "con_novedades" ? "Con novedades" : "Sin revisar"}
             </span>
           </summary>
@@ -740,7 +740,7 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
         </label>
         <label>
           <span className={lbl}>Color de tu marca</span>
-          <input name="color" type="color" defaultValue={s.color ?? "#1c2235"} className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-1" />
+          <input name="color" type="color" defaultValue={s.color ?? "#1c2235"} className="mt-1 h-(--control-h) w-full rounded-md border border-line bg-surface px-1" />
         </label>
         <label className="sm:col-span-2">
           <span className={lbl}>Logo (PNG o JPG)</span>
@@ -772,7 +772,7 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
             points.map((p) => (
               <li key={p.id}>
                 <span className="num">{String(p.number).padStart(5, "0")}</span> · {p.kind || "Web services"}
-                {p.blocked && <span className="text-[#8f2a1c]"> · bloqueado</span>}
+                {p.blocked && <span className="text-danger"> · bloqueado</span>}
               </li>
             ))
           )}

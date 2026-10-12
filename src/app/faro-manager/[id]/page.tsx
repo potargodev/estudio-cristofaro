@@ -63,19 +63,19 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="border border-line bg-surface px-4 py-3">
             <p className="text-meta text-muted">Organizaciones</p>
-            <p className="num text-[30px] text-ink">
+            <p className="num text-metric text-ink">
               {orgs.n} <span className="text-lead text-muted">/ {e?.limits.organizations ?? "∞"}</span>
             </p>
           </div>
           <div className="border border-line bg-surface px-4 py-3">
             <p className="text-meta text-muted">Usuarios</p>
-            <p className="num text-[30px] text-ink">
+            <p className="num text-metric text-ink">
               {staff.filter((u) => u.active).length} <span className="text-lead text-muted">/ {e?.limits.staffUsers ?? "∞"}</span>
             </p>
           </div>
           <div className="border border-line bg-surface px-4 py-3">
             <p className="text-meta text-muted">IA este mes</p>
-            <p className="num text-[30px] text-ink">{formatUsd(Number(ai.cost))}</p>
+            <p className="num text-metric text-ink">{formatUsd(Number(ai.cost))}</p>
             <p className="text-caption text-muted">{ai.calls} llamadas</p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                 <label htmlFor="plan" className="text-ui font-medium text-ink/80">
                   Plan
                 </label>
-                <select id="plan" name="plan" defaultValue={t.plan_key} disabled={!owner} className="mt-1 block h-9 border border-line bg-surface px-2 text-body">
+                <select id="plan" name="plan" defaultValue={t.plan_key} disabled={!owner} className="mt-1 block h-(--control-h) border border-line bg-surface px-2 text-body">
                   {plans.map((p) => (
                     <option key={p.key} value={p.key}>
                       {p.name}
@@ -165,8 +165,8 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                         ) : (
                           <>
                             <input type="hidden" name="enabled" value={inPlan ? "false" : "true"} />
-                            <input name="reason" required placeholder="Motivo" aria-label={`Motivo para ${m.name}`} className="h-9 w-40 border border-line bg-surface px-2 text-meta" />
-                            <input name="expires" type="date" aria-label="Vence" className="h-9 border border-line bg-surface px-2 text-meta" />
+                            <input name="reason" required placeholder="Motivo" aria-label={`Motivo para ${m.name}`} className="h-(--control-h) w-40 border border-line bg-surface px-2 text-meta" />
+                            <input name="expires" type="date" aria-label="Vence" className="h-(--control-h) border border-line bg-surface px-2 text-meta" />
                             <SubmitButton variant="secondary" pendingText="…">
                               {inPlan ? "Deshabilitar" : "Habilitar"}
                             </SubmitButton>

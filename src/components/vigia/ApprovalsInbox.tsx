@@ -63,7 +63,7 @@ function DraftField({ id, k, v }: { id: string; k: string; v: unknown }) {
           </p>
         </>
       ) : t === "boolean" ? (
-        <select id={fid} name={`f:${k}`} defaultValue={String(v)} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body">
+        <select id={fid} name={`f:${k}`} defaultValue={String(v)} className="mt-1 h-(--control-h) w-full border border-line bg-surface px-2 text-body">
           <option value="true">Sí</option>
           <option value="false">No</option>
         </select>

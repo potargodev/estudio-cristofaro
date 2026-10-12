@@ -61,14 +61,14 @@ export default async function AutorizarPage({ searchParams }: { searchParams: Pr
           <label htmlFor="oauth-name" className="text-ui font-medium text-ink/80">
             Nombre del acceso
           </label>
-          <input id="oauth-name" name="name" defaultValue={client.name} maxLength={80} className="mt-1 h-9 w-full border border-line bg-surface px-2 text-body" />
+          <input id="oauth-name" name="name" defaultValue={client.name} maxLength={80} className="mt-1 h-(--control-h) w-full border border-line bg-surface px-2 text-body" />
         </div>
         <ScopeFields modules={TOOL_MODULES} orgs={orgs} idPrefix="oauth" />
         <div className="flex flex-wrap gap-2">
-          <button type="submit" name="decision" value="permitir" className="h-10 bg-navy px-5 text-body font-medium text-paper hover:bg-navy-deep">
+          <button type="submit" name="decision" value="permitir" className="h-(--control-h) bg-navy px-5 text-body font-medium text-paper hover:bg-navy-deep">
             Permitir acceso
           </button>
-          <button type="submit" name="decision" value="rechazar" formNoValidate className="h-10 border border-line bg-surface px-5 text-body text-ink hover:border-muted">
+          <button type="submit" name="decision" value="rechazar" formNoValidate className="h-(--control-h) border border-line bg-surface px-5 text-body text-ink hover:border-muted">
             Rechazar
           </button>
         </div>

@@ -14,7 +14,7 @@ import { formatDate, formatMoney, todayAR } from "@/lib/format";
 
 const field = `mt-1 ${fieldClass}`;
 const lbl = "block text-meta text-muted";
-const card = "rounded-lg border border-line bg-surface p-5";
+const card = "rounded-md border border-line bg-surface p-5";
 
 type Me = { id: string; name: string; email: string; studioId: string };
 
@@ -54,7 +54,7 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
       </section>
 
       {myPending.length > 0 && (
-        <section aria-labelledby="confirmar" className="rounded-lg border border-rose/40 bg-rose-soft p-5">
+        <section aria-labelledby="confirmar" className="rounded-md border border-rose/40 bg-rose-soft p-5">
           <h2 id="confirmar" className="flex items-center gap-2 text-lead font-semibold text-ink">
             <Clock className="size-5 text-rose-deep" aria-hidden /> Para confirmar
           </h2>
@@ -270,7 +270,7 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
         </form>
       </section>
 
-      <section aria-labelledby="movs" className="rounded-lg border border-line bg-surface">
+      <section aria-labelledby="movs" className="rounded-md border border-line bg-surface">
         <h2 id="movs" className="px-5 pt-4 text-lead font-semibold">
           Movimientos
         </h2>
@@ -293,7 +293,7 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
                   <form action={deleteSharedEntryAction}>
                     {hidden}
                     <input type="hidden" name="id" value={e.id} />
-                    <button type="submit" className="h-9 rounded-md px-2 text-meta text-muted hover:text-danger" aria-label={`Borrar ${e.description}`}>
+                    <button type="submit" className="h-(--control-h) rounded-md px-2 text-meta text-muted hover:text-danger" aria-label={`Borrar ${e.description}`}>
                       Borrar
                     </button>
                   </form>
@@ -307,7 +307,7 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
       {box.owner_id !== me.id && (
         <form action={leaveBoxAction}>
           {hidden}
-          <button type="submit" className="inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-ui text-muted hover:text-danger">
+          <button type="submit" className="inline-flex h-(--control-h) items-center gap-2 rounded-md border border-line px-4 text-ui text-muted hover:text-danger">
             <UserPlus className="size-4 rotate-180" aria-hidden /> Salir de la caja
           </button>
         </form>

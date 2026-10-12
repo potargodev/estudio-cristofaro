@@ -11,6 +11,7 @@ import { moveToBusinessAction } from "@/app/cajas/actions";
 import { looksLikeBusiness } from "@/modules/cajas/catalog";
 import { SubmitButton } from "@/components/admin/ui";
 import { formatNumber } from "@/lib/format";
+import { pageTitleClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Movimiento" };
 
@@ -35,13 +36,13 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
       <Link href={`/bitacora?mes=${mes}`} className="text-meta text-muted hover:text-ink">
         ← Bitácora
       </Link>
-      <h1 className="font-display text-[28px] leading-tight text-ink sm:text-[32px]">{e.kind === "ingreso" ? "Ingreso" : "Gasto"}</h1>
+      <h1 className={pageTitleClass}>{e.kind === "ingreso" ? "Ingreso" : "Gasto"}</h1>
       {sp.error && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-2.5 text-ui text-danger">
           {sp.error}
         </p>
       )}
-      <div className={fromBox ? "pointer-events-none rounded-lg border border-line bg-surface p-5 opacity-60" : "rounded-lg border border-line bg-surface p-5"} aria-disabled={fromBox || undefined}>
+      <div className={fromBox ? "pointer-events-none rounded-md border border-line bg-surface p-5 opacity-60" : "rounded-md border border-line bg-surface p-5"} aria-disabled={fromBox || undefined}>
         <EntryForm
           action={updateEntryAction}
           categories={cats}
@@ -73,7 +74,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           .
         </p>
       ) : (
-        <section className="grid gap-3 rounded-lg border border-line bg-surface p-5" aria-label="¿Es de tu negocio?">
+        <section className="grid gap-3 rounded-md border border-line bg-surface p-5" aria-label="¿Es de tu negocio?">
           <p className="text-body font-medium">¿Es de tu negocio?</p>
           <p className="text-ui text-muted">
             {hint ? `Parece del trabajo (por «${hint}»). ` : ""}Lo de tu actividad va en la caja de negocio, separado de lo personal. Al moverlo no se duplica: sale de acá y queda allá, con el registro original.
@@ -93,7 +94,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
         <form action={deleteEntryAction}>
           <input type="hidden" name="id" value={e.id} />
           <input type="hidden" name="mes" value={mes} />
-          <button type="submit" className="h-10 rounded-md border border-danger/40 px-4 text-ui text-danger hover:bg-danger/10">
+          <button type="submit" className="h-(--control-h) rounded-md border border-danger/40 px-4 text-ui text-danger hover:bg-danger/10">
             Borrar movimiento
           </button>
         </form>

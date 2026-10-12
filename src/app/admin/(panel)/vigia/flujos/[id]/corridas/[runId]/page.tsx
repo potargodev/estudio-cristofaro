@@ -29,7 +29,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
       />
       <div className="grid gap-4">
         <Feedback sp={sp} />
-        {v.r.error && <p className="rounded-md border border-[#efc4bd] bg-[#fbecea] px-4 py-3 text-ui text-[#8f2a1c]">{v.r.error}</p>}
+        {v.r.error && <p className="rounded-md border border-danger/30 bg-danger/10 px-4 py-3 text-ui text-danger">{v.r.error}</p>}
         {v.r.status === "esperando" && v.r.waiting_approval_id && (
           <p className="rounded-md border border-line bg-surface px-4 py-3 text-ui">
             Esperando una decisión en <Link href="/admin/vigia?tab=propuestas" className="underline">Propuestas para aprobar</Link>.
@@ -42,12 +42,12 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 <span className="font-medium">
                   {s.kind} · {s.node_id}
                 </span>
-                <span className={s.status === "error" || s.status === "rechazado" ? "text-[#8f2a1c]" : "text-muted"}>
+                <span className={s.status === "error" || s.status === "rechazado" ? "text-danger" : "text-muted"}>
                   {ST[s.status] ?? s.status} · {formatDate(s.started_at, "time")}
                   {s.attempt > 1 ? ` · intento ${s.attempt}` : ""}
                 </span>
               </p>
-              {s.error && <p className="mt-1 text-[#8f2a1c]">{s.error}</p>}
+              {s.error && <p className="mt-1 text-danger">{s.error}</p>}
               {s.output != null && <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-all text-micro text-muted">{JSON.stringify(s.output, null, 1).slice(0, 1200)}</pre>}
             </li>
           ))}

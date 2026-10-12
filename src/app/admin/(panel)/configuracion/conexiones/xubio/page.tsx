@@ -120,7 +120,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                 </form>
                 <form action={syncXubioAction} className="flex items-center gap-2">
                   <input type="hidden" name="id" value={c.id} />
-                  <select name="days" defaultValue="90" aria-label="Período a sincronizar" className="h-9 border border-line bg-surface px-2 text-ui">
+                  <select name="days" defaultValue="90" aria-label="Período a sincronizar" className="h-(--control-h) border border-line bg-surface px-2 text-ui">
                     <option value="30">30 días</option>
                     <option value="90">90 días</option>
                     <option value="365">12 meses</option>
@@ -140,7 +140,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                   return (
                     <div key={k} className="border border-line bg-canvas px-3 py-2">
                       <dt className="text-caption text-muted">{label}</dt>
-                      <dd className="num text-[26px] leading-tight text-ink">{row?.n ?? 0}</dd>
+                      <dd className="num text-headline text-ink">{row?.n ?? 0}</dd>
                       {row && <dd className="text-caption text-muted">{row.cruzados} con organización</dd>}
                     </div>
                   );

@@ -32,7 +32,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </label>
         <label className="text-meta text-muted">
           Qué es
-          <select name="source" className="mt-1 block h-9 w-full rounded-md border border-line bg-surface px-2 text-ui text-ink sm:w-72">
+          <select name="source" className="mt-1 block h-(--control-h) w-full rounded-md border border-line bg-surface px-2 text-ui text-ink sm:w-72">
             <option value="auto">Resumen del banco o la tarjeta</option>
             <option value="mercadopago_csv">Movimientos de Mercado Pago (CSV)</option>
           </select>

@@ -65,7 +65,7 @@ export function ProposalForm({ studio, name, email, derivacion }: { studio: stri
           {state.message}
         </p>
       )}
-      <button type="submit" disabled={pending} className="h-11 rounded-md bg-navy px-5 text-body font-medium text-paper hover:bg-night disabled:opacity-60">
+      <button type="submit" disabled={pending} className="h-(--control-h) rounded-md bg-navy px-5 text-body font-medium text-paper hover:bg-night disabled:opacity-60">
         {pending ? "Enviando…" : "Pedir propuesta"}
       </button>
     </form>

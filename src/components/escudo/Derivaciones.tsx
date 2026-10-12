@@ -26,13 +26,13 @@ export async function Derivaciones({ me, volver, max = 2 }: { me: Me; volver: st
               {s.context.why} {NO_REEMPLAZA}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link href={`/red-contable?derivacion=${s.id}`} className="inline-flex h-9 items-center rounded-md bg-navy px-3 text-ui font-medium text-paper hover:bg-night">
+              <Link href={`/red-contable?derivacion=${s.id}`} className="inline-flex h-(--control-h) items-center rounded-md bg-navy px-3 text-ui font-medium text-paper hover:bg-night">
                 Sumar un contador
               </Link>
               <form action={dismissSuggestionAction}>
                 <input type="hidden" name="id" value={s.id} />
                 <input type="hidden" name="volver" value={volver} />
-                <button type="submit" className="inline-flex h-9 items-center gap-1 rounded-md px-2 text-meta text-muted hover:text-ink">
+                <button type="submit" className="inline-flex h-(--control-h) items-center gap-1 rounded-md px-2 text-meta text-muted hover:text-ink">
                   <X className="size-4" aria-hidden /> Ahora no
                 </button>
               </form>

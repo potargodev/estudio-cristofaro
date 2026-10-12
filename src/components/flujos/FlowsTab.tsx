@@ -12,7 +12,7 @@ import { formatDate } from "@/lib/format";
 // Pestaña «Automatizaciones» del Vigía (§2.o): los flujos del estudio, las
 // plantillas listas y armar uno desde una frase.
 
-const STATUS: Record<string, { label: string; tone: string }> = { borrador: { label: "Borrador", tone: "text-muted" }, activo: { label: "Activo", tone: "text-[#1f6b3d]" }, pausado: { label: "Pausado", tone: "text-[#7a5410]" } };
+const STATUS: Record<string, { label: string; tone: string }> = { borrador: { label: "Borrador", tone: "text-muted" }, activo: { label: "Activo", tone: "text-[#1f5f36]" }, pausado: { label: "Pausado", tone: "text-[#7a5410]" } };
 const TRIGGER: Record<string, string> = { horario: "Por horario", webhook: "Webhook entrante", vigia: "Pedido al Vigía" };
 
 export async function FlowsTab({ user, sp }: { user: StaffUser; sp: Record<string, string | undefined> }) {
@@ -27,7 +27,7 @@ export async function FlowsTab({ user, sp }: { user: StaffUser; sp: Record<strin
           Contale al Vigía qué querés automatizar
         </label>
         <div className="flex flex-wrap gap-2">
-          <input id="frase" name="frase" required minLength={8} placeholder="Ej.: cada vez que entre una factura de proveedor, avisale a administración" className="h-10 min-w-0 flex-1 rounded-md border border-line bg-surface px-3 text-ui" />
+          <input id="frase" name="frase" required minLength={8} placeholder="Ej.: cada vez que entre una factura de proveedor, avisale a administración" className="h-(--control-h) min-w-0 flex-1 rounded-md border border-line bg-surface px-3 text-ui" />
           <SubmitButton pendingText="Armando…">Armar el flujo</SubmitButton>
         </div>
         <p className="text-caption text-muted">Queda en borrador: lo revisás en el canvas y lo activás. Lo sensible siempre pasa por Aprobaciones.</p>
