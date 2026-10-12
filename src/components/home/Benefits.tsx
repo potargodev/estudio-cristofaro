@@ -16,7 +16,9 @@ const BENEFITS = [
 /**
  * Beneficios: en escritorio, scroll horizontal fijo con 6 paneles grandes
  * numerados y un índice fino en rosé. En el celular (o con reduced-motion),
- * los paneles van uno debajo del otro.
+ * los paneles van uno debajo del otro (en escritorio con reduced-motion, en
+ * una grilla de tres columnas: sin animación no hay forma de llegar a los que
+ * quedan afuera).
  */
 export function Benefits() {
   const root = useRef<HTMLElement>(null);
@@ -54,7 +56,7 @@ export function Benefits() {
 
   return (
     <section ref={root} aria-labelledby="beneficios-titulo" className="bg-gold text-[#1c2235]">
-      <div data-hpin className="overflow-hidden py-16 lg:flex lg:h-[100svh] lg:flex-col lg:justify-center lg:py-0">
+      <div data-hpin className="overflow-hidden py-16 lg:py-24 lg:motion-safe:flex lg:motion-safe:h-[100svh] lg:motion-safe:flex-col lg:motion-safe:justify-center lg:motion-safe:py-0">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -67,7 +69,7 @@ export function Benefits() {
                 Lo que cambia en tu día a día.
               </h2>
             </div>
-            <ol aria-hidden className="hidden items-center gap-4 text-caption text-[#1c2235] lg:flex">
+            <ol aria-hidden className="hidden items-center gap-4 text-caption text-[#1c2235] lg:motion-safe:flex">
               {BENEFITS.map((_, i) => (
                 <li key={i} data-idx className={`tabular underline-offset-4 ${i === 0 ? "font-semibold underline" : ""}`}>
                   0{i + 1}
@@ -80,11 +82,11 @@ export function Benefits() {
           </div>
         </Container>
         <div className="mt-10 lg:mt-16">
-          <ol data-track className="flex flex-col gap-4 px-5 sm:px-8 lg:w-max lg:flex-row lg:gap-6 lg:px-0 lg:pl-[max(3rem,calc((100vw-1360px)/2+3rem))]">
+          <ol data-track className="flex flex-col gap-4 px-5 sm:px-8 lg:motion-safe:w-max lg:motion-safe:flex-row lg:motion-safe:gap-6 lg:motion-safe:px-0 lg:motion-safe:pl-[max(3rem,calc((100vw-1360px)/2+3rem))] lg:motion-reduce:mx-auto lg:motion-reduce:grid lg:motion-reduce:max-w-[1360px] lg:motion-reduce:grid-cols-3 lg:motion-reduce:gap-6 lg:motion-reduce:px-12">
             {BENEFITS.map((b, i) => (
               <li
                 key={b.t}
-                className="flex flex-col justify-between gap-5 lg:h-[52vh] lg:w-[30rem] xl:w-[34rem]"
+                className="flex flex-col justify-between gap-5 lg:motion-safe:h-[52vh] lg:motion-safe:w-[30rem] xl:motion-safe:w-[34rem]"
               >
                 <span className="tabular font-display text-[2.75rem] leading-none text-[#1c2235] lg:text-[clamp(4rem,8vw,7.5rem)]">0{i + 1}</span>
                 <div className="bg-[#1c2235] p-6 lg:min-h-[15rem] lg:p-8">
@@ -93,7 +95,7 @@ export function Benefits() {
                 </div>
               </li>
             ))}
-            <li aria-hidden className="hidden lg:block lg:w-[20vw]" />
+            <li aria-hidden className="hidden lg:motion-safe:block lg:w-[20vw]" />
           </ol>
         </div>
       </div>

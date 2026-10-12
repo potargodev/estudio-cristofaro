@@ -107,7 +107,7 @@ async function Products({ r, sp }: { r: ResolvedStock; sp: SP }) {
           <tbody>
             {list.map((x) => (
               <tr key={x.p.id} className="border-b border-line last:border-0">
-                <td className="num px-3 py-2">{x.p.code}</td>
+                <td className="num whitespace-nowrap px-3 py-2">{x.p.code}</td>
                 <td className="px-3 py-2">
                   {r.scope.canManage ? (
                     <Link href={`${r.base}${r.sep}ver=productos&editar=${x.p.id}#producto`} className="underline-offset-4 hover:underline">
@@ -727,7 +727,7 @@ async function Inventory({ r, sp }: { r: ResolvedStock; sp: SP }) {
           <tbody>
             {rows.map((x) => (
               <tr key={x.productId} className="border-b border-line last:border-0">
-                <td className="num px-3 py-2">{x.code}</td>
+                <td className="num whitespace-nowrap px-3 py-2">{x.code}</td>
                 <td className="px-3 py-2">{x.description}</td>
                 <td className="num px-3 py-2 text-right">
                   {qtyFmt(x.qty)} <span className="text-meta text-muted">{x.unit}</span>

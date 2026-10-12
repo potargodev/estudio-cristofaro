@@ -6,6 +6,7 @@ import { Feedback } from "@/components/app/Feedback";
 import { Card, EmptyState, MetricCard, SubmitButton, Table, ToneBadge, ViewSwitch } from "@/components/ds";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate, formatMoney, todayAR } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { periodLabel } from "@/modules/agent/intent";
 import { CCTS, OWN_CCT, cctOf, scaleAt } from "@/modules/liquidacion/convenios";
 import { END_REASON, NOVELTY_LABEL } from "@/modules/liquidacion/core";
@@ -453,10 +454,10 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
       )}
 
       {r.scope.canManage && (
-        <div className="flex flex-wrap items-start gap-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
           {run.status === "borrador" && (
             <>
-              <form action={runAction} className="flex flex-wrap items-center gap-2 rounded-md border border-navy/30 bg-surface p-3">
+              <form action={runAction} className="flex flex-wrap items-center gap-3">
                 <Hidden r={r} />
                 <input type="hidden" name="id" value={run.id} />
                 <input type="hidden" name="op" value="aprobar" />
@@ -471,7 +472,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
                 <Hidden r={r} />
                 <input type="hidden" name="id" value={run.id} />
                 <input type="hidden" name="op" value="reliquidar" />
-                <input name="reason" placeholder="Motivo (opcional)" className={`${fieldClass} h-(--control-h) w-48`} />
+                <input name="reason" placeholder="Motivo (opcional)" className={cn(fieldClass, "w-48")} />
                 <SubmitButton variant="secondary" pendingText="Re-liquidando…">
                   Re-liquidar
                 </SubmitButton>
@@ -493,7 +494,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
               <Hidden r={r} />
               <input type="hidden" name="id" value={run.id} />
               <input type="hidden" name="op" value="duplicar" />
-              <input name="reason" required placeholder="Motivo de la re-liquidación" className={`${fieldClass} h-(--control-h) w-56`} />
+              <input name="reason" required placeholder="Motivo de la re-liquidación" className={cn(fieldClass, "w-56")} />
               <SubmitButton variant="secondary" pendingText="…">
                 Duplicar y re-liquidar
               </SubmitButton>

@@ -1,6 +1,7 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { Counter } from "@/components/web/Counter";
+import { formatPercent } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Sparkline } from "./Sparkline";
 
@@ -41,22 +42,26 @@ export function StatCard({
   const showSpark = spark && spark.filter((v) => v !== 0).length > 1;
   return (
     <div className={cn("flex min-w-0 flex-col rounded-md border bg-surface p-4 sm:p-5", tone === "alert" ? "border-danger/40" : "border-line")}>
-      <div className="flex items-start justify-between gap-3">
-        <p className="flex min-w-0 items-center gap-2 text-ui font-medium text-muted">
-          <Icon className={cn("size-4 shrink-0", tone === "alert" ? "text-danger" : "text-rose-deep")} strokeWidth={1.6} aria-hidden />
-          <span className="truncate">{label}</span>
-        </p>
-        {showSpark && <Sparkline data={spark} className="h-6 w-20 shrink-0" />}
-      </div>
-      <p className="num mt-3 text-metric text-ink">
-        {display ?? (value === null ? "—" : <Counter value={value} prefix={prefix} suffix={suffix} duration={800} />)}
+      {/* La etiqueta pasa a dos líneas en las tarjetas angostas (dos por fila en el celular) en lugar de cortarse */}
+      <p className="flex min-w-0 items-start gap-2 text-ui font-medium text-muted">
+        <Icon className={cn("mt-0.5 size-4 shrink-0", tone === "alert" ? "text-danger" : "text-rose-deep")} strokeWidth={1.6} aria-hidden />
+        <span className="line-clamp-2 min-w-0 [overflow-wrap:anywhere]" title={label}>
+          {label}
+        </span>
       </p>
+      {/* La curva va junto al número: la etiqueta usa todo el ancho y no se corta */}
+      <div className="mt-3 flex items-end justify-between gap-3">
+        <p className="num min-w-0 text-metric text-ink">
+          {display ?? (value === null ? "—" : <Counter value={value} prefix={prefix} suffix={suffix} duration={800} />)}
+        </p>
+        {showSpark && <Sparkline data={spark} className="mb-1.5 h-6 w-20 shrink-0" />}
+      </div>
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
         {delta && (
           <span className={cn("num inline-flex items-center gap-0.5 font-medium", good === null ? "text-muted" : good ? "text-[#1f7a43]" : "text-danger")}>
             <Arrow className="size-3.5" strokeWidth={2} aria-hidden />
             {delta.value > 0 ? "+" : ""}
-            {delta.value}% <span className="font-normal text-muted">{delta.label ?? "vs. período anterior"}</span>
+            {formatPercent(delta.value, 1, false)} <span className="font-normal text-muted">{delta.label ?? "vs. período anterior"}</span>
           </span>
         )}
         {hint && <span className="text-muted">{hint}</span>}

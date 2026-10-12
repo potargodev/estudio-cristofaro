@@ -33,7 +33,7 @@ import { audit_log, bookings, documents, leads, obligations, organizations, requ
 import { auditLabel } from "@/lib/audit";
 import { requireStaff } from "@/lib/auth";
 import { LEAD_SOURCES } from "@/lib/types";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatNumber, formatPercent } from "@/lib/format";
 
 const DAY = 86400000;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -135,7 +135,7 @@ async function Stats({ studioId, commercial }: { studioId: string; commercial: b
             "Sin respuestas en 30 días"
           ) : (
             <span className={avgHours <= 24 ? "text-[#1f7a43]" : "text-danger"}>
-              1.ª respuesta: {avgHours}{"\u00a0"}h promedio · objetivo 24{"\u00a0"}h
+              1.ª respuesta: {formatNumber(avgHours, 1)}{"\u00a0"}h promedio · objetivo 24{"\u00a0"}h
             </span>
           )
         }
@@ -146,7 +146,7 @@ async function Stats({ studioId, commercial }: { studioId: string; commercial: b
         label="Consultas nuevas del mes"
         value={thisMonth.length}
         delta={{ value: pct(thisMonth.length, prevMonth.length), goodWhen: "up", label: "vs. mes anterior" }}
-        hint={`Conversión ${thisMonth.length ? Math.round((won / thisMonth.length) * 100) : 0}%`}
+        hint={`Conversión ${formatPercent(thisMonth.length ? won / thisMonth.length : 0, 0)}`}
         spark={leadSpark}
         href="/admin/comercial/consultas"
       />}

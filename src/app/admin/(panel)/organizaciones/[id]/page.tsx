@@ -173,7 +173,7 @@ export default async function OrganizacionPage({
           label="Vencimientos próximos"
           value={dues.soon + dues.late}
           tone={dues.late ? "alert" : "default"}
-          hint={dues.late ? `${dues.late} vencidos sin presentar` : "Próximos 14 días"}
+          hint={dues.late ? `${dues.late} ${dues.late === 1 ? "vencido" : "vencidos"} sin presentar` : "Próximos 14 días"}
           href={`/admin/organizaciones/${org.id}?tab=vencimientos`}
         />
         <StatCard icon={MessagesSquare} label="Solicitudes abiertas" value={openReqs.n} hint="Abiertas o en curso" href={`/admin/organizaciones/${org.id}?tab=solicitudes`} />

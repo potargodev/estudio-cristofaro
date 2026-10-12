@@ -5,7 +5,7 @@ import { bitacora_entries, bitacora_insights, bitacora_recurring } from "@/db/sc
 import { listCategories } from "./server";
 import { budgetView, PlanningError } from "./planning";
 import { detectLeaks, detectRecurring, merchantKey, type Mov } from "./smart";
-import { formatDate, formatMoney } from "@/lib/format";
+import { formatDate, formatMoney, formatPercent } from "@/lib/format";
 import { UUID } from "@/lib/ids";
 
 // Gastos fijos y suscripciones (detección por recurrencia), fugas y avisos
@@ -100,7 +100,7 @@ export async function refreshInsights(userId: string) {
   for (const l of detectLeaks(movs, rec.map((r) => ({ key: r.key, label: r.label, categoryId: r.category_id, kind: r.kind as "fijo" | "suscripcion", currency: r.currency, avgAmount: r.avg_amount, lastAmount: r.last_amount, lastDate: r.last_date, nextDate: r.next_date, months: r.months, priceChangePct: r.price_change_pct ? Number(r.price_change_pct) : null, stillUsed: r.still_used })))) await add({ kind: l.kind, ref: String(l.data.key ?? ""), period: month, title: l.title, body: l.body, data: l.data });
   const soon = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
   for (const r of rec) {
-    if (r.price_change_pct && Number(r.price_change_pct) >= 10) await add({ kind: "aumento", ref: r.key, period: r.last_date.slice(0, 7), title: `Subió ${r.label}`, body: `El último pago fue ${formatMoney(r.last_amount, "ARS", { decimals: "none" })}, ${Number(r.price_change_pct)}% más que antes (${formatMoney(r.avg_amount, "ARS", { decimals: "none" })} de promedio).`, data: { key: r.key } });
+    if (r.price_change_pct && Number(r.price_change_pct) >= 10) await add({ kind: "aumento", ref: r.key, period: r.last_date.slice(0, 7), title: `Subió ${r.label}`, body: `El último pago fue ${formatMoney(r.last_amount, "ARS", { decimals: "none" })}, ${formatPercent(Number(r.price_change_pct), 1, false)} más que antes (${formatMoney(r.avg_amount, "ARS", { decimals: "none" })} de promedio).`, data: { key: r.key } });
     if (r.next_date >= today() && r.next_date <= soon && r.status !== "descartado") await add({ kind: r.kind === "suscripcion" ? "renovacion" : "vencimiento", ref: r.key, period: r.next_date, title: r.kind === "suscripcion" ? `Se renueva ${r.label}` : `Vence ${r.label}`, body: `El ${formatDate(r.next_date, "short")}, unos ${formatMoney(r.last_amount, "ARS", { decimals: "none" })}.`, data: { key: r.key } });
   }
   const b = await budgetView(userId);

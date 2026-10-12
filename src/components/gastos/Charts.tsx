@@ -1,5 +1,5 @@
 import { categoryName } from "@/modules/gastos/constants";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatPercent } from "@/lib/format";
 
 // Gráficos simples (server): por categoría (barras horizontales) y por mes
 // (columnas). Los valores van en la moneda base; cada barra tiene su texto.
@@ -21,7 +21,7 @@ export function CategoryChart({ data, currency }: { data: Record<string, number>
             <div className="flex items-baseline justify-between gap-3 text-ui">
               <span>{categoryName(k)}</span>
               <span className="tabular-nums text-muted">
-                {formatMoney(v, currency)} <span className="text-caption">· {Math.round((v / total) * 100)}%</span>
+                {formatMoney(v, currency)} <span className="text-caption">· {formatPercent(v / total, 0)}</span>
               </span>
             </div>
             <div className="mt-1.5 h-2.5 bg-navy-soft">

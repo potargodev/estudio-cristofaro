@@ -328,7 +328,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           <label htmlFor="msg" className="sr-only">
             Mensaje para la Flota
           </label>
-          <input id="msg" name="body" required maxLength={1000} placeholder="Escribile a la tripulación" className={`${field} mt-0`} />
+          <input id="msg" name="body" required maxLength={1000} placeholder="Escribile a la tripulación" className={fieldClass} />
           <SubmitButton pendingText="…">Enviar</SubmitButton>
         </form>
         <ol className="mt-4 grid gap-2">

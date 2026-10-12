@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, formatPercent } from "@/lib/format";
 
 // Gráficos livianos en SVG (sin dependencias): barras, líneas y donut con
 // colores de marca (todos ≥ 3:1 sobre blanco), ejes discretos, números
@@ -234,7 +234,7 @@ export function DonutChart({
             </span>
             <span className="tabular text-muted">
               {d.value}
-              {total > 0 && <span className="ml-2 text-caption">{Math.round((d.value / total) * 100)}%</span>}
+              {total > 0 && <span className="ml-2 text-caption">{formatPercent(d.value / total, 0)}</span>}
             </span>
           </li>
         ))}

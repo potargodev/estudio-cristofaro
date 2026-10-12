@@ -55,6 +55,9 @@ export const formatUsd = (n: number, max = 2) => `US$ ${numberFormat(2, Math.max
 /** Número entero o con decimales: "1.234" · "12,5" (`minDecimals` fija decimales, p. ej. 2 para "12,50") */
 export const formatNumber = (n: number, maxDecimals = 0, minDecimals = 0) => numberFormat(minDecimals, Math.max(minDecimals, maxDecimals)).format(n);
 
+/** Porcentaje en formato argentino: 0,302 → "30,2 %" (con `ratio: false`, 30.2 → "30,2 %") */
+export const formatPercent = (n: number, maxDecimals = 1, ratio = true) => `${formatNumber(ratio ? n * 100 : n, maxDecimals)}\u00a0%`;
+
 // ───────────── Fechas ─────────────
 
 const DATE_STYLES = {

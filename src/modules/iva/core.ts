@@ -5,6 +5,8 @@
 // explicación. Son hechos para el contador, nunca una validación (principios
 // §1). Montos en centavos.
 
+import { formatPercent } from "@/lib/format";
+
 export type Severity = "alta" | "media" | "baja";
 
 export interface BookRow {
@@ -66,7 +68,7 @@ export type AnomalyType = keyof typeof ANOMALY_LABEL;
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 const ivaOf = (r: BookRow) => sum(r.iva.map((x) => x.importe));
 const pesos = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-const pct = (x: number) => `${Math.round(x * 100)} %`;
+const pct = (x: number) => formatPercent(x, 0);
 const inPeriod = (date: string | null, period: string) => !!date && date.slice(0, 7) === period;
 
 /** ¿Da crédito fiscal? Solo facturas A y M (y sus notas) a un responsable inscripto */

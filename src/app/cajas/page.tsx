@@ -53,12 +53,12 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
                 <span className="text-ui text-muted">{b.kind === "compartida" ? t?.description : PURPOSE[b.kind]}</span>
                 {b.kind === "personal" && (
                   <span className="num text-ui text-ink">
-                    Este mes: entró {formatMoney(personal.byCurrency.ARS.now.in, "ARS", { decimals: "auto" })} · salió {formatMoney(personal.byCurrency.ARS.now.out, "ARS", { decimals: "auto" })}
+                    Este mes: entró <span className="whitespace-nowrap">{formatMoney(personal.byCurrency.ARS.now.in, "ARS", { decimals: "auto" })}</span> · salió <span className="whitespace-nowrap">{formatMoney(personal.byCurrency.ARS.now.out, "ARS", { decimals: "auto" })}</span>
                   </span>
                 )}
                 {b.kind === "negocio" && biz && (
                   <span className="num text-ui text-ink">
-                    Este mes: resultado {formatMoney(biz.result, "ARS", { decimals: "auto" })} · sueldo {formatMoney(biz.salary, "ARS", { decimals: "auto" })}
+                    Este mes: resultado <span className="whitespace-nowrap">{formatMoney(biz.result, "ARS", { decimals: "auto" })}</span> · sueldo <span className="whitespace-nowrap">{formatMoney(biz.salary, "ARS", { decimals: "auto" })}</span>
                   </span>
                 )}
               </Link>

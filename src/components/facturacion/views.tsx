@@ -51,7 +51,7 @@ import { asProfile, legendsFor, type LegendProfile } from "@/modules/leyendas/ca
 import { getLegendRules } from "@/modules/leyendas/server";
 import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { fieldClass } from "@/components/ds/primitives";
-import { formatAmount, formatDate } from "@/lib/format";
+import { formatAmount, formatDate, formatPercent } from "@/lib/format";
 
 // Vistas de facturación y ARCA, iguales para el autónomo (/facturacion) y para
 // una organización del estudio (ficha → ARCA). Reciben el alcance ya validado.
@@ -143,7 +143,7 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
                 <span className="min-w-0">
                   <span className="block truncate text-body text-ink">{i.customer_name}</span>
                   <span className="block text-meta text-muted">
-                    {CBTE_TYPES[i.cbte_type].label} {fullNumber(i.point_of_sale, i.number)} · {formatDate(i.issue_date, "numeric")}
+                    {CBTE_TYPES[i.cbte_type].label} {i.number == null ? `punto de venta ${i.point_of_sale} · sin número todavía` : fullNumber(i.point_of_sale, i.number)} · {formatDate(i.issue_date, "numeric")}
                   </span>
                 </span>
                 <span className="flex items-center gap-3">
@@ -211,7 +211,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-meta text-muted">
-              {t.label} · {fullNumber(inv.point_of_sale, inv.number)} · {formatDate(inv.issue_date, "numeric")}
+              {t.label} · {inv.number == null ? `punto de venta ${inv.point_of_sale} · sin número todavía` : fullNumber(inv.point_of_sale, inv.number)} · {formatDate(inv.issue_date, "numeric")}
             </p>
             <p className="mt-1 text-title font-semibold">{inv.customer_name}</p>
             <p className="text-meta text-muted">
@@ -228,7 +228,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
             <li key={i} className="flex justify-between gap-3 py-2">
               <span>
                 {it.quantity} × {it.description}
-                {it.ivaRate != null && <span className="text-muted"> · IVA {it.ivaRate}%</span>}
+                {it.ivaRate != null && <span className="text-muted"> · IVA {formatPercent(it.ivaRate, 1, false)}</span>}
               </span>
               <span className="num">{formatAmount(it.quantity * it.unitPrice, inv.currency)}</span>
             </li>
@@ -942,7 +942,7 @@ export async function CustomersView({ scope, sp, volver }: { scope: IssuerScope;
             <li key={p.id} className="flex items-center justify-between gap-2 py-2">
               <span className="min-w-0 truncate">
                 {p.description} · <span className="num">{formatAmount(Number(p.unit_price))}</span>
-                {p.iva_rate != null && <span className="text-muted"> · IVA {Number(p.iva_rate)}%</span>}
+                {p.iva_rate != null && <span className="text-muted"> · IVA {formatPercent(Number(p.iva_rate), 1, false)}</span>}
               </span>
               <form action={deleteProductAction}>
                 <ScopeFields scope={scope} volver={volver} />

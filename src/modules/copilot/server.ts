@@ -22,7 +22,7 @@ import { readCopilotFile } from "./files";
 import { checkQuota, recordAlert, type Quota } from "./limits";
 import { costUsd, getPlatformAi, isConfigured, platformModel, transcribeAudio } from "./platform";
 import { consultarBitacora, consultarSaldos, isProposalTool, PROPOSAL_TOOLS, type ProposalTool } from "./tools";
-import { formatDate, formatMoney, todayAR } from "@/lib/format";
+import { formatDate, formatMoney, formatPercent, todayAR } from "@/lib/format";
 import { UUID } from "@/lib/ids";
 
 // Vigía (docs/faro-producto.md §2.m). Todo opera como el usuario de la
@@ -415,9 +415,9 @@ function queryTools(u: CopilotUser): ToolSet {
         const [b, rec, ins, goals] = await Promise.all([budgetView(u.id), listRecurring(u.id), listInsights(u.id, 6), listGoals(u.id)]);
         return {
           sobres: b.list.filter((x) => x.budget).map((x) => ({ categoria: x.name, presupuesto: formatMoney(x.budget!, "ARS", { decimals: "auto" }), gastado: formatMoney(x.spent, "ARS", { decimals: "auto" }) })),
-          fijos_y_suscripciones: rec.slice(0, 10).map((r) => ({ nombre: r.label, mensual: formatMoney(r.last_amount, "ARS", { decimals: "auto" }), aumento: r.price_change_pct ? `${r.price_change_pct}%` : null })),
+          fijos_y_suscripciones: rec.slice(0, 10).map((r) => ({ nombre: r.label, mensual: formatMoney(r.last_amount, "ARS", { decimals: "auto" }), aumento: r.price_change_pct ? formatPercent(Number(r.price_change_pct), 1, false) : null })),
           avisos: ins.map((i) => i.title),
-          metas: goals.map((g) => ({ meta: g.name, avance: `${Math.round(g.progress * 100)}%`, ahorro_semanal_sugerido: formatMoney(g.weekly, "ARS", { decimals: "auto" }) })),
+          metas: goals.map((g) => ({ meta: g.name, avance: formatPercent(g.progress, 0), ahorro_semanal_sugerido: formatMoney(g.weekly, "ARS", { decimals: "auto" }) })),
           alternativas_educativas: [
             "Plazo fijo: tasa fija por un plazo; la plata queda inmovilizada hasta el vencimiento.",
             "Fondos comunes formatMoney market: rescate en el día, rinden una tasa variable; no están garantizados.",

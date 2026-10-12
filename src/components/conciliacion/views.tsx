@@ -9,7 +9,7 @@ import type { StaffUser } from "@/lib/auth";
 import { hasModule } from "@/lib/faro/entitlements";
 import { listRules, listStatements, statementView, type RecScope } from "@/modules/bank-rec/server";
 import { fieldClass } from "@/components/ds/primitives";
-import { formatDate, formatMoney } from "@/lib/format";
+import { formatDate, formatMoney, formatPercent } from "@/lib/format";
 
 // Conciliación bancaria en la ficha de la organización (pestaña Conciliación).
 
@@ -186,7 +186,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
           <summary className="flex cursor-pointer items-center gap-2 text-ui font-medium">
             <SlidersHorizontal className="size-4 text-muted" aria-hidden /> Tolerancias y cuentas del ajuste
             <span className="text-meta font-normal text-muted">
-              · hasta {v.tolerance.days} días y {v.tolerance.kind === "fijo" ? formatMoney(v.tolerance.value * 100) : `${v.tolerance.value} %`}
+              · hasta {v.tolerance.days} días y {v.tolerance.kind === "fijo" ? formatMoney(v.tolerance.value * 100) : formatPercent(v.tolerance.value, 2, false)}
             </span>
           </summary>
           <form action={accountAction} className="mt-4 grid gap-3 sm:grid-cols-3">

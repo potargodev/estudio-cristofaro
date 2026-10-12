@@ -6,7 +6,7 @@ import { Feedback } from "@/components/app/Feedback";
 import { Card, EmptyState, MetricCard, Panel, SubmitButton, Table, ToneBadge, ViewSwitch } from "@/components/ds";
 import { fieldClass } from "@/components/ds/primitives";
 import type { StaffUser } from "@/lib/auth";
-import { formatDate, formatMoney, todayAR } from "@/lib/format";
+import { formatDate, formatMoney, formatPercent, todayAR } from "@/lib/format";
 import { ANOMALY_LABEL, conditionOf, creditOf } from "@/modules/iva/core";
 import { analyze, isPeriod, readyToFile, type Book } from "@/modules/iva/server";
 import { periodLabel } from "@/modules/agent/intent";
@@ -115,7 +115,7 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
           />
         </Card>
         <Card>
-          <BarList title="IVA por alícuota" bars={a.summary.byRate.map((r) => ({ label: `${r.alicuota} %`, value: r.iva, display: formatMoney(r.iva), hint: `base ${formatMoney(r.base)}` }))} />
+          <BarList title="IVA por alícuota" bars={a.summary.byRate.map((r) => ({ label: formatPercent(r.alicuota, 1, false), value: r.iva, display: formatMoney(r.iva), hint: `base ${formatMoney(r.base)}` }))} />
         </Card>
         <Card>
           <BarList title="Por condición frente al IVA" bars={a.summary.byCondition.map((c) => ({ label: c.condition, value: c.total, display: formatMoney(c.total), hint: `${c.count} comprobante${c.count === 1 ? "" : "s"} · ${fiscalLabel.toLowerCase()} ${formatMoney(c.fiscal)}` }))} />

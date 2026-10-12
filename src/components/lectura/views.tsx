@@ -12,7 +12,7 @@ import { batchProgress, listRules, supplierPrecision, type SmartDoc } from "@/mo
 import { LEARNED_LABEL, type Decisions, type SupplierRule } from "@/modules/smart-docs/learning";
 import { TRATAMIENTOS, TRIBUTO_LABEL, tributoKey, type TributoTipo } from "@/modules/smart-docs/tributos";
 import { fieldClass } from "@/components/ds/primitives";
-import { formatAmountOrDash, formatDate, formatUsd } from "@/lib/format";
+import { formatAmountOrDash, formatDate, formatPercent, formatUsd } from "@/lib/format";
 
 // Pantallas compartidas de la lectura inteligente: la bandeja (subir, para
 // confirmar, confirmados y exportar) y la revisión de un documento.
@@ -226,7 +226,7 @@ export async function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedS
                 const rule = rules.find((x) => x.supplier_cuit === cuit);
                 const p = precision.find((x) => x.cuit === cuit);
                 const rr = (rule?.rule ?? {}) as SupplierRule;
-                const parts = [rr.account && `cuenta ${rr.account}`, rr.costCenter && `centro de costo ${rr.costCenter}`, rr.concept && `concepto ${rr.concept}`, rr.itemRate != null && `alícuota ${rr.itemRate} %`, rr.treatments && Object.keys(rr.treatments).length > 0 && `${Object.keys(rr.treatments).length} tratamiento(s)`].filter(Boolean);
+                const parts = [rr.account && `cuenta ${rr.account}`, rr.costCenter && `centro de costo ${rr.costCenter}`, rr.concept && `concepto ${rr.concept}`, rr.itemRate != null && `alícuota ${formatPercent(rr.itemRate, 1, false)}`, rr.treatments && Object.keys(rr.treatments).length > 0 && `${Object.keys(rr.treatments).length} tratamiento(s)`].filter(Boolean);
                 return (
                   <tr key={cuit}>
                     <td>
