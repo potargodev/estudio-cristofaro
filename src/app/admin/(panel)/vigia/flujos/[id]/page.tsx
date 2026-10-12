@@ -5,7 +5,7 @@ import { deleteFlowAction, flowStatusAction, testFlowAction } from "@/app/admin/
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
-import { FlowEditor } from "@/components/flujos/FlowEditor";
+import { FlowEditor } from "@/components/flujos/FlowEditorLazy";
 import { requireOperator } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { validateGraph, type Graph } from "@/modules/flows/core";

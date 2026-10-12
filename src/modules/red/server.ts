@@ -167,8 +167,9 @@ export async function publicDirectory(f: DirectoryFilters = {}, demo = false) {
     .from(directory_profiles)
     .innerJoin(studios, eq(studios.id, directory_profiles.studio_id))
     .where(and(eq(directory_profiles.published, true), eq(directory_profiles.license_status, "verificada"), eq(studios.kind, "studio"), ne(studios.status, "suspendido"), eq(studios.is_demo, demo)));
-  const visible = [];
-  for (const r of rows) if (await hasModule(r.p.studio_id, "red_estudios")) visible.push(r);
+  // El plan de cada estudio (con su caché) en paralelo, no uno por uno
+  const allowed = await Promise.all(rows.map((r) => hasModule(r.p.studio_id, "red_estudios")));
+  const visible = rows.filter((_, i) => allowed[i]);
   const ids = visible.map((r) => r.p.studio_id);
   const [rate, hours] = await Promise.all([ratings(ids), responseHours(ids)]);
   const zona = norm(f.zona);

@@ -4,7 +4,7 @@ import { Camera, Check, Clock, FileText, Loader2, Mic, Paperclip, Pencil, Rotate
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import { ChatMarkdown } from "@/components/chat/LazyMarkdown";
 import { confirmCardAction, editGroupCardAction, editMovementCardAction, redoCardAction, retryMessageAction, setAutoAction, undoCardAction, type CardState } from "@/app/vigia/actions";
 import { cn } from "@/lib/utils";
 import { fieldClass } from "@/components/ds/primitives";
@@ -263,7 +263,7 @@ function Bubble({ m, categories }: { m: ChatMessage; categories: { id: string; n
                 <p className="whitespace-pre-wrap break-words">{m.text}</p>
               ) : (
                 <div className="copilot-md break-words [&_a]:font-medium [&_a]:text-rose-deep [&_a]:underline [&_li]:ml-4 [&_li]:list-disc [&_p+p]:mt-2 [&_ul]:mt-1">
-                  <ReactMarkdown components={{ a: ({ href = "", children }) => (href.startsWith("/") ? <Link href={href}>{children}</Link> : <a href={href} target="_blank" rel="noreferrer">{children}</a>) }}>{m.text}</ReactMarkdown>
+                  <ChatMarkdown text={m.text} />
                 </div>
               ))}
             {m.transcript && <p className={cn("mt-1 text-meta italic", mine ? "text-paper/75" : "text-muted")}>«{m.transcript}»</p>}
