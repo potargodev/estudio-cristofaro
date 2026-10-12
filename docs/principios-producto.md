@@ -294,6 +294,20 @@ El registro compartido (§18, cajas compartidas) y la conexión con el contador 
 - **Migrar es conectar, traer la historia, cambiar la fuente de verdad a Faro y desconectar.** Faro guía ese camino.
 - Los conectores de venta (tiendas online, Mercado Pago) y de comunicación (WhatsApp, mail) siguen la misma regla: son adaptadores del núcleo.
 
+### 22.a Cómo se evita que los sistemas choquen
+
+1. **Un único dueño por dato.** Para cada organización y cada área (contabilidad, facturación, compras, sueldos, stock) manda una sola fuente de verdad: Faro o un sistema conectado, nunca los dos a la vez sobre la misma área.
+2. **Sin duplicados.** Todo lo que entra de un sistema externo guarda su origen: qué sistema y qué ID externo. Si la misma cosa vuelve a llegar, Faro la reconoce por ese ID y no la duplica.
+3. **Conflictos sin pisar.** Si los dos lados modificaron lo mismo, Faro no elige por su cuenta ni sobrescribe. Marca el conflicto y lo muestra para que una persona decida cuál vale (§14.c).
+4. **Escritura según capacidades.** Faro escribe de vuelta solo lo que el adaptador declara que el sistema externo permite modificar. Lo demás queda marcado "solo en Faro".
+5. **Los sistemas que alimentan una parte no chocan.** Lo más común es que el núcleo sea Faro y un sistema externo le alimente una parte (por ejemplo, las ventas de una tienda). Ese sistema solo aporta su parte y no toca las demás áreas.
+6. **El choque real solo aparece en una migración**, cuando dos sistemas conviven un tiempo. Para eso está el asistente "Pasate a Faro":
+   1. trae la historia;
+   2. controla los totales contra el sistema de origen;
+   3. recién cuando el usuario confirma, cambia la fuente de verdad a Faro y desconecta.
+
+   Nunca quedan dos sistemas como fuente de verdad de la misma área de forma permanente.
+
 ---
 
 ## Decisiones abiertas
