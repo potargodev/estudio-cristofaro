@@ -282,6 +282,18 @@ El primer movimiento real para arrancar con Estudio Cristofaro, en orden:
 
 El registro compartido (§18, cajas compartidas) y la conexión con el contador (§4 a §8: admisión, acuerdo, delegar o proponer, cierre con mediación y calificaciones) **ya están construidos** y se pueden mostrar en la reunión; también hay una demo completa para recorrerlos sin datos reales (`docs/demo.md`). La lista completa de lo que falta configurar, por prioridad, está en `docs/pendientes-configuracion.md`.
 
+## 22. Núcleo propio con adaptadores (Faro no depende de nadie)
+
+**Decisión de arquitectura.** Faro es, ante todo, la herramienta del contador y del estudio, y no puede quedar prisionero de ningún sistema externo (Tango, Xubio, Contabilium, Facturante ni cualquier otro).
+
+- **Núcleo propio.** Faro tiene su propio modelo y todas sus funciones nativas: contabilidad, facturación, compras, IVA, sueldos, stock, cobros y bancos. Todo funciona completo sin ningún sistema externo conectado.
+- **Adaptadores intercambiables.** Cada sistema externo es un adaptador que traduce entre su formato y el núcleo de Faro. Todos responden a la misma interfaz. Sumar un sistema nuevo es escribir un adaptador, no cambiar las pantallas ni la lógica.
+- **Espejo con la estética de Faro.** Con un sistema conectado, sus datos y su operativa se ven dentro de Faro, normalizados (§14.a), con el orden y el diseño de Faro. Lo que se hace en Faro vuelve al sistema externo en la medida en que ese sistema lo permita (§14.c), y cada adaptador declara qué puede leer y qué puede escribir.
+- **Fuente de verdad por organización y por área.** Para cada organización y cada área (contabilidad, facturación, sueldos, stock) se elige si manda Faro o un sistema externo. Se puede cambiar.
+- **Conectar y desconectar sin perder nada.** Todo lo que llega de un sistema externo queda guardado en el núcleo, con su origen (regla de datos de integraciones). Al desconectar, el estudio sigue trabajando con las funciones nativas sobre la misma historia.
+- **Migrar es conectar, traer la historia, cambiar la fuente de verdad a Faro y desconectar.** Faro guía ese camino.
+- Los conectores de venta (tiendas online, Mercado Pago) y de comunicación (WhatsApp, mail) siguen la misma regla: son adaptadores del núcleo.
+
 ---
 
 ## Decisiones abiertas
