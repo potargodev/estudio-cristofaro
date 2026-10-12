@@ -1,4 +1,5 @@
 import { cronAuthorized, unauthorized } from "@/lib/http";
+import { withJobLease } from "@/lib/jobs";
 import { sendReminders } from "@/lib/agenda/bookings";
 
 export const dynamic = "force-dynamic";
@@ -10,5 +11,6 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(request: Request) {
   if (!cronAuthorized(request)) return unauthorized();
-  return Response.json(await sendReminders());
+  // Mismo turno que la tarea interna: nunca dos envíos a la vez
+  return Response.json((await withJobLease("agenda", 5 * 60_000, () => sendReminders())) ?? { ocupado: true });
 }

@@ -229,6 +229,8 @@ En desarrollo: `npm run reset-password -- persona@estudiocristofaro.com`.
 3. En el servicio `db` → **Backups**: elegí ese destino, un horario (por ejemplo diario a las 3 a. m.) y cuántas copias conservar.
 4. Probá una restauración al menos una vez: el backup es un dump de `pg_dump` que se restaura con `pg_restore` (o `psql` si es SQL plano) sobre una base vacía.
 
+Ese backup no incluye los archivos de `/data/uploads`. Para tener la base y los archivos juntos, con retención y restauración probada, usá `scripts/backup/` con cron en el VPS: paso a paso en [`docs/backup.md`](docs/backup.md).
+
 ### 8. Conector de Tango
 
 El conector se instala en la PC de la contadora donde corre Tango, no en Easypanel. Paso a paso en [`connector/README.md`](connector/README.md): Node 22, `config.json` bajado de **Conexiones → Tango**, `node index.mjs test`, `node index.mjs sync` y la tarea programada con `instalar-tarea.ps1`.

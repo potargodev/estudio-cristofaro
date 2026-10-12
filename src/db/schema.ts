@@ -357,7 +357,7 @@ export const organization_staff = pgTable(
     assignment: staffAssignment("assignment").notNull().default("colaborador"),
     created_at: createdAt(),
   },
-  (t) => [
+  (t) => [ index("organization_staff_user_idx").on(t.user_id),
     primaryKey({ columns: [t.organization_id, t.user_id] }),
     uniqueIndex("organization_staff_one_lead_idx")
       .on(t.organization_id)
@@ -385,7 +385,7 @@ export const memberships = pgTable(
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
-  (t) => [unique("memberships_org_user_key").on(t.organization_id, t.user_id), index("memberships_user_idx").on(t.user_id)],
+  (t) => [ index("memberships_studio_idx").on(t.studio_id),unique("memberships_org_user_key").on(t.organization_id, t.user_id), index("memberships_user_idx").on(t.user_id)],
 );
 
 /**
@@ -424,7 +424,7 @@ export const employees = pgTable(
     notes: text("notes"),
     created_at: createdAt(),
   },
-  (t) => [
+  (t) => [ index("employees_user_idx").on(t.user_id), index("employees_studio_idx").on(t.studio_id),
     index("employees_org_idx").on(t.organization_id),
     uniqueIndex("employees_org_user_idx").on(t.organization_id, t.user_id).where(sql`${t.user_id} is not null`),
     uniqueIndex("employees_org_email_idx").on(t.organization_id, t.email).where(sql`${t.email} is not null`),
@@ -612,7 +612,7 @@ export const documents = pgTable(
     external_id: text("external_id"),
     created_at: createdAt(),
   },
-  (t) => [index("documents_org_idx").on(t.organization_id, t.created_at)],
+  (t) => [ index("documents_studio_idx").on(t.studio_id, t.created_at),index("documents_org_idx").on(t.organization_id, t.created_at)],
 );
 
 // Solicitudes del cliente (consulta, pedido de factura, alta o baja de empleado, otro)
@@ -975,7 +975,7 @@ export const approvals = pgTable(
     result: jsonb("result").$type<Record<string, unknown> | null>(),
     created_at: createdAt(),
   },
-  (t) => [index("approvals_studio_status_idx").on(t.studio_id, t.status, t.created_at)],
+  (t) => [ index("approvals_org_idx").on(t.organization_id),index("approvals_studio_status_idx").on(t.studio_id, t.status, t.created_at)],
 );
 
 /** Accesos MCP: con token Bearer (creado en /admin/mcp) o por OAuth 2.1 */
@@ -1003,7 +1003,7 @@ export const mcp_accesses = pgTable(
     last_used_at: timestamp("last_used_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [index("mcp_accesses_studio_idx").on(t.studio_id, t.created_at)],
+  (t) => [ index("mcp_accesses_user_idx").on(t.user_id),index("mcp_accesses_studio_idx").on(t.studio_id, t.created_at)],
 );
 
 /** Tokens (SHA-256) de los accesos MCP: Bearer, access y refresh de OAuth y códigos de autorización */
@@ -1050,7 +1050,7 @@ export const mcp_calls = pgTable(
     message: text("message"),
     created_at: createdAt(),
   },
-  (t) => [index("mcp_calls_access_idx").on(t.access_id, t.created_at)],
+  (t) => [ index("mcp_calls_studio_idx").on(t.studio_id),index("mcp_calls_access_idx").on(t.access_id, t.created_at)],
 );
 
 /**
@@ -1380,6 +1380,20 @@ export const assisted_access = pgTable(
 );
 
 /**
+ * Tareas internas del contenedor: una fila por tarea. Quien la corre toma el
+ * turno hasta locked_until; otra instancia (o una vuelta que se pisa con la
+ * anterior) no la corre mientras tanto. Si el contenedor muere, vence sola.
+ */
+export const job_leases = pgTable("job_leases", {
+  name: text("name").primaryKey(),
+  holder: text("holder"),
+  locked_until: timestamp("locked_until", { withTimezone: true }).notNull().defaultNow(),
+  last_started_at: timestamp("last_started_at", { withTimezone: true }),
+  last_finished_at: timestamp("last_finished_at", { withTimezone: true }),
+  last_error: text("last_error"),
+});
+
+/**
  * «Ver como…» (solo faro_owner, solo usuarios de la demo): sesión real del
  * usuario demo elegido. Guarda la sesión original para volver en un clic.
  */
@@ -1441,7 +1455,7 @@ export const expense_groups = pgTable(
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
-  (t) => [index("expense_groups_studio_idx").on(t.studio_id), uniqueIndex("expense_groups_invite_idx").on(t.invite_token_hash)],
+  (t) => [ index("expense_groups_org_idx").on(t.organization_id),index("expense_groups_studio_idx").on(t.studio_id), uniqueIndex("expense_groups_invite_idx").on(t.invite_token_hash)],
 );
 
 /** Integrantes: usuarios de Faro o invitados sin cuenta (entran por link mágico solo a su grupo) */
@@ -1610,7 +1624,7 @@ export const expense_comments = pgTable(
     body: text("body").notNull(),
     created_at: createdAt(),
   },
-  (t) => [index("expense_comments_idx").on(t.group_id, t.expense_id, t.created_at)],
+  (t) => [ index("expense_comments_expense_idx").on(t.expense_id),index("expense_comments_idx").on(t.group_id, t.expense_id, t.created_at)],
 );
 
 /** Actividad cronológica del grupo */
@@ -1660,7 +1674,7 @@ export const reimbursements = pgTable(
     reimbursed_at: timestamp("reimbursed_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [index("reimbursements_org_idx").on(t.organization_id, t.status, t.created_at)],
+  (t) => [ index("reimbursements_user_idx").on(t.user_id),index("reimbursements_org_idx").on(t.organization_id, t.status, t.created_at)],
 );
 
 /**
@@ -1689,7 +1703,7 @@ export const accounting_expenses = pgTable(
     receipt_mime: text("receipt_mime"),
     created_at: createdAt(),
   },
-  (t) => [unique("accounting_expenses_source_key").on(t.source, t.source_id), index("accounting_expenses_org_idx").on(t.organization_id, t.date)],
+  (t) => [ index("accounting_expenses_studio_idx").on(t.studio_id),unique("accounting_expenses_source_key").on(t.source, t.source_id), index("accounting_expenses_org_idx").on(t.organization_id, t.date)],
 );
 
 // ───────────────────────── Centro de ayuda ─────────────────────────
@@ -2180,7 +2194,7 @@ export const copilot_reminders = pgTable(
     source_message_id: uuid("source_message_id").references(() => copilot_messages.id, { onDelete: "set null" }),
     created_at: createdAt(),
   },
-  (t) => [index("copilot_reminders_due_idx").on(t.due_at)],
+  (t) => [ index("copilot_reminders_user_idx").on(t.user_id),index("copilot_reminders_due_idx").on(t.due_at)],
 );
 
 /**
@@ -2260,7 +2274,7 @@ export const conversations = pgTable(
     last_message_at: timestamp("last_message_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [
+  (t) => [ index("conversations_studio_idx").on(t.studio_id),
     uniqueIndex("conversations_direct_idx").on(t.direct_key),
     uniqueIndex("conversations_group_idx").on(t.expense_group_id),
     uniqueIndex("conversations_fleet_idx").on(t.fleet_id),
@@ -2583,7 +2597,7 @@ export const invoices = pgTable(
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
-  (t) => [
+  (t) => [ index("invoices_studio_idx").on(t.studio_id, t.created_at),
     index("invoices_org_idx").on(t.organization_id, t.issue_date),
     uniqueIndex("invoices_number_idx").on(t.cuit, t.environment, t.point_of_sale, t.cbte_type, t.number),
     uniqueIndex("invoices_token_idx").on(t.public_token),
@@ -2894,7 +2908,7 @@ export const bitacora_shares = pgTable(
     revoked_at: timestamp("revoked_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [uniqueIndex("bitacora_shares_token_idx").on(t.token), index("bitacora_shares_member_idx").on(t.member_id)],
+  (t) => [ index("bitacora_shares_owner_idx").on(t.owner_id),uniqueIndex("bitacora_shares_token_idx").on(t.token), index("bitacora_shares_member_idx").on(t.member_id)],
 );
 
 // ───────────── F6 · Lectura inteligente (smart_docs) y conciliación (bank_rec) ─────────────
@@ -3012,7 +3026,7 @@ export const bank_movements = pgTable(
     confirmed_at: timestamp("confirmed_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [uniqueIndex("bank_movements_ext_idx").on(t.organization_id, t.external_id), index("bank_movements_stmt_idx").on(t.statement_id, t.date)],
+  (t) => [ index("bank_movements_studio_idx").on(t.studio_id),uniqueIndex("bank_movements_ext_idx").on(t.organization_id, t.external_id), index("bank_movements_stmt_idx").on(t.statement_id, t.date)],
 );
 
 /** Regla guardada: si la descripción contiene el texto, se clasifica sola */
@@ -3107,7 +3121,7 @@ export const mp_payments = pgTable(
     synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
     created_at: createdAt(),
   },
-  (t) => [uniqueIndex("mp_payments_ext_idx").on(t.account, t.mp_payment_id), index("mp_payments_ref_idx").on(t.kind, t.ref_id)],
+  (t) => [ index("mp_payments_studio_idx").on(t.studio_id),uniqueIndex("mp_payments_ext_idx").on(t.account, t.mp_payment_id), index("mp_payments_ref_idx").on(t.kind, t.ref_id)],
 );
 
 /** Registro de cada webhook recibido (firma, resultado), para auditoría e idempotencia */
@@ -3307,7 +3321,7 @@ export const payslips = pgTable(
     reminders_sent: jsonb("reminders_sent").$type<number[]>().notNull().default([]),
     created_at: createdAt(),
   },
-  (t) => [index("payslips_batch_idx").on(t.batch_id), index("payslips_emp_idx").on(t.employee_id, t.period)],
+  (t) => [ index("payslips_org_status_idx").on(t.organization_id, t.status),index("payslips_batch_idx").on(t.batch_id), index("payslips_emp_idx").on(t.employee_id, t.period)],
 );
 
 /** Comunicado interno de la organización (o del estudio en su nombre) */
@@ -3347,7 +3361,7 @@ export const announcement_reads = pgTable(
     read_at: timestamp("read_at", { withTimezone: true }),
     ack_at: timestamp("ack_at", { withTimezone: true }),
   },
-  (t) => [primaryKey({ columns: [t.announcement_id, t.employee_id] })],
+  (t) => [ index("announcement_reads_user_idx").on(t.user_id),primaryKey({ columns: [t.announcement_id, t.employee_id] })],
 );
 
 // ───────────── F4 · Flujos (automatizaciones) ─────────────
@@ -3403,7 +3417,7 @@ export const flow_runs = pgTable(
     finished_at: timestamp("finished_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [uniqueIndex("flow_runs_idem_idx").on(t.flow_id, t.idempotency_key), index("flow_runs_queue_idx").on(t.status, t.next_attempt_at)],
+  (t) => [ index("flow_runs_studio_idx").on(t.studio_id),uniqueIndex("flow_runs_idem_idx").on(t.flow_id, t.idempotency_key), index("flow_runs_queue_idx").on(t.status, t.next_attempt_at)],
 );
 
 /** Registro de cada paso de una corrida */
@@ -3466,7 +3480,7 @@ export const tasks = pgTable(
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
-  (t) => [index("tasks_studio_idx").on(t.studio_id, t.status, t.due_date), uniqueIndex("tasks_source_idx").on(t.studio_id, t.source, t.source_ref)],
+  (t) => [ index("tasks_org_idx").on(t.organization_id),index("tasks_studio_idx").on(t.studio_id, t.status, t.due_date), uniqueIndex("tasks_source_idx").on(t.studio_id, t.source, t.source_ref)],
 );
 
 // ───────────────────────── F9: consultas con IA, marca blanca y WhatsApp ─────────────────────────
@@ -3629,7 +3643,7 @@ export const whatsapp_messages = pgTable(
     synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
     created_at: createdAt(),
   },
-  (t) => [uniqueIndex("whatsapp_messages_external_idx").on(t.external_id), index("whatsapp_messages_studio_idx").on(t.studio_id, t.created_at)],
+  (t) => [ index("whatsapp_messages_org_idx").on(t.organization_id),uniqueIndex("whatsapp_messages_external_idx").on(t.external_id), index("whatsapp_messages_studio_idx").on(t.studio_id, t.created_at)],
 );
 
 // ───────────────────────── Escudo de responsabilidad (principios §1.b y §1.c) ─────────────────────────
@@ -3741,7 +3755,9 @@ export const box_goals = pgTable("box_goals", {
   created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
   archived_at: timestamp("archived_at", { withTimezone: true }),
   created_at: createdAt(),
-});
+},
+  (t) => [index("box_goals_box_idx").on(t.box_id)],
+);
 
 /**
  * Movimientos de una caja de negocio o compartida (los de la caja personal son
@@ -3807,7 +3823,7 @@ export const box_entry_shares = pgTable(
     /** Quien debe confirma que pagó; recién ahí cuenta en su seguimiento */
     paid_at: timestamp("paid_at", { withTimezone: true }),
   },
-  (t) => [uniqueIndex("box_entry_shares_entry_user_idx").on(t.entry_id, t.user_id)],
+  (t) => [ index("box_entry_shares_user_idx").on(t.user_id),uniqueIndex("box_entry_shares_entry_user_idx").on(t.entry_id, t.user_id)],
 );
 
 /** Movimiento explícito entre cajas: el sueldo del dueño (negocio → personal) o un aporte (personal → otra caja) */
@@ -3848,7 +3864,9 @@ export const box_salaries = pgTable("box_salaries", {
   next_date: date("next_date").notNull(),
   active: boolean("active").notNull().default(true),
   updated_at: updatedAt(),
-});
+},
+  (t) => [index("box_salaries_user_idx").on(t.user_id)],
+);
 
 // ───────────────────────── Conexión con un contador (principios §2, §4 a §9) ─────────────────────────
 
@@ -3953,7 +3971,9 @@ export const connection_messages = pgTable("connection_messages", {
   side: text("side").notNull(), // usuario | estudio
   body: text("body").notNull(),
   created_at: createdAt(),
-});
+},
+  (t) => [index("connection_messages_conn_idx").on(t.connection_id)],
+);
 
 /** Calificaciones: durante la relación (a los 30 días y cada 6 meses, salteables) y al cierre. Solo se guardan */
 export const connection_ratings = pgTable("connection_ratings", {
@@ -4016,7 +4036,7 @@ export const seeker_contacts = pgTable(
     connection_id: uuid("connection_id"),
     created_at: createdAt(),
   },
-  (t) => [uniqueIndex("seeker_contacts_seeker_studio_idx").on(t.seeker_id, t.studio_id)],
+  (t) => [ index("seeker_contacts_studio_idx").on(t.studio_id),uniqueIndex("seeker_contacts_seeker_studio_idx").on(t.seeker_id, t.studio_id)],
 );
 
 // ───────────────────────── Tango: capa de orden y sincronización en los dos sentidos (principios §14) ─────────────────────────

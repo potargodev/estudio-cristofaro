@@ -316,6 +316,20 @@
       "when": 1791770923788,
       "tag": "0044_demo_ver_como",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1791776133698,
+      "tag": "0045_tareas_internas",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1791776460248,
+      "tag": "0046_indices_consultas",
+      "breakpoints": true
     }
   ]
 }
