@@ -162,8 +162,11 @@ export interface ShellProps {
   children: React.ReactNode;
 }
 
-/** Resorte del sidebar (ancho y viaje de los íconos entre la barra lateral y la horizontal) */
+/** Resorte del sidebar (viaje de los íconos entre la barra lateral y la horizontal) */
 const SPRING = { type: "spring", stiffness: 260, damping: 30 } as const;
+/** Escalonado: cada ítem sale (o vuelve) 35 ms después del de arriba */
+const STEP = 0.035;
+const NO_MOTION = { duration: 0 } as const;
 
 const isActive = (i: ShellItem, active: ShellItem | null) => !!active && active.href === i.href;
 
@@ -177,7 +180,7 @@ function Count({ n, badge, className }: { n: number; badge: ShellBadge; classNam
   );
 }
 
-function SideNav({ groups, badges, active, onNavigate, shared = false }: { groups: ShellGroup[]; badges: ShellProps["badges"]; active: ShellItem | null; onNavigate?: () => void; shared?: boolean }) {
+function SideNav({ groups, badges, active, onNavigate, shared = false, reduce = false }: { groups: ShellGroup[]; badges: ShellProps["badges"]; active: ShellItem | null; onNavigate?: () => void; shared?: boolean; reduce?: boolean }) {
   let order = 0;
   const main = groups.filter((g) => !g.pinned);
   const pinned = groups.filter((g) => g.pinned);
@@ -201,14 +204,21 @@ function SideNav({ groups, badges, active, onNavigate, shared = false }: { group
                     className={cn("relative flex h-10 items-center gap-3 rounded-md px-3 text-ui transition-colors", on ? "bg-paper/[0.08] text-paper" : "text-paper/70 hover:bg-paper/[0.04] hover:text-paper")}
                   >
                     {shared ? (
-                      <m.span layoutId={`nav-${g.title}-${i.href}`} transition={SPRING} className="grid size-[18px] shrink-0 place-items-center">
+                      // El ícono vuelve de la barra superior a su lugar, de a uno (de arriba hacia abajo)
+                      <m.span layoutId={`nav-${g.title}-${i.href}`} layoutDependency={k} transition={reduce ? NO_MOTION : { ...SPRING, delay: k * STEP }} className="grid size-[18px] shrink-0 place-items-center">
                         <Icon className={cn("size-[18px]", on && "text-rose-light")} strokeWidth={1.5} aria-hidden />
                       </m.span>
                     ) : (
                       <Icon className={cn("size-[18px] shrink-0", on && "text-rose-light")} strokeWidth={1.5} aria-hidden />
                     )}
                     {shared ? (
-                      <m.span initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.28, delay: 0.08 + Math.min(k, 14) * 0.018, ease: [0.16, 1, 0.3, 1] }} className="flex-1 truncate">
+                      // La etiqueta aparece detrás de su ícono y, al colapsar, se va de a una
+                      <m.span
+                        initial={reduce ? false : { opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0, transition: reduce ? NO_MOTION : { duration: 0.24, delay: 0.12 + k * STEP, ease: [0.16, 1, 0.3, 1] } }}
+                        exit={{ opacity: 0, x: -8, transition: reduce ? NO_MOTION : { duration: 0.16, delay: k * STEP, ease: [0.4, 0, 1, 1] } }}
+                        className="flex-1 truncate"
+                      >
                         {i.label}
                       </m.span>
                     ) : (
@@ -228,7 +238,7 @@ function SideNav({ groups, badges, active, onNavigate, shared = false }: { group
 }
 
 /** Barra horizontal de íconos (escritorio, barra lateral colapsada) */
-function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups: ShellGroup[]; badges: ShellProps["badges"]; active: ShellItem | null; onExpand: () => void; brand: React.ReactNode; right: React.ReactNode }) {
+function TopIconBar({ groups, badges, active, onExpand, brand, right, reduce = false }: { groups: ShellGroup[]; badges: ShellProps["badges"]; active: ShellItem | null; onExpand: () => void; brand: React.ReactNode; right: React.ReactNode; reduce?: boolean }) {
   const items = groups.flatMap((g) => g.items.map((i) => ({ ...i, key: `${g.title}-${i.href}` })));
   const wrap = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState(items.length);
@@ -259,7 +269,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
   }, [more]);
   const shown = items.slice(0, fit);
   const rest = items.slice(fit);
-  const icon = (i: (typeof items)[number], inMenu = false) => {
+  const icon = (i: (typeof items)[number], inMenu = false, k = 0) => {
     const Icon = ICONS[i.icon];
     const on = isActive(i, active);
     const n = i.badge ? (badges[i.badge] ?? 0) : 0;
@@ -272,7 +282,8 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
     ) : (
       <li key={i.key} className="group relative">
         <Link href={i.href} aria-label={i.label} aria-current={on ? "page" : undefined} className={cn("relative grid size-10 place-items-center rounded-md transition-colors", on ? "bg-paper/[0.1] text-rose-light" : "text-paper/65 hover:bg-paper/[0.06] hover:text-paper")}>
-          <m.span layoutId={`nav-${i.key}`} transition={SPRING} className="grid size-[18px] place-items-center">
+          {/* Cada ícono viaja del sidebar a su lugar en la barra, de a uno */}
+          <m.span layoutId={`nav-${i.key}`} transition={reduce ? NO_MOTION : { ...SPRING, delay: k * STEP }} className="grid size-[18px] place-items-center">
             <Icon className="size-[18px]" strokeWidth={1.5} aria-hidden />
           </m.span>
           {n > 0 && <span aria-hidden className="absolute right-1.5 top-1.5 size-2 rounded-full bg-rose-light" />}
@@ -285,7 +296,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
     );
   };
   return (
-    <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="keep-dark sticky top-0 z-40 hidden h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-night px-3 text-paper lg:flex">
+    <m.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1, transition: reduce ? NO_MOTION : { duration: 0.2 } }} exit={{ opacity: 0, transition: reduce ? NO_MOTION : { duration: 0.2, delay: items.length * STEP } }} className="keep-dark sticky top-0 z-40 hidden h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-night px-3 text-paper lg:flex">
       <button type="button" onClick={onExpand} aria-label="Expandir la barra lateral ( [ )" title="Expandir ( [ )" className="grid size-9 shrink-0 place-items-center rounded-md text-paper/70 hover:bg-paper/[0.06] hover:text-paper">
         <ChevronsRight className="size-[18px]" strokeWidth={1.6} aria-hidden />
       </button>
@@ -293,7 +304,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right }: { groups
       <div ref={wrap} className="min-w-0 flex-1">
         <nav aria-label="Menú" data-tour="nav">
           <ul className="flex items-center gap-1">
-            {shown.map((i) => icon(i))}
+            {shown.map((i, k) => icon(i, false, k))}
             {rest.length > 0 && (
               <li className="relative" data-more>
                 <button type="button" aria-haspopup="menu" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-10 items-center gap-1 rounded-md px-2.5 text-meta text-paper/70 hover:bg-paper/[0.06] hover:text-paper">
@@ -375,7 +386,8 @@ export function AppShell(p: ShellProps) {
     </Link>
   );
   // El contenido acompaña a la barra con la misma curva (sin salto); con reduced motion, directo
-  const pad = cn("motion-safe:transition-[padding] motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "lg:pl-0" : "lg:pl-[248px]");
+  const pad = collapsed ? "lg:ml-0" : "lg:ml-[248px]";
+  const navCount = p.groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
     <div className={cn("admin-shell app-ui min-h-dvh bg-canvas text-ink", collapsed && "lg:[--app-top:calc(var(--header-h)*2)]")} style={p.brandVars ? (p.brandVars as React.CSSProperties) : undefined}>
@@ -386,11 +398,11 @@ export function AppShell(p: ShellProps) {
       {!collapsed && (
         <m.aside
           key="sidebar"
-          initial={{ width: 64 }}
-          animate={{ width: 248 }}
-          exit={{ width: 0 }}
-          transition={reduce ? { duration: 0 } : SPRING}
-          className="keep-dark fixed inset-y-0 left-0 z-40 hidden flex-col overflow-hidden bg-night text-paper lg:flex"
+          // Solo transform: el fondo entra y sale de costado; al colapsar espera a que se vayan las etiquetas
+          initial={reduce ? false : { x: "-100%" }}
+          animate={{ x: 0, transition: reduce ? NO_MOTION : { type: "spring", stiffness: 320, damping: 34 } }}
+          exit={{ x: "-100%", transition: reduce ? NO_MOTION : { type: "spring", stiffness: 320, damping: 36, delay: navCount * STEP + 0.06 } }}
+          className="keep-dark fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col overflow-hidden bg-night text-paper will-change-transform lg:flex"
         >
           <div className="flex w-[248px] flex-1 flex-col">
           <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between gap-2 border-b border-[var(--shell-line)] pl-5 pr-3">
@@ -402,7 +414,7 @@ export function AppShell(p: ShellProps) {
           <div className="px-3 pt-3">
             <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} />
           </div>
-          <SideNav groups={p.groups} badges={p.badges} active={active} shared />
+          <SideNav groups={p.groups} badges={p.badges} active={active} shared reduce={!!reduce} />
           </div>
         </m.aside>
       )}
@@ -421,6 +433,7 @@ export function AppShell(p: ShellProps) {
             </span>
           }
           right={null}
+          reduce={!!reduce}
         />
       )}
       </AnimatePresence>
@@ -446,7 +459,9 @@ export function AppShell(p: ShellProps) {
         </div>
       )}
 
-      <div className={pad}>
+      {/* El contenido se corre con una animación de posición (transform), no con un cambio de padding cuadro a cuadro */}
+      <LazyMotion features={domMax}>
+      <m.div layout={reduce ? false : "position"} layoutDependency={collapsed} transition={{ type: "spring", stiffness: 320, damping: 36, delay: collapsed ? navCount * STEP * 0.5 : 0 }} className={pad}>
         <header className={cn("sticky z-30 flex h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8", collapsed ? "top-0 lg:top-[var(--header-h)]" : "top-0")}>
           <nav aria-label="Ubicación" className="min-w-0 flex-1">
             <ol className="flex min-w-0 items-center gap-1.5 text-meta text-muted">
@@ -517,7 +532,8 @@ export function AppShell(p: ShellProps) {
         <main id="contenido" className="mx-auto w-full max-w-[calc(var(--content-max)+4rem)] px-4 pb-28 pt-6 [--app-bottom:calc(60px+env(safe-area-inset-bottom))] sm:px-6 sm:pt-8 lg:px-8 lg:pb-10 lg:[--app-bottom:0px]">
           <RouteReveal>{p.children}</RouteReveal>
         </main>
-      </div>
+      </m.div>
+      </LazyMotion>
 
       {/* Celular: barra inferior */}
       <nav aria-label="Secciones principales" className="keep-dark fixed inset-x-0 bottom-0 z-40 border-t border-paper/10 bg-night pb-[env(safe-area-inset-bottom)] text-paper lg:hidden">

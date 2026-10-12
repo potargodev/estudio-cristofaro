@@ -257,7 +257,8 @@ Todo sale de `@/components/ds`.
 `Dialog` + `DialogContent` (centrado, para decidir algo corto) o con `side="right"` (hoja que entra de costado en escritorio y desde abajo en el celular). `AlertDialog` para confirmar una acción destructiva.
 
 ### Navigation
-- **Sidebar:** azul noche fijo, ítems de 14 px, el activo con fondo y el ícono en rosé; badges `micro`. Se colapsa a una barra de íconos.
+- **Sidebar:** azul noche fijo, ítems de 14 px, el activo con fondo y el ícono en rosé; badges `micro`. Se colapsa a una barra horizontal de íconos (botón o tecla `[`).
+- **Animación del colapso (la firma de la app):** las etiquetas se van de a una, de arriba hacia abajo, con 35 ms entre ítems. Mientras tanto, cada ícono viaja a su lugar en la barra superior con un `layoutId` compartido y el mismo escalonado (resorte 260/30). El fondo del sidebar sale con `transform` y el contenido se corre con una animación de posición. Al expandir pasa lo inverso. Solo `transform` y `opacity`: 60 cuadros por segundo y sin bloquear clics. Con `prefers-reduced-motion`, el cambio es directo. Ver `docs/diseno/sidebar.gif`.
 - **Tabs** (`PageHeader tabs`): subrayado azul noche de 2 px en la activa; scrollean en el celular.
 - **Barra inferior** (celular): cuatro accesos y el Vigía al centro.
 
