@@ -20,7 +20,7 @@ import { seedStudios } from "./studios";
 export const DEMO_PROFILES = [
   { key: "persona", label: "Persona", email: `persona@${DEMO_DOMAIN}`, home: "/personal", what: "Martina Gómez: Bitácora de 6 meses, cajas compartidas, Grupos y su contador conectado." },
   { key: "autonomo", label: "Autónomo", email: `autonomo@${DEMO_DOMAIN}`, home: "/personal", what: "Julián Ríos: caja de negocio, sueldo del dueño, facturación con el semáforo en amarillo y capitán de una Flota." },
-  { key: "dueno", label: "Dueña de estudio", email: `duena.estudio@${DEMO_DOMAIN}`, home: "/admin", what: "Gabriela Ferreyra: estudio grande con 8 organizaciones, equipo, honorarios, flujos y la Red Contable." },
+  { key: "dueno", label: "Dueña de estudio", email: `duena.estudio@${DEMO_DOMAIN}`, home: "/admin", what: "Gabriela Ferreyra: estudio grande con 20 organizaciones, equipo, honorarios, flujos y la Red Contable." },
   { key: "contador", label: "Contador", email: `contador@${DEMO_DOMAIN}`, home: "/admin", what: "Santiago Molina: contador del estudio grande." },
   { key: "organizacion", label: "Dueña de organización", email: `duena.organizacion@${DEMO_DOMAIN}`, home: "/portal", what: "Dana Lagos: Agencia Creativa Norte SRL en el portal del estudio." },
   { key: "empleado", label: "Empleada", email: `empleada@${DEMO_DOMAIN}`, home: "/portal", what: "Ema Rodríguez: recibos para firmar y comunicados." },

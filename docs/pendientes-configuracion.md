@@ -142,7 +142,7 @@ Actualizado el 12 de octubre de 2026.
 - **Cómo se verifica:** «Ajustado por inflación» en la Bitácora deja de avisar que muestra pesos corrientes; los abonos con ajuste por IPC usan el último valor.
 
 ### 17. IA de cada estudio
-- **Qué falta:** que cada estudio cargue su proveedor y elija los modelos de «Extracción» (con visión) y «Redacción de borradores». Si no lo hace, se usa la IA de la plataforma (ítem 2).
+- **Qué falta:** que cada estudio cargue su proveedor y elija los modelos de «Extracción» (con visión), «Redacción de borradores» y «Agente contable» (un modelo potente para planificar y analizar: las tareas libres del Agente lo necesitan; las tareas del catálogo funcionan sin modelo). Si no lo hace, se usa la IA de la plataforma (ítem 2), salvo para el Agente del estudio, que usa la clave del estudio. Para personas y autónomos, el modelo del Agente se elige en Faro Manager → Catálogo → IA → «Modelo del Agente contable».
 - **Quién:** el dueño de cada estudio (Cristofaro primero).
 - **Dónde:** Configuración → **IA** (proveedor, clave cifrada, modelo por tarea y límite de gasto).
 - **Cómo se verifica:** «Probar la conexión» en verde y el gasto en la pestaña Uso.

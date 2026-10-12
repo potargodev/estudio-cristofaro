@@ -3,7 +3,7 @@ titulo: El Vigía del estudio y las Propuestas para aprobar
 resumen: Cómo configurar la IA con la clave propia del estudio, qué puede hacer el Asistente y por qué lo sensible siempre lo aprueba una persona.
 perfiles: [estudio, autonomo, persona]
 modulo: ai
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [ia/mcp, solicitudes/solicitudes, organizaciones/rubros, conexiones/conexiones]
 ---
 
@@ -15,7 +15,7 @@ Lo hace el dueño de la cuenta, en **Configuración → IA**, en tres pasos:
 
 1. **Elegí un proveedor:** Anthropic, OpenAI, Google, OpenRouter, Azure OpenAI o un modelo local compatible con OpenAI (Ollama, LM Studio).
 2. **Pegá la clave:** se guarda cifrada y nunca sale del servidor.
-3. **Probá la conexión y elegí el modelo:** uno por defecto y, si querés, uno para cada tarea (chat del Asistente, extracción de documentos y redacción de borradores).
+3. **Probá la conexión y elegí el modelo:** uno por defecto y, si querés, uno para cada tarea (chat del Asistente, extracción de documentos, redacción de borradores y el [Agente contable](/ayuda/vigia/agente-contable), que conviene que sea un modelo potente).
 
 Podés poner un **límite de gasto mensual** en dólares: al llegar, el Asistente deja de responder hasta el mes siguiente. En **Uso** ves el gasto estimado del mes y las llamadas por modelo. El costo es una estimación: el importe real lo factura cada proveedor.
 
@@ -36,6 +36,8 @@ El Asistente consulta organizaciones, vencimientos, documentos, solicitudes, age
 - **Leer:** se hace directo.
 - **Cambiar algo** (por ejemplo, crear una solicitud): te pide que lo confirmes en el chat. Solo quien lo pidió puede confirmarlo.
 - **Lo sensible nunca se ejecuta solo:** comunicaciones a clientes, pagos y datos fiscales. Por ejemplo, responderle a un cliente, aplicar la plantilla de un rubro o cargar un vencimiento con monto, link de pago o aviso al cliente. Todo eso queda como propuesta en **Aprobaciones**.
+
+Para lo que lleva varios pasos (cerrar un mes, revisar el IVA de toda la cartera), usá la pestaña **Agente**: ver [Agente contable](/ayuda/vigia/agente-contable).
 
 ## Propuestas para aprobar
 

@@ -37,6 +37,7 @@ export async function savePlatformAiAction(fd: FormData) {
     baseUrl: s(fd, "base_url"),
     modelPrimary: model,
     modelFallback: s(fd, "model_fallback"),
+    modelAgent: s(fd, "model_agent"),
     transcription: s(fd, "transcription"),
     transcriptionKey: s(fd, "transcription_key"),
     transcriptionModel: s(fd, "transcription_model"),

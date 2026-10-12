@@ -191,6 +191,26 @@ export async function notifyOrgWhatsApp(studioId: string, organizationId: string
   return n;
 }
 
+/**
+ * Aviso a una persona (el resumen de una rutina del Agente contable): a sus
+ * números verificados que aceptaron avisos. Devuelve cuántos salieron.
+ */
+export async function notifyUserWhatsApp(studioId: string, userId: string, detail: string) {
+  const a = await accountFor(studioId);
+  if (!a) return 0;
+  const rows = await db()
+    .select({ phone: whatsapp_contacts.phone, name: users.name, org: whatsapp_contacts.organization_id })
+    .from(whatsapp_contacts)
+    .innerJoin(users, eq(users.id, whatsapp_contacts.user_id))
+    .where(and(eq(whatsapp_contacts.studio_id, studioId), eq(whatsapp_contacts.user_id, userId), isNotNull(whatsapp_contacts.verified_at), eq(whatsapp_contacts.opt_in_avisos, true)));
+  let n = 0;
+  for (const r of rows) {
+    const m = await sendTemplate(studioId, a, { phone: r.phone, template: "faro_aviso_general", params: [r.name.split(" ")[0] || r.name, detail], organizationId: r.org });
+    if (m.status === "enviado") n++;
+  }
+  return n;
+}
+
 // ───────────── Contactos (verificación con código) ─────────────
 
 type Member = { id: string; email: string; studioId: string; organizationId: string };

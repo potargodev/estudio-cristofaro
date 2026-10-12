@@ -63,7 +63,7 @@ export const PROVIDERS: Record<AiProviderKind, ProviderMeta> = {
   },
 };
 
-export const AI_TASKS = { chat: "Chat del Asistente", extraccion: "Extracción de documentos", redaccion: "Redacción de borradores" } as const;
+export const AI_TASKS = { chat: "Chat del Asistente", extraccion: "Extracción de documentos", redaccion: "Redacción de borradores", agente: "Agente contable (planificar y analizar; conviene un modelo potente)" } as const;
 export type AiTaskKey = keyof typeof AI_TASKS;
 
 /** "providerId:modelo" para los selectores */

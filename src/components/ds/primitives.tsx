@@ -52,6 +52,7 @@ export function ListRow({
   href,
   icon: Icon,
   className,
+  prefetch,
 }: {
   title: React.ReactNode;
   detail?: React.ReactNode;
@@ -59,6 +60,8 @@ export function ListRow({
   href?: string;
   icon?: LucideIcon;
   className?: string;
+  /** false en listas largas de enlaces (informes): no precarga cada destino */
+  prefetch?: boolean;
 }) {
   const body = (
     <>
@@ -71,7 +74,7 @@ export function ListRow({
     </>
   );
   const cls = cn("flex items-start gap-3 px-4 py-3", href && "transition-colors hover:bg-navy-soft/60", className);
-  return <li>{href ? <Link href={href} className={cls}>{body}</Link> : <div className={cls}>{body}</div>}</li>;
+  return <li>{href ? <Link href={href} prefetch={prefetch} className={cls}>{body}</Link> : <div className={cls}>{body}</div>}</li>;
 }
 
 /**

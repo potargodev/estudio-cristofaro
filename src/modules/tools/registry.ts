@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod/v4";
 import { agendaTools } from "./modulos/agenda";
+import { agenteTools } from "./modulos/agente";
 import { ayudaTools } from "./modulos/ayuda";
 import { conexionesTools } from "./modulos/conexiones";
 import { cuentasTools } from "./modulos/cuentas";
@@ -38,6 +39,7 @@ export const TOOLS: ToolDefinition[] = [
   ...gastosTools,
   ...industriasTools,
   ...ayudaTools,
+  ...agenteTools,
   ...facturacionTools,
   ...lecturaTools,
   ...cobrosTools,

@@ -831,7 +831,7 @@ export const bookings = pgTable(
 // ───────────────────────── F2 · IA, MCP y conexiones ─────────────────────────
 
 export const aiProviderKind = pgEnum("ai_provider_kind", ["anthropic", "openai", "google", "openrouter", "azure", "openai_compatible"]);
-export const toolOrigin = pgEnum("tool_origin", ["asistente", "mcp", "flujo"]);
+export const toolOrigin = pgEnum("tool_origin", ["asistente", "mcp", "flujo", "agente"]);
 export const toolLevel = pgEnum("tool_level", ["lectura", "escritura", "sensible"]);
 export const approvalStatus = pgEnum("approval_status", ["pendiente", "ejecutada", "rechazada", "error", "cancelada"]);
 export const connectionStatus = pgEnum("connection_status", ["pendiente", "activa", "pausada", "error"]);
@@ -869,7 +869,7 @@ export const ai_providers = pgTable(
   (t) => [index("ai_providers_studio_idx").on(t.studio_id)],
 );
 
-export type AiTask = "chat" | "extraccion" | "redaccion";
+export type AiTask = "chat" | "extraccion" | "redaccion" | "agente";
 export interface ModelRef {
   providerId: string;
   model: string;
@@ -2210,6 +2210,8 @@ export const platform_ai = pgTable("platform_ai", {
   base_url: text("base_url"),
   model_primary: text("model_primary").notNull().default("gemini-3.1-flash-lite"),
   model_fallback: text("model_fallback"),
+  /** Agente contable de personas y autónomos (§2.q): un modelo más potente para planificar y analizar */
+  model_agent: text("model_agent"),
   /** Transcripción de audio: nativo (Gemini entiende el audio) | openai (Whisper o similar) */
   transcription: text("transcription").notNull().default("nativo"),
   transcription_key_enc: text("transcription_key_enc"),
@@ -4144,3 +4146,172 @@ export const tango_conflicts = pgTable("tango_conflicts", {
   resolved_at: timestamp("resolved_at", { withTimezone: true }),
   created_at: createdAt(),
 });
+
+// ───────────── §2.q · Agente contable ─────────────
+
+/** Paso del plan de una tarea del Agente (visible para la persona) */
+export interface AgentPlanStep {
+  id: string;
+  title: string;
+  /** herramienta (del registro) | analisis (modelo con herramientas) | informe */
+  kind: "herramienta" | "analisis" | "informe";
+  tool?: string;
+  input?: Record<string, unknown>;
+  organizationId?: string | null;
+  status: "pendiente" | "en_curso" | "hecho" | "error" | "saltado";
+  detail?: string | null;
+}
+
+/** Hallazgo del informe: un hecho con su importancia (nunca una validación) */
+export interface AgentFinding {
+  severity: "alta" | "media" | "baja";
+  title: string;
+  detail?: string;
+  organizationId?: string | null;
+  organizationName?: string | null;
+  href?: string | null;
+}
+
+export interface AgentReport {
+  summary: string;
+  findings: AgentFinding[];
+  /** Borradores que dejó (en Aprobaciones o como registro propio) */
+  drafts: { kind: string; title: string; approvalId?: string | null; href?: string | null }[];
+  /** Tareas del equipo que creó */
+  tasks: { id: string; title: string }[];
+}
+
+/**
+ * Tarea del Agente contable (cola en Postgres, mismo patrón que flow_runs): un
+ * pedido que se resuelve en varios pasos en segundo plano, con plan visible,
+ * avance, pausa y cancelación, informe y costo.
+ */
+export const agent_tasks = pgTable(
+  "agent_tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    /** organizacion | cartera | personal */
+    scope: text("scope").notNull(),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    routine_id: uuid("routine_id"),
+    template_key: text("template_key").notNull(),
+    title: text("title").notNull(),
+    prompt: text("prompt").notNull(),
+    /** Parámetros resueltos: período (AAAA-MM), fecha, organizaciones */
+    params: jsonb("params").$type<Record<string, unknown>>().notNull().default({}),
+    /** pendiente | en_curso | pausada | cancelada | completada | error */
+    status: text("status").notNull().default("pendiente"),
+    plan: jsonb("plan").$type<AgentPlanStep[]>().notNull().default([]),
+    /** Resultados de cada paso (por id del paso), para el informe */
+    results: jsonb("results").$type<Record<string, unknown>>().notNull().default({}),
+    report: jsonb("report").$type<AgentReport | null>(),
+    model: text("model"),
+    cost_usd: numeric("cost_usd", { precision: 12, scale: 6 }).notNull().default("0"),
+    tokens: integer("tokens").notNull().default(0),
+    error: text("error"),
+    next_attempt_at: timestamp("next_attempt_at", { withTimezone: true }).notNull().defaultNow(),
+    locked_until: timestamp("locked_until", { withTimezone: true }),
+    started_at: timestamp("started_at", { withTimezone: true }),
+    finished_at: timestamp("finished_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("agent_tasks_studio_idx").on(t.studio_id, t.created_at), index("agent_tasks_queue_idx").on(t.status, t.next_attempt_at), index("agent_tasks_org_idx").on(t.organization_id)],
+);
+
+/** Bitácora en vivo de una tarea: cada paso, herramienta y resultado */
+export const agent_task_events = pgTable(
+  "agent_task_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    task_id: uuid("task_id")
+      .notNull()
+      .references(() => agent_tasks.id, { onDelete: "cascade" }),
+    step_id: text("step_id"),
+    /** plan | paso | herramienta | hallazgo | borrador | nota | error */
+    kind: text("kind").notNull(),
+    text: text("text").notNull(),
+    data: jsonb("data").$type<unknown>(),
+    created_at: createdAt(),
+  },
+  (t) => [index("agent_task_events_task_idx").on(t.task_id, t.created_at)],
+);
+
+/** Rutina del Agente: una tarea que se crea sola según un calendario */
+export const agent_routines = pgTable(
+  "agent_routines",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    scope: text("scope").notNull(),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    name: text("name").notNull(),
+    template_key: text("template_key").notNull(),
+    /** { tipo: mensual, dia, hora } | { tipo: semanal, dia_semana, hora } | { tipo: antes_vencimiento, dias, impuesto } */
+    schedule: jsonb("schedule").$type<Record<string, unknown>>().notNull(),
+    /** Canales del resumen: app, mail, whatsapp */
+    channels: text("channels").array().notNull().default(sql`'{app}'::text[]`),
+    /** activa | pausada */
+    status: text("status").notNull().default("activa"),
+    next_run_at: timestamp("next_run_at", { withTimezone: true }),
+    last_run_at: timestamp("last_run_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("agent_routines_studio_idx").on(t.studio_id), index("agent_routines_due_idx").on(t.status, t.next_run_at)],
+);
+
+/** Memoria del Agente por organización: criterios del contador, visibles y editables */
+export const agent_memory = pgTable(
+  "agent_memory",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    /** criterio | cuenta_proveedor | tratamiento */
+    kind: text("kind").notNull().default("criterio"),
+    /** Clave opcional (CUIT del proveedor, concepto) */
+    subject: text("subject"),
+    content: text("content").notNull(),
+    /** contador (lo cargó una persona) | aprendido (de correcciones) */
+    source: text("source").notNull().default("contador"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    last_used_at: timestamp("last_used_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("agent_memory_org_idx").on(t.studio_id, t.organization_id)],
+);
+
+/**
+ * Automatizaciones activadas (regla fiscal de §2.q): lo sensible queda para
+ * aprobar salvo que el titular o su contador activen este interruptor, por
+ * acción y organización (null = todas). Auditado y con pausa.
+ */
+export const automation_switches = pgTable(
+  "automation_switches",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    /** Herramienta del registro o acción propia (conciliacion.ajuste, …) */
+    action: text("action").notNull(),
+    enabled: boolean("enabled").notNull().default(false),
+    paused: boolean("paused").notNull().default(false),
+    set_by: uuid("set_by").references(() => users.id, { onDelete: "set null" }),
+    set_at: timestamp("set_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  // Único con NULLS NOT DISTINCT (agregado a mano en la migración): un solo interruptor por acción y organización
+  (t) => [uniqueIndex("automation_switches_idx").on(t.studio_id, t.action, t.organization_id)],
+);

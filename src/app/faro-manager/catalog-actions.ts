@@ -26,7 +26,7 @@ const num = (v: string) => {
   return Number.isFinite(n) && n >= 0 ? n : null;
 };
 const back = (path: string, q: string): never => redirect(`${path}${path.includes("?") ? "&" : "?"}${q}`);
-const LIMIT_KEYS: (keyof PlanLimits)[] = ["organizations", "staffUsers", "smartDocsPerMonth", "flows", "invoicesPerMonth"];
+const LIMIT_KEYS: (keyof PlanLimits)[] = ["organizations", "staffUsers", "smartDocsPerMonth", "flows", "invoicesPerMonth", "agentTasksPerMonth"];
 
 function rowOf(p: FaroPlan, position = 0) {
   return {

@@ -31,7 +31,8 @@ export type FaroModuleKey =
   | "personal_invoicing"
   | "flotas"
   | "red_estudios"
-  | "bitacora";
+  | "bitacora"
+  | "agent";
 
 export type ModuleStatus = "disponible" | "beta" | "proximamente";
 type StudioRoleKey = "dueno" | "contador" | "colaborador" | "titular";
@@ -53,7 +54,7 @@ interface FaroModule {
   events: string[];
   tools: string[];
   /** Clave de límite del plan que lo acota (PlanLimits) */
-  limit?: "smartDocsPerMonth" | "flows" | "invoicesPerMonth";
+  limit?: "smartDocsPerMonth" | "flows" | "invoicesPerMonth" | "agentTasksPerMonth";
 }
 
 const ALL_STAFF: StudioRoleKey[] = ["dueno", "contador", "colaborador"];
@@ -408,6 +409,20 @@ FARO_MODULES.push(
     nav: [{ href: "/bitacora", label: "Bitácora" }],
     events: ["bitacora.fijo_por_vencer", "bitacora.fuga_detectada", "bitacora.sobre_excedido", "bitacora.importacion_confirmada", "bitacora.resumen_semanal"],
     tools: ["crear_movimiento", "consultar_bitacora", "coach_finanzas"],
+  },
+  {
+    key: "agent",
+    name: "Agente contable",
+    icon: "BrainCircuit",
+    description: "Un trabajador que recibe una tarea («cerrá octubre de Agencia Norte», «revisá el IVA de la cartera») y la resuelve en varios pasos en segundo plano: plan visible, avance en vivo, pausa, informe con hallazgos, borradores en Aprobaciones, rutinas programadas y memoria por organización.",
+    status: "disponible",
+    minPlan: { studio: "profesional", personal: "autonomo_pro" },
+    roles: [...ALL_STAFF, "titular"],
+    // §2.o: pestaña «Agente» del Vigía
+    nav: [{ href: "/admin/vigia?tab=agente", label: "Vigía → Agente" }],
+    events: ["agente.tarea_completada"],
+    tools: ["encargar_al_agente", "ver_tareas_agente"],
+    limit: "agentTasksPerMonth",
   },
 );
 

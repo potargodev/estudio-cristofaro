@@ -365,3 +365,24 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Instalar el backup con cron en el VPS, confirmar que Traefik no deja pasar un `X-Forwarded-For` del cliente y borrar las ramas remotas viejas (ver pendientes).
+
+## §2.q · Etapa 1: Agente contable (12 de octubre)
+
+**Qué quedó**
+- **Vigía → Agente** (estudio y Autónomos Pro): nueva tarea (pedido libre o tareas frecuentes), en curso, historial, rutinas y memoria. Cada tarea tiene su pantalla con el plan, el avance en vivo, pausa, reanudación y cancelación, el informe (hallazgos por importancia, borradores en Propuestas para aprobar, tareas del equipo y costo) y la bitácora.
+- **Tareas frecuentes:** cierre del mes, revisión del crédito fiscal (IVA), conciliación del extracto, clientes cerca del tope del monotributo y resumen mensual. **Otra tarea:** el modelo arma el plan y usa las herramientas registradas.
+- **Cola en Postgres** (`agent_tasks`, tarea interna `agente`, `AGENT_JOBS`), con turno por fila; sobre una organización, la cartera o la cuenta personal, con los permisos de quien la pide.
+- **Rutinas** mensuales, semanales o N días antes de un vencimiento, con resumen por la app, mail o WhatsApp.
+- **Memoria** por organización, visible y editable.
+- **Regla fiscal:** interruptores de automatización auditados y con pausa (`automation_switches`); lo sensible sin interruptor queda para aprobar.
+- **Vigía → Agente:** herramientas `encargar_al_agente` y `ver_tareas_agente`.
+- **Plan:** módulo `agent` y límite «Tareas del Agente por mes»; modelo del Agente por estudio y de la plataforma. Migración `0047`.
+- **Demo:** Ferreyra & Asociados con 20 organizaciones, dos tareas terminadas, dos rutinas y criterios en la memoria.
+
+**Qué se probó**
+- `src/modules/agent/agent.test.ts` (interpretación del pedido, rutinas, hallazgos e informe).
+- `scripts/pruebas/agente.mts` (50 verificaciones): plan y ejecución, borrador en Aprobaciones con origen Agente, pausa, reanudación y cancelación, interruptor activo y en pausa, tarea libre con el bucle de herramientas y el costo medido, rutinas mensual y antes del vencimiento (sin dispararse dos veces), memoria, tope del plan, encargo desde el Vigía y por MCP, aislamiento entre estudios forzando IDs y una revisión de IVA sobre la cartera de 20 organizaciones de la demo (9 hallazgos altos y 13 medios en 1,3 s).
+- Pantallas del Agente a 390 y 1.440 px, en claro y en oscuro, sin desborde ni errores.
+
+**Qué falta configurar**
+- Elegir el modelo del Agente en Configuración → IA de cada estudio y en Faro Manager → Catálogo → IA (pendiente 17).

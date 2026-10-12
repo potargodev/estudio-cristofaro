@@ -99,6 +99,10 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
               Modelo de respaldo (si el principal falla o no tiene cuota)
               <input name="model_fallback" defaultValue={p.model_fallback ?? ""} disabled={!owner} className={input} />
             </label>
+            <label className={label}>
+              Modelo del Agente contable (personas y autónomos; vacío = el principal)
+              <input name="model_agent" defaultValue={p.model_agent ?? ""} disabled={!owner} className={input} />
+            </label>
             <label className="flex items-center gap-2 text-ui sm:col-span-2">
               <input type="checkbox" name="free_tier" defaultChecked={p.free_tier} disabled={!owner} className="size-4 accent-navy" /> Es una clave del plan gratis del proveedor
             </label>

@@ -29,7 +29,7 @@ node dist/demo.mjs reset    # borra solo lo de la demo
 |---|---|---|---|
 | Persona | `persona@demo.faro.local` | /ingresar → Usuario y contraseña | Martina Gómez: Bitácora de 6 meses, cajas de pareja, familia y amigos, Grupos y su contador conectado (con lo personal compartido) |
 | Autónomo | `autonomo@demo.faro.local` | /ingresar | Julián Ríos: caja de negocio, sueldo del dueño, facturación con el semáforo en amarillo, conexión «delegar y mirar» y capitán de una Flota |
-| Dueña de estudio | `duena.estudio@demo.faro.local` | /admin/login | Ferreyra & Asociados: 8 organizaciones, equipo, honorarios, flujos, consultas, conexiones en todos los estados y la Red Contable |
+| Dueña de estudio | `duena.estudio@demo.faro.local` | /admin/login | Ferreyra & Asociados: 20 organizaciones, equipo, honorarios, flujos, consultas, conexiones en todos los estados y la Red Contable |
 | Contador | `contador@demo.faro.local` | /admin/login | El mismo estudio, como contador |
 | Dueña de organización | `duena.organizacion@demo.faro.local` | /ingresar | Agencia Creativa Norte SRL en el portal |
 | Empleada | `empleada@demo.faro.local` | /ingresar | Recibos para firmar y comunicados |
@@ -58,7 +58,7 @@ Si alguien lo intenta, ve «La demo y los datos reales no se mezclan…». Adem�
 
 ## Qué hay
 
-- **Estudios:** Ferreyra & Asociados (avanzado, 4 personas en el equipo, 8 organizaciones), Paz Contables (profesional, 2 personas, 3 organizaciones) y Lucía Ibarra (inicial, independiente, 2 organizaciones). Todos tienen la ficha publicada en la Red con matrícula verificada y reseñas.
+- **Estudios:** Ferreyra & Asociados (avanzado, 4 personas en el equipo, 20 organizaciones), Paz Contables (profesional, 2 personas, 3 organizaciones) y Lucía Ibarra (inicial, independiente, 2 organizaciones). Todos tienen la ficha publicada en la Red con matrícula verificada y reseñas.
 - **Organizaciones:**
   - Vencimientos pagados, presentados, en proceso, por vencer y vencidos.
   - Documentos, algunos del cliente sin revisar.

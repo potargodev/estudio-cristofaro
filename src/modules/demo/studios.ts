@@ -36,6 +36,7 @@ import {
   tasks,
 } from "@/db/schema";
 import { TEMPLATES } from "@/modules/flows/core";
+import { seedAgent } from "./agent";
 import { ago, cents, cuit, dateIn, day, demoFile, demoTenant, demoUser, month, rng, tinyPdf, type DemoUser } from "./base";
 
 type R = ReturnType<typeof rng>;
@@ -302,6 +303,19 @@ export async function seedStudios(db: Db, pass: Record<string, string>) {
     { name: "Transportes Rápidos del Sur SRL", industry: "transporte_logistica", regime: "sociedad", plan: "gestion_estrategica", fee: 1_120_000, risk: "medio", status: "pausada" },
     { name: "Distribuidora Mayorista de Productos Alimenticios y Bebidas del Noroeste Argentino SRL", industry: "comercio_minorista", regime: "sociedad", plan: "gestion_estrategica", fee: 1_980_000, risk: "alto" },
     { name: "Kiosco Don Pepe", industry: "comercio_minorista", regime: "monotributo", plan: null, fee: 95_000, risk: "bajo", status: "onboarding", empty: true },
+    // Cartera de 20 para el Agente contable (§2.q): comercios, servicios y monotributistas
+    { name: "Panadería La Espiga", industry: "gastronomia", regime: "monotributo", plan: "negocio_en_orden", fee: 160_000, risk: "medio" },
+    { name: "Óptica Mirada Clara", industry: "salud", regime: "responsable_inscripto", plan: "empresa_en_control", fee: 420_000, risk: "bajo" },
+    { name: "Taller Mecánico Los Pinos", industry: "oficios", regime: "monotributo", plan: "negocio_en_orden", fee: 150_000, risk: "bajo" },
+    { name: "Estudio de Arquitectura Plano SRL", industry: "servicios_profesionales", regime: "sociedad", plan: "empresa_en_control", fee: 640_000, risk: "bajo" },
+    { name: "Indumentaria Lola Tienda Online", industry: "comercio_minorista", regime: "responsable_inscripto", plan: "empresa_en_control", fee: 380_000, risk: "medio" },
+    { name: "Gimnasio Fuerza Total", industry: "servicios_profesionales", regime: "monotributo", plan: "negocio_en_orden", fee: 175_000, risk: "alto" },
+    { name: "Laboratorio Bioanálisis Centro SA", industry: "salud", regime: "sociedad", plan: "gestion_estrategica", fee: 990_000, risk: "bajo" },
+    { name: "Fletes Martínez", industry: "transporte_logistica", regime: "monotributo", plan: "negocio_en_orden", fee: 130_000, risk: "bajo" },
+    { name: "Consultora Datos Claros SAS", industry: "software_exportacion", regime: "responsable_inscripto", plan: "empresa_en_control", fee: 560_000, risk: "bajo" },
+    { name: "Pinturería Arcoíris", industry: "comercio_minorista", regime: "responsable_inscripto", plan: "empresa_en_control", fee: 340_000, risk: "medio" },
+    { name: "Restaurante El Fogón", industry: "gastronomia", regime: "responsable_inscripto", plan: "empresa_en_control", fee: 510_000, risk: "alto" },
+    { name: "Veterinaria Patitas", industry: "salud", regime: "monotributo", plan: "negocio_en_orden", fee: 145_000, risk: "bajo" },
   ];
   const bigOrgs = [];
   for (const [k, spec] of BIG.entries()) bigOrgs.push(await seedOrg(db, r, { studioId: big.studioId, staff: bigStaff, owner: big.owner }, spec, k));
@@ -315,6 +329,7 @@ export async function seedStudios(db: Db, pass: Record<string, string>) {
   await seedEmployees(db, r, big.studioId, bigOrgs[0].id, contador, empleada);
   await seedBank(db, r, big.studioId, bigOrgs[3].id, contador);
   await seedFlows(db, big.studioId, big.owner);
+  await seedAgent(db, big.studioId, big.owner, contador, bigOrgs);
   await seedLeads(db, r, big.studioId, big.owner);
   await db.insert(billing_settings).values({ studio_id: big.studioId, issuer_organization_id: null, reminders: true, due_day: 10 });
   await seedDirectory(

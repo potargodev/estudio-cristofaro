@@ -330,6 +330,13 @@
       "when": 1791776460248,
       "tag": "0046_indices_consultas",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1791813605383,
+      "tag": "0047_agente_contable",
+      "breakpoints": true
     }
   ]
 }

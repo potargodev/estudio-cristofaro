@@ -1,3 +1,4 @@
+import { AGENT_SHORT } from "@/modules/agent/name";
 import { and, count, eq, inArray } from "drizzle-orm";
 import { Check, Compass, Minus } from "lucide-react";
 import { Notice } from "@/components/admin/AdminField";
@@ -46,7 +47,7 @@ const ars = (p: FaroPlan, usdArs: number) => (p.free || !p.priceUsd ? "Gratis" :
 export async function PlanBilling({ studioId, back, pedido, ok, error }: { studioId: string; back: string; pedido?: string; ok?: string; error?: string }) {
   const e = (await getEntitlements(studioId))!;
   const db = getDb();
-  const [plans, usdArs, [orgs], [staff], [groups], pending, smartDocs, invoicesUsed] = await Promise.all([
+  const [plans, usdArs, [orgs], [staff], [groups], pending, smartDocs, invoicesUsed, agentTasks] = await Promise.all([
     getPlans(),
     getUsdArs(),
     db.select({ n: count() }).from(organizations).where(and(eq(organizations.studio_id, studioId), inArray(organizations.status, ["onboarding", "activa", "pausada"]))),
@@ -55,6 +56,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
     db.select({ to: plan_requests.to_plan }).from(plan_requests).where(and(eq(plan_requests.studio_id, studioId), eq(plan_requests.status, "pendiente"))),
     limitUsage(studioId, "smartDocsPerMonth"),
     limitUsage(studioId, "invoicesPerMonth"),
+    limitUsage(studioId, "agentTasksPerMonth"),
   ]);
   const kind = e.tenant.kind;
   const online = !!(await accountSummary(null));
@@ -83,12 +85,14 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
               <Usage label="Organizaciones" used={orgs.n} max={e.limits.organizations} />
               <Usage label="Personas del estudio" used={staff.n} max={e.limits.staffUsers} />
               <Usage label="Lectura inteligente por mes" used={smartDocs} max={e.limits.smartDocsPerMonth} />
+              {e.modules.has("agent") && <Usage label={`Tareas del ${AGENT_SHORT} por mes`} used={agentTasks} max={e.limits.agentTasksPerMonth} />}
             </>
           ) : (
             <>
               <Usage label="Grupos de gastos" used={groups.n} max={null} />
               {kind === "personal" && <Usage label="Comprobantes por mes" used={invoicesUsed} max={e.limits.invoicesPerMonth} />}
               <Usage label="Lectura inteligente por mes" used={smartDocs} max={e.limits.smartDocsPerMonth} />
+              {e.modules.has("agent") && <Usage label={`Tareas del ${AGENT_SHORT} por mes`} used={agentTasks} max={e.limits.agentTasksPerMonth} />}
             </>
           )}
         </div>

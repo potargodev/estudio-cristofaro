@@ -23,6 +23,8 @@ export interface PlanLimits {
   flows: number | null;
   /** Comprobantes emitidos por mes (Faro Personal) */
   invoicesPerMonth: number | null;
+  /** Tareas del Agente contable por mes (§2.q) */
+  agentTasksPerMonth: number | null;
 }
 
 export interface FaroPlan {
@@ -52,7 +54,7 @@ export const ANNUAL_FREE_MONTHS = 2;
 export const DEFAULT_USD_ARS = 1400;
 
 const CORE_STUDIO: FaroModuleKey[] = ["ai", "shared_expenses"];
-const NO_LIMITS: PlanLimits = { organizations: 0, staffUsers: 1, smartDocsPerMonth: 0, flows: 0, invoicesPerMonth: null };
+const NO_LIMITS: PlanLimits = { organizations: 0, staffUsers: 1, smartDocsPerMonth: 0, flows: 0, invoicesPerMonth: null, agentTasksPerMonth: 0 };
 
 export const PLANS: FaroPlan[] = [
   {
@@ -113,8 +115,8 @@ export const PLANS: FaroPlan[] = [
     free: false,
     recommended: true,
     ai: "acciones",
-    limits: { ...NO_LIMITS, smartDocsPerMonth: 300 },
-    modules: ["ai", "shared_expenses", "personal_invoicing", "arca", "smart_docs", "whatsapp"],
+    limits: { ...NO_LIMITS, smartDocsPerMonth: 300, agentTasksPerMonth: 20 },
+    modules: ["ai", "shared_expenses", "personal_invoicing", "arca", "smart_docs", "whatsapp", "agent"],
     support: "Mail prioritario",
   },
   {
@@ -129,7 +131,7 @@ export const PLANS: FaroPlan[] = [
     trialDays: 0,
     free: true,
     ai: "consultas",
-    limits: { organizations: 5, staffUsers: 1, smartDocsPerMonth: 30, flows: 1, invoicesPerMonth: null },
+    limits: { organizations: 5, staffUsers: 1, smartDocsPerMonth: 30, flows: 1, invoicesPerMonth: null, agentTasksPerMonth: 0 },
     modules: [...CORE_STUDIO, "smart_docs", "flows", "tango_files"],
     support: "Comunidad y mail",
   },
@@ -145,8 +147,8 @@ export const PLANS: FaroPlan[] = [
     free: false,
     recommended: true,
     ai: "acciones",
-    limits: { organizations: 40, staffUsers: 5, smartDocsPerMonth: 1000, flows: 10, invoicesPerMonth: null },
-    modules: [...CORE_STUDIO, "smart_docs", "flows", "tango_files", "tango", "arca", "crm", "payroll", "employees", "comms", "billing", "ai_consults", "red_estudios"],
+    limits: { organizations: 40, staffUsers: 5, smartDocsPerMonth: 1000, flows: 10, invoicesPerMonth: null, agentTasksPerMonth: 60 },
+    modules: [...CORE_STUDIO, "smart_docs", "flows", "tango_files", "tango", "arca", "crm", "payroll", "employees", "comms", "billing", "ai_consults", "red_estudios", "agent"],
     support: "Mail prioritario",
   },
   {
@@ -160,7 +162,7 @@ export const PLANS: FaroPlan[] = [
     trialDays: 30,
     free: false,
     ai: "avanzado",
-    limits: { organizations: 120, staffUsers: 25, smartDocsPerMonth: 10000, flows: null, invoicesPerMonth: null },
+    limits: { organizations: 120, staffUsers: 25, smartDocsPerMonth: 10000, flows: null, invoicesPerMonth: null, agentTasksPerMonth: 600 },
     modules: [
       ...CORE_STUDIO,
       "smart_docs",
@@ -179,6 +181,7 @@ export const PLANS: FaroPlan[] = [
       "insights",
       "whatsapp",
       "white_label",
+      "agent",
     ],
     support: "Dedicado",
   },

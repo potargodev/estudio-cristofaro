@@ -109,11 +109,24 @@ function consult(q) {
     : "Gracias por tu consulta. Si sos monotributista, la recategorización es semestral (enero y julio) y se hace con los ingresos de los últimos 12 meses. Si te pasás del tope de tu categoría tenés que subir; si superás el máximo de la escala, pasás al régimen general. Revisamos tus números y te confirmamos la categoría que corresponde.";
 }
 
+/** Agente contable (§2.q): plan, una herramienta por paso y el informe al final */
+function agent(msgs, tools) {
+  const done = msgs.filter((m) => m.role === "tool").length;
+  const ask = text(msgs.find((m) => m.role === "user")).toLowerCase();
+  const steps = /solicitud/.test(ask) ? [["listar_solicitudes", { estados: ["abierta"] }], ["listar_vencimientos", {}]] : [["resumen_estudio", {}]];
+  const next = steps[done];
+  if (next && tools.has(next[0])) return { tool: next[0], args: next[1] };
+  const results = msgs.filter((m) => m.role === "tool").map((m) => { try { return JSON.parse(text(m)); } catch { return {}; } });
+  const open = results[0]?.total ?? firstArray(results[0])?.length ?? 0;
+  return { text: `Plan:\n- Buscar las solicitudes abiertas de la cartera\n- Cruzarlas con los vencimientos próximos\n\nInforme:\n- (media) Hay ${open} solicitudes abiertas para responder.\n- (baja) Revisá las que llevan más de una semana sin respuesta.` };
+}
+
 function decide(body) {
   const msgs = body.messages ?? [];
   const system = msgs.filter((m) => m.role === "system").map(text).join("\n");
   const last = msgs[msgs.length - 1];
   const tools = new Set((body.tools ?? []).map((t) => t.function?.name));
+  if (system.includes("Agente contable de Faro")) return agent(msgs, tools);
   if (last?.role === "tool") {
     let parsed;
     try { parsed = JSON.parse(text(last)); } catch { parsed = text(last); }

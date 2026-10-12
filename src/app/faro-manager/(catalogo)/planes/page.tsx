@@ -21,6 +21,7 @@ const LIMITS: [keyof PlanLimits, string][] = [
   ["smartDocsPerMonth", "Lectura inteligente / mes"],
   ["flows", "Flujos activos"],
   ["invoicesPerMonth", "Comprobantes / mes"],
+  ["agentTasksPerMonth", "Tareas del Agente / mes"],
 ];
 const input = fieldClass;
 

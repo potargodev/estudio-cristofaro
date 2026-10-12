@@ -7,7 +7,7 @@ import type { z } from "zod/v4";
 // el servidor y deja todo en la auditoría.
 
 export type ToolLevel = "lectura" | "escritura" | "sensible";
-export type ToolOrigin = "asistente" | "mcp" | "flujo";
+export type ToolOrigin = "asistente" | "mcp" | "flujo" | "agente";
 export type StaffRole = "dueno" | "contador" | "colaborador" | "titular";
 
 /** Módulos del registro (los alcances de MCP se eligen por módulo) */
@@ -33,6 +33,7 @@ export const TOOL_MODULES = {
   consultas_ia: "Consultas con IA",
   whatsapp: "WhatsApp",
   indicadores: "Indicadores",
+  agente: "Agente contable",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 

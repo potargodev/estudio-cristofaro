@@ -115,6 +115,8 @@ correr demo-navegador node scripts/pruebas/demo-navegador.mjs
 npx tsx scripts/demo.ts seed > "$SALIDA/demo-seed.log" 2>&1
 correr ver-como node scripts/pruebas/ver-como.mjs
 correr auditoria-seguridad "${S[@]}" scripts/pruebas/auditoria-seguridad.mts
+# §2.q · Agente contable (incluye la cartera de 20 organizaciones de la demo)
+correr agente "${S[@]}" scripts/pruebas/agente.mts
 correr red-con-demo "${T[@]}" scripts/pruebas/red.mts
 correr principios-con-demo "${S[@]}" scripts/pruebas/principios-servidor.mts
 correr recorrido env SALIDA="$SALIDA/recorrido.json" node scripts/pruebas/recorrido.mjs 200

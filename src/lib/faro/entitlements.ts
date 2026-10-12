@@ -2,7 +2,7 @@ import "server-only";
 import { and, count, eq, gt, gte, inArray, isNotNull, isNull, or } from "drizzle-orm";
 import { cache } from "react";
 import { getDb } from "@/db";
-import { faro_module_releases, faro_plans, flows, invoices, organizations, smart_documents, studios, tenant_modules, users } from "@/db/schema";
+import { agent_tasks, faro_module_releases, faro_plans, flows, invoices, organizations, smart_documents, studios, tenant_modules, users } from "@/db/schema";
 import { FARO_MODULES, getFaroModule, type FaroModuleKey, type ModuleStatus } from "@/modules/registry";
 import { PLANS, type AiLevel, type FaroPlan, type PlanLimits, type TenantKind } from "./plans";
 
@@ -23,10 +23,10 @@ export interface Entitlements {
 }
 
 const CORE = FARO_MODULES.filter((m) => m.core).map((m) => m.key);
-const LIMIT_KEYS: (keyof PlanLimits)[] = ["organizations", "staffUsers", "smartDocsPerMonth", "flows", "invoicesPerMonth"];
+const LIMIT_KEYS: (keyof PlanLimits)[] = ["organizations", "staffUsers", "smartDocsPerMonth", "flows", "invoicesPerMonth", "agentTasksPerMonth"];
 
 function fromRow(r: typeof faro_plans.$inferSelect, base?: FaroPlan): FaroPlan {
-  const limits = { ...(base?.limits ?? { organizations: null, staffUsers: null, smartDocsPerMonth: null, flows: null, invoicesPerMonth: null }) };
+  const limits = { ...(base?.limits ?? { organizations: null, staffUsers: null, smartDocsPerMonth: null, flows: null, invoicesPerMonth: null, agentTasksPerMonth: null }) };
   for (const k of LIMIT_KEYS) if (k in r.limits) limits[k] = r.limits[k] ?? null;
   return {
     key: r.key,
@@ -129,6 +129,7 @@ const LIMIT_TEXT: Record<LimitKey, [string, string]> = {
   smartDocsPerMonth: ["documento por mes", "documentos por mes"],
   flows: ["flujo activo", "flujos activos"],
   invoicesPerMonth: ["comprobante por mes", "comprobantes por mes"],
+  agentTasksPerMonth: ["tarea del Agente por mes", "tareas del Agente por mes"],
 };
 
 /** Uso actual de un límite (los de módulos que todavía no existen cuentan 0) */
@@ -170,6 +171,16 @@ export async function limitUsage(studioId: string, key: LimitKey): Promise<numbe
       .select({ n: count() })
       .from(invoices)
       .where(and(eq(invoices.studio_id, studioId), eq(invoices.status, "autorizada"), gte(invoices.authorized_at, first)));
+    return n;
+  }
+  if (key === "agentTasksPerMonth") {
+    // Tareas del Agente creadas en el mes calendario (hora de Buenos Aires)
+    const ar = new Date(Date.now() - 3 * 3600_000);
+    const first = new Date(Date.UTC(ar.getUTCFullYear(), ar.getUTCMonth(), 1, 3));
+    const [{ n }] = await db
+      .select({ n: count() })
+      .from(agent_tasks)
+      .where(and(eq(agent_tasks.studio_id, studioId), gte(agent_tasks.created_at, first)));
     return n;
   }
   return 0;

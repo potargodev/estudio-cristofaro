@@ -34,6 +34,7 @@ const DEFAULTS: Omit<PlatformAi, "updated_at"> = {
   base_url: null,
   model_primary: "gemini-3.1-flash-lite",
   model_fallback: "gemini-3.5-flash-lite",
+  model_agent: null,
   transcription: "nativo",
   transcription_key_enc: null,
   transcription_model: "whisper-1",
@@ -66,6 +67,8 @@ interface PlatformInput {
   baseUrl?: string;
   modelPrimary: string;
   modelFallback?: string;
+  /** Agente contable de personas y autónomos (§2.q) */
+  modelAgent?: string | null;
   transcription: string;
   transcriptionKey?: string;
   transcriptionModel?: string;
@@ -91,6 +94,7 @@ export async function savePlatformAi(by: string, i: PlatformInput) {
     base_url: i.baseUrl?.trim() || null,
     model_primary: i.modelPrimary.trim().slice(0, 80) || DEFAULTS.model_primary,
     model_fallback: i.modelFallback?.trim().slice(0, 80) || null,
+    model_agent: i.modelAgent?.trim().slice(0, 80) || null,
     transcription: i.transcription === "openai" ? "openai" : "nativo",
     transcription_key_enc: tkey ? encrypt(tkey) : cur.transcription_key_enc,
     transcription_model: i.transcriptionModel?.trim().slice(0, 60) || "whisper-1",

@@ -61,6 +61,7 @@ Reglas:
 | `insights` | Indicadores | Tableros financieros y de gestión por organización y del estudio. |
 | `whatsapp` | WhatsApp | Avisos y recepción de comprobantes por WhatsApp Business API. |
 | `white_label` | Marca blanca | Logo, colores y dominio propio del estudio en el portal de sus clientes. |
+| `agent` | Agente contable | Recibe tareas de varios pasos (cierre, IVA, conciliación, tope del monotributo, resumen mensual u otra) y las resuelve en segundo plano con plan visible, informe, borradores en Aprobaciones, rutinas y memoria (§2.q). |
 
 Cada módulo define: clave, nombre, descripción, plan mínimo, permisos por rol, ítems de navegación, eventos que emite (para Flujos), herramientas que expone (para el Vigía) y límites de uso.
 
@@ -361,7 +362,7 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
    - Mensajes y los avisos son globales: siguen a la persona en cualquier espacio.
    - El "?" junta todo lo de ayuda: tour de esta pantalla, Primeros pasos, Centro de ayuda e interruptor de la Guía. La ayuda sale del sidebar.
    - El menú de la cuenta tiene: Mi cuenta, Plan y facturación, Accesos MCP, tema claro/oscuro, cambiar de espacio y Salir.
-5. **Un solo Vigía.** Es la misma puerta en todos los espacios y sabe dónde estás. En Personal es el chat de tus finanzas. En el estudio es el asistente del estudio, con sus herramientas y su clave. Se abre como panel lateral desde la barra superior, sin perder la pantalla, o a pantalla completa en /vigia. En el estudio, el Vigía tiene las pestañas **Asistente**, **Propuestas para aprobar** (las Aprobaciones, con badge en el botón) y **Automatizaciones** (Flujos).
+5. **Un solo Vigía.** Es la misma puerta en todos los espacios y sabe dónde estás. En Personal es el chat de tus finanzas. En el estudio es el asistente del estudio, con sus herramientas y su clave. Se abre como panel lateral desde la barra superior, sin perder la pantalla, o a pantalla completa en /vigia. En el estudio, el Vigía tiene las pestañas **Asistente**, **Agente** (el Agente contable, §2.q), **Propuestas para aprobar** (las Aprobaciones, con badge en el botón) y **Automatizaciones** (Flujos).
 6. **Configuración es una sola entrada**, con pestañas: Equipo y usuarios, Plan y módulos, Conexiones, IA, Rubros y plantillas, Sitio web (solo el estudio con sitio propio), Seguridad y Avanzado (marca blanca y WhatsApp del estudio, plan Avanzado).
 7. **Plantilla de pantalla única:** encabezado compacto (título de 28 a 32 px, una línea de contexto, una acción principal), pestañas debajo si la sección tiene varias vistas, y contenido. Los títulos gigantes quedan para las landings.
 8. **Celular:** barra inferior con 3 accesos del espacio, el Vigía al centro como botón destacado y "Más" con el resto.
@@ -454,6 +455,7 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 | Núcleo | ✓ | ✓ | ✓ |
 | Vigía (IA) | Con clave propia, consultas | Con clave propia, consultas y acciones | Acciones avanzadas y agentes |
 | Flujos | 1 plantilla activa | 10 flujos, plantillas | Ilimitados, editor libre |
+| Agente contable (§2.q) | — | 60 tareas/mes | 600 tareas/mes |
 | Recibos, legajo y comunicación interna | — | ✓ | ✓ |
 | Lectura inteligente | 30 documentos/mes | 1.000 documentos/mes | 10.000 documentos/mes |
 | Cartera y tareas, Tango, ARCA | Tango por archivos | ✓ | ✓ |

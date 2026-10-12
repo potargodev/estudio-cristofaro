@@ -7,6 +7,7 @@ import { isUuid } from "@/lib/ids";
 import { hasModule } from "@/lib/faro/entitlements";
 import { moduleOfTool } from "@/modules/registry";
 import { EXT_PREFIX, executeConfirmedExternal } from "@/modules/connectors/mcp-externo/tools";
+import { automationAllows } from "@/modules/agent/automations";
 import { getTool, levelFor } from "./registry";
 import { ToolError, type HandlerContext, type ToolActor, type ToolContext, type ToolDefinition, type ToolModule, type ToolOutcome } from "./types";
 
@@ -18,7 +19,10 @@ import { ToolError, type HandlerContext, type ToolActor, type ToolContext, type 
 //   propuesta de nivel "escritura" que confirma la misma persona), salvo las
 //   marcadas autoRun (cargar un gasto compartido); desde MCP con alcance de
 //   escritura se ejecuta;
-// - sensible: nunca se ejecuta sola, crea una propuesta en Aprobaciones.
+// - sensible: nunca se ejecuta sola, crea una propuesta en Aprobaciones (salvo
+//   desde el Agente contable con la automatización activada, §2.q);
+// - el Agente contable trabaja en segundo plano: su escritura se ejecuta
+//   (tareas, lecturas, borradores) y queda en la auditoría con origen «agente».
 // Toda ejecución queda en la auditoría con el origen y el resultado.
 
 const NOT_FOUND = "No existe o no está dentro de lo que este pedido puede ver.";
@@ -156,6 +160,11 @@ export async function executeTool(name: string, rawInput: unknown, ctx: ToolCont
   }
 
   if (level === "sensible") {
+    // §2.q: el Agente ejecuta lo sensible solo si el titular o su contador activaron esa automatización
+    if (ctx.origin === "agente" && (await automationAllows(ctx.studioId, organizationId, t.name))) {
+      await audit({ studioId: ctx.studioId, organizationId, actor: ctx.actor, action: "automatizacion.ejecutar", entityType: "herramienta", entityId: t.name, metadata: { origen: ctx.origin } });
+      return run(t, input, ctx, hctx, organizationId);
+    }
     const p = await propose(t, input, ctx, "sensible", organizationId);
     return { status: "aprobacion", approvalId: p.id, summary: p.summary };
   }

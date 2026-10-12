@@ -101,7 +101,7 @@ check("un cliente real sigue sin entrar con contraseña", await seen(rc, "incorr
 // La dueña del estudio demo ve la Red Contable con estudios y postulaciones
 const duena = await page(await cookieFor(by("Dueña de estudio").email));
 await duena.goto(`${BASE}/admin/organizaciones`);
-check("estudio demo: 8 organizaciones, incluido el nombre largo", (await seen(duena, "Distribuidora Mayorista de Productos Alimenticios")) && (await seen(duena, "Kiosco Don Pepe")));
+check("estudio demo: 20 organizaciones, incluido el nombre largo", (await seen(duena, "Distribuidora Mayorista de Productos Alimenticios")) && (await seen(duena, "Kiosco Don Pepe")));
 await duena.goto(`${BASE}/admin/comercial/conexiones`);
 check("estudio demo: conexiones en distintos estados", (await seen(duena, "Conectada")) && (await seen(duena, "En cierre")));
 

@@ -1,10 +1,12 @@
-import { Bot, ShieldCheck, WandSparkles, Workflow } from "lucide-react";
+import { Bot, BrainCircuit, ShieldCheck, WandSparkles, Workflow } from "lucide-react";
 import { and, count, eq } from "drizzle-orm";
 import { SectionTabs } from "@/components/app/SectionTabs";
 import { getDb } from "@/db";
 import { approvals } from "@/db/schema";
 import type { StaffUser } from "@/lib/auth";
 import type { Space } from "@/components/app/shell/spaces";
+import { AgentTab } from "@/components/agente/AgentTab";
+import { AGENT_SHORT } from "@/modules/agent/name";
 import { ApprovalsInbox } from "./ApprovalsInbox";
 import { FlowsTab } from "@/components/flujos/FlowsTab";
 import { PersonalVigia } from "./PersonalVigia";
@@ -21,7 +23,7 @@ import { StudioAssistant } from "./StudioAssistant";
 // Todo sale de la sesión; el espacio pedido se valida antes de llegar acá.
 
 
-type VigiaTab = "conversacion" | "asistente" | "propuestas" | "automatizaciones";
+type VigiaTab = "conversacion" | "asistente" | "agente" | "propuestas" | "automatizaciones";
 
 export async function VigiaView({ user, space, sp, base }: { user: StaffUser; space: Space; sp: Record<string, string | undefined>; base: "/vigia" | "/admin/vigia" | "/vigia-panel" }) {
   const embedded = base === "/vigia-panel";
@@ -35,6 +37,8 @@ export async function VigiaView({ user, space, sp, base }: { user: StaffUser; sp
       .where(and(eq(approvals.studio_id, user.studioId), eq(approvals.status, "pendiente"), eq(approvals.level, "sensible")));
     tabs.push(
       { key: "asistente", label: space === "studio" ? "Asistente" : "Asistente con tu clave", icon: <Bot strokeWidth={1.5} aria-hidden /> },
+      // §2.q: el Agente contable, junto al Vigía (tareas de varios pasos en segundo plano)
+      { key: "agente", label: AGENT_SHORT, icon: <BrainCircuit strokeWidth={1.5} aria-hidden /> },
       { key: "propuestas", label: "Propuestas para aprobar", icon: <ShieldCheck strokeWidth={1.5} aria-hidden />, count: pending?.n ?? 0 },
     );
     // Flujos (F4): solo en el estudio, para dueños y contadores
@@ -57,6 +61,7 @@ export async function VigiaView({ user, space, sp, base }: { user: StaffUser; sp
       <div className={embedded ? "flex min-h-0 flex-1 flex-col px-4 pt-3" : ""}>
         {tab === "conversacion" && <PersonalVigia user={user} embedded={embedded} />}
         {tab === "asistente" && <StudioAssistant user={user} sp={sp} basePath={href("asistente")} embedded={embedded} />}
+        {tab === "agente" && <AgentTab user={user} sp={sp} base={href("agente")} />}
         {tab === "propuestas" && <ApprovalsInbox user={user} sp={sp} back={back} embedded={embedded} />}
         {tab === "automatizaciones" && <FlowsTab user={user} sp={sp} />}
       </div>

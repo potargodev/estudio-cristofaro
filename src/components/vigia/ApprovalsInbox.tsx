@@ -1,5 +1,6 @@
+import { AGENT_NAME } from "@/modules/agent/name";
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { Bot, Building2, ShieldCheck, Waypoints, Workflow, XCircle } from "lucide-react";
+import { Bot, BrainCircuit, Building2, ShieldCheck, Waypoints, Workflow, XCircle } from "lucide-react";
 import Link from "next/link";
 import { decideApprovalAction } from "@/app/admin/approval-actions";
 import { Notice } from "@/components/admin/AdminField";
@@ -18,6 +19,7 @@ const ORIGIN = {
   asistente: { label: "Asistente", icon: Bot },
   mcp: { label: "MCP", icon: Waypoints },
   flujo: { label: "Flujos", icon: Workflow },
+  agente: { label: AGENT_NAME, icon: BrainCircuit },
 } as const;
 
 

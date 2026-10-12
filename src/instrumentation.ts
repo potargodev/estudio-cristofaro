@@ -15,6 +15,7 @@
 // | flujos     | FLOWS_JOBS       | 1 min   | Motor de la cola de flujos                                        |
 // | escaneo    | FLOWS_JOBS       | 1 h     | Eventos por tiempo, tareas por vencimiento y corridas trabadas    |
 // | tango      | TANGO_JOBS       | 15 min  | Bandeja de salida a Tango y sondeo de los enlaces sin webhooks    |
+// | agente     | AGENT_JOBS       | 30 s    | Cola del Agente contable (tareas en pasos) y sus rutinas          |
 
 interface Job {
   name: string;
@@ -121,6 +122,16 @@ const JOBS: Job[] = [
     run: async () => {
       const r = await (await import("./modules/tango-sync/server")).runTangoJobs();
       return r.sent || r.polled ? `${r.sent} comprobantes escritos en Tango, ${r.polled} revisados desde Tango` : null;
+    },
+  },
+  {
+    name: "agente",
+    env: "AGENT_JOBS",
+    every: 30_000,
+    firstDelay: 35_000,
+    run: async () => {
+      const r = await (await import("./modules/agent/server")).runAgentWorker();
+      return r.tareas || r.rutinas ? `${r.tareas} tareas avanzadas, ${r.rutinas} rutinas disparadas` : null;
     },
   },
 ];
