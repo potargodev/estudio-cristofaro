@@ -109,7 +109,7 @@ for (const [perfil, nombre, path, action] of SCEN) {
     [390, "dark"],
   ]) {
     const motion = action === "animacion";
-    const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, reducedMotion: motion ? "no-preference" : "reduce", colorScheme: scheme });
+    const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, locale: "es-AR", timezoneId: "America/Argentina/Buenos_Aires", reducedMotion: motion ? "no-preference" : "reduce", colorScheme: scheme });
     if (cookies[perfil]) await ctx.addCookies([{ name: "better-auth.session_token", value: cookies[perfil], domain: "localhost", path: "/" }]);
     const p = await ctx.newPage();
     const base = { perfil, path, w, scheme };

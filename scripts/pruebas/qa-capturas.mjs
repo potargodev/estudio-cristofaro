@@ -86,7 +86,7 @@ for (const [name, perfil, path, action, only] of SHOTS) {
     [390, "dark"],
   ]) {
     if (only && only !== w) continue;
-    const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, reducedMotion: "reduce", colorScheme: scheme, deviceScaleFactor: 1 });
+    const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, locale: "es-AR", timezoneId: "America/Argentina/Buenos_Aires", reducedMotion: "reduce", colorScheme: scheme, deviceScaleFactor: 1 });
     if (perfil) await ctx.addCookies([{ name: "better-auth.session_token", value: await cookieFor(EMAILS[perfil]), domain: "localhost", path: "/" }]);
     const p = await ctx.newPage();
     await p.goto(`${BASE}${path}`, { waitUntil: "load" });

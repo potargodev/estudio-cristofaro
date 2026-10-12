@@ -103,7 +103,7 @@ for (const [perfil, cfg] of Object.entries(PERFILES)) {
   if (cookie === null) continue;
   const ctxs = {};
   for (const [w, scheme] of VARIANTS) {
-    ctxs[`${w}-${scheme}`] = await browser.newContext({ viewport: { width: w, height: 900 }, reducedMotion: "reduce", colorScheme: scheme });
+    ctxs[`${w}-${scheme}`] = await browser.newContext({ viewport: { width: w, height: 900 }, locale: "es-AR", timezoneId: "America/Argentina/Buenos_Aires", reducedMotion: "reduce", colorScheme: scheme });
     if (cookie) await ctxs[`${w}-${scheme}`].addCookies([{ name: "better-auth.session_token", value: cookie, domain: "localhost", path: "/" }]);
   }
   const queue = [...cfg.start];
