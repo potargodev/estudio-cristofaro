@@ -95,6 +95,11 @@ function extraction(q) {
   if (file.includes("roto")) return "No pude leer el documento.";
   if (file.includes("ticket"))
     return JSON.stringify({ ...base, tipo_documento: "ticket", cuit_emisor: "30500010912", razon_social_emisor: "Supermercado Día", letra: "B", codigo_comprobante: 6, punto_venta: 12, numero: 99881, fecha: today, neto_gravado: 10000, iva: [{ alicuota: 21, importe: 2100 }], total: 12100, confianza: { cuit_emisor: 0.9, fecha: 0.95, total: 0.97, numero: 0.85 } });
+  // §2.q etapa 2: factura de compra con ítems, percepciones por jurisdicción y una retención informada
+  if (file.includes("mayorista")) {
+    const n = Number((file.match(/(\d+)/) ?? [])[1] ?? 100);
+    return JSON.stringify({ ...base, cuit_emisor: "30712345671", razon_social_emisor: "Molinos del Plata SA", letra: "A", codigo_comprobante: 1, punto_venta: 7, numero: n, fecha: today, neto_gravado: 230000, iva: [{ alicuota: 21, importe: 48300 }], percepciones: [{ concepto: "Percepción IIBB CABA (AGIP)", importe: 6900 }, { concepto: "Percepción IVA RG 2408", importe: 6900 }], retenciones: [{ concepto: "Retención Ganancias RG 830", importe: 1500 }], items: [{ descripcion: "Harina 000 x 25 kg", codigo: "HAR25", cantidad: 10, precio_unitario: 18000, alicuota: 21, importe: 180000 }, { descripcion: "Levadura 500 g", codigo: "LEV500", cantidad: 20, precio_unitario: 2500, alicuota: 21, importe: 50000 }], total: 292100, cae: "75123456789013", vencimiento_cae: today, confianza: { cuit_emisor: 0.98, fecha: 0.97, total: 0.99, numero: 0.96, cae: 0.93 } });
+  }
   if (file.includes("dudoso"))
     return JSON.stringify({ ...base, cuit_emisor: "30711111112", razon_social_emisor: "Proveedor Dudoso SRL", letra: "A", codigo_comprobante: 1, punto_venta: 3, numero: 120, fecha: today, neto_gravado: 50000, iva: [{ alicuota: 21, importe: 10500 }], total: 70000, cae: "123", confianza: { cuit_emisor: 0.55, fecha: 0.9, total: 0.6, numero: 0.7 } });
   const n = Number((file.match(/(\d+)/) ?? [])[1] ?? 45);

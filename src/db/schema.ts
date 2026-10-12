@@ -2960,9 +2960,20 @@ export const smart_documents = pgTable(
     confirmed_at: timestamp("confirmed_at", { withTimezone: true }),
     exported_at: timestamp("exported_at", { withTimezone: true }),
     target_id: uuid("target_id"), // gasto contable o movimiento de Bitácora creado al confirmar
+    // §2.q etapa 2: lo propuesto antes de que la persona corrija (lectura + reglas), sus decisiones y lo aprendido
+    original: jsonb("original").$type<Record<string, unknown>>(),
+    decisions: jsonb("decisions").$type<Record<string, unknown>>(),
+    /** Campos que salieron de la regla del proveedor ({ fields, ruleId, undone }) */
+    learned: jsonb("learned").$type<{ fields: string[]; ruleId: string | null; undone?: boolean } | null>(),
+    /** Campos que la persona corrigió al confirmar (precisión por proveedor) */
+    corrected_fields: jsonb("corrected_fields").$type<string[] | null>(),
+    supplier_cuit: text("supplier_cuit"),
+    batch_id: uuid("batch_id"),
     created_at: createdAt(),
   },
   (t) => [
+    index("smart_documents_supplier_idx").on(t.studio_id, t.organization_id, t.supplier_cuit),
+    index("smart_documents_queue_idx").on(t.status, t.created_at),
     index("smart_documents_org_idx").on(t.studio_id, t.organization_id, t.status),
     index("smart_documents_owner_idx").on(t.owner_user_id, t.status),
     index("smart_documents_fp_idx").on(t.studio_id, t.fingerprint),
@@ -4314,4 +4325,59 @@ export const automation_switches = pgTable(
   },
   // Único con NULLS NOT DISTINCT (agregado a mano en la migración): un solo interruptor por acción y organización
   (t) => [uniqueIndex("automation_switches_idx").on(t.studio_id, t.action, t.organization_id)],
+);
+
+// ───────────── §2.q · Lectura de compras: reglas por proveedor y carga masiva ─────────────
+
+/**
+ * Regla aprendida de un proveedor (por organización, o de la cuenta personal o
+ * la Bitácora): cuenta, centro de costo, tratamiento de percepciones, alícuota
+ * de los ítems, concepto y productos vinculados. Sale de las correcciones al
+ * confirmar y se propone en el próximo comprobante.
+ */
+export const supplier_rules = pgTable(
+  "supplier_rules",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    owner_user_id: uuid("owner_user_id").references(() => users.id, { onDelete: "cascade" }),
+    /** organizacion | personal | bitacora (mismo alcance que smart_documents) */
+    scope: text("scope").notNull(),
+    supplier_cuit: text("supplier_cuit").notNull(),
+    supplier_name: text("supplier_name"),
+    rule: jsonb("rule").$type<Record<string, unknown>>().notNull().default({}),
+    /** aprendido (de correcciones) | contador (cargada a mano) */
+    source: text("source").notNull().default("aprendido"),
+    applied_count: integer("applied_count").notNull().default(0),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  // Una regla por proveedor y alcance (NULLS NOT DISTINCT agregado a mano en la migración)
+  (t) => [uniqueIndex("supplier_rules_idx").on(t.studio_id, t.scope, t.organization_id, t.owner_user_id, t.supplier_cuit)],
+);
+
+/** Carga masiva: un lote de comprobantes (archivos sueltos o ZIP) que se leen en cola */
+export const smart_batches = pgTable(
+  "smart_batches",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    owner_user_id: uuid("owner_user_id").references(() => users.id, { onDelete: "cascade" }),
+    scope: text("scope").notNull(),
+    /** archivos | zip | mail | whatsapp */
+    source: text("source").notNull(),
+    total: integer("total").notNull().default(0),
+    /** Archivos que no se pudieron tomar (formato, tamaño) */
+    skipped: integer("skipped").notNull().default(0),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("smart_batches_scope_idx").on(t.studio_id, t.organization_id, t.created_at)],
 );

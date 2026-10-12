@@ -16,6 +16,7 @@
 // | escaneo    | FLOWS_JOBS       | 1 h     | Eventos por tiempo, tareas por vencimiento y corridas trabadas    |
 // | tango      | TANGO_JOBS       | 15 min  | Bandeja de salida a Tango y sondeo de los enlaces sin webhooks    |
 // | agente     | AGENT_JOBS       | 30 s    | Cola del Agente contable (tareas en pasos) y sus rutinas          |
+// | lectura    | READ_JOBS        | 30 s    | Cola de la carga masiva de comprobantes (lectura inteligente)     |
 
 interface Job {
   name: string;
@@ -132,6 +133,16 @@ const JOBS: Job[] = [
     run: async () => {
       const r = await (await import("./modules/agent/server")).runAgentWorker();
       return r.tareas || r.rutinas ? `${r.tareas} tareas avanzadas, ${r.rutinas} rutinas disparadas` : null;
+    },
+  },
+  {
+    name: "lectura",
+    env: "READ_JOBS",
+    every: 30_000,
+    firstDelay: 25_000,
+    run: async () => {
+      const n = await (await import("./modules/smart-docs/server")).runReadQueue();
+      return n ? `${n} comprobantes leídos de la cola` : null;
     },
   },
 ];

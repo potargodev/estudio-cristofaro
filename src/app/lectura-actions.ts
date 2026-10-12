@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { resolveScope, type Ambito } from "@/modules/smart-docs/scope";
-import { confirmDoc, corrections, discardDoc, getDoc, readExisting, readUpload, SmartDocError } from "@/modules/smart-docs/server";
-import type { Extraction } from "@/modules/smart-docs/core";
+import { confirmDoc, corrections, decisionsFrom, discardDoc, forgetRule, getDoc, readBatch, readExisting, readUpload, SmartDocError, undoLearned } from "@/modules/smart-docs/server";
+import { asExtraction } from "@/modules/smart-docs/core";
 
 // Acciones de la lectura inteligente. El alcance se arma con la sesión en
 // resolveScope; el ID de la organización del formulario se vuelve a validar.
@@ -49,8 +49,9 @@ export async function confirmDocAction(fd: FormData) {
   const back = `${r.base}/${id}`;
   const d = await getDoc(r.scope, id);
   if (!d?.extracted) go(r.base, { error: "No encontramos ese documento." });
-  const edited = corrections(d.extracted as unknown as Extraction, fd);
-  await guard(back, () => confirmDoc(r.scope, r.actor, id, edited, s(fd, "account") || "Otros gastos", { allowDuplicate: fd.get("allow_duplicate") === "on" }));
+  const edited = corrections(asExtraction(d.extracted)!, fd);
+  const decisions = decisionsFrom(d, edited, fd);
+  await guard(back, () => confirmDoc(r.scope, r.actor, id, edited, s(fd, "account") || "Otros gastos", { allowDuplicate: fd.get("allow_duplicate") === "on", decisions }));
   revalidatePath(r.base);
   go(r.base, { ok: r.scope.scope === "bitacora" ? "Confirmado: quedó como gasto en tu Bitácora." : "Confirmado: quedó en los gastos y en la planilla." });
 }
@@ -60,4 +61,31 @@ export async function discardDocAction(fd: FormData) {
   await discardDoc(r.scope, r.actor, s(fd, "id"));
   revalidatePath(r.base);
   go(r.base, { ok: "Descartado." });
+}
+
+/** Carga masiva: muchos archivos o un ZIP, que se leen en cola */
+export async function readBatchAction(fd: FormData) {
+  const r = await resolveScope(ambitoOf(fd), s(fd, "org"));
+  const files = fd.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
+  if (!files.length) go(r.base, { error: "Elegí los archivos o un ZIP." });
+  const b = await guard(r.base, () => readBatch(r.scope, r.actor, files));
+  revalidatePath(r.base);
+  go(r.base, { ok: `En cola: ${b.queued} comprobante${b.queued === 1 ? "" : "s"}${b.skipped ? ` (${b.skipped} salteado${b.skipped === 1 ? "" : "s"}: formato o tamaño)` : ""}. Se leen solos; te quedan en «Para confirmar».` });
+}
+
+/** Deshacer lo aprendido del proveedor en este comprobante */
+export async function undoLearnedAction(fd: FormData) {
+  const r = await resolveScope(ambitoOf(fd), s(fd, "org"));
+  const id = s(fd, "id");
+  await guard(`${r.base}/${id}`, () => undoLearned(r.scope, r.actor, id));
+  revalidatePath(r.base);
+  go(`${r.base}/${id}`, { ok: "Listo: volvió a lo que leyó el modelo, sin la regla del proveedor." });
+}
+
+/** Olvidar la regla de un proveedor */
+export async function forgetRuleAction(fd: FormData) {
+  const r = await resolveScope(ambitoOf(fd), s(fd, "org"));
+  await guard(r.base, () => forgetRule(r.scope, r.actor, s(fd, "rule")));
+  revalidatePath(r.base);
+  go(r.base, { ok: "Regla olvidada: deja de proponerse." });
 }

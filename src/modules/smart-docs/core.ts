@@ -7,6 +7,15 @@ import { z } from "zod";
 import { CBTE_TYPES, validCuit } from "@/modules/arca/config";
 import { toCsv as toCsv_ } from "@/lib/csv";
 import { formatAmount } from "@/lib/format";
+import { byTipo, classifyTributo, TRIBUTO_TIPOS } from "./tributos";
+
+/** Percepción, retención u otro tributo, por tipo y jurisdicción */
+const TRIBUTO = z.object({
+  concepto: z.string(),
+  importe: z.number(),
+  tipo: z.enum(TRIBUTO_TIPOS).nullable().optional(),
+  jurisdiccion: z.string().nullable().optional(),
+});
 
 /** Lo que devuelve el modelo (montos en pesos con decimales; confianza 0 a 1 por campo) */
 export const EXTRACTION_SCHEMA = z.object({
@@ -24,13 +33,34 @@ export const EXTRACTION_SCHEMA = z.object({
   no_gravado: z.number().nullable(),
   exento: z.number().nullable(),
   iva: z.array(z.object({ alicuota: z.number(), importe: z.number() })).default([]),
-  percepciones: z.array(z.object({ concepto: z.string(), importe: z.number() })).default([]),
+  percepciones: z.array(TRIBUTO).default([]).describe("Percepciones, impuestos internos y otros tributos que suman al total"),
+  /** Retenciones informadas en el comprobante (no suman al total) */
+  retenciones: z.array(TRIBUTO).default([]),
+  items: z
+    .array(
+      z.object({
+        descripcion: z.string(),
+        codigo: z.string().nullable().default(null).describe("Código del producto del proveedor"),
+        cantidad: z.number().nullable().default(null),
+        precio_unitario: z.number().nullable().default(null),
+        alicuota: z.number().nullable().default(null).describe("Alícuota de IVA del ítem"),
+        importe: z.number().nullable().default(null).describe("Importe neto del ítem"),
+      }),
+    )
+    .default([]),
   total: z.number().nullable(),
   cae: z.string().nullable(),
   vencimiento_cae: z.string().nullable(),
   confianza: z.record(z.string(), z.number().min(0).max(1)).default({}).describe("Confianza por campo, de 0 a 1"),
 });
 export type Extraction = z.infer<typeof EXTRACTION_SCHEMA>;
+
+/** Lo guardado en la base como Extraction (los leídos antes de la etapa 2 de §2.q no traen ítems ni retenciones) */
+export function asExtraction(raw: unknown): Extraction | null {
+  if (!raw || typeof raw !== "object") return null;
+  const e = raw as Partial<Extraction>;
+  return { ...(e as Extraction), iva: e.iva ?? [], percepciones: e.percepciones ?? [], retenciones: e.retenciones ?? [], items: e.items ?? [], confianza: e.confianza ?? {} };
+}
 
 /** Campos que se muestran y se corrigen en la bandeja "Para confirmar" */
 export const FIELDS: { key: keyof Extraction; label: string; kind: "text" | "money" | "date" | "int" }[] = [
@@ -66,8 +96,20 @@ export function normalize(e: Extraction): Extraction {
     fecha: date(e.fecha),
     vencimiento_cae: date(e.vencimiento_cae),
     cae: digits(e.cae) || null,
+    percepciones: e.percepciones.map(tributo),
+    retenciones: (e.retenciones ?? []).map(tributo),
+    items: (e.items ?? []).slice(0, 300).map((i) => ({ ...i, descripcion: i.descripcion.trim().slice(0, 200), codigo: i.codigo?.trim().slice(0, 60) || null })),
   };
 }
+
+/** Tipo y jurisdicción del tributo: lo que dijo el modelo o, si falta, lo que dice el concepto */
+function tributo(x: z.infer<typeof TRIBUTO>) {
+  const guess = classifyTributo(x.concepto);
+  return { ...x, concepto: x.concepto.trim().slice(0, 120), tipo: x.tipo ?? guess.tipo, jurisdiccion: x.jurisdiccion?.trim() || guess.jurisdiccion };
+}
+
+/** Neto de un ítem: el importe o cantidad × precio unitario */
+const itemNet = (i: Extraction["items"][number]) => i.importe ?? (i.cantidad != null && i.precio_unitario != null ? Math.round(i.cantidad * i.precio_unitario * 100) / 100 : 0);
 
 export type Check = "ok" | "error" | "sin_dato" | "no_verificado";
 
@@ -75,6 +117,8 @@ export interface Validation {
   cuit: Check;
   cae: Check;
   totales: Check;
+  /** Que los ítems sumen el neto del comprobante */
+  items?: Check;
   /** Resultado de la consulta a ARCA, si se pudo hacer */
   arca?: { cuit?: "activo" | "inexistente" | "error"; cae?: "autorizado" | "no_encontrado" | "error"; consultado_at?: string };
   mensajes: string[];
@@ -102,6 +146,13 @@ export function validate(e: Extraction, today = new Date().toISOString().slice(0
       v.totales = Math.abs(sum - cents(e.total)) <= 2 ? "ok" : "error";
       if (v.totales === "error") v.mensajes.push(`Los importes suman ${formatAmount(sum / 100)} y el total dice ${formatAmount(e.total)}.`);
     }
+  }
+  if (e.items.length) {
+    const net = cents(e.neto_gravado) + cents(e.no_gravado) + cents(e.exento);
+    const sum = e.items.reduce((s, i) => s + cents(itemNet(i)), 0);
+    // Tolerancia: un peso por ítem (redondeos de precio unitario)
+    v.items = net && Math.abs(sum - net) <= Math.max(100, e.items.length * 100) ? "ok" : net ? "error" : "sin_dato";
+    if (v.items === "error") v.mensajes.push(`Los ítems suman ${formatAmount(sum / 100)} y el neto del comprobante es ${formatAmount(net / 100)}.`);
   }
   if (e.fecha && e.fecha > today) v.mensajes.push("La fecha es posterior a hoy.");
   return v;
@@ -166,6 +217,11 @@ export interface ExportRow {
   iva_27: number;
   iva_otros: number;
   percepciones: number;
+  percepciones_iva: number;
+  percepciones_iibb: number;
+  percepciones_ganancias: number;
+  impuestos_internos: number;
+  otros_tributos: number;
   total: number;
   cae: string;
   moneda: string;
@@ -193,6 +249,11 @@ export function exportRow(e: Extraction, account: string): ExportRow {
     iva_27: r2(iva(27)),
     iva_otros: r2(totalIva - known),
     percepciones: r2(e.percepciones.reduce((s, x) => s + x.importe, 0)),
+    percepciones_iva: r2(byTipo(e.percepciones).iva),
+    percepciones_iibb: r2(byTipo(e.percepciones).iibb),
+    percepciones_ganancias: r2(byTipo(e.percepciones).ganancias),
+    impuestos_internos: r2(byTipo(e.percepciones).internos),
+    otros_tributos: r2(byTipo(e.percepciones).otros),
     total: r2(e.total ?? 0),
     cae: e.cae ?? "",
     moneda: e.moneda,

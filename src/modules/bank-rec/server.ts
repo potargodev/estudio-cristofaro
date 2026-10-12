@@ -8,7 +8,7 @@ import { hasModule } from "@/lib/faro/entitlements";
 import { CBTE_TYPES } from "@/modules/arca/config";
 import { guessMapping } from "@/modules/bitacora/imports";
 import { mapRows, parseCsv, rowsFromPdfText, type Mapping } from "@/modules/bitacora/smart";
-import type { Extraction } from "@/modules/smart-docs/core";
+import { asExtraction } from "@/modules/smart-docs/core";
 import { classify, matchRule, suggest, summarize, type Candidate, type MovStatus, type MovementClass, type Rule } from "./core";
 import { pdfPages } from "@/lib/text/extract";
 import { UUID } from "@/lib/ids";
@@ -55,7 +55,7 @@ async function candidates(s: RecScope): Promise<Candidate[]> {
       .filter((i) => CBTE_TYPES[i.cbte_type]?.kind !== "nota_credito")
       .map((i) => ({ id: i.id, type: "emitido" as const, date: i.issue_date, total: Math.round(Number(i.total) * 100), counterparty: i.customer_name, cuit: i.customer_doc_number, number: `${String(i.point_of_sale).padStart(5, "0")}-${String(i.number ?? 0).padStart(8, "0")}` })),
     ...received
-      .map((d) => ({ d, e: d.extracted as unknown as Extraction }))
+      .map((d) => ({ d, e: asExtraction(d.extracted)! }))
       .filter(({ e }) => e?.total && e.fecha && e.tipo_documento !== "nota_credito")
       .map(({ d, e }) => ({ id: d.id, type: "recibido" as const, date: e.fecha!, total: Math.round(e.total! * 100), counterparty: e.razon_social_emisor, cuit: e.cuit_emisor, number: e.numero != null ? String(e.numero) : null })),
   ];

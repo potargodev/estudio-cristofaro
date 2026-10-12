@@ -337,6 +337,13 @@
       "when": 1791813605383,
       "tag": "0047_agente_contable",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1791818146664,
+      "tag": "0048_lectura_compras",
+      "breakpoints": true
     }
   ]
 }

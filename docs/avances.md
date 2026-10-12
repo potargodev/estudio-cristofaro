@@ -386,3 +386,19 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Elegir el modelo del Agente en Configuración → IA de cada estudio y en Faro Manager → Catálogo → IA (pendiente 17).
+
+## §2.q · Etapa 2: lectura de compras de nivel superior (12 de octubre)
+
+**Qué quedó**
+- La lectura extrae cada **ítem** (descripción, código del proveedor, cantidad, precio unitario y alícuota) y cada **percepción, retención y otro tributo** por tipo (IVA, ingresos brutos, Ganancias, internos, otros) y jurisdicción; valida que los importes cierren con el total y los ítems con el neto. La planilla exporta las percepciones por tipo.
+- **Aprendizaje por proveedor:** cuenta, centro de costo, concepto, tratamiento de percepciones y alícuota de los ítems quedan como regla del proveedor en esa organización y se proponen en el próximo comprobante, con «Aprendido de tus correcciones» y «Deshacer»; «Olvidar» borra la regla.
+- **Precisión medida:** campos corregidos por comprobante y proveedor, al principio y en los últimos («Proveedores aprendidos»).
+- **Carga masiva:** muchos archivos o un ZIP (hasta 500) en cola, con avance en la bandeja. Migración `0048`.
+
+**Qué se probó**
+- `src/modules/smart-docs/compras.test.ts` (tributos, ítems, totales y aprendizaje).
+- `scripts/pruebas/lectura-compras.mts` (29 verificaciones): ítems y tributos por jurisdicción, la segunda factura del mismo proveedor ya viene corregida, deshacer, precisión que mejora, ZIP en cola, aislamiento entre estudios y entre organizaciones del mismo estudio.
+- `lectura-navegador` (50) y `lectura-servidor` (14) siguen en verde; pantallas a 390 y 1.440 px en claro y oscuro.
+
+**Qué falta configurar**
+- Una casilla de mail entrante para recibir comprobantes por mail (pendientes).

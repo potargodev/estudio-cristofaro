@@ -54,7 +54,7 @@ const is404 = async (p) => (await p.content()).includes("404") || (await seen("n
 const L = `${BASE}/admin/organizaciones/${NORTE}/lectura`;
 const upload = async (file, p = page, url = L) => {
   await p.goto(url);
-  await p.locator('input[type="file"]').setInputFiles(file);
+  await p.locator('input[name="file"]').setInputFiles(file);
   await p.getByRole("button", { name: "Leer", exact: true }).click();
 };
 
@@ -174,7 +174,7 @@ const dd = (n) => iso(n).split("-").reverse().join("/");
 const extracto = `Fecha;Concepto;Importe\n${dd(3)};TRANSF RECIBIDA 30744444449 JUAN PEREZ;150.000,00\n${dd(2)};DEB AUTOMATICO EDENOR 30711111111;-124.000,00\n${dd(2)};IMP. LEY 25413 S/DEB;-744,00\n${dd(1)};COMISION MANTENIMIENTO CUENTA;-5.000,00\n${dd(1)};SEGURO LA CAJA;-8.000,00\n${dd(1)};PAGO PROVEEDOR XX;-3.000,00\n`;
 const importar = async () => {
   await page.goto(`${BASE}/admin/organizaciones/${NORTE}?tab=conciliacion`);
-  await page.locator('input[type="file"]').setInputFiles({ name: "extracto.csv", mimeType: "text/csv", buffer: Buffer.from(extracto) });
+  await page.locator('input[name="file"]').setInputFiles({ name: "extracto.csv", mimeType: "text/csv", buffer: Buffer.from(extracto) });
   await page.getByLabel("Banco").fill("Galicia");
   await page.getByRole("button", { name: "Importar y conciliar" }).click();
 };

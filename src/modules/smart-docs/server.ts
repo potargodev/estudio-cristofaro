@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { generateText } from "ai";
 import { and, desc, eq, gte, inArray, isNotNull, isNull, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { accounting_expenses, documents, smart_documents } from "@/db/schema";
+import { accounting_expenses, documents, smart_batches, smart_documents, supplier_rules } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { budgetBlock, languageModel, recordUsage, resolveModel } from "@/lib/ai/models";
 import { estimateCost } from "@/lib/ai/pricing";
@@ -16,7 +16,9 @@ import { getPersona } from "@/modules/arca/padron";
 import { constatar } from "@/modules/arca/wscdc";
 import { categoryByHint, createEntry } from "@/modules/bitacora/server";
 import { costUsd, getPlatformAi, isConfigured, platformModel } from "@/modules/copilot/platform";
-import { EXTRACTION_SCHEMA, exportRow, fingerprint, lowFields, normalize, overallConfidence, suggestAccount, validate, type Extraction, type ExportRow, type Validation } from "./core";
+import { asExtraction, EXTRACTION_SCHEMA, exportRow, fingerprint, lowFields, normalize, overallConfidence, suggestAccount, validate, type Extraction, type ExportRow, type Validation } from "./core";
+import { applyRule, baseDecisions, learnFrom, type Decisions, type SupplierRule } from "./learning";
+import { TRATAMIENTOS, tributoKey, type Tratamiento } from "./tributos";
 import { UUID } from "@/lib/ids";
 
 // Lectura inteligente (smart_docs): lee facturas, tickets y extractos con un
@@ -64,7 +66,7 @@ export async function availability(studioId: string) {
 const PROMPT = (fileName: string) =>
   `LECTURA_INTELIGENTE · archivo: ${fileName.replace(/\s+/g, "_")}
 Leé este comprobante argentino (factura, ticket, nota de crédito/débito o extracto) y respondé SOLO un JSON con estas claves:
-tipo_documento (factura|ticket|nota_credito|nota_debito|extracto|otro), cuit_emisor (11 dígitos), razon_social_emisor, cuit_receptor, letra (A|B|C|E|M|X), codigo_comprobante (código de ARCA: 1 Factura A, 6 Factura B, 11 Factura C, 3/8/13 notas de crédito…), punto_venta, numero, fecha (AAAA-MM-DD), moneda (ARS|USD), neto_gravado, no_gravado, exento, iva (lista de {alicuota, importe}), percepciones (lista de {concepto, importe}), total, cae (14 dígitos), vencimiento_cae (AAAA-MM-DD), confianza (objeto con la confianza de 0 a 1 de cada campo que completaste).
+tipo_documento (factura|ticket|nota_credito|nota_debito|extracto|otro), cuit_emisor (11 dígitos), razon_social_emisor, cuit_receptor, letra (A|B|C|E|M|X), codigo_comprobante (código de ARCA: 1 Factura A, 6 Factura B, 11 Factura C, 3/8/13 notas de crédito…), punto_venta, numero, fecha (AAAA-MM-DD), moneda (ARS|USD), neto_gravado, no_gravado, exento, iva (lista de {alicuota, importe}), percepciones (lista de {concepto, importe, tipo: iva|iibb|ganancias|internos|otros, jurisdiccion: la provincia o CABA si es de ingresos brutos}; incluí impuestos internos y otros tributos que suman al total), retenciones (misma forma, si el comprobante las informa), items (lista de {descripcion, codigo (del proveedor), cantidad, precio_unitario, alicuota, importe (neto del ítem)}), total, cae (14 dígitos), vencimiento_cae (AAAA-MM-DD), confianza (objeto con la confianza de 0 a 1 de cada campo que completaste).
 Importes como números con punto decimal. Si un dato no está, usá null. No inventes.`;
 
 async function callModel(studioId: string, userId: string | null, fileName: string, data: Uint8Array, mediaType: string) {
@@ -73,7 +75,7 @@ async function callModel(studioId: string, userId: string | null, fileName: stri
   const block = await budgetBlock(studioId);
   if (block) throw new SmartDocError(block);
   const content = [{ type: "text" as const, text: PROMPT(fileName) }, mediaType === "application/pdf" ? { type: "file" as const, data, mediaType } : { type: "image" as const, image: data, mediaType }];
-  const r = await generateText({ model: m.kind === "estudio" ? languageModel(m.own.provider, m.own.model) : platformModel(m.p, m.p.model_primary!), maxRetries: 1, timeout: 60000, maxOutputTokens: 1200, messages: [{ role: "user", content }] });
+  const r = await generateText({ model: m.kind === "estudio" ? languageModel(m.own.provider, m.own.model) : platformModel(m.p, m.p.model_primary!), maxRetries: 1, timeout: 60000, maxOutputTokens: 4000, messages: [{ role: "user", content }] });
   const inputTokens = r.usage.inputTokens ?? 0;
   const outputTokens = r.usage.outputTokens ?? 0;
   let cost: number | null = null;
@@ -123,6 +125,23 @@ async function accountHistory(s: DocScope) {
   return m;
 }
 
+/** Regla del proveedor en este alcance (organización, cuenta personal o Bitácora) */
+async function ruleFor(s: DocScope, cuit: string) {
+  const [r] = await db()
+    .select()
+    .from(supplier_rules)
+    .where(
+      and(
+        eq(supplier_rules.studio_id, s.studioId),
+        eq(supplier_rules.scope, s.scope),
+        s.organizationId ? eq(supplier_rules.organization_id, s.organizationId) : isNull(supplier_rules.organization_id),
+        s.scope === "bitacora" ? eq(supplier_rules.owner_user_id, s.ownerUserId ?? "00000000-0000-0000-0000-000000000000") : isNull(supplier_rules.owner_user_id),
+        eq(supplier_rules.supplier_cuit, cuit),
+      ),
+    );
+  return r ?? null;
+}
+
 /** Procesa un documento ya guardado: modelo → normalización → validaciones → duplicados */
 async function process(s: DocScope, row: SmartDoc, actor: Actor, data: Uint8Array) {
   let ai;
@@ -153,9 +172,29 @@ async function process(s: DocScope, row: SmartDoc, actor: Actor, data: Uint8Arra
   const fp = fingerprint(parsed);
   const [dup] = fp ? await db().select({ id: smart_documents.id }).from(smart_documents).where(and(where(s), eq(smart_documents.fingerprint, fp), ne(smart_documents.id, row.id), inArray(smart_documents.status, ["para_confirmar", "confirmado"]))).limit(1) : [];
   const history = await accountHistory(s);
+  // Lo que sugiere la lectura y, encima, la regla aprendida del proveedor (§2.q)
+  const base = baseDecisions(parsed, suggestAccount(parsed, history));
+  const rule = parsed.cuit_emisor ? await ruleFor(s, parsed.cuit_emisor) : null;
+  const applied = applyRule(parsed, base, (rule?.rule as SupplierRule | undefined) ?? null);
   const [u] = await db()
     .update(smart_documents)
-    .set({ ...usage, status: "para_confirmar", kind: parsed.tipo_documento, extracted: parsed as unknown as Record<string, unknown>, confidence: String(overallConfidence(parsed)), low_fields: lowFields(parsed), validation: v as unknown as Record<string, unknown>, fingerprint: fp, duplicate_of: dup?.id ?? null, account: suggestAccount(parsed, history), error: null })
+    .set({
+      ...usage,
+      status: "para_confirmar",
+      kind: parsed.tipo_documento,
+      extracted: applied.extraction as unknown as Record<string, unknown>,
+      confidence: String(overallConfidence(parsed)),
+      low_fields: lowFields(parsed),
+      validation: v as unknown as Record<string, unknown>,
+      fingerprint: fp,
+      duplicate_of: dup?.id ?? null,
+      account: applied.decisions.account,
+      decisions: applied.decisions as unknown as Record<string, unknown>,
+      original: { model: parsed, modelDecisions: base, proposed: { extraction: applied.extraction, decisions: applied.decisions } } as unknown as Record<string, unknown>,
+      learned: applied.learned.length ? { fields: applied.learned, ruleId: rule!.id } : null,
+      supplier_cuit: parsed.cuit_emisor,
+      error: null,
+    })
     .where(eq(smart_documents.id, row.id))
     .returning();
   if (s.scope !== "bitacora") await emitEvent(s.studioId, "documento.leido", { documento_id: row.id, organizacion_id: s.organizationId, emisor: parsed.razon_social_emisor, total: parsed.total, tipo: parsed.tipo_documento, repetido: !!dup }, row.id);
@@ -180,7 +219,7 @@ export async function readUpload(s: DocScope, actor: Actor, file: File, source: 
   const base = { studio_id: s.studioId, organization_id: s.organizationId, owner_user_id: s.ownerUserId, scope: s.scope, storage_path: stored.storagePath, file_name: stored.name, mime_type: stored.mimeType, size_bytes: stored.sizeBytes, sha256, source, created_by: actor.id };
   if (same) {
     // Mismo archivo: no se manda otra vez al modelo
-    const [row] = await db().insert(smart_documents).values({ ...base, status: "para_confirmar", kind: same.kind, extracted: same.extracted, confidence: same.confidence, low_fields: same.low_fields, validation: same.validation, fingerprint: same.fingerprint, duplicate_of: same.id, account: same.account, raw: same.raw, synced_at: new Date() }).returning();
+    const [row] = await db().insert(smart_documents).values({ ...base, status: "para_confirmar", kind: same.kind, extracted: same.extracted, confidence: same.confidence, low_fields: same.low_fields, validation: same.validation, fingerprint: same.fingerprint, duplicate_of: same.id, account: same.account, raw: same.raw, decisions: same.decisions, original: same.original, learned: same.learned, supplier_cuit: same.supplier_cuit, synced_at: new Date() }).returning();
     return row;
   }
   await guardRead(s);
@@ -255,16 +294,40 @@ export function corrections(e: Extraction, fd: FormData): Extraction {
     total: num(fd.get("total")),
     cae: str("cae"),
     vencimiento_cae: str("vencimiento_cae"),
+    // Alícuota de cada ítem (la regla del proveedor la aprende)
+    items: e.items.map((it, i) => {
+      const rate = num(fd.get(`item_alicuota_${i}`));
+      return fd.has(`item_alicuota_${i}`) ? { ...it, alicuota: rate } : it;
+    }),
     // Lo que la persona revisó pasa a confianza 1
     confianza: Object.fromEntries(Object.keys(e.confianza ?? {}).map((k) => [k, 1])),
   });
+}
+
+/** Decisiones del formulario: cuenta, centro de costo, concepto y tratamiento de cada tributo */
+export function decisionsFrom(d: SmartDoc, e: Extraction, fd: FormData): Decisions {
+  const prev = (d.decisions as unknown as Decisions | null) ?? baseDecisions(e, d.account ?? "Otros gastos");
+  const treatments: Record<string, Tratamiento> = { ...prev.treatments };
+  for (const p of [...e.percepciones, ...e.retenciones]) {
+    const k = tributoKey(p);
+    const v = String(fd.get(`tratamiento_${k}`) ?? "");
+    if (v in TRATAMIENTOS) treatments[k] = v as Tratamiento;
+  }
+  const str = (k: string) => (fd.has(k) ? String(fd.get(k) ?? "").trim().slice(0, 80) || null : undefined);
+  return {
+    account: str("account") ?? prev.account,
+    costCenter: str("cost_center") === undefined ? prev.costCenter : (str("cost_center") as string | null),
+    concept: str("concept") === undefined ? prev.concept : (str("concept") as string | null),
+    treatments,
+    productLinks: prev.productLinks ?? {},
+  };
 }
 
 /**
  * Confirma: guarda las correcciones y la cuenta, y lo pasa a donde va
  * (gastos de la organización o de la actividad, o un gasto de la Bitácora).
  */
-export async function confirmDoc(s: DocScope, actor: Actor, id: string, edited: Extraction, account: string, opts: { allowDuplicate?: boolean } = {}) {
+export async function confirmDoc(s: DocScope, actor: Actor, id: string, edited: Extraction, account: string, opts: { allowDuplicate?: boolean; decisions?: Decisions } = {}) {
   if (!s.canConfirm) throw new SmartDocError("No tenés permiso para confirmar documentos.");
   const d = await getDoc(s, id);
   if (!d || d.status !== "para_confirmar") throw new SmartDocError("Ese documento ya no está para confirmar.");
@@ -288,9 +351,22 @@ export async function confirmDoc(s: DocScope, actor: Actor, id: string, edited: 
       .returning({ id: accounting_expenses.id });
     targetId = x?.id ?? null;
   }
+  // Aprendizaje por proveedor: lo corregido respecto de lo propuesto queda como regla
+  const decisions: Decisions = { ...((d.decisions as unknown as Decisions | null) ?? baseDecisions(edited, account)), ...(opts.decisions ?? {}), account: account.slice(0, 60) };
+  const proposed = (d.original as { proposed?: { extraction: Extraction; decisions: Decisions } } | null)?.proposed ?? { extraction: asExtraction(d.extracted)!, decisions: (d.decisions as unknown as Decisions | null) ?? baseDecisions(edited, d.account ?? account) };
+  const cuit = edited.cuit_emisor;
+  const previous = cuit ? await ruleFor(s, cuit) : null;
+  const learned = learnFrom(proposed, { extraction: edited, decisions }, (previous?.rule as SupplierRule | undefined) ?? null);
+  if (cuit && learned.rule) {
+    if (previous) await db().update(supplier_rules).set({ rule: learned.rule as Record<string, unknown>, supplier_name: edited.razon_social_emisor, source: "aprendido", updated_by: actor.id }).where(eq(supplier_rules.id, previous.id));
+    else await db().insert(supplier_rules).values({ studio_id: s.studioId, organization_id: s.organizationId, owner_user_id: s.scope === "bitacora" ? s.ownerUserId : null, scope: s.scope, supplier_cuit: cuit, supplier_name: edited.razon_social_emisor, rule: learned.rule as Record<string, unknown>, updated_by: actor.id });
+    await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.regla_aprendida", entityType: "proveedor", entityId: cuit, metadata: { campos: learned.corrected.filter((c) => !c.includes("_emisor")), proveedor: edited.razon_social_emisor } });
+  }
+  const learnedInfo = d.learned as { fields: string[]; undone?: boolean } | null;
+  if (previous && learnedInfo?.fields.length && !learnedInfo.undone) await db().update(supplier_rules).set({ applied_count: sql`${supplier_rules.applied_count} + 1` }).where(eq(supplier_rules.id, previous.id));
   await db()
     .update(smart_documents)
-    .set({ status: "confirmado", extracted: edited as unknown as Record<string, unknown>, validation: v as unknown as Record<string, unknown>, fingerprint: fingerprint(edited), low_fields: [], account: account.slice(0, 60), confirmed_by: actor.id, confirmed_at: new Date(), target_id: targetId })
+    .set({ status: "confirmado", extracted: edited as unknown as Record<string, unknown>, validation: v as unknown as Record<string, unknown>, fingerprint: fingerprint(edited), low_fields: [], account: account.slice(0, 60), decisions: decisions as unknown as Record<string, unknown>, corrected_fields: learned.corrected, supplier_cuit: cuit, confirmed_by: actor.id, confirmed_at: new Date(), target_id: targetId })
     .where(eq(smart_documents.id, d.id));
   if (s.scope !== "bitacora") await emitEvent(s.studioId, "documento.confirmado", { documento_id: d.id, organizacion_id: s.organizationId, emisor: edited.razon_social_emisor, total: edited.total, cuenta: account }, d.id);
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.confirmado", entityType: "documento_leido", entityId: d.id, metadata: { total: edited.total, cuenta: account, cuit: edited.cuit_emisor } });
@@ -308,11 +384,168 @@ export async function discardDoc(s: DocScope, actor: Actor, id: string) {
 export async function exportData(s: DocScope, from?: string, to?: string): Promise<{ rows: ExportRow[]; ids: string[] }> {
   const docs = await db().select().from(smart_documents).where(and(where(s), eq(smart_documents.status, "confirmado"))).orderBy(smart_documents.created_at);
   const out = docs
-    .map((d) => ({ d, e: d.extracted as unknown as Extraction }))
+    .map((d) => ({ d, e: asExtraction(d.extracted)! }))
     .filter(({ e }) => e?.fecha && (!from || e.fecha >= from) && (!to || e.fecha <= to));
   return { rows: out.map(({ d, e }) => exportRow(e, d.account ?? "Otros gastos")), ids: out.map(({ d }) => d.id) };
 }
 
 export async function markExported(ids: string[]) {
   if (ids.length) await db().update(smart_documents).set({ exported_at: new Date() }).where(inArray(smart_documents.id, ids));
+}
+
+/** «Deshacer» lo aprendido en este comprobante: vuelve a lo que leyó el modelo, sin la regla */
+export async function undoLearned(s: DocScope, actor: Actor, id: string) {
+  if (!s.canConfirm) throw new SmartDocError("No tenés permiso para cambiar este documento.");
+  const d = await getDoc(s, id);
+  const o = d?.original as { model?: Extraction; modelDecisions?: Decisions } | null;
+  if (!d || d.status !== "para_confirmar" || !o?.model || !(d.learned as { fields?: string[] } | null)?.fields?.length) throw new SmartDocError("No hay nada aprendido para deshacer en este comprobante.");
+  const decisions = o.modelDecisions ?? baseDecisions(o.model, d.account ?? "Otros gastos");
+  await db()
+    .update(smart_documents)
+    .set({ extracted: o.model as unknown as Record<string, unknown>, decisions: decisions as unknown as Record<string, unknown>, account: decisions.account, learned: { ...(d.learned as { fields: string[]; ruleId: string | null }), undone: true }, original: { ...(d.original as Record<string, unknown>), proposed: { extraction: o.model, decisions } } })
+    .where(eq(smart_documents.id, d.id));
+  await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.regla_deshecha", entityType: "documento_leido", entityId: d.id });
+}
+
+/** Olvidar la regla de un proveedor (deja de proponerse) */
+export async function forgetRule(s: DocScope, actor: Actor, ruleId: string) {
+  if (!s.canConfirm || !UUID.test(ruleId)) throw new SmartDocError("Esa regla no existe.");
+  const [r] = await db()
+    .delete(supplier_rules)
+    .where(and(eq(supplier_rules.id, ruleId), eq(supplier_rules.studio_id, s.studioId), eq(supplier_rules.scope, s.scope), s.organizationId ? eq(supplier_rules.organization_id, s.organizationId) : isNull(supplier_rules.organization_id), s.scope === "bitacora" ? eq(supplier_rules.owner_user_id, s.ownerUserId ?? "00000000-0000-0000-0000-000000000000") : isNull(supplier_rules.owner_user_id)))
+    .returning({ cuit: supplier_rules.supplier_cuit });
+  if (!r) throw new SmartDocError("Esa regla no existe.");
+  await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.regla_olvidada", entityType: "proveedor", entityId: r.cuit });
+}
+
+export async function listRules(s: DocScope) {
+  return db()
+    .select()
+    .from(supplier_rules)
+    .where(and(eq(supplier_rules.studio_id, s.studioId), eq(supplier_rules.scope, s.scope), s.organizationId ? eq(supplier_rules.organization_id, s.organizationId) : isNull(supplier_rules.organization_id), s.scope === "bitacora" ? eq(supplier_rules.owner_user_id, s.ownerUserId ?? "00000000-0000-0000-0000-000000000000") : isNull(supplier_rules.owner_user_id)))
+    .orderBy(desc(supplier_rules.updated_at))
+    .limit(200);
+}
+
+/**
+ * Precisión por proveedor: campos corregidos por comprobante, la primera mitad
+ * de los confirmados contra la segunda (la mejora con lo aprendido).
+ */
+export async function supplierPrecision(s: DocScope) {
+  const rows = await db()
+    .select({ cuit: smart_documents.supplier_cuit, e: smart_documents.extracted, c: smart_documents.corrected_fields })
+    .from(smart_documents)
+    .where(and(where(s), eq(smart_documents.status, "confirmado"), isNotNull(smart_documents.corrected_fields), isNotNull(smart_documents.supplier_cuit)))
+    .orderBy(smart_documents.confirmed_at)
+    .limit(2000);
+  const by = new Map<string, { name: string; counts: number[] }>();
+  for (const r of rows) {
+    const k = r.cuit!;
+    const g = by.get(k) ?? { name: (r.e as { razon_social_emisor?: string } | null)?.razon_social_emisor ?? k, counts: [] };
+    g.counts.push(r.c?.length ?? 0);
+    by.set(k, g);
+  }
+  const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
+  return [...by.entries()]
+    .map(([cuit, g]) => {
+      const half = Math.ceil(g.counts.length / 2);
+      return { cuit, name: g.name, docs: g.counts.length, corrected: g.counts.reduce((a, b) => a + b, 0), first: avg(g.counts.slice(0, half)), last: g.counts.length > 1 ? avg(g.counts.slice(half)) : null, latest: g.counts.at(-1) ?? 0 };
+    })
+    .sort((a, b) => b.docs - a.docs);
+}
+
+// ───────────── Carga masiva (cola) ─────────────
+
+const READABLE: Record<string, string> = { ".pdf": "application/pdf", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png" };
+/** Máximo de comprobantes por lote */
+const BATCH_MAX = 500;
+
+/** Sube muchos comprobantes (archivos sueltos o un ZIP) y los deja en cola para leer */
+export async function readBatch(s: DocScope, actor: Actor, files: File[], source: "archivos" | "zip" | "mail" | "whatsapp" = "archivos") {
+  if (!s.canConfirm) throw new SmartDocError("No tenés permiso para cargar documentos.");
+  if (!(await hasModule(s.studioId, "smart_docs"))) throw new SmartDocError("La lectura inteligente no está incluida en el plan.");
+  const { unzipSync } = await import("fflate");
+  const expanded: File[] = [];
+  for (const f of files) {
+    if (f.name.toLowerCase().endsWith(".zip")) {
+      if (f.size > 200 * 1024 * 1024) throw new SmartDocError("El ZIP supera los 200 MB.");
+      let entries: Record<string, Uint8Array>;
+      try {
+        entries = unzipSync(new Uint8Array(await f.arrayBuffer()), { filter: (e) => !e.name.endsWith("/") && !e.name.split("/").some((p) => p.startsWith(".") || p === "__MACOSX") && Object.keys(READABLE).some((x) => e.name.toLowerCase().endsWith(x)) && e.originalSize <= 10 * 1024 * 1024 });
+      } catch {
+        throw new SmartDocError("No pudimos abrir el ZIP.");
+      }
+      for (const [name, data] of Object.entries(entries)) {
+        const base = name.split("/").pop()!;
+        const ext = base.slice(base.lastIndexOf(".")).toLowerCase();
+        expanded.push(new File([data as BlobPart], base, { type: READABLE[ext] }));
+      }
+    } else expanded.push(f);
+  }
+  if (!expanded.length) throw new SmartDocError("No encontramos comprobantes (PDF, JPG o PNG) para leer.");
+  if (expanded.length > BATCH_MAX) throw new SmartDocError(`Se pueden cargar hasta ${BATCH_MAX} comprobantes por vez.`);
+  const [batch] = await db().insert(smart_batches).values({ studio_id: s.studioId, organization_id: s.organizationId, owner_user_id: s.ownerUserId, scope: s.scope, source: files.some((f) => f.name.toLowerCase().endsWith(".zip")) ? "zip" : source, total: 0, created_by: actor.id }).returning();
+  let queued = 0;
+  let skipped = 0;
+  for (const file of expanded) {
+    const check = await checkUpload(file);
+    if (!check.ok) {
+      skipped++;
+      continue;
+    }
+    const data = new Uint8Array(await file.arrayBuffer());
+    const stored = await storeUpload(file, s.studioId, s.organizationId ?? `bitacora-${s.ownerUserId}`);
+    await db().insert(smart_documents).values({ studio_id: s.studioId, organization_id: s.organizationId, owner_user_id: s.ownerUserId, scope: s.scope, storage_path: stored.storagePath, file_name: stored.name, mime_type: stored.mimeType, size_bytes: stored.sizeBytes, sha256: createHash("sha256").update(data).digest("hex"), source: source === "archivos" ? "subida" : source, status: "en_cola", batch_id: batch.id, created_by: actor.id });
+    queued++;
+  }
+  await db().update(smart_batches).set({ total: queued, skipped }).where(eq(smart_batches.id, batch.id));
+  await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.lote", entityType: "lote_lectura", entityId: batch.id, metadata: { comprobantes: queued, salteados: skipped } });
+  return { id: batch.id, queued, skipped };
+}
+
+/** Avance de los lotes recientes del alcance */
+export async function batchProgress(s: DocScope) {
+  const batches = await db()
+    .select()
+    .from(smart_batches)
+    .where(and(eq(smart_batches.studio_id, s.studioId), eq(smart_batches.scope, s.scope), s.organizationId ? eq(smart_batches.organization_id, s.organizationId) : isNull(smart_batches.organization_id), s.scope === "bitacora" ? eq(smart_batches.owner_user_id, s.ownerUserId ?? "00000000-0000-0000-0000-000000000000") : isNull(smart_batches.owner_user_id)))
+    .orderBy(desc(smart_batches.created_at))
+    .limit(5);
+  if (!batches.length) return [];
+  const counts = await db()
+    .select({ batch: smart_documents.batch_id, status: smart_documents.status, n: sql<number>`count(*)::int` })
+    .from(smart_documents)
+    .where(inArray(smart_documents.batch_id, batches.map((b) => b.id)))
+    .groupBy(smart_documents.batch_id, smart_documents.status);
+  return batches.map((b) => {
+    const c = Object.fromEntries(counts.filter((x) => x.batch === b.id).map((x) => [x.status, x.n])) as Record<string, number>;
+    const waiting = (c.en_cola ?? 0) + (c.leyendo ?? 0);
+    return { id: b.id, created_at: b.created_at, total: b.total, skipped: b.skipped, waiting, read: b.total - waiting, failed: c.error ?? 0, source: b.source };
+  });
+}
+
+/** Cola de la carga masiva: toma comprobantes en cola sin pisarse con otra instancia y los lee */
+export async function runReadQueue(max = 10) {
+  // Los que quedaron «leyendo» por un corte vuelven a la cola
+  await db().execute(sql`update smart_documents set status = 'en_cola' where status = 'leyendo' and batch_id is not null and synced_at is null and created_at < now() - interval '15 minutes'`);
+  const claimed = (await db().execute(sql`
+    update smart_documents set status = 'leyendo'
+    where id in (select id from smart_documents where status = 'en_cola' order by created_at limit ${max} for update skip locked)
+    returning id`)) as unknown as { id: string }[];
+  let done = 0;
+  for (const { id } of claimed) {
+    const [row] = await db().select().from(smart_documents).where(eq(smart_documents.id, id));
+    if (!row) continue;
+    const s: DocScope = { studioId: row.studio_id, organizationId: row.organization_id, ownerUserId: row.owner_user_id, scope: row.scope as DocScope["scope"], canConfirm: true };
+    try {
+      await guardRead(s);
+      const { data } = await readStored(row.storage_path);
+      await process(s, row, { id: row.created_by ?? "", email: "" }, new Uint8Array(data));
+      done++;
+    } catch (err) {
+      const msg = err instanceof SmartDocError ? err.message : "No pudimos leer el documento.";
+      await db().update(smart_documents).set({ status: "error", error: msg, synced_at: new Date() }).where(eq(smart_documents.id, id));
+    }
+  }
+  return done;
 }
