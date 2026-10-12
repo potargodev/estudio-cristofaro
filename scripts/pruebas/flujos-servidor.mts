@@ -29,6 +29,8 @@ const tick = async (n = 1) => {
   for (let i = 0; i < n; i++) {
     await sql`update flow_runs set next_attempt_at = now() where status in ('pendiente') and studio_id in ${sql([A, SB])}`;
     await runFlowWorker();
+    // La tarea de flujos del servidor puede haber tomado una corrida al mismo tiempo (skip locked): esperar a que la termine
+    for (let w = 0; w < 50 && (await sql`select 1 from flow_runs where status = 'en_curso' and studio_id in ${sql([A, SB])} limit 1`).length; w++) await new Promise((ok) => setTimeout(ok, 100));
   }
 };
 const fails_ = async (fn: () => Promise<unknown>) => {
