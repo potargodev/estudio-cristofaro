@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   // Metadatos (title, description) siempre en el <head>, también en páginas
   // dinámicas como /diagnostico: no los manda "en streaming".
   htmlLimitedBots: /.*/,
+  // pdf.js (unpdf) carga sus partes en runtime: se usa desde node_modules sin empaquetarlo
+  serverExternalPackages: ["unpdf"],
   // "radix-ui" reexporta todos los primitivos: importar solo lo que se usa en cada página
   experimental: {
     optimizePackageImports: ["radix-ui"],

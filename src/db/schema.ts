@@ -1379,6 +1379,28 @@ export const assisted_access = pgTable(
   (t) => [index("assisted_access_user_idx").on(t.faro_user_id, t.expires_at)],
 );
 
+/**
+ * «Ver como…» (solo faro_owner, solo usuarios de la demo): sesión real del
+ * usuario demo elegido. Guarda la sesión original para volver en un clic.
+ */
+export const demo_impersonations = pgTable(
+  "demo_impersonations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    faro_user_id: uuid("faro_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    original_session_id: uuid("original_session_id"),
+    // Sin FK: la demo se borra entera y el historial queda en la auditoría
+    target_user_id: uuid("target_user_id").notNull(),
+    target_email: text("target_email").notNull(),
+    target_session_id: uuid("target_session_id").notNull(),
+    started_at: createdAt(),
+    ended_at: timestamp("ended_at", { withTimezone: true }),
+  },
+  (t) => [index("demo_impersonations_user_idx").on(t.faro_user_id, t.started_at)],
+);
+
 // ───────────────────────── Grupos de gastos (núcleo, docs/faro-producto.md §2.e) ─────────────────────────
 // Todos los montos en centavos enteros (bigint, modo number: hasta 9 billones de pesos).
 

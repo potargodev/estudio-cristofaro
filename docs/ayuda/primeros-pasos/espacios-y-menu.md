@@ -3,7 +3,7 @@ titulo: Tus espacios y el menú de Faro
 resumen: Faro te muestra un espacio a la vez (Personal, tu estudio, tu organización o Faro Manager). Cambiás de espacio desde el selector de arriba del menú y la app recuerda el último que usaste.
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: core
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [primeros-pasos/registro, primeros-pasos/primeros-pasos-estudio, bitacora/bitacora]
 ---
 
@@ -17,7 +17,7 @@ Faro junta varias cosas en una sola cuenta: tus finanzas personales, el estudio 
   - **Negocio:** Comercial, con las pestañas Consultas, Agenda y Perfil en la Red.
   - **Configuración** (fija abajo del menú), con las pestañas Equipo y usuarios, Plan y módulos, Conexiones, IA, Rubros y plantillas, Sitio web (si el estudio tiene sitio) y Seguridad. Cada rol ve las que puede usar.
   - La ficha de cada organización tiene las pestañas **Resumen** (datos, rubro, plan, miembros del portal, equipo, gastos y actividad), **Vencimientos**, **Documentos**, **Solicitudes** y **Conexiones**.
-- **Organización:** el portal de la empresa que atiende el estudio. Lo ve cada persona según su rol: **Inicio**, **Vencimientos**, **Documentos**, **Solicitudes** y **Empresa** (con las pestañas Gastos de la empresa, Rendiciones y los módulos activos). **Agendar una llamada** y **Reseñar al estudio** están en la tarjeta del estudio del Inicio, y **Mi equipo**, en el menú de tu cuenta.
+- **Organización:** el portal de la empresa que atiende el estudio. Lo ve cada persona según su rol: **Inicio**, **Vencimientos**, **Documentos**, **Solicitudes** y **Empresa** (con las pestañas Gastos de la empresa, Rendiciones y los módulos activos). **Agendar una llamada** y **Reseñar al estudio** están en la tarjeta del estudio del Inicio, y **Mi equipo**, en el menú de tu cuenta. Si tu rol ve sueldos y la organización tiene el módulo, el Inicio arranca con la tarjeta **Sueldos**: recibos firmados no conformes, recibos sin firmar, recibos en revisión del estudio y novedades de personal abiertas.
 - **Empleado:** **Inicio**, **Rendiciones** y **Grupos**. Nada más.
 - **Faro Manager:** la administración de la plataforma. Solo para el equipo de Faro: **Resumen**, **Tenants** (lista, pedidos de plan y alta manual), **Catálogo** (planes y precios, módulos, plantillas e IA de la plataforma), **Red** y **Plataforma** (auditoría, opiniones de la ayuda, mensajes reportados y uso y costos de IA).
 

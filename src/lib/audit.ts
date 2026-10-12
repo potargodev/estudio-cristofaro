@@ -57,6 +57,12 @@ export async function audit(e: AuditEvent): Promise<void> {
 
 /** Nombres legibles de las acciones para la línea de tiempo */
 export const AUDIT_LABELS: Record<string, string> = {
+  "faro.asistido_iniciar": "Faro empezó un acceso asistido",
+  "faro.asistido_terminar": "Faro terminó un acceso asistido",
+  "demo.cargada": "Cargó la demo",
+  "demo.borrada": "Borró la demo",
+  "demo.ver_como_iniciar": "Empezó a ver la app como un usuario de la demo",
+  "demo.ver_como_terminar": "Dejó de ver la app como un usuario de la demo",
   "factura.borrador": "Preparó un borrador de comprobante",
   "factura.emitida": "Emitió un comprobante en ARCA",
   "factura.enviada": "Envió un comprobante por mail",

@@ -31,3 +31,7 @@ Para mostrar Faro o probarlo sin tocar datos reales, el equipo de Faro puede car
 ## Tus datos no se tocan
 
 La demo vive en espacios propios, marcados como demostración. No ve ni modifica nada de los estudios, organizaciones o personas reales. Cuando el equipo de Faro la borra, se va entera y solo ella. Los usuarios de la demo entran con usuario y contraseña (sin segundo factor), únicamente a su espacio de prueba.
+
+## Ver como… (equipo de Faro)
+
+El owner de Faro puede recorrer la app como cualquier usuario de la demo desde **Faro Manager → Plataforma → Demo → Ver como…**, sin pedir contraseñas. Mientras tanto, arriba de cada pantalla queda la franja **«Viendo como…»** con **Volver a mi usuario**, que lo devuelve a su cuenta en un clic. Solo funciona con usuarios de la demo, dura como máximo dos horas y el inicio y el fin quedan en la auditoría de la plataforma.

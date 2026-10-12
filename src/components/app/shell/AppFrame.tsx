@@ -2,6 +2,8 @@ import { portalBrand, type PortalBrand } from "@/modules/white-label/server";
 import { and, count, eq, gte, inArray, lte, notInArray } from "drizzle-orm";
 import { signOut } from "@/app/admin/actions";
 import { endAssistedAccess } from "@/app/faro-manager/actions";
+import { endViewAsAction } from "@/app/faro-manager/demo-actions";
+import { activeViewAs } from "@/modules/demo/view-as";
 import { portalSignOut, switchOrganization } from "@/app/portal/actions";
 import { GuideHost } from "@/components/app/Guide";
 import { LegalGate } from "@/components/app/LegalGate";
@@ -117,6 +119,7 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
   if (allowed.has("faro")) spaces.push({ key: "faro", label: "Faro Manager", kind: "Plataforma", href: HOME.faro, current: space === "faro", icon: "faro" });
 
   const groups = groupsFor(input);
+  const viewAs = studio?.isDemo ? await activeViewAs().catch(() => null) : null;
   const prefs = await getPrefs(user.id);
   const links = {
     account: user.role === "cliente" ? "/portal/mas" : user.role === "titular" ? "/personal/cuenta" : "/admin/cuenta",
@@ -147,6 +150,8 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
         assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}
         endAssisted={endAssistedAccess}
         demo={!!studio?.isDemo}
+        viewAs={viewAs ? { name: viewAs.name, role: roleLabel, studio: viewAs.studio } : null}
+        endViewAs={endViewAsAction}
         signOut={user.role === "cliente" ? portalSignOut : signOut}
         notices={user.assisted ? undefined : { unread: noticeCount, items: noticeList.map((n) => ({ id: n.id, title: n.title, body: n.body, href: n.href, read: !!n.read_at, at: n.created_at.toISOString() })) }}
         switchOrg={user.role === "cliente" ? switchOrganization : undefined}

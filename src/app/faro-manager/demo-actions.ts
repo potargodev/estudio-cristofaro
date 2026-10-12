@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { requireFaro } from "@/lib/auth";
 import { auditDemo, resetDemo, seedDemo } from "@/modules/demo";
+import { endViewAs, startViewAs, ViewAsError } from "@/modules/demo/view-as";
 
 // Demo de la plataforma (solo faro_owner): cargar o borrar los espacios de
 // demostración. Las contraseñas vuelven una sola vez en la respuesta de la
@@ -36,4 +38,22 @@ export async function resetDemoAction(_: DemoActionState): Promise<DemoActionSta
   await auditDemo(db, "demo.borrada", { id: me.id, label: me.email }, { espacios: before.studios, usuarios: before.users });
   revalidatePath("/faro-manager", "layout");
   return { ok: before.loaded ? `Demo borrada: ${before.studios} espacios y ${before.users} usuarios.` : "No había demo cargada." };
+}
+
+/** «Ver como…»: entra con la sesión de un usuario de la demo (solo faro_owner) */
+export async function viewAsAction(fd: FormData) {
+  const me = await requireFaro(true);
+  let href: string;
+  try {
+    href = await startViewAs(me, String(fd.get("userId") ?? ""));
+  } catch (e) {
+    if (!(e instanceof ViewAsError)) throw e;
+    redirect(`/faro-manager/demo?error=${encodeURIComponent(e.message)}`);
+  }
+  redirect(href);
+}
+
+/** Vuelve al usuario de Faro (un clic desde la franja «Viendo como…») */
+export async function endViewAsAction() {
+  redirect(await endViewAs());
 }

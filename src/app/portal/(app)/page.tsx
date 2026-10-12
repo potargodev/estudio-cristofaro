@@ -1,11 +1,15 @@
 import { FirstSteps } from "@/components/app/FirstSteps";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { ArrowRight, CalendarDays, Download, Star } from "lucide-react";
+import { and, count, eq, inArray } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge, Card, Empty, obligationTone, requestTone } from "@/components/portal/ui";
 import { LeadContact } from "@/components/portal/LeadContact";
+import { getDb } from "@/db";
+import { payslips, requests } from "@/db/schema";
 import { requireMember } from "@/lib/auth";
+import { moduleHref } from "@/lib/modules/catalog";
 import { getOrgStaff } from "@/lib/organizations";
 import { can, canCreateRequests, canSeeRequests } from "@/lib/permissions";
 import { Suspense } from "react";
@@ -23,12 +27,15 @@ export default async function PortalHome() {
     documents: can(me.orgRole, "documentos.ver"),
     requests: canSeeRequests(me.orgRole),
   };
-  const [upcoming, lastDoc, openRequests, staff, month] = await Promise.all([
+  // Sueldos (roles con sueldos.ver y el módulo activo): lo que espera respuesta
+  const payroll = can(me.orgRole, "sueldos.ver") && me.modules.includes("sueldos");
+  const [upcoming, lastDoc, openRequests, staff, month, slips] = await Promise.all([
     show.obligations ? getUpcomingObligations(me) : [],
     show.documents ? getLatestStudioDocument(me) : null,
     show.requests ? getRequests(me, true) : [],
     getOrgStaff(me.organizationId),
     getMonthSummary(me),
+    payroll ? payrollSummary(me.studioId, me.organizationId) : null,
   ]);
   const monthName = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" }).format(
     new Date(),
@@ -65,6 +72,7 @@ export default async function PortalHome() {
 
       <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4">
+          {slips && <PayrollCard s={slips} />}
           {show.obligations && (
             <Card>
               <div className="flex items-center justify-between gap-3">
@@ -193,5 +201,58 @@ export default async function PortalHome() {
         </Link>
       )}
     </>
+  );
+}
+
+async function payrollSummary(studioId: string, organizationId: string) {
+  const db = getDb();
+  const [rows, [news]] = await Promise.all([
+    db
+      .select({ status: payslips.status, n: count() })
+      .from(payslips)
+      .where(and(eq(payslips.studio_id, studioId), eq(payslips.organization_id, organizationId), inArray(payslips.status, ["publicado", "no_conforme", "sin_asignar", "asignado"])))
+      .groupBy(payslips.status),
+    db.select({ n: count() }).from(requests).where(and(eq(requests.studio_id, studioId), eq(requests.organization_id, organizationId), eq(requests.type, "empleado"), inArray(requests.status, ["abierta", "en_curso"]))),
+  ]);
+  const n = (k: string) => rows.find((r) => r.status === k)?.n ?? 0;
+  return { unsigned: n("publicado"), objected: n("no_conforme"), inReview: n("sin_asignar") + n("asignado"), news: news?.n ?? 0 };
+}
+
+/** Sueldos en el inicio: lo pendiente de las personas, con el acceso a cada cosa */
+function PayrollCard({ s }: { s: { unsigned: number; objected: number; inReview: number; news: number } }) {
+  const items = [
+    { n: s.objected, label: s.objected === 1 ? "recibo firmado no conforme" : "recibos firmados no conformes", alert: true },
+    { n: s.unsigned, label: s.unsigned === 1 ? "recibo sin firmar" : "recibos sin firmar", alert: false },
+    { n: s.inReview, label: "recibos en revisión del estudio", alert: false },
+    { n: s.news, label: s.news === 1 ? "novedad de personal abierta" : "novedades de personal abiertas", alert: false },
+  ].filter((i) => i.n > 0);
+  return (
+    <Card>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-semibold">Sueldos</h2>
+        <Link href={moduleHref("sueldos")} className="link-underline text-ui text-rose-deep">
+          Ver sueldos
+        </Link>
+      </div>
+      {items.length === 0 ? (
+        <div className="mt-3">
+          <Empty>Todos los recibos están firmados y no hay novedades abiertas.</Empty>
+        </div>
+      ) : (
+        <ul className="mt-3 divide-y divide-line">
+          {items.map((i) => (
+            <li key={i.label} className="flex items-center gap-3 py-2.5">
+              <span className={i.alert ? "num min-w-8 text-section text-rose-deep" : "num min-w-8 text-section"}>{i.n}</span>
+              <span className="text-ui">{i.label}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {s.news > 0 && (
+        <Link href="/portal/solicitudes" className="mt-2 inline-block text-ui text-muted underline underline-offset-4">
+          Ver las novedades
+        </Link>
+      )}
+    </Card>
   );
 }
