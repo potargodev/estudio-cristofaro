@@ -418,13 +418,19 @@ async function RecentActivity({ studioId }: { studioId: string }) {
     .where(and(eq(audit_log.studio_id, studioId), notInArray(audit_log.action, ["sesion.iniciar", "sesion.rechazada"])))
     .orderBy(desc(audit_log.created_at))
     .limit(24);
-  // Eventos iguales seguidos (misma acción, organización, persona y minuto) van en una sola fila: «2 veces»
-  const minute = (d: Date) => Math.floor(d.getTime() / 60000);
+  // Eventos iguales del mismo minuto (misma acción, organización, persona y resultado) van en una sola
+  // fila con «· N veces», aunque vengan intercalados con otros
   const rows: ((typeof raw)[number] & { times: number })[] = [];
+  const byKey = new Map<string, (typeof rows)[number]>();
   for (const r of raw) {
-    const last = rows[rows.length - 1];
-    if (last && last.action === r.action && last.orgId === r.orgId && last.actor === r.actor && last.result === r.result && minute(last.at) === minute(r.at)) last.times++;
-    else if (rows.length < 8) rows.push({ ...r, times: 1 });
+    const key = [r.action, r.orgId, r.actor, r.result, Math.floor(r.at.getTime() / 60000)].join("|");
+    const same = byKey.get(key);
+    if (same) same.times++;
+    else if (rows.length < 8) {
+      const row = { ...r, times: 1 };
+      rows.push(row);
+      byKey.set(key, row);
+    }
   }
   return (
     <Panel title="Actividad reciente" icon={Activity} bodyClassName="p-0">
