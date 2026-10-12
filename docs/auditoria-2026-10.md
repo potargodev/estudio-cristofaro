@@ -136,12 +136,18 @@ Ninguna se pudo borrar del remoto desde la sesión: el proxy de git rechaza el b
 - **`bitacora-navegador`:** el gasto de la actividad ahora se mueve a la caja de negocio (principios §10). La prueba también crea las categorías antes de cargar la historia.
 - **`lectura-navegador`**, **`empleados-navegador`** y **`flujos-navegador`:** buscan cada elemento sin ambigüedad y esperan el canvas diferido.
 - **`cobros-navegador`:** cierra el acuerdo que inserta a mano.
+- **`flujos-servidor`:** el `tick` espera las corridas que tomó la tarea de flujos del servidor.
 - **`principios-navegador`:** apaga la guía de recorrido de sus usuarios, que se abría sola según el tiempo y tapaba los botones (como ya hacía `capturas.mjs`).
 - **El corredor:** pone la Red antes que Flotas, hace que el owner de Faro sea el admin del seed (como en staging), y mueve WhatsApp al 4090 (el 4080 es de Tango).
 
 ### Resultado de la regresión final
 
-(se completa al terminar la corrida)
+Corrida del 12/10/2026 sobre `main`, con base nueva, simuladores y el servidor de producción:
+
+- **45 pruebas, 1.465 verificaciones, todas en verde**: 38 sin la demo y 7 con la demo cargada (contra 18 pruebas con fallas en la línea de base).
+- **Recorrido:** 134 pantallas × 2 anchos × claro y oscuro = 536 cargas, **0 hallazgos** (desborde, tamaños, controles, contraste, HTTP y JS).
+- **`flujos-servidor`** falló una vez (19 de 20) por una carrera de la prueba: la tarea de flujos del servidor tomó la misma corrida (`skip locked`) y la prueba leyó el estado antes de que terminara. La corrida quedó bien (error sin reintentos). Ahora el `tick` de la prueba espera a las corridas en curso, y la suite pasó 20 de 20 en dos corridas seguidas con las tareas del servidor encendidas.
+- `npm run typecheck`, `npm run lint`, `npm run knip`, `npm test` (98 de 98) y `npm run build`: sin errores ni advertencias.
 
 ## Pendientes de terceros
 
