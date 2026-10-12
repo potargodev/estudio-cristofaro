@@ -9,10 +9,10 @@ import { requireFaro } from "@/lib/auth";
 import { getPlans } from "@/lib/faro/entitlements";
 import { planFullName } from "@/lib/faro/plans";
 import { resolvePlanRequestAction } from "@/app/faro-manager/catalog-actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Pedidos de plan" };
 
-const when = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 /** "Quiero mejorar mi plan": pedidos de los tenants (el cobro llega en la F7) */
 export default async function PedidosPage({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string }> }) {
@@ -51,7 +51,7 @@ export default async function PedidosPage({ searchParams }: { searchParams: Prom
                 </span>
               </p>
               <p className="text-meta text-muted">
-                {when.format(r.created_at)} · {email ?? "—"}
+                {formatDate(r.created_at, "shortTime")} · {email ?? "—"}
                 {r.module_key && ` · por el módulo ${r.module_key}`}
                 {r.message && ` · “${r.message}”`}
               </p>

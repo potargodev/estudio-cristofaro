@@ -6,6 +6,7 @@ import { Feedback } from "@/components/app/Feedback";
 import { importsThisMonth, listImports } from "@/modules/bitacora/imports";
 import { bitacoraPlan } from "@/modules/bitacora/plus";
 import { requireUser } from "@/modules/bitacora/session";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Importar resúmenes" };
 
@@ -59,7 +60,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               <div className="min-w-0">
                 <p className="truncate text-body">{i.fileName}</p>
                 <p className="text-meta text-muted">
-                  {SOURCE[i.source] ?? i.source} · {STATUS[i.status] ?? i.status} · {i.createdAt.toLocaleDateString("es-AR")}
+                  {SOURCE[i.source] ?? i.source} · {STATUS[i.status] ?? i.status} · {formatDate(i.createdAt, "numeric")}
                   {i.status === "importado" && (
                     <>
                       {" "}· <span className="num">{i.imported}</span> cargados{i.duplicates ? <>, <span className="num">{i.duplicates}</span> repetidos</> : null}

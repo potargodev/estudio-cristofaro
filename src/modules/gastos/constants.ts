@@ -54,27 +54,3 @@ export const REIMBURSEMENT_STATUS = {
 } as const;
 
 export const GROUP_COLORS = ["#c9a596", "#a57c6d", "#5b7aa6", "#6f9a7e", "#9b6fa6", "#c26b5a"] as const;
-
-const formatters = new Map<string, Intl.NumberFormat>();
-/** Centavos → "$ 48.000,00" (o "US$ 120,00") */
-export function formatMoney(cents: number, currency = "ARS", opts: { signed?: boolean; compact?: boolean } = {}) {
-  const key = `${currency}-${opts.compact ? 1 : 0}`;
-  let f = formatters.get(key);
-  if (!f) {
-    f = new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency,
-      minimumFractionDigits: opts.compact ? 0 : 2,
-      maximumFractionDigits: opts.compact ? 0 : 2,
-    });
-    formatters.set(key, f);
-  }
-  const s = f.format(Math.abs(cents) / 100).replace(/\s/g, " ");
-  if (!opts.signed) return cents < 0 ? `-${s}` : s;
-  return cents > 0 ? `+${s}` : cents < 0 ? `-${s}` : s;
-}
-
-/** Hoy en Buenos Aires (YYYY-MM-DD) */
-export function todayAR() {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
-}

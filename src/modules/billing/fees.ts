@@ -14,6 +14,7 @@ import { createDraft, getSettings, listPoints, orgIssuer } from "@/modules/arca/
 import { notify } from "@/modules/notifications/server";
 import { dueReminder, feeFor, refOf, reminderTone, type Adjustment } from "./core";
 import { BillingError, createPreference, loadAccount, type MpPayment } from "./mp";
+import { formatDate, formatMoney } from "@/lib/format";
 
 // Cobranza de honorarios del estudio (módulo billing, pestaña Honorarios del
 // grupo Negocio): abonos por organización con ajuste periódico, cargos del
@@ -173,7 +174,6 @@ async function recipients(studioId: string, organizationId: string) {
   return { users: list.map((r) => r.id), emails };
 }
 
-const ars = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 /**
  * Manda el cobro (mail y aviso en el portal) con el link de pago. Lo usan el
@@ -193,11 +193,11 @@ export async function sendCharge(studioId: string, chargeId: string, actor: Acto
   const to = await recipients(studioId, c.organization_id);
   if (!to.emails.length && !to.users.length) throw new BillingError("La organización no tiene a nadie con acceso a pagos ni un mail cargado.");
   const tone = step == null ? "manual" : reminderTone(step);
-  const due = c.due_date.split("-").reverse().join("/");
+  const due = formatDate(c.due_date, "numeric");
   const title = tone === "previo" ? `Vence el ${due}: ${c.concept}` : tone === "vence_hoy" ? `Vence hoy: ${c.concept}` : tone === "vencido" ? `Quedó pendiente: ${c.concept}` : tone === "ultimo_aviso" ? `Último aviso: ${c.concept}` : `${st?.name ?? "Tu estudio"}: ${c.concept}`;
-  const body = `<p>${esc(st?.name ?? "Tu estudio")} te envía el cobro de <strong>${esc(c.concept)}</strong> por <strong>${ars(c.amount)}</strong>, con vencimiento el ${due}.</p>${link ? "<p>Podés pagarlo con Mercado Pago desde el botón.</p>" : "<p>Coordiná el pago con el estudio.</p>"}<p>También lo ves en tu portal, en Empresa → Estado de cuenta.</p>`;
+  const body = `<p>${esc(st?.name ?? "Tu estudio")} te envía el cobro de <strong>${esc(c.concept)}</strong> por <strong>${formatMoney(c.amount)}</strong>, con vencimiento el ${due}.</p>${link ? "<p>Podés pagarlo con Mercado Pago desde el botón.</p>" : "<p>Coordiná el pago con el estudio.</p>"}<p>También lo ves en tu portal, en Empresa → Estado de cuenta.</p>`;
   for (const e of to.emails) await sendMail({ to: e, subject: title, html: mailLayout(title, body, { href: link ?? `${getSiteUrl()}/portal/estado-de-cuenta`, label: link ? "Pagar" : "Ver estado de cuenta" }, st?.name ?? "Faro") });
-  await notify(to.users, { kind: "pago", title, body: `${ars(c.amount)} · vence el ${due}`, href: "/portal/estado-de-cuenta" });
+  await notify(to.users, { kind: "pago", title, body: `${formatMoney(c.amount)} · vence el ${due}`, href: "/portal/estado-de-cuenta" });
   await db().update(fee_charges).set({ reminders_sent: step == null ? c.reminders_sent : [...c.reminders_sent, step], last_reminder_at: new Date() }).where(eq(fee_charges.id, c.id));
   await audit({ studioId, organizationId: c.organization_id, actor, actorLabel: actor ? undefined : "Recordatorio automático", action: "honorarios.enviado", entityType: "cargo", entityId: c.id, metadata: { destinatarios: to.emails.length, paso: step, tono: tone } });
   return { link, sentTo: to.emails.length };
@@ -253,7 +253,7 @@ export async function applyFeePayment(studioId: string, chargeId: string, p: MpP
   await audit({ studioId, organizationId: c.organization_id, actorLabel: "Mercado Pago", action: "honorarios.pagado", entityType: "cargo", entityId: c.id, metadata: { pago: p.id, importe: p.transaction_amount } });
   const staff = await db().select({ id: users.id }).from(users).where(and(eq(users.studioId, studioId), inArray(users.role, ["dueno", "contador"]), eq(users.active, true)));
   const [org] = await db().select({ name: organizations.name }).from(organizations).where(eq(organizations.id, c.organization_id));
-  await notify(staff.map((s) => s.id), { kind: "pago", title: `${org?.name ?? "Una organización"} pagó ${c.concept}`, body: ars(Math.round(p.transaction_amount * 100)), href: "/admin/honorarios?tab=cobros" });
+  await notify(staff.map((s) => s.id), { kind: "pago", title: `${org?.name ?? "Una organización"} pagó ${c.concept}`, body: formatMoney(Math.round(p.transaction_amount * 100)), href: "/admin/honorarios?tab=cobros" });
   return "aplicado";
 }
 

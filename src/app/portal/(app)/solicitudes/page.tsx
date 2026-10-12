@@ -7,13 +7,9 @@ import { requireMember } from "@/lib/auth";
 import { canCreateRequests, canSeeRequests } from "@/lib/permissions";
 import { getRequests } from "@/lib/portal-data";
 import { REQUEST_STATUS, REQUEST_TYPES } from "@/lib/portal-types";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Solicitudes" };
-
-const dateFmt = new Intl.DateTimeFormat("es-AR", {
-  day: "numeric",
-  month: "short",
-});
 
 export default async function SolicitudesPage() {
   const me = await requireMember();
@@ -41,7 +37,7 @@ export default async function SolicitudesPage() {
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{r.subject}</span>
                   <span className="block text-ui text-muted">
-                    {REQUEST_TYPES[r.type]} · {dateFmt.format(r.updated_at)}
+                    {REQUEST_TYPES[r.type]} · {formatDate(r.updated_at, "short")}
                   </span>
                 </span>
                 <Badge tone={requestTone(r.status)}>{REQUEST_STATUS[r.status]}</Badge>

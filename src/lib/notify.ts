@@ -6,6 +6,7 @@ import { can, type Permission } from "./permissions";
 import { esc, sendMail } from "./email";
 import { getSiteUrl } from "./runtime-config";
 import { site } from "./site";
+import { formatDate } from "@/lib/format";
 
 // Avisos por mail del portal. Si el SMTP no está configurado no se envía nada
 // (sendMail no hace nada) y la acción sigue igual.
@@ -67,7 +68,7 @@ export async function notifyOrganization(studioId: string, organizationId: strin
         studioId,
         organizationId,
         event.kind,
-        event.kind === "respuesta" ? event.subject : event.kind === "documento" ? `el estudio subió «${event.documentName}» a tu portal.` : event.items.length === 1 ? `cargamos ${event.items[0].tax} ${event.items[0].period}, que vence el ${event.items[0].dueDate.split("-").reverse().join("/")}.` : `cargamos ${event.items.length} vencimientos nuevos en tu portal.`,
+        event.kind === "respuesta" ? event.subject : event.kind === "documento" ? `el estudio subió «${event.documentName}» a tu portal.` : event.items.length === 1 ? `cargamos ${event.items[0].tax} ${event.items[0].period}, que vence el ${formatDate(event.items[0].dueDate, "numeric")}.` : `cargamos ${event.items.length} vencimientos nuevos en tu portal.`,
       ),
     )
     .catch((e) => console.error("[notify] WhatsApp", (e as Error).message));
@@ -86,7 +87,7 @@ export async function notifyOrganization(studioId: string, organizationId: strin
       });
     } else if (event.kind === "vencimientos") {
       const list = event.items
-        .map((i) => `<li>${esc(i.tax)} · ${esc(i.period)} · vence el ${esc(i.dueDate.split("-").reverse().join("/"))}</li>`)
+        .map((i) => `<li>${esc(i.tax)} · ${esc(i.period)} · vence el ${esc(formatDate(i.dueDate, "numeric"))}</li>`)
         .join("");
       await sendMail({
         to,

@@ -3,7 +3,8 @@ import { markStep } from "@/modules/onboarding/server";
 import { Badge, Empty, PageTitle, obligationTone } from "@/components/portal/ui";
 import { requireMember } from "@/lib/auth";
 import { getObligations } from "@/lib/portal-data";
-import { OBLIGATION_STATUS, dateLabel, moneyLabel, periodLabel, todayISO } from "@/lib/portal-types";
+import { OBLIGATION_STATUS, periodLabel } from "@/lib/portal-types";
+import { formatAmountOrDash, formatDate, todayAR } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Vencimientos y pagos" };
 
@@ -25,7 +26,7 @@ export default async function VencimientosPage() {
   const me = await requireMember("vencimientos.ver");
   await markStep("vencimientos_vistos").catch(() => undefined);
   const rows = await getObligations(me);
-  const today = todayISO();
+  const today = todayAR();
   const pending = rows.filter((r) => r.status !== "pagado" && r.status !== "presentado").reverse();
   const done = rows.filter((r) => r.status === "pagado" || r.status === "presentado");
 
@@ -54,8 +55,8 @@ export default async function VencimientosPage() {
                     </div>
                     <div className="mt-3 flex items-end justify-between gap-3">
                       <div className="text-ui">
-                        <p className="text-muted">Vence el {dateLabel(o.due_date)}</p>
-                        <p className="text-lead font-semibold tabular-nums">{moneyLabel(o.amount)}</p>
+                        <p className="text-muted">Vence el {formatDate(o.due_date, "numeric")}</p>
+                        <p className="text-lead font-semibold tabular-nums">{formatAmountOrDash(o.amount)}</p>
                       </div>
                       <PayLink url={o.payment_url} />
                     </div>
@@ -82,8 +83,8 @@ export default async function VencimientosPage() {
                       <tr key={o.id}>
                         <td className="px-4 py-3 font-medium">{o.tax}</td>
                         <td className="px-4 py-3">{periodLabel(o.period)}</td>
-                        <td className="px-4 py-3 tabular-nums">{dateLabel(o.due_date)}</td>
-                        <td className="px-4 py-3 text-right tabular-nums">{moneyLabel(o.amount)}</td>
+                        <td className="px-4 py-3 tabular-nums">{formatDate(o.due_date, "numeric")}</td>
+                        <td className="px-4 py-3 text-right tabular-nums">{formatAmountOrDash(o.amount)}</td>
                         <td className="px-4 py-3">
                           <Badge tone={obligationTone(o.status, o.due_date, today)}>{OBLIGATION_STATUS[o.status]}</Badge>
                         </td>

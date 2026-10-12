@@ -1,11 +1,12 @@
 import "server-only";
 import { z } from "zod/v4";
-import { formatMoney, todayAR, CURRENCIES } from "@/modules/gastos/constants";
+import { CURRENCIES } from "@/modules/gastos/constants";
 import { splitExpense, SplitError } from "@/modules/gastos/core/split";
 import type { GastosActor } from "@/modules/gastos/server/actor";
 import { GastosError, createExpense, getGroupView, listGroups, recordSettlement, type GroupSummary } from "@/modules/gastos/server/service";
 import { defineTool, ToolError, type HandlerContext } from "../types";
 import { uuid } from "./helpers";
+import { formatMoney, todayAR } from "@/lib/format";
 
 // Grupos de gastos para el Asistente y MCP. Operan como la persona que
 // pregunta (solo sus grupos). Crear y consultar no piden aprobación; un pago

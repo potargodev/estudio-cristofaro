@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { assisted_access, tenant_modules, studios, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { ASSISTED_COOKIE, getCurrentUser, requireFaro } from "@/lib/auth";
+import { ASSISTED_COOKIE, getSessionUser, requireFaro } from "@/lib/auth";
 import { esc, sendMail } from "@/lib/email";
 import { isFaroModuleKey } from "@/lib/faro/modules";
 import { getPlan, type TenantKind } from "@/lib/faro/plans";
@@ -154,7 +154,7 @@ export async function startAssistedAccess(fd: FormData) {
 }
 
 export async function endAssistedAccess() {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   const jar = await cookies();
   const id = jar.get(ASSISTED_COOKIE)?.value;
   jar.delete(ASSISTED_COOKIE);

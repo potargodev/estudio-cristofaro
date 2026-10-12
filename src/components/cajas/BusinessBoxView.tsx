@@ -5,14 +5,14 @@ import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import { addBusinessEntryAction, contributeAction, deleteBoxEntryAction, paySalaryAction, setSalaryAction } from "@/app/cajas/actions";
 import { cn } from "@/lib/utils";
-import { money, monthLabel, prevMonth } from "@/modules/bitacora/catalog";
+import { prevMonth } from "@/modules/bitacora/catalog";
 import { BUSINESS_CATEGORIES, categoryName, SALARY_FREQUENCIES, TRANSFER_KINDS } from "@/modules/cajas/catalog";
 import { boxEntries, businessSummary, salaryOf, salarySuggestion, type Box } from "@/modules/cajas/server";
-import { todayAR } from "@/modules/gastos/constants";
 import { CHANGA_CONTEXT, NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { grayZone } from "@/modules/escudo/server";
 import { Derivaciones } from "@/components/escudo/Derivaciones";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney, formatNumber, formatPeriod, todayAR } from "@/lib/format";
 
 const field = `mt-1 ${fieldClass}`;
 const lbl = "block text-meta text-muted";
@@ -21,8 +21,6 @@ const nextMonth = (m: string) => {
   const [y, mm] = m.split("-").map(Number);
   return mm === 12 ? `${y + 1}-01` : `${y}-${String(mm + 1).padStart(2, "0")}`;
 };
-const day = (iso: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
-const amountText = (c: number) => (c / 100).toLocaleString("es-AR", { maximumFractionDigits: 2 });
 
 type Me = { id: string; name: string; email: string; studioId: string; role: string; tenantKind: string };
 
@@ -51,7 +49,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
             <Eye className="size-5 text-rose-deep" aria-hidden /> Esto ya es una actividad
           </h2>
           <p className="mt-1 text-ui text-ink">
-            Según lo que registraste, en los últimos 12 meses cobraste <span className="num font-medium">{money(gray.total)}</span> sin facturar, en {gray.months} {gray.months === 1 ? "mes" : "meses"}. No es un juicio: es la foto de lo que cargaste.
+            Según lo que registraste, en los últimos 12 meses cobraste <span className="num font-medium">{formatMoney(gray.total, "ARS", { decimals: "auto" })}</span> sin facturar, en {gray.months} {gray.months === 1 ? "mes" : "meses"}. No es un juicio: es la foto de lo que cargaste.
           </p>
           <p className="mt-2 text-meta text-muted">{CHANGA_CONTEXT}</p>
           <p className="mt-2 text-meta text-muted">
@@ -68,7 +66,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
         <Link href={`/cajas/${box.id}?mes=${prevMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-ui">
           <ChevronLeft className="size-4" aria-hidden /> <span className="sr-only sm:not-sr-only">Anterior</span>
         </Link>
-        <p className="text-lead font-medium capitalize text-ink">{monthLabel(month)}</p>
+        <p className="text-lead font-medium capitalize text-ink">{formatPeriod(month)}</p>
         <Link href={`/cajas/${box.id}?mes=${nextMonth(month)}`} className="inline-flex h-10 items-center gap-1 rounded-md border border-line px-3 text-ui">
           <span className="sr-only sm:not-sr-only">Siguiente</span> <ChevronRight className="size-4" aria-hidden />
         </Link>
@@ -83,15 +81,15 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
         ].map(([k, v]) => (
           <div key={k as string} className="min-w-0 rounded-md border border-line bg-surface p-3">
             <dt className="text-meta text-muted">{k}</dt>
-            <dd className={cn("num mt-1 truncate text-title sm:text-section", (v as number) < 0 ? "text-danger" : "text-ink")}>{money(v as number)}</dd>
+            <dd className={cn("num mt-1 truncate text-title sm:text-section", (v as number) < 0 ? "text-danger" : "text-ink")}>{formatMoney(v as number, "ARS", { decimals: "auto" })}</dd>
           </div>
         ))}
       </dl>
       <p className="-mt-3 text-meta text-muted">
-        Sueldo del dueño este mes: <span className="num">{money(s.salary)}</span> · aportes: <span className="num">{money(s.contributions)}</span>
+        Sueldo del dueño este mes: <span className="num">{formatMoney(s.salary, "ARS", { decimals: "auto" })}</span> · aportes: <span className="num">{formatMoney(s.contributions, "ARS", { decimals: "auto" })}</span>
         {s.uninvoiced > 0 && (
           <>
-            {" "}· sin facturar: <span className="num">{money(s.uninvoiced)}</span>
+            {" "}· sin facturar: <span className="num">{formatMoney(s.uninvoiced, "ARS", { decimals: "auto" })}</span>
           </>
         )}
       </p>
@@ -149,7 +147,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
 
       <section aria-labelledby="movs" className="rounded-lg border border-line bg-surface">
         <h2 id="movs" className="px-5 pt-4 text-lead font-semibold">
-          Movimientos de {monthLabel(month)}
+          Movimientos de {formatPeriod(month)}
         </h2>
         {list.length === 0 ? (
           <p className="px-5 pb-5 pt-2 text-ui text-muted">Todavía nada este mes.</p>
@@ -164,14 +162,14 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-body text-ink">{e.description}</span>
                     <span className="block text-meta text-muted">
-                      {day(e.date)} · {transfer ? TRANSFER_KINDS[e.kind as "retiro" | "aporte"] : categoryName("negocio", null, e.category)}
+                      {formatDate(e.date, "short")} · {transfer ? TRANSFER_KINDS[e.kind as "retiro" | "aporte"] : categoryName("negocio", null, e.category)}
                       {e.kind === "ingreso" && !e.invoiced ? " · sin facturar" : ""}
                       {e.source === "bitacora" ? " · movido de lo personal" : ""}
                     </span>
                   </span>
                   <span className={cn("num shrink-0 text-body", e.kind === "ingreso" || e.kind === "aporte" ? "text-[#2f7a4c]" : "text-ink")}>
                     {e.kind === "ingreso" || e.kind === "aporte" ? "+" : "−"}
-                    {money(e.amount, e.currency)}
+                    {formatMoney(e.amount, e.currency, { decimals: "auto" })}
                   </span>
                   <form action={deleteBoxEntryAction}>
                     {hidden}
@@ -196,8 +194,8 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
           {suggestion && (
             <p data-sugerencia className="mt-3 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-ui text-ink">
               {suggestion.average > 0
-                ? `Según lo que cargaste, el negocio dejó en promedio ${money(suggestion.average)} por mes en los últimos meses. Un sueldo de ${money(suggestion.suggestion)} deja un 30 % en la caja.`
-                : `Según lo que cargaste, el negocio no dejó resultado positivo en los últimos meses (promedio ${money(suggestion.average)}).`}{" "}
+                ? `Según lo que cargaste, el negocio dejó en promedio ${formatMoney(suggestion.average, "ARS", { decimals: "auto" })} por mes en los últimos meses. Un sueldo de ${formatMoney(suggestion.suggestion, "ARS", { decimals: "auto" })} deja un 30 % en la caja.`
+                : `Según lo que cargaste, el negocio no dejó resultado positivo en los últimos meses (promedio ${formatMoney(suggestion.average, "ARS", { decimals: "auto" })}).`}{" "}
               Es un dato, no una recomendación. {NO_REEMPLAZA}
             </p>
           )}
@@ -205,7 +203,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
             {hidden}
             <label>
               <span className={lbl}>Monto</span>
-              <input name="amount" inputMode="decimal" required defaultValue={salary ? amountText(salary.amount) : suggestion?.suggestion ? amountText(suggestion.suggestion) : ""} className={field} />
+              <input name="amount" inputMode="decimal" required defaultValue={salary ? formatNumber(salary.amount / 100, 2) : suggestion?.suggestion ? formatNumber(suggestion.suggestion / 100, 2) : ""} className={field} />
             </label>
             <label>
               <span className={lbl}>Frecuencia</span>
@@ -234,7 +232,7 @@ export async function BusinessBoxView({ me, box, month, sp }: { me: Me; box: Box
             {hidden}
             <label>
               <span className={lbl}>Pagarte ahora</span>
-              <input name="amount" inputMode="decimal" required defaultValue={salary ? amountText(salary.amount) : ""} className={cn(field, "w-40")} />
+              <input name="amount" inputMode="decimal" required defaultValue={salary ? formatNumber(salary.amount / 100, 2) : ""} className={cn(field, "w-40")} />
             </label>
             <SubmitButton pendingText="…">
               <span className="inline-flex items-center gap-1.5">

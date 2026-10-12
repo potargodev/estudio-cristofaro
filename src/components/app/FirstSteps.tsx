@@ -1,6 +1,6 @@
 import { ListChecks } from "lucide-react";
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { getPrefs } from "@/lib/prefs";
 import { cn } from "@/lib/utils";
 import { getGuide } from "@/modules/onboarding/server";
@@ -14,7 +14,7 @@ export async function FirstSteps({ className, path }: { className?: string; path
   const g = await getGuide(undefined, path);
   if (!g || g.disabled) return null;
   // El del Inicio se puede cerrar (el de una Flota, no: es de ese espacio)
-  const me = path ? null : await getCurrentUser();
+  const me = path ? null : await getSessionUser();
   if (me && (await getPrefs(me.id)).hideFirstSteps) return null;
   const done = g.steps.filter((s) => s.done).length;
   const left = g.steps.length - done;

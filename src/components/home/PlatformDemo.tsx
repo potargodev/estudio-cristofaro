@@ -8,8 +8,8 @@ import { Container, SectionIndex } from "@/components/web/ui";
 import { DEMO } from "@/lib/home";
 import { PLATFORM_TABS, type PlatformTabKey } from "@/lib/platform";
 import { cn } from "@/lib/utils";
+import { formatAmount } from "@/lib/format";
 
-const money = (n: number) => "$" + new Intl.NumberFormat("es-AR").format(n);
 
 type Tone = "ok" | "warn" | "due" | "info";
 const chip: Record<Tone, string> = {
@@ -79,7 +79,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
         <div className="grid gap-px bg-hair sm:grid-cols-3">
           {[
             ["Resuelto", "8/10", "2 tareas en curso"],
-            ["A pagar en octubre", money(DEMO.toPay), "3 pagos pendientes"],
+            ["A pagar en octubre", formatAmount(DEMO.toPay, "ARS", { decimals: "none" }), "3 pagos pendientes"],
             ["Próximo vencimiento", "20/10", "IVA septiembre"],
           ].map(([k, v, d]) => (
             <div key={k} className="bg-night p-4">
@@ -137,7 +137,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
             ["F.931 septiembre", "09/10", "$328.800", "Pagado", "ok"],
             ["Ganancias anticipo 5", "13/10", "$214.900", "Pagado", "ok"],
             ["Ingresos Brutos CABA", "16/10", "$98.420", "Pagado", "ok"],
-            ["IVA septiembre", "20/10", money(DEMO.ivaAmount), "Vence en 3 días", "due"],
+            ["IVA septiembre", "20/10", formatAmount(DEMO.ivaAmount, "ARS", { decimals: "none" }), "Vence en 3 días", "due"],
             ["Sindicato (FAECYS)", "15/11", "$41.300", "Programado", "info"],
             ["Bienes Personales socios", "18/11", "$156.700", "Programado", "info"],
           ] as [string, string, string, string, Tone][]
@@ -153,7 +153,7 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
         ))}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border border-rose-light/40 bg-rose-light/[0.06] px-4 py-3">
           <span>
-            <span className="block text-paper">IVA septiembre · {money(DEMO.ivaAmount)}</span>
+            <span className="block text-paper">IVA septiembre · {formatAmount(DEMO.ivaAmount, "ARS", { decimals: "none" })}</span>
             <span className="block text-caption text-paper/60">Te avisamos en la app y por mail el 17/10</span>
           </span>
           <span className="bg-rose-light px-3 py-1.5 text-caption font-medium text-night">Ver cómo pagar</span>

@@ -52,8 +52,8 @@ export function formatAmountOrDash(value: string | number | null | undefined, cu
 /** Dólares con hasta `max` decimales (costos de IA): "US$ 0,0042" */
 export const formatUsd = (n: number, max = 2) => `US$ ${numberFormat(2, Math.max(2, max)).format(n)}`;
 
-/** Número entero o con decimales: "1.234" · "12,5" */
-export const formatNumber = (n: number, maxDecimals = 0) => numberFormat(0, maxDecimals).format(n);
+/** Número entero o con decimales: "1.234" · "12,5" (`minDecimals` fija decimales, p. ej. 2 para "12,50") */
+export const formatNumber = (n: number, maxDecimals = 0, minDecimals = 0) => numberFormat(minDecimals, Math.max(minDecimals, maxDecimals)).format(n);
 
 // ───────────── Fechas ─────────────
 
@@ -70,12 +70,26 @@ const DATE_STYLES = {
   dateTime: { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" },
   /** 12 oct, 14:30 */
   shortTime: { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" },
+  /** 12/10/2026, 14:30 (registros y constancias) */
+  numericTime: { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" },
+  /** 12/10/2026, 14:30:05 (registros técnicos, firmas) */
+  timestamp: { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" },
   /** 14:30 */
   time: { hour: "2-digit", minute: "2-digit", hourCycle: "h23" },
   /** lunes 12 de octubre */
   weekday: { weekday: "long", day: "numeric", month: "long" },
+  /** lunes 12 de octubre, 14:30 */
+  weekdayTime: { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", hourCycle: "h23" },
+  /** lun 12 oct */
+  weekdayShort: { weekday: "short", day: "numeric", month: "short" },
+  /** lunes */
+  weekdayName: { weekday: "long" },
+  /** lunes, 12 de octubre de 2026 */
+  full: { weekday: "long", day: "numeric", month: "long", year: "numeric" },
   /** octubre de 2026 */
   month: { month: "long", year: "numeric" },
+  /** octubre */
+  monthName: { month: "long" },
 } satisfies Record<string, Intl.DateTimeFormatOptions>;
 
 export type DateStyle = keyof typeof DATE_STYLES;
@@ -97,3 +111,9 @@ export function formatDate(value: Date | string | number | null | undefined, sty
 
 /** Hoy en Buenos Aires (YYYY-MM-DD) */
 export const todayAR = () => new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date());
+
+/** Período "2026-09" → "septiembre 2026"; si no tiene esa forma, lo devuelve como vino */
+export function formatPeriod(period: string): string {
+  const m = /^(\d{4})-(\d{2})$/.exec(period);
+  return m ? `${formatDate(`${period}-01`, "monthName")} ${m[1]}` : period;
+}

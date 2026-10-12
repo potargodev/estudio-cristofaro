@@ -16,7 +16,8 @@ import { Suspense } from "react";
 import { MonthCard, Ring, SplitBar, TimelineSection } from "@/components/portal/Dashboard";
 import { ListSkeleton } from "@/components/ui/skeleton-blocks";
 import { getLatestStudioDocument, getMonthSummary, getRequests, getUpcomingObligations } from "@/lib/portal-data";
-import { OBLIGATION_STATUS, REQUEST_STATUS, REQUEST_TYPES, categoryLabel, dateLabel, moneyLabel, periodLabel, todayISO } from "@/lib/portal-types";
+import { OBLIGATION_STATUS, REQUEST_STATUS, REQUEST_TYPES, categoryLabel, periodLabel } from "@/lib/portal-types";
+import { formatAmountOrDash, formatDate, todayAR } from "@/lib/format";
 
 export default async function PortalHome() {
   const me = await requireMember();
@@ -37,11 +38,9 @@ export default async function PortalHome() {
     getMonthSummary(me),
     payroll ? payrollSummary(me.studioId, me.organizationId) : null,
   ]);
-  const monthName = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" }).format(
-    new Date(),
-  );
+  const monthName = formatDate(new Date(), "month");
   const lead = staff.find((t) => t.assignment === "responsable") ?? null;
-  const today = todayISO();
+  const today = todayAR();
   const canReview = me.orgRole === "administrador" || me.orgRole === "direccion";
   // Saluda por el nombre solo si el usuario tiene uno propio (no la razón social)
   const first = me.name && me.name !== me.organizationName ? me.name.split(" ")[0] : "";
@@ -92,11 +91,11 @@ export default async function PortalHome() {
                       <div className="min-w-0">
                         <p className="font-medium">{o.tax}</p>
                         <p className="text-ui text-muted">
-                          {periodLabel(o.period)} · vence el {dateLabel(o.due_date)}
+                          {periodLabel(o.period)} · vence el {formatDate(o.due_date, "numeric")}
                         </p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <p className="font-medium tabular-nums">{moneyLabel(o.amount)}</p>
+                        <p className="font-medium tabular-nums">{formatAmountOrDash(o.amount)}</p>
                         <Badge tone={obligationTone(o.status, o.due_date, today)}>{OBLIGATION_STATUS[o.status]}</Badge>
                       </div>
                     </li>

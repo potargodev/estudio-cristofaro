@@ -2,12 +2,12 @@ import { EmpresaHeader } from "@/components/portal/EmpresaTabs";
 import type { Metadata } from "next";
 import { Card, Empty, PageTitle } from "@/components/portal/ui";
 import { requireMember } from "@/lib/auth";
-import { categoryName, formatMoney } from "@/modules/gastos/constants";
+import { categoryName } from "@/modules/gastos/constants";
 import { orgExpenses } from "@/modules/gastos/server/reimbursements";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Gastos de la empresa" };
 
-const day = (d: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
 export default async function GastosEmpresaPage() {
   const me = await requireMember("finanzas.ver");
@@ -36,7 +36,7 @@ export default async function GastosEmpresaPage() {
                 <div className="min-w-0">
                   <p className="font-medium">{r.description}</p>
                   <p className="text-ui text-muted">
-                    {day(r.date)} · {categoryName(r.category)} · {r.source === "rendicion" ? "Rendición" : "Gasto compartido"}
+                    {formatDate(r.date)} · {categoryName(r.category)} · {r.source === "rendicion" ? "Rendición" : "Gasto compartido"}
                     {r.deductible && " · deducible"}
                     {r.receipt_path && (
                       <>

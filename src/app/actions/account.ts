@@ -5,14 +5,14 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { esc, sendMail } from "@/lib/email";
 import { mailLayout } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
 
 /** Pedido de baja de la cuenta: queda en la auditoría y le llega al equipo de Faro, que la cierra después de ofrecer la exportación */
 export async function requestAccountClosureAction(fd: FormData) {
-  const me = await getCurrentUser();
+  const me = await getSessionUser();
   if (!me || me.assisted) redirect("/ingresar");
   const back = me.role === "titular" ? "/personal/cuenta" : "/admin/cuenta";
   if (fd.get("confirm") !== "on") redirect(`${back}?baja=error`);

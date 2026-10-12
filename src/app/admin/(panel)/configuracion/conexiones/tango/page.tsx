@@ -15,11 +15,11 @@ import { requireModule } from "@/lib/faro/require-module";
 import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { MAPPING_LABELS, getMapping, type TangoMapping } from "@/lib/integrations/tango/mapping";
 import { getSiteUrl } from "@/lib/runtime-config";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Tango · Conexiones" };
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-const when = (d: Date | null) => (d ? fmt.format(d) : "Nunca");
+const when = (d: Date | null) => (d ? formatDate(d, "shortTime") : "Nunca");
 
 /** Estado de la conexión según el último contacto del conector */
 function connectionState(lastSeen: Date | null, status: string) {
@@ -193,7 +193,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
                   <tbody className="divide-y divide-line">
                     {syncs.map((x) => (
                       <tr key={x.id}>
-                        <td className="whitespace-nowrap px-3 py-2">{fmt.format(x.started_at)}</td>
+                        <td className="whitespace-nowrap px-3 py-2">{formatDate(x.started_at, "shortTime")}</td>
                         <td className="px-3 py-2">{x.kind === "test" ? "Prueba" : "Sincronización"}</td>
                         <td className="px-3 py-2">
                           <Badge tone={x.status === "ok" ? "ok" : x.status === "error" ? "danger" : "neutral"}>

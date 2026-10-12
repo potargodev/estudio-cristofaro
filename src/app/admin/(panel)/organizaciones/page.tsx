@@ -16,12 +16,12 @@ import { studioConnections } from "@/modules/conexiones/server";
 import { getModule } from "@/lib/modules/catalog";
 import { awaitingApproval, getLeadsFor } from "@/lib/organizations";
 import { ORGANIZATION_STATUSES, formatCuit } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Organizaciones" };
 
 const DAY = 86400000;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
-const shortDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" });
 
 function ago(d: Date | null, now: Date) {
   if (!d) return "Sin actividad";
@@ -231,7 +231,7 @@ export default async function OrganizacionesPage({ searchParams }: { searchParam
     const dueCell = soon || late ? (
       <Link href={`/admin/vencimientos?org=${org.id}`} className="tabular block text-ui underline-offset-4 hover:underline">
         <span className={late ? "font-medium text-[#8f2a1c]" : "text-ink"}>{soon + late}</span>
-        <span className="ml-1.5 text-caption text-muted">{due?.next ? `próx. ${shortDate.format(new Date(`${due.next}T00:00:00Z`))}` : "vencidos"}</span>
+        <span className="ml-1.5 text-caption text-muted">{due?.next ? `próx. ${formatDate(due.next, "short")}` : "vencidos"}</span>
       </Link>
     ) : (
       <span className="text-meta text-muted">—</span>

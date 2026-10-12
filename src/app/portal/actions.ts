@@ -10,7 +10,7 @@ import { isTopic } from "@/modules/ai-consults/core";
 import { openConsult } from "@/modules/ai-consults/server";
 import { getDb } from "@/db";
 import { documents, request_messages, requests } from "@/db/schema";
-import { ORG_COOKIE, getCurrentUser, getMemberships, requireMember } from "@/lib/auth";
+import { ORG_COOKIE, getSessionUser, getMemberships, requireMember } from "@/lib/auth";
 import { audit } from "@/lib/audit";
 import { AUTH_ERRORS, getAuth, googleEnabled, googleSignInUrl, type AuthErrorCode } from "@/lib/auth-server";
 import { isUuid } from "@/lib/ids";
@@ -90,7 +90,7 @@ const CLIENT_CATEGORIES = ["comprobantes", "recibos", "constancias", "otro"];
 
 /** Cambia la organización activa (solo a una donde el usuario es miembro activo) */
 export async function switchOrganization(fd: FormData) {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user) redirect("/portal/login");
   const wanted = s(fd, "organization_id");
   const list = await getMemberships(user.id, user.studioId);

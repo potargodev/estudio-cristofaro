@@ -16,20 +16,19 @@ import { getAiSettings, getProviders, monthSpend } from "@/lib/ai/models";
 import { priceFor } from "@/lib/ai/pricing";
 import { requireTenantOwner } from "@/lib/auth";
 import { encryptionEnabled } from "@/lib/crypto";
+import { formatDate, formatNumber, formatUsd } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Configuración de IA" };
 
 const ERRORS: Record<string, string> = {
   cifrado: "Falta ENCRYPTION_KEY en el servidor: sin ella no se pueden guardar claves de forma segura.",
   proveedor: "Ese proveedor no existe.",
-  url: "Revisá la URL base (tiene que empezar con http:// o https://).",
+  url: "Revisá la URL base: tiene que ser una dirección pública que empiece con https://.",
   clave: "Falta la clave de API.",
   azure: "Para Azure OpenAI completá el nombre del recurso o una URL base.",
   presupuesto: "Revisá el límite de gasto (un número en dólares).",
 };
 
-const fmtDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
-const usd = (n: number) => `US$ ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: n < 1 ? 4 : 2 })}`;
 
 export default async function IaConfigPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
@@ -97,7 +96,7 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
                           <XCircle className="size-4 text-danger" strokeWidth={1.5} aria-hidden />
                         )}
                         <span className={p.last_test_ok === false ? "text-danger" : "text-muted"}>
-                          {p.last_test_at ? `${p.last_test_message} (${fmtDate.format(p.last_test_at)})` : "Sin probar"}
+                          {p.last_test_at ? `${p.last_test_message} (${formatDate(p.last_test_at, "shortTime")})` : "Sin probar"}
                         </span>
                       </p>
                     </div>
@@ -175,9 +174,9 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-meta text-muted">Gasto estimado este mes</p>
-              <p className="num text-[36px] leading-none text-ink">{usd(spend.usd)}</p>
+              <p className="num text-[36px] leading-none text-ink">{formatUsd(spend.usd, spend.usd < 1 ? 4 : 2)}</p>
               <p className="mt-1 text-meta text-muted">
-                {spend.tokens.toLocaleString("es-AR")} tokens{budget ? ` · límite ${usd(budget)}` : " · sin límite"}
+                {formatNumber(spend.tokens)} tokens{budget ? ` · límite ${formatUsd(budget, budget < 1 ? 4 : 2)}` : " · sin límite"}
               </p>
             </div>
             {pct !== null && (
@@ -215,9 +214,9 @@ export default async function IaConfigPage({ searchParams }: { searchParams: Pro
                         {r.model} <span className="text-muted">· {PROVIDERS[r.kind as keyof typeof PROVIDERS]?.label ?? r.kind}</span>
                       </td>
                       <td className="py-2 text-right">{r.calls}</td>
-                      <td className="py-2 text-right">{r.input.toLocaleString("es-AR")}</td>
-                      <td className="py-2 text-right">{r.output.toLocaleString("es-AR")}</td>
-                      <td className="py-2 text-right">{priceFor(r.model) ? usd(Number(r.cost)) : "Sin precio"}</td>
+                      <td className="py-2 text-right">{formatNumber(r.input)}</td>
+                      <td className="py-2 text-right">{formatNumber(r.output)}</td>
+                      <td className="py-2 text-right">{priceFor(r.model) ? formatUsd(Number(r.cost), Number(r.cost) < 1 ? 4 : 2) : "Sin precio"}</td>
                     </tr>
                   ))
                 )}

@@ -1,4 +1,5 @@
 import type { documents, obligationStatus, requestStatus, requestType } from "@/db/schema";
+import { formatPeriod } from "@/lib/format";
 
 export type ObligationStatus = (typeof obligationStatus.enumValues)[number];
 export type RequestType = (typeof requestType.enumValues)[number];
@@ -41,27 +42,7 @@ export function categoryLabel(c: string | null) {
   return c ? (DOCUMENT_CATEGORIES[c] ?? c) : "Sin categoría";
 }
 
-const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-
 /** "2026-09" → "septiembre 2026"; otros formatos se muestran como vienen */
 export function periodLabel(p: string | null) {
-  if (!p) return "Sin período";
-  const m = /^(\d{4})-(\d{2})$/.exec(p);
-  return m ? `${MONTHS[Number(m[2]) - 1]} ${m[1]}` : p;
-}
-
-/** "2026-10-15" → "15/10/2026" */
-export function dateLabel(d: string | null) {
-  return d ? d.split("-").reverse().join("/") : "";
-}
-
-const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 2 });
-
-export function moneyLabel(n: string | number | null) {
-  return n == null || n === "" ? "—" : money.format(Number(n));
-}
-
-export function todayISO() {
-  // Fecha local de Argentina para comparar vencimientos
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+  return p ? formatPeriod(p) : "Sin período";
 }

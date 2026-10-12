@@ -11,9 +11,9 @@ import { getDb } from "@/db";
 import { box_entries, copilot_messages, copilot_proposals, copilot_reminders, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { getPrefs } from "@/lib/prefs";
-import { money, monthOf } from "@/modules/bitacora/catalog";
+import { monthOf } from "@/modules/bitacora/catalog";
 import { BitacoraError, categoryByHint, createEntry, deleteEntry, listCategories, restoreEntry, spentInCategory, updateEntry } from "@/modules/bitacora/server";
-import { CATEGORIES, formatMoney, todayAR } from "@/modules/gastos/constants";
+import { CATEGORIES } from "@/modules/gastos/constants";
 import { splitExpense, SplitError } from "@/modules/gastos/core/split";
 import type { GastosActor } from "@/modules/gastos/server/actor";
 import { archiveGroup, createExpense, createGroup, deleteExpense, GastosError, getGroupView, inviteMember, listGroups } from "@/modules/gastos/server/service";
@@ -22,6 +22,7 @@ import { readCopilotFile } from "./files";
 import { checkQuota, recordAlert, type Quota } from "./limits";
 import { costUsd, getPlatformAi, isConfigured, platformModel, transcribeAudio } from "./platform";
 import { consultarBitacora, consultarSaldos, isProposalTool, PROPOSAL_TOOLS, type ProposalTool } from "./tools";
+import { formatDate, formatMoney, todayAR } from "@/lib/format";
 
 // Vigía (docs/faro-producto.md §2.m). Todo opera como el usuario de la
 // sesión: sus movimientos, sus grupos (memberOf en grupos de gastos) y su
@@ -65,7 +66,7 @@ const daysLabel = (iso: string) => {
   const y = new Date(`${t}T12:00:00Z`);
   y.setUTCDate(y.getUTCDate() - 1);
   if (iso === y.toISOString().slice(0, 10)) return "ayer";
-  return new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
+  return formatDate(iso, "short");
 };
 
 // ── Historial ────────────────────────────────────────────────────────
@@ -113,7 +114,7 @@ async function contextFor(u: CopilotUser) {
 
 function systemPrompt(u: CopilotUser, ctx: Awaited<ReturnType<typeof contextFor>>) {
   const today = todayAR();
-  const weekday = new Intl.DateTimeFormat("es-AR", { weekday: "long", timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+  const weekday = formatDate(new Date(), "weekdayName");
   return `Sos el Vigía de Faro de ${u.name}: un asistente de finanzas personales en un chat tipo WhatsApp. Hoy es ${weekday} ${today} (Argentina).
 
 Qué hacés:
@@ -128,7 +129,7 @@ Qué hacés:
 - Si algo es ambiguo (falta el monto, no sabés en qué grupo), NO llames herramientas: preguntá UNA sola cosa, corta.
 - Nunca inventes montos, personas ni grupos.
 - "¿Qué hizo mi contador?", "¿tengo contador?": usá consultar_contador y respondé con el dato y el enlace.
-- Coach (si la persona pide consejos, cómo ahorrar o en qué le conviene poner la plata): usá coach_finanzas, que te da sus números reales (sobres, fijos, fugas y metas). Explicá y sugerí hábitos. Podés comparar alternativas generales de ahorro (plazo fijo, fondos money market, dólar MEP) solo con fines educativos y sin recomendar una en particular. Nunca des una recomendación de inversión personalizada: es una actividad regulada por la CNV. Si la persona quiere asesoramiento, derivala a un asesor matriculado de la Red Contable ([Buscar un asesor](/red-contable?servicio=asesoramiento_financiero)).
+- Coach (si la persona pide consejos, cómo ahorrar o en qué le conviene poner la plata): usá coach_finanzas, que te da sus números reales (sobres, fijos, fugas y metas). Explicá y sugerí hábitos. Podés comparar alternativas generales de ahorro (plazo fijo, fondos formatMoney market, dólar MEP) solo con fines educativos y sin recomendar una en particular. Nunca des una recomendación de inversión personalizada: es una actividad regulada por la CNV. Si la persona quiere asesoramiento, derivala a un asesor matriculado de la Red Contable ([Buscar un asesor](/red-contable?servicio=asesoramiento_financiero)).
 - Respondé en español rioplatense (voseo), muy breve: una línea como "Listo, te dejé 2 gastos para confirmar." Las tarjetas muestran el detalle.
 
 ${SHIELD_PROMPT}
@@ -163,8 +164,8 @@ async function previewFor(u: CopilotUser, tool: ProposalTool, raw: unknown): Pro
     const others = members.filter((m) => m.id !== u.id);
     const half = members.length > 1 ? Math.floor(amount / members.length) : amount;
     return {
-      title: `${box.name} · ${money(amount, "ARS")}`,
-      lines: [`${i.descripcion} · pagaste vos · ${daysLabel(date)}`, others.length ? `Solo registrar: queda que pusiste ${money(amount, "ARS")}. Dividir: ${others.map((m) => m.name).join(", ")} ${others.length === 1 ? "te debe" : "te deben"} ${money(half, "ARS")}${others.length === 1 ? "" : " cada uno"}.` : "Todavía estás solo en la caja: invitá a los demás para dividir."],
+      title: `${box.name} · ${formatMoney(amount, "ARS", { decimals: "auto" })}`,
+      lines: [`${i.descripcion} · pagaste vos · ${daysLabel(date)}`, others.length ? `Solo registrar: queda que pusiste ${formatMoney(amount, "ARS", { decimals: "auto" })}. Dividir: ${others.map((m) => m.name).join(", ")} ${others.length === 1 ? "te debe" : "te deben"} ${formatMoney(half, "ARS", { decimals: "auto" })}${others.length === 1 ? "" : " cada uno"}.` : "Todavía estás solo en la caja: invitá a los demás para dividir."],
       needsConfirm: true,
       data: { boxId: box.id, boxName: box.name, amount, date, description: i.descripcion, category: i.categoria ?? null },
     };
@@ -178,7 +179,7 @@ async function previewFor(u: CopilotUser, tool: ProposalTool, raw: unknown): Pro
       const changa = /changa|freelance|trabajito/i.test(`${i.descripcion} ${i.nota ?? ""} ${i.categoria ?? ""}`);
       const category = i.tipo === "ingreso" ? (changa ? "changa" : "ventas") : businessCategoryFor(`${i.descripcion} ${i.categoria ?? ""}`);
       return {
-        title: `Negocio · ${i.tipo === "ingreso" ? "Ingreso" : "Gasto"} ${money(amount, i.moneda)}`,
+        title: `Negocio · ${i.tipo === "ingreso" ? "Ingreso" : "Gasto"} ${formatMoney(amount, i.moneda, { decimals: "auto" })}`,
         lines: [[i.descripcion, boxCategoryName("negocio", null, category), daysLabel(date)].filter(Boolean).join(" · "), "Caja de negocio"],
         needsConfirm: false,
         data: { box: "negocio", kind: i.tipo, amount, currency: i.moneda, date, category, description: i.descripcion, note: i.nota ?? null },
@@ -186,7 +187,7 @@ async function previewFor(u: CopilotUser, tool: ProposalTool, raw: unknown): Pro
     }
     const cat = await categoryByHint(u.id, i.categoria, i.tipo);
     return {
-      title: `${i.tipo === "ingreso" ? "Ingreso" : "Gasto"} ${money(amount, i.moneda)}`,
+      title: `${i.tipo === "ingreso" ? "Ingreso" : "Gasto"} ${formatMoney(amount, i.moneda, { decimals: "auto" })}`,
       lines: [[i.descripcion, cat?.name, daysLabel(date)].filter(Boolean).join(" · "), ...(i.medio_pago ? [i.medio_pago.replace("_", " ")] : [])],
       needsConfirm: false,
       data: { kind: i.tipo, amount, currency: i.moneda, date, categoryId: cat?.id ?? null, description: i.descripcion, paymentMethod: i.medio_pago ?? null, note: i.nota ?? null },
@@ -251,7 +252,7 @@ async function previewFor(u: CopilotUser, tool: ProposalTool, raw: unknown): Pro
   if (Number.isNaN(due.getTime())) return { question: "¿Para cuándo te lo recuerdo?" };
   return {
     title: "Recordatorio",
-    lines: [i.texto, new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(due)],
+    lines: [i.texto, formatDate(due, "dateTime")],
     needsConfirm: false,
     data: { text: i.texto, due: due.toISOString() },
   };
@@ -353,7 +354,7 @@ export async function editMovementProposal(u: CopilotUser, id: string, data: { k
   if ((p.preview.data as { box?: string }).box) throw new CopilotError("Los movimientos de una caja se editan desde Mis cajas.");
   const cats = await listCategories(u.id);
   const cat = cats.find((c) => c.id === data.categoryId);
-  const preview = { ...p.preview, title: `${data.kind === "ingreso" ? "Ingreso" : "Gasto"} ${money(data.amount, data.currency)}`, lines: [[data.description, cat?.name, daysLabel(data.date)].filter(Boolean).join(" · ")], data: { ...data } };
+  const preview = { ...p.preview, title: `${data.kind === "ingreso" ? "Ingreso" : "Gasto"} ${formatMoney(data.amount, data.currency, { decimals: "auto" })}`, lines: [[data.description, cat?.name, daysLabel(data.date)].filter(Boolean).join(" · ")], data: { ...data } };
   if (p.status === "confirmada" && p.result_id) await wrapErr(() => updateEntry(u.id, p.result_id!, data));
   await db().update(copilot_proposals).set({ preview }).where(eq(copilot_proposals.id, p.id));
   if (p.status === "propuesta") return confirmProposal(u, id);
@@ -400,7 +401,7 @@ function queryTools(u: CopilotUser): ToolSet {
       execute: async (raw: unknown) => {
         const i = consultarBitacora.parse(raw ?? {});
         const r = await spentInCategory(u.id, i.mes ?? monthOf(), i.categoria);
-        return { mes: i.mes ?? monthOf(), categoria: r.category ?? "todas", gastado: money(r.spent), ingresado: money(r.earned), movimientos: r.count, enlace: `/bitacora?mes=${i.mes ?? monthOf()}` };
+        return { mes: i.mes ?? monthOf(), categoria: r.category ?? "todas", gastado: formatMoney(r.spent, "ARS", { decimals: "auto" }), ingresado: formatMoney(r.earned, "ARS", { decimals: "auto" }), movimientos: r.count, enlace: `/bitacora?mes=${i.mes ?? monthOf()}` };
       },
     }),
     coach_finanzas: tool({
@@ -413,13 +414,13 @@ function queryTools(u: CopilotUser): ToolSet {
         const { listRecurring, listInsights } = await import("@/modules/bitacora/recurring");
         const [b, rec, ins, goals] = await Promise.all([budgetView(u.id), listRecurring(u.id), listInsights(u.id, 6), listGoals(u.id)]);
         return {
-          sobres: b.list.filter((x) => x.budget).map((x) => ({ categoria: x.name, presupuesto: money(x.budget!), gastado: money(x.spent) })),
-          fijos_y_suscripciones: rec.slice(0, 10).map((r) => ({ nombre: r.label, mensual: money(r.last_amount), aumento: r.price_change_pct ? `${r.price_change_pct}%` : null })),
+          sobres: b.list.filter((x) => x.budget).map((x) => ({ categoria: x.name, presupuesto: formatMoney(x.budget!, "ARS", { decimals: "auto" }), gastado: formatMoney(x.spent, "ARS", { decimals: "auto" }) })),
+          fijos_y_suscripciones: rec.slice(0, 10).map((r) => ({ nombre: r.label, mensual: formatMoney(r.last_amount, "ARS", { decimals: "auto" }), aumento: r.price_change_pct ? `${r.price_change_pct}%` : null })),
           avisos: ins.map((i) => i.title),
-          metas: goals.map((g) => ({ meta: g.name, avance: `${Math.round(g.progress * 100)}%`, ahorro_semanal_sugerido: money(g.weekly) })),
+          metas: goals.map((g) => ({ meta: g.name, avance: `${Math.round(g.progress * 100)}%`, ahorro_semanal_sugerido: formatMoney(g.weekly, "ARS", { decimals: "auto" }) })),
           alternativas_educativas: [
             "Plazo fijo: tasa fija por un plazo; la plata queda inmovilizada hasta el vencimiento.",
-            "Fondos comunes money market: rescate en el día, rinden una tasa variable; no están garantizados.",
+            "Fondos comunes formatMoney market: rescate en el día, rinden una tasa variable; no están garantizados.",
             "Dólar MEP: se compra con bonos en un broker o en el home banking; protege del tipo de cambio, no de la inflación en dólares.",
           ],
           aviso_legal: "Información general con fines educativos. No es una recomendación de inversión personalizada (actividad regulada por la CNV).",

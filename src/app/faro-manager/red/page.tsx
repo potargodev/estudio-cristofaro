@@ -10,10 +10,10 @@ import { requireFaro } from "@/lib/auth";
 import { LICENSE_STATUS_LABEL } from "@/modules/red/catalog";
 import { moderateReviewAction, reviewLicenseAction } from "../red-actions";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Red Contable" };
 
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 const input = fieldClass;
 
 /** Matrículas por verificar, reseñas por moderar y fichas de la Red */
@@ -92,7 +92,7 @@ export default async function FaroRedPage({ searchParams }: { searchParams: Prom
             {pending.map(({ r, studio, org }) => (
               <li key={r.id} className="rounded-lg border border-line bg-surface p-4">
                 <p className="text-meta text-muted">
-                  {studio} · de {org} · {day.format(r.created_at)} · <span className="text-ink">{"★".repeat(r.rating)}</span>
+                  {studio} · de {org} · {formatDate(r.created_at)} · <span className="text-ink">{"★".repeat(r.rating)}</span>
                 </p>
                 <p className="mt-1 text-ui">{r.body}</p>
                 <div className="mt-3 flex flex-wrap items-end gap-3">

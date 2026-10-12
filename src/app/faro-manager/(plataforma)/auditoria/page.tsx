@@ -7,10 +7,10 @@ import { audit_log, studios } from "@/db/schema";
 import { requireFaro } from "@/lib/auth";
 import { auditLabel } from "@/lib/audit";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Auditoría de plataforma" };
 
-const when = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
 const FILTERS: [string, string][] = [
   ["", "Todo lo de Faro"],
@@ -62,7 +62,7 @@ export default async function AuditoriaPage({ searchParams }: { searchParams: Pr
           <tbody className="divide-y divide-line">
             {rows.map(({ a, tenant }) => (
               <tr key={a.id} className={a.result === "denegado" ? "bg-[#fbecea]" : undefined}>
-                <td className="whitespace-nowrap px-4 py-2 tabular-nums">{when.format(a.created_at)}</td>
+                <td className="whitespace-nowrap px-4 py-2 tabular-nums">{formatDate(a.created_at, "timestamp")}</td>
                 <td className="py-2">
                   {auditLabel(a.action)} <code className="ml-1 text-micro text-muted">{a.action}</code>
                 </td>

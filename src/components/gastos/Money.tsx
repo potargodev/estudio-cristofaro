@@ -1,5 +1,5 @@
-import { formatMoney } from "@/modules/gastos/constants";
 import { cn } from "@/lib/utils";
+import { formatMoney } from "@/lib/format";
 
 /** Saldo con texto claro: "te deben", "debés" o "al día" */
 export function BalanceLine({ cents, currency, className, who = "te" }: { cents: number; currency: string; className?: string; who?: "te" | "nombre" }) {

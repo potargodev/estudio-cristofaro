@@ -4,10 +4,10 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { bookingByToken, cancelBooking, createBooking, rescheduleBooking } from "@/lib/agenda/bookings";
 import { findSlot, getHosts } from "@/lib/agenda/slots";
-import { fmtDateTime, fmtTime } from "@/lib/agenda/time";
 import { getStudioId } from "@/lib/data";
 import { publicProfile } from "@/modules/red/server";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { formatDate } from "@/lib/format";
 
 // Agenda pública (/agendar y el link para reprogramar o cancelar). El horario
 // se vuelve a validar en el servidor contra la disponibilidad real.
@@ -63,7 +63,7 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
     const b = booking ?? (await bookingByToken(token));
     return {
       ok: true,
-      booking: { when: fmtDateTime(slot.start), until: fmtTime(slot.end), email: email!, meetUrl: b?.meet_url ?? null, ics: `/api/agenda/ics/${token}`, manage: `/agenda/gestionar/${token}` },
+      booking: { when: formatDate(slot.start, "weekdayTime"), until: formatDate(slot.end, "time"), email: email!, meetUrl: b?.meet_url ?? null, ics: `/api/agenda/ics/${token}`, manage: `/agenda/gestionar/${token}` },
     };
   }
   redirect(red ? `/red-contable/${encodeURIComponent(red)}/agendar?t=${token}` : `/agendar/confirmada?t=${token}`);

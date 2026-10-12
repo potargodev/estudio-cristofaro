@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { setPrefs } from "@/lib/prefs";
 import { parseAmount } from "@/modules/bitacora/catalog";
 import { confirmProposal, CopilotError, editGroupProposal, editMovementProposal, processMessage, ownMessage, redoProposal, undoProposal } from "@/modules/copilot/server";
@@ -15,7 +15,7 @@ export interface CardState {
 }
 
 async function me() {
-  const u = await getCurrentUser();
+  const u = await getSessionUser();
   if (!u || u.assisted) throw new CopilotError("Tu sesión venció. Volvé a entrar.");
   return { id: u.id, name: u.name, email: u.email, studioId: u.studioId, role: u.role };
 }

@@ -4,11 +4,11 @@ import { notFound } from "next/navigation";
 import { importConfirmAction, importDiscardAction, importRemapAction } from "@/app/bitacora/plus-actions";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
-import { money } from "@/modules/bitacora/catalog";
 import { previewRows } from "@/modules/bitacora/imports";
 import { requireUser } from "@/modules/bitacora/session";
 import type { Mapping } from "@/modules/bitacora/smart";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Vista previa de la importación" };
 const field = `mt-1 ${fieldClass}`;
@@ -92,13 +92,13 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-ui">{r.description}</p>
                   <p className="text-caption text-muted">
-                    {r.date.split("-").reverse().join("/")}
+                    {formatDate(r.date, "numeric")}
                     {r.duplicate && " · ya estaba cargado"}
                   </p>
                 </div>
                 <span className={`num text-ui ${r.kind === "ingreso" ? "text-[#1f6b3d]" : ""}`}>
                   {r.kind === "ingreso" ? "+" : "−"}
-                  {money(r.amount)}
+                  {formatMoney(r.amount, "ARS", { decimals: "auto" })}
                 </span>
               </li>
             ))}

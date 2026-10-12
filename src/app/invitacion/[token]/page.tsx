@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { portalSignOut } from "@/app/portal/actions";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { PortalAccess } from "@/components/auth/PortalAccess";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { googleEnabled } from "@/lib/auth-server";
 import { ORG_ROLE_LABELS } from "@/lib/permissions";
 import { acceptInvitationsFor, invitationByToken } from "@/lib/team";
@@ -57,7 +57,7 @@ export default async function InvitacionPage({ params }: { params: Promise<{ tok
       />
     );
 
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (user) {
     if (user.role === "cliente" && user.email === inv.email) {
       await acceptInvitationsFor(user);

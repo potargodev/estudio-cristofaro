@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { formatNumber } from "@/lib/format";
 
-const fmt = new Intl.NumberFormat("es-AR");
 
 /** Número que cuenta al aparecer (rAF, sin GSAP). Con reduced-motion, el valor final. */
 export function Counter({ value, prefix = "", suffix = "", duration = 1400, className }: { value: number; prefix?: string; suffix?: string; duration?: number; className?: string }) {
@@ -37,12 +37,12 @@ export function Counter({ value, prefix = "", suffix = "", duration = 1400, clas
     <span ref={ref} className={className}>
       <span aria-hidden>
         {prefix}
-        {fmt.format(shown)}
+        {formatNumber(shown)}
         {suffix}
       </span>
       <span className="sr-only">
         {prefix}
-        {fmt.format(value)}
+        {formatNumber(value)}
         {suffix}
       </span>
     </span>

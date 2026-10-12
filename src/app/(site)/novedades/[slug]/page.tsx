@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MaskText } from "@/components/web/MaskText";
-import { formatDate, getPost } from "@/lib/data";
+import { getPost } from "@/lib/data";
+import { formatDate } from "@/lib/format";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -31,7 +32,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               Novedades
             </Link>
             <span aria-hidden>·</span>
-            <span className="tabular">{formatDate(post.published_at)}</span>
+            <span className="tabular">{formatDate(post.published_at, "long")}</span>
           </p>
           <MaskText className="display-sm mt-8 text-paper">{post.title}</MaskText>
           {post.excerpt && <p className="mt-8 border-t border-hair pt-6 text-section leading-relaxed text-paper/70">{post.excerpt}</p>}

@@ -9,6 +9,7 @@ import { requireFaro } from "@/lib/auth";
 import { ITEM_KINDS, templateItems, type ItemKind } from "@/modules/industries/catalog";
 import { getTemplate, templateHistory } from "@/modules/industries/server";
 import { saveTemplateAction, validateTemplateAction } from "@/app/faro-manager/template-actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Plantilla" };
 
@@ -86,7 +87,7 @@ export default async function PlantillaPage({ params, searchParams }: { params: 
                     Versión {h.version} · {h.status === "validada" ? "validada" : "borrador"}
                   </p>
                   <p className="text-meta text-muted">
-                    {h.source === "repo" ? "Repositorio" : h.createdAt?.toLocaleDateString("es-AR")}
+                    {h.source === "repo" ? "Repositorio" : formatDate(h.createdAt, "numeric")}
                     {h.validatedBy && ` · validó ${h.validatedBy}`}
                     {h.note && ` · ${h.note}`}
                   </p>

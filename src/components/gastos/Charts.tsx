@@ -1,4 +1,5 @@
-import { categoryName, formatMoney } from "@/modules/gastos/constants";
+import { categoryName } from "@/modules/gastos/constants";
+import { formatMoney } from "@/lib/format";
 
 // Gráficos simples (server): por categoría (barras horizontales) y por mes
 // (columnas). Los valores van en la moneda base; cada barra tiene su texto.
@@ -43,7 +44,7 @@ export function MonthChart({ data, currency }: { data: Record<string, number>; c
       <div className="flex h-48 items-end gap-2 border-b border-line">
         {rows.map(([m, v], i) => (
           <div key={m} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1" role="img" aria-label={`${m}: ${formatMoney(v, currency)}`}>
-            <span className="hidden truncate text-micro tabular-nums text-muted sm:block">{formatMoney(v, currency, { compact: true })}</span>
+            <span className="hidden truncate text-micro tabular-nums text-muted sm:block">{formatMoney(v, currency, { decimals: "none" })}</span>
             <div className="gastos-col w-full max-w-12 origin-bottom bg-navy" style={{ height: `${Math.max(2, (v / max) * 82)}%`, animationDelay: `${i * 50}ms` }} />
           </div>
         ))}

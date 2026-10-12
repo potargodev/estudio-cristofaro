@@ -8,10 +8,10 @@ import { SeekerForm } from "@/components/red/SeekerForm";
 import { requirePersonal } from "@/lib/auth";
 import { myContacts, mySeeker } from "@/modules/red/seekers";
 import { answerContactAction, rejectContactAction, seekerAction } from "../actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Mi postulación" };
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short" });
 
 /**
  * Red Contable · Mi postulación (§15): «Disponible, busco contador» bien a la
@@ -96,7 +96,7 @@ export default async function DisponiblePage({ searchParams }: { searchParams: P
                   {x.studio}
                 </Link>
                 <span className="flex items-center gap-2 text-meta text-muted">
-                  {fmt.format(x.c.created_at)}
+                  {formatDate(x.c.created_at, "short")}
                   <StatusBadge status={x.c.status === "aceptado" ? "activa" : x.c.status === "rechazado" ? "cancelada" : "pendiente"} label={x.c.status === "aceptado" ? "Aceptado" : x.c.status === "rechazado" ? "No aceptado" : "Para responder"} />
                 </span>
               </li>

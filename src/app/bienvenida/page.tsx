@@ -8,7 +8,7 @@ import { SubmitButton } from "@/components/admin/ui";
 import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { getDb } from "@/db";
 import { studios } from "@/db/schema";
-import { getCurrentUser, requireTenantOwner } from "@/lib/auth";
+import { getSessionUser, requireTenantOwner } from "@/lib/auth";
 import { homeFor } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import { FILE_TEMPLATES } from "@/modules/industries/catalog";
@@ -29,7 +29,7 @@ const label = "text-meta font-medium text-muted";
  */
 export default async function BienvenidaPage({ searchParams }: { searchParams: Promise<{ paso?: string; error?: string }> }) {
   const sp = await searchParams;
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user) redirect("/ingresar");
   if (user.role !== "dueno" && user.role !== "titular") redirect(homeFor(user.role));
   if (user.role === "dueno" && !user.twoFactorEnabled) redirect("/admin/seguridad");

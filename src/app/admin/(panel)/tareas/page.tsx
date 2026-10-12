@@ -12,11 +12,12 @@ import { getStudioStaff } from "@/lib/organizations";
 import { cn } from "@/lib/utils";
 import { crmEnabled, listTasks, TASK_STATUS, type TaskStatus } from "@/modules/crm/server";
 import { fieldInlineClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 export const metadata = { title: "Tareas" };
 
 const field = fieldInlineClass;
-const d = (s: string | null) => (s ? s.split("-").reverse().join("/") : "Sin fecha");
+const d = (s: string | null) => (s ? formatDate(s, "numeric") : "Sin fecha");
 const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
 /** Tareas (grupo Operación, §2.o): el trabajo del equipo por cliente en tabla, kanban o calendario */

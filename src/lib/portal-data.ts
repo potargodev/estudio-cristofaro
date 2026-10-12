@@ -5,7 +5,7 @@ import { documents, obligations, request_messages, requests } from "@/db/schema"
 import type { PortalUser } from "./auth";
 import { isUuid } from "./ids";
 import { can, canSeeRequests } from "./permissions";
-import { todayISO } from "./portal-types";
+import { todayAR } from "@/lib/format";
 
 // Lecturas del portal. TODAS filtran por la organización activa y el estudio de
 // la sesión (PortalUser sale de requireMember), así un miembro nunca ve datos de
@@ -42,7 +42,7 @@ export async function getUpcomingObligations(me: PortalUser, limit = 5) {
       and(
         eq(obligations.organization_id, orgId),
         eq(obligations.studio_id, studioId),
-        gte(obligations.due_date, todayISO()),
+        gte(obligations.due_date, todayAR()),
         notInArray(obligations.status, ["presentado", "pagado"]),
       ),
     )

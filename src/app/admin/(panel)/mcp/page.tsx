@@ -14,11 +14,10 @@ import { mcp_accesses, mcp_calls, oauth_clients, organizations, users } from "@/
 import { requireTenant, TENANT_OWNERS } from "@/lib/auth";
 import { mcpUrls } from "@/lib/mcp/oauth-meta";
 import { TOOL_MODULES } from "@/modules/tools/types";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Accesos MCP" };
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" });
 
 function accessState(a: typeof mcp_accesses.$inferSelect) {
   if (a.revoked_at) return { key: "cancelada", label: "Revocado" };
@@ -122,7 +121,7 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                         {a.organization_ids ? a.organization_ids.map((id) => orgName.get(id) ?? "—").join(", ") : "Todas las organizaciones"}
                       </p>
                       <p className="mt-1 text-meta text-muted">
-                        De {owner} · creado {day.format(a.created_at)} · {a.expires_at ? `vence ${day.format(a.expires_at)}` : "sin vencimiento"} · último uso {a.last_used_at ? fmt.format(a.last_used_at) : "nunca"}
+                        De {owner} · creado {formatDate(a.created_at)} · {a.expires_at ? `vence ${formatDate(a.expires_at)}` : "sin vencimiento"} · último uso {a.last_used_at ? formatDate(a.last_used_at, "dateTime") : "nunca"}
                       </p>
                     </div>
                     <div className="flex gap-2">
@@ -165,7 +164,7 @@ export default async function McpPage({ searchParams }: { searchParams: Promise<
                       {calls.map((c) => (
                         <tr key={c.id} className="border-b border-line last:border-0">
                           <td className="px-5 py-2 font-mono text-meta">{c.tool ?? c.method}</td>
-                          <td className="py-2">{fmt.format(c.created_at)}</td>
+                          <td className="py-2">{formatDate(c.created_at, "dateTime")}</td>
                           <td className="py-2">
                             <StatusBadge status={RESULT[c.result]?.key ?? c.result} label={RESULT[c.result]?.label ?? c.result} />
                             {c.message && <span className="ml-2 text-caption text-muted">{c.message}</span>}

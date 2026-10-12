@@ -5,6 +5,7 @@ import { Feedback } from "@/components/app/Feedback";
 import { Badge, Card, Empty, PageTitle } from "@/components/portal/ui";
 import { requireEmployee } from "@/lib/auth";
 import { myPayslips } from "@/modules/payroll/server";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Mis recibos" };
 
@@ -35,7 +36,7 @@ export default async function MisRecibos({ searchParams }: { searchParams: Promi
                 </a>
                 {p.signed_at ? (
                   <p className="mt-2 text-meta text-muted">
-                    Firmado el {p.signed_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })} desde {p.sign_device}. Constancia: {p.seal?.slice(0, 16)}…{p.reason ? ` · Motivo: ${p.reason}` : ""}
+                    Firmado el {formatDate(p.signed_at, "numericTime")} desde {p.sign_device}. Constancia: {p.seal?.slice(0, 16)}…{p.reason ? ` · Motivo: ${p.reason}` : ""}
                   </p>
                 ) : (
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">

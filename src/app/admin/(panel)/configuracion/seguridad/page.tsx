@@ -9,10 +9,10 @@ import { getDb } from "@/db";
 import { assisted_access, users } from "@/db/schema";
 import { requireTenant } from "@/lib/auth";
 import { STUDIO_ROLE_LABELS, isStudioRole } from "@/lib/roles";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Seguridad" };
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 
 /**
  * Seguridad (pestaña de Configuración): el segundo factor de cada persona del
@@ -108,7 +108,7 @@ export default async function SeguridadPage() {
                     {a.who} · {a.reason}
                   </span>
                   <span className="num block text-meta font-normal text-muted">
-                    {fmt.format(a.createdAt)} → {fmt.format(a.endedAt ?? a.expiresAt)}
+                    {formatDate(a.createdAt, "dateTime")} → {formatDate(a.endedAt ?? a.expiresAt, "dateTime")}
                     {a.endedAt ? " (terminado)" : a.expiresAt > new Date() ? " (vigente)" : " (vencido)"}
                   </span>
                 </li>

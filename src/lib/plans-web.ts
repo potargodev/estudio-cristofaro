@@ -1,5 +1,6 @@
 // Planes tal como se muestran en la web (docs/home-contenido.md, sección 7).
 import { SERVICE_PLANS } from "./service-plans";
+import { formatNumber } from "@/lib/format";
 
 export const HOME_PLANS = [
   {
@@ -47,7 +48,7 @@ export const MODULES = [
 export function priceLabel(key: string, prices: Record<string, string | null> = {}) {
   const raw = prices[key];
   // Separador de miles en los importes cargados sin puntos ("$845130" → "$845.130")
-  return raw ? raw.replace(/\d{4,}/g, (n) => Number(n).toLocaleString("es-AR")) : "Consultá el precio";
+  return raw ? raw.replace(/\d{4,}/g, (n) => formatNumber(Number(n))) : "Consultá el precio";
 }
 
 

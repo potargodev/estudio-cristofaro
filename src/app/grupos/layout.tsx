@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AppFrame } from "@/components/app/shell/AppFrame";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { HelpLink } from "@/components/app/Guide";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -20,7 +20,7 @@ const PANEL: Record<string, string> = { "/admin": "Volver al estudio", "/portal"
 /** Grupos de gastos: mismo lugar para todos (estudio, autónomo, portal, empleados e invitados) */
 export default async function GastosLayout({ children }: { children: React.ReactNode }) {
   // Con cuenta: dentro del marco de la app (menú, barra superior y selector de espacio)
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   if (user)
     return (
       <AppFrame space="personal" employeeGroups>

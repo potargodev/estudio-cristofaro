@@ -3,10 +3,10 @@ import { Paperclip } from "lucide-react";
 import { getDb } from "@/db";
 import { reimbursements, users } from "@/db/schema";
 import { Badge } from "@/components/portal/ui";
-import { REIMBURSEMENT_STATUS, categoryName, formatMoney } from "@/modules/gastos/constants";
+import { REIMBURSEMENT_STATUS, categoryName } from "@/modules/gastos/constants";
 import { orgExpenses } from "@/modules/gastos/server/reimbursements";
+import { formatDate, formatMoney } from "@/lib/format";
 
-const day = (d: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 const tone = { pendiente: "warn", aprobada: "neutral", rechazada: "danger", reintegrada: "ok" } as const;
 
 /** Ficha de la organización → Gastos: gastos contables (con comprobante) y rendiciones del equipo */
@@ -37,7 +37,7 @@ export async function OrgExpensesTab({ orgId, studioId }: { orgId: string; studi
               <div className="min-w-0">
                 <p className="font-medium text-ink">{r.description}</p>
                 <p className="text-muted">
-                  {day(r.date)} · {categoryName(r.category)} · {r.source === "rendicion" ? "Rendición" : "Gasto compartido"}
+                  {formatDate(r.date)} · {categoryName(r.category)} · {r.source === "rendicion" ? "Rendición" : "Gasto compartido"}
                   {r.deductible && " · deducible"}
                 </p>
               </div>
@@ -62,7 +62,7 @@ export async function OrgExpensesTab({ orgId, studioId }: { orgId: string; studi
               <div className="min-w-0">
                 <p className="font-medium text-ink">{r.description}</p>
                 <p className="text-muted">
-                  {employee} · {day(r.date)}
+                  {employee} · {formatDate(r.date)}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-3">

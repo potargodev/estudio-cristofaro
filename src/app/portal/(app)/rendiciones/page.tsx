@@ -6,13 +6,13 @@ import { DecideButtons, ReimburseButton, RendicionForm } from "@/components/gast
 import { Badge, Card, Empty, PageTitle } from "@/components/portal/ui";
 import { requireMember } from "@/lib/auth";
 import { can } from "@/lib/permissions";
-import { REIMBURSEMENT_STATUS, categoryName, formatMoney } from "@/modules/gastos/constants";
+import { REIMBURSEMENT_STATUS, categoryName } from "@/modules/gastos/constants";
 import { canApprove, listReimbursements } from "@/modules/gastos/server/reimbursements";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Rendiciones" };
 
 const tone = { pendiente: "warn", aprobada: "neutral", rechazada: "danger", reintegrada: "ok" } as const;
-const day = (d: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
 export default async function RendicionesPage() {
   const me = await requireMember();
@@ -55,7 +55,7 @@ export default async function RendicionesPage() {
                         <div className="min-w-0">
                           <p className="font-medium">{r.description}</p>
                           <p className="text-ui text-muted">
-                            {r.employee} · {day(r.date)} · {categoryName(r.category)} ·{" "}
+                            {r.employee} · {formatDate(r.date, "short")} · {categoryName(r.category)} ·{" "}
                             <a href={`/api/gastos/archivo/rendicion/${r.id}`} target="_blank" className="text-rose-deep underline-offset-4 hover:underline">
                               ticket
                             </a>
@@ -85,7 +85,7 @@ export default async function RendicionesPage() {
                         <p className="font-medium">{r.description}</p>
                         <p className="text-ui text-muted">
                           {approver && `${r.employee} · `}
-                          {day(r.date)} · {categoryName(r.category)}
+                          {formatDate(r.date, "short")} · {categoryName(r.category)}
                           {r.reason && ` · ${r.reason}`}
                         </p>
                       </div>

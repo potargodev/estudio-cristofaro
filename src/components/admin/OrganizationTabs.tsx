@@ -35,14 +35,12 @@ import {
   REQUEST_STATUS,
   REQUEST_TYPES,
   categoryLabel,
-  dateLabel,
-  moneyLabel,
   periodLabel,
-  todayISO,
   type DocumentRow,
 } from "@/lib/portal-types";
 import { ACCEPT_ATTR, ALLOWED_LABEL, formatBytes } from "@/lib/uploads-shared";
 import { cn } from "@/lib/utils";
+import { formatAmountOrDash, formatDate, todayAR } from "@/lib/format";
 
 // Pestañas de la ficha de la organización en el backoffice. La página ya validó
 // que la organización es del estudio; igual cada query filtra también por studio_id.
@@ -190,7 +188,7 @@ export async function ObligationsTab({ orgId, studioId, entities }: { orgId: str
     .from(obligations)
     .where(and(eq(obligations.organization_id, orgId), eq(obligations.studio_id, studioId)))
     .orderBy(desc(obligations.due_date));
-  const today = todayISO();
+  const today = todayAR();
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -208,11 +206,11 @@ export async function ObligationsTab({ orgId, studioId, entities }: { orgId: str
               <span>
                 <span className="font-medium">{o.tax}</span>
                 <span className="ml-2 text-ui text-muted">
-                  {periodLabel(o.period)} · vence {dateLabel(o.due_date)}
+                  {periodLabel(o.period)} · vence {formatDate(o.due_date, "numeric")}
                 </span>
               </span>
               <span className="flex items-center gap-3">
-                <span className="tabular-nums">{moneyLabel(o.amount)}</span>
+                <span className="tabular-nums">{formatAmountOrDash(o.amount)}</span>
                 <Badge tone={obligationTone(o.status, o.due_date, today)}>{OBLIGATION_STATUS[o.status]}</Badge>
                 <span className="text-ui text-rose-deep group-open:hidden">Editar</span>
               </span>
@@ -252,7 +250,6 @@ export async function ObligationsTab({ orgId, studioId, entities }: { orgId: str
   );
 }
 
-const dateFmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 const CATEGORY_OPTIONS = Object.entries(DOCUMENT_CATEGORIES)
   .filter(([v]) => v !== "solicitud")
   .map(([value, label]) => ({ value, label }));
@@ -273,7 +270,7 @@ function DocList({ docs, orgId, highlightNew, readable, read }: { docs: Document
               </span>
             )}
             <p className="text-ui text-muted">
-              {categoryLabel(d.category)} · {periodLabel(d.period)} · {dateFmt.format(d.created_at)} · {formatBytes(d.size_bytes)}
+              {categoryLabel(d.category)} · {periodLabel(d.period)} · {formatDate(d.created_at)} · {formatBytes(d.size_bytes)}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -386,7 +383,6 @@ export async function DocumentsTab({
   );
 }
 
-const msgDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 const REQUEST_STATUS_OPTIONS = Object.entries(REQUEST_STATUS).map(([value, label]) => ({ value, label }));
 
 /** Hilo de una solicitud con el formulario de respuesta (lo usan la ficha y /admin/solicitudes) */
@@ -433,7 +429,7 @@ export async function RequestThread({
                   ·{" "}
                 </>
               )}
-              {REQUEST_TYPES[r.type]} · {msgDate.format(r.created_at)}
+              {REQUEST_TYPES[r.type]} · {formatDate(r.created_at, "shortTime")}
             </p>
           </div>
           <StatusBadge status={r.status} />
@@ -444,7 +440,7 @@ export async function RequestThread({
         {messages.map((m) => (
           <li key={m.id} className={cn("max-w-[85%] border px-4 py-3", m.from_client ? "border-line bg-canvas" : "ml-auto border-navy/15 bg-navy-soft")}>
             <p className="text-caption text-muted">
-              {m.from_client ? (m.author ?? "Cliente") : `${m.author ?? "Estudio"} (estudio)`} · <span className="tabular">{msgDate.format(m.created_at)}</span>
+              {m.from_client ? (m.author ?? "Cliente") : `${m.author ?? "Estudio"} (estudio)`} · <span className="tabular">{formatDate(m.created_at, "shortTime")}</span>
             </p>
             <p className="mt-1 whitespace-pre-line text-ui leading-relaxed text-ink">{m.body}</p>
             {m.document_id && (
@@ -583,7 +579,6 @@ export async function StaffTab({ orgId, studioId }: { orgId: string; studioId: s
 
 // ───────────── integraciones ─────────────
 
-const syncFmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 
 export async function IntegrationsTab({ orgId, studioId }: { orgId: string; studioId: string }) {
   const db = getDb();
@@ -636,7 +631,7 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
                   Empresa {c.company_id}
                   {c.name ? ` · ${c.name}` : ""}
                 </span>
-                <span className="text-ui text-muted">Última sincronización: {c.last_sync_at ? syncFmt.format(c.last_sync_at) : "pendiente"}</span>
+                <span className="text-ui text-muted">Última sincronización: {c.last_sync_at ? formatDate(c.last_sync_at, "dateTime") : "pendiente"}</span>
               </li>
             ))}
           </ul>
@@ -655,7 +650,7 @@ export async function IntegrationsTab({ orgId, studioId }: { orgId: string; stud
                   </span>
                 </span>
                 <span className="text-ui text-muted">
-                  <Badge tone="ok">Fuente: Tango</Badge> sincronizado {syncFmt.format(r.synced)}
+                  <Badge tone="ok">Fuente: Tango</Badge> sincronizado {formatDate(r.synced, "dateTime")}
                 </span>
               </li>
             ))}

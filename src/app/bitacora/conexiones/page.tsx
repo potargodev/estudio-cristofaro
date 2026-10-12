@@ -5,6 +5,7 @@ import { Feedback } from "@/components/app/Feedback";
 import { available, listConnections, listProposals, type Provider } from "@/modules/bitacora/connections";
 import { bitacoraPlan } from "@/modules/bitacora/plus";
 import { requireUser } from "@/modules/bitacora/session";
+import { formatDate, formatNumber } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Conexiones" };
 
@@ -37,7 +38,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 <p className="text-meta text-muted">
                   {c.status === "error" ? <span className="text-[#8f2a1c]">Con error</span> : "Conectado"}
                   {c.label ? ` · ${c.label}` : ""}
-                  {c.lastSync ? ` · última lectura ${c.lastSync.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}` : ""}
+                  {c.lastSync ? ` · última lectura ${formatDate(c.lastSync, "numericTime")}` : ""}
                 </p>
               )}
             </div>
@@ -76,14 +77,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 <div className="min-w-0">
                   <p className="truncate text-body">{p.description}</p>
                   <p className="text-meta text-muted">
-                    {DETECTED[p.detected] ?? p.detected} · {p.date ? p.date.split("-").reverse().join("/") : "sin fecha"} · desde {p.source === "gmail" ? "Gmail" : p.source}
+                    {DETECTED[p.detected] ?? p.detected} · {p.date ? formatDate(p.date, "numeric") : "sin fecha"} · desde {p.source === "gmail" ? "Gmail" : p.source}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5">
                   <form action={proposalAction} className="flex items-center gap-1.5">
                     <input type="hidden" name="id" value={p.id} />
                     <input type="hidden" name="op" value="aceptar" />
-                    <input name="amount" inputMode="decimal" aria-label="Importe" placeholder="Importe" defaultValue={p.amount ? (p.amount / 100).toLocaleString("es-AR") : ""} className="h-9 w-28 rounded-md border border-line bg-surface px-2 text-ui" />
+                    <input name="amount" inputMode="decimal" aria-label="Importe" placeholder="Importe" defaultValue={p.amount ? formatNumber(p.amount / 100, 2) : ""} className="h-9 w-28 rounded-md border border-line bg-surface px-2 text-ui" />
                     <SubmitButton pendingText="…">Cargar</SubmitButton>
                   </form>
                   <form action={proposalAction}>

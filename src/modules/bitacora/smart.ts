@@ -1,3 +1,4 @@
+import { formatMoney } from "@/lib/format";
 // Inteligencia de Bitácora (docs/faro-producto.md §2.g), sin base ni red: se
 // prueba con node --test. Montos en centavos.
 
@@ -135,7 +136,6 @@ interface Leak {
 }
 
 const DELIVERY = /rappi|pedidos ?ya|uber ?eats|delivery|glovo|mcdonald|burger|pizza|empanadas|sushi/i;
-const fmt = (c: number) => `$ ${Math.round(c / 100).toLocaleString("es-AR")}`;
 
 /**
  * Patrones donde la plata se escapa, con un aviso amable y preventivo:
@@ -149,7 +149,7 @@ export function detectLeaks(movs: Mov[], recurring: (Recurring & { stillUsed?: b
   const night = movs.filter((m) => m.kind === "gasto" && m.date >= since && m.hour != null && (m.hour >= 21 || m.hour < 3) && (DELIVERY.test(m.description) || m.categoryKey === "comida"));
   if (night.length >= 4) {
     const total = night.reduce((s, m) => s + m.amount, 0);
-    out.push({ kind: "delivery_noche", title: "El delivery de noche suma", body: `En el último mes pediste ${night.length} veces de noche: ${fmt(total)}. ¿Probás dejar algo listo para esas noches?`, data: { veces: night.length, total } });
+    out.push({ kind: "delivery_noche", title: "El delivery de noche suma", body: `En el último mes pediste ${night.length} veces de noche: ${formatMoney(total, "ARS", { decimals: "none" })}. ¿Probás dejar algo listo para esas noches?`, data: { veces: night.length, total } });
   }
   // Fines de semana (viernes a domingo) y si hubo un ingreso en los 4 días anteriores
   const weekends = new Map<string, { total: number; afterPay: boolean }>();
@@ -172,11 +172,11 @@ export function detectLeaks(movs: Mov[], recurring: (Recurring & { stillUsed?: b
     const a = paid.reduce((s, w) => s + w.total, 0) / paid.length;
     const b = normal.reduce((s, w) => s + w.total, 0) / normal.length;
     if (b > 0 && a / b >= 1.5)
-      out.push({ kind: "finde_cobro", title: "El finde después de cobrar", body: `Los fines de semana después de cobrar gastás en promedio ${fmt(a)}, contra ${fmt(b)} un finde común. Te avisamos el viernes que cobres para que lo tengas en cuenta.`, data: { despues_de_cobrar: Math.round(a), comun: Math.round(b), veces: Math.round((a / b) * 10) / 10 } });
+      out.push({ kind: "finde_cobro", title: "El finde después de cobrar", body: `Los fines de semana después de cobrar gastás en promedio ${formatMoney(a, "ARS", { decimals: "none" })}, contra ${formatMoney(b, "ARS", { decimals: "none" })} un finde común. Te avisamos el viernes que cobres para que lo tengas en cuenta.`, data: { despues_de_cobrar: Math.round(a), comun: Math.round(b), veces: Math.round((a / b) * 10) / 10 } });
   }
   for (const r of recurring) {
     if (r.kind === "suscripcion" && r.months >= 3 && r.stillUsed == null)
-      out.push({ kind: "suscripcion_olvidada", title: `¿Seguís usando ${r.label}?`, body: `Hace ${r.months} meses que pagás ${fmt(r.lastAmount)} por mes. Si no la usás, darla de baja te ahorra ${fmt(r.lastAmount * 12)} por año.`, data: { key: r.key, mensual: r.lastAmount } });
+      out.push({ kind: "suscripcion_olvidada", title: `¿Seguís usando ${r.label}?`, body: `Hace ${r.months} meses que pagás ${formatMoney(r.lastAmount, "ARS", { decimals: "none" })} por mes. Si no la usás, darla de baja te ahorra ${formatMoney(r.lastAmount * 12, "ARS", { decimals: "none" })} por año.`, data: { key: r.key, mensual: r.lastAmount } });
   }
   return out;
 }

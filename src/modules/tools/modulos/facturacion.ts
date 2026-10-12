@@ -1,11 +1,12 @@
 import "server-only";
 import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { z } from "zod/v4";
-import { fullNumber, money } from "@/modules/arca/calc";
+import { fullNumber } from "@/modules/arca/calc";
 import { CBTE_TYPES } from "@/modules/arca/config";
 import { ArcaError, createDraft, emitInvoice, issuerForTool, latestSituation, listInvoices, semaforoFor } from "@/modules/arca/server";
 import { defineTool, ToolError } from "../types";
 import { limite, uuid } from "./helpers";
+import { formatAmount } from "@/lib/format";
 
 // Facturación y ARCA para el Vigía, MCP y Flujos. Emitir es fiscal: la
 // herramienta es "sensible" y nunca se ejecuta sola; crea una propuesta en
@@ -49,7 +50,7 @@ export const facturacionTools = [
       if (!input.organizacion_id) throw new ToolError("Indicá la organización que factura.", "entrada_invalida");
       return input.organizacion_id;
     },
-    describe: (i) => `Factura a ${i.cliente} por ${money(i.importe)} · ${i.descripcion}`,
+    describe: (i) => `Factura a ${i.cliente} por ${formatAmount(i.importe)} · ${i.descripcion}`,
     async handler(input, ctx) {
       const scope = await wrap(() => issuerForTool(ctx.studioId, ctx.actor.role, input.organizacion_id));
       if (input.organizacion_id) await ctx.organization(input.organizacion_id);

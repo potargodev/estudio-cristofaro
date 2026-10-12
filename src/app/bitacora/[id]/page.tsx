@@ -10,6 +10,7 @@ import { deleteEntryAction, updateEntryAction } from "../actions";
 import { moveToBusinessAction } from "@/app/cajas/actions";
 import { looksLikeBusiness } from "@/modules/cajas/catalog";
 import { SubmitButton } from "@/components/admin/ui";
+import { formatNumber } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Movimiento" };
 
@@ -48,7 +49,7 @@ export default async function EntryPage({ params, searchParams }: { params: Prom
           d={{
             id: e.id,
             kind: e.kind,
-            amount: (e.amount / 100).toLocaleString("es-AR", { maximumFractionDigits: 2 }),
+            amount: formatNumber(e.amount / 100, 2),
             currency: e.currency,
             date: e.date,
             categoryId: e.category_id,

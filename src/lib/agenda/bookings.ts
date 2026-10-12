@@ -10,7 +10,7 @@ import { getSiteUrl } from "../runtime-config";
 import { site } from "../site";
 import { cancelEvent, createMeetEvent, moveEvent } from "./google";
 import { buildIcs } from "./ics";
-import { fmtDateTime, fmtTime } from "./time";
+import { formatDate } from "@/lib/format";
 
 // Reservas de llamadas: alta (web, portal o estudio), reprogramación y
 // cancelación por link seguro, mails con .ics y recordatorios 24 h y 1 h antes.
@@ -56,7 +56,7 @@ function ics(b: Booking, h: { name: string; email: string }, token: string | nul
 }
 
 function details(b: Booking, h: { name: string }) {
-  return `<p style="margin:0"><strong>${esc(fmtDateTime(b.starts_at))}</strong> a ${esc(fmtTime(b.ends_at))} (hora de Buenos Aires)<br>Con ${esc(h.name)}${b.reason ? `<br>Motivo: ${esc(b.reason)}` : ""}</p>`;
+  return `<p style="margin:0"><strong>${esc(formatDate(b.starts_at, "weekdayTime"))}</strong> a ${esc(formatDate(b.ends_at, "time"))} (hora de Buenos Aires)<br>Con ${esc(h.name)}${b.reason ? `<br>Motivo: ${esc(b.reason)}` : ""}</p>`;
 }
 
 function meetBlock(b: Booking) {

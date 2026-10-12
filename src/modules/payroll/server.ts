@@ -13,6 +13,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { checkUpload, readStored, storeUpload } from "@/lib/uploads";
 import { notify } from "@/modules/notifications/server";
 import { cuilFromName, cuilsIn, deviceOf, groupPages, periodIn, seal, sha256, signReminderDue, validCuil, type SignatureRecord } from "./core";
+import { formatDate } from "@/lib/format";
 
 // Empleados (módulos employees, payroll y comms): legajo, recibos de sueldo
 // con firma conforme / no conforme y constancia, comunicados internos con
@@ -111,7 +112,7 @@ export async function saveEmployee(s: PayrollScope, actor: Actor, i: EmployeeInp
     const [row] = await db().insert(employees).values({ ...v, studio_id: s.studioId, organization_id: s.organizationId }).returning({ id: employees.id });
     empId = row.id;
     await emitEvent(s.studioId, "empleado.alta", { empleado_id: empId, organizacion_id: s.organizationId, nombre: `${v.first_name} ${v.last_name}`.trim() }, empId);
-    await event(s, empId, "alta", `Alta${v.position ? ` como ${v.position}` : ""}${v.start_date ? ` desde el ${v.start_date.split("-").reverse().join("/")}` : ""}`, actor, v.start_date ?? day(), requestId);
+    await event(s, empId, "alta", `Alta${v.position ? ` como ${v.position}` : ""}${v.start_date ? ` desde el ${formatDate(v.start_date, "numeric")}` : ""}`, actor, v.start_date ?? day(), requestId);
   }
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: id ? "empleado.editado" : "empleado.alta", entityType: "empleado", entityId: empId, metadata: { por_el_estudio: s.fromStudio } });
   return empId;
@@ -417,8 +418,8 @@ export async function createNovedad(me: { id: string; name: string; studioId: st
   if (i.tipo === "horas_extra" && !(Number(i.horas) > 0)) throw new PayrollError("Poné la cantidad de horas.");
   if (["alta", "baja", "licencia"].includes(i.tipo) && !isDate(i.desde)) throw new PayrollError("Poné la fecha.");
   const data = { novedad: i.tipo, empleado_id: i.employeeId, nombre: empName, cuil: i.cuil?.replace(/\D/g, "") || null, puesto: i.puesto?.trim() || null, desde: isDate(i.desde), hasta: isDate(i.hasta), horas: i.horas ?? null, motivo: i.motivo?.trim() || null };
-  const subject = `${NOVEDADES[i.tipo]}: ${empName}${data.desde ? ` (${data.desde.split("-").reverse().join("/")})` : ""}`.slice(0, 140);
-  const body = [subject, data.cuil && `CUIL ${data.cuil}`, data.puesto && `Puesto: ${data.puesto}`, data.hasta && `Hasta: ${data.hasta.split("-").reverse().join("/")}`, data.horas && `Horas: ${data.horas}`, data.motivo && `Motivo: ${data.motivo}`, i.detalle?.trim()].filter(Boolean).join("\n");
+  const subject = `${NOVEDADES[i.tipo]}: ${empName}${data.desde ? ` (${formatDate(data.desde, "numeric")})` : ""}`.slice(0, 140);
+  const body = [subject, data.cuil && `CUIL ${data.cuil}`, data.puesto && `Puesto: ${data.puesto}`, data.hasta && `Hasta: ${formatDate(data.hasta, "numeric")}`, data.horas && `Horas: ${data.horas}`, data.motivo && `Motivo: ${data.motivo}`, i.detalle?.trim()].filter(Boolean).join("\n");
   const [r] = await db().insert(requests).values({ studio_id: me.studioId, organization_id: me.organizationId, type: "empleado", subject, data, created_by: me.id }).returning({ id: requests.id });
   await db().insert(request_messages).values({ request_id: r.id, author_id: me.id, from_client: true, body: body.slice(0, 5000) });
   await notifyStudio({ kind: "solicitud", organizationId: me.organizationId, organizationName: me.organizationName, subject, message: body });
@@ -442,7 +443,7 @@ export async function applyNovedad(s: PayrollScope, actor: Actor, requestId: str
     const [first, ...rest] = String(d.nombre ?? "").split(" ");
     await saveEmployee(s, actor, { firstName: first, lastName: rest.join(" "), email: null, cuil: (d.cuil as string) ?? null, dni: null, birthDate: null, phone: null, address: null, position: (d.puesto as string) ?? null, area: null, contractType: null, agreement: null, startDate: (d.desde as string) ?? null, notes: null }, null, r.id);
   } else if (d.novedad === "baja") await terminateEmployee(s, actor, String(d.empleado_id), String(d.desde), String(d.motivo ?? ""), r.id);
-  else await addEmployeeEvent(s, actor, String(d.empleado_id), d.novedad, String(d.desde ?? day()), d.novedad === "licencia" ? `Licencia${d.motivo ? ` (${d.motivo})` : ""}${d.hasta ? ` hasta el ${String(d.hasta).split("-").reverse().join("/")}` : ""}` : `${d.horas} horas extra${d.motivo ? ` (${d.motivo})` : ""}`, r.id);
+  else await addEmployeeEvent(s, actor, String(d.empleado_id), d.novedad, String(d.desde ?? day()), d.novedad === "licencia" ? `Licencia${d.motivo ? ` (${d.motivo})` : ""}${d.hasta ? ` hasta el ${formatDate(String(d.hasta), "numeric")}` : ""}` : `${d.horas} horas extra${d.motivo ? ` (${d.motivo})` : ""}`, r.id);
   await db().update(requests).set({ data: { ...d, aplicada: new Date().toISOString() }, status: "resuelta" }).where(eq(requests.id, r.id));
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "novedad.aplicada", entityType: "solicitud", entityId: r.id, metadata: { tipo: d.novedad } });
 }

@@ -4,12 +4,13 @@ import Link from "next/link";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
-import { money, monthOf } from "@/modules/bitacora/catalog";
+import { monthOf } from "@/modules/bitacora/catalog";
 import { monthSummary } from "@/modules/bitacora/server";
 import { requireUser } from "@/modules/bitacora/session";
 import { templateOf } from "@/modules/cajas/catalog";
 import { businessHints, businessSummary, myBoxes } from "@/modules/cajas/server";
 import { dismissHintAction, moveToBusinessAction, openBusinessAction } from "./actions";
+import { formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: { absolute: "Mis cajas · Faro" } };
 
@@ -52,12 +53,12 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
                 <span className="text-ui text-muted">{b.kind === "compartida" ? t?.description : PURPOSE[b.kind]}</span>
                 {b.kind === "personal" && (
                   <span className="num text-ui text-ink">
-                    Este mes: entró {money(personal.byCurrency.ARS.now.in)} · salió {money(personal.byCurrency.ARS.now.out)}
+                    Este mes: entró {formatMoney(personal.byCurrency.ARS.now.in, "ARS", { decimals: "auto" })} · salió {formatMoney(personal.byCurrency.ARS.now.out, "ARS", { decimals: "auto" })}
                   </span>
                 )}
                 {b.kind === "negocio" && biz && (
                   <span className="num text-ui text-ink">
-                    Este mes: resultado {money(biz.result)} · sueldo {money(biz.salary)}
+                    Este mes: resultado {formatMoney(biz.result, "ARS", { decimals: "auto" })} · sueldo {formatMoney(biz.salary, "ARS", { decimals: "auto" })}
                   </span>
                 )}
               </Link>
@@ -97,7 +98,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
                 <span className="min-w-0">
                   <span className="block text-body text-ink">{entry.description}</span>
                   <span className="num block text-meta text-muted">
-                    {money(entry.amount, entry.currency)} · {entry.date} · por «{hint}»
+                    {formatMoney(entry.amount, entry.currency, { decimals: "auto" })} · {entry.date} · por «{hint}»
                   </span>
                 </span>
                 <span className="flex gap-2">

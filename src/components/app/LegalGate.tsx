@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { acceptLegalAction } from "@/app/legal/actions";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { legalDoc } from "@/modules/legal/catalog";
 import { pendingDocs } from "@/modules/legal/server";
 
 /** Aviso en las apps cuando hay una versión nueva de los términos o la privacidad sin aceptar */
 export async function LegalGate({ back }: { back: string }) {
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   if (!user || user.assisted) return null;
   const pending = await pendingDocs(user.id);
   if (!pending.length) return null;

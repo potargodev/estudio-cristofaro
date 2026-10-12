@@ -101,8 +101,3 @@ export async function getPost(slug: string): Promise<Post | null> {
     fallback,
   );
 }
-
-export function formatDate(iso: string | Date | null) {
-  if (!iso) return "";
-  return new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric" }).format(new Date(iso));
-}

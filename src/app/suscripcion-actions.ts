@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getCurrentUser, requireTenantOwner } from "@/lib/auth";
+import { getSessionUser, requireTenantOwner } from "@/lib/auth";
 import { BillingError } from "@/modules/billing/mp";
 import { cancelSubscription, choosePlan, payNowLink } from "@/modules/billing/subscriptions";
 
@@ -39,7 +39,7 @@ export async function cancelSubscriptionAction() {
 
 /** Pagar ahora (morosa o suspendida): también desde la pantalla de cuenta suspendida */
 export async function payNowAction() {
-  const me = await getCurrentUser();
+  const me = await getSessionUser();
   if (!me || !["dueno", "titular"].includes(me.role)) redirect("/ingresar");
   let url: string;
   try {

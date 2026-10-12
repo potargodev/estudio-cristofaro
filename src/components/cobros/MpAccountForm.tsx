@@ -1,6 +1,7 @@
 import { SubmitButton } from "@/components/admin/ui";
 import type { accountSummary } from "@/modules/billing/mp";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 // Credenciales de Mercado Pago de una cuenta (Faro o un tenant). El access
 // token y el secreto de webhooks se guardan cifrados y nunca se muestran.
@@ -14,7 +15,7 @@ export function MpAccountForm({ summary, save, remove, webhookUrl, canEdit = tru
         {summary ? (
           <>
             Cuenta de Mercado Pago: <strong>{summary.nickname ?? "conectada"}</strong> · {summary.status === "ok" ? "funciona" : summary.status === "error" ? <span className="text-[#8f2a1c]">con error</span> : "sin probar"}
-            {summary.testedAt && ` · probada el ${summary.testedAt.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}`}
+            {summary.testedAt && ` · probada el ${formatDate(summary.testedAt, "numericTime")}`}
             {!summary.hasSecret && <span className="text-[#8f2a1c]"> · falta la clave secreta de webhooks (sin ella no se acreditan los pagos)</span>}
           </>
         ) : (

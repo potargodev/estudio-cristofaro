@@ -4,9 +4,10 @@ import { Camera, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { createExpenseAction, fxAction, readReceiptAction, type FormState } from "@/app/grupos/actions";
 import { cn } from "@/lib/utils";
-import { CATEGORIES, CURRENCIES, FX_SOURCES, RECURRENCES, SPLIT_METHODS, formatMoney, todayAR, type FxSource } from "@/modules/gastos/constants";
+import { CATEGORIES, CURRENCIES, FX_SOURCES, RECURRENCES, SPLIT_METHODS, type FxSource } from "@/modules/gastos/constants";
 import { parseAmount, splitExpense, type SplitMethod, type SplitSpec } from "@/modules/gastos/core/split";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatMoney, formatNumber, todayAR } from "@/lib/format";
 
 // Formulario rápido de gasto, pensado para el celular: importe grande con
 // teclado numérico, quién pagó (uno o varios), cómo se divide con vista
@@ -118,7 +119,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
       const r = await readReceiptAction(fd);
       if ("error" in r) return setReadMsg(r.error);
       if (r.description) setDescription(r.description);
-      if (r.amount) setAmountText((r.amount / 100).toLocaleString("es-AR", { minimumFractionDigits: 2 }));
+      if (r.amount) setAmountText(formatNumber(r.amount / 100, 2, 2));
       if (r.currency) setCurrency(r.currency);
       if (r.date) setDate(r.date);
       if (r.category) setCategory(r.category);

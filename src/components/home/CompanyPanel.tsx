@@ -7,8 +7,8 @@ import { Container, SectionIndex } from "@/components/web/ui";
 import { DEMO } from "@/lib/home";
 import { loadGsap, onceVisible, reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
+import { formatAmount } from "@/lib/format";
 
-const money = (n: number) => "$" + new Intl.NumberFormat("es-AR").format(n);
 
 const MENU = ["Inicio", "Vencimientos", "Documentos", "Solicitudes", "Mensajes", "Vigía", "Mi equipo"];
 // Impuestos pagados por mes (miles de pesos, ejemplo)
@@ -21,7 +21,7 @@ const CHART = [
   ["oct", 1284],
 ] as const;
 const NOTIFS = [
-  { t: "IVA vence en 3 días", d: `${money(DEMO.ivaAmount)}. Tocá para pagar con VEP.` },
+  { t: "IVA vence en 3 días", d: `${formatAmount(DEMO.ivaAmount, "ARS", { decimals: "none" })}. Tocá para pagar con VEP.` },
   { t: "Recibos de sueldo listos", d: "12 recibos de septiembre." },
   { t: "Lucía respondió tu consulta", d: "Sobre el alta de la diseñadora." },
   { t: "Vigía anotó un gasto", d: "Almuerzo con cliente · $ 18.450. Tocá para confirmar." },
@@ -104,7 +104,7 @@ export function CompanyPanel() {
           </p>
         </div>
 
-        <div className="relative mt-16 [perspective:1600px] lg:grid lg:grid-cols-12 lg:items-end" role="img" aria-label={`Ejemplo del panel de ${DEMO.client}: 8 de 10 tareas resueltas, ${money(DEMO.toPay)} a pagar en octubre, 2 documentos por confirmar.`}>
+        <div className="relative mt-16 [perspective:1600px] lg:grid lg:grid-cols-12 lg:items-end" role="img" aria-label={`Ejemplo del panel de ${DEMO.client}: 8 de 10 tareas resueltas, ${formatAmount(DEMO.toPay, "ARS", { decimals: "none" })} a pagar en octubre, 2 documentos por confirmar.`}>
           <div data-desk className="grid border border-hair-strong bg-night lg:col-span-10 lg:col-start-1 lg:row-start-1 lg:grid-cols-[13rem_1fr]" aria-hidden>
             <nav className="hidden border-r border-hair p-5 text-meta lg:block">
               <p className="font-display text-section text-paper">{DEMO.client}</p>

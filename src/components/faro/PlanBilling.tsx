@@ -11,12 +11,12 @@ import { accountSummary } from "@/modules/billing/mp";
 import { getDb } from "@/db";
 import { expense_groups, organizations, plan_requests, users } from "@/db/schema";
 import { getEntitlements, getPlans, limitUsage } from "@/lib/faro/entitlements";
-import { AI_LEVEL_LABEL, ANNUAL_FREE_MONTHS, annualUsd, formatArs, formatUsd, type FaroPlan } from "@/lib/faro/plans";
+import { AI_LEVEL_LABEL, ANNUAL_FREE_MONTHS, annualUsd, type FaroPlan } from "@/lib/faro/plans";
 import { getUsdArs } from "@/lib/faro/pricing";
 import { cn } from "@/lib/utils";
 import { FARO_MODULES } from "@/modules/registry";
+import { formatAmount, formatDate } from "@/lib/format";
 
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric" });
 
 function Usage({ label, used, max }: { label: string; used: number; max: number | null }) {
   const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
@@ -36,7 +36,7 @@ function Usage({ label, used, max }: { label: string; used: number; max: number 
   );
 }
 
-const ars = (p: FaroPlan, usdArs: number) => (p.free || !p.priceUsd ? "Gratis" : `${formatArs(p.priceUsd * usdArs)} / mes`);
+const ars = (p: FaroPlan, usdArs: number) => (p.free || !p.priceUsd ? "Gratis" : `${formatAmount(p.priceUsd * usdArs, "ARS", { decimals: "none" })} / mes`);
 
 /**
  * "Plan y facturación" del dueño del tenant: plan actual, uso contra los
@@ -74,7 +74,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
         </p>
         {trialLeft != null && (
           <p className="mt-3 rounded-md border border-line bg-navy-soft px-4 py-2.5 text-ui text-ink">
-            Estás en la prueba gratis: te quedan <strong className="font-semibold">{trialLeft} días</strong> (hasta el {day.format(e.tenant.trial_ends_at!)}). No te cobramos nada sin avisarte.
+            Estás en la prueba gratis: te quedan <strong className="font-semibold">{trialLeft} días</strong> (hasta el {formatDate(e.tenant.trial_ends_at!, "long")}). No te cobramos nada sin avisarte.
           </p>
         )}
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -94,7 +94,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
         </div>
         {kind === "studio" && e.plan.extraOrgUsd != null && (
           <p className="mt-3 text-meta text-muted">
-            Cada organización extra por encima de las incluidas: {formatArs(e.plan.extraOrgUsd * usdArs)} / mes ({formatUsd(e.plan.extraOrgUsd)}).
+            Cada organización extra por encima de las incluidas: {formatAmount(e.plan.extraOrgUsd * usdArs, "ARS", { decimals: "none" })} / mes ({formatAmount(e.plan.extraOrgUsd, "USD", { decimals: "auto" })}).
           </p>
         )}
       </Panel>
@@ -104,7 +104,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
           Comparar planes
         </h2>
         <p className="mt-1 text-ui text-muted">
-          Precios en pesos de referencia (1 USD = {formatArs(usdArs)}). Pagando el año, {ANNUAL_FREE_MONTHS} meses de regalo.
+          Precios en pesos de referencia (1 USD = {formatAmount(usdArs, "ARS", { decimals: "none" })}). Pagando el año, {ANNUAL_FREE_MONTHS} meses de regalo.
         </p>
         <div className={cn("mt-4 grid gap-4", options.length >= 3 ? "lg:grid-cols-3" : "sm:grid-cols-2")}>
           {options.map((p) => {
@@ -121,7 +121,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
                 <p className="num mt-4 text-metric leading-none text-ink">{ars(p, usdArs)}</p>
                 {!p.free && (
                   <p className="mt-1 text-caption text-muted">
-                    {formatUsd(p.priceUsd)} / mes · anual {formatArs(annualUsd(p) * usdArs)}
+                    {formatAmount(p.priceUsd, "USD", { decimals: "auto" })} / mes · anual {formatAmount(annualUsd(p) * usdArs, "ARS", { decimals: "none" })}
                     {p.trialDays ? ` · ${p.trialDays} días gratis` : ""}
                   </p>
                 )}

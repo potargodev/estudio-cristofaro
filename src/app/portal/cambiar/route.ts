@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { ORG_COOKIE, getCurrentUser, getMemberships } from "@/lib/auth";
+import { ORG_COOKIE, getSessionUser, getMemberships } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/runtime-config";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   // Con la URL pública del sitio: detrás del proxy request.url trae el host interno
   const target = new URL("/portal", getSiteUrl());
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user) return NextResponse.redirect(new URL("/portal/login", getSiteUrl()));
   const wanted = request.nextUrl.searchParams.get("org");
   const res = NextResponse.redirect(target);

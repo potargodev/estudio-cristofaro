@@ -6,13 +6,13 @@ import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, CtaLink, SectionIndex } from "@/components/web/ui";
 import { reducedMotion } from "@/lib/motion/gsap";
 import { cn } from "@/lib/utils";
+import { formatAmount } from "@/lib/format";
 
 // docs/faro-producto.md §2.e. Los números de la demo son coherentes:
 // Cena $48.000 (pagó Ana, entre 3) y Nafta $30.000 (pagó Juan, entre 3):
 // a cada uno le tocan $26.000 → Ana +22.000, Juan +4.000, Lucía −26.000.
 // Simplificado: Lucía → Ana $22.000 y Lucía → Juan $4.000 (2 transferencias).
 
-const money = (n: number) => `$ ${n.toLocaleString("es-AR")}`;
 const PEOPLE = [
   { name: "Ana", c: "#c9a596" },
   { name: "Juan", c: "#c9a596" },
@@ -69,13 +69,13 @@ function Demo() {
                   <e.icon className="size-4 text-gold" strokeWidth={1.5} aria-hidden />
                   {e.title}
                 </span>
-                <span className="font-display text-section">{money(e.amount)}</span>
+                <span className="font-display text-section">{formatAmount(e.amount, "ARS", { decimals: "auto" })}</span>
               </p>
               <p className="mt-1 text-caption text-paper/55">Pagó {e.payer} · en partes iguales</p>
               <div className="mt-2 grid grid-cols-3 gap-1.5 text-center text-micro">
                 {PEOPLE.map((p) => (
                   <span key={p.name} className="border border-hair py-1 text-paper/75">
-                    {p.name} {money(e.amount / 3)}
+                    {p.name} {formatAmount(e.amount / 3, "ARS", { decimals: "auto" })}
                   </span>
                 ))}
               </div>
@@ -94,7 +94,7 @@ function Demo() {
           ].map(([n, v]) => (
             <p key={n} className="border border-hair px-2 py-1.5">
               <span className="block text-paper/60">{n}</span>
-              <span className={Number(v) >= 0 ? "text-[#8fd1a5]" : "text-[#f0a493]"}>{Number(v) >= 0 ? `le deben ${money(Number(v))}` : `debe ${money(-Number(v))}`}</span>
+              <span className={Number(v) >= 0 ? "text-[#8fd1a5]" : "text-[#f0a493]"}>{Number(v) >= 0 ? `le deben ${formatAmount(Number(v), "ARS", { decimals: "auto" })}` : `debe ${formatAmount(-Number(v), "ARS", { decimals: "auto" })}`}</span>
             </p>
           ))}
         </div>
@@ -108,7 +108,7 @@ function Demo() {
           ].map(([a, b, v]) => (
             <li key={String(b)} className="flex items-center gap-2">
               {a} <ArrowRight className="size-4 text-gold" aria-hidden /> {b}
-              <span className="ml-auto font-display text-title">{money(Number(v))}</span>
+              <span className="ml-auto font-display text-title">{formatAmount(Number(v), "ARS", { decimals: "auto" })}</span>
             </li>
           ))}
         </ul>

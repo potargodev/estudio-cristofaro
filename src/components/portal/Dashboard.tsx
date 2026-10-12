@@ -5,6 +5,7 @@ import { getTimeline, type TimelineItem } from "@/lib/portal-data";
 import { Counter } from "@/components/web/Counter";
 import { cn } from "@/lib/utils";
 import { Card, Empty } from "./ui";
+import { formatDate } from "@/lib/format";
 
 /** Anillo de progreso (SVG) para la tarjeta oscura: "3 de 5 al día" */
 export function Ring({ value, total, label, empty }: { value: number; total: number; label: string; empty: string }) {
@@ -71,14 +72,6 @@ export function SplitBar({ a, b, labelA, labelB, title }: { a: number; b: number
 }
 
 const ICONS = { documento: FileText, solicitud: MessageSquare, vencimiento: CalendarClock };
-const fmt = new Intl.DateTimeFormat("es-AR", {
-  day: "numeric",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  hourCycle: "h23",
-  timeZone: "America/Argentina/Buenos_Aires",
-});
 
 function Timeline({ items }: { items: TimelineItem[] }) {
   return (
@@ -100,7 +93,7 @@ function Timeline({ items }: { items: TimelineItem[] }) {
                 <Link href={it.href} className="group block">
                   <p className="text-body font-medium group-hover:text-rose-deep">{it.title}</p>
                   <p className="truncate text-ui text-muted">{it.detail}</p>
-                  <p className="text-caption text-muted">{fmt.format(it.at)}</p>
+                  <p className="text-caption text-muted">{formatDate(it.at, "shortTime")}</p>
                 </Link>
               </li>
             );

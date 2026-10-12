@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EntryForm } from "@/components/bitacora/EntryForm";
 import { cn } from "@/lib/utils";
-import { isMonth, money, monthLabel, monthOf, PAYMENT_METHODS, prevMonth } from "@/modules/bitacora/catalog";
+import { isMonth, monthOf, PAYMENT_METHODS, prevMonth } from "@/modules/bitacora/catalog";
 import { listCategories, monthSummary } from "@/modules/bitacora/server";
 import { ipcFactor, mepFor } from "@/modules/bitacora/planning";
 import { listInsights } from "@/modules/bitacora/recurring";
@@ -11,6 +11,7 @@ import { Insights } from "@/components/bitacora/Insights";
 import { requireUser } from "@/modules/bitacora/session";
 import { mySharedBoxes } from "@/modules/cajas/shared";
 import { createEntryAction, restoreEntryAction } from "./actions";
+import { formatDate, formatMoney, formatPeriod } from "@/lib/format";
 
 export const metadata: Metadata = { title: { absolute: "Bitácora · Faro" } };
 
@@ -18,7 +19,6 @@ const nextMonth = (m: string) => {
   const [y, mm] = m.split("-").map(Number);
   return mm === 12 ? `${y + 1}-01` : `${y}-${String(mm + 1).padStart(2, "0")}`;
 };
-const day = (iso: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
 
 function Delta({ now, before }: { now: number; before: number }) {
   if (!before) return <span className="text-caption text-muted">Sin datos del mes anterior</span>;
@@ -40,15 +40,15 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
   const cat = sp.categoria && cats.some((c) => c.id === sp.categoria) ? sp.categoria : null;
   const [s, insights, factor, mep] = await Promise.all([monthSummary(me.id, month, cat), listInsights(me.id, 4), sp.ver === "real" ? ipcFactor(month) : null, sp.ver === "mep" ? mepFor(month) : null]);
   // Valores reales (IPC de Faro Manager) o en dólares MEP
-  const show = (c: number) => (sp.ver === "real" && factor ? money(factor.apply(c) ?? c) : sp.ver === "mep" && mep ? money(Math.round(c / mep.rate), "USD") : money(c));
+  const show = (c: number) => (sp.ver === "real" && factor ? formatMoney(factor.apply(c) ?? c, "ARS", { decimals: "auto" }) : sp.ver === "mep" && mep ? formatMoney(Math.round(c / mep.rate), "USD", { decimals: "auto" }) : formatMoney(c, "ARS", { decimals: "auto" }));
   const valueNote =
     sp.ver === "real"
       ? factor
-        ? `En pesos de ${monthLabel(factor.latestMonth)} según el IPC (${factor.source}).`
+        ? `En pesos de ${formatPeriod(factor.latestMonth)} según el IPC (${factor.source}).`
         : "Todavía no hay serie de IPC cargada para ese mes: se muestran pesos corrientes."
       : sp.ver === "mep"
         ? mep
-          ? `A ${money(Math.round(mep.rate * 100))} por dólar · ${mep.source}.`
+          ? `A ${formatMoney(Math.round(mep.rate * 100), "ARS", { decimals: "auto" })} por dólar · ${mep.source}.`
           : "No pudimos obtener la cotización del dólar MEP."
         : null;
   const ars = s.byCurrency.ARS;
@@ -100,7 +100,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           <Link href={q({ mes: prevMonth(month) })} aria-label="Mes anterior" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <ChevronLeft className="size-4" aria-hidden />
           </Link>
-          <span className="min-w-36 text-center text-body font-medium capitalize">{monthLabel(month)}</span>
+          <span className="min-w-36 text-center text-body font-medium capitalize">{formatPeriod(month)}</span>
           <Link href={q({ mes: nextMonth(month) })} aria-label="Mes siguiente" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <ChevronRight className="size-4" aria-hidden />
           </Link>
@@ -130,7 +130,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
       </p>
       {usd && (usd.now.in > 0 || usd.now.out > 0) && (
         <p className="-mt-2 text-meta text-muted">
-          En dólares: entró {money(usd.now.in, "USD")} · salió {money(usd.now.out, "USD")} · queda {money(usd.now.left, "USD")}
+          En dólares: entró {formatMoney(usd.now.in, "USD", { decimals: "auto" })} · salió {formatMoney(usd.now.out, "USD", { decimals: "auto" })} · queda {formatMoney(usd.now.left, "USD", { decimals: "auto" })}
         </p>
       )}
 
@@ -182,7 +182,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
                   <Link href={q({ categoria: c.categoryId })} className="hover:underline">
                     {c.name}
                   </Link>
-                  <span className="tabular-nums">{money(c.amount)}</span>
+                  <span className="tabular-nums">{formatMoney(c.amount, "ARS", { decimals: "auto" })}</span>
                 </div>
                 <div className="mt-1 h-2 rounded bg-navy-soft">
                   <div className="gastos-bar h-full rounded bg-navy" style={{ width: `${(c.amount / maxCat) * 100}%` }} />
@@ -208,7 +208,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
           </div>
         </div>
         {s.movements.length === 0 ? (
-          <p className="border-t border-line px-5 py-4 text-ui text-muted">Sin movimientos en {monthLabel(month)}.</p>
+          <p className="border-t border-line px-5 py-4 text-ui text-muted">Sin movimientos en {formatPeriod(month)}.</p>
         ) : (
           <ul className="divide-y divide-line border-t border-line">
             {s.movements.map((m) => {
@@ -225,13 +225,13 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
                         {m.source === "copiloto" && <WandSparkles className="size-3.5 shrink-0 text-rose-deep" aria-label="Cargado por el Vigía" />}
                       </span>
                       <span className="block truncate text-caption text-muted">
-                        {m.source === "grupo" ? `Mi parte · ${m.group!.name}` : m.categoryName} · {day(m.date)}
+                        {m.source === "grupo" ? `Mi parte · ${m.group!.name}` : m.categoryName} · {formatDate(m.date, "short")}
                         {m.paymentMethod && ` · ${PAYMENT_METHODS[m.paymentMethod as keyof typeof PAYMENT_METHODS]}`}
                       </span>
                     </span>
                     <span className={cn("shrink-0 tabular-nums text-body", m.kind === "ingreso" ? "text-[#2f7a4c]" : "text-ink")}>
                       {m.kind === "ingreso" ? "+" : "−"}
-                      {money(m.amount, m.currency)}
+                      {formatMoney(m.amount, m.currency, { decimals: "auto" })}
                     </span>
                   </Link>
                 </li>

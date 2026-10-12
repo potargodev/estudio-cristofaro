@@ -6,6 +6,7 @@ import type { TeamResult } from "@/lib/team";
 import { getTeam } from "@/lib/team";
 import { ORG_ROLES, ORG_ROLE_DESCRIPTIONS, ORG_ROLE_LABELS, SENSITIVE_ROLES, canGrant, type OrgRole } from "@/lib/permissions";
 import { InviteLinkBanner, TeamForm } from "./TeamForm";
+import { formatDate } from "@/lib/format";
 
 type TeamAction = (prev: TeamResult | null, fd: FormData) => Promise<TeamResult>;
 
@@ -19,7 +20,6 @@ interface TeamActions {
   approve?: TeamAction;
 }
 
-const dateFmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 
 /**
  * Miembros e invitaciones de una organización. Lo usan la ficha del backoffice
@@ -129,7 +129,7 @@ export async function TeamPanel({
                           ) : waiting ? (
                             <Badge tone="danger">Espera confirmación del estudio</Badge>
                           ) : (
-                            <Badge tone="warn">Pendiente · vence el {dateFmt.format(i.expires_at)}</Badge>
+                            <Badge tone="warn">Pendiente · vence el {formatDate(i.expires_at)}</Badge>
                           )}
                         </p>
                       </div>

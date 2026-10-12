@@ -4,16 +4,15 @@ import Link from "next/link";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/flotas/Feedback";
 import { requirePersonal } from "@/lib/auth";
-import { formatArs } from "@/lib/faro/plans";
 import { cn } from "@/lib/utils";
 import { profileLabel } from "@/modules/flotas/catalog";
 import { finalSettlement, FleetError, myAgreements } from "@/modules/flotas/server";
 import { requestEndAction } from "../actions";
 import { fleetPayAction } from "../cobro-actions";
+import { formatAmount, formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Mis servicios" };
 
-const day = (d: string | null) => (d ? new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`)) : "—");
 const STATUS = { activo: "Activo", baja_solicitada: "Baja pedida", finalizado: "Finalizado" } as const;
 
 /** "Mis servicios": cada acuerdo con su estado de cuenta (solo lo propio) y la baja con liquidación final */
@@ -49,31 +48,31 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                 <div>
                   <p className="text-title font-semibold">{a.terms.studioName}</p>
                   <p className="text-meta text-muted">
-                    Por la Flota «{a.terms.fleetName}» · {profileLabel(a.profile)} · firmado el {day(a.signed_at.toISOString().slice(0, 10))}
+                    Por la Flota «{a.terms.fleetName}» · {profileLabel(a.profile)} · firmado el {formatDate(a.signed_at.toISOString().slice(0, 10), "long")}
                   </p>
                 </div>
                 <span className={cn("rounded-md px-2.5 py-1 text-meta font-medium", account.state === "al_dia" ? "bg-navy-soft text-ink" : "bg-danger/10 text-danger")}>
-                  {a.status === "finalizado" ? STATUS.finalizado : account.state === "al_dia" ? "Al día" : `Pendiente: ${formatArs(account.pendingAmount)}`}
+                  {a.status === "finalizado" ? STATUS.finalizado : account.state === "al_dia" ? "Al día" : `Pendiente: ${formatAmount(account.pendingAmount, "ARS", { decimals: "none" })}`}
                 </span>
               </div>
               <dl className="mt-3 grid gap-x-6 gap-y-1 text-ui sm:grid-cols-[180px_1fr]">
                 <dt className="text-muted">Abono</dt>
-                <dd>{formatArs(a.monthly_price)} por mes</dd>
+                <dd>{formatAmount(a.monthly_price, "ARS", { decimals: "none" })} por mes</dd>
                 <dt className="text-muted">Estado</dt>
                 <dd>
                   {STATUS[a.status]}
-                  {a.ends_on && ` · termina el ${day(a.ends_on)}`}
+                  {a.ends_on && ` · termina el ${formatDate(a.ends_on, "long")}`}
                 </dd>
                 {a.status !== "finalizado" && account.nextDue && (
                   <>
                     <dt className="text-muted">Próximo vencimiento</dt>
-                    <dd>{day(account.nextDue)}</dd>
+                    <dd>{formatDate(account.nextDue, "long")}</dd>
                   </>
                 )}
                 {a.group_price_until && (
                   <>
                     <dt className="text-muted">Precio grupal hasta</dt>
-                    <dd>{day(a.group_price_until)} (la Flota quedó debajo del mínimo)</dd>
+                    <dd>{formatDate(a.group_price_until, "long")} (la Flota quedó debajo del mínimo)</dd>
                   </>
                 )}
                 <dt className="text-muted">Pagos registrados</dt>
@@ -87,7 +86,7 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                     <form action={fleetPayAction}>
                       <input type="hidden" name="agreement" value={a.id} />
                       <input type="hidden" name="op" value="saldo" />
-                      <SubmitButton pendingText="…">Pagar {formatArs(account.pendingAmount)}</SubmitButton>
+                      <SubmitButton pendingText="…">Pagar {formatAmount(account.pendingAmount, "ARS", { decimals: "none" })}</SubmitButton>
                     </form>
                   )}
                   {a.status === "activo" && a.debit_status !== "autorizado" &&
@@ -123,13 +122,13 @@ export default async function ServiciosPage({ searchParams }: { searchParams: Pr
                   <dl className="grid gap-x-6 gap-y-1 text-ui sm:grid-cols-[200px_1fr]">
                     <dt className="text-muted">Fin del servicio</dt>
                     <dd>
-                      {day(settlement.endsOn)} ({a.terms.noticeDays} días de preaviso)
+                      {formatDate(settlement.endsOn, "long")} ({a.terms.noticeDays} días de preaviso)
                     </dd>
                     <dt className="text-muted">Períodos pagados</dt>
                     <dd>{settlement.paidPeriods.length ? settlement.paidPeriods.join(", ") : "Ninguno"}</dd>
                     <dt className="text-muted">Queda por pagar hasta el fin</dt>
                     <dd className={settlement.pendingAmount ? "font-semibold text-danger" : ""}>
-                      {settlement.pendingAmount ? `${formatArs(settlement.pendingAmount)} (${settlement.pendingPeriods.join(", ")})` : "Nada"}
+                      {settlement.pendingAmount ? `${formatAmount(settlement.pendingAmount, "ARS", { decimals: "none" })} (${settlement.pendingPeriods.join(", ")})` : "Nada"}
                     </dd>
                   </dl>
                   {settlement.pendingAmount > 0 && <p className="text-meta text-muted">Lo pendiente es solo tu parte: lo pagás con el botón «Pagar» (si el estudio cobra con Mercado Pago) o directo al estudio. Con la baja se corta el débito automático.</p>}

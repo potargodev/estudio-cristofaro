@@ -7,6 +7,7 @@ import { Feedback } from "@/components/app/Feedback";
 import { Card, PageTitle } from "@/components/portal/ui";
 import { requireEmployee } from "@/lib/auth";
 import { openAnnouncement } from "@/modules/payroll/server";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Comunicado" };
 
@@ -22,7 +23,7 @@ export default async function Comunicado({ params, searchParams }: { params: Pro
       <Link href="/portal/empleado" className="text-meta text-muted hover:text-ink">
         ← Inicio
       </Link>
-      <PageTitle title={a.title} intro={`${a.created_at.toLocaleDateString("es-AR")}${a.from_studio ? " · enviado por el estudio en nombre de la empresa" : ""}`} />
+      <PageTitle title={a.title} intro={`${formatDate(a.created_at, "numeric")}${a.from_studio ? " · enviado por el estudio en nombre de la empresa" : ""}`} />
       <Feedback sp={sp} />
       <Card>
         <p className="whitespace-pre-line text-body leading-relaxed">{a.body}</p>
@@ -40,7 +41,7 @@ export default async function Comunicado({ params, searchParams }: { params: Pro
       </Card>
       {a.require_ack &&
         (r.ack_at ? (
-          <p className="mt-4 text-ui text-muted">Confirmaste la lectura el {r.ack_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}.</p>
+          <p className="mt-4 text-ui text-muted">Confirmaste la lectura el {formatDate(r.ack_at, "numericTime")}.</p>
         ) : (
           <form action={ackAnnouncementAction} className="mt-4">
             <input type="hidden" name="id" value={a.id} />

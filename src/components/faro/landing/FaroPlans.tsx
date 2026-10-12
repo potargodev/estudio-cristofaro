@@ -4,8 +4,9 @@ import { useState } from "react";
 import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, CtaLink, GhostLink, SectionIndex } from "@/components/web/ui";
 import { PERSONA_ROWS, PERSONAL_ROWS, STUDIO_ROWS } from "@/lib/faro/plan-rows";
-import { ANNUAL_FREE_MONTHS, formatArs, formatUsd, PLANS, type FaroPlan, type TenantKind } from "@/lib/faro/plans";
+import { ANNUAL_FREE_MONTHS, PLANS, type FaroPlan, type TenantKind } from "@/lib/faro/plans";
 import { cn } from "@/lib/utils";
+import { formatAmount } from "@/lib/format";
 
 const TABS: { kind: TenantKind; label: string; intro: string }[] = [
   { kind: "persona", label: "Para personas", intro: "Bitácora gratis para tus finanzas, tus grupos de gastos y para encontrar un contador cuando lo necesites." },
@@ -18,9 +19,9 @@ function Price({ p, usdArs }: { p: FaroPlan; usdArs: number }) {
   if (p.free || !p.priceUsd) return <span className="tabular mt-4 block text-title text-paper">Gratis</span>;
   return (
     <span className="mt-4 block">
-      <span className="tabular block text-title text-paper">{formatArs(p.priceUsd * usdArs)} / mes</span>
+      <span className="tabular block text-title text-paper">{formatAmount(p.priceUsd * usdArs, "ARS", { decimals: "none" })} / mes</span>
       <span className="tabular block text-meta text-paper/55">
-        Referencia {formatUsd(p.priceUsd)} · anual {formatArs(p.priceUsd * (12 - ANNUAL_FREE_MONTHS) * usdArs)}{p.trialDays ? ` · ${p.trialDays} días gratis` : ""}
+        Referencia {formatAmount(p.priceUsd, "USD", { decimals: "auto" })} · anual {formatAmount(p.priceUsd * (12 - ANNUAL_FREE_MONTHS) * usdArs, "ARS", { decimals: "none" })}{p.trialDays ? ` · ${p.trialDays} días gratis` : ""}
       </span>
     </span>
   );

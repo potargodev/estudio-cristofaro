@@ -4,10 +4,10 @@ import { notFound } from "next/navigation";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback, FleetLabel } from "@/components/flotas/Feedback";
 import { requirePersonal } from "@/lib/auth";
-import { formatArs } from "@/lib/faro/plans";
 import { BELOW_MIN_NOTICE_DAYS, INFORMAL_NOTICE, profileLabel } from "@/modules/flotas/catalog";
 import { FleetError, proposalForMember } from "@/modules/flotas/server";
 import { signAgreementAction } from "../../actions";
+import { formatAmount } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Tu acuerdo de servicio" };
 
@@ -45,7 +45,7 @@ export default async function AcuerdoPage({ params, searchParams }: { params: Pr
           <dt className="text-muted">Tu perfil</dt>
           <dd>{profileLabel(x.member.profile)}</dd>
           <dt className="text-muted">Abono mensual</dt>
-          <dd className="font-semibold">{x.price != null ? `${formatArs(x.price)} por mes, por adelantado` : "Esta propuesta no incluye tu perfil"}</dd>
+          <dd className="font-semibold">{x.price != null ? `${formatAmount(x.price, "ARS", { decimals: "none" })} por mes, por adelantado` : "Esta propuesta no incluye tu perfil"}</dd>
           <dt className="text-muted">Qué incluye</dt>
           <dd className="whitespace-pre-line">{x.p.includes}</dd>
           <dt className="text-muted">Mínimo de la Flota</dt>

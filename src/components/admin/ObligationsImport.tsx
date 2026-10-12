@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { formatAmount, formatDate } from "@/lib/format";
 
 const initial: ImportState = { ok: false };
 
-const dateLabel = (d: string) => (d ? d.split("-").reverse().join("/") : "—");
-const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 2 });
 
 export function ObligationsImport() {
   const [preview, previewAction, previewing] = useActionState(previewObligationsImport, initial);
@@ -79,8 +78,8 @@ export function ObligationsImport() {
                     <td className="px-3 py-2">{r.clientName ?? "—"}</td>
                     <td className="px-3 py-2">{r.tax || "—"}</td>
                     <td className="px-3 py-2">{r.period || "—"}</td>
-                    <td className="px-3 py-2 tabular-nums">{dateLabel(r.due_date)}</td>
-                    <td className="px-3 py-2 text-right tabular-nums">{r.amount ? money.format(Number(r.amount)) : "—"}</td>
+                    <td className="px-3 py-2 tabular-nums">{formatDate(r.due_date, "numeric")}</td>
+                    <td className="px-3 py-2 text-right tabular-nums">{r.amount ? formatAmount(Number(r.amount)) : "—"}</td>
                     <td className="px-3 py-2">{r.errors.length ? <span className="text-danger">{r.errors.join(" · ")}</span> : "OK"}</td>
                   </tr>
                 ))}

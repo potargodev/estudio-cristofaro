@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { archiveGoalAction, createGoalAction, goalMoveAction } from "@/app/bitacora/plus-actions";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
-import { money } from "@/modules/bitacora/catalog";
 import { listGoals } from "@/modules/bitacora/planning";
 import { bitacoraPlan } from "@/modules/bitacora/plus";
 import { requireUser } from "@/modules/bitacora/session";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Metas" };
 const KIND: Record<string, string> = { viaje: "Viaje", emergencia: "Fondo de emergencia", otro: "Meta" };
@@ -27,14 +27,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               {g.name} <span className="text-caption font-normal text-muted">· {KIND[g.kind]}</span>
             </p>
             <p className="num text-ui">
-              {money(g.saved)} de {money(g.target)}
+              {formatMoney(g.saved, "ARS", { decimals: "auto" })} de {formatMoney(g.target, "ARS", { decimals: "auto" })}
             </p>
           </div>
           <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-canvas" role="progressbar" aria-label={`Avance de ${g.name}`} aria-valuenow={Math.round(g.progress * 100)} aria-valuemin={0} aria-valuemax={100}>
             <div className="h-full rounded-full bg-navy" style={{ width: `${g.progress * 100}%` }} />
           </div>
           <p className="mt-2 text-meta text-muted">
-            {g.progress >= 1 ? "¡Llegaste! " : g.weekly ? `Guardá ${money(g.weekly)} por semana para llegar${g.deadline ? ` al ${g.deadline.split("-").reverse().join("/")}` : " en seis meses"}.` : ""}
+            {g.progress >= 1 ? "¡Llegaste! " : g.weekly ? `Guardá ${formatMoney(g.weekly, "ARS", { decimals: "auto" })} por semana para llegar${g.deadline ? ` al ${formatDate(g.deadline, "numeric")}` : " en seis meses"}.` : ""}
           </p>
           <form action={goalMoveAction} className="mt-3 flex flex-wrap items-end gap-2">
             <input type="hidden" name="id" value={g.id} />

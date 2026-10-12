@@ -6,10 +6,10 @@ import { getDb } from "@/db";
 import { help_feedback } from "@/db/schema";
 import { requireFaro } from "@/lib/auth";
 import { ARTICLES, articleUrl, categoryName } from "@/modules/help/catalog";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Opiniones de la ayuda" };
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 
 /** "¿Te sirvió?" por artículo: qué ayuda falta mejorar. Sin datos de clientes: solo votos y comentarios */
 export default async function AyudaOpiniones() {
@@ -62,7 +62,7 @@ export default async function AyudaOpiniones() {
           {comments.map((c) => (
             <li key={c.id} className="rounded-md border border-line bg-surface px-4 py-3 text-ui">
               <p className="text-caption text-muted">
-                {ARTICLES.find((a) => a.id === c.article_id)?.titulo ?? c.article_id} · {c.helpful ? "le sirvió" : "no le sirvió"} · {fmt.format(c.created_at)}
+                {ARTICLES.find((a) => a.id === c.article_id)?.titulo ?? c.article_id} · {c.helpful ? "le sirvió" : "no le sirvió"} · {formatDate(c.created_at, "shortTime")}
               </p>
               <p className="mt-1">{c.comment}</p>
             </li>

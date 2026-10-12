@@ -5,18 +5,16 @@ import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import { addSharedEntryAction, confirmEntryAction, createGoalAction, deleteSharedEntryAction, leaveBoxAction } from "@/app/cajas/actions";
 import { cn } from "@/lib/utils";
-import { money } from "@/modules/bitacora/catalog";
 import { categoryName, templateOf } from "@/modules/cajas/catalog";
 import type { Box } from "@/modules/cajas/server";
 import { sharedBreakdown, sharedEntries } from "@/modules/cajas/shared";
-import { todayAR } from "@/modules/gastos/constants";
 import { BoxInvite } from "./BoxInvite";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney, todayAR } from "@/lib/format";
 
 const field = `mt-1 ${fieldClass}`;
 const lbl = "block text-meta text-muted";
 const card = "rounded-lg border border-line bg-surface p-5";
-const day = (iso: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${iso}T12:00:00Z`));
 
 type Me = { id: string; name: string; email: string; studioId: string };
 
@@ -68,7 +66,7 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
               return (
                 <li key={e.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                   <span className="min-w-0 text-ui">
-                    {what === "carga" ? `${nameOf(e.created_by)} cargó que pagaste ${e.description}: ${money(e.amount)}` : `Tu parte de ${e.description} (pagó ${nameOf(e.paid_by)}): ${money(share!.amount)}`}
+                    {what === "carga" ? `${nameOf(e.created_by)} cargó que pagaste ${e.description}: ${formatMoney(e.amount, "ARS", { decimals: "auto" })}` : `Tu parte de ${e.description} (pagó ${nameOf(e.paid_by)}): ${formatMoney(share!.amount, "ARS", { decimals: "auto" })}`}
                   </span>
                   <form action={confirmEntryAction}>
                     {hidden}
@@ -209,10 +207,10 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
               {b.members.map((m) => (
                 <tr key={m.userId} className="border-t border-line" data-persona={m.name}>
                   <td className="py-2 pr-2">{m.userId === me.id ? `${m.name} (vos)` : m.name}</td>
-                  <td className="num py-2 pr-2 text-right">{money(m.put)}</td>
-                  <td className="num py-2 pr-2 text-right">{m.owes ? money(m.owes) : "—"}</td>
-                  <td className="num py-2 pr-2 text-right">{m.pendingConfirm ? money(m.pendingConfirm) : "—"}</td>
-                  <td className={cn("num py-2 text-right", m.diff > 0 ? "text-[#1f5f36]" : m.diff < 0 ? "text-danger" : "")}>{m.diff === 0 ? "—" : `${m.diff > 0 ? "+" : "−"}${money(Math.abs(m.diff))}`}</td>
+                  <td className="num py-2 pr-2 text-right">{formatMoney(m.put, "ARS", { decimals: "auto" })}</td>
+                  <td className="num py-2 pr-2 text-right">{m.owes ? formatMoney(m.owes, "ARS", { decimals: "auto" }) : "—"}</td>
+                  <td className="num py-2 pr-2 text-right">{m.pendingConfirm ? formatMoney(m.pendingConfirm, "ARS", { decimals: "auto" }) : "—"}</td>
+                  <td className={cn("num py-2 text-right", m.diff > 0 ? "text-[#1f5f36]" : m.diff < 0 ? "text-danger" : "")}>{m.diff === 0 ? "—" : `${m.diff > 0 ? "+" : "−"}${formatMoney(Math.abs(m.diff), "ARS", { decimals: "auto" })}`}</td>
                 </tr>
               ))}
             </tbody>
@@ -222,14 +220,14 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
           <ul className="mt-3 grid gap-1 text-ui" aria-label="Quién le debe a quién">
             {b.debts.map((d) => (
               <li key={`${d.from}-${d.to}`} data-deuda>
-                {d.from === me.id ? "Vos le debés" : `${d.fromName} le debe`} {money(d.amount)} a {d.to === me.id ? "vos" : d.toName} <span className="text-muted">(pendiente hasta que confirme que pagó)</span>
+                {d.from === me.id ? "Vos le debés" : `${d.fromName} le debe`} {formatMoney(d.amount, "ARS", { decimals: "auto" })} a {d.to === me.id ? "vos" : d.toName} <span className="text-muted">(pendiente hasta que confirme que pagó)</span>
               </li>
             ))}
           </ul>
         )}
         {b.byCategory.length > 0 && (
           <p className="mt-3 text-meta text-muted">
-            En qué se fue: {b.byCategory.map((c) => `${c.name} ${money(c.amount)}`).join(" · ")}
+            En qué se fue: {b.byCategory.map((c) => `${c.name} ${formatMoney(c.amount, "ARS", { decimals: "auto" })}`).join(" · ")}
           </p>
         )}
       </section>
@@ -247,13 +245,13 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
                 <p className="flex justify-between gap-2 text-ui">
                   <span className="font-medium">{g.name}</span>
                   <span className="num">
-                    {money(g.saved)} de {money(g.target)}
+                    {formatMoney(g.saved, "ARS", { decimals: "auto" })} de {formatMoney(g.target, "ARS", { decimals: "auto" })}
                   </span>
                 </p>
                 <div className="mt-1 h-2 rounded-full bg-canvas" role="progressbar" aria-valuenow={g.pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Meta ${g.name}`}>
                   <div className="h-2 rounded-full bg-navy" style={{ width: `${g.pct}%` }} />
                 </div>
-                {g.byMember.length > 0 && <p className="mt-1 text-meta text-muted">{g.byMember.map((x) => `${x.userId === me.id ? "Vos" : x.name} ${money(x.amount)}`).join(" · ")}</p>}
+                {g.byMember.length > 0 && <p className="mt-1 text-meta text-muted">{g.byMember.map((x) => `${x.userId === me.id ? "Vos" : x.name} ${formatMoney(x.amount, "ARS", { decimals: "auto" })}`).join(" · ")}</p>}
               </li>
             ))}
           </ul>
@@ -285,12 +283,12 @@ export async function SharedBoxView({ me, box, sp }: { me: Me; box: Box; month: 
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-body text-ink">{e.description}</span>
                   <span className="block text-meta text-muted">
-                    {day(e.date)} · pagó {nameOf(e.paid_by)} · {e.kind === "ahorro" ? "Ahorro" : categoryName("compartida", box.purpose, e.category)} · {e.mode === "dividir" ? "dividido" : "solo registrado"}
+                    {formatDate(e.date, "short")} · pagó {nameOf(e.paid_by)} · {e.kind === "ahorro" ? "Ahorro" : categoryName("compartida", box.purpose, e.category)} · {e.mode === "dividir" ? "dividido" : "solo registrado"}
                     {e.status === "pendiente" ? " · sin confirmar" : ""}
-                    {e.mode === "dividir" && e.shares.some((s) => !s.paid_at) ? ` · partes pendientes: ${e.shares.filter((s) => !s.paid_at).map((s) => `${nameOf(s.user_id)} ${money(s.amount)}`).join(", ")}` : ""}
+                    {e.mode === "dividir" && e.shares.some((s) => !s.paid_at) ? ` · partes pendientes: ${e.shares.filter((s) => !s.paid_at).map((s) => `${nameOf(s.user_id)} ${formatMoney(s.amount, "ARS", { decimals: "auto" })}`).join(", ")}` : ""}
                   </span>
                 </span>
-                <span className="num shrink-0 text-body">{money(e.amount)}</span>
+                <span className="num shrink-0 text-body">{formatMoney(e.amount, "ARS", { decimals: "auto" })}</span>
                 {e.created_by === me.id && (
                   <form action={deleteSharedEntryAction}>
                     {hidden}

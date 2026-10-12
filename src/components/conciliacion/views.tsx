@@ -7,12 +7,11 @@ import type { StaffUser } from "@/lib/auth";
 import { hasModule } from "@/lib/faro/entitlements";
 import { listRules, listStatements, statementView, type RecScope } from "@/modules/bank-rec/server";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney } from "@/lib/format";
 
 // Conciliación bancaria en la ficha de la organización (pestaña Conciliación).
 
 const field = `mt-1 ${fieldClass}`;
-const ars = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-const d = (s: string | null) => (s ? s.split("-").reverse().join("/") : "—");
 const ACTION: Record<string, string> = { comision: "Comisión bancaria", impuesto: "Impuesto bancario", ignorar: "Ignorar", sin_factura: "Pago sin factura" };
 const SIGN: Record<string, string> = { debito: "débitos", credito: "créditos", ambos: "débitos y créditos" };
 
@@ -63,7 +62,7 @@ export async function BankRecTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
                       {st.account ? ` · ${st.account}` : ""}
                     </p>
                     <p className="text-caption text-muted">
-                      {d(st.from)} al {d(st.to)} · <span className="num">{st.total}</span> movimientos · {st.fileName}
+                      {formatDate(st.from, "numeric")} al {formatDate(st.to, "numeric")} · <span className="num">{st.total}</span> movimientos · {st.fileName}
                     </p>
                   </div>
                 </Link>
@@ -152,7 +151,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
   const rules = await listRules(scope);
   const label = (cid: string | null) => {
     const c = cid ? v.byId.get(cid) : null;
-    return c ? `${c.type === "emitido" ? "Factura emitida" : "Comprobante recibido"} ${c.number ?? ""} · ${c.counterparty ?? ""} · ${ars(c.total)} · ${d(c.date)}` : "—";
+    return c ? `${c.type === "emitido" ? "Factura emitida" : "Comprobante recibido"} ${c.number ?? ""} · ${c.counterparty ?? ""} · ${formatMoney(c.total)} · ${formatDate(c.date, "numeric")}` : "—";
   };
   const options = (amount: number) => [...v.byId.values()].filter((c) => (amount > 0) === (c.type === "emitido") && !v.matched.has(c.id));
   const cards: [string, string | number, string][] = [
@@ -160,15 +159,15 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
     ["Pendientes", v.summary.pendientes, ""],
     ["En tránsito", v.summary.enTransito, "de los últimos días del período"],
     ["Pagos sin factura", v.summary.pagosSinFactura, ""],
-    ["Comisiones", ars(v.summary.comisiones), ""],
-    ["Impuestos bancarios", ars(v.summary.impuestos), ""],
+    ["Comisiones", formatMoney(v.summary.comisiones), ""],
+    ["Impuestos bancarios", formatMoney(v.summary.impuestos), ""],
   ];
   return (
     <div className="grid gap-5">
       <Feedback sp={sp} />
       <p className="text-ui text-muted">
         {v.st.bank}
-        {v.st.account_label ? ` · ${v.st.account_label}` : ""} · del {d(v.st.period_from)} al {d(v.st.period_to)} · {v.st.file_name}
+        {v.st.account_label ? ` · ${v.st.account_label}` : ""} · del {formatDate(v.st.period_from, "numeric")} al {formatDate(v.st.period_to, "numeric")} · {v.st.file_name}
         {v.summary.sinConciliar > 0 && <span className="text-[#8f2a1c]"> · {v.summary.sinConciliar} sin conciliar</span>}
       </p>
       <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -194,11 +193,11 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-ui">{m.description}</p>
                     <p className="text-caption text-muted">
-                      {d(m.date)} · {CLS[m.cls]} · <span className={st.tone}>{st.label}</span>
+                      {formatDate(m.date, "numeric")} · {CLS[m.cls]} · <span className={st.tone}>{st.label}</span>
                       {m.status === "sugerido" && m.match_score && ` (${Math.round(Number(m.match_score) * 100)}%)`}
                     </p>
                   </div>
-                  <span className={`num text-ui ${m.amount > 0 ? "text-[#1f6b3d]" : ""}`}>{ars(m.amount)}</span>
+                  <span className={`num text-ui ${m.amount > 0 ? "text-[#1f6b3d]" : ""}`}>{formatMoney(m.amount)}</span>
                 </div>
                 {(m.status === "sugerido" || m.status === "conciliado") && (
                   <p className="pl-7 text-meta">

@@ -20,10 +20,10 @@ import { getEntitlements } from "@/lib/faro/entitlements";
 import { FARO_MODULES } from "@/lib/faro/modules";
 import { getPlan, KIND_LABEL, plansFor } from "@/lib/faro/plans";
 import { isUuid } from "@/lib/ids";
+import { formatDate, formatUsd } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Tenant" };
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 
 export default async function TenantPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const { id } = await params;
@@ -53,8 +53,8 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
       </Link>
       <PageHeader
         title={t.name}
-        description={`${KIND_LABEL[t.kind]} · plan ${getPlan(t.plan_key)?.name ?? t.plan_key} · alta ${fmt.format(t.created_at)} (${t.created_via})${t.cuit ? ` · CUIT ${t.cuit}` : ""}${t.industries.length ? ` · rubros: ${t.industries.map((k) => INDUSTRY_NAMES[k] ?? k).join(", ")}` : ""}`}
-        actions={<StatusBadge status={t.status === "activo" ? "activa" : t.status === "prueba" ? "onboarding" : "pausada"} label={t.status === "activo" ? "Activo" : t.status === "prueba" ? `En prueba${t.trial_ends_at ? ` hasta ${fmt.format(t.trial_ends_at)}` : ""}` : "Suspendido"} />}
+        description={`${KIND_LABEL[t.kind]} · plan ${getPlan(t.plan_key)?.name ?? t.plan_key} · alta ${formatDate(t.created_at, "dateTime")} (${t.created_via})${t.cuit ? ` · CUIT ${t.cuit}` : ""}${t.industries.length ? ` · rubros: ${t.industries.map((k) => INDUSTRY_NAMES[k] ?? k).join(", ")}` : ""}`}
+        actions={<StatusBadge status={t.status === "activo" ? "activa" : t.status === "prueba" ? "onboarding" : "pausada"} label={t.status === "activo" ? "Activo" : t.status === "prueba" ? `En prueba${t.trial_ends_at ? ` hasta ${formatDate(t.trial_ends_at, "dateTime")}` : ""}` : "Suspendido"} />}
         className="mt-3"
       />
       {sp.ok && <Notice>{sp.ok}</Notice>}
@@ -75,7 +75,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
           </div>
           <div className="border border-line bg-surface px-4 py-3">
             <p className="text-meta text-muted">IA este mes</p>
-            <p className="num text-[30px] text-ink">US$ {Number(ai.cost).toLocaleString("es-AR", { maximumFractionDigits: 2 })}</p>
+            <p className="num text-[30px] text-ink">{formatUsd(Number(ai.cost))}</p>
             <p className="text-caption text-muted">{ai.calls} llamadas</p>
           </div>
         </div>
@@ -144,7 +144,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
                         {o && (
                           <Tag>
                             Override {o.enabled ? "habilitado" : "deshabilitado"}
-                            {o.expires_at ? ` hasta ${fmt.format(o.expires_at)}` : ""}
+                            {o.expires_at ? ` hasta ${formatDate(o.expires_at, "dateTime")}` : ""}
                             {o.expires_at && o.expires_at < new Date() ? " (vencido)" : ""}
                           </Tag>
                         )}
@@ -236,7 +236,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
               <ul className="mt-4 divide-y divide-line border border-line text-meta">
                 {grants.map(({ g, who }) => (
                   <li key={g.id} className="px-3 py-2">
-                    {fmt.format(g.created_at)} · {who} · {g.reason} · {g.ended_at ? `terminado ${fmt.format(g.ended_at)}` : g.expires_at < new Date() ? "venció" : `vigente hasta ${fmt.format(g.expires_at)}`}
+                    {formatDate(g.created_at, "dateTime")} · {who} · {g.reason} · {g.ended_at ? `terminado ${formatDate(g.ended_at, "dateTime")}` : g.expires_at < new Date() ? "venció" : `vigente hasta ${formatDate(g.expires_at, "dateTime")}`}
                   </li>
                 ))}
               </ul>
@@ -268,7 +268,7 @@ export default async function TenantPage({ params, searchParams }: { params: Pro
             <ul className="grid gap-1.5 text-meta">
               {log.map((l) => (
                 <li key={l.id}>
-                  {fmt.format(l.created_at)} · {l.actor_label} · {auditLabel(l.action)} {Object.keys(l.metadata).length ? <span className="text-muted">{JSON.stringify(l.metadata)}</span> : null}
+                  {formatDate(l.created_at, "dateTime")} · {l.actor_label} · {auditLabel(l.action)} {Object.keys(l.metadata).length ? <span className="text-muted">{JSON.stringify(l.metadata)}</span> : null}
                 </li>
               ))}
             </ul>

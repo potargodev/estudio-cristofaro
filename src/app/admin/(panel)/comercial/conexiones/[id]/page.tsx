@@ -7,9 +7,9 @@ import { SubmitButton } from "@/components/admin/ui";
 import { acceptConnectionAction, rejectConnectionAction, infoAction, interviewAction, studioSignAction } from "@/app/admin/conexiones-actions";
 import { LiveAccount } from "@/components/conexiones/LiveAccount";
 import { requireStaff } from "@/lib/auth";
-import { money } from "@/modules/bitacora/catalog";
 import { AUTONOMY_LABEL, liveView, STATUS_LABEL, studioConnection } from "@/modules/conexiones/server";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Admisión" };
 
@@ -104,7 +104,7 @@ export default async function AdmisionPage({ params, searchParams }: { params: P
           </h3>
           <p>{c.terms.services}</p>
           <p className="text-muted">
-            Honorarios <span className="num">{money(c.terms.monthlyPrice * 100)}</span> por mes · preaviso {c.terms.noticeDays} días · {c.user_signed_at ? `firmó ${c.user_signed_name}` : "falta la firma de la persona"} · {c.studio_signed_at ? `firmó el estudio (${c.studio_signed_name})` : "falta la firma del estudio"}
+            Honorarios <span className="num">{formatMoney(c.terms.monthlyPrice * 100, "ARS", { decimals: "auto" })}</span> por mes · preaviso {c.terms.noticeDays} días · {c.user_signed_at ? `firmó ${c.user_signed_name}` : "falta la firma de la persona"} · {c.studio_signed_at ? `firmó el estudio (${c.studio_signed_name})` : "falta la firma del estudio"}
           </p>
           {!c.studio_signed_at && operator && (
             <form action={studioSignAction} className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">

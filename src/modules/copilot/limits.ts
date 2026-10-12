@@ -8,6 +8,7 @@ import { getPlan } from "@/lib/faro/plans";
 import { mailLayout } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { limitsFor, type PlatformAi } from "./platform";
+import { formatUsd } from "@/lib/format";
 
 // Uso y límites de la IA de la plataforma: por usuario y mes (mensajes y
 // audios según su plan) y topes globales de gasto (día y mes, en USD). Con el
@@ -93,7 +94,7 @@ export async function checkQuota(u: { id: string; studioId: string }, kind: stri
   const overDay = p.daily_cap_usd != null && spend.day >= Number(p.daily_cap_usd);
   const overMonth = p.monthly_cap_usd != null && spend.month >= Number(p.monthly_cap_usd);
   if (overDay || overMonth) {
-    await recordAlert("tope", `Se alcanzó el tope ${overDay ? `diario (USD ${p.daily_cap_usd})` : `mensual (USD ${p.monthly_cap_usd})`} de la IA de la plataforma. La IA quedó pausada para los planes gratis.`).catch(() => undefined);
+    await recordAlert("tope", `Se alcanzó el tope ${overDay ? `diario (${formatUsd(Number(p.daily_cap_usd))})` : `mensual (${formatUsd(Number(p.monthly_cap_usd))})`} de la IA de la plataforma. La IA quedó pausada para los planes gratis.`).catch(() => undefined);
     if (free) return { ok: false, reason: "tope", message: "La IA de Faro está en pausa por hoy para las cuentas gratis." };
   }
   const lim = limitsFor(p, plan?.key ?? "persona_gratis");

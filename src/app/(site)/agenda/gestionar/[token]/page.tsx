@@ -7,7 +7,7 @@ import { SaveToast } from "@/components/admin/SaveToast";
 import { bookingByToken } from "@/lib/agenda/bookings";
 import { toPickerDays } from "@/lib/agenda/picker";
 import { availableSlots, getHosts } from "@/lib/agenda/slots";
-import { fmtDateTime, fmtTime } from "@/lib/agenda/time";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Tu llamada", robots: { index: false, follow: false } };
 
@@ -43,11 +43,11 @@ export default async function GestionarPage({
       {sp.reprogramada && <SaveToast message="Listo, reprogramamos la llamada. Te mandamos la confirmación." />}
       <p className="text-ui text-muted">Tu llamada con el Estudio Cristofaro</p>
       <h1 className="display-sm mt-4 text-paper first-letter:uppercase">
-        {b.status === "cancelada" ? "Llamada cancelada" : fmtDateTime(b.starts_at)}
+        {b.status === "cancelada" ? "Llamada cancelada" : formatDate(b.starts_at, "weekdayTime")}
       </h1>
       {b.status === "confirmada" && (
         <p className="mt-2 text-muted">
-          Hasta las {fmtTime(b.ends_at)} (hora de Buenos Aires) ·{" "}
+          Hasta las {formatDate(b.ends_at, "time")} (hora de Buenos Aires) ·{" "}
           {b.meet_url ? (
             <a href={b.meet_url} className="text-rose-deep underline">
               link de la videollamada

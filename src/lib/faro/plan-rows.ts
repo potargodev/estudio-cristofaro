@@ -2,10 +2,11 @@
 // Los límites numéricos salen de plans.ts; acá van los textos comparativos.
 
 import { getPlan } from "./plans";
+import { formatNumber } from "@/lib/format";
 
 const lim = (key: string, f: "organizations" | "staffUsers" | "smartDocsPerMonth") => {
   const v = getPlan(key)?.limits[f];
-  return v == null ? "Ilimitadas" : f === "smartDocsPerMonth" ? `${v.toLocaleString("es-AR")} documentos/mes` : `Hasta ${v}`;
+  return v == null ? "Ilimitadas" : f === "smartDocsPerMonth" ? `${formatNumber(v)} documentos/mes` : `Hasta ${v}`;
 };
 
 /** [fila, Inicial, Profesional, Avanzado] */

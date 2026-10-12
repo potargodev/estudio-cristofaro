@@ -6,8 +6,8 @@ import { audit } from "@/lib/audit";
 import { esc, sendMail } from "@/lib/email";
 import { mailLayout } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
-import { formatMoney, todayAR } from "../constants";
 import { ledgerBalances, nextDate, syncAccounting } from "./service";
+import { formatMoney, todayAR } from "@/lib/format";
 
 // Tareas de grupos de gastos (corren solas desde instrumentation.ts y por
 // /api/gastos/cron con CRON_SECRET):

@@ -6,11 +6,11 @@ import { bitacora_categories, bitacora_entries, bitacora_shares, box_entries, bo
 import { audit } from "@/lib/audit";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { SplitError, splitExpense } from "@/modules/gastos/core/split";
-import { todayAR } from "@/modules/gastos/constants";
 import { notify } from "@/modules/notifications/server";
 import { categoriesFor, templateOf } from "./catalog";
 import { breakdown, type LedgerEntry } from "./ledger";
 import { boxFor, CajaError } from "./server";
+import { todayAR } from "@/lib/format";
 
 // Cajas compartidas: el registro compartido (principios §16 y §18). No es un
 // grupo de gastos: llevar la cuenta juntos. Cada integrante carga lo que gasta

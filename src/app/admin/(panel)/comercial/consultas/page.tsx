@@ -14,11 +14,11 @@ import { audit_log, leads } from "@/db/schema";
 import { requireOperator } from "@/lib/auth";
 import { likeTerm } from "@/lib/search";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Consultas" };
 
 const DAY = 86400000;
-const shortDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" });
 
 export default async function ConsultasPage({ searchParams }: { searchParams: Promise<{ q?: string; vista?: string }> }) {
   const { q, vista } = await searchParams;
@@ -106,12 +106,12 @@ export default async function ConsultasPage({ searchParams }: { searchParams: Pr
         next: l.next_action ? (
           <span className={`block max-w-[16rem] truncate text-meta ${overdue ? "font-medium text-[#8f2a1c]" : "text-ink"}`}>
             {l.next_action}
-            {l.next_action_at && <span className="tabular"> · {shortDate.format(new Date(`${l.next_action_at}T00:00:00Z`))}</span>}
+            {l.next_action_at && <span className="tabular"> · {formatDate(l.next_action_at, "short")}</span>}
           </span>
         ) : (
           <span className="text-meta text-muted">—</span>
         ),
-        created: <span className="tabular text-meta text-muted">{shortDate.format(l.created_at)}</span>,
+        created: <span className="tabular text-meta text-muted">{formatDate(l.created_at, "short")}</span>,
       },
     };
   });

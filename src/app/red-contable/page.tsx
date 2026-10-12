@@ -8,7 +8,7 @@ import { StudioCard } from "@/components/red/StudioCard";
 import { ViewSwitch } from "@/components/ds/primitives";
 import { mySeeker } from "@/modules/red/seekers";
 import { publicDirectory } from "@/modules/red/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { getDerivationRules, ownSuggestion } from "@/modules/escudo/server";
 import { StudiosMap } from "@/components/red/StudiosMap";
 import { SectionTabs } from "@/components/app/SectionTabs";
@@ -35,7 +35,7 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
     if (v === "mapa") q.set("vista", "mapa");
     return `/red-contable${q.size ? `?${q}` : ""}`;
   };
-  const [list, user] = await Promise.all([publicDirectory(filters), getCurrentUser().catch(() => null), markStep("red").catch(() => undefined)]);
+  const [list, user] = await Promise.all([publicDirectory(filters), getSessionUser().catch(() => null), markStep("red").catch(() => undefined)]);
   const titular = user?.role === "titular" && user.tenantKind !== "studio";
   const seeker = titular ? await mySeeker(user!.id) : null;
   // Derivación (§1.c): la persona llega con el contexto armado (solo el propio, validado en el servidor)

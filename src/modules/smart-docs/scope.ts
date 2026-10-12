@@ -1,6 +1,6 @@
 import "server-only";
 import { notFound, redirect } from "next/navigation";
-import { getCurrentUser, requireStaff } from "@/lib/auth";
+import { getSessionUser, requireStaff } from "@/lib/auth";
 import { ownOrganization } from "@/lib/faro/tenants";
 import { studioOrganization } from "@/lib/organizations";
 import type { DocScope } from "./server";
@@ -26,7 +26,7 @@ export async function resolveScope(ambito: Ambito, orgId?: string | null): Promi
     if (!org) notFound();
     return { scope: { studioId: me.studioId, organizationId: org.id, ownerUserId: null, scope: "organizacion", canConfirm: true }, actor: me, base: `/admin/organizaciones/${org.id}/lectura`, title: org.name };
   }
-  const me = await getCurrentUser();
+  const me = await getSessionUser();
   if (!me) redirect("/ingresar");
   if (ambito === "personal") {
     if (me.role !== "titular" || me.tenantKind !== "personal") notFound();

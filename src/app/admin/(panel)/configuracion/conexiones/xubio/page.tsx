@@ -15,11 +15,11 @@ import { external_records, legal_entities, organizations } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth";
 import { getConnector } from "@/modules/connectors/catalog";
 import { connectionsOf, readCredentials, recentLogs, unmatched } from "@/modules/connectors/store";
+import { formatAmountOrDash } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Xubio · Conexiones" };
 
 const RES: Record<string, string> = { clientes: "Clientes", comprobantes_venta: "Ventas", comprobantes_compra: "Compras", asientos: "Asientos" };
-const money = (v: string | null) => (v == null ? "—" : `$ ${Number(v).toLocaleString("es-AR", { maximumFractionDigits: 2 })}`);
 
 function XubioForm({ orgs, current }: { orgs: { id: string; name: string }[]; current?: { id: string; name: string; organization_id: string | null; client_id?: string } }) {
   const p = current?.id ?? "nueva";
@@ -166,7 +166,7 @@ export default async function XubioPage({ searchParams }: { searchParams: Promis
                           <td className="py-1.5">{r.resource === "comprobantes_venta" ? "Venta" : "Compra"}</td>
                           <td className="py-1.5">{r.name}</td>
                           <td className="py-1.5">{org ?? <span className="text-muted">Sin cruzar</span>}</td>
-                          <td className="py-1.5 text-right">{money(r.amount)}</td>
+                          <td className="py-1.5 text-right">{formatAmountOrDash(r.amount, "ARS", { decimals: "auto" })}</td>
                         </tr>
                       ))}
                     </tbody>

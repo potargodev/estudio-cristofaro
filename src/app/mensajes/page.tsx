@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { blockedList, listConversations } from "@/modules/messages/server";
 import { requireChatUser } from "@/modules/messages/session";
 import { unblockAction } from "./actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: { absolute: "Mensajes · Faro" } };
 
@@ -16,9 +17,8 @@ const KIND = { directo: "", grupo: "Grupo", gastos: "Grupo de gastos", flota: "F
 
 const when = (iso: string | null) => {
   if (!iso) return "";
-  const d = new Date(iso);
-  const today = new Date().toDateString() === d.toDateString();
-  return new Intl.DateTimeFormat("es-AR", today ? { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" } : { day: "numeric", month: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(d);
+  const today = formatDate(iso, "numeric") === formatDate(new Date(), "numeric");
+  return formatDate(iso, today ? "time" : "short");
 };
 
 /** Mensajes: conversaciones con personas con las que compartís un espacio */

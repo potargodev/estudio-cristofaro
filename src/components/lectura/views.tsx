@@ -8,12 +8,12 @@ import { DEFAULT_ACCOUNTS, FIELDS, LOW_CONFIDENCE, type Extraction, type Validat
 import type { ResolvedScope } from "@/modules/smart-docs/scope";
 import type { SmartDoc } from "@/modules/smart-docs/server";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatAmountOrDash, formatDate, formatUsd } from "@/lib/format";
 
 // Pantallas compartidas de la lectura inteligente: la bandeja (subir, para
 // confirmar, confirmados y exportar) y la revisión de un documento.
 
 const field = `mt-1 ${fieldClass}`;
-const ars = (n: number | null | undefined) => (n == null ? "—" : `$ ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
 const STATUS: Record<string, string> = { leyendo: "Leyendo", para_confirmar: "Para confirmar", confirmado: "Confirmado", descartado: "Descartado", error: "No se pudo leer" };
 
 function Hidden({ r }: { r: ResolvedScope }) {
@@ -62,7 +62,7 @@ export function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedScope; 
             {usage && (
               <span className="text-meta text-muted">
                 <span className="num">{usage.docs}</span>
-                {usage.limit != null && <> de <span className="num">{usage.limit}</span></>} leídos este mes · costo de IA <span className="num">US$ {usage.usd.toFixed(4)}</span>
+                {usage.limit != null && <> de <span className="num">{usage.limit}</span></>} leídos este mes · costo de IA <span className="num">{formatUsd(usage.usd, 4)}</span>
               </span>
             )}
           </div>
@@ -89,7 +89,7 @@ export function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedScope; 
                         {d.low_fields.length > 0 && ` · ${d.low_fields.length} dato${d.low_fields.length === 1 ? "" : "s"} para revisar`}
                       </p>
                     </div>
-                    <span className="num text-ui">{ars((d.extracted as unknown as Extraction | null)?.total)}</span>
+                    <span className="num text-ui">{formatAmountOrDash((d.extracted as unknown as Extraction | null)?.total)}</span>
                   </Link>
                 </li>
               );
@@ -152,7 +152,7 @@ export function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedScope; 
                       {d.exported_at ? " · exportado" : ""}
                     </p>
                   </div>
-                  <span className="num text-ui">{ars((d.extracted as unknown as Extraction | null)?.total)}</span>
+                  <span className="num text-ui">{formatAmountOrDash((d.extracted as unknown as Extraction | null)?.total)}</span>
                 </Link>
               </li>
             ))}
@@ -194,7 +194,7 @@ export function LecturaReview({ r, d, sp }: { r: ResolvedScope; d: SmartDoc; sp:
           {d.file_name}
         </a>
         {d.model && ` · leído con ${d.model}`}
-        {d.synced_at && ` el ${d.synced_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}`}
+        {d.synced_at && ` el ${formatDate(d.synced_at, "numericTime")}`}
         {d.confidence && ` · confianza ${Math.round(Number(d.confidence) * 100)}%`}
       </p>
       {d.duplicate_of && (
@@ -247,8 +247,8 @@ export function LecturaReview({ r, d, sp }: { r: ResolvedScope; d: SmartDoc; sp:
           </div>
           {(e.iva.length > 0 || e.percepciones.length > 0) && (
             <p className="text-meta text-muted">
-              {e.iva.map((x) => `IVA ${x.alicuota}%: ${ars(x.importe)}`).join(" · ")}
-              {e.percepciones.length > 0 && ` · ${e.percepciones.map((x) => `${x.concepto}: ${ars(x.importe)}`).join(" · ")}`}
+              {e.iva.map((x) => `IVA ${x.alicuota}%: ${formatAmountOrDash(x.importe)}`).join(" · ")}
+              {e.percepciones.length > 0 && ` · ${e.percepciones.map((x) => `${x.concepto}: ${formatAmountOrDash(x.importe)}`).join(" · ")}`}
             </p>
           )}
           <label className="text-meta text-muted">

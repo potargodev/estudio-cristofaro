@@ -19,11 +19,10 @@ import { calendarAvailable, getConnection } from "@/lib/agenda/google";
 import { STUDIO_TZ, addDays, isoWeekday, localDate, zonedTime } from "@/lib/agenda/time";
 import { encryptionEnabled } from "@/lib/crypto";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Agenda" };
 
-const timeFmt = new Intl.DateTimeFormat("es-AR", { timeZone: STUDIO_TZ, hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
-const fmtTime = (d: Date) => timeFmt.format(d);
 
 // Colores por tipo de llamada (todos con texto AA sobre su fondo)
 const CALL_TYPES = {
@@ -33,7 +32,6 @@ const CALL_TYPES = {
 } as const;
 
 const DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
-const dayFmt = new Intl.DateTimeFormat("es-AR", { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" });
 const GOOGLE_MSG: Record<string, [string, "ok" | "error"]> = {
   conectado: ["Google Calendar conectado.", "ok"],
   desconectado: ["Google Calendar desconectado.", "ok"],
@@ -252,7 +250,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <Link href={`/admin/comercial/agenda?${qs({ semana: addDays(monday, -7) })}`} className="grid size-9 place-items-center border border-line bg-surface" aria-label="Semana anterior">
               <ChevronLeft className="size-4" aria-hidden />
             </Link>
-            <h2 className="min-w-52 text-center text-title font-semibold">Semana del {dayFmt.format(new Date(`${monday}T12:00:00Z`))}</h2>
+            <h2 className="min-w-52 text-center text-title font-semibold">Semana del {formatDate(monday, "weekdayShort")}</h2>
             <Link href={`/admin/comercial/agenda?${qs({ semana: addDays(monday, 7) })}`} className="grid size-9 place-items-center border border-line bg-surface" aria-label="Semana siguiente">
               <ChevronRight className="size-4" aria-hidden />
             </Link>
@@ -291,9 +289,9 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
               const date = addDays(monday, i);
               const list = rows.filter((r) => localDate(r.b.starts_at) === date);
               return (
-                <section key={date} aria-label={dayFmt.format(new Date(`${date}T12:00:00Z`))} className={cn("min-h-40 border-b border-r border-line p-2", date === today && "bg-navy-soft/40")}>
+                <section key={date} aria-label={formatDate(date, "weekdayShort")} className={cn("min-h-40 border-b border-r border-line p-2", date === today && "bg-navy-soft/40")}>
                   <h3 className={cn("mb-2 px-1 text-meta capitalize", date === today ? "font-medium text-rose-deep" : "text-muted")}>
-                    {dayFmt.format(new Date(`${date}T12:00:00Z`))}
+                    {formatDate(date, "weekdayShort")}
                     {date === today && " · hoy"}
                   </h3>
                   <ul className="space-y-1.5">
@@ -313,7 +311,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                             )}
                           >
                             <span className="tabular block font-medium">
-                              {fmtTime(b.starts_at)}–{fmtTime(b.ends_at)}
+                              {formatDate(b.starts_at, "time")}–{formatDate(b.ends_at, "time")}
                             </span>
                             <span className="block truncate">{b.name}</span>
                             <span className="block truncate text-caption opacity-80">
@@ -345,7 +343,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                   <Clock className="size-4 text-muted" strokeWidth={1.5} aria-hidden />
                   <dt className="sr-only">Horario</dt>
                   <dd className="tabular capitalize">
-                    {dayFmt.format(new Date(`${localDate(selected.b.starts_at)}T12:00:00Z`))} · {fmtTime(selected.b.starts_at)}–{fmtTime(selected.b.ends_at)}
+                    {formatDate(selected.b.starts_at, "weekdayShort")} · {formatDate(selected.b.starts_at, "time")}–{formatDate(selected.b.ends_at, "time")}
                   </dd>
                 </div>
                 <div className="flex items-center gap-2">

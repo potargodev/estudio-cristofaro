@@ -14,13 +14,13 @@ import { REQUEST_TYPES } from "@/lib/portal-types";
 import { cn } from "@/lib/utils";
 import { ConsultPanel } from "@/components/consultas/ConsultPanel";
 import { consultForRequest, pendingConsults } from "@/modules/ai-consults/server";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Solicitudes" };
 
 const HOUR = 3600000;
 const SLA_HOURS = 24;
 const isUuid = (v?: string) => !!v && /^[0-9a-f-]{36}$/i.test(v);
-const shortDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short" });
 
 type Priority = "alta" | "media" | "baja";
 const PRIORITY: Record<Priority, { label: string; className: string }> = {
@@ -218,7 +218,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
                             {i.clientName} · {REQUEST_TYPES[i.request.type]}
                           </span>
                         </span>
-                        <span className="tabular shrink-0 text-caption text-muted">{shortDate.format(i.request.updated_at)}</span>
+                        <span className="tabular shrink-0 text-caption text-muted">{formatDate(i.request.updated_at, "short")}</span>
                       </span>
                       {i.last && <span className="mt-1 line-clamp-1 text-meta text-muted">{i.last.from_client ? "" : "Vos: "}{i.last.body}</span>}
                       <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">

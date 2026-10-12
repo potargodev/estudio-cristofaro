@@ -10,10 +10,10 @@ import { getPlans } from "@/lib/faro/entitlements";
 import { KIND_PLANS_LABEL, type TenantKind } from "@/lib/faro/plans";
 import { FARO_MODULES } from "@/modules/registry";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
+import { formatUsd } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Resumen" };
 
-const usd = (n: number) => `USD ${n.toLocaleString("es-AR", { maximumFractionDigits: 2 })}`;
 
 function Metric({ label, value, hint, icon: Icon, href }: { label: string; value: string | number; hint?: string; icon: typeof Building2; href?: string }) {
   const body = (
@@ -85,7 +85,7 @@ export default async function FaroResumen() {
         <Metric icon={Building2} label="Estudios" value={tenants("studio")} hint={`${tenants("studio", "prueba")} en prueba · ${tenants("studio", "suspendido")} suspendidos`} href="/faro-manager/tenants?tipo=studio" />
         <Metric icon={UserRound} label="Autónomos" value={tenants("personal")} hint={`${tenants("personal", "prueba")} en prueba`} href="/faro-manager/tenants?tipo=personal" />
         <Metric icon={NotebookPen} label="Personas" value={tenants("persona")} hint="Bitácora, grupos y Flotas" href="/faro-manager/tenants?tipo=persona" />
-        <Metric icon={Sparkles} label="Altas del mes" value={newThisMonth} hint={`IA del mes: ${usd(Number(ai?.usd ?? 0))}`} />
+        <Metric icon={Sparkles} label="Altas del mes" value={newThisMonth} hint={`IA del mes: ${formatUsd(Number(ai?.usd ?? 0))}`} />
       </section>
       <section aria-label="Uso" className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Metric icon={Building2} label="Organizaciones gestionadas" value={orgs?.n ?? 0} hint="De estudios, sin contar las propias de autónomos" />

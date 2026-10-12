@@ -29,6 +29,7 @@ import {
 import { DEFAULT_CATEGORIES } from "@/modules/bitacora/catalog";
 import { CHANGA_CONTEXT, DERIVATION_RULES } from "@/modules/escudo/catalog";
 import { ago, cents, cuit, dateIn, day, demoTenant, month, rng, type DemoUser } from "./base";
+import { formatMoney } from "@/lib/format";
 
 type R = ReturnType<typeof rng>;
 
@@ -247,11 +248,10 @@ export async function seedPeople(db: Db, pass: Record<string, string>, scaleMax:
     if (spec.full) await vigia(db, p);
     // Changa en zona gris: la misma sugerencia que arma el escudo al pasar el umbral
     if (spec.changa && biz) {
-      const money = (c: number) => `$ ${Math.round(c / 100).toLocaleString("es-AR")}`;
       await db.insert(derivation_suggestions).values({
         user_id: p.id,
         rule_key: "changa_actividad",
-        context: { need: DERIVATION_RULES.find((x) => x.key === "changa_actividad")!.need, why: `Según lo que registraste, en los últimos 12 meses cobraste ${money(biz.uninvoiced)} sin facturar en tu caja de negocio, en 6 meses. Eso ya es una actividad.`, data: { sin_facturar: biz.uninvoiced / 100, meses: 6, contexto: CHANGA_CONTEXT } },
+        context: { need: DERIVATION_RULES.find((x) => x.key === "changa_actividad")!.need, why: `Según lo que registraste, en los últimos 12 meses cobraste ${formatMoney(biz.uninvoiced, "ARS", { decimals: "none" })} sin facturar en tu caja de negocio, en 6 meses. Eso ya es una actividad.`, data: { sin_facturar: biz.uninvoiced / 100, meses: 6, contexto: CHANGA_CONTEXT } },
         triggered_at: ago(2),
       });
     }

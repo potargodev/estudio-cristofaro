@@ -9,8 +9,9 @@ import { mailLayout } from "@/lib/notify";
 import { can } from "@/lib/permissions";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { checkUpload, storeUpload } from "@/lib/uploads";
-import { CATEGORIES, CURRENCIES, formatMoney } from "../constants";
+import { CATEGORIES, CURRENCIES } from "../constants";
 import { GastosError } from "./service";
+import { formatMoney } from "@/lib/format";
 
 // Rendición de gastos de empleados: el empleado carga un gasto "a rendir" con
 // su ticket; quien gestiona las finanzas de la organización lo aprueba o lo

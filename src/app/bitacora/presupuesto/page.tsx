@@ -3,9 +3,9 @@ import { applySuggestedAction, saveBudgetAction } from "@/app/bitacora/plus-acti
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import { cn } from "@/lib/utils";
-import { money, monthLabel } from "@/modules/bitacora/catalog";
 import { budgetView } from "@/modules/bitacora/planning";
 import { requireUser } from "@/modules/bitacora/session";
+import { formatMoney, formatPeriod } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Sobres" };
 
@@ -20,7 +20,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       <Feedback sp={sp} />
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface p-4">
         <p className="text-ui">
-          {monthLabel(v.month)}: llevás <span className="num">{money(v.totalSpent)}</span> de <span className="num">{money(v.total)}</span> en tus sobres.
+          {formatPeriod(v.month)}: llevás <span className="num">{formatMoney(v.totalSpent, "ARS", { decimals: "auto" })}</span> de <span className="num">{formatMoney(v.total, "ARS", { decimals: "auto" })}</span> en tus sobres.
         </p>
         {pending > 0 && (
           <form action={applySuggestedAction}>
@@ -37,8 +37,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-body font-medium">{x.name}</p>
                 <p className="num text-ui text-muted">
-                  {money(x.spent)}
-                  {x.budget ? ` de ${money(x.budget)}` : ""}
+                  {formatMoney(x.spent, "ARS", { decimals: "auto" })}
+                  {x.budget ? ` de ${formatMoney(x.budget, "ARS", { decimals: "auto" })}` : ""}
                 </p>
               </div>
               {x.budget ? (
@@ -53,7 +53,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                   <input name="amount" inputMode="decimal" defaultValue={x.budget ? String(x.budget / 100) : ""} placeholder={x.suggested ? `Sugerido: ${x.suggested / 100}` : "Sin sobre"} className="mt-1 block h-9 w-40 rounded-md border border-line bg-surface px-2 text-ui text-ink" />
                 </label>
                 <SubmitButton variant="secondary" pendingText="…">Guardar</SubmitButton>
-                {x.suggested && <span className="text-caption text-muted">Sugerido: {money(x.suggested)} (mediana de los últimos meses)</span>}
+                {x.suggested && <span className="text-caption text-muted">Sugerido: {formatMoney(x.suggested, "ARS", { decimals: "auto" })} (mediana de los últimos meses)</span>}
               </form>
             </li>
           );

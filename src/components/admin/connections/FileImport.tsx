@@ -6,6 +6,7 @@ import { AdminField } from "@/components/admin/AdminField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FIELD_LABEL, RESOURCE_LABEL, TEMPLATES, type MappingField } from "@/modules/connectors/archivos/templates";
+import { formatNumber } from "@/lib/format";
 
 /** Importar una exportación con plantilla: primero vista previa, después importar (sin perder el archivo elegido) */
 export function FileImport({ orgs }: { orgs: { id: string; name: string }[] }) {
@@ -96,7 +97,7 @@ export function FileImport({ orgs }: { orgs: { id: string; name: string }[] }) {
                       <td className="py-1.5">{r.cuit ?? "—"}</td>
                       <td className="py-1.5">{r.name ?? "—"}</td>
                       <td className="py-1.5">{r.date ?? "—"}</td>
-                      <td className="py-1.5 text-right">{r.amount != null ? r.amount.toLocaleString("es-AR") : "—"}</td>
+                      <td className="py-1.5 text-right">{r.amount != null ? formatNumber(r.amount, 2) : "—"}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -10,14 +10,9 @@ import { getDocuments } from "@/lib/portal-data";
 import { categoryLabel, periodLabel } from "@/lib/portal-types";
 import { formatBytes } from "@/lib/uploads-shared";
 import { uploadClientDocument } from "../../actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Documentos" };
-
-const dateFmt = new Intl.DateTimeFormat("es-AR", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-});
 
 export default async function DocumentosPage({ searchParams }: { searchParams: Promise<{ subido?: string; error?: string }> }) {
   const { subido, error } = await searchParams;
@@ -102,7 +97,7 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
                         <span className="min-w-0">
                           <span className="block truncate font-medium">{d.name}</span>
                           <span className="mt-0.5 flex flex-wrap items-center gap-2 text-ui text-muted">
-                            {dateFmt.format(d.created_at)} · {formatBytes(d.size_bytes)}
+                            {formatDate(d.created_at)} · {formatBytes(d.size_bytes)}
                             <Badge tone={d.source === "cliente" ? "neutral" : "warn"}>
                               {d.source === "cliente" ? "Subido por vos" : "Del estudio"}
                             </Badge>

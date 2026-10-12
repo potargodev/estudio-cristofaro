@@ -16,12 +16,12 @@ import { LICENSE_STATUS_LABEL, MODALITIES, PROVINCES, RED_SERVICES, TEAM_SIZES }
 import { getProfile, visibilityIssue } from "@/modules/red/server";
 import { publishRedAction, respondReviewAction, saveRedProfileAction } from "@/app/admin/red-actions";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Red Contable" };
 
 const field = `mt-1 ${fieldClass}`;
 const label = "text-meta font-medium text-muted";
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 
 const LICENSE_TONE = { sin_cargar: "pendiente", pendiente: "en_proceso", verificada: "activa", rechazada: "vencido" } as const;
 
@@ -197,7 +197,7 @@ export default async function RedAdminPage({ searchParams }: { searchParams: Pro
                       <span className="text-line">{"★".repeat(5 - r.rating)}</span>
                     </span>
                     <span>
-                      {org} · {day.format(r.created_at)}
+                      {org} · {formatDate(r.created_at)}
                     </span>
                     <Tag>{r.status === "publicada" ? "Publicada" : r.status === "pendiente" ? "En moderación" : "Rechazada por Faro"}</Tag>
                   </div>

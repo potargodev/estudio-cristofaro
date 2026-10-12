@@ -7,10 +7,11 @@ import { BalanceLine, GroupDot } from "@/components/gastos/Money";
 import { CopyButton, InviteForm, MeForm, PartnerForm, RenewLinkForm, SettingsForm } from "@/components/gastos/forms";
 import { GroupLink } from "@/components/gastos/invite";
 import { cn } from "@/lib/utils";
-import { GROUP_TYPES, SETTLEMENT_METHODS, categoryName, formatMoney, type GroupType } from "@/modules/gastos/constants";
+import { GROUP_TYPES, SETTLEMENT_METHODS, categoryName, type GroupType } from "@/modules/gastos/constants";
 import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 import { answerSettlementAction, archiveGroupAction, removeMemberAction, toggleSimplifyAction } from "../../actions";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata = { title: "Grupo" };
 
@@ -23,8 +24,6 @@ const TABS = [
 
 const SAVED: Record<string, string> = { gasto: "Gasto guardado.", pago: "Pago registrado. Cuando la otra persona lo confirme, queda confirmado.", borrado: "Gasto borrado.", cuenta: "Listo: el grupo quedó guardado en tu cuenta." };
 
-const when = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Argentina/Buenos_Aires" });
-const day = (d: string) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
 export default async function GroupPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string; guardado?: string; error?: string; nuevo?: string }> }) {
   const { id } = await params;
@@ -164,7 +163,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                     <span className="min-w-0 flex-1">
                       <span className="block text-body">{a.text}</span>
                       <span className="block text-caption text-muted">
-                        {when.format(a.created_at)}
+                        {formatDate(a.created_at, "shortTime")}
                         {e && (
                           <>
                             {" · "}
@@ -389,7 +388,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                 {v.movements.map((m) => (
                   <li key={m.id} className="flex justify-between gap-3 py-2.5">
                     <span>
-                      {day(m.date)} · {name(m.member_id)} · {m.kind === "aporte" ? "Aporte" : "Retiro"}
+                      {formatDate(m.date, "short")} · {name(m.member_id)} · {m.kind === "aporte" ? "Aporte" : "Retiro"}
                       {m.note && <span className="text-muted"> · {m.note}</span>}
                     </span>
                     <span className="tabular-nums">{formatMoney(m.kind === "aporte" ? m.amount : -m.amount, m.currency, { signed: true })}</span>

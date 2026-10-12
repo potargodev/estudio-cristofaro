@@ -1,23 +1,23 @@
 import Link from "next/link";
 import { FaroPlans } from "@/components/faro/landing/FaroPlans";
 import { Container } from "@/components/web/ui";
-import { ANNUAL_FREE_MONTHS, formatArs, formatUsd } from "@/lib/faro/plans";
+import { ANNUAL_FREE_MONTHS } from "@/lib/faro/plans";
 import { getUsdArs, publicPlans } from "@/lib/faro/pricing";
+import { formatAmount, formatDate } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" });
 
 /** Precios públicos: salen de los planes que edita el Faro Manager (USD de base, en pesos con la conversión vigente) */
 export default async function PreciosPage() {
   const [plans, usdArs] = await Promise.all([publicPlans(), getUsdArs()]);
   const extra = plans.find((p) => p.kind === "studio" && p.extraOrgUsd != null)?.extraOrgUsd ?? null;
   const faqs = [
-    { q: "¿Por qué los precios están en dólares y en pesos?", a: `Los fijamos en dólares de referencia y los mostramos en pesos con la conversión del día (hoy, 1 USD = ${formatArs(usdArs)}). Pagás en pesos.` },
+    { q: "¿Por qué los precios están en dólares y en pesos?", a: `Los fijamos en dólares de referencia y los mostramos en pesos con la conversión del día (hoy, 1 USD = ${formatAmount(usdArs, "ARS", { decimals: "none" })}). Pagás en pesos.` },
     { q: "¿El plan Inicial es gratis de verdad?", a: "Sí: sin prueba, sin tarjeta y sin débito. Incluye hasta 5 organizaciones y 1 usuario. Para sumar más organizaciones o personas del equipo, pasás a Profesional." },
     { q: "¿Cómo funciona la prueba gratis?", a: "Profesional y Avanzado arrancan con 30 días gratis, sin tarjeta. Antes de que termine te avisamos y elegís si seguís; si no seguís, quedás en Inicial con tus datos intactos." },
     { q: "¿Hay descuento por pagar el año?", a: `Sí: pagando el año completo tenés ${ANNUAL_FREE_MONTHS} meses de regalo (pagás 10 de 12).` },
-    ...(extra != null ? [{ q: "¿Qué pasa si tengo más organizaciones que las del plan?", a: `Cada organización extra suma ${formatArs(extra * usdArs)} por mes (${formatUsd(extra)}). No se corta nada: te avisamos al acercarte al límite.` }] : []),
+    ...(extra != null ? [{ q: "¿Qué pasa si tengo más organizaciones que las del plan?", a: `Cada organización extra suma ${formatAmount(extra * usdArs, "ARS", { decimals: "none" })} por mes (${formatAmount(extra, "USD", { decimals: "auto" })}). No se corta nada: te avisamos al acercarte al límite.` }] : []),
     { q: "¿Puedo cambiar de plan?", a: "Cuando quieras, desde «Plan y facturación» con «Quiero mejorar mi plan». El cobro en línea llega pronto; mientras tanto el equipo de Faro te contacta para activarlo." },
     { q: "¿La IA tiene costo aparte?", a: "Usás tu propia clave del proveedor de IA que elijas: el consumo lo pagás directo a ese proveedor, y en Faro ves cuánto llevás." },
   ];
@@ -31,7 +31,7 @@ export default async function PreciosPage() {
             Gratis para personas y autónomos que arrancan, y para el contador que empieza con el plan Inicial. Profesional y Avanzado tienen 30 días de prueba y {ANNUAL_FREE_MONTHS} meses de regalo pagando el año.
           </p>
           <p className="mt-4 text-meta text-paper/50">
-            Precios de referencia en pesos al {day.format(new Date())} (1 USD = {formatArs(usdArs)}). Pueden cambiar con la cotización.
+            Precios de referencia en pesos al {formatDate(new Date(), "long")} (1 USD = {formatAmount(usdArs, "ARS", { decimals: "none" })}). Pueden cambiar con la cotización.
           </p>
         </Container>
       </section>

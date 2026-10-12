@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { blockAction, deleteMessageAction, editMessageAction, leaveAction, markReadAction, muteAction, reportAction, typingAction } from "@/app/mensajes/actions";
 import { cn } from "@/lib/utils";
 import type { ConversationView, MessageView } from "@/modules/messages/server";
+import { formatDate } from "@/lib/format";
 
 const EMOJIS = ["😀", "😂", "😊", "😍", "🙏", "👍", "👏", "🙌", "🎉", "❤️", "🔥", "✅", "👀", "🤔", "😅", "😢", "😮", "💸", "🧾", "🍕", "🍻", "✈️", "🏠", "⚽"];
 const REASONS: [string, string][] = [
@@ -17,8 +18,6 @@ const REASONS: [string, string][] = [
   ["datos", "Comparte datos personales de otros"],
   ["otro", "Otro"],
 ];
-const time = (iso: string) => new Intl.DateTimeFormat("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" }).format(new Date(iso));
-const dayLabel = (iso: string) => new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long", timeZone: "America/Argentina/Buenos_Aires" }).format(new Date(iso));
 const initials = (n: string) => n.split(/\s+/).slice(0, 2).map((x) => x[0]?.toUpperCase() ?? "").join("");
 
 /**
@@ -223,7 +222,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
           const showName = !m.mine && view.kind !== "directo" && (!prev || prev.authorId !== m.authorId || newDay);
           return (
             <li key={m.id} id={`msg-${m.id}`}>
-              {newDay && <p className="my-3 text-center text-caption text-muted first-letter:uppercase">{dayLabel(m.createdAt)}</p>}
+              {newDay && <p className="my-3 text-center text-caption text-muted first-letter:uppercase">{formatDate(m.createdAt, "weekday")}</p>}
               <div className={cn("group flex items-start gap-2", m.mine ? "justify-end" : "justify-start")}>
                 {!m.mine && (
                   <span aria-hidden className={cn("grid size-7 shrink-0 place-items-center rounded-full bg-navy-soft text-micro font-semibold text-ink", showName && "mt-5", !showName && view.kind !== "directo" && "invisible")}>
@@ -252,7 +251,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                     )}
                     <p className="mt-0.5 text-right text-micro text-muted">
                       {m.editedAt && !m.deleted && "editado · "}
-                      {time(m.createdAt)}
+                      {formatDate(m.createdAt, "time")}
                     </p>
                   </div>
                   {!m.deleted && (

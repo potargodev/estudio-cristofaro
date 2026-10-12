@@ -1,5 +1,6 @@
 import { WandSparkles } from "lucide-react";
 import Link from "next/link";
+import { formatDate } from "@/lib/format";
 
 interface Origin {
   id: string;
@@ -14,7 +15,6 @@ interface Origin {
 }
 
 const KIND: Record<string, string> = { texto: "Mensaje", audio: "Audio", imagen: "Foto", pdf: "PDF" };
-const when = (d: Date) => new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(d);
 
 /** De qué mensaje del Vigía salió un registro: el original, la transcripción, el modelo y la fecha */
 export function CopilotOrigin({ o }: { o: Origin }) {
@@ -45,7 +45,7 @@ export function CopilotOrigin({ o }: { o: Origin }) {
           </div>
         )}
         <div className="text-caption text-muted">
-          {when(o.createdAt)} · {o.model === "basico" ? "modo básico (sin IA)" : o.model ? `modelo ${o.model}` : "sin modelo"} · {o.auto ? "registrado solo" : "confirmado por vos"}
+          {formatDate(o.createdAt, "dateTime")} · {o.model === "basico" ? "modo básico (sin IA)" : o.model ? `modelo ${o.model}` : "sin modelo"} · {o.auto ? "registrado solo" : "confirmado por vos"}
         </div>
       </dl>
       <Link href={`/vigia#m-${o.id}`} className="mt-3 inline-block text-meta underline underline-offset-2">

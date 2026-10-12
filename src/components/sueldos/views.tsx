@@ -9,6 +9,7 @@ import { formatCuil } from "@/modules/payroll/core";
 import type { ResolvedPayroll } from "@/modules/payroll/scope";
 import { announcementView, batchView, getEmployee, listAnnouncements, listBatches, listEmployees, listNovedades, NOVEDADES, payrollEnabled } from "@/modules/payroll/server";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 // Sueldos y empleados: la misma pantalla en la ficha de la organización (el
 // estudio en su nombre) y en el portal (Empresa → Sueldos y empleados).
@@ -16,7 +17,6 @@ import { fieldClass } from "@/components/ds/primitives";
 type SP = Record<string, string | undefined>;
 const field = `mt-1 ${fieldClass}`;
 const lbl = "text-meta text-muted";
-const d = (s: string | null | undefined) => (s ? s.split("-").reverse().join("/") : "—");
 const per = (p: string) => `${p.slice(5)}/${p.slice(0, 4)}`;
 const SLIP: Record<string, { label: string; tone: string }> = {
   sin_asignar: { label: "Sin asignar", tone: "text-[#8f2a1c]" },
@@ -128,7 +128,7 @@ async function EmployeesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
                   </span>
                   <span className="text-caption text-muted">
                     {[e.position, e.area, e.cuil && `CUIL ${formatCuil(e.cuil)}`].filter(Boolean).join(" · ") || "Sin datos del legajo"}
-                    {!e.active && ` · baja el ${d(e.end_date)}`}
+                    {!e.active && ` · baja el ${formatDate(e.end_date, "numeric")}`}
                     {e.user_id ? " · con acceso al portal" : ""}
                   </span>
                 </span>
@@ -166,7 +166,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
       </Link>
       <Feedback sp={sp} />
       <h2 className="text-title font-semibold">
-        {e.first_name} {e.last_name} {!e.active && <span className="text-meta font-normal text-muted">· baja el {d(e.end_date)}{e.end_reason ? ` (${e.end_reason})` : ""}</span>}
+        {e.first_name} {e.last_name} {!e.active && <span className="text-meta font-normal text-muted">· baja el {formatDate(e.end_date, "numeric")}{e.end_reason ? ` (${e.end_reason})` : ""}</span>}
       </h2>
       <form action={saveEmployeeAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-2">
         <Hidden r={r} />
@@ -224,7 +224,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
                 </a>
                 <span className={cn("text-meta", SLIP[p.status]?.tone)}>
                   {SLIP[p.status]?.label}
-                  {p.signed_at && ` · ${p.signed_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}`}
+                  {p.signed_at && ` · ${formatDate(p.signed_at, "numericTime")}`}
                 </span>
               </li>
             ))}
@@ -238,7 +238,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
         <ol className="grid gap-1 text-ui">
           {v.events.map((ev) => (
             <li key={ev.id} className="flex gap-3">
-              <span className="num w-24 shrink-0 text-muted">{d(ev.date)}</span>
+              <span className="num w-24 shrink-0 text-muted">{formatDate(ev.date, "numeric")}</span>
               <span>{ev.detail}</span>
             </li>
           ))}
@@ -398,7 +398,7 @@ async function BatchView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp: SP
             {p.signed_at && (
               <p className="flex gap-1.5 text-caption text-muted">
                 <CheckCircle2 className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-                {p.signed_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "medium" })} · IP {p.sign_ip ?? "—"} · {p.sign_device} · hash {p.sha256.slice(0, 12)}… · sello {p.seal?.slice(0, 12)}…{p.reason ? ` · motivo: ${p.reason}` : ""}
+                {formatDate(p.signed_at, "timestamp")} · IP {p.sign_ip ?? "—"} · {p.sign_device} · hash {p.sha256.slice(0, 12)}… · sello {p.seal?.slice(0, 12)}…{p.reason ? ` · motivo: ${p.reason}` : ""}
               </p>
             )}
             {r.scope.canManage && !["conforme", "no_conforme"].includes(p.status) && (p.status === "sin_asignar" || p.match) && (
@@ -487,7 +487,7 @@ async function AnnouncementsView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
                 <span className="min-w-0">
                   <span className="block truncate text-ui font-medium">{a.title}</span>
                   <span className="text-caption text-muted">
-                    {a.created_at.toLocaleDateString("es-AR")} · {a.area ?? "Todos"}
+                    {formatDate(a.created_at, "numeric")} · {a.area ?? "Todos"}
                     {a.from_studio ? " · enviado por el estudio" : ""}
                   </span>
                 </span>
@@ -522,7 +522,7 @@ async function AnnouncementView({ r, id, sp }: { r: ResolvedPayroll; id: string;
               {first} {last}
             </span>
             <span className={rd.ack_at ? "text-[#1f6b3d]" : "text-muted"}>
-              {rd.ack_at ? `Confirmó el ${rd.ack_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}` : rd.read_at ? "Leído" : "Sin leer"}
+              {rd.ack_at ? `Confirmó el ${formatDate(rd.ack_at, "numericTime")}` : rd.read_at ? "Leído" : "Sin leer"}
             </span>
           </li>
         ))}
@@ -606,7 +606,7 @@ async function NovedadesView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
                 <span className="min-w-0">
                   <span className="block truncate text-ui">{q.subject}</span>
                   <span className="text-caption text-muted">
-                    {q.created_at.toLocaleDateString("es-AR")} · {data?.aplicada ? "aplicada al legajo" : q.status === "resuelta" ? "resuelta" : "pendiente"}
+                    {formatDate(q.created_at, "numeric")} · {data?.aplicada ? "aplicada al legajo" : q.status === "resuelta" ? "resuelta" : "pendiente"}
                   </span>
                 </span>
                 {r.scope.canManage && !data?.aplicada && (

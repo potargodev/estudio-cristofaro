@@ -3,11 +3,11 @@ import Link from "next/link";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { requireFaro } from "@/lib/auth";
 import { subscriptionsOverview } from "@/modules/billing/subscriptions";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Suscripciones" };
 
 const STATUS: Record<string, string> = { prueba: "En prueba", activa: "Activa", morosa: "Morosa", suspendida: "Suspendida", cancelada: "Cancelada" };
-const ars = (c: number) => `$ ${Math.round(c / 100).toLocaleString("es-AR")}`;
 
 /** Altas, bajas, ingresos y morosos de las suscripciones de Faro */
 export default async function Page({ searchParams }: { searchParams: Promise<{ estado?: string }> }) {
@@ -16,8 +16,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
   const o = await subscriptionsOverview();
   const rows = sp.estado ? o.rows.filter((r) => r.status === sp.estado) : o.rows;
   const cards: [string, string | number, string?][] = [
-    ["Ingresos del mes", ars(o.income), `${o.payments} pagos`],
-    ["Ingreso mensual recurrente", ars(o.mrr)],
+    ["Ingresos del mes", formatMoney(o.income, "ARS", { decimals: "none" }), `${o.payments} pagos`],
+    ["Ingreso mensual recurrente", formatMoney(o.mrr, "ARS", { decimals: "none" })],
     ["Altas del mes", o.altas],
     ["Bajas del mes", o.bajas],
     ["Activas", o.counts.activa],
@@ -52,12 +52,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
                 <span className="block truncate text-ui">{r.name}</span>
                 <span className="text-caption text-muted">
                   {r.plan} · {r.interval} · {STATUS[r.status] ?? r.status}
-                  {r.status === "prueba" && r.trialEnds && ` hasta el ${r.trialEnds.toLocaleDateString("es-AR")}`}
-                  {r.status === "activa" && r.periodEnd && ` hasta el ${r.periodEnd.toLocaleDateString("es-AR")}`}
-                  {r.pastDue && ` · sin pagar desde el ${r.pastDue.toLocaleDateString("es-AR")}`}
+                  {r.status === "prueba" && r.trialEnds && ` hasta el ${formatDate(r.trialEnds, "numeric")}`}
+                  {r.status === "activa" && r.periodEnd && ` hasta el ${formatDate(r.periodEnd, "numeric")}`}
+                  {r.pastDue && ` · sin pagar desde el ${formatDate(r.pastDue, "numeric")}`}
                 </span>
               </span>
-              <span className="num text-ui">{r.amount ? ars(r.amount) : "—"}</span>
+              <span className="num text-ui">{r.amount ? formatMoney(r.amount, "ARS", { decimals: "none" }) : "—"}</span>
             </Link>
           </li>
         ))}

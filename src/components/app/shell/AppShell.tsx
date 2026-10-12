@@ -70,6 +70,7 @@ import { RouteReveal } from "@/components/app/RouteReveal";
 import { cn } from "@/lib/utils";
 import { SpaceSwitcher, type ShellSpace } from "./SpaceSwitcher";
 import { activeItem, BADGE_TEXT, type ShellBadge, type ShellGroup, type ShellIcon, type ShellItem, type Space } from "./spaces";
+import { formatDate } from "@/lib/format";
 
 // Estructura única de la app para todos los espacios (estudio, cuenta
 // personal, portal de una organización y Faro Manager): barra lateral oscura
@@ -531,7 +532,7 @@ export function AppShell(p: ShellProps) {
           <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-rose/40 bg-rose-soft px-4 py-2 text-meta text-rose-deep sm:px-6 lg:px-8">
             <span>
               <strong className="font-semibold">Acceso asistido de Faro</strong> a {p.assisted.studioName} hasta{" "}
-              {new Date(p.assisted.expiresAt).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })}. Todo queda en la auditoría.
+              {formatDate(p.assisted.expiresAt, "time")}. Todo queda en la auditoría.
             </span>
             {p.endAssisted && (
               <form action={p.endAssisted}>

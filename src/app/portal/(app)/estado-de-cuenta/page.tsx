@@ -7,11 +7,10 @@ import { requireMember } from "@/lib/auth";
 import { hasModule } from "@/lib/faro/entitlements";
 import { accountStatement } from "@/modules/billing/fees";
 import { accountSummary } from "@/modules/billing/mp";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Estado de cuenta" };
 
-const ars = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-const d = (s: string) => s.split("-").reverse().join("/");
 
 /** Estado de cuenta con el estudio: lo pendiente (con el botón de pago) y lo pagado */
 export default async function EstadoDeCuentaPage({ searchParams }: { searchParams: Promise<{ pago?: string; error?: string }> }) {
@@ -33,12 +32,12 @@ export default async function EstadoDeCuentaPage({ searchParams }: { searchParam
           <div className="mb-6 flex flex-wrap gap-3">
             <Card className="min-w-48">
               <p className="text-ui text-muted">Pendiente</p>
-              <p className="num text-3xl">{ars(st.pending)}</p>
-              {st.overdue > 0 && <p className="text-ui text-[#8f2a1c]">{ars(st.overdue)} vencido</p>}
+              <p className="num text-3xl">{formatMoney(st.pending)}</p>
+              {st.overdue > 0 && <p className="text-ui text-[#8f2a1c]">{formatMoney(st.overdue)} vencido</p>}
             </Card>
             <Card className="min-w-48">
               <p className="text-ui text-muted">Pagado</p>
-              <p className="num text-3xl">{ars(st.paid)}</p>
+              <p className="num text-3xl">{formatMoney(st.paid)}</p>
             </Card>
           </div>
           <Card>
@@ -51,11 +50,11 @@ export default async function EstadoDeCuentaPage({ searchParams }: { searchParam
                     <div className="min-w-0">
                       <p className="font-medium">{r.concept}</p>
                       <p className="text-ui text-muted">
-                        {r.status === "pagado" ? `Pagado el ${r.paid_at?.toLocaleDateString("es-AR")}` : `Vence el ${d(r.due_date)}`}
+                        {r.status === "pagado" ? `Pagado el ${formatDate(r.paid_at, "numeric")}` : `Vence el ${formatDate(r.due_date, "numeric")}`}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="num">{ars(r.amount)}</span>
+                      <span className="num">{formatMoney(r.amount)}</span>
                       {r.status === "pagado" ? (
                         <Badge tone="ok">Pagado</Badge>
                       ) : mp ? (

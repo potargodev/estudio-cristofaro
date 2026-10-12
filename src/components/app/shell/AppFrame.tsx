@@ -11,7 +11,7 @@ import { newCandidates } from "@/modules/red/seekers";
 import { Toaster } from "@/components/ui/sonner";
 import { getDb } from "@/db";
 import { approvals, leads, message_reports, obligations, organization_modules, plan_requests, requests, studios } from "@/db/schema";
-import { getCurrentUser, TENANT_OWNERS } from "@/lib/auth";
+import { getSessionUser, TENANT_OWNERS } from "@/lib/auth";
 import { getEntitlements } from "@/lib/faro/entitlements";
 import { SITE_STUDIO_SLUG } from "@/lib/faro/tenants";
 import { can, ORG_ROLE_LABELS } from "@/lib/permissions";
@@ -37,7 +37,7 @@ const PLAN_HREF = "/admin/configuracion/plan";
  * Todo sale de la sesión; sin sesión, muestra el contenido solo.
  */
 export async function AppFrame({ space: forced, employeeGroups, children }: { space?: Space; employeeGroups?: boolean; children: React.ReactNode }) {
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   if (!user) return <>{children}</>;
   const db = getDb();
   const space: Space = await resolveSpace(user, forced, { employeeGroups });

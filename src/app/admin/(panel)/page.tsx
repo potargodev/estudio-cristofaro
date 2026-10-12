@@ -33,12 +33,10 @@ import { audit_log, bookings, documents, leads, obligations, organizations, requ
 import { auditLabel } from "@/lib/audit";
 import { requireStaff } from "@/lib/auth";
 import { LEAD_SOURCES } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 const DAY = 86400000;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
-const shortDate = (d: Date) => new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "numeric" }).format(d);
-const time = new Intl.DateTimeFormat("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
-const when = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 const pct = (a: number, b: number) => (b ? Math.round(((a - b) / b) * 100) : a ? 100 : 0);
 
 function mondayOf(d: Date) {
@@ -226,7 +224,7 @@ async function Attention({ studioId }: { studioId: string }) {
       priority: o.due < today ? 0 : 1,
       icon: CalendarClock,
       title: `${o.tax} ${o.period} · ${o.org}`,
-      detail: o.due < today ? `Venció el ${shortDate(new Date(`${o.due}T12:00:00`))}` : `Vence el ${shortDate(new Date(`${o.due}T12:00:00`))}`,
+      detail: o.due < today ? `Venció el ${formatDate(o.due, "short")}` : `Vence el ${formatDate(o.due, "short")}`,
       status: <StatusBadge status={o.due < today ? "vencido" : "pendiente"} label={o.due < today ? "Vencido" : "En riesgo"} />,
       action: { href: `/admin/vencimientos?org=${o.orgId}`, label: "Ver vencimiento" },
     })),
@@ -261,7 +259,7 @@ async function Attention({ studioId }: { studioId: string }) {
         priority: 4,
         icon: Moon,
         title: o.name,
-        detail: o.last ? `Sin actividad desde el ${shortDate(new Date(o.last))}` : "Sin actividad registrada",
+        detail: o.last ? `Sin actividad desde el ${formatDate(o.last, "short")}` : "Sin actividad registrada",
         status: <StatusBadge status="pausada" label="Sin actividad" />,
         action: { href: `/admin/organizaciones/${o.id}`, label: "Ver ficha" },
       })),
@@ -325,7 +323,7 @@ async function Charts({ studioId, commercial }: { studioId: string; commercial: 
     const b = iso(new Date(from.getTime() + (i + 1) * 7 * DAY));
     const inWeek = dues.filter((d) => d.due >= a && d.due < b);
     return {
-      label: shortDate(new Date(from.getTime() + i * 7 * DAY)),
+      label: formatDate(new Date(from.getTime() + i * 7 * DAY), "short"),
       hechos: inWeek.filter((d) => d.status === "presentado" || d.status === "pagado").length,
       pendientes: inWeek.filter((d) => d.status !== "presentado" && d.status !== "pagado").length,
     };
@@ -391,7 +389,7 @@ async function Today({ studioId }: { studioId: string }) {
         <ul className="divide-y divide-line">
           {rows.map(({ b, host }) => (
             <li key={b.id} className="flex items-center gap-4 px-5 py-3">
-              <span className="tabular w-14 shrink-0 text-body font-medium text-ink">{time.format(b.starts_at)}</span>
+              <span className="tabular w-14 shrink-0 text-body font-medium text-ink">{formatDate(b.starts_at, "time")}</span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-ui text-ink">{b.name}</span>
                 <span className="block truncate text-meta text-muted">
@@ -442,7 +440,7 @@ async function RecentActivity({ studioId }: { studioId: string }) {
                   )}
                 </span>
                 <span className="block truncate text-meta text-muted">
-                  {r.actor ?? "Sistema"} · {when.format(r.at)}
+                  {r.actor ?? "Sistema"} · {formatDate(r.at, "shortTime")}
                 </span>
               </span>
               {r.result !== "ok" && <StatusBadge status="vencido" label={r.result === "denegado" ? "Denegado" : "Error"} />}

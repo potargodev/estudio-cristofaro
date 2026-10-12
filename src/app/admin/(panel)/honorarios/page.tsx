@@ -10,12 +10,11 @@ import { hasModule } from "@/lib/faro/entitlements";
 import { getBillingSettings, listCharges } from "@/modules/billing/fees";
 import { accountSummary } from "@/modules/billing/mp";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata = { title: "Honorarios" };
 
 const field = `mt-1 ${fieldClass}`;
-const ars = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-const d = (s: string) => s.split("-").reverse().join("/");
 const STATUS: Record<string, string> = { pendiente: "Pendiente", pagado: "Pagado", anulado: "Anulado" };
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -52,7 +51,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </nav>
       </div>
       <p className="text-ui text-muted">
-        {rows.length} cargo{rows.length === 1 ? "" : "s"} · <span className="num">{ars(total)}</span>
+        {rows.length} cargo{rows.length === 1 ? "" : "s"} · <span className="num">{formatMoney(total)}</span>
       </p>
       <ul className="divide-y divide-line rounded-md border border-line bg-surface">
         {rows.map(({ c, org }) => (
@@ -61,13 +60,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               <div className="min-w-0">
                 <p className="truncate text-ui font-medium">{org}</p>
                 <p className="text-meta text-muted">
-                  {c.concept} · vence el {d(c.due_date)}
+                  {c.concept} · vence el {formatDate(c.due_date, "numeric")}
                   {c.status === "pendiente" && c.due_date < today && <span className="text-[#8f2a1c]"> · vencido</span>}
                   {c.reminders_sent.length > 0 && ` · ${c.reminders_sent.length} recordatorio${c.reminders_sent.length === 1 ? "" : "s"}`}
-                  {c.status === "pagado" && c.paid_at && ` · pagado el ${c.paid_at.toLocaleDateString("es-AR")} (${c.payment_method})`}
+                  {c.status === "pagado" && c.paid_at && ` · pagado el ${formatDate(c.paid_at, "numeric")} (${c.payment_method})`}
                 </p>
               </div>
-              <span className="num text-body">{ars(c.amount)}</span>
+              <span className="num text-body">{formatMoney(c.amount)}</span>
             </div>
             {c.status === "pendiente" && (
               <div className="flex flex-wrap gap-1.5">

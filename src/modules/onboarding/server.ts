@@ -25,7 +25,7 @@ import {
   studios,
   users,
 } from "@/db/schema";
-import { getCurrentUser, getMemberships, ORG_COOKIE, type StaffUser } from "@/lib/auth";
+import { getSessionUser, getMemberships, ORG_COOKIE, type StaffUser } from "@/lib/auth";
 import { getPrefs, setPrefs } from "@/lib/prefs";
 import { CHECKLISTS, PROFILE_LABEL, type GuideView, type OnboardingProfile, type SpaceType } from "./catalog";
 
@@ -49,7 +49,7 @@ interface OnboardingContext {
  * espacio es esa Flota (Capitán o Tripulante).
  */
 async function onboardingContext(path?: string | null): Promise<OnboardingContext | null> {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   // El equipo de Faro en acceso asistido no deja progreso en el tenant ajeno
   if (!user || user.assisted) return null;
   const fleetId = path?.match(/^\/flotas\/([0-9a-f-]{36})/i)?.[1];

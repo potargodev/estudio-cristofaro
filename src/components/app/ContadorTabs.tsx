@@ -2,7 +2,7 @@ import { count, eq } from "drizzle-orm";
 import { Network, Ship, Store, UserRound } from "lucide-react";
 import { getDb } from "@/db";
 import { service_agreements } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { SectionTabs } from "./SectionTabs";
 
 /**
@@ -12,7 +12,7 @@ import { SectionTabs } from "./SectionTabs";
  * Solo para cuentas personales; sin sesión, la Red se ve sola.
  */
 export async function ContadorTabs() {
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   if (!user || user.role !== "titular") return null;
   const [mine] = await getDb().select({ n: count() }).from(service_agreements).where(eq(service_agreements.user_id, user.id));
   return (

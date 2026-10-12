@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { markNoticesReadAction } from "@/app/actions/notices";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/format";
 
 export interface Notice {
   id: string;
@@ -22,7 +23,7 @@ const ago = (iso: string) => {
   if (m < 60) return `hace ${m} min`;
   const h = Math.round(m / 60);
   if (h < 24) return `hace ${h} h`;
-  return new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short" }).format(new Date(iso));
+  return formatDate(iso, "short");
 };
 
 /** Campanita: avisos dentro de la app (gastos que te cargaron, pagos, grupos) */

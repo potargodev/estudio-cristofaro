@@ -4,9 +4,10 @@ import { Check, Copy, MessageCircle } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { commentAction, inviteAction, partnerMovementAction, renewLinkAction, updateGroupAction, updateMeAction, type FormState } from "@/app/grupos/actions";
-import { CURRENCIES, GROUP_COLORS, REMINDER_FREQUENCIES, todayAR } from "@/modules/gastos/constants";
+import { CURRENCIES, GROUP_COLORS, REMINDER_FREQUENCIES } from "@/modules/gastos/constants";
 import { cn } from "@/lib/utils";
 import { fieldClass } from "@/components/ds/primitives";
+import { todayAR } from "@/lib/format";
 
 export const inputCls = fieldClass;
 const btn = "inline-flex h-11 items-center justify-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep disabled:opacity-60";

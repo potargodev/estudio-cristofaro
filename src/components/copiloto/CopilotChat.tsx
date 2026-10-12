@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { confirmCardAction, editGroupCardAction, editMovementCardAction, redoCardAction, retryMessageAction, setAutoAction, undoCardAction, type CardState } from "@/app/vigia/actions";
 import { cn } from "@/lib/utils";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatNumber } from "@/lib/format";
 
 // Vigía: chat estilo WhatsApp con el agente (IA). Visualmente distinto de
 // Mensajes (personas): burbujas con el acento rosé y el ícono de varita.
@@ -38,7 +39,6 @@ export interface ChatMessage {
   proposals: ChatProposal[];
 }
 
-const time = (iso: string) => new Date(iso).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 const TOOL_LABEL: Record<string, string> = { registrar_en_caja_compartida: "Caja compartida", crear_movimiento: "Bitácora", crear_gasto_en_grupo: "Grupo de gastos", crear_grupo: "Grupo nuevo", recordar: "Recordatorio" };
 const STATUS_LABEL: Record<string, string> = { propuesta: "Para confirmar", confirmada: "Registrado", deshecha: "Deshecho", descartada: "Descartado" };
 const field = `mt-1 ${fieldClass}`;
@@ -151,7 +151,7 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
           </label>
           <label>
             Monto
-            <input name="amount" defaultValue={((Number(d.amount) || 0) / 100).toLocaleString("es-AR")} inputMode="decimal" required className={field} />
+            <input name="amount" defaultValue={formatNumber((Number(d.amount) || 0) / 100, 2)} inputMode="decimal" required className={field} />
           </label>
           <label>
             Tipo
@@ -212,7 +212,7 @@ function Card({ p, categories }: { p: ChatProposal; categories: { id: string; na
           </label>
           <label>
             Monto total
-            <input name="amount" defaultValue={((Number(d.amount) || 0) / 100).toLocaleString("es-AR")} inputMode="decimal" required className={field} />
+            <input name="amount" defaultValue={formatNumber((Number(d.amount) || 0) / 100, 2)} inputMode="decimal" required className={field} />
           </label>
           <label>
             Fecha
@@ -271,7 +271,7 @@ function Bubble({ m, categories }: { m: ChatMessage; categories: { id: string; n
           <p className={cn("mt-0.5 flex items-center gap-1 px-1 text-micro text-muted", mine && "justify-end")}>
             {m.status === "procesando" && <Loader2 className="size-3 animate-spin motion-reduce:animate-none" aria-hidden />}
             {m.status === "pendiente" && <Clock className="size-3" aria-hidden />}
-            {time(m.createdAt)}
+            {formatDate(m.createdAt, "time")}
             {m.status === "procesando" && " · interpretando…"}
             {m.status === "pendiente" && " · en cola: lo proceso apenas vuelva la IA"}
             {m.status === "error" && " · no se pudo procesar"}

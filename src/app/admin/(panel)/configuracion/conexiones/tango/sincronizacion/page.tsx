@@ -21,13 +21,12 @@ import { requireAdmin } from "@/lib/auth";
 import { requireModule } from "@/lib/faro/require-module";
 import { documentsFor, getLink, listRules, openConflicts, syncCounts } from "@/modules/tango-sync/server";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatAmount, formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Tango · Sincronización" };
 
 const field = `mt-1 py-2 ${fieldClass}`;
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 2 });
-const when = (d: Date | null) => (d ? fmt.format(d) : "—");
+const when = (d: Date | null) => (d ? formatDate(d, "shortTime") : "—");
 const DOC_STATUS: Record<string, string> = { pendiente: "Pendiente", sincronizado: "Sincronizado", error: "Con error", conflicto: "En conflicto" };
 const tone = (st: string) => (st === "sincronizado" ? "activa" : st === "conflicto" || st === "error" ? "vencida" : "pendiente");
 const FIELD: Record<string, string> = { cliente: "Cliente", cuenta: "Cuenta", categoria: "Categoría", total: "Total", fecha: "Fecha", comprobante: "Comprobante" };
@@ -261,7 +260,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
                   {d.last_error && d.status === "error" && <p className="text-meta text-danger">{d.last_error}</p>}
                 </div>
                 <div className="flex items-center gap-3 sm:justify-end">
-                  <span className="num">{money.format(Number(d.total))}</span>
+                  <span className="num">{formatAmount(Number(d.total))}</span>
                   <StatusBadge status={tone(d.status)} label={DOC_STATUS[d.status] ?? d.status} />
                 </div>
               </li>

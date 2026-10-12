@@ -8,6 +8,7 @@ import type { StaffUser } from "@/lib/auth";
 import { externalAssistantTools } from "@/modules/connectors/mcp-externo/tools";
 import { executeTool, inputJsonSchema, toolAllowed, TOOLS, type StaffRole, type ToolContext, type ToolOutcome } from "@/modules/tools";
 import type { ContextItem, ContextRef } from "./context";
+import { formatDate } from "@/lib/format";
 
 // Piezas del Asistente: contexto de herramientas, prompt de sistema,
 // resolución del contexto adjunto y persistencia de conversaciones.
@@ -99,7 +100,7 @@ export async function resolveContext(studioId: string, refs: ContextRef[]): Prom
 }
 
 export function systemPrompt(user: StaffUser, studioName: string, context: ContextItem[]) {
-  const today = new Intl.DateTimeFormat("es-AR", { timeZone: "America/Argentina/Buenos_Aires", dateStyle: "full" }).format(new Date());
+  const today = formatDate(new Date(), "full");
   const ctx = context.length
     ? `\n\nContexto que adjuntó la persona (usá estos IDs con las herramientas):\n${context
         .map((c) => `- ${c.kind}: ${c.label}${c.hint ? ` (${c.hint})` : ""} · id ${c.id}`)

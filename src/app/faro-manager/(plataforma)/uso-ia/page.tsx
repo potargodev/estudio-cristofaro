@@ -5,11 +5,10 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { getDb } from "@/db";
 import { ai_usage, studios } from "@/db/schema";
 import { requireFaro } from "@/lib/auth";
+import { formatDate, formatNumber, formatUsd } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Uso y costos de IA" };
 
-const usd = (v: string | number) => `USD ${Number(v).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-const n = (v: number) => v.toLocaleString("es-AR");
 
 /**
  * Uso y costos de IA del mes (Plataforma): llamadas, tokens y costo estimado
@@ -42,15 +41,15 @@ export default async function UsoIaPage() {
       .orderBy(desc(cost))
       .limit(30),
   ]);
-  const monthName = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "UTC" }).format(month);
+  const monthName = formatDate(month.toISOString().slice(0, 10), "month");
   return (
     <div className="grid gap-6">
       <PageHeader level={2} title="Uso y costos de IA" description={`Costo estimado de ${monthName} (tokens × precios del catálogo), por tenant y por modelo. Sin contenido de conversaciones.`} className="mb-0" />
       <dl className="grid grid-cols-3 gap-3">
         {[
-          { k: "Costo estimado", v: usd(total?.cost ?? 0) },
-          { k: "Llamadas", v: n(total?.calls ?? 0) },
-          { k: "Tokens", v: n(total?.tokens ?? 0) },
+          { k: "Costo estimado", v: formatUsd(Number(total?.cost ?? 0)) },
+          { k: "Llamadas", v: formatNumber(total?.calls ?? 0) },
+          { k: "Tokens", v: formatNumber(total?.tokens ?? 0) },
         ].map((x) => (
           <div key={x.k} className="rounded-md border border-line bg-surface p-4">
             <dt className="text-meta text-muted">{x.k}</dt>
@@ -72,7 +71,7 @@ export default async function UsoIaPage() {
                   {t.name}
                 </Link>
                 <span className="num text-muted">
-                  {n(t.calls)} llamadas · {n(t.tokens)} tokens · <span className="text-ink">{usd(t.cost)}</span>
+                  {formatNumber(t.calls)} llamadas · {formatNumber(t.tokens)} tokens · <span className="text-ink">{formatUsd(Number(t.cost))}</span>
                 </span>
               </li>
             ))}
@@ -93,7 +92,7 @@ export default async function UsoIaPage() {
                   {m.model} <span className="text-muted">· {m.provider}</span>
                 </span>
                 <span className="num text-muted">
-                  {n(m.calls)} llamadas · {n(m.tokens)} tokens · <span className="text-ink">{usd(m.cost)}</span>
+                  {formatNumber(m.calls)} llamadas · {formatNumber(m.tokens)} tokens · <span className="text-ink">{formatUsd(Number(m.cost))}</span>
                 </span>
               </li>
             ))}

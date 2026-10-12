@@ -3,9 +3,9 @@ import { StatusBadge } from "@/components/admin/kit/StatusBadge";
 import type { connection_logs } from "@/db/schema";
 import type { ConnectorDefinition } from "@/modules/connectors/catalog";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/format";
 
-const fmtDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
-export const when = (d: Date | null | undefined) => (d ? fmtDate.format(d) : "Nunca");
+export const when = (d: Date | null | undefined) => (d ? formatDate(d, "shortTime") : "Nunca");
 
 /** Monograma del conector (sin logos de terceros embebidos) */
 export function ConnectorLogo({ def, size = "md" }: { def: Pick<ConnectorDefinition, "logo" | "name">; size?: "md" | "lg" }) {
@@ -62,7 +62,7 @@ export function LogTable({ logs }: { logs: (typeof connection_logs.$inferSelect)
         <tbody className="tabular">
           {logs.map((l) => (
             <tr key={l.id} className="border-b border-line align-top last:border-0">
-              <td className="py-2 whitespace-nowrap">{fmtDate.format(l.started_at)}</td>
+              <td className="py-2 whitespace-nowrap">{formatDate(l.started_at, "shortTime")}</td>
               <td className="py-2">{KIND[l.kind] ?? l.kind}</td>
               <td className="py-2">
                 <StatusBadge status={l.status === "ok" ? "resuelta" : l.status === "error" ? "vencido" : "en_curso"} label={l.status === "ok" ? "OK" : l.status === "error" ? "Error" : "En curso"} />

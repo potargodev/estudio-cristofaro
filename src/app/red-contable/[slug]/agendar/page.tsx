@@ -7,8 +7,8 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { toPickerDays } from "@/lib/agenda/picker";
 import { bookingByToken } from "@/lib/agenda/bookings";
 import { availableSlots, getHosts } from "@/lib/agenda/slots";
-import { fmtDateTime, fmtTime } from "@/lib/agenda/time";
 import { publicProfile } from "@/modules/red/server";
+import { formatDate } from "@/lib/format";
 
 type Params = Promise<{ slug: string }>;
 export const dynamic = "force-dynamic";
@@ -33,7 +33,7 @@ export default async function AgendarRedPage({ params, searchParams }: { params:
         {back}
         <PageHeader title="Tu llamada está confirmada" description={`Con ${x.name}. Te mandamos la confirmación a ${b.email}.`} className="mb-0" />
         <p className="num text-title first-letter:uppercase">
-          {fmtDateTime(b.starts_at)} a {fmtTime(b.ends_at)} <span className="text-ui font-normal text-muted">(hora de Buenos Aires)</span>
+          {formatDate(b.starts_at, "weekdayTime")} a {formatDate(b.ends_at, "time")} <span className="text-ui font-normal text-muted">(hora de Buenos Aires)</span>
         </p>
         <div className="flex flex-wrap gap-2">
           {b.meet_url && (

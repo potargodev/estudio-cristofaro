@@ -2,7 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { isStudioRole } from "@/lib/roles";
 import { GUEST_COOKIE, guestByToken, type GastosActor } from "./actor";
 
@@ -10,7 +10,7 @@ import { GUEST_COOKIE, guestByToken, type GastosActor } from "./actor";
 
 /** Actor del pedido actual o null (sin sesión válida ni invitación vigente) */
 export const getGastosActor = cache(async (): Promise<GastosActor | null> => {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (user) {
     // El estudio entra con su seguridad completa (contraseña definitiva y 2FA)
     if (isStudioRole(user.role) && (user.mustChangePassword || !user.twoFactorEnabled)) return null;

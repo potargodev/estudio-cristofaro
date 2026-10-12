@@ -7,6 +7,7 @@ import { SubmitButton } from "@/components/admin/ui";
 import { allowedTypes, CBTE_TYPES, DOC_TYPES, IVA_CONDITIONS } from "@/modules/arca/config";
 import { cn } from "@/lib/utils";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatAmount } from "@/lib/format";
 
 interface FormCustomer {
   id: string;
@@ -32,7 +33,6 @@ interface Line {
 const field = `mt-1 ${fieldClass}`;
 const label = "text-meta font-medium text-ink/80";
 const num = (v: string) => Number(v.replace(/\./g, "").replace(",", ".")) || 0;
-const money = (n: number) => `$ ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 /** Borrador de factura o nota: se guarda, se revisa y recién después se emite */
 export function InvoiceForm({
@@ -260,7 +260,7 @@ export function InvoiceForm({
               <option value="">+ Producto frecuente</option>
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.description} · {money(p.unitPrice)}
+                  {p.description} · {formatAmount(p.unitPrice)}
                 </option>
               ))}
             </select>
@@ -307,17 +307,17 @@ export function InvoiceForm({
             <>
               <div className="flex justify-end gap-6">
                 <dt className="text-muted">Neto</dt>
-                <dd className="num">{money(totals.net)}</dd>
+                <dd className="num">{formatAmount(totals.net)}</dd>
               </div>
               <div className="flex justify-end gap-6">
                 <dt className="text-muted">IVA</dt>
-                <dd className="num">{money(totals.iva)}</dd>
+                <dd className="num">{formatAmount(totals.iva)}</dd>
               </div>
             </>
           )}
           <div className="flex justify-end gap-6 text-title">
             <dt className="font-medium">Total</dt>
-            <dd className="num">{money(totals.total)}</dd>
+            <dd className="num">{formatAmount(totals.total)}</dd>
           </div>
         </dl>
       </section>

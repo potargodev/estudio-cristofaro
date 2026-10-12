@@ -2,7 +2,7 @@ import { Users } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { JoinChoices } from "@/components/gastos/invite";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { googleEnabled } from "@/lib/auth-server";
 import { templateOf } from "@/modules/cajas/catalog";
 import { boxByInvite } from "@/modules/cajas/shared";
@@ -29,7 +29,7 @@ export default async function UnirsePage({ params, searchParams }: { params: Pro
       </div>
     );
   const t = templateOf(inv.box.purpose);
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   const next = `/caja/${token}`;
   return (
     <div className="mx-auto grid max-w-md gap-6 px-4 pt-10 pb-10">

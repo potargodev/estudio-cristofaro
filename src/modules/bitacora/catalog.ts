@@ -49,16 +49,6 @@ export function prevMonth(month: string) {
   const [y, m] = month.split("-").map(Number);
   return m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, "0")}`;
 }
-const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-export const monthLabel = (month: string) => `${MONTHS[Number(month.slice(5)) - 1]} ${month.slice(0, 4)}`;
-
-/** "$ 12.345,60" o "US$ 20" */
-export function money(cents: number, currency = "ARS"): string {
-  if (cents < 0) return `−${money(-cents, currency)}`;
-  const v = cents / 100;
-  const s = v.toLocaleString("es-AR", { minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 });
-  return currency === "USD" ? `US$ ${s}` : `$ ${s}`;
-}
 
 /** "12.345,50" · "12.345" · "1,5" · "12345.5" · "12k" → centavos (o null). Formato argentino primero */
 export function parseAmount(raw: string): number | null {

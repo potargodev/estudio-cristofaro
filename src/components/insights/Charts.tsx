@@ -1,13 +1,12 @@
 import { change, monthLabel } from "@/modules/insights/core";
 import { cn } from "@/lib/utils";
+import { formatAmount, formatNumber } from "@/lib/format";
 
 // Gráficos livianos en SVG (sin librerías): barras por mes, con una o dos
 // series. Cada gráfico tiene su tabla equivalente para lectores de pantalla.
 
 type Point = { m: string; v: number };
-const ars = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
-const int = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 1 });
-export const fmt = (v: number, unit: "ars" | "n" | "pct") => (unit === "ars" ? ars.format(v) : unit === "pct" ? `${int.format(v)} %` : int.format(v));
+export const fmt = (v: number, unit: "ars" | "n" | "pct") => (unit === "ars" ? formatAmount(v, "ARS", { decimals: "none" }) : unit === "pct" ? `${formatNumber(v, 1)} %` : formatNumber(v, 1));
 
 export function Kpi({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: "danger" | "ok" }) {
   return (

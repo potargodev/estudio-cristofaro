@@ -8,6 +8,7 @@ import { monotributo_scales } from "@/db/schema";
 import { requireFaro } from "@/lib/auth";
 import { currentScale } from "@/modules/arca/server";
 import { deleteScaleAction, saveScaleAction } from "../../arca-actions";
+import { formatAmount, formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Escalas de monotributo" };
 
@@ -29,7 +30,7 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
           <li key={s.id} className="rounded-md border border-line bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-body font-semibold">
-                Vigente desde el {s.valid_from.split("-").reverse().join("/")} ·{" "}
+                Vigente desde el {formatDate(s.valid_from, "numeric")} ·{" "}
                 <span className={s.status === "validada" ? "text-[#1f6b3d]" : "text-[#7a5410]"}>{s.status === "validada" ? "validada" : "a validar"}</span>
               </p>
               {me.faroRole === "faro_owner" && scales.length > 1 && (
@@ -59,12 +60,12 @@ export default async function MonotributoPage({ searchParams }: { searchParams: 
                   {s.categories.map((c) => (
                     <tr key={c.letter} className="border-t border-line">
                       <td className="py-1 font-semibold">{c.letter}</td>
-                      <td>$ {c.maxIncome.toLocaleString("es-AR")}</td>
+                      <td>{formatAmount(c.maxIncome, "ARS", { decimals: "auto" })}</td>
                       <td>{c.maxSurfaceM2 ?? "—"}</td>
                       <td>{c.maxEnergyKw ?? "—"}</td>
-                      <td>{c.maxRent != null ? `$ ${c.maxRent.toLocaleString("es-AR")}` : "—"}</td>
-                      <td>{c.feeServices != null ? `$ ${c.feeServices.toLocaleString("es-AR")}` : "—"}</td>
-                      <td>{c.feeGoods != null ? `$ ${c.feeGoods.toLocaleString("es-AR")}` : "—"}</td>
+                      <td>{c.maxRent != null ? formatAmount(c.maxRent, "ARS", { decimals: "auto" }) : "—"}</td>
+                      <td>{c.feeServices != null ? formatAmount(c.feeServices, "ARS", { decimals: "auto" }) : "—"}</td>
+                      <td>{c.feeGoods != null ? formatAmount(c.feeGoods, "ARS", { decimals: "auto" }) : "—"}</td>
                     </tr>
                   ))}
                 </tbody>

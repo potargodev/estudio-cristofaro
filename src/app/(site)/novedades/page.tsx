@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Container } from "@/components/web/ui";
-import { formatDate, getPosts } from "@/lib/data";
+import { getPosts } from "@/lib/data";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Novedades de ARCA, impuestos y sueldos",
@@ -24,7 +25,7 @@ export default async function NovedadesPage() {
               {posts.map((p) => (
                 <li key={p.id} className="border-b border-hair">
                   <Link href={`/novedades/${p.slug}`} className="group grid gap-3 py-10 lg:grid-cols-12 lg:items-baseline">
-                    <span className="tabular text-meta text-paper/55 lg:col-span-2">{formatDate(p.published_at)}</span>
+                    <span className="tabular text-meta text-paper/55 lg:col-span-2">{formatDate(p.published_at, "long")}</span>
                     <span className="font-display text-[clamp(1.7rem,2.8vw,2.6rem)] leading-[1.08] text-paper transition-colors duration-500 group-hover:text-rose-light lg:col-span-6">
                       {p.title}
                     </span>

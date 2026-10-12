@@ -7,11 +7,11 @@ import { organizations } from "@/db/schema";
 import { requireOperator } from "@/lib/auth";
 import { listPlans, planAmount } from "@/modules/billing/fees";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatMoney } from "@/lib/format";
 
 export const metadata = { title: "Abonos" };
 
 const field = `mt-1 ${fieldClass}`;
-const ars = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const ADJ: Record<string, string> = { ninguno: "Sin ajuste", porcentaje: "Porcentaje fijo", ipc: "Por IPC" };
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -38,8 +38,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                 </p>
               </div>
               <span className="text-right text-meta">
-                <span className="num block text-body">{ars(current[i])}</span>
-                {current[i] !== p.amount && <span className="text-muted">base {ars(p.amount)}</span>}
+                <span className="num block text-body">{formatMoney(current[i])}</span>
+                {current[i] !== p.amount && <span className="text-muted">base {formatMoney(p.amount)}</span>}
               </span>
             </li>
           ))}

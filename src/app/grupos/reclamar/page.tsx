@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { JoinChoices } from "@/components/gastos/invite";
 import { googleEnabled } from "@/lib/auth-server";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { GUEST_COOKIE, guestByToken } from "@/modules/gastos/server/actor";
 import { claimGuestAction } from "../invitacion-actions";
 
@@ -14,7 +14,7 @@ export default async function ClaimPage({ searchParams }: { searchParams: Promis
   const sp = await searchParams;
   const token = (await cookies()).get(GUEST_COOKIE)?.value ?? "";
   const g = token ? await guestByToken(token) : null;
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   if (!g)
     return (
       <div className="mx-auto max-w-md pt-6">

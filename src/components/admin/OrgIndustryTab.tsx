@@ -4,6 +4,7 @@ import { updateSetupItemAction } from "@/app/admin/industry-actions";
 import { INDUSTRY_NAMES, ITEM_KINDS, type ItemKind } from "@/modules/industries/catalog";
 import { organizationSetup, studioTemplateStatuses } from "@/modules/industries/server";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/format";
 
 const PERFIL: Record<string, string> = { impositivo: "Perfil impositivo típico", laboral: "Perfil laboral (convenios y conceptos)" };
 const label = (d: Record<string, unknown>, fallback: string) => String(d.etiqueta ?? d.impuesto ?? d.item ?? d.nombre ?? d.titulo ?? d.descripcion ?? PERFIL[fallback] ?? fallback);
@@ -31,7 +32,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
                 <div>
                   <p className="font-medium text-ink">{i.name}</p>
                   <p className="text-meta text-muted">
-                    Versión {i.version} aplicada el {i.appliedAt.toLocaleDateString("es-AR")} ·{" "}
+                    Versión {i.version} aplicada el {formatDate(i.appliedAt, "numeric")} ·{" "}
                     {reviewed?.[i.key] ? <span className="text-[#1f5f36]">validada</span> : <span className="text-[#7a5410]">plantilla en revisión por el estudio</span>}
                   </p>
                 </div>

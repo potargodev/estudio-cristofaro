@@ -4,8 +4,9 @@ import { Camera } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { createRendicionAction, decideRendicionAction, reimburseAction, type RendicionState } from "@/app/portal/rendicion-actions";
-import { CATEGORIES, CURRENCIES, todayAR } from "@/modules/gastos/constants";
+import { CATEGORIES, CURRENCIES } from "@/modules/gastos/constants";
 import { fieldClass } from "@/components/ds/primitives";
+import { todayAR } from "@/lib/format";
 
 const input = fieldClass;
 

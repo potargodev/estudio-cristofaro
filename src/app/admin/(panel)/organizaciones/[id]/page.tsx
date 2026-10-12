@@ -47,6 +47,7 @@ import { bookings, documents, legal_entities, obligations, requests, tango_recor
 import { requireStaff } from "@/lib/auth";
 import { getOrgLimits, getOrgStaff, studioOrganization } from "@/lib/organizations";
 import { formatCuit } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Organización" };
 
@@ -156,7 +157,7 @@ export default async function OrganizacionPage({
             {tango.n > 0 && (
               <span className="inline-flex items-center gap-1.5 text-[#24583a]">
                 <RefreshCw className="size-4" strokeWidth={1.5} aria-hidden />
-                Vinculada con Tango · última sincronización {tango.lastSync ? new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(tango.lastSync)) : "pendiente"}
+                Vinculada con Tango · última sincronización {tango.lastSync ? formatDate(tango.lastSync, "shortTime") : "pendiente"}
               </span>
             )}
           </div>

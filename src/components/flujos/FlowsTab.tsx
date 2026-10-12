@@ -7,6 +7,7 @@ import type { StaffUser } from "@/lib/auth";
 import { getEntitlements, hasModule, limitUsage } from "@/lib/faro/entitlements";
 import { EVENTS, TEMPLATES } from "@/modules/flows/core";
 import { listFlows } from "@/modules/flows/engine";
+import { formatDate } from "@/lib/format";
 
 // Pestaña «Automatizaciones» del Vigía (§2.o): los flujos del estudio, las
 // plantillas listas y armar uno desde una frase.
@@ -56,7 +57,7 @@ export async function FlowsTab({ user, sp }: { user: StaffUser; sp: Record<strin
                     <span className="block truncate text-ui font-medium">{f.name}</span>
                     <span className="text-caption text-muted">
                       {f.trigger_type === "evento" ? (EVENTS[f.trigger_event ?? ""]?.label ?? f.trigger_event) : TRIGGER[f.trigger_type]}
-                      {f.last_run_at && ` · última corrida ${f.last_run_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}`}
+                      {f.last_run_at && ` · última corrida ${formatDate(f.last_run_at, "numericTime")}`}
                     </span>
                   </span>
                   <span className={`text-meta ${STATUS[f.status]?.tone}`}>{STATUS[f.status]?.label}</span>

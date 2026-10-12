@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { HelpFeedback } from "@/components/help/HelpFeedback";
 import { HelpMarkdown } from "@/components/help/HelpMarkdown";
 import { articleUrl, categoryName, getArticle, PROFILE_LABELS, relatedOf } from "@/modules/help/catalog";
+import { formatDate } from "@/lib/format";
 
 type Params = Promise<{ categoria: string; slug: string }>;
 
@@ -14,7 +15,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return a ? { title: a.titulo, description: a.resumen } : { title: "Artículo no encontrado" };
 }
 
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 export default async function ArticuloPage({ params }: { params: Params }) {
   const { categoria, slug } = await params;
@@ -39,7 +39,7 @@ export default async function ArticuloPage({ params }: { params: Params }) {
               {PROFILE_LABELS[p]}
             </span>
           ))}
-          <span className="px-1 py-0.5">Actualizado el {day.format(new Date(`${a.actualizado}T12:00:00Z`))}</span>
+          <span className="px-1 py-0.5">Actualizado el {formatDate(a.actualizado, "long")}</span>
         </p>
         <div className="mt-6 border-t border-line pt-2">
           <HelpMarkdown text={a.body} />

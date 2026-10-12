@@ -3,11 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SubmitButton } from "@/components/admin/ui";
 import { HelpMarkdown } from "@/components/help/HelpMarkdown";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { DRAFT_NOTICE, isLegalKey, LEGAL_DOCS, legalDoc } from "@/modules/legal/catalog";
 import { acceptanceOf } from "@/modules/legal/server";
 import { acceptLegalAction } from "../actions";
+import { formatDate } from "@/lib/format";
 
 type Params = Promise<{ doc: string }>;
 
@@ -16,20 +17,19 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return d ? { title: `${d.titulo} · Faro` } : { title: "Documento no encontrado" };
 }
 
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 /** Texto legal versionado: muestra la versión, la fecha y si el usuario ya la aceptó */
 export default async function LegalPage({ params }: { params: Params }) {
   const key = (await params).doc;
   if (!isLegalKey(key)) notFound();
   const d = legalDoc(key)!;
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   const accepted = user ? await acceptanceOf(user.id, key) : null;
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_240px]">
       <article className="min-w-0">
         <p role="note" className="inline-block rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-3 py-1.5 text-meta font-medium text-[#7a5410]">
-          {DRAFT_NOTICE} · {day.format(new Date(`${d.fecha}T12:00:00Z`))}
+          {DRAFT_NOTICE} · {formatDate(d.fecha, "long")}
         </p>
         <h1 className="mt-4 font-display text-[34px] leading-tight sm:text-[46px]">{d.titulo}</h1>
         <p className="mt-2 text-ui text-muted">Versión {d.version}</p>
@@ -39,7 +39,7 @@ export default async function LegalPage({ params }: { params: Params }) {
         {user && !user.assisted && (
           <div className="mt-10 rounded-lg border border-line bg-surface p-5 text-body">
             {accepted ? (
-              <p>Aceptaste esta versión el {day.format(accepted.accepted_at)}.</p>
+              <p>Aceptaste esta versión el {formatDate(accepted.accepted_at, "long")}.</p>
             ) : (
               <form action={acceptLegalAction} className="flex flex-wrap items-center justify-between gap-3">
                 <input type="hidden" name="doc" value={key} />

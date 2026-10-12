@@ -9,12 +9,11 @@ import { requireFaro } from "@/lib/auth";
 import { getPlan, KIND_LABEL, PLANS, planFullName, type TenantKind } from "@/lib/faro/plans";
 import { likeTerm } from "@/lib/search";
 import { cn } from "@/lib/utils";
+import { formatDate, formatUsd } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Tenants" };
 
 
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
-const usd = (n: number) => `US$ ${n.toLocaleString("es-AR", { maximumFractionDigits: 2 })}`;
 
 
 /**
@@ -138,13 +137,13 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
                   <Tag>{getPlan(t.plan_key) ? planFullName(getPlan(t.plan_key)!) : t.plan_key}</Tag>
                 </td>
                 <td className="py-2.5">
-                  <StatusBadge status={t.status === "activo" ? "activa" : t.status === "prueba" ? "onboarding" : "pausada"} label={t.status === "activo" ? "Activo" : t.status === "prueba" ? `Prueba${t.trial_ends_at ? ` hasta ${day.format(t.trial_ends_at)}` : ""}` : "Suspendido"} />
+                  <StatusBadge status={t.status === "activo" ? "activa" : t.status === "prueba" ? "onboarding" : "pausada"} label={t.status === "activo" ? "Activo" : t.status === "prueba" ? `Prueba${t.trial_ends_at ? ` hasta ${formatDate(t.trial_ends_at)}` : ""}` : "Suspendido"} />
                 </td>
                 <td className="py-2.5 text-right">{t.kind === "studio" ? orgs : "—"}</td>
                 <td className="py-2.5 text-right">{staff}</td>
-                <td className="py-2.5 text-right">{usd(Number(ai))}</td>
+                <td className="py-2.5 text-right">{formatUsd(Number(ai))}</td>
                 <td className="px-4 py-2.5 whitespace-nowrap">
-                  {day.format(t.created_at)} <span className="text-caption text-muted">· {t.created_via === "registro" ? "autoregistro" : t.created_via}</span>
+                  {formatDate(t.created_at)} <span className="text-caption text-muted">· {t.created_via === "registro" ? "autoregistro" : t.created_via}</span>
                 </td>
               </tr>
             ))}

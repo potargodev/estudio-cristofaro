@@ -6,6 +6,7 @@
 // "server-only": lo usan también la landing y el Faro Manager.
 
 import type { FaroModuleKey } from "@/modules/registry";
+import { formatAmount } from "@/lib/format";
 
 /** studio: estudios y contadores · personal: autónomos (Faro Personal) · persona: personas (Bitácora) */
 export type TenantKind = "studio" | "personal" | "persona";
@@ -194,13 +195,10 @@ export const KIND_PLANS_LABEL: Record<TenantKind, string> = { studio: "Estudios 
 /** "Autónomos · Pro", "Estudios · Inicial" */
 export const planFullName = (p: Pick<FaroPlan, "kind" | "name">) => `${KIND_PLANS_LABEL[p.kind]} · ${p.name}`;
 
-export const formatUsd = (n: number) => `USD ${n.toLocaleString("es-AR", { maximumFractionDigits: 2 })}`;
-export const formatArs = (n: number) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
-
-/** Precio mensual visible: "Gratis" o "USD 49 / mes" (con ARS si se pasa la conversión) */
+/** Precio mensual visible: "Gratis" o "US$ 49 / mes" (con ARS si se pasa la conversión) */
 export function priceLabel(p: Pick<FaroPlan, "free" | "priceUsd">, usdArs?: number) {
   if (p.free || !p.priceUsd) return "Gratis";
-  return usdArs ? `${formatArs(p.priceUsd * usdArs)} / mes` : `${formatUsd(p.priceUsd)} / mes`;
+  return usdArs ? `${formatAmount(p.priceUsd * usdArs, "ARS", { decimals: "none" })} / mes` : `${formatAmount(p.priceUsd, "USD", { decimals: "auto" })} / mes`;
 }
 
 /** Precio anual (con los meses de regalo) */

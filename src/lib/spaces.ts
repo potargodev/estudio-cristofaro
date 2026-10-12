@@ -2,7 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import type { Space } from "@/components/app/shell/spaces";
 import { PARAM_SPACE } from "@/components/vigia/space-param";
-import { getCurrentUser, getMemberships, ORG_COOKIE, type StaffUser } from "./auth";
+import { getSessionUser, getMemberships, ORG_COOKIE, type StaffUser } from "./auth";
 import { getPrefs, setPrefs } from "./prefs";
 import { isStudioRole } from "./roles";
 
@@ -65,7 +65,7 @@ export async function vigiaSpace(user: StaffUser, param?: string | null): Promis
 
 /** Pantalla de entrada: el último espacio usado (o el natural) */
 export async function entryPath() {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user) return "/ingresar";
   const space = await resolveSpace(user);
   return SPACE_HOME[space];

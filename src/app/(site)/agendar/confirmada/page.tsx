@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/web/ui";
 import { bookingByToken } from "@/lib/agenda/bookings";
-import { fmtDateTime, fmtTime } from "@/lib/agenda/time";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Llamada confirmada", robots: { index: false, follow: false } };
 
@@ -21,7 +21,7 @@ export default async function ConfirmadaPage({ searchParams }: { searchParams: P
       </p>
       <h1 className="display-md mt-8 text-paper">Tu llamada está confirmada.</h1>
       <p className="mt-10 border-t border-hair pt-6 text-section text-paper first-letter:uppercase">
-        {fmtDateTime(b.starts_at)} a {fmtTime(b.ends_at)} <span className="text-muted">(hora de Buenos Aires)</span>
+        {formatDate(b.starts_at, "weekdayTime")} a {formatDate(b.ends_at, "time")} <span className="text-muted">(hora de Buenos Aires)</span>
       </p>
       <p className="mt-2 text-muted">Te mandamos la confirmación a {b.email}.</p>
       <div className="mt-8 flex flex-wrap gap-3">

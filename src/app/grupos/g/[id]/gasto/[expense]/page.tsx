@@ -2,14 +2,14 @@ import { Paperclip } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CommentForm } from "@/components/gastos/forms";
-import { CATEGORIES, FX_SOURCES, RECURRENCES, SPLIT_METHODS, formatMoney, type Category } from "@/modules/gastos/constants";
+import { CATEGORIES, FX_SOURCES, RECURRENCES, SPLIT_METHODS, type Category } from "@/modules/gastos/constants";
 import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
 import { deleteExpenseAction, stopRecurrenceAction } from "../../../../actions";
+import { formatDate, formatMoney, formatNumber } from "@/lib/format";
 
 export const metadata = { title: "Gasto" };
 
-const when = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Argentina/Buenos_Aires" });
 
 export default async function GastoDetalle({ params }: { params: Promise<{ id: string; expense: string }> }) {
   const { id, expense } = await params;
@@ -26,7 +26,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
   const name = (mid: string | null) => v.allMembers.find((m) => m.id === mid)?.name ?? "Alguien";
   const comments = v.comments.filter((c) => c.expense_id === e.id);
   const canDelete = e.created_by === v.me.id || v.me.role === "admin";
-  const date = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${e.date}T12:00:00Z`));
+  const date = formatDate(e.date, "long");
   return (
     <>
       <Link href={`/grupos/g/${v.group.id}`} className="text-ui text-rose-deep underline-offset-4 hover:underline">
@@ -39,7 +39,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
       <p className="mt-2 num text-[44px] leading-none">{formatMoney(e.amount, e.currency)}</p>
       {e.fx_rate && (
         <p className="mt-2 text-ui text-muted">
-          ≈ {formatMoney(Math.round(e.amount * Number(e.fx_rate)), v.group.base_currency)} · 1 {e.currency} = {Number(e.fx_rate).toLocaleString("es-AR")} {v.group.base_currency} ({FX_SOURCES[e.fx_source as keyof typeof FX_SOURCES] ?? e.fx_source}, {e.fx_date})
+          ≈ {formatMoney(Math.round(e.amount * Number(e.fx_rate)), v.group.base_currency)} · 1 {e.currency} = {formatNumber(Number(e.fx_rate), 4)} {v.group.base_currency} ({FX_SOURCES[e.fx_source as keyof typeof FX_SOURCES] ?? e.fx_source}, {e.fx_date})
         </p>
       )}
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -87,7 +87,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
             <li key={c.id} className="border-l-2 border-line pl-3">
               <p className="text-body">{c.body}</p>
               <p className="text-caption text-muted">
-                {name(c.member_id)} · {when.format(c.created_at)}
+                {name(c.member_id)} · {formatDate(c.created_at, "shortTime")}
               </p>
             </li>
           ))}

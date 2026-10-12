@@ -2,10 +2,10 @@ import "server-only";
 import { and, count, eq, gte, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db";
 import { box_entries, derivation_rules, derivation_suggestions, employees, invoices, professional_tasks, studios, users } from "@/db/schema";
-import { money } from "@/modules/bitacora/catalog";
 import { audit } from "@/lib/audit";
 import { ownOrganization } from "@/lib/faro/tenants";
 import { CHANGA_CONTEXT, DERIVATION_RULES, matchProfessionalTask, PROFESSIONAL_TASKS, type DerivationRule, type ProfessionalTask, type RuleKey, type ValidationState } from "./catalog";
+import { formatMoney } from "@/lib/format";
 
 // Escudo de responsabilidad del lado del servidor: la lista de tareas de
 // matriculados y las reglas de derivación vigentes (configuración del Faro
@@ -204,7 +204,7 @@ export async function evaluateDerivations(user: { id: string; role: string; stud
   if (changa) {
     const g = await grayZone(user);
     if (g && g.withoutRegime && g.total >= (changa.threshold ?? 1_500_000) * 100)
-      await suggest(user.id, "changa_actividad", `Según lo que registraste, en los últimos 12 meses cobraste ${money(g.total)} sin facturar en tu caja de negocio, en ${g.months} ${g.months === 1 ? "mes" : "meses"}. Eso ya es una actividad.`, { sin_facturar: g.total / 100, meses: g.months, contexto: CHANGA_CONTEXT });
+      await suggest(user.id, "changa_actividad", `Según lo que registraste, en los últimos 12 meses cobraste ${formatMoney(g.total, "ARS", { decimals: "auto" })} sin facturar en tu caja de negocio, en ${g.months} ${g.months === 1 ? "mes" : "meses"}. Eso ya es una actividad.`, { sin_facturar: g.total / 100, meses: g.months, contexto: CHANGA_CONTEXT });
   }
   if (user.tenantKind !== "personal") return;
   const { personalIssuer, semaforoFor, latestSituation } = await import("@/modules/arca/server");

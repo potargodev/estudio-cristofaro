@@ -7,16 +7,7 @@ import { orgHosts } from "@/lib/agenda/org-hosts";
 import { availableSlots, getHosts } from "@/lib/agenda/slots";
 import { defineTool } from "../types";
 import { uuid } from "./helpers";
-
-const fmt = new Intl.DateTimeFormat("es-AR", {
-  timeZone: "America/Argentina/Buenos_Aires",
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  hourCycle: "h23",
-});
+import { formatDate } from "@/lib/format";
 
 export const agendaTools = [
   defineTool({
@@ -60,7 +51,7 @@ export const agendaTools = [
         .orderBy(asc(bookings.starts_at));
       // Con un acceso limitado a algunas organizaciones, no se ven llamadas de otras (ni de consultas sin organización)
       const visible = ctx.allowedOrganizations ? rows.filter((r) => r.organizacion_id && ctx.allowedOrganizations!.includes(r.organizacion_id)) : rows;
-      return { total: visible.length, llamadas: visible.map((r) => ({ ...r, cuando: fmt.format(r.inicio) })) };
+      return { total: visible.length, llamadas: visible.map((r) => ({ ...r, cuando: formatDate(r.inicio, "weekdayTime") })) };
     },
   }),
   defineTool({
@@ -92,7 +83,7 @@ export const agendaTools = [
       // Repartidos: hasta 2 por día para que haya variedad
       for (const list of byDay.values()) {
         for (const s of list.filter((_, i) => i % Math.max(1, Math.floor(list.length / 2)) === 0).slice(0, 2)) {
-          out.push({ inicio: s.start.toISOString(), cuando: fmt.format(s.start), con: names.get(s.hostId) });
+          out.push({ inicio: s.start.toISOString(), cuando: formatDate(s.start, "weekdayTime"), con: names.get(s.hostId) });
         }
         if (out.length >= input.cantidad) break;
       }

@@ -2,6 +2,7 @@ import { BadgeCheck, Clock, MapPin, Star } from "lucide-react";
 import Link from "next/link";
 import { labelOf, MODALITIES, RED_SERVICES, responseLabel } from "@/modules/red/catalog";
 import type { publicDirectory } from "@/modules/red/server";
+import { formatNumber } from "@/lib/format";
 
 type Entry = Awaited<ReturnType<typeof publicDirectory>>[number];
 
@@ -26,7 +27,7 @@ export function StudioCard({ x, href }: { x: Entry; href: string }) {
           <MapPin className="size-4 shrink-0 text-muted" aria-hidden /> {[x.profile.city, x.profile.province].filter(Boolean).join(", ") || "Sin zona"} · {labelOf(MODALITIES, x.profile.modality)}
         </li>
         <li className="flex items-center gap-1.5">
-          <Star className="size-4 shrink-0 text-muted" aria-hidden /> {x.rating ? `${x.rating.avg.toFixed(1)} de 5 · ${x.rating.n} ${x.rating.n === 1 ? "reseña" : "reseñas"}` : "Sin reseñas todavía"}
+          <Star className="size-4 shrink-0 text-muted" aria-hidden /> {x.rating ? `${formatNumber(x.rating.avg, 1, 1)} de 5 · ${x.rating.n} ${x.rating.n === 1 ? "reseña" : "reseñas"}` : "Sin reseñas todavía"}
         </li>
         <li className="flex items-center gap-1.5">
           <Clock className="size-4 shrink-0 text-muted" aria-hidden /> {responseLabel(x.responseHours)}

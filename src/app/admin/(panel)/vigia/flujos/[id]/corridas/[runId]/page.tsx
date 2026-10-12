@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { Feedback } from "@/components/app/Feedback";
 import { requireOperator } from "@/lib/auth";
 import { getFlow, runView } from "@/modules/flows/engine";
+import { formatDate } from "@/lib/format";
 
 export const metadata = { title: "Corrida" };
 const ST: Record<string, string> = { ok: "Listo", error: "Error", esperando: "Esperando", rechazado: "Rechazado", saltado: "Salteado" };
@@ -24,7 +25,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           </Link>
         }
         title="Corrida"
-        description={`${v.r.status} · ${v.r.source} · ${v.r.created_at.toLocaleString("es-AR")}${v.r.attempts ? ` · ${v.r.attempts} reintento${v.r.attempts === 1 ? "" : "s"}` : ""}`}
+        description={`${v.r.status} · ${v.r.source} · ${formatDate(v.r.created_at, "timestamp")}${v.r.attempts ? ` · ${v.r.attempts} reintento${v.r.attempts === 1 ? "" : "s"}` : ""}`}
       />
       <div className="grid gap-4">
         <Feedback sp={sp} />
@@ -42,7 +43,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                   {s.kind} · {s.node_id}
                 </span>
                 <span className={s.status === "error" || s.status === "rechazado" ? "text-[#8f2a1c]" : "text-muted"}>
-                  {ST[s.status] ?? s.status} · {s.started_at.toLocaleTimeString("es-AR")}
+                  {ST[s.status] ?? s.status} · {formatDate(s.started_at, "time")}
                   {s.attempt > 1 ? ` · intento ${s.attempt}` : ""}
                 </span>
               </p>

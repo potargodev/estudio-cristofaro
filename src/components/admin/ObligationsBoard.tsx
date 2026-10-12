@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/admin/kit/Panel";
 import { StatusBadge } from "@/components/admin/kit/StatusBadge";
 import { cn } from "@/lib/utils";
+import { formatAmount, formatDate } from "@/lib/format";
 
 export interface ObligationRow {
   id: string;
@@ -19,9 +20,6 @@ export interface ObligationRow {
   responsible: string | null;
 }
 
-const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
-const dayFmt = new Intl.DateTimeFormat("es-AR", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
-const weekFmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", timeZone: "UTC" });
 const STATUS_OPTIONS = [
   ["vencido", "Vencidos"],
   ["pendiente", "Pendientes"],
@@ -201,11 +199,11 @@ export function ObligationsBoard({
           const allOn = list.every((r) => selected.has(r.id));
           const late = list.filter((r) => r.status === "vencido").length;
           return (
-            <section key={week} aria-label={`Semana del ${weekFmt.format(new Date(`${week}T00:00:00Z`))}`}>
+            <section key={week} aria-label={`Semana del ${formatDate(week, "short")}`}>
               <header className="flex items-center gap-3 border-b border-line bg-canvas px-4 py-2 text-meta">
                 <input type="checkbox" checked={allOn} onChange={() => toggleGroup(list)} aria-label="Elegir toda la semana" className="size-4 accent-[var(--color-navy)]" />
                 <span className="font-medium text-ink">
-                  {week === thisWeek ? "Esta semana" : `Semana del ${weekFmt.format(new Date(`${week}T00:00:00Z`))}`}
+                  {week === thisWeek ? "Esta semana" : `Semana del ${formatDate(week, "short")}`}
                 </span>
                 <span className="tabular text-muted">{list.length}</span>
                 {late > 0 && <StatusBadge status="vencido" label={`${late} vencidos`} />}
@@ -221,7 +219,7 @@ export function ObligationsBoard({
                   >
                     <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggleRow(r.id)} aria-label={`Elegir ${r.tax} ${r.period} de ${r.org}`} className="size-4 accent-[var(--color-navy)]" />
                     <span className={cn("tabular hidden text-meta md:block", r.status === "vencido" ? "font-medium text-[#8f2a1c]" : "text-muted")}>
-                      {dayFmt.format(new Date(`${r.due}T00:00:00Z`))}
+                      {formatDate(r.due, "weekdayShort")}
                     </span>
                     <span className="min-w-0">
                       <span className="block truncate text-ui font-medium text-ink">
@@ -232,14 +230,14 @@ export function ObligationsBoard({
                       </Link>
                       {/* Celular: fecha, importe y responsable en una línea */}
                       <span className="tabular mt-0.5 block truncate text-meta text-muted md:hidden">
-                        <span className={r.status === "vencido" ? "font-medium text-[#8f2a1c]" : ""}>{dayFmt.format(new Date(`${r.due}T00:00:00Z`))}</span>
+                        <span className={r.status === "vencido" ? "font-medium text-[#8f2a1c]" : ""}>{formatDate(r.due, "weekdayShort")}</span>
                         {" · "}
-                        {r.amount != null ? money.format(r.amount) : "sin importe"}
+                        {r.amount != null ? formatAmount(r.amount, "ARS", { decimals: "none" }) : "sin importe"}
                         {" · "}
                         {r.responsible ?? "sin responsable"}
                       </span>
                     </span>
-                    <span className="tabular hidden text-right text-ui text-ink md:block">{r.amount != null ? money.format(r.amount) : "—"}</span>
+                    <span className="tabular hidden text-right text-ui text-ink md:block">{r.amount != null ? formatAmount(r.amount, "ARS", { decimals: "none" }) : "—"}</span>
                     <span className="hidden truncate text-meta text-muted md:block">{r.responsible ?? "Sin responsable"}</span>
                     <span className="text-right">
                       <StatusBadge status={r.status} />

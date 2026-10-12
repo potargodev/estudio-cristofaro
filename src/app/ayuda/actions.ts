@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { getDb } from "@/db";
 import { help_feedback } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { ARTICLES } from "@/modules/help/catalog";
 
@@ -18,7 +18,7 @@ export async function sendHelpFeedback(_prev: FeedbackState, fd: FormData): Prom
   const vote = String(fd.get("helpful") ?? "");
   if (!ARTICLES.some((a) => a.id === article) || (vote !== "si" && vote !== "no")) return { ok: false, message: "Elegí sí o no." };
   if (!rateLimit(`ayuda:${clientIp(await headers())}`, 20, 3600_000)) return { ok: false, message: "Recibimos muchas respuestas seguidas. Probá más tarde." };
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   const comment = String(fd.get("comment") ?? "").trim().slice(0, 1000) || null;
   await getDb()
     .insert(help_feedback)

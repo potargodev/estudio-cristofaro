@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import { sharedEntryAction } from "@/app/bitacora/plus-actions";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
-import { isMonth, money, monthLabel, monthOf } from "@/modules/bitacora/catalog";
+import { isMonth, monthOf } from "@/modules/bitacora/catalog";
 import { monthSummary } from "@/modules/bitacora/server";
 import { sharedAccess } from "@/modules/bitacora/shares";
 import { requireUser } from "@/modules/bitacora/session";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney, formatPeriod } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Bitácora compartida" };
 const field = `mt-1 ${fieldClass}`;
@@ -28,12 +29,12 @@ export default async function Page({ params, searchParams }: { params: Promise<{
       <Link href="/bitacora/compartida" className="text-meta text-muted hover:text-ink">← Hogar</Link>
       <Feedback sp={sp} />
       <h2 className="text-title font-semibold">
-        Bitácora de {share.owner} · <span className="font-normal">{monthLabel(month)}</span>
+        Bitácora de {share.owner} · <span className="font-normal">{formatPeriod(month)}</span>
       </h2>
       <dl className="grid grid-cols-3 gap-2 rounded-md border border-line bg-surface p-4 text-meta">
-        <div><dt className="text-muted">Entró</dt><dd className="num text-lead">{money(ars.in)}</dd></div>
-        <div><dt className="text-muted">Salió</dt><dd className="num text-lead">{money(ars.out)}</dd></div>
-        <div><dt className="text-muted">Queda</dt><dd className="num text-lead">{money(ars.left)}</dd></div>
+        <div><dt className="text-muted">Entró</dt><dd className="num text-lead">{formatMoney(ars.in, "ARS", { decimals: "auto" })}</dd></div>
+        <div><dt className="text-muted">Salió</dt><dd className="num text-lead">{formatMoney(ars.out, "ARS", { decimals: "auto" })}</dd></div>
+        <div><dt className="text-muted">Queda</dt><dd className="num text-lead">{formatMoney(ars.left, "ARS", { decimals: "auto" })}</dd></div>
       </dl>
       {share.permission === "cargar" && (
         <form action={sharedEntryAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-[8rem_1fr_9rem_9rem_auto] sm:items-end">
@@ -68,9 +69,9 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             <li key={m.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
               <div className="min-w-0">
                 <p className="truncate text-ui">{m.description}</p>
-                <p className="text-caption text-muted">{m.date.split("-").reverse().join("/")} · {m.categoryName}</p>
+                <p className="text-caption text-muted">{formatDate(m.date, "numeric")} · {m.categoryName}</p>
               </div>
-              <span className="num text-ui">{m.kind === "ingreso" ? "+" : "−"}{money(m.amount, m.currency)}</span>
+              <span className="num text-ui">{m.kind === "ingreso" ? "+" : "−"}{formatMoney(m.amount, m.currency, { decimals: "auto" })}</span>
             </li>
           ))}
         </ul>

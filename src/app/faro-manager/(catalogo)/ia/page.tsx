@@ -11,13 +11,12 @@ import { platformSpend, usageByUser } from "@/modules/copilot/limits";
 import { getPlatformAi, isConfigured, limitsFor, PLATFORM_PROVIDERS } from "@/modules/copilot/platform";
 import { forgetPlatformKeyAction, savePlatformAiAction } from "@/app/faro-manager/ia-actions";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatNumber, formatUsd } from "@/lib/format";
 
 export const metadata: Metadata = { title: "IA de la plataforma" };
 
 const input = fieldClass;
 const label = "grid gap-1 text-meta text-muted";
-const usd = (n: number) => `USD ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
-const int = (n: number) => n.toLocaleString("es-AR");
 
 /** Clave y modelos de la IA que Faro pone para personas y autónomos (§2.m), límites, topes y consumo */
 export default async function IaPage({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string }> }) {
@@ -42,7 +41,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
         <div role="status" className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-ui">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-rose-deep" aria-hidden />
           <p>
-            Última alerta de la IA: {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(p.cap_alerted_at)}. El detalle está en la <Link href="/faro-manager/auditoria" className="underline underline-offset-2">auditoría</Link>.
+            Última alerta de la IA: {formatDate(p.cap_alerted_at, "dateTime")}. El detalle está en la <Link href="/faro-manager/auditoria" className="underline underline-offset-2">auditoría</Link>.
           </p>
         </div>
       )}
@@ -57,10 +56,10 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
 
       <section className="mb-6 grid gap-3 sm:grid-cols-4">
         {[
-          ["Gasto de hoy", usd(spend.day), p.daily_cap_usd ? `tope ${usd(Number(p.daily_cap_usd))}` : "sin tope"],
-          ["Gasto del mes", usd(spend.month), p.monthly_cap_usd ? `tope ${usd(Number(p.monthly_cap_usd))}` : "sin tope"],
-          ["Mensajes hoy", int(spend.dayMessages), "de usuarios"],
-          ["Mensajes del mes", int(spend.monthMessages), "de usuarios"],
+          ["Gasto de hoy", formatUsd(spend.day, 4), p.daily_cap_usd ? `tope ${formatUsd(Number(p.daily_cap_usd), 4)}` : "sin tope"],
+          ["Gasto del mes", formatUsd(spend.month, 4), p.monthly_cap_usd ? `tope ${formatUsd(Number(p.monthly_cap_usd), 4)}` : "sin tope"],
+          ["Mensajes hoy", formatNumber(spend.dayMessages), "de usuarios"],
+          ["Mensajes del mes", formatNumber(spend.monthMessages), "de usuarios"],
         ].map(([t, v, s]) => (
           <div key={t} className="rounded-md border border-line bg-surface p-4">
             <p className="text-caption text-muted">{t}</p>
@@ -224,12 +223,12 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
                 <tr key={r.userId} className="border-t border-line tabular-nums">
                   <td className="px-3 py-2">{r.email}</td>
                   <td className="px-3 py-2">{r.plan ?? "—"}</td>
-                  <td className="px-3 py-2">{int(r.messages)}</td>
-                  <td className="px-3 py-2">{int(r.audios)}</td>
-                  <td className="px-3 py-2">{int(r.images)}</td>
-                  <td className="px-3 py-2">{int(r.tokensIn)}</td>
-                  <td className="px-3 py-2">{int(r.tokensOut)}</td>
-                  <td className="px-3 py-2">{usd(Number(r.cost))}</td>
+                  <td className="px-3 py-2">{formatNumber(r.messages)}</td>
+                  <td className="px-3 py-2">{formatNumber(r.audios)}</td>
+                  <td className="px-3 py-2">{formatNumber(r.images)}</td>
+                  <td className="px-3 py-2">{formatNumber(r.tokensIn)}</td>
+                  <td className="px-3 py-2">{formatNumber(r.tokensOut)}</td>
+                  <td className="px-3 py-2">{formatUsd(Number(r.cost), 4)}</td>
                 </tr>
               ))}
             </tbody>

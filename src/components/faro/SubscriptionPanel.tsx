@@ -9,13 +9,12 @@ import { getPlans } from "@/lib/faro/entitlements";
 import { graceEnds } from "@/modules/billing/core";
 import { accountSummary } from "@/modules/billing/mp";
 import { ensureSubscription } from "@/modules/billing/subscriptions";
+import { formatDate, formatMoney } from "@/lib/format";
 
 // Suscripción del tenant a Faro (Plan y facturación): estado, próximo débito,
 // cambios programados, pagos y acciones (autorizar débito, pagar, cancelar).
 
 const STATUS: Record<string, string> = { prueba: "En prueba", activa: "Activa", morosa: "Pago pendiente", suspendida: "Suspendida", cancelada: "Cancelada" };
-const ars = (c: number) => `$ ${(c / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-const day = (d: Date | null) => (d ? d.toLocaleDateString("es-AR") : "—");
 
 export async function SubscriptionPanel({ studioId }: { studioId: string }) {
   const [sub, faroMp, plans] = await Promise.all([ensureSubscription(studioId), accountSummary(null), getPlans()]);
@@ -34,22 +33,22 @@ export async function SubscriptionPanel({ studioId }: { studioId: string }) {
         </div>
         <div>
           <dt className="text-caption text-muted">{free ? "Precio" : sub.status === "prueba" ? "La prueba termina" : "Pagado hasta"}</dt>
-          <dd className="num">{free ? "Gratis, sin vencimiento" : day(sub.status === "prueba" ? sub.trial_ends_at : sub.current_period_end)}</dd>
+          <dd className="num">{free ? "Gratis, sin vencimiento" : formatDate(sub.status === "prueba" ? sub.trial_ends_at : sub.current_period_end, "numeric")}</dd>
         </div>
         <div>
           <dt className="text-caption text-muted">Débito automático</dt>
-          <dd>{free ? "Sin débito (plan gratis)" : sub.mp_status === "authorized" ? `Autorizado · ${ars(sub.amount)} ${sub.interval === "anual" ? "por año" : "por mes"}` : sub.mp_status === "pending" ? "Falta autorizarlo" : sub.mp_status === "cancelled" ? "Cancelado" : "Sin débito"}</dd>
+          <dd>{free ? "Sin débito (plan gratis)" : sub.mp_status === "authorized" ? `Autorizado · ${formatMoney(sub.amount)} ${sub.interval === "anual" ? "por año" : "por mes"}` : sub.mp_status === "pending" ? "Falta autorizarlo" : sub.mp_status === "cancelled" ? "Cancelado" : "Sin débito"}</dd>
         </div>
       </dl>
       {sub.pending_plan_key && sub.pending_plan_key !== sub.plan_key && (
         <p className="mt-3 text-meta text-muted">
-          Cambio programado: {name(sub.pending_plan_key)} ({sub.pending_interval ?? sub.interval}){sub.current_period_end ? ` desde el ${day(sub.current_period_end)}` : " al autorizar el débito"}.
+          Cambio programado: {name(sub.pending_plan_key)} ({sub.pending_interval ?? sub.interval}){sub.current_period_end ? ` desde el ${formatDate(sub.current_period_end, "numeric")}` : " al autorizar el débito"}.
         </p>
       )}
-      {sub.cancel_at_period_end && sub.status === "activa" && <p className="mt-3 text-meta text-[#7a5410]">Cancelaste la suscripción: el plan sigue hasta el {day(sub.current_period_end)}.</p>}
+      {sub.cancel_at_period_end && sub.status === "activa" && <p className="mt-3 text-meta text-[#7a5410]">Cancelaste la suscripción: el plan sigue hasta el {formatDate(sub.current_period_end, "numeric")}.</p>}
       {sub.status === "morosa" && sub.past_due_since && (
         <p role="alert" className="mt-3 rounded-md border border-[#efc4bd] bg-[#fbecea] px-3 py-2 text-meta text-[#8f2a1c]">
-          Mercado Pago no pudo cobrar el plan. Regularizalo antes del {day(graceEnds(sub.past_due_since))} para que la cuenta no se suspenda.
+          Mercado Pago no pudo cobrar el plan. Regularizalo antes del {formatDate(graceEnds(sub.past_due_since), "numeric")} para que la cuenta no se suspenda.
         </p>
       )}
       <div className="mt-4 flex flex-wrap gap-2">
@@ -77,9 +76,9 @@ export async function SubscriptionPanel({ studioId }: { studioId: string }) {
           {payments.map((p) => (
             <li key={p.id} className="flex justify-between gap-2 py-2">
               <span>
-                {p.created_at.toLocaleDateString("es-AR")} · {p.status === "approved" ? "Aprobado" : p.status === "rejected" ? "Rechazado" : p.status}
+                {formatDate(p.created_at, "numeric")} · {p.status === "approved" ? "Aprobado" : p.status === "rejected" ? "Rechazado" : p.status}
               </span>
-              <span className="num">{ars(p.amount)}</span>
+              <span className="num">{formatMoney(p.amount)}</span>
             </li>
           ))}
         </ul>

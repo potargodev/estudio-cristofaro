@@ -1,10 +1,10 @@
 import { Lock } from "lucide-react";
 import { SubmitButton } from "@/components/admin/ui";
 import { studioActAction } from "@/app/admin/conexiones-actions";
-import { money } from "@/modules/bitacora/catalog";
 import { BUSINESS_CATEGORIES, categoryName } from "@/modules/cajas/catalog";
 import type { liveView } from "@/modules/conexiones/server";
 import { fieldInlineClass } from "@/components/ds/primitives";
+import { formatMoney } from "@/lib/format";
 
 type View = NonNullable<Awaited<ReturnType<typeof liveView>>>;
 const card = "rounded-lg border border-line bg-surface p-5";
@@ -58,7 +58,7 @@ export function LiveAccount({ v, volver, canAct }: { v: View; volver: string; ca
               ].map(([k, n]) => (
                 <div key={k as string} className="rounded-md border border-line p-2">
                   <dt className="text-caption text-muted">{k}</dt>
-                  <dd className="num">{money(n as number)}</dd>
+                  <dd className="num">{formatMoney(n as number, "ARS", { decimals: "auto" })}</dd>
                 </div>
               ))}
             </dl>
@@ -75,7 +75,7 @@ export function LiveAccount({ v, volver, canAct }: { v: View; volver: string; ca
                     </span>
                   </span>
                   <span className="flex flex-wrap items-center gap-2 sm:justify-end">
-                    <span className="num">{money(e.amount)}</span>
+                    <span className="num">{formatMoney(e.amount, "ARS", { decimals: "auto" })}</span>
                     {act && (e.kind === "gasto" || e.kind === "ingreso") && (
                       <form action={studioActAction} className="flex flex-wrap items-center gap-1.5">
                         <input type="hidden" name="id" value={v.conn.id} />
@@ -149,7 +149,7 @@ export function LiveAccount({ v, volver, canAct }: { v: View; volver: string; ca
                 <span className="min-w-0 truncate">{e.description}</span>
                 <span className="num shrink-0">
                   {e.kind === "ingreso" ? "+" : "−"}
-                  {money(e.amount, e.currency)}
+                  {formatMoney(e.amount, e.currency, { decimals: "auto" })}
                 </span>
               </li>
             ))}

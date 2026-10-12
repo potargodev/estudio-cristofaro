@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
 import { ThemeToggle } from "@/components/app/ThemeToggle";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { homeFor } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  * con sesión ofrecen volver al espacio propio.
  */
 export async function PublicShell({ sub, home: homeHref, children, wide = false }: { sub: string; home: string; children: React.ReactNode; wide?: boolean }) {
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   const back = user ? homeFor(user.role) : null;
   const width = wide ? "max-w-6xl" : "max-w-5xl";
   return (

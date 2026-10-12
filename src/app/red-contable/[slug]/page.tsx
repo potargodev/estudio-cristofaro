@@ -3,13 +3,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProposalForm } from "@/components/red/ProposalForm";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { contextMessage, ownSuggestion } from "@/modules/escudo/server";
 import { currentConnection } from "@/modules/conexiones/server";
 import { requestConnectionAction } from "@/app/contador/actions";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { labelOf, MODALITIES, RED_SERVICES, responseLabel, TEAM_SIZES } from "@/modules/red/catalog";
 import { publicProfile } from "@/modules/red/server";
+import { formatDate, formatNumber } from "@/lib/format";
 
 type Params = Promise<{ slug: string }>;
 export const dynamic = "force-dynamic";
@@ -19,12 +20,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return p ? { title: `${p.name} · Red Contable`, description: p.p.headline ?? undefined } : { title: "Estudio no encontrado" };
 }
 
-const month = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" });
 
 export default async function EstudioRedPage({ params, searchParams }: { params: Params; searchParams: Promise<Record<string, string | undefined>> }) {
   const x = await publicProfile((await params).slug);
   if (!x) notFound();
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   const derivacion = user ? await ownSuggestion(user.id, (await searchParams).derivacion) : null;
   // Conectar la cuenta (§7): personas y autónomos titulares, una conexión a la vez
   const canConnect = !!user && user.role === "titular" && user.tenantKind !== "studio" && !user.assisted;
@@ -33,7 +33,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
     { icon: BadgeCheck, text: `Matrícula verificada · ${x.p.license_body}` },
     { icon: MapPin, text: `${[x.p.city, x.p.province].filter(Boolean).join(", ")} · ${labelOf(MODALITIES, x.p.modality)}` },
     { icon: Clock, text: responseLabel(x.responseHours) },
-    { icon: Star, text: x.rating ? `${x.rating.avg.toFixed(1)} de 5 · ${x.rating.n} ${x.rating.n === 1 ? "reseña" : "reseñas"} de clientes verificados` : "Sin reseñas todavía" },
+    { icon: Star, text: x.rating ? `${formatNumber(x.rating.avg, 1, 1)} de 5 · ${x.rating.n} ${x.rating.n === 1 ? "reseña" : "reseñas"} de clientes verificados` : "Sin reseñas todavía" },
     ...(x.p.team_size ? [{ icon: Users, text: labelOf(TEAM_SIZES, x.p.team_size) }] : []),
     ...(x.p.fee_range ? [{ icon: Wallet, text: `Honorarios orientativos: ${x.p.fee_range}` }] : []),
     ...(x.p.languages.length ? [{ icon: Languages, text: x.p.languages.map((l) => l.charAt(0).toUpperCase() + l.slice(1)).join(", ") }] : []),
@@ -99,7 +99,7 @@ export default async function EstudioRedPage({ params, searchParams }: { params:
                       {"★".repeat(r.rating)}
                       <span className="text-line">{"★".repeat(5 - r.rating)}</span>
                     </span>{" "}
-                    · {r.author_label} · cliente verificado · {month.format(r.created_at)}
+                    · {r.author_label} · cliente verificado · {formatDate(r.created_at, "month")}
                   </p>
                   <p className="mt-1.5 text-ui">{r.body}</p>
                   {r.response && (

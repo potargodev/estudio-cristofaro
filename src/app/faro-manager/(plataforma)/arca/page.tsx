@@ -7,6 +7,7 @@ import { ARCA_ENVS, arcaUrls, formatCuit, usingMock, type ArcaEnv } from "@/modu
 import { activeEnv, credentialSummary } from "@/modules/arca/credentials";
 import { deleteArcaCredentialAction, saveArcaCredentialAction, setArcaEnvAction, testArcaAction } from "../../arca-actions";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "ARCA" };
 
@@ -55,9 +56,9 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
                   <dt className="text-muted">Certificado</dt>
                   <dd>{c.subject}</dd>
                   <dt className="text-muted">Vence</dt>
-                  <dd className={c.notAfter && c.notAfter.getTime() - Date.now() < 30 * 86400000 ? "text-[#8f2a1c]" : ""}>{c.notAfter?.toLocaleDateString("es-AR") ?? "—"}</dd>
+                  <dd className={c.notAfter && c.notAfter.getTime() - Date.now() < 30 * 86400000 ? "text-[#8f2a1c]" : ""}>{formatDate(c.notAfter, "numeric")}</dd>
                   <dt className="text-muted">Última prueba</dt>
-                  <dd className={c.lastTestOk === false ? "text-[#8f2a1c]" : c.lastTestOk ? "text-[#1f6b3d]" : ""}>{c.lastTestAt ? `${c.lastTestAt.toLocaleString("es-AR")} · ${c.lastTestDetail}` : "Sin probar"}</dd>
+                  <dd className={c.lastTestOk === false ? "text-[#8f2a1c]" : c.lastTestOk ? "text-[#1f6b3d]" : ""}>{c.lastTestAt ? `${formatDate(c.lastTestAt, "numericTime")} · ${c.lastTestDetail}` : "Sin probar"}</dd>
                 </dl>
               ) : (
                 <p className="text-ui text-muted">Sin certificado cargado.</p>

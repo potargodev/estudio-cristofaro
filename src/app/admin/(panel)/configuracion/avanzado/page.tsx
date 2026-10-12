@@ -15,11 +15,11 @@ import { txtName } from "@/modules/white-label/core";
 import { platformAccount, recentMessages, studioRow, templatesOf } from "@/modules/whatsapp/server";
 import { hasModule } from "@/lib/faro/entitlements";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Avanzado" };
 
 const field = `mt-1 ${fieldClass}`;
-const when = new Intl.DateTimeFormat("es-AR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" });
 
 function Locked({ what }: { what: string }) {
   return (
@@ -111,7 +111,7 @@ async function Marca({ studioId }: { studioId: string }) {
               <form action={verifyDomainAction}>
                 <SubmitButton pendingText="Verificando…">Verificar</SubmitButton>
               </form>
-              {b.domain_checked_at && <span className="text-meta text-muted">Último intento: {when.format(b.domain_checked_at)}</span>}
+              {b.domain_checked_at && <span className="text-meta text-muted">Último intento: {formatDate(b.domain_checked_at, "numericTime")}</span>}
             </div>
             <p className="text-meta text-muted">Con el dominio verificado, el equipo de Faro activa el certificado seguro (HTTPS) y tus clientes entran al portal desde tu dirección.</p>
           </div>
@@ -211,7 +211,7 @@ async function WhatsApp({ studioId }: { studioId: string }) {
                   {org ?? "Sin organización"} · {m.template ?? m.kind} {m.body ? `· ${m.body.slice(0, 80)}` : ""}
                 </span>
                 <span className={m.status === "fallido" || m.status === "sin_contacto" ? "text-[#8f2a1c]" : "text-muted"}>
-                  {m.status.replace("_", " ")} · {when.format(m.created_at)}
+                  {m.status.replace("_", " ")} · {formatDate(m.created_at, "numericTime")}
                   {m.error ? ` · ${m.error}` : ""}
                 </span>
               </li>

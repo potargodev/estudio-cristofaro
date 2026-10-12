@@ -1,3 +1,4 @@
+import { formatAmount } from "@/lib/format";
 // Semáforo de monotributo (docs/faro-producto.md §2.c): facturación de los
 // últimos 12 meses contra el tope de la categoría, cuánto falta, la
 // recategorización de enero y julio y la alerta de exclusión. Sin base ni red.
@@ -99,14 +100,13 @@ export function semaforo(input: { byMonth: Record<string, number>; category: str
   else if (used != null && used >= 0.9) light = "rojo";
   else if (used != null && used >= 0.7) light = "amarillo";
   const rec = nextRecategorization(today);
-  const fmt = (n: number) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
   let message: string;
   // Principio madre (§1): hechos según lo cargado, nunca una validación ni una recomendación
   const pct = used != null ? ` (el ${Math.round(used * 100)} % del tope de la categoría ${cat!.letter})` : "";
-  if (excluded) message = `Según lo que cargaste, tus ingresos de los últimos 12 meses (${fmt(income12m)}) superan el tope de la categoría más alta (${fmt(top.maxIncome)}). Ese es un supuesto de exclusión del monotributo: un contador matriculado tiene que revisarlo con vos.`;
-  else if (!cat) message = `Según lo que cargaste, facturaste ${fmt(income12m)} en los últimos 12 meses. Cargá tu categoría para ver el margen hasta el tope${suggested ? ` (por ingresos, la categoría que coincide es la ${suggested})` : ""}.`;
-  else if (income12m > cat.maxIncome) message = `Según lo que cargaste, facturaste ${fmt(income12m)}${pct}: superaste el tope de la categoría ${cat.letter}. Por ingresos, la categoría que coincide para la recategorización de ${rec.label} es la ${suggested}.`;
-  else message = `Según lo que cargaste, facturaste ${fmt(income12m)} en los últimos 12 meses${pct}. Hasta el tope quedan ${fmt(cat.maxIncome - income12m)}.${suggested && suggested !== cat.letter ? ` Por ingresos, la categoría que coincide para ${rec.label} es la ${suggested}.` : ""}`;
+  if (excluded) message = `Según lo que cargaste, tus ingresos de los últimos 12 meses (${formatAmount(income12m, "ARS", { decimals: "none" })}) superan el tope de la categoría más alta (${formatAmount(top.maxIncome, "ARS", { decimals: "none" })}). Ese es un supuesto de exclusión del monotributo: un contador matriculado tiene que revisarlo con vos.`;
+  else if (!cat) message = `Según lo que cargaste, facturaste ${formatAmount(income12m, "ARS", { decimals: "none" })} en los últimos 12 meses. Cargá tu categoría para ver el margen hasta el tope${suggested ? ` (por ingresos, la categoría que coincide es la ${suggested})` : ""}.`;
+  else if (income12m > cat.maxIncome) message = `Según lo que cargaste, facturaste ${formatAmount(income12m, "ARS", { decimals: "none" })}${pct}: superaste el tope de la categoría ${cat.letter}. Por ingresos, la categoría que coincide para la recategorización de ${rec.label} es la ${suggested}.`;
+  else message = `Según lo que cargaste, facturaste ${formatAmount(income12m, "ARS", { decimals: "none" })} en los últimos 12 meses${pct}. Hasta el tope quedan ${formatAmount(cat.maxIncome - income12m, "ARS", { decimals: "none" })}.${suggested && suggested !== cat.letter ? ` Por ingresos, la categoría que coincide para ${rec.label} es la ${suggested}.` : ""}`;
   return { income12m, category: cat?.letter ?? input.category, cap: cat?.maxIncome ?? null, used, remaining: cat ? cat.maxIncome - income12m : null, light, suggested, excluded, projection12m, nextRecategorization: rec, months, message };
 }
 

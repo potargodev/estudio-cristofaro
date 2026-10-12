@@ -13,11 +13,11 @@ import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { describeClient, getMapping } from "@/lib/integrations/tango/mapping";
 import { formatCuit } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Clientes en Tango" };
 
 const fmtCuit = (c: string | null) => formatCuit(c, "Sin CUIT");
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 const FILTERS = [
   { key: "todos", label: "Todos" },
@@ -150,7 +150,7 @@ export default async function TangoClientesPage({
                 ) : (
                   <Badge tone="neutral">No vinculado</Badge>
                 )}
-                <p className="mt-1 text-caption text-muted">Sincronizado: {fmt.format(r.synced_at)}</p>
+                <p className="mt-1 text-caption text-muted">Sincronizado: {formatDate(r.synced_at, "shortTime")}</p>
               </div>
               <div className="flex flex-wrap items-center gap-2 lg:justify-end">
                 {linked ? (

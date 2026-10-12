@@ -8,10 +8,10 @@ import { SubmitButton } from "@/components/admin/ui";
 import { requireStaff } from "@/lib/auth";
 import { listTemplates, studioTemplateStatuses } from "@/modules/industries/server";
 import { validateTemplateForStudioAction } from "@/app/admin/rubro-validation-actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Rubros" };
 
-const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 
 /** Plantillas de rubro y su validación por el estudio */
 export default async function RubrosPage({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string }> }) {
@@ -40,7 +40,7 @@ export default async function RubrosPage({ searchParams }: { searchParams: Promi
                   </p>
                   <p className="mt-0.5 text-meta text-muted">
                     {t.descripcion}
-                    {st.at && ` · ${day.format(st.at)}`}
+                    {st.at && ` · ${formatDate(st.at)}`}
                   </p>
                 </div>
                 {canValidate && st.state !== "validada_faro" && (

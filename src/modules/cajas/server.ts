@@ -4,8 +4,8 @@ import { getDb } from "@/db";
 import { bitacora_categories, bitacora_entries, box_entries, box_members, box_salaries, box_transfers, boxes, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { monthRange, prevMonth } from "@/modules/bitacora/catalog";
-import { todayAR } from "@/modules/gastos/constants";
 import { businessCategoryFor, categoriesFor, looksLikeBusiness, nextSalaryDate, SALARY_FREQUENCIES, suggestedSalary, type BoxKind, type SalaryFrequency } from "./catalog";
+import { todayAR } from "@/lib/format";
 
 // Cajas del lado del servidor (principios §10, §11 y §17). Una sola cuenta por
 // usuario y varias cajas: la personal (es la Bitácora: sus movimientos siguen

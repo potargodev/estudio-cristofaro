@@ -7,19 +7,17 @@ import { Feedback } from "@/components/app/Feedback";
 import { ModeBadge } from "@/components/conexiones/ModeBadge";
 import { myContacts, mySeeker } from "@/modules/red/seekers";
 import { requirePersonal } from "@/lib/auth";
-import { money } from "@/modules/bitacora/catalog";
 import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { actionsFor, AUTONOMY_LABEL, connectionHistory, currentConnection, disputeMessages, READONLY_DAYS, STATUS_LABEL, surveyDue } from "@/modules/conexiones/server";
 import { acceptInvitationAction, answerInfoAction, autonomyAction, closingClearAction, declineAction, approveActionAction, rejectActionAction, disputeAction, disputeMessageAction, rateAction, skipRatingAction, answerContactAction, rejectContactAction, resolveDisputeAction, scopesAction, signAction, startClosingAction, weeklyAction } from "./actions";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: { absolute: "Contador · Faro" } };
 
 const card = "rounded-lg border border-line bg-surface p-5";
 const field = `mt-1 py-2 ${fieldClass}`;
 const lbl = "block text-meta text-muted";
-const fmt = (d: Date | null | undefined) => (d ? d.toLocaleDateString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }) : "—");
-const when = (d: Date) => d.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" });
 const show = (v: unknown) => (v == null ? "—" : typeof v === "boolean" ? (v ? "sí" : "no") : typeof v === "object" ? Object.entries(v as Record<string, unknown>).map(([k, x]) => `${k}: ${typeof x === "boolean" ? (x ? "sí" : "no") : String(x)}`).join(" · ") : String(v));
 
 function Scopes({ id, personal }: { id: string; personal: boolean }) {
@@ -194,10 +192,10 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
                 </p>
                 <p className="mt-2">{c.terms.services}</p>
                 <p className="mt-1 text-muted">
-                  Honorarios: <span className="num">{money(c.terms.monthlyPrice * 100)}</span> por mes · preaviso de baja: {c.terms.noticeDays} días · versión {c.terms.version}
+                  Honorarios: <span className="num">{formatMoney(c.terms.monthlyPrice * 100, "ARS", { decimals: "auto" })}</span> por mes · preaviso de baja: {c.terms.noticeDays} días · versión {c.terms.version}
                 </p>
                 <p className="mt-1 text-muted">
-                  {c.studio_signed_at ? `Firmó el estudio (${c.studio_signed_name}) el ${fmt(c.studio_signed_at)}.` : "Falta la firma del estudio."} {c.user_signed_at ? `Firmaste el ${fmt(c.user_signed_at)}.` : ""}
+                  {c.studio_signed_at ? `Firmó el estudio (${c.studio_signed_name}) el ${formatDate(c.studio_signed_at, "numeric")}.` : "Falta la firma del estudio."} {c.user_signed_at ? `Firmaste el ${formatDate(c.user_signed_at, "numeric")}.` : ""}
                 </p>
               </div>
               {!c.user_signed_at && (
@@ -226,8 +224,8 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
           {["activa", "en_cierre", "en_disputa"].includes(c.status) && (
             <div className="mt-2 grid gap-4 text-ui">
               <p className="text-muted">
-                Conectados desde el {fmt(c.started_at)}. Trabaja sobre tus datos en vivo: no se lleva una copia.
-                {c.status !== "activa" && ` Desde el ${fmt(c.closing_started_at)} está en cierre (motivo: ${c.closing_reason}); el estudio solo puede mirar hasta el ${fmt(c.readonly_until)}.`}
+                Conectados desde el {formatDate(c.started_at, "numeric")}. Trabaja sobre tus datos en vivo: no se lleva una copia.
+                {c.status !== "activa" && ` Desde el ${formatDate(c.closing_started_at, "numeric")} está en cierre (motivo: ${c.closing_reason}); el estudio solo puede mirar hasta el ${formatDate(c.readonly_until, "numeric")}.`}
               </p>
               {c.status === "activa" && (
                 <form action={autonomyAction} className="grid gap-2 rounded-md border border-line p-3">
@@ -257,7 +255,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
             {proposals.map((a) => (
               <li key={a.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-ui">
                 <span>
-                  {a.summary} <span className="text-muted">· {a.actor_name} · {when(a.created_at)}</span>
+                  {a.summary} <span className="text-muted">· {a.actor_name} · {formatDate(a.created_at, "numericTime")}</span>
                 </span>
                 <form action={approveActionAction} className="flex gap-2">
                   <input type="hidden" name="action" value={a.id} />
@@ -308,7 +306,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
                 <li key={a.id} className="py-2.5 text-ui" data-accion={a.status}>
                   <p className="text-ink">{a.summary}</p>
                   <p className="text-meta text-muted">
-                    {a.actor_name} · {when(a.created_at)} · {a.status}
+                    {a.actor_name} · {formatDate(a.created_at, "numericTime")} · {a.status}
                   </p>
                   {(a.before != null || a.after != null) && (
                     <p className="text-meta text-muted">
@@ -388,7 +386,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
                 {messages.map(({ m, name }) => (
                   <li key={m.id} className="rounded-md border border-line bg-canvas px-3 py-2 text-ui">
                     <span className="text-caption text-muted">
-                      {m.side === "usuario" ? "Vos" : (name ?? "El estudio")} · {when(m.created_at)}
+                      {m.side === "usuario" ? "Vos" : (name ?? "El estudio")} · {formatDate(m.created_at, "numericTime")}
                     </span>
                     <span className="block">{m.body}</span>
                   </li>
@@ -466,7 +464,7 @@ export default async function ContadorPage({ searchParams }: { searchParams: Pro
           <ul className="mt-2 grid gap-1 text-ui">
             {history.map((h) => (
               <li key={h.id}>
-                {h.studio} · {STATUS_LABEL[h.status]} {h.started ? `· del ${fmt(h.started)} al ${fmt(h.closed)}` : `· ${fmt(h.created)}`}
+                {h.studio} · {STATUS_LABEL[h.status]} {h.started ? `· del ${formatDate(h.started, "numeric")} al ${formatDate(h.closed, "numeric")}` : `· ${formatDate(h.created, "numeric")}`}
               </li>
             ))}
           </ul>

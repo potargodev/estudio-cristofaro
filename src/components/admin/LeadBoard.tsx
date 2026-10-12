@@ -8,6 +8,7 @@ import { moveLead } from "@/app/admin/actions";
 import { daysLabel, leadSourceIcon } from "@/components/admin/kit/leadIcons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES, type Lead, type LeadStatus } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 export type BoardLead = Pick<
   Lead,
@@ -100,7 +101,7 @@ export function LeadBoard({ leads }: { leads: BoardLead[] }) {
                           <CalendarClock className="mt-px size-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
                           <span>
                             {l.next_action}
-                            {l.next_action_at ? ` · ${l.next_action_at.split("-").reverse().slice(0, 2).join("/")}` : ""}
+                            {l.next_action_at ? ` · ${formatDate(l.next_action_at, "short")}` : ""}
                             {overdue && " (atrasada)"}
                           </span>
                         </p>

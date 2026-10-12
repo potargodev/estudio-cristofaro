@@ -7,6 +7,7 @@ import { audit } from "@/lib/audit";
 import { notifyOrganization } from "@/lib/notify";
 import { defineTool, ToolError } from "../types";
 import { limite, orgFilter, uuid } from "./helpers";
+import { formatAmount } from "@/lib/format";
 
 const ESTADOS = ["pendiente", "en_proceso", "presentado", "pagado", "vencido"] as const;
 const fecha = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato AAAA-MM-DD");
@@ -89,7 +90,7 @@ export const vencimientosTools = [
       return input.organizacion_id;
     },
     describe: (i) =>
-      `Crear el vencimiento ${i.impuesto} ${i.periodo} con fecha ${i.vencimiento}${i.importe != null ? ` por $ ${i.importe.toLocaleString("es-AR")}` : ""}${i.avisar_al_cliente ? " y avisarle al cliente" : ""}`,
+      `Crear el vencimiento ${i.impuesto} ${i.periodo} con fecha ${i.vencimiento}${i.importe != null ? ` por ${formatAmount(i.importe, "ARS", { decimals: "auto" })}` : ""}${i.avisar_al_cliente ? " y avisarle al cliente" : ""}`,
     async handler(input, ctx) {
       const org = await ctx.organization(input.organizacion_id);
       const db = getDb();

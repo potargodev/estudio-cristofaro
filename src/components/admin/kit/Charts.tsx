@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/lib/format";
 
 // Gráficos livianos en SVG (sin dependencias): barras, líneas y donut con
 // colores de marca (todos ≥ 3:1 sobre blanco), ejes discretos, números
@@ -9,7 +10,6 @@ import { cn } from "@/lib/utils";
 // Cada gráfico lleva además una tabla oculta con los datos para lectores.
 
 const CHART_COLORS = ["#1c2235", "#a57c6d", "#6b7a99", "#3f7f57", "#7d5848"] as const;
-const fmt = new Intl.NumberFormat("es-AR");
 
 interface Series {
   key: string;
@@ -72,7 +72,7 @@ function Tooltip({ row, series, x, y }: { row: Row; series: Series[]; x: number;
             <span className="size-2" style={{ background: s.color ?? CHART_COLORS[i] }} aria-hidden />
             {s.label}
           </span>
-          <span className="text-ink">{fmt.format(Number(row[s.key]) || 0)}</span>
+          <span className="text-ink">{formatNumber(Number(row[s.key]) || 0)}</span>
         </p>
       ))}
     </div>

@@ -5,12 +5,13 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { SubmitButton } from "@/components/admin/ui";
 import { requireFaro } from "@/lib/auth";
 import { getPlans } from "@/lib/faro/entitlements";
-import { annualUsd, formatArs, formatUsd, KIND_PLANS_LABEL, type PlanLimits } from "@/lib/faro/plans";
+import { annualUsd, KIND_PLANS_LABEL, type PlanLimits } from "@/lib/faro/plans";
 import { getUsdArs } from "@/lib/faro/pricing";
 import { cn } from "@/lib/utils";
 import { PLAN_MODULES } from "@/modules/registry";
 import { savePlanAction, setUsdArsAction, togglePlanModuleAction } from "@/app/faro-manager/catalog-actions";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatAmount } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Planes y precios" };
 
@@ -57,7 +58,7 @@ export default async function PlanesPage({ searchParams }: { searchParams: Promi
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <p className="text-caption font-semibold uppercase tracking-[0.12em] text-rose-deep">{KIND_PLANS_LABEL[p.kind]}</p>
               <p className="tabular-nums text-meta text-muted">
-                {p.free ? "Gratis" : `${formatUsd(p.priceUsd)} ≈ ${formatArs(p.priceUsd * usdArs)} / mes · anual ${formatUsd(annualUsd(p))}`}
+                {p.free ? "Gratis" : `${formatAmount(p.priceUsd, "USD", { decimals: "auto" })} ≈ ${formatAmount(p.priceUsd * usdArs, "ARS", { decimals: "none" })} / mes · anual ${formatAmount(annualUsd(p), "USD", { decimals: "auto" })}`}
               </p>
             </div>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">

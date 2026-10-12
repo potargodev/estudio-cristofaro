@@ -9,6 +9,7 @@ import { inviteClientAction } from "@/app/admin/conexiones-actions";
 import { requireStaff } from "@/lib/auth";
 import { STATUS_LABEL, studioConnections, studioRatings } from "@/modules/conexiones/server";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Conexiones" };
 
@@ -70,7 +71,7 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
                       {name}
                     </Link>
                     <span className="block text-meta text-muted">
-                      {email} · {c.initiated_by === "usuario" ? "la pidió la persona" : "la invitó el estudio"} · {c.source === "flota" ? "desde una Flota" : c.created_at.toLocaleDateString("es-AR")}
+                      {email} · {c.initiated_by === "usuario" ? "la pidió la persona" : "la invitó el estudio"} · {c.source === "flota" ? "desde una Flota" : formatDate(c.created_at, "numeric")}
                     </span>
                   </span>
                   <StatusBadge status={tone(c.status)} label={STATUS_LABEL[c.status]} />
@@ -93,7 +94,7 @@ export default async function ConexionesPage({ searchParams }: { searchParams: P
           <ul className="mt-2 divide-y divide-line">
             {ratings.map(({ r, name }) => (
               <li key={r.id} className="py-2 text-ui">
-                <span className="num">{"★".repeat(r.score ?? 0)}</span> {name} · {r.kind === "cierre" ? "al cierre" : "durante la relación"} · {r.created_at.toLocaleDateString("es-AR")}
+                <span className="num">{"★".repeat(r.score ?? 0)}</span> {name} · {r.kind === "cierre" ? "al cierre" : "durante la relación"} · {formatDate(r.created_at, "numeric")}
                 {r.comment && <span className="block text-muted">«{r.comment}»</span>}
               </li>
             ))}

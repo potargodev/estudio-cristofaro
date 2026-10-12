@@ -3,13 +3,12 @@ import { addRecurringAction, recurringAction, weeklyPrefAction } from "@/app/bit
 import { getPrefs } from "@/lib/prefs";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
-import { money } from "@/modules/bitacora/catalog";
 import { listRecurring, refreshRecurring } from "@/modules/bitacora/recurring";
 import { requireUser } from "@/modules/bitacora/session";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Gastos fijos y suscripciones" };
 
-const d = (s: string) => `${s.slice(8, 10)}/${s.slice(5, 7)}`;
 
 /** Gastos fijos y suscripciones: los detectamos solos por recurrencia y avisamos antes de cada vencimiento */
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -23,7 +22,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     <div className="grid gap-4">
       <Feedback sp={sp} />
       <p className="rounded-md border border-line bg-surface p-4 text-ui">
-        Tus fijos y suscripciones suman <span className="num font-medium">{money(monthly)}</span> por mes. Te avisamos antes de que venzan, cuando se renuevan y si suben de precio.
+        Tus fijos y suscripciones suman <span className="num font-medium">{formatMoney(monthly, "ARS", { decimals: "auto" })}</span> por mes. Te avisamos antes de que venzan, cuando se renuevan y si suben de precio.
       </p>
       {list.length === 0 ? (
         <p className="text-ui text-muted">Todavía no detectamos gastos que se repitan. Con dos o tres meses cargados (o importando tus resúmenes) aparecen solos.</p>
@@ -36,7 +35,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                   {r.label} <span className="text-caption text-muted">· {r.kind === "suscripcion" ? "suscripción" : "fijo"}{r.status === "detectado" ? " · detectado" : ""}</span>
                 </p>
                 <p className="text-meta text-muted">
-                  <span className="num">{money(r.last_amount)}</span> · próximo el {d(r.next_date)}
+                  <span className="num">{formatMoney(r.last_amount, "ARS", { decimals: "auto" })}</span> · próximo el {formatDate(r.next_date, "short")}
                   {r.price_change_pct && <span className="text-[#8f2a1c]"> · subió {Number(r.price_change_pct)}%</span>}
                   {r.still_used === false && <span className="text-[#8f2a1c]"> · dijiste que no la usás</span>}
                 </p>

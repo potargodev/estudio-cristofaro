@@ -16,6 +16,7 @@ import { CONTRIBUTOR_TYPES, LEAD_SOURCES, LEAD_STATUSES } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { adminButton } from "@/components/admin/styles";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Consulta" };
 
@@ -52,7 +53,7 @@ export default async function ConsultaPage({
   ]);
   if (!lead) notFound();
 
-  const created = new Intl.DateTimeFormat("es-AR", { dateStyle: "long", timeStyle: "short" }).format(new Date(lead.created_at));
+  const created = formatDate(lead.created_at, "dateTime");
 
   return (
     <div className="max-w-5xl">

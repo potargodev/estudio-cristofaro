@@ -5,6 +5,7 @@ import { Feedback } from "@/components/app/Feedback";
 import { requireFaro } from "@/lib/auth";
 import { ipcTable } from "@/modules/bitacora/planning";
 import { saveIpcAction } from "../../indices-actions";
+import { formatNumber } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Índices" };
 
@@ -47,7 +48,7 @@ export default async function IndicesPage({ searchParams }: { searchParams: Prom
             {rows.map((r) => (
               <tr key={r.month} className="border-t border-line">
                 <td className="num px-3 py-1.5">{r.month}</td>
-                <td className="num">{Number(r.value).toLocaleString("es-AR")}</td>
+                <td className="num">{formatNumber(Number(r.value), 4)}</td>
                 <td className="hidden text-muted sm:table-cell">{r.source}</td>
               </tr>
             ))}

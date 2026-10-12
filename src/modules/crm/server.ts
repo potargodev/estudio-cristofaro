@@ -6,6 +6,7 @@ import { audit } from "@/lib/audit";
 import { hasModule } from "@/lib/faro/entitlements";
 import { notify } from "@/modules/notifications/server";
 import { emitEvent } from "@/modules/flows/events";
+import { formatDate } from "@/lib/format";
 
 // Cartera y tareas (módulo crm, ítem Tareas del grupo Operación): el trabajo
 // del equipo por cliente, con responsables, estados y vencimientos. Las
@@ -126,7 +127,7 @@ export async function syncObligationTasks(studioId?: string) {
     const due = new Date(new Date(`${o.due_date}T12:00:00Z`).getTime() - 3 * 86400000).toISOString().slice(0, 10);
     const r = await db()
       .insert(tasks)
-      .values({ studio_id: o.studio_id, organization_id: o.organization_id, title: `Preparar ${o.tax} ${o.period} · ${org}`, detail: `Vence el ${o.due_date.split("-").reverse().join("/")}.`, due_date: due < today ? today : due, assignee_id: staff?.id ?? null, source: "obligacion", source_ref: o.id })
+      .values({ studio_id: o.studio_id, organization_id: o.organization_id, title: `Preparar ${o.tax} ${o.period} · ${org}`, detail: `Vence el ${formatDate(o.due_date, "numeric")}.`, due_date: due < today ? today : due, assignee_id: staff?.id ?? null, source: "obligacion", source_ref: o.id })
       .onConflictDoNothing()
       .returning({ id: tasks.id });
     created += r.length;

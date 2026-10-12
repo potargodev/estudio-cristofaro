@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { getDb } from "@/db";
 import { studios } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { RedError, requestProposal } from "@/modules/red/server";
 import { markSuggestionSent } from "@/modules/escudo/server";
@@ -38,7 +38,7 @@ async function send(fd: FormData): Promise<ProposalState> {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, message: "Revisá el email." };
   const [st] = await getDb().select({ id: studios.id, kind: studios.kind }).from(studios).where(eq(studios.slug, v(fd, "studio")));
   if (!st || st.kind !== "studio") return { ok: false, message: "Ese estudio no está disponible en la Red." };
-  const user = await getCurrentUser().catch(() => null);
+  const user = await getSessionUser().catch(() => null);
   try {
     await requestProposal({
       studioId: st.id,

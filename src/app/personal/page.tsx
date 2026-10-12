@@ -4,12 +4,12 @@ import Link from "next/link";
 import { FirstSteps } from "@/components/app/FirstSteps";
 import { getDb } from "@/db";
 import { accounting_expenses, studios } from "@/db/schema";
-import { categoryName, formatMoney } from "@/modules/gastos/constants";
+import { categoryName } from "@/modules/gastos/constants";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { VigiaPrompt } from "@/components/copiloto/VigiaPrompt";
 import { Derivaciones } from "@/components/escudo/Derivaciones";
 import { ModeBadge } from "@/components/conexiones/ModeBadge";
-import { money, monthLabel, monthOf } from "@/modules/bitacora/catalog";
+import { monthOf } from "@/modules/bitacora/catalog";
 import { monthSummary } from "@/modules/bitacora/server";
 import { listInsights } from "@/modules/bitacora/recurring";
 import { Insights } from "@/components/bitacora/Insights";
@@ -17,6 +17,7 @@ import { requireUser } from "@/modules/bitacora/session";
 import { getPlan, planFullName } from "@/lib/faro/plans";
 import { ownOrganization } from "@/lib/faro/tenants";
 import { myBoxes } from "@/modules/cajas/server";
+import { formatMoney, formatPeriod } from "@/lib/format";
 
 export const metadata = { title: { absolute: "Inicio · Faro" } };
 
@@ -66,7 +67,7 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
       <section aria-labelledby="mes" className="rounded-md border border-line bg-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 id="mes" className="text-title font-semibold text-ink">
-            Tu mes · {monthLabel(month)}
+            Tu mes · {formatPeriod(month)}
           </h2>
           <Link href="/bitacora" className="text-ui font-medium text-rose-deep underline-offset-4 hover:underline">
             Abrir la Bitácora
@@ -80,7 +81,7 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
           ].map((x) => (
             <div key={x.k} className="min-w-0">
               <dt className="text-meta text-muted">{x.k}</dt>
-              <dd className="num truncate text-section text-ink sm:text-headline">{money(x.v)}</dd>
+              <dd className="num truncate text-section text-ink sm:text-headline">{formatMoney(x.v, "ARS", { decimals: "auto" })}</dd>
             </div>
           ))}
         </dl>

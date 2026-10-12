@@ -10,6 +10,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { createFromPhrase, FlowError, triggerManual } from "@/modules/flows/engine";
 import { defineTool, ToolError } from "../types";
 import { uuid } from "./helpers";
+import { formatDate, formatMoney, formatPeriod } from "@/lib/format";
 
 // Flujos para el Vigía y acciones que usan las plantillas. Mandar algo a un
 // cliente (recordatorio, pedido de documentación, resumen) es una
@@ -21,8 +22,6 @@ const prevMonth = () => {
   d.setUTCMonth(d.getUTCMonth() - 1);
   return d.toISOString().slice(0, 7);
 };
-const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-const monthName = (p: string) => `${MONTHS[Number(p.slice(5)) - 1]} ${p.slice(0, 4)}`;
 
 export const flujosTools = [
   defineTool<{ corrida_id: string; paso: string; motivo: string }, unknown>({
@@ -71,15 +70,15 @@ export const flujosTools = [
     async organizationOf(input) {
       return input.organizacion_id;
     },
-    describe: (i) => `Pedir los comprobantes de ${monthName(i.periodo ?? prevMonth())}`,
+    describe: (i) => `Pedir los comprobantes de ${formatPeriod(i.periodo ?? prevMonth())}`,
     async handler(input, ctx) {
       const org = await ctx.organization(input.organizacion_id);
       const periodo = input.periodo ?? prevMonth();
       const [{ n }] = await getDb().select({ n: count() }).from(documents).where(and(eq(documents.organization_id, org.id), eq(documents.studio_id, ctx.studioId), eq(documents.period, periodo)));
       if (n > 0) return { pedido: false, motivo: "Ya subió documentación del período." };
-      const subject = `Documentación de ${monthName(periodo)}`;
+      const subject = `Documentación de ${formatPeriod(periodo)}`;
       const [r] = await getDb().insert(requests).values({ studio_id: ctx.studioId, organization_id: org.id, type: "consulta", subject, created_by: ctx.actor.id }).returning({ id: requests.id });
-      await getDb().insert(request_messages).values({ request_id: r.id, author_id: ctx.actor.id, from_client: false, body: `Hola, todavía no recibimos los comprobantes de ${monthName(periodo)} (facturas de compras y ventas, extractos y gastos). ¿Nos los subís en Documentos? Gracias.` });
+      await getDb().insert(request_messages).values({ request_id: r.id, author_id: ctx.actor.id, from_client: false, body: `Hola, todavía no recibimos los comprobantes de ${formatPeriod(periodo)} (facturas de compras y ventas, extractos y gastos). ¿Nos los subís en Documentos? Gracias.` });
       await notifyOrganization(ctx.studioId, org.id, { kind: "respuesta", subject });
       await audit({ studioId: ctx.studioId, organizationId: org.id, actor: ctx.actor, action: "flujo.pedido_documentacion", entityType: "solicitud", entityId: r.id, metadata: { periodo, origen: ctx.origin } });
       return { pedido: true, solicitud: r.id };
@@ -114,9 +113,9 @@ export const flujosTools = [
       ]);
       const done = obl.filter((o) => o.status !== "pendiente").reduce((s, o) => s + o.n, 0);
       const pend = obl.filter((o) => o.status === "pendiente").reduce((s, o) => s + o.n, 0);
-      const html = `<p>Este es el resumen de <strong>${esc(monthName(p))}</strong> de ${esc(org.name)}:</p><ul><li>Vencimientos del mes: ${done} cumplidos${pend ? `, ${pend} pendientes` : ""}.</li><li>Documentos recibidos: ${docs.n}.</li><li>Solicitudes abiertas: ${open.n}.</li>${Number(fees.total) ? `<li>Honorarios pendientes: $ ${(Number(fees.total) / 100).toLocaleString("es-AR")}.</li>` : ""}</ul>${upcoming.length ? `<p>Próximos vencimientos:</p><ul>${upcoming.map((u) => `<li>${esc(u.tax)} · ${u.due.split("-").reverse().join("/")}</li>`).join("")}</ul>` : ""}`;
+      const html = `<p>Este es el resumen de <strong>${esc(formatPeriod(p))}</strong> de ${esc(org.name)}:</p><ul><li>Vencimientos del mes: ${done} cumplidos${pend ? `, ${pend} pendientes` : ""}.</li><li>Documentos recibidos: ${docs.n}.</li><li>Solicitudes abiertas: ${open.n}.</li>${Number(fees.total) ? `<li>Honorarios pendientes: ${formatMoney(Number(fees.total), "ARS", { decimals: "auto" })}.</li>` : ""}</ul>${upcoming.length ? `<p>Próximos vencimientos:</p><ul>${upcoming.map((u) => `<li>${esc(u.tax)} · ${formatDate(u.due, "numeric")}</li>`).join("")}</ul>` : ""}`;
       const toList = await memberEmails(ctx.studioId, org.id, "inicio.ver");
-      for (const e of toList) await sendMail({ to: e, subject: `Resumen de ${monthName(p)} · ${org.name}`, html: mailLayout(`Resumen de ${monthName(p)}`, html, { href: `${getSiteUrl()}/portal`, label: "Abrir el portal" }, st?.name ?? "Faro") });
+      for (const e of toList) await sendMail({ to: e, subject: `Resumen de ${formatPeriod(p)} · ${org.name}`, html: mailLayout(`Resumen de ${formatPeriod(p)}`, html, { href: `${getSiteUrl()}/portal`, label: "Abrir el portal" }, st?.name ?? "Faro") });
       await audit({ studioId: ctx.studioId, organizationId: org.id, actor: ctx.actor, action: "flujo.resumen_mensual", entityType: "organizacion", entityId: org.id, metadata: { periodo: p, destinatarios: toList.length, origen: ctx.origin } });
       return { enviado: toList.length > 0, destinatarios: toList.length, periodo: p };
     },

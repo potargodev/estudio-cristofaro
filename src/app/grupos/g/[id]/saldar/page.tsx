@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SettleForm } from "@/components/gastos/SettleForm";
 import { requireGastos } from "@/modules/gastos/server/session";
 import { GastosError, getGroupView } from "@/modules/gastos/server/service";
+import { formatNumber } from "@/lib/format";
 
 export const metadata = { title: "Saldar" };
 
@@ -35,7 +36,7 @@ export default async function Saldar({ params, searchParams }: { params: Promise
         groupId={v.group.id}
         meId={v.me.id}
         members={v.members.map((m) => ({ id: m.id, name: m.name, alias: m.alias, cvu: m.cvu }))}
-        initial={{ from, to, amount: cents ? (cents / 100).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "", currency }}
+        initial={{ from, to, amount: cents ? formatNumber(cents / 100, 2, 2) : "", currency }}
       />
     </>
   );

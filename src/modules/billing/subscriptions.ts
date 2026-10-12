@@ -12,6 +12,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { notify } from "@/modules/notifications/server";
 import { addMonths, GRACE_DAYS, graceEnds, nextStatus, periodPrice, refOf, TRIAL_DAYS, type SubStatus } from "./core";
 import { BillingError, createPreapproval, createPreference, loadAccount, updatePreapproval, type MpPayment } from "./mp";
+import { formatDate } from "@/lib/format";
 
 // Suscripciones de Faro: cada tenant paga su plan con débito automático de
 // Mercado Pago (cuenta de Faro). Prueba de 30 días, pago mensual o anual (2
@@ -72,7 +73,7 @@ export async function choosePlan(studioId: string, actor: Actor, planKey: string
       await db().update(faro_subscriptions).set({ pending_plan_key: plan.key, pending_interval: interval, cancel_at_period_end: false }).where(eq(faro_subscriptions.id, sub.id));
       if (sub.mp_preapproval_id) await cancelPreapproval(sub.mp_preapproval_id);
       await audit({ studioId, actor, action: "suscripcion.baja_de_plan", entityType: "suscripcion", entityId: sub.id, metadata: { a: plan.key, desde: sub.current_period_end } });
-      return { message: `Pasás a ${plan.name} cuando termine el período pago (${sub.current_period_end!.toLocaleDateString("es-AR")}).` };
+      return { message: `Pasás a ${plan.name} cuando termine el período pago (${formatDate(sub.current_period_end!, "numeric")}).` };
     }
     if (sub.mp_preapproval_id) await cancelPreapproval(sub.mp_preapproval_id);
     await db().update(faro_subscriptions).set({ plan_key: plan.key, interval, status: "activa", amount: 0, mp_preapproval_id: null, mp_status: null, init_point: null, pending_plan_key: null, past_due_since: null, cancel_at_period_end: false }).where(eq(faro_subscriptions.id, sub.id));
@@ -122,7 +123,7 @@ export async function cancelSubscription(studioId: string, actor: Actor) {
   await db().update(faro_subscriptions).set({ cancel_at_period_end: true, mp_status: "cancelled", canceled_at: now, ...(immediate ? { status: "cancelada" } : {}) }).where(eq(faro_subscriptions.id, sub.id));
   if (immediate) await applyCanceled(studioId);
   await audit({ studioId, actor, action: "suscripcion.cancelada", entityType: "suscripcion", entityId: sub.id, metadata: { inmediata: immediate, hasta: sub.current_period_end } });
-  return immediate ? "Cancelaste la suscripción." : `Cancelaste la suscripción: seguís con tu plan hasta el ${sub.current_period_end!.toLocaleDateString("es-AR")}.`;
+  return immediate ? "Cancelaste la suscripción." : `Cancelaste la suscripción: seguís con tu plan hasta el ${formatDate(sub.current_period_end!, "numeric")}.`;
 }
 
 /** Al cancelar se vuelve al plan gratis del tipo de cuenta (estudios: Inicial); si no hubiera, se suspende */
@@ -174,14 +175,14 @@ export async function applySubscriptionPayment(subId: string, p: MpPayment) {
       .where(eq(faro_subscriptions.id, sub.id));
     await db().update(studios).set({ plan_key: planKey, status: "activo", suspended_reason: null, trial_ends_at: null }).where(eq(studios.id, sub.studio_id));
     await audit({ studioId: sub.studio_id, actorLabel: "Mercado Pago", action: "suscripcion.pago", entityType: "suscripcion", entityId: sub.id, metadata: { importe: p.transaction_amount, pago: p.id, hasta: end.toISOString().slice(0, 10) } });
-    await tell(sub.studio_id, "Recibimos tu pago de Faro", `Tu plan sigue activo hasta el ${end.toLocaleDateString("es-AR")}. ¡Gracias!`, href);
+    await tell(sub.studio_id, "Recibimos tu pago de Faro", `Tu plan sigue activo hasta el ${formatDate(end, "numeric")}. ¡Gracias!`, href);
     return "aplicado";
   }
   if (p.status === "rejected" || p.status === "cancelled") {
     const since = sub.past_due_since ?? new Date();
     await db().update(faro_subscriptions).set({ status: "morosa", past_due_since: since }).where(eq(faro_subscriptions.id, sub.id));
     await audit({ studioId: sub.studio_id, actorLabel: "Mercado Pago", action: "suscripcion.pago_fallido", entityType: "suscripcion", entityId: sub.id, metadata: { pago: p.id, detalle: p.status_detail ?? null } });
-    await tell(sub.studio_id, "No pudimos cobrar tu plan de Faro", `Mercado Pago rechazó el débito. Tenés tiempo hasta el ${graceEnds(since).toLocaleDateString("es-AR")} para regularizarlo (pagá desde Plan y facturación o revisá tu medio de pago en Mercado Pago); después la cuenta se suspende.`, href);
+    await tell(sub.studio_id, "No pudimos cobrar tu plan de Faro", `Mercado Pago rechazó el débito. Tenés tiempo hasta el ${formatDate(graceEnds(since), "numeric")} para regularizarlo (pagá desde Plan y facturación o revisá tu medio de pago en Mercado Pago); después la cuenta se suspende.`, href);
     return "moroso";
   }
   return "ignorado";

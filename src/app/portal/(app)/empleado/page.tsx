@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireEmployee } from "@/lib/auth";
 import { myAnnouncements, myPayslips } from "@/modules/payroll/server";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Mi espacio" };
 
@@ -34,7 +35,7 @@ export default async function EmpleadoHome() {
                 <Link href={`/portal/comunicados/${a.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-canvas">
                   <span className="min-w-0">
                     <span className={`block truncate text-ui ${(a.require_ack ? !r.ack_at : !r.read_at) ? "font-semibold" : ""}`}>{a.title}</span>
-                    <span className="text-caption text-muted">{a.created_at.toLocaleDateString("es-AR")}</span>
+                    <span className="text-caption text-muted">{formatDate(a.created_at, "numeric")}</span>
                   </span>
                   <span className="text-caption text-muted">{r.ack_at ? "Confirmado" : a.require_ack ? "Confirmá la lectura" : r.read_at ? "Leído" : "Nuevo"}</span>
                 </Link>

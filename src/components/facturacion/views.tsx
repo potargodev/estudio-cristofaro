@@ -26,7 +26,7 @@ import { accountSummary, notificationUrl } from "@/modules/billing/mp";
 import { SubmitButton } from "@/components/admin/ui";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { cn } from "@/lib/utils";
-import { fullNumber, money } from "@/modules/arca/calc";
+import { fullNumber } from "@/modules/arca/calc";
 import { CBTE_TYPES, DOC_TYPES, formatCuit, IVA_CONDITIONS } from "@/modules/arca/config";
 import { simulateRI } from "@/modules/arca/monotributo";
 import {
@@ -47,6 +47,7 @@ import {
 import type { TaxpayerData } from "@/modules/arca/padron";
 import { InvoiceForm } from "./InvoiceForm";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatAmount, formatDate } from "@/lib/format";
 
 // Vistas de facturación y ARCA, iguales para el autónomo (/facturacion) y para
 // una organización del estudio (ficha → ARCA). Reciben el alcance ya validado.
@@ -55,7 +56,6 @@ type SP = Record<string, string | undefined>;
 const field = `mt-1 ${fieldClass}`;
 const lbl = "text-meta font-medium text-ink/80";
 const card = "rounded-md border border-line bg-surface p-4 sm:p-5";
-const date = (d: string | null) => (d ? `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(0, 4)}` : "—");
 const STATUS: Record<string, { label: string; tone: string }> = {
   borrador: { label: "Borrador", tone: "bg-canvas text-muted border-line" },
   autorizando: { label: "Emitiendo…", tone: "bg-[#fbf5e6] text-[#7a5410] border-[#e3cf9f]" },
@@ -123,7 +123,7 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
         <HeaderAction href={`${scope.base}/nueva`} label="Nueva factura" />
       </div>
       <p className="text-ui text-muted">
-        {settings.business_name} · CUIT {formatCuit(scope.cuit) || "sin cargar"} · {IVA_CONDITIONS[settings.iva_condition]} · este mes: <span className="num text-ink">{money(monthTotal)}</span> en {authorizedMonth.length} comprobante{authorizedMonth.length === 1 ? "" : "s"}
+        {settings.business_name} · CUIT {formatCuit(scope.cuit) || "sin cargar"} · {IVA_CONDITIONS[settings.iva_condition]} · este mes: <span className="num text-ink">{formatAmount(monthTotal)}</span> en {authorizedMonth.length} comprobante{authorizedMonth.length === 1 ? "" : "s"}
       </p>
       {list.length === 0 ? (
         <div className={cn(card, "text-center")}>
@@ -139,11 +139,11 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
                 <span className="min-w-0">
                   <span className="block truncate text-body text-ink">{i.customer_name}</span>
                   <span className="block text-meta text-muted">
-                    {CBTE_TYPES[i.cbte_type].label} {fullNumber(i.point_of_sale, i.number)} · {date(i.issue_date)}
+                    {CBTE_TYPES[i.cbte_type].label} {fullNumber(i.point_of_sale, i.number)} · {formatDate(i.issue_date, "numeric")}
                   </span>
                 </span>
                 <span className="flex items-center gap-3">
-                  <span className="num text-body">{money(Number(i.total), i.currency)}</span>
+                  <span className="num text-body">{formatAmount(Number(i.total), i.currency)}</span>
                   <StatusPill status={i.status} />
                 </span>
               </Link>
@@ -207,7 +207,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-meta text-muted">
-              {t.label} · {fullNumber(inv.point_of_sale, inv.number)} · {date(inv.issue_date)}
+              {t.label} · {fullNumber(inv.point_of_sale, inv.number)} · {formatDate(inv.issue_date, "numeric")}
             </p>
             <p className="mt-1 text-title font-semibold">{inv.customer_name}</p>
             <p className="text-meta text-muted">
@@ -216,7 +216,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           </div>
           <div className="text-right">
             <StatusPill status={inv.status} />
-            <p className="num mt-2 text-headline">{money(Number(inv.total), inv.currency)}</p>
+            <p className="num mt-2 text-headline">{formatAmount(Number(inv.total), inv.currency)}</p>
           </div>
         </div>
         <ul className="mt-4 divide-y divide-line border-t border-line text-ui">
@@ -226,13 +226,13 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
                 {it.quantity} × {it.description}
                 {it.ivaRate != null && <span className="text-muted"> · IVA {it.ivaRate}%</span>}
               </span>
-              <span className="num">{money(it.quantity * it.unitPrice, inv.currency)}</span>
+              <span className="num">{formatAmount(it.quantity * it.unitPrice, inv.currency)}</span>
             </li>
           ))}
         </ul>
         {inv.status === "autorizada" && (
           <p className="mt-3 flex items-center gap-2 text-ui text-[#1f6b3d]">
-            <ShieldCheck className="size-4" aria-hidden /> CAE {inv.cae} · vence el {date(inv.cae_due)}
+            <ShieldCheck className="size-4" aria-hidden /> CAE {inv.cae} · vence el {formatDate(inv.cae_due, "numeric")}
             {inv.environment === "homologacion" && <span className="text-[#8f2a1c]"> · homologación (sin validez fiscal)</span>}
           </p>
         )}
@@ -270,7 +270,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
               <input type="checkbox" name="confirmo" required className="mt-0.5 size-4 accent-navy" /> Revisé el cliente, los importes y el tipo de comprobante. Quiero emitirlo.
             </label>
             <div>
-              <SubmitButton pendingText="Emitiendo en ARCA…" confirm={`¿Emitir ${t.label} a ${inv.customer_name} por ${money(Number(inv.total), inv.currency)}?`} confirmLabel="Emitir">
+              <SubmitButton pendingText="Emitiendo en ARCA…" confirm={`¿Emitir ${t.label} a ${inv.customer_name} por ${formatAmount(Number(inv.total), inv.currency)}?`} confirmLabel="Emitir">
                 Emitir comprobante
               </SubmitButton>
             </div>
@@ -291,7 +291,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
             <input name="to" type="email" required defaultValue={inv.customer_email ?? ""} placeholder="mail del cliente" className={field} />
             <div>
               <SubmitButton pendingText="Enviando…">Enviar</SubmitButton>
-              {inv.emailed_at && <span className="ml-3 text-meta text-muted">Enviado el {date(inv.emailed_at.toISOString().slice(0, 10))}</span>}
+              {inv.emailed_at && <span className="ml-3 text-meta text-muted">Enviado el {formatDate(inv.emailed_at.toISOString().slice(0, 10), "numeric")}</span>}
             </div>
           </form>
           <div className={cn(card, "grid gap-2")}>
@@ -310,7 +310,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
             <div className={cn(card, "grid gap-2 lg:col-span-2")}>
               <p className="flex items-center gap-2 text-body font-semibold">
                 <Link2 className="size-4" aria-hidden /> Cobrar con Mercado Pago
-                {inv.paid_at && <span className="rounded-md bg-[#e3efe6] px-2 py-0.5 text-caption font-medium text-[#24583a]">Pagada el {date(inv.paid_at.toISOString().slice(0, 10))}</span>}
+                {inv.paid_at && <span className="rounded-md bg-[#e3efe6] px-2 py-0.5 text-caption font-medium text-[#24583a]">Pagada el {formatDate(inv.paid_at.toISOString().slice(0, 10), "numeric")}</span>}
               </p>
               {inv.payment_url ? (
                 <input readOnly value={inv.payment_url} className={cn(field, "text-meta")} aria-label="Link de pago" />
@@ -357,7 +357,7 @@ export async function SituationView({ scope, sp, volver }: { scope: IssuerScope;
       <div className={cn(card, "flex flex-wrap items-center justify-between gap-3")}>
         <div>
           <p className="text-body font-semibold">Constancia de inscripción · CUIT {formatCuit(scope.cuit) || "sin cargar"}</p>
-          <p className="text-meta text-muted">{valid ? `Consultada el ${valid.fetchedAt.toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })} por web service oficial de ARCA${valid.environment === "homologacion" ? " (homologación)" : ""}.` : "Todavía no la consultamos."}</p>
+          <p className="text-meta text-muted">{valid ? `Consultada el ${formatDate(valid.fetchedAt, "timestamp")} por web service oficial de ARCA${valid.environment === "homologacion" ? " (homologación)" : ""}.` : "Todavía no la consultamos."}</p>
         </div>
         <form action={fetchSituationAction}>
           <ScopeFields scope={scope} volver={volver} />
@@ -434,7 +434,6 @@ const LIGHT = {
 export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; sp: SP; volver: string }) {
   const s = await semaforoFor(scope);
   const l = LIGHT[s.light];
-  const fmt = (n: number) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
   const cat = (s.scale.categories as { letter: string; feeServices: number | null }[]).find((c) => c.letter === s.category);
   const sim = simulateRI({ annualIncome: Math.max(s.income12m, s.projection12m), annualPurchasesWithIva: Number(sp.compras ?? 0) || 0, monthlyFee: cat?.feeServices ?? null });
   const max = Math.max(1, ...s.months.map((m) => m.amount));
@@ -442,14 +441,14 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
     <div className="grid gap-4">
       <Feedback sp={sp} />
       {s.scale.status !== "validada" && (
-        <p className="rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2.5 text-meta text-[#7a5410]">Escala de categorías vigente desde el {date(s.scale.valid_from)} · {s.scale.source}. Está marcada «a validar»: verificá los topes en arca.gob.ar antes de decidir.</p>
+        <p className="rounded-md border border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2.5 text-meta text-[#7a5410]">Escala de categorías vigente desde el {formatDate(s.scale.valid_from, "numeric")} · {s.scale.source}. Está marcada «a validar»: verificá los topes en arca.gob.ar antes de decidir.</p>
       )}
       <div className={cn(card, "grid gap-4 sm:grid-cols-[auto_1fr] sm:items-center")}>
         <div className="flex items-center gap-3">
           <span aria-hidden className={cn("size-12 rounded-full", l.dot)} />
           <div>
             <p className="text-title font-semibold">{l.label}</p>
-            <p className="text-meta text-muted">Categoría {s.category ?? "sin cargar"}{s.cap ? ` · tope ${fmt(s.cap)}` : ""}</p>
+            <p className="text-meta text-muted">Categoría {s.category ?? "sin cargar"}{s.cap ? ` · tope ${formatAmount(s.cap, "ARS", { decimals: "none" })}` : ""}</p>
           </div>
         </div>
         <div>
@@ -463,10 +462,10 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
       </div>
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          ["Últimos 12 meses", fmt(s.income12m)],
-          ["Margen hasta el tope", s.remaining != null ? fmt(Math.max(0, s.remaining)) : "—"],
+          ["Últimos 12 meses", formatAmount(s.income12m, "ARS", { decimals: "none" })],
+          ["Margen hasta el tope", s.remaining != null ? formatAmount(Math.max(0, s.remaining), "ARS", { decimals: "none" }) : "—"],
           ["Categoría que coincide con lo facturado", s.suggested ?? (s.excluded ? "Fuera de escala" : "—")],
-          ["Proyección a 12 meses", fmt(s.projection12m)],
+          ["Proyección a 12 meses", formatAmount(s.projection12m, "ARS", { decimals: "none" })],
         ].map(([k, v]) => (
           <div key={k} className={card}>
             <dt className="text-meta text-muted">{k}</dt>
@@ -475,7 +474,7 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
         ))}
       </dl>
       <p className="text-ui text-muted">
-        Próxima recategorización: <strong className="text-ink">{s.nextRecategorization.label}</strong>, con lo facturado hasta el {date(s.nextRecategorization.cutoff)} (se hace hasta el {date(s.nextRecategorization.deadline)}).
+        Próxima recategorización: <strong className="text-ink">{s.nextRecategorization.label}</strong>, con lo facturado hasta el {formatDate(s.nextRecategorization.cutoff, "numeric")} (se hace hasta el {formatDate(s.nextRecategorization.deadline, "numeric")}).
       </p>
       <section className={card} aria-labelledby="meses">
         <h2 id="meses" className="text-body font-semibold">
@@ -488,7 +487,7 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
               <span className="h-2 rounded-full bg-canvas">
                 <span className="block h-full rounded-full bg-navy/70" style={{ width: `${(m.amount / max) * 100}%` }} />
               </span>
-              <span className="num text-right">{fmt(m.amount)}</span>
+              <span className="num text-right">{formatAmount(m.amount, "ARS", { decimals: "none" })}</span>
             </li>
           ))}
         </ul>
@@ -527,15 +526,15 @@ export async function SemaforoView({ scope, sp, volver }: { scope: IssuerScope; 
         <dl className="mt-3 grid gap-2 text-ui sm:grid-cols-3">
           <div>
             <dt className="text-muted">IVA de tus ventas por mes</dt>
-            <dd className="num text-title">{fmt(sim.debit)}</dd>
+            <dd className="num text-title">{formatAmount(sim.debit, "ARS", { decimals: "none" })}</dd>
           </div>
           <div>
             <dt className="text-muted">IVA de tus compras por mes</dt>
-            <dd className="num text-title">{fmt(sim.credit)}</dd>
+            <dd className="num text-title">{formatAmount(sim.credit, "ARS", { decimals: "none" })}</dd>
           </div>
           <div>
             <dt className="text-muted">IVA a pagar por mes (aprox.)</dt>
-            <dd className="num text-title">{fmt(sim.ivaMonthly)}</dd>
+            <dd className="num text-title">{formatAmount(sim.ivaMonthly, "ARS", { decimals: "none" })}</dd>
           </div>
         </dl>
         <p className="mt-2 text-meta text-muted">Además se suman Ganancias y aportes de autónomos. Esto no reemplaza el criterio de un contador: <Link href="/red-contable?necesito=simulacion_ri" className="underline underline-offset-4">sumá uno desde la Red Contable</Link>.</p>
@@ -568,7 +567,7 @@ export async function CalendarView({ scope, sp, volver }: { scope: IssuerScope; 
                     </span>
                   </span>
                   <span className="text-right">
-                    <span className="num block text-body">{date(o.due_date)}</span>
+                    <span className="num block text-body">{formatDate(o.due_date, "numeric")}</span>
                     <span className={cn("block text-caption", days <= 3 && days >= 0 ? "text-[#8f2a1c]" : "text-muted")}>{days < 0 ? "Pasó" : days === 0 ? "Vence hoy" : `En ${days} día${days === 1 ? "" : "s"}`}</span>
                   </span>
                 </li>
@@ -641,7 +640,7 @@ export async function ChecksView({ scope, sp, volver }: { scope: IssuerScope; sp
           <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2">
             <span className="text-body font-semibold">{c.title}</span>
             <span className={cn("text-meta", c.state?.status === "con_novedades" ? "text-[#8f2a1c]" : c.state?.status === "ok" ? "text-[#1f6b3d]" : "text-muted")}>
-              {c.state?.status === "ok" ? `Sin novedades según lo que viste · ${c.state.checked_at?.toLocaleDateString("es-AR")}` : c.state?.status === "con_novedades" ? "Con novedades" : "Sin revisar"}
+              {c.state?.status === "ok" ? `Sin novedades según lo que viste · ${formatDate(c.state.checked_at, "numeric")}` : c.state?.status === "con_novedades" ? "Con novedades" : "Sin revisar"}
             </span>
           </summary>
           <p className="mt-2 text-ui text-muted">{c.why}</p>
@@ -869,7 +868,7 @@ export async function CustomersView({ scope, sp, volver }: { scope: IssuerScope;
           {products.map((p) => (
             <li key={p.id} className="flex items-center justify-between gap-2 py-2">
               <span className="min-w-0 truncate">
-                {p.description} · <span className="num">{money(Number(p.unit_price))}</span>
+                {p.description} · <span className="num">{formatAmount(Number(p.unit_price))}</span>
                 {p.iva_rate != null && <span className="text-muted"> · IVA {Number(p.iva_rate)}%</span>}
               </span>
               <form action={deleteProductAction}>

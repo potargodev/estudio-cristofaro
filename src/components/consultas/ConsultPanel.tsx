@@ -3,8 +3,8 @@ import { SubmitButton } from "@/components/admin/ui";
 import { approveConsultAction, discardConsultAction, redraftConsultAction } from "@/app/admin/consultas-actions";
 import { CONSULT_STATUS, CONSULT_TOPICS, isTopic, type ConsultStatus } from "@/modules/ai-consults/core";
 import type { AiConsult } from "@/modules/ai-consults/server";
+import { formatDate } from "@/lib/format";
 
-const when = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Argentina/Buenos_Aires" });
 
 /** Borrador de la IA para una consulta: el estudio lo edita y lo aprueba (o lo descarta) */
 export function ConsultPanel({ c, volver, reviewer }: { c: AiConsult; volver: string; reviewer?: string | null }) {
@@ -56,7 +56,7 @@ export function ConsultPanel({ c, volver, reviewer }: { c: AiConsult; volver: st
       {c.status === "aprobada" && (
         <p className="mt-2 text-meta text-muted">
           Enviada{reviewer ? ` por ${reviewer}` : ""}
-          {c.reviewed_at ? ` el ${when.format(c.reviewed_at)}` : ""}
+          {c.reviewed_at ? ` el ${formatDate(c.reviewed_at, "shortTime")}` : ""}
           {c.edited ? " · con cambios sobre el borrador" : " · sin cambios"}.
         </p>
       )}

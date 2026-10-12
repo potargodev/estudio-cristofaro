@@ -12,15 +12,9 @@ import { getRequestThread } from "@/lib/portal-data";
 import { REQUEST_STATUS, REQUEST_TYPES } from "@/lib/portal-types";
 import { cn } from "@/lib/utils";
 import { replyRequestAsClient } from "../../../actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Solicitud" };
-
-const dateFmt = new Intl.DateTimeFormat("es-AR", {
-  day: "numeric",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-});
 
 export default async function SolicitudPage({
   params,
@@ -56,7 +50,7 @@ export default async function SolicitudPage({
           <li key={m.id} className={cn("flex", m.from_client ? "justify-end" : "justify-start")}>
             <div className={cn("max-w-[85%] rounded-lg px-4 py-3", m.from_client ? "bg-navy text-paper" : "border border-line bg-surface")}>
               <p className={cn("text-caption", m.from_client ? "text-paper/70" : "text-muted")}>
-                {m.from_client ? "Vos" : "Estudio Cristofaro"} · {dateFmt.format(m.created_at)}
+                {m.from_client ? "Vos" : "Estudio Cristofaro"} · {formatDate(m.created_at, "shortTime")}
               </p>
               <p className="mt-1 whitespace-pre-line leading-relaxed">{m.body}</p>
               {m.document_id && (

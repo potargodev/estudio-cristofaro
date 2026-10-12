@@ -10,6 +10,7 @@ import { requireOperator } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { validateGraph, type Graph } from "@/modules/flows/core";
 import { availableTools, EVENT_LIST, getFlow, listRuns } from "@/modules/flows/engine";
+import { formatDate } from "@/lib/format";
 
 export const metadata = { title: "Flujo" };
 
@@ -93,7 +94,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 <li key={r.id}>
                   <Link href={`/admin/vigia/flujos/${f.id}/corridas/${r.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-ui hover:bg-canvas">
                     <span>
-                      {r.created_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "medium" })} · {r.source}
+                      {formatDate(r.created_at, "timestamp")} · {r.source}
                     </span>
                     <span className={r.status === "error" || r.status === "rechazada" ? "text-[#8f2a1c]" : r.status === "completada" ? "text-[#1f6b3d]" : "text-muted"}>{RUN[r.status] ?? r.status}</span>
                   </Link>

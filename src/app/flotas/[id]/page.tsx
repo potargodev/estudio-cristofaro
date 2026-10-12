@@ -6,7 +6,6 @@ import { SubmitButton } from "@/components/admin/ui";
 import { FirstSteps } from "@/components/app/FirstSteps";
 import { Feedback, FleetLabel } from "@/components/flotas/Feedback";
 import { requirePersonal } from "@/lib/auth";
-import { formatArs } from "@/lib/faro/plans";
 import { cn } from "@/lib/utils";
 import { FLEET_MAX, FLEET_MIN, INFORMAL_NOTICE, PROFILES, profileLabel } from "@/modules/flotas/catalog";
 import { FleetError, fleetSpace } from "@/modules/flotas/server";
@@ -30,11 +29,11 @@ import {
 import { SeekerForm } from "@/components/red/SeekerForm";
 import { fleetSeeker, myContacts } from "@/modules/red/seekers";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatAmount, formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Flota" };
 
 const field = `mt-1 ${fieldClass}`;
-const time = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 const STATUS = { invitado: "Invitado", activo: "Activo", salio: "Salió", rechazo: "No aceptó" } as const;
 
 /** Espacio de la Flota: lo ven todos sus integrantes. Nadie ve las finanzas de nadie */
@@ -266,7 +265,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                       </th>
                       {PROFILES.map((pr) => (
                         <td key={pr.key} className={cn("tabular-nums px-3 py-3 text-right", pr.key === x.me.profile && "font-semibold")}>
-                          {p.prices[pr.key] != null ? formatArs(p.prices[pr.key]!) : "—"}
+                          {p.prices[pr.key] != null ? formatAmount(p.prices[pr.key]!, "ARS", { decimals: "none" }) : "—"}
                         </td>
                       ))}
                       <td className="px-3 py-3">{p.min_members}</td>
@@ -335,7 +334,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
           {x.events.map((e) => (
             <li key={e.id} className={cn("rounded-md px-4 py-2.5 text-ui", e.kind === "mensaje" ? "border border-line bg-surface" : "bg-canvas text-muted")}>
               <span className="block text-caption text-muted">
-                {e.kind === "mensaje" ? e.actor_label : "Novedad"} · {time.format(e.created_at)}
+                {e.kind === "mensaje" ? e.actor_label : "Novedad"} · {formatDate(e.created_at, "shortTime")}
               </span>
               {e.body}
             </li>

@@ -13,12 +13,12 @@ import { getDb } from "@/db";
 import { obligations, organization_staff, organizations, users } from "@/db/schema";
 import { requireStaff } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Vencimientos" };
 
 const DAY = 86400000;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
-const monthFmt = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "UTC" });
 
 async function loadRows(studioId: string, from: string, to: string): Promise<ObligationRow[]> {
   const assignee = alias(users, "assignee");
@@ -83,7 +83,7 @@ function Calendar({ rows, month }: { rows: ObligationRow[]; month: string }) {
           return (
             <li key={d} className={cn("min-h-28 border-b border-line p-2 md:border-r", !inMonth && "bg-canvas/60", items.length === 0 && "hidden md:block")}>
               <p className={cn("tabular mb-1.5 text-caption", d === today ? "font-semibold text-rose-deep" : "text-muted")}>
-                <span className="md:hidden">{new Intl.DateTimeFormat("es-AR", { weekday: "long", timeZone: "UTC" }).format(new Date(`${d}T00:00:00Z`))} </span>
+                <span className="md:hidden">{formatDate(d, "weekdayName")} </span>
                 {Number(d.slice(8))}
                 {d === today && " · hoy"}
               </p>
@@ -141,7 +141,7 @@ export default async function VencimientosPage({ searchParams }: { searchParams:
             <Link href={`/admin/vencimientos?vista=calendario&mes=${shift(-1)}`} aria-label="Mes anterior" className="grid size-9 place-items-center border border-line bg-surface">
               <ChevronLeft className="size-4" aria-hidden />
             </Link>
-            <h2 className="text-title font-semibold first-letter:uppercase">{monthFmt.format(monthDate)}</h2>
+            <h2 className="text-title font-semibold first-letter:uppercase">{formatDate(`${month}-01`, "month")}</h2>
             <Link href={`/admin/vencimientos?vista=calendario&mes=${shift(1)}`} aria-label="Mes siguiente" className="grid size-9 place-items-center border border-line bg-surface">
               <ChevronRight className="size-4" aria-hidden />
             </Link>

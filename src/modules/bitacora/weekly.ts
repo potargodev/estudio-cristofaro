@@ -9,13 +9,13 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { notify } from "@/modules/notifications/server";
 import { listGoals } from "./planning";
 import { listCategories } from "./server";
+import { formatMoney } from "@/lib/format";
 
 // Resumen semanal de un minuto (domingo): cuánto entró y salió en la semana,
 // en qué se fue, cómo van las metas. En la app (aviso) y por mail.
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const iso = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const fmt = (c: number) => `$ ${Math.round(c / 100).toLocaleString("es-AR")}`;
 
 export async function weeklySummary(userId: string, end = new Date()) {
   const to = iso(end);
@@ -29,8 +29,8 @@ export async function weeklySummary(userId: string, end = new Date()) {
   const inn = rows.filter((r) => r.kind === "ingreso").reduce((s, r) => s + r.amount, 0);
   const byCat = new Map<string, number>();
   for (const r of rows) if (r.kind === "gasto") byCat.set(r.category_id ?? "", (byCat.get(r.category_id ?? "") ?? 0) + r.amount);
-  const top = [...byCat.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id, v]) => `${cats.find((c) => c.id === id)?.name ?? "Sin categoría"} ${fmt(v)}`);
-  const lines = [`Salió ${fmt(out)} y entró ${fmt(inn)}.`, top.length ? `En lo que más: ${top.join(", ")}.` : "No cargaste gastos esta semana.", ...goals.slice(0, 2).map((g) => `Meta «${g.name}»: ${Math.round(g.progress * 100)}%${g.weekly ? `, guardá ${fmt(g.weekly)} esta semana` : ""}.`)];
+  const top = [...byCat.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id, v]) => `${cats.find((c) => c.id === id)?.name ?? "Sin categoría"} ${formatMoney(v, "ARS", { decimals: "none" })}`);
+  const lines = [`Salió ${formatMoney(out, "ARS", { decimals: "none" })} y entró ${formatMoney(inn, "ARS", { decimals: "none" })}.`, top.length ? `En lo que más: ${top.join(", ")}.` : "No cargaste gastos esta semana.", ...goals.slice(0, 2).map((g) => `Meta «${g.name}»: ${Math.round(g.progress * 100)}%${g.weekly ? `, guardá ${formatMoney(g.weekly, "ARS", { decimals: "none" })} esta semana` : ""}.`)];
   return { from, to, out, inn, top, lines, count: rows.length };
 }
 

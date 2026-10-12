@@ -8,6 +8,7 @@ import { webhook_events } from "@/db/schema";
 import { requireFaro } from "@/lib/auth";
 import { accountSummary, notificationUrl } from "@/modules/billing/mp";
 import { deleteFaroMpAction, saveFaroMpAction } from "../../mp-actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Mercado Pago" };
 
@@ -30,7 +31,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             {events.map((e) => (
               <li key={e.id} className="flex flex-wrap justify-between gap-2 px-4 py-2">
                 <span>
-                  {e.created_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "medium" })} · {e.account === "faro" ? "Faro" : "estudio"} · {e.topic ?? "—"} {e.data_id ?? ""}
+                  {formatDate(e.created_at, "timestamp")} · {e.account === "faro" ? "Faro" : "estudio"} · {e.topic ?? "—"} {e.data_id ?? ""}
                 </span>
                 <span className={e.result === "rechazado" || e.result === "error" ? "text-[#8f2a1c]" : "text-muted"}>
                   {e.result}

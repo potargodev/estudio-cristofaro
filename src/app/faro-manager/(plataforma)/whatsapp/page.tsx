@@ -11,6 +11,7 @@ import { requireFaro } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { platformAccount, templatesOf } from "@/modules/whatsapp/server";
 import { pauseFaroWaAction, saveFaroWaAction, syncFaroWaAction } from "../../whatsapp-actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "WhatsApp" };
 
@@ -87,7 +88,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             {events.map((e) => (
               <li key={e.id} className="flex flex-wrap justify-between gap-2 px-4 py-2">
                 <span>
-                  {e.created_at.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "medium" })} · {e.account === "faro" ? "Faro" : "estudio"} · {e.topic ?? "—"}
+                  {formatDate(e.created_at, "timestamp")} · {e.account === "faro" ? "Faro" : "estudio"} · {e.topic ?? "—"}
                 </span>
                 <span className={e.result === "rechazado" || e.result === "error" ? "text-[#8f2a1c]" : "text-muted"}>
                   {e.result}

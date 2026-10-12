@@ -5,10 +5,10 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { requireFaro } from "@/lib/auth";
 import { listReports, REPORT_REASONS } from "@/modules/messages/server";
 import { resolveReportAction } from "@/app/faro-manager/reportes-actions";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Mensajes reportados" };
 
-const when = (d: Date | string) => new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(new Date(d));
 
 /** Moderación: el Faro Manager ve solo el mensaje reportado (copia del momento), nunca la conversación */
 export default async function ReportesPage({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string; ver?: string }> }) {
@@ -34,12 +34,12 @@ export default async function ReportesPage({ searchParams }: { searchParams: Pro
             <li key={r.id} className="rounded-md border border-line bg-surface p-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2 text-meta text-muted">
                 <span>
-                  {REPORT_REASONS[r.reason as keyof typeof REPORT_REASONS] ?? r.reason} · reportó {reporter ?? "alguien"} · {when(r.created_at)}
+                  {REPORT_REASONS[r.reason as keyof typeof REPORT_REASONS] ?? r.reason} · reportó {reporter ?? "alguien"} · {formatDate(r.created_at, "dateTime")}
                 </span>
                 <span>{r.status === "abierto" ? "Abierto" : `Revisado: ${r.resolution === "borrar" ? "mensaje borrado" : "sin acción"}`}</span>
               </div>
               <p className="mt-2 text-meta text-muted">
-                De {r.snapshot.author ?? "un usuario"} · {when(r.snapshot.at)}
+                De {r.snapshot.author ?? "un usuario"} · {formatDate(r.snapshot.at, "dateTime")}
               </p>
               <blockquote className="mt-1 whitespace-pre-wrap rounded-md bg-canvas px-3 py-2 text-body">{r.snapshot.body ?? (r.snapshot.attachment ? `Archivo: ${r.snapshot.attachment}` : "—")}</blockquote>
               {r.detail && <p className="mt-2 text-meta">Comentario: {r.detail}</p>}

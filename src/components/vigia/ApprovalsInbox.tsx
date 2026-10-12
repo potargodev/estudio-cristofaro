@@ -12,6 +12,7 @@ import { getDb } from "@/db";
 import { approvals, documents, leads, mcp_accesses, organizations, requests, users } from "@/db/schema";
 import type { StaffUser } from "@/lib/auth";
 import { getTool } from "@/modules/tools";
+import { formatDate } from "@/lib/format";
 
 const ORIGIN = {
   asistente: { label: "Asistente", icon: Bot },
@@ -19,7 +20,6 @@ const ORIGIN = {
   flujo: { label: "Flujos", icon: Workflow },
 } as const;
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 
 const LABELS: Record<string, string> = {
   organizacion_id: "Organización",
@@ -163,7 +163,7 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
                         </Link>
                       )}
                       <span>
-                        Pedido por {requester ?? a.requested_label ?? "—"} · {fmt.format(a.created_at)}
+                        Pedido por {requester ?? a.requested_label ?? "—"} · {formatDate(a.created_at, "shortTime")}
                       </span>
                     </p>
                   </div>
@@ -187,7 +187,7 @@ export async function ApprovalsInbox({ user, sp, back, embedded }: { user: Staff
                   {a.status !== "pendiente" && (
                     <p className="mt-3 text-meta text-muted">
                       {a.status === "rechazada" ? `Rechazada por ${deciders.get(a.decided_by ?? "") ?? "—"}: ${a.reason}` : `Aprobada por ${deciders.get(a.decided_by ?? "") ?? "—"}${a.edited ? " (con cambios)" : ""}`}
-                      {a.decided_at ? ` · ${fmt.format(a.decided_at)}` : ""}
+                      {a.decided_at ? ` · ${formatDate(a.decided_at, "shortTime")}` : ""}
                       {a.status === "error" && a.result ? ` · ${String((a.result as { message?: string }).message ?? "")}` : ""}
                     </p>
                   )}

@@ -2,7 +2,7 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { employees } from "@/db/schema";
-import { getCurrentUser, getMemberships } from "@/lib/auth";
+import { getSessionUser, getMemberships } from "@/lib/auth";
 import { can, type OrgRole } from "@/lib/permissions";
 import { isStudioRole } from "@/lib/roles";
 
@@ -11,7 +11,7 @@ import { isStudioRole } from "@/lib/roles";
  * todo lo del estudio), un miembro con su rol, y su legajo si es empleado.
  */
 export async function viewerFor(organizationId: string, studioId: string) {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user || user.studioId !== studioId) return null;
   if (isStudioRole(user.role) && (!user.tenantSuspended || user.assisted)) return { user, studio: true, role: null as OrgRole | null, employeeId: null as string | null };
   const m = (await getMemberships(user.id, user.studioId)).find((x) => x.organizationId === organizationId);

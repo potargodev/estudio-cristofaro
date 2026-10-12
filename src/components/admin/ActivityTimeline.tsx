@@ -4,8 +4,8 @@ import { Badge } from "@/components/portal/ui";
 import { getDb } from "@/db";
 import { audit_log } from "@/db/schema";
 import { auditLabel } from "@/lib/audit";
+import { formatDate } from "@/lib/format";
 
-const fmt = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 const PAGE = 50;
 
 /** Detalle legible de los metadatos más comunes */
@@ -50,7 +50,7 @@ export async function ActivityTimeline({ orgId, studioId, before }: { orgId: str
               )}
             </p>
             <p className="text-ui text-muted">
-              {fmt.format(e.created_at)} · {e.actor_label ?? "sistema"}
+              {formatDate(e.created_at, "dateTime")} · {e.actor_label ?? "sistema"}
               {e.ip ? ` · IP ${e.ip}` : ""}
             </p>
             {Object.keys(e.metadata ?? {}).length > 0 && <p className="mt-0.5 text-ui text-ink/70">{detail(e.metadata)}</p>}

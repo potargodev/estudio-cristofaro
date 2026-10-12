@@ -6,13 +6,13 @@ import { Panel } from "@/components/admin/kit/Panel";
 import { Tag } from "@/components/admin/kit/StatusBadge";
 import { SubmitButton } from "@/components/admin/ui";
 import { requireTenant } from "@/lib/auth";
-import { formatArs } from "@/lib/faro/plans";
 import { requireModule } from "@/lib/faro/require-module";
 import { FLEET_MAX, FLEET_MIN, MAX_NOTICE_DAYS, PROFILES, profileLabel } from "@/modules/flotas/catalog";
 import { openRequestsForStudio, studioAgreements } from "@/modules/flotas/server";
 import { labelOf, RED_SERVICES } from "@/modules/red/catalog";
 import { registerPaymentAction, submitProposalAction } from "@/app/admin/fleet-actions";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatAmount } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Flotas" };
 
@@ -96,7 +96,7 @@ export default async function RedFlotasPage({ searchParams }: { searchParams: Pr
                       {a.member_name} <span className="text-meta font-normal text-muted">· {a.member_email}</span>
                     </p>
                     <p className="text-meta text-muted">
-                      Flota «{a.terms.fleetName}» · {profileLabel(a.profile)} · {formatArs(a.monthly_price)} / mes · {STATUS[a.status]}
+                      Flota «{a.terms.fleetName}» · {profileLabel(a.profile)} · {formatAmount(a.monthly_price, "ARS", { decimals: "none" })} / mes · {STATUS[a.status]}
                       {a.ends_on && ` · termina ${a.ends_on}`}
                       {a.group_price_until && ` · precio grupal hasta ${a.group_price_until}`}
                     </p>

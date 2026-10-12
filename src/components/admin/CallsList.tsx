@@ -3,7 +3,7 @@ import { Video } from "lucide-react";
 import { Badge } from "@/components/portal/ui";
 import { getDb } from "@/db";
 import { bookings, users } from "@/db/schema";
-import { fmtDateTime } from "@/lib/agenda/time";
+import { formatDate } from "@/lib/format";
 
 const ORIGIN: Record<string, string> = { web: "Web", portal: "Portal", estudio: "Estudio" };
 
@@ -28,7 +28,7 @@ export async function CallsList({ studioId, where, upcoming = false, empty }: { 
       {rows.map(({ b, host }) => (
         <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
           <span className="min-w-0">
-            <span className="block text-body font-medium first-letter:uppercase">{fmtDateTime(b.starts_at)}</span>
+            <span className="block text-body font-medium first-letter:uppercase">{formatDate(b.starts_at, "weekdayTime")}</span>
             <span className="block truncate text-ui text-muted">
               {b.name} · con {host} · {ORIGIN[b.origin]}
               {b.reason ? ` · ${b.reason}` : ""}

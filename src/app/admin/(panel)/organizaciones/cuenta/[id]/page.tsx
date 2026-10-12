@@ -12,12 +12,12 @@ import { requireStaff } from "@/lib/auth";
 import { isMonth } from "@/modules/bitacora/catalog";
 import { AUTONOMY_LABEL, disputeMessages, liveView, STATUS_LABEL, studioActions, studioConnection } from "@/modules/conexiones/server";
 import { fieldClass } from "@/components/ds/primitives";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Cuenta conectada" };
 
 const field = `mt-1 py-2 ${fieldClass}`;
 const card = "rounded-lg border border-line bg-surface p-5";
-const when = (d: Date) => d.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" });
 
 /**
  * Cuenta conectada (Organizaciones): el estudio trabaja sobre los datos de la
@@ -39,7 +39,7 @@ export default async function CuentaConectadaPage({ params, searchParams }: { pa
       <div className="grid gap-4">
         <PageHeader title={r.name} description={`${STATUS_LABEL[c.status]}: el estudio no tiene acceso a los datos de esta cuenta.`} />
         <p className="text-ui text-muted">
-          {c.status === "cerrada" ? `Estuvieron conectados ${c.started_at ? `del ${c.started_at.toLocaleDateString("es-AR")} al ${c.closed_at?.toLocaleDateString("es-AR")}` : ""}. Los datos quedaron en la cuenta de la persona.` : "Mirá el estado en "}
+          {c.status === "cerrada" ? `Estuvieron conectados ${c.started_at ? `del ${formatDate(c.started_at, "numeric")} al ${formatDate(c.closed_at, "numeric")}` : ""}. Los datos quedaron en la cuenta de la persona.` : "Mirá el estado en "}
           {c.status !== "cerrada" && (
             <Link href={`/admin/comercial/conexiones/${c.id}`} className="underline underline-offset-4">
               Conexiones
@@ -88,7 +88,7 @@ export default async function CuentaConectadaPage({ params, searchParams }: { pa
           <ul className="mt-2 divide-y divide-line">
             {actions.map((a) => (
               <li key={a.id} className="py-2 text-ui">
-                {a.summary} <span className="text-muted">· {a.actor_name} · {when(a.created_at)} · {a.status}</span>
+                {a.summary} <span className="text-muted">· {a.actor_name} · {formatDate(a.created_at, "numericTime")} · {a.status}</span>
               </li>
             ))}
           </ul>
@@ -119,7 +119,7 @@ export default async function CuentaConectadaPage({ params, searchParams }: { pa
           <h2 id="checklist" className="flex items-center gap-2 text-lead font-semibold">
             <ClipboardCheck className="size-5 text-rose-deep" aria-hidden /> Checklist de cierre
           </h2>
-          <p className="mt-1 text-meta text-muted">Motivo: {c.closing_reason}. Solo lectura hasta el {c.readonly_until?.toLocaleDateString("es-AR")}.</p>
+          <p className="mt-1 text-meta text-muted">Motivo: {c.closing_reason}. Solo lectura hasta el {formatDate(c.readonly_until, "numeric")}.</p>
           <ul className="mt-2 grid gap-2 text-ui">
             {(
               [
@@ -163,7 +163,7 @@ export default async function CuentaConectadaPage({ params, searchParams }: { pa
               {messages.map(({ m, name }) => (
                 <li key={m.id} className="rounded-md border border-line bg-canvas px-3 py-2 text-ui">
                   <span className="text-caption text-muted">
-                    {m.side === "estudio" ? (name ?? "Estudio") : `${r.name} (cliente)`} · {when(m.created_at)}
+                    {m.side === "estudio" ? (name ?? "Estudio") : `${r.name} (cliente)`} · {formatDate(m.created_at, "numericTime")}
                   </span>
                   <span className="block">{m.body}</span>
                 </li>
