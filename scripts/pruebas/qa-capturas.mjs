@@ -4,7 +4,7 @@
 // (en la regresión corre justo después de cargarla). Los números, las fechas y los
 // datos que cambian solos se tapan (máscara) para que la comparación mida el
 // diseño y no el día. Falla si una captura cambia más del umbral; la imagen
-// con la diferencia queda en $SALIDA. Con --actualizar reemplaza las
+// con la diferencia queda en $SALIDA_CAPTURAS. Con --actualizar reemplaza las
 // referencias (después de revisar el cambio a ojo).
 //
 //   node --env-file=.env.local scripts/pruebas/qa-capturas.mjs [--actualizar]
@@ -18,7 +18,7 @@ const pw = await import(process.env.PW ?? "/opt/node22/lib/node_modules/playwrig
 const { chromium } = pw.chromium ? pw : pw.default;
 const BASE = process.env.FARO_URL ?? "http://localhost:3000";
 const REF = new URL("../../docs/qa-visual/referencia/", import.meta.url).pathname;
-const OUT = process.env.SALIDA ?? "/tmp/qa-capturas";
+const OUT = process.env.SALIDA_CAPTURAS ?? "/tmp/qa-capturas";
 const MAX_DIFF = 0.004; // 0,4 % de los píxeles
 mkdirSync(REF, { recursive: true });
 mkdirSync(OUT, { recursive: true });

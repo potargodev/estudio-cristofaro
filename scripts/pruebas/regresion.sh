@@ -125,7 +125,7 @@ echo "── Con la demo cargada ──" | tee -a "$RESUMEN"
 correr demo-navegador node scripts/pruebas/demo-navegador.mjs
 npx tsx scripts/demo.ts seed > "$SALIDA/demo-seed.log" 2>&1
 # Regresión por captura sobre la demo recién cargada (QA_ACTUALIZAR=1 rehace las referencias)
-correr qa-capturas env SALIDA="$SALIDA/qa-capturas" node scripts/pruebas/qa-capturas.mjs ${QA_ACTUALIZAR:+--actualizar}
+correr qa-capturas env SALIDA_CAPTURAS="$SALIDA/qa-capturas" node scripts/pruebas/qa-capturas.mjs ${QA_ACTUALIZAR:+--actualizar}
 correr ver-como node scripts/pruebas/ver-como.mjs
 correr auditoria-seguridad "${S[@]}" scripts/pruebas/auditoria-seguridad.mts
 # §2.q · Agente contable (incluye la cartera de 20 organizaciones de la demo)
