@@ -130,7 +130,7 @@ export function LecturaInbox({ r, sp, docs, ready, usage }: { r: ResolvedScope; 
                 ["tango", "Tango"],
                 ["xubio", "Xubio"],
               ].map(([f, l]) => (
-                <a key={f} href={exportHref(r, f)} className="inline-flex h-8 items-center gap-1.5 rounded-md border border-line px-2.5 hover:border-muted">
+                <a key={f} href={exportHref(r, f)} className="inline-flex h-(--control-h-sm) items-center gap-1.5 rounded-md border border-line px-2.5 hover:border-muted">
                   <Download className="size-3.5" aria-hidden /> {l}
                 </a>
               ))}

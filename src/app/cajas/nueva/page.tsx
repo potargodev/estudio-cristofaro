@@ -31,9 +31,7 @@ export default async function NuevaCajaPage({ searchParams }: { searchParams: Pr
                 <input type="hidden" name="purpose" value={t.purpose} />
                 <button type="submit" data-opcion={t.purpose} className="flex h-full w-full flex-col items-start gap-2 rounded-lg border border-line bg-surface p-5 text-left transition-colors hover:border-navy">
                   <span className="flex items-center gap-3">
-                    <span className="grid size-10 place-items-center rounded-md bg-navy text-gold" aria-hidden>
-                      <Icon className="size-5" />
-                    </span>
+                    <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" />
                     <span className="text-title font-medium text-ink">{t.name}</span>
                   </span>
                   <span className="text-ui text-muted">{t.description}</span>

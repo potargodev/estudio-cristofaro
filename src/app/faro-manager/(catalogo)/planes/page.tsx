@@ -118,7 +118,7 @@ export default async function PlanesPage({ searchParams }: { searchParams: Promi
       </div>
 
       <section id="matriz" className="mt-8 scroll-mt-20">
-        <h2 className="font-display text-[28px]">Matriz plan × módulo</h2>
+        <h2 className="text-section font-semibold">Matriz plan × módulo</h2>
         <p className="mb-4 text-ui text-muted">El núcleo (organizaciones, conexiones, IA, grupos de gastos, rubros, Flotas) está en todos los planes.</p>
         <div className="overflow-x-auto rounded-lg border border-line bg-surface">
           <table className="w-full min-w-[960px] text-left text-meta">

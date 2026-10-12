@@ -43,9 +43,7 @@ export default async function MisCajasPage({ searchParams }: { searchParams: Pro
             <li key={b.id}>
               <Link href={href} data-caja={b.kind} className="flex h-full flex-col gap-3 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-navy">
                 <span className="flex items-center gap-3">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-md bg-navy text-gold" aria-hidden>
-                    <Icon className="size-5" />
-                  </span>
+                  <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" />
                   <span className="min-w-0">
                     <span className="block truncate text-lead font-medium text-ink">{b.kind === "personal" ? "Personal" : b.name}</span>
                     <span className="block text-meta text-muted">{b.kind === "compartida" ? `${t?.name ?? "Compartida"} · ${b.members.length} ${b.members.length === 1 ? "persona" : "personas"}` : b.kind === "negocio" ? "Negocio · solo vos" : "Personal · solo vos"}</span>

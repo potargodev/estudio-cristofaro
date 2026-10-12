@@ -135,7 +135,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
         </h3>
         <p className="mt-1 text-ui text-muted">Faro nunca pisa datos en silencio. Elegí con qué versión te quedás. Un comprobante autorizado por ARCA no se modifica: solo su copia en Tango.</p>
         {conflicts.length === 0 ? (
-          <p className="mt-3 rounded-md border border-dashed border-line p-4 text-ui text-muted">No hay diferencias abiertas.</p>
+          <p className="mt-3 rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">No hay diferencias abiertas.</p>
         ) : (
           <ul className="mt-3 grid gap-3">
             {conflicts.map(({ c, d }) => (
@@ -243,7 +243,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
           Comprobantes
         </h3>
         {docs.length === 0 ? (
-          <p className="mt-3 rounded-md border border-dashed border-line p-4 text-ui text-muted">Todavía no hay comprobantes sincronizados.</p>
+          <p className="mt-3 rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">Todavía no hay comprobantes sincronizados.</p>
         ) : (
           <ul className="mt-3 divide-y divide-line rounded-md border border-line bg-surface">
             {docs.map(({ d, org }) => (

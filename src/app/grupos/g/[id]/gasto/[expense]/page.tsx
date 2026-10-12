@@ -81,7 +81,7 @@ export default async function GastoDetalle({ params }: { params: Promise<{ id: s
       )}
 
       <section className="mt-10">
-        <h2 className="mb-3 font-display text-headline">Comentarios</h2>
+        <h2 className="mb-3 text-title font-semibold">Comentarios</h2>
         <ul className="mb-4 grid gap-3">
           {comments.map((c) => (
             <li key={c.id} className="border-l-2 border-line pl-3">

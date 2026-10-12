@@ -98,7 +98,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                     <form action={transferCaptainAction}>
                       {hidden}
                       <input type="hidden" name="member" value={m.id} />
-                      <button type="submit" className="h-8 rounded-md border border-line px-2.5 text-caption hover:border-muted">
+                      <button type="submit" className="h-(--control-h-sm) rounded-md border border-line px-2.5 text-caption hover:border-muted">
                         Hacer Capitán
                       </button>
                     </form>
@@ -106,7 +106,7 @@ export default async function FlotaPage({ params, searchParams }: { params: Prom
                   <form action={removeMemberAction}>
                     {hidden}
                     <input type="hidden" name="member" value={m.id} />
-                    <button type="submit" className="h-8 rounded-md border border-line px-2.5 text-caption hover:border-muted">
+                    <button type="submit" className="h-(--control-h-sm) rounded-md border border-line px-2.5 text-caption hover:border-muted">
                       Quitar
                     </button>
                   </form>

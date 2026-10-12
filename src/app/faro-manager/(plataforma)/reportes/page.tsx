@@ -27,7 +27,7 @@ export default async function ReportesPage({ searchParams }: { searchParams: Pro
         </Link>
       </p>
       {rows.length === 0 ? (
-        <p className="rounded-md border border-dashed border-line bg-surface p-6 text-center text-ui text-muted">No hay reportes {all ? "" : "abiertos"}.</p>
+        <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">No hay reportes {all ? "" : "abiertos"}.</p>
       ) : (
         <ul className="grid gap-3">
           {rows.map(({ r, reporter }) => (

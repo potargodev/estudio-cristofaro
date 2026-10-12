@@ -27,7 +27,7 @@ export function Ring({ value, total, label, empty }: { value: number; total: num
         />
       </svg>
       <div>
-        <p className="tabular font-display text-5xl leading-none">
+        <p className="num text-metric leading-none">
           <Counter value={value} duration={900} />
           <span className="text-headline text-muted">/{total}</span>
         </p>
@@ -44,7 +44,7 @@ export function SplitBar({ a, b, labelA, labelB, title }: { a: number; b: number
     <div>
       <p className="flex items-baseline justify-between">
         <span className="text-ui text-muted">{title}</span>
-        <span className="tabular font-display text-5xl leading-none">
+        <span className="num text-metric leading-none">
           <Counter value={total} duration={900} />
         </span>
       </p>
@@ -83,7 +83,7 @@ const fmt = new Intl.DateTimeFormat("es-AR", {
 export function Timeline({ items }: { items: TimelineItem[] }) {
   return (
     <Card>
-      <h2 className="font-display text-headline">Actividad reciente</h2>
+      <h2 className="text-title font-semibold">Actividad reciente</h2>
       {items.length === 0 ? (
         <div className="mt-3">
           <Empty>Todavía no hay movimientos.</Empty>

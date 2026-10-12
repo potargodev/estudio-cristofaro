@@ -101,7 +101,7 @@ export function FlowEditor(p: Props) {
       {!p.readOnly && (
         <div className="flex flex-wrap gap-1.5" role="toolbar" aria-label="Agregar pasos">
           {(["condicion", "accion", "aprobacion", "espera"] as Kind[]).map((k) => (
-            <button key={k} type="button" onClick={() => add(k)} className="inline-flex h-8 items-center gap-1 rounded-md border border-line bg-surface px-2.5 text-meta hover:border-muted">
+            <button key={k} type="button" onClick={() => add(k)} className="inline-flex h-(--control-h-sm) items-center gap-1 rounded-md border border-line bg-surface px-2.5 text-meta hover:border-muted">
               + {KIND_LABEL[k]}
             </button>
           ))}

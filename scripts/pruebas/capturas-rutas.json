@@ -1,8 +1,62 @@
 {
-  "publico": { "home": "/", "faro": "/faro", "precios": "/precios", "red": "/red-contable", "ayuda": "/ayuda", "ingresar": "/ingresar" },
-  "persona": { "inicio": "/personal", "cajas": "/cajas", "bitacora": "/bitacora", "grupos": "/grupos", "contador": "/contador", "facturacion": "/facturacion", "vigia": "/vigia" },
-  "estudio": { "inicio": "/admin", "organizaciones": "/admin/organizaciones", "vencimientos": "/admin/vencimientos", "solicitudes": "/admin/solicitudes", "tareas": "/admin/tareas", "comercial": "/admin/comercial", "conexiones": "/admin/comercial/conexiones", "buscar-clientes": "/admin/comercial/buscar-clientes", "honorarios": "/admin/honorarios", "configuracion": "/admin/configuracion" },
-  "organizacion": { "inicio": "/portal", "vencimientos": "/portal/vencimientos", "documentos": "/portal/documentos", "solicitudes": "/portal/solicitudes", "empresa": "/portal/empresa" },
-  "empleado": { "inicio": "/portal", "recibos": "/portal/recibos" },
-  "manager": { "resumen": "/faro-manager", "tenants": "/faro-manager/tenants", "planes": "/faro-manager/planes", "red": "/faro-manager/red", "auditoria": "/faro-manager/auditoria" }
+ "publico": {
+  "home": "/",
+  "faro": "/faro",
+  "precios": "/precios",
+  "red": "/red-contable",
+  "ayuda": "/ayuda",
+  "ingresar": "/ingresar"
+ },
+ "persona": {
+  "inicio": "/personal",
+  "cajas": "/cajas",
+  "bitacora": "/bitacora",
+  "sobres": "/bitacora/presupuesto",
+  "fijos": "/bitacora/fijos",
+  "metas": "/bitacora/metas",
+  "grupos": "/grupos",
+  "contador": "/contador",
+  "vigia": "/vigia",
+  "mensajes": "/mensajes"
+ },
+ "estudio": {
+  "inicio": "/admin",
+  "organizaciones": "/admin/organizaciones",
+  "vencimientos": "/admin/vencimientos",
+  "solicitudes": "/admin/solicitudes",
+  "tareas": "/admin/tareas",
+  "comercial": "/admin/comercial",
+  "conexiones": "/admin/comercial/conexiones",
+  "buscar-clientes": "/admin/comercial/buscar-clientes",
+  "honorarios": "/admin/honorarios",
+  "configuracion": "/admin/configuracion",
+  "red": "/admin/comercial/red",
+  "agenda": "/admin/comercial/agenda"
+ },
+ "organizacion": {
+  "inicio": "/portal",
+  "vencimientos": "/portal/vencimientos",
+  "documentos": "/portal/documentos",
+  "solicitudes": "/portal/solicitudes",
+  "empresa": "/portal/empresa",
+  "estado-de-cuenta": "/portal/estado-de-cuenta"
+ },
+ "empleado": {
+  "inicio": "/portal/empleado",
+  "recibos": "/portal/recibos"
+ },
+ "manager": {
+  "resumen": "/faro-manager",
+  "tenants": "/faro-manager/tenants",
+  "planes": "/faro-manager/planes",
+  "red": "/faro-manager/red",
+  "auditoria": "/faro-manager/auditoria"
+ },
+ "autonomo": {
+  "inicio": "/personal",
+  "cajas": "/cajas",
+  "facturacion": "/facturacion",
+  "monotributo": "/facturacion/monotributo",
+  "flotas": "/flotas"
+ }
 }

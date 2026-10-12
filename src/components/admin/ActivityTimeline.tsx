@@ -31,7 +31,7 @@ export async function ActivityTimeline({ orgId, studioId, before }: { orgId: str
     .limit(PAGE + 1);
   const more = rows.length > PAGE;
   const list = rows.slice(0, PAGE);
-  if (list.length === 0) return <p className="border border-dashed border-line p-6 text-muted">Todavía no hay actividad registrada.</p>;
+  if (list.length === 0) return <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">Todavía no hay actividad registrada.</p>;
   return (
     <div>
       <ol className="relative space-y-4 border-l border-line pl-6">

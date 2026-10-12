@@ -194,9 +194,7 @@ export default async function BienvenidaPage({ searchParams }: { searchParams: P
                       ]
                 ).map((o) => (
                   <Link key={o.href} href={o.href} className="group rounded-md border border-line p-4 transition-colors hover:border-navy">
-                    <span className="grid size-10 place-items-center rounded-md bg-navy text-gold">
-                      <o.icon className="size-5" strokeWidth={1.5} aria-hidden />
-                    </span>
+                    <o.icon className="size-5 shrink-0 text-rose-deep mt-0.5" strokeWidth={1.5} aria-hidden />
                     <span className="mt-3 block text-body font-medium group-hover:underline">{o.t}</span>
                     <span className="block text-meta text-muted">{o.d}</span>
                   </Link>

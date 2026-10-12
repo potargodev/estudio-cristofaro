@@ -120,7 +120,7 @@ export default async function TangoClientesPage({
       </form>
 
       {rows.length === 0 ? (
-        <p className="border border-dashed border-line p-6 text-muted">
+        <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">
           Todavía no hay clientes de Tango. Corré <code>node index.mjs sync</code> en la PC del conector.
         </p>
       ) : (

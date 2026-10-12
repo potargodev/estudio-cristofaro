@@ -19,9 +19,7 @@ export async function OrgIndustryTab({ orgId, studioId, canEdit, notice }: { org
       {notice && <p className="rounded-lg border border-[#a9d1b5] bg-[#ecf6ef] px-4 py-3 text-ui text-[#1f5f36]">{notice}</p>}
       <section className="rounded-lg border border-line bg-surface p-5">
         <h2 className="flex items-center gap-2.5 text-title font-semibold">
-          <span className="grid size-7 place-items-center rounded-md bg-navy text-gold">
-            <Factory className="size-4" aria-hidden />
-          </span>
+          <Factory className="size-5 shrink-0 text-rose-deep mt-0.5" aria-hidden />
           Rubros
         </h2>
         {s.industries.length === 0 ? (

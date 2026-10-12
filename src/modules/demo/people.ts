@@ -106,7 +106,7 @@ async function bitacora(db: Db, r: R, p: DemoPerson, spec: PersonSpec) {
   }
   // Casos extremos: un gasto muy chico, uno muy grande y uno en dólares
   e(day(-3), "gasto", 0.5, "otros", "Redondeo de la caja del súper");
-  if (spec.full) e(day(-9), "gasto", 18_750_000, "casa", "Seña del departamento (reserva)");
+  if (spec.full) e(dateIn(month(-4), 9), "gasto", 18_750_000, "casa", "Seña del departamento (reserva)");
   if (spec.usd) e(day(-6), "gasto", 1_299, "suscripciones", "Notebook en cuotas (USD)", { currency: "USD" });
   if (spec.changa) {
     // Sin régimen: cobra changas como ingreso de la Bitácora (y en la caja de negocio, más abajo)

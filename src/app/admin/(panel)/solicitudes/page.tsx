@@ -126,7 +126,7 @@ export default async function SolicitudesAdminPage({ searchParams }: { searchPar
     return `/admin/solicitudes${s ? `?${s}` : ""}`;
   };
   const chip = (on: boolean) =>
-    cn("inline-flex h-7 items-center rounded-md border px-2.5 text-meta transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted");
+    cn("inline-flex h-(--control-h-sm) items-center rounded-md border px-2.5 text-meta transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted");
 
   return (
     <>

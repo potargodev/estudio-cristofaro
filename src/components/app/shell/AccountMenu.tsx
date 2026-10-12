@@ -95,7 +95,7 @@ export function AccountMenu({
           )}
           <div className="flex items-center justify-between gap-2 px-3 py-1.5 text-ink">
             Tema
-            <ThemeToggle withLabel className="h-8 rounded-md border border-line px-2 text-meta text-ink hover:border-muted" />
+            <ThemeToggle withLabel className="h-(--control-h-sm) rounded-md border border-line px-2 text-meta text-ink hover:border-muted" />
           </div>
           {spaces.length > 1 && (
             <>

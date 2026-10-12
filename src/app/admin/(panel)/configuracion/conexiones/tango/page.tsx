@@ -138,7 +138,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
               Si el estudio usa una empresa de Tango por cada cliente, asigná cada empresa a su organización en la plataforma.
             </p>
             {companies.length === 0 ? (
-              <p className="mt-3 border border-dashed border-line p-5 text-muted">Aparecen después de la primera prueba o sincronización del conector.</p>
+              <p className="mt-3 rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">Aparecen después de la primera prueba o sincronización del conector.</p>
             ) : (
               <ul className="mt-3 divide-y divide-line border border-line bg-surface">
                 {companies.map((c) => (
@@ -173,7 +173,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
           <section>
             <h2 className="text-title font-medium">Últimas sincronizaciones</h2>
             {syncs.length === 0 ? (
-              <p className="mt-3 border border-dashed border-line p-5 text-muted">
+              <p className="mt-3 rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">
                 Todavía no hubo sincronizaciones. En la PC de Tango corré <code>node index.mjs test</code> y después <code>node index.mjs sync</code>.
               </p>
             ) : (

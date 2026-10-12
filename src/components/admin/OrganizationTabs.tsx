@@ -201,7 +201,7 @@ export async function ObligationsTab({ orgId, studioId, entities }: { orgId: str
       </div>
 
       <div className="space-y-2">
-        {rows.length === 0 && <p className="border border-dashed border-line p-5 text-muted">Todavía no hay vencimientos.</p>}
+        {rows.length === 0 && <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">Todavía no hay vencimientos.</p>}
         {rows.map((o) => (
           <details key={o.id} className="group border border-line bg-surface">
             <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-4 py-3">
@@ -258,7 +258,7 @@ const CATEGORY_OPTIONS = Object.entries(DOCUMENT_CATEGORIES)
   .map(([value, label]) => ({ value, label }));
 
 function DocList({ docs, orgId, highlightNew, readable, read }: { docs: DocumentRow[]; orgId: string; highlightNew?: Set<string>; readable?: boolean; read?: Map<string, string> }) {
-  if (docs.length === 0) return <p className="border border-dashed border-line p-5 text-muted">Sin documentos.</p>;
+  if (docs.length === 0) return <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">Sin documentos.</p>;
   return (
     <ul className="divide-y divide-line border border-line bg-surface">
       {docs.map((d) => (
@@ -489,7 +489,7 @@ export async function RequestsTab({ orgId, studioId }: { orgId: string; studioId
     .where(and(eq(requests.organization_id, orgId), eq(requests.studio_id, studioId)))
     .orderBy(asc(requests.status), desc(requests.updated_at));
   if (rows.length === 0)
-    return <p className="border border-dashed border-line p-5 text-muted">La organización todavía no hizo solicitudes.</p>;
+    return <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">La organización todavía no hizo solicitudes.</p>;
   return (
     <div className="space-y-4">
       {rows.map((r) => (
@@ -674,7 +674,7 @@ function Meter({ label, used, max, extra }: { label: string; used: number; max: 
   return (
     <div className="border border-line bg-surface p-4">
       <p className="text-ui text-muted">{label}</p>
-      <p className={cn("mt-1 font-display text-3xl", over && "text-danger")}>
+      <p className={cn("num mt-1 text-metric", over && "text-danger")}>
         {used}
         <span className="text-title text-muted"> / {max ?? "∞"}</span>
       </p>

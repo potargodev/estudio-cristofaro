@@ -46,13 +46,11 @@ export default async function EmpleadoHome() {
       <ul className="mt-6 grid gap-4 sm:grid-cols-2">
         {cards.map((c) => (
           <li key={c.href}>
-            <Link href={c.href} className="group flex h-full gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
-              <span className="grid size-11 shrink-0 place-items-center rounded-md bg-navy text-gold">
-                <c.icon className="size-5" strokeWidth={1.6} aria-hidden />
-              </span>
+            <Link href={c.href} className="group flex h-full gap-3 rounded-md border border-line bg-surface p-4 transition-colors hover:border-navy/40 sm:p-5">
+              <c.icon className="size-5 shrink-0 text-rose-deep mt-0.5" strokeWidth={1.6} aria-hidden />
               <span>
-                <span className="block text-title font-semibold">{c.title}</span>
-                <span className="mt-1 block text-ui text-muted">{c.text}</span>
+                <span className="block text-body font-semibold">{c.title}</span>
+                <span className="mt-0.5 block text-meta text-muted">{c.text}</span>
               </span>
             </Link>
           </li>

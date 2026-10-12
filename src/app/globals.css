@@ -904,6 +904,18 @@ body {
   .app-ui :where(.overflow-x-auto, .overflow-auto, .ds-table) {
     position: relative;
   }
+  /* Un campo nunca es más ancho que su lugar (un select con una opción larga
+     no empuja la página) y los textos largos (mails, URLs, nombres) cortan
+     donde haga falta en vez de desbordar */
+  .app-ui :where(main) :where(input, select, textarea) {
+    max-width: 100%;
+  }
+  .app-ui :where(main) :where(.flex, .inline-flex) > :where(select, input, form) {
+    min-width: 0;
+  }
+  .app-ui :where(main) :where(p, dd, li, code, td, h2, h3) {
+    overflow-wrap: anywhere;
+  }
   .app-ui :where(main) :where(table) :where(thead th) {
     padding: 0.625rem 1rem;
     font-size: var(--text-caption);

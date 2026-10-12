@@ -45,7 +45,7 @@ export default async function GastosHome() {
       <h2 className="mt-10 text-meta font-medium uppercase tracking-[0.14em] text-muted">Tus grupos</h2>
       {groups.length === 0 ? (
         <div className="mt-4 border border-dashed border-line bg-surface px-6 py-12 text-center">
-          <p className="font-display text-headline">Todavía no tenés grupos</p>
+          <p className="text-title font-semibold">Todavía no tenés grupos</p>
           <p className="mx-auto mt-2 max-w-sm text-muted">Armá uno para un viaje, la oficina, un proyecto o tus socios, y sumá a las personas (aunque no tengan cuenta).</p>
           {actor.kind === "user" && (
             <Link href="/grupos/nuevo" className="mt-6 inline-flex h-11 items-center gap-2 bg-navy px-5 text-paper hover:bg-navy-deep">

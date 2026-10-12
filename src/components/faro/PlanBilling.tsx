@@ -100,7 +100,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
       </Panel>
 
       <section aria-labelledby="comparar">
-        <h2 id="comparar" className="font-display text-[26px] text-ink">
+        <h2 id="comparar" className="text-section font-semibold text-ink">
           Comparar planes
         </h2>
         <p className="mt-1 text-ui text-muted">
@@ -118,7 +118,7 @@ export async function PlanBilling({ studioId, back, pedido, ok, error }: { studi
                   {current ? <StatusBadge status="activa" label="Tu plan" /> : p.recommended ? <Tag>Recomendado</Tag> : null}
                 </div>
                 <p className="mt-1 text-ui text-muted">{p.tagline}</p>
-                <p className="mt-4 font-display text-[34px] leading-none text-ink">{ars(p, usdArs)}</p>
+                <p className="num mt-4 text-metric leading-none text-ink">{ars(p, usdArs)}</p>
                 {!p.free && (
                   <p className="mt-1 text-caption text-muted">
                     {formatUsd(p.priceUsd)} / mes · anual {formatArs(annualUsd(p) * usdArs)}

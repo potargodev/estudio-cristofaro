@@ -69,7 +69,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
       <div className="grid gap-4">
         <Feedback sp={sp} />
         <div className="flex flex-wrap items-end gap-2">
-          <form className="flex flex-wrap items-end gap-2" action="/admin/tareas">
+          <form className="flex min-w-0 max-w-full flex-wrap items-end gap-2 [&>select]:min-w-0 [&>select]:flex-1 sm:[&>select]:flex-none" action="/admin/tareas">
             <input type="hidden" name="vista" value={vista} />
             {vista === "tabla" && (
               <select name="estado" defaultValue={sp.estado ?? "abiertas"} aria-label="Estado" className={field}>
@@ -195,7 +195,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
                               <input type="hidden" name="id" value={t.id} />
                               <input type="hidden" name="status" value={x} />
                               <input type="hidden" name="volver" value={volver} />
-                              <button className="h-7 rounded-md border border-line px-2 text-caption hover:border-muted">→ {TASK_STATUS[x]}</button>
+                              <button className="h-(--control-h-sm) rounded-md border border-line px-2 text-caption hover:border-muted">→ {TASK_STATUS[x]}</button>
                             </form>
                           ))}
                       </div>

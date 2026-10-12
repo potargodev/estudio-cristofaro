@@ -251,7 +251,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <Link href={`/admin/comercial/agenda?${qs({ semana: addDays(monday, -7) })}`} className="grid size-9 place-items-center border border-line bg-surface" aria-label="Semana anterior">
               <ChevronLeft className="size-4" aria-hidden />
             </Link>
-            <h2 className="min-w-52 text-center font-display text-section">Semana del {dayFmt.format(new Date(`${monday}T12:00:00Z`))}</h2>
+            <h2 className="min-w-52 text-center text-title font-semibold">Semana del {dayFmt.format(new Date(`${monday}T12:00:00Z`))}</h2>
             <Link href={`/admin/comercial/agenda?${qs({ semana: addDays(monday, 7) })}`} className="grid size-9 place-items-center border border-line bg-surface" aria-label="Semana siguiente">
               <ChevronRight className="size-4" aria-hidden />
             </Link>
@@ -263,14 +263,14 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <Link
               href={`/admin/comercial/agenda?${new URLSearchParams({ tab: "semana", semana: monday }).toString()}`}
               aria-current={mine ? "true" : undefined}
-              className={cn("inline-flex h-7 items-center rounded-md border px-2.5", mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
+              className={cn("inline-flex h-(--control-h-sm) items-center rounded-md border px-2.5", mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
             >
               Mis llamadas
             </Link>
             <Link
               href={`/admin/comercial/agenda?${new URLSearchParams({ tab: "semana", semana: monday, quien: "todos" }).toString()}`}
               aria-current={!mine ? "true" : undefined}
-              className={cn("inline-flex h-7 items-center rounded-md border px-2.5", !mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
+              className={cn("inline-flex h-(--control-h-sm) items-center rounded-md border px-2.5", !mine ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink")}
             >
               Todo el estudio
             </Link>

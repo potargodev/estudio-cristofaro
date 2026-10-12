@@ -283,7 +283,7 @@ async function Attention({ studioId }: { studioId: string }) {
               <span className="ml-[2.125rem] sm:ml-0">{it.status}</span>
               <Link
                 href={it.action.href}
-                className="ml-auto inline-flex h-8 items-center rounded-md border border-line px-3 text-meta font-medium text-ink transition-colors hover:border-navy sm:ml-0"
+                className="ml-auto inline-flex h-(--control-h-sm) items-center rounded-md border border-line px-3 text-meta font-medium text-ink transition-colors hover:border-navy sm:ml-0"
               >
                 {it.action.label}
               </Link>

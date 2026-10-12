@@ -21,7 +21,7 @@ export function SlotPicker({ days, error, initial }: { days: PickerDay[]; error?
   const current = days.find((d) => d.date === day);
   if (days.length === 0) {
     return (
-      <p className="border border-dashed border-line p-5 text-muted">
+      <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">
         No hay horarios libres en las próximas semanas. Escribinos por WhatsApp y lo coordinamos.
       </p>
     );

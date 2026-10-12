@@ -52,14 +52,14 @@ export async function ArcaOrgTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
           <form method="get" className="flex items-center gap-2 text-meta">
             <input type="hidden" name="tab" value="arca" />
             <input type="hidden" name="ver" value={ver} />
-            <select name="cuit" defaultValue={scope.cuit} className="h-8 rounded-md border border-line bg-surface px-2">
+            <select name="cuit" defaultValue={scope.cuit} className="h-(--control-h-sm) rounded-md border border-line bg-surface px-2">
               {entities.map((e) => (
                 <option key={e.cuit ?? ""} value={(e.cuit ?? "").replace(/\D/g, "")}>
                   {e.name} · {formatCuit((e.cuit ?? "").replace(/\D/g, ""))}
                 </option>
               ))}
             </select>
-            <button type="submit" className="h-8 rounded-md border border-line px-2">
+            <button type="submit" className="h-(--control-h-sm) rounded-md border border-line px-2">
               Cambiar
             </button>
           </form>

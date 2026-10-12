@@ -22,9 +22,7 @@ export async function FirstSteps({ className, path }: { className?: string; path
   const next = g.steps.find((s) => !s.done)!;
   return (
     <section aria-label="Primeros pasos" className={cn("flex flex-wrap items-center gap-3 rounded-md border border-line bg-surface px-4 py-3", className)}>
-      <span className="grid size-9 shrink-0 place-items-center rounded-md bg-navy text-gold">
-        <ListChecks className="size-4" aria-hidden />
-      </span>
+      <ListChecks className="size-5 shrink-0 text-rose-deep mt-0.5" aria-hidden />
       <div className="min-w-0 flex-1">
         <p className="text-ui font-medium">Te {left === 1 ? "falta 1 paso" : `faltan ${left} pasos`}</p>
         <div className="mt-1.5 flex items-center gap-2">

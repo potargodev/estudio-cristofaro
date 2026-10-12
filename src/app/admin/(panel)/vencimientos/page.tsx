@@ -141,7 +141,7 @@ export default async function VencimientosPage({ searchParams }: { searchParams:
             <Link href={`/admin/vencimientos?vista=calendario&mes=${shift(-1)}`} aria-label="Mes anterior" className="grid size-9 place-items-center border border-line bg-surface">
               <ChevronLeft className="size-4" aria-hidden />
             </Link>
-            <h2 className="font-display text-section first-letter:uppercase">{monthFmt.format(monthDate)}</h2>
+            <h2 className="text-title font-semibold first-letter:uppercase">{monthFmt.format(monthDate)}</h2>
             <Link href={`/admin/vencimientos?vista=calendario&mes=${shift(1)}`} aria-label="Mes siguiente" className="grid size-9 place-items-center border border-line bg-surface">
               <ChevronRight className="size-4" aria-hidden />
             </Link>

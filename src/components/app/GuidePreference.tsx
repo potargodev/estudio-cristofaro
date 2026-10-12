@@ -10,9 +10,7 @@ export async function GuidePreference() {
   return (
     <section aria-labelledby="guia-pref" className="rounded-lg border border-line bg-surface p-5">
       <h2 id="guia-pref" className="flex items-center gap-2 text-title font-semibold text-ink">
-        <span className="grid size-8 place-items-center rounded-md bg-navy text-gold">
-          <Compass className="size-4" aria-hidden />
-        </span>
+        <Compass className="size-5 shrink-0 text-rose-deep mt-0.5" aria-hidden />
         Guía y recorridos
       </h2>
       <p className="mt-2 text-ui text-muted">Los recorridos cortos aparecen la primera vez que entrás a cada pantalla. El botón «Guía» de arriba queda siempre, aunque los apagues.</p>

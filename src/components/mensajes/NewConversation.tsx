@@ -17,7 +17,7 @@ export function NewConversation({ contacts, staff }: { contacts: Contact[]; staf
   const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const shown = useMemo(() => contacts.filter((c) => (!canal || tab !== "grupo" || c.team) && (!q || norm(c.name).includes(norm(q)) || c.via.some((v) => norm(v).includes(norm(q))))), [contacts, q, canal, tab]);
   if (!contacts.length)
-    return <p className="rounded-md border border-dashed border-line bg-surface p-6 text-center text-ui text-muted">Todavía no compartís ningún espacio con otra persona. Sumate a un grupo de gastos o a una Flota, o pedile a tu estudio que te invite.</p>;
+    return <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">Todavía no compartís ningún espacio con otra persona. Sumate a un grupo de gastos o a una Flota, o pedile a tu estudio que te invite.</p>;
   return (
     <div className="grid gap-4">
       <div role="tablist" aria-label="Tipo de conversación" className="grid grid-cols-2 rounded-md border border-line p-1">

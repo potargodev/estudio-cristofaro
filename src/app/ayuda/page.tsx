@@ -49,9 +49,7 @@ export default async function AyudaPage({ searchParams }: { searchParams: Promis
           return (
             <section key={c.key} aria-labelledby={`cat-${c.key}`} className="rounded-lg border border-line bg-surface p-5">
               <div className="flex items-center gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-md bg-navy text-gold">
-                  <Icon className="size-5" strokeWidth={1.5} aria-hidden />
-                </span>
+                <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" strokeWidth={1.5} aria-hidden />
                 <div>
                   <h2 id={`cat-${c.key}`} className="text-title font-semibold">
                     {c.name}

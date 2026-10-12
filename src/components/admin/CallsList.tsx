@@ -22,7 +22,7 @@ export async function CallsList({ studioId, where, upcoming = false, empty }: { 
     )
     .orderBy(upcoming ? asc(bookings.starts_at) : desc(bookings.starts_at))
     .limit(upcoming ? 6 : 20);
-  if (rows.length === 0) return <p className="border border-dashed border-line p-4 text-ui text-muted">{empty}</p>;
+  if (rows.length === 0) return <p className="rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted">{empty}</p>;
   return (
     <ul className="divide-y divide-line border border-line bg-surface">
       {rows.map(({ b, host }) => (

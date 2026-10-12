@@ -18,9 +18,7 @@ const usd = (n: number) => `USD ${n.toLocaleString("es-AR", { maximumFractionDig
 function Metric({ label, value, hint, icon: Icon, href }: { label: string; value: string | number; hint?: string; icon: typeof Building2; href?: string }) {
   const body = (
     <>
-      <span className="grid size-10 place-items-center rounded-md bg-navy text-gold">
-        <Icon className="size-5" strokeWidth={1.6} aria-hidden />
-      </span>
+      <Icon className="size-5 shrink-0 text-rose-deep mt-0.5" strokeWidth={1.6} aria-hidden />
       <p className="mt-4 text-ui font-medium text-muted">{label}</p>
       <p className="mt-1 num text-[44px] leading-none text-ink">{value}</p>
       {hint && <p className="mt-2 text-meta text-muted">{hint}</p>}

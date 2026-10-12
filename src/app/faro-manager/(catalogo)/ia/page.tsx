@@ -198,7 +198,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
       )}
 
       <section className="mt-8">
-        <h2 className="font-display text-[28px]">Consumo del mes por usuario</h2>
+        <h2 className="text-section font-semibold">Consumo del mes por usuario</h2>
         <p className="mb-3 text-ui text-muted">Solo cantidades: el Faro Manager no ve el contenido de los chats.</p>
         <div className="overflow-x-auto rounded-md border border-line bg-surface">
           <table className="w-full min-w-[720px] text-left text-meta">

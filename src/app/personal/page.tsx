@@ -1,5 +1,5 @@
 import { and, desc, eq, isNull, or } from "drizzle-orm";
-import { Boxes, CalendarClock, FileText, Gauge, LifeBuoy, ShieldCheck, Ship, Wallet } from "lucide-react";
+import { ArrowRight, Boxes, FileText, LifeBuoy, Ship, Wallet } from "lucide-react";
 import Link from "next/link";
 import { FirstSteps } from "@/components/app/FirstSteps";
 import { getDb } from "@/db";
@@ -20,12 +20,6 @@ import { myBoxes } from "@/modules/cajas/server";
 
 export const metadata = { title: { absolute: "Inicio · Faro" } };
 
-const SOON = [
-  { icon: FileText, title: "Facturación electrónica", text: "Facturas A, B, C y E con ARCA, con tu logo y link de pago." },
-  { icon: Gauge, title: "Semáforo de monotributo", text: "Cuánto podés facturar sin pasarte y aviso de recategorización." },
-  { icon: ShieldCheck, title: "Tu situación con ARCA", text: "Constancia y datos del padrón por web service oficial." },
-  { icon: CalendarClock, title: "Calendario personal", text: "Tus vencimientos según tu CUIT, con el importe y alertas." },
-];
 
 const cuitFmt = (c: string | null) => (c ? `${c.slice(0, 2)}-${c.slice(2, 10)}-${c.slice(10)}` : "—");
 
@@ -69,9 +63,9 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
 
       <Insights items={insights} volver="/personal" />
 
-      <section aria-labelledby="mes" className="rounded-md border border-line bg-surface p-5">
+      <section aria-labelledby="mes" className="rounded-md border border-line bg-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="mes" className="text-title font-medium text-ink">
+          <h2 id="mes" className="text-title font-semibold text-ink">
             Tu mes · {monthLabel(month)}
           </h2>
           <Link href="/bitacora" className="text-ui font-medium text-rose-deep underline-offset-4 hover:underline">
@@ -97,35 +91,37 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
         )}
       </section>
 
-      <Link href="/cajas" className="group flex items-center gap-4 rounded-md border border-line bg-surface p-5 transition-colors hover:border-muted">
-        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
-          <Boxes className="size-6" strokeWidth={1.5} aria-hidden />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-title font-medium text-ink">Mis cajas</span>
-          <span className="block text-ui text-muted">{business ? `Personal y ${business.name}${shared ? `, más ${shared} compartida${shared === 1 ? "" : "s"}` : ""}: cada plata en su caja.` : "Tu caja personal, la de tu negocio y las que compartís con otros, cada una por separado."}</span>
-        </span>
-        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
-      </Link>
+      <section aria-labelledby="accesos">
+        <h2 id="accesos" className="sr-only">
+          Tus lugares en Faro
+        </h2>
+        <ul className="grid gap-3 sm:grid-cols-2" data-tour="grupos">
+          {[
+            { href: "/cajas", icon: Boxes, title: "Mis cajas", text: business ? `Personal y ${business.name}${shared ? `, más ${shared} compartida${shared === 1 ? "" : "s"}` : ""}: cada plata en su caja.` : "Tu caja personal, la de tu negocio y las que compartís con otros." },
+            { href: "/grupos", icon: Wallet, title: "Grupos de gastos", text: titular ? "Dividí gastos con socios, clientes o amigos. Lo deducible queda marcado." : "Dividí gastos y Faro calcula quién le debe a quién." },
+            ...(titular && t?.kind === "personal" ? [{ href: "/facturacion", icon: FileText, title: "Facturación", text: "Comprobantes con ARCA, el semáforo de monotributo y tu calendario." }] : []),
+            ...(titular ? [{ href: "/contador", icon: LifeBuoy, title: "Contador", text: "Buscá un estudio en la Red Contable o conectá el tuyo. Tus números no se comparten sin tu permiso." }] : []),
+            ...(titular ? [{ href: "/flotas", icon: Ship, title: "Flotas", text: "Entre 3 y 20 personas piden juntas una propuesta a un estudio." }] : []),
+          ].map((x) => (
+            <li key={x.href}>
+              <Link href={x.href} className="group flex h-full items-start gap-3 rounded-md border border-line bg-surface p-4 transition-colors hover:border-navy/40 sm:p-5">
+                <x.icon className="mt-0.5 size-5 shrink-0 text-rose-deep" strokeWidth={1.6} aria-hidden />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-body font-semibold text-ink group-hover:underline group-hover:underline-offset-4">{x.title}</span>
+                  <span className="mt-0.5 block text-meta text-muted">{x.text}</span>
+                </span>
+                <ArrowRight className="mt-0.5 size-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <Link href="/grupos" data-tour="grupos" className="group flex items-center gap-4 rounded-md border border-line bg-surface p-5 transition-colors hover:border-muted">
-        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
-          <Wallet className="size-6" strokeWidth={1.5} aria-hidden />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-title font-medium text-ink">Grupos de gastos</span>
-          <span className="block text-ui text-muted">Dividí gastos con socios, clientes o amigos. {titular ? "Lo deducible queda marcado para tu contabilidad." : "Faro calcula quién le debe a quién."}</span>
-        </span>
-        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
-      </Link>
+      {titular && <FirstSteps />}
 
-      {!titular ? null : (
-        <>
-      <FirstSteps />
-
-      {activity.length > 0 && (
-        <section aria-labelledby="actividad" className="border border-line bg-surface p-5">
-          <h2 id="actividad" className="text-title font-medium text-ink">
+      {titular && activity.length > 0 && (
+        <section aria-labelledby="actividad" className="rounded-md border border-line bg-surface p-4 sm:p-5">
+          <h2 id="actividad" className="text-title font-semibold text-ink">
             Gastos de tu actividad
           </h2>
           <p className="mt-1 text-ui text-muted">Los que marcaste como de la actividad o deducibles, con su comprobante. Quedan listos para tu contabilidad.</p>
@@ -147,52 +143,11 @@ export default async function PersonalHome({ searchParams }: { searchParams: Pro
                     )}
                   </span>
                 </span>
-                <span className="shrink-0 tabular-nums">{formatMoney(a.amount, a.currency)}</span>
+                <span className="num shrink-0">{formatMoney(a.amount, a.currency)}</span>
               </li>
             ))}
           </ul>
         </section>
-      )}
-
-      <section aria-labelledby="pronto">
-        <h2 id="pronto" className="text-meta font-medium uppercase tracking-wide text-muted">
-          Próximamente
-        </h2>
-        <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-          {(t?.kind === "persona" ? [] : SOON).map((s) => (
-            <li key={s.title} className="flex gap-3 border border-dashed border-line bg-surface/60 p-4">
-              <s.icon className="mt-0.5 size-5 shrink-0 text-gold-ink" strokeWidth={1.5} aria-hidden />
-              <span>
-                <span className="block font-medium text-ink">{s.title}</span>
-                <span className="block text-ui text-muted">{s.text}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <Link href="/flotas" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
-        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
-          <Ship className="size-6" strokeWidth={1.5} aria-hidden />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-title font-medium text-ink">Flotas</span>
-          <span className="block text-ui text-muted">Entre 3 y 20 personas piden juntas una propuesta a un estudio. Cada uno firma su acuerdo y paga solo lo suyo.</span>
-        </span>
-        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Abrir</span>
-      </Link>
-
-      <Link href="/red-contable" className="group flex items-center gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-muted">
-        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-navy text-gold">
-          <LifeBuoy className="size-6" strokeWidth={1.5} aria-hidden />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-title font-medium text-ink">Necesito un contador</span>
-          <span className="block text-ui text-muted">Compará estudios de la Red: matrícula verificada, reseñas de clientes reales y un orden sin posiciones pagas. Tus números no se comparten hasta que vos lo autorices.</span>
-        </span>
-        <span className="text-ui font-medium text-ink underline-offset-4 group-hover:underline">Ver la Red</span>
-      </Link>
-        </>
       )}
     </div>
   );

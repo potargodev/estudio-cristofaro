@@ -27,7 +27,7 @@ export async function OrgExpensesTab({ orgId, studioId }: { orgId: string; studi
     <div className="grid gap-8">
       <section>
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="font-display text-headline">Gastos de la organización</h2>
+          <h2 className="text-title font-semibold">Gastos de la organización</h2>
           <p className="text-ui text-muted">{Object.entries(totals).map(([c, v]) => formatMoney(v, c)).join(" · ") || "Sin gastos"}</p>
         </div>
         <p className="mt-1 text-ui text-muted">Rendiciones aprobadas y grupos de gastos marcados como de la empresa o deducibles.</p>
@@ -55,7 +55,7 @@ export async function OrgExpensesTab({ orgId, studioId }: { orgId: string; studi
         </ul>
       </section>
       <section>
-        <h2 className="font-display text-headline">Rendiciones del equipo</h2>
+        <h2 className="text-title font-semibold">Rendiciones del equipo</h2>
         <ul className="mt-4 divide-y divide-line border-y border-line">
           {rends.map(({ r, employee }) => (
             <li key={r.id} className="flex items-start justify-between gap-3 py-3 text-ui">

@@ -104,9 +104,7 @@ export default async function FlotasPage({ searchParams }: { searchParams: Promi
             {mine.map((f) => (
               <li key={f.id}>
                 <Link href={`/flotas/${f.id}`} className="flex items-center gap-3 px-5 py-4 hover:bg-canvas">
-                  <span className="grid size-10 place-items-center rounded-md bg-navy text-gold">
-                    <Ship className="size-5" strokeWidth={1.5} aria-hidden />
-                  </span>
+                  <Ship className="size-5 shrink-0 text-rose-deep mt-0.5" strokeWidth={1.5} aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="block text-body font-medium">{f.name}</span>
                     <span className="block text-meta text-muted">

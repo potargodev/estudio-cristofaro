@@ -39,7 +39,7 @@ export default async function ModuloGate({ params, searchParams }: { params: Pro
           {a.state === "proximamente" ? <Sparkles className="size-3.5" aria-hidden /> : <Lock className="size-3.5" aria-hidden />}
           {a.state === "proximamente" ? "Próximamente" : `Disponible en el plan ${plan?.name ?? "superior"}`}
         </p>
-        <h2 className="mt-2 font-display text-headline leading-tight">{m.name}</h2>
+        <h2 className="mt-2 text-title font-semibold leading-tight">{m.name}</h2>
         <p className="mt-3 text-lead text-muted">{m.description}</p>
         {a.state === "proximamente" ? (
           <p className="mt-6 text-body text-muted">Lo estamos construyendo. {plan ? `Va a estar incluido desde el plan ${plan.name}.` : ""} Te avisamos cuando esté listo.</p>

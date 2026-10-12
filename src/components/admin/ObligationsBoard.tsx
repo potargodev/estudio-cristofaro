@@ -42,7 +42,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={cn("h-7 rounded-md border px-2.5 text-meta transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
+      className={cn("h-(--control-h-sm) rounded-md border px-2.5 text-meta transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted")}
     >
       {children}
     </button>

@@ -33,9 +33,7 @@ export default async function ModulosPage({ searchParams }: { searchParams: Prom
           const inPlans = plans.filter((p) => p.modules.includes(m.key)).map((p) => p.name);
           return (
             <li key={m.key} className="flex flex-wrap items-center gap-4 rounded-lg border border-line bg-surface p-4">
-              <span className="grid size-10 shrink-0 place-items-center rounded-md bg-navy text-gold">
-                <ModuleIcon name={m.icon} className="size-5" />
-              </span>
+              <ModuleIcon name={m.icon} className="size-5 shrink-0 text-rose-deep mt-0.5" />
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-ink">
                   {m.name} <code className="ml-1 text-caption font-normal text-muted">{m.key}</code>
@@ -49,7 +47,7 @@ export default async function ModulosPage({ searchParams }: { searchParams: Prom
                   <form key={v} action={setModuleReleaseAction}>
                     <input type="hidden" name="module" value={m.key} />
                     <input type="hidden" name="status" value={v} />
-                    <button disabled={!owner || st === v} className={cn("h-8 rounded-md border px-3 text-caption", st === v ? "border-navy bg-navy text-paper" : "border-line hover:border-muted")}>
+                    <button disabled={!owner || st === v} className={cn("h-(--control-h-sm) rounded-md border px-3 text-caption", st === v ? "border-navy bg-navy text-paper" : "border-line hover:border-muted")}>
                       {label}
                     </button>
                   </form>

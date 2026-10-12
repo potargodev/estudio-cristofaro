@@ -74,7 +74,8 @@ async function expenseGroup(db: Db, studioId: string, name: string, type: "viaje
   const members = await db.insert(group_members).values(people.map((p, i) => ({ group_id: g.id, user_id: p.id, name: p.name, email: p.email, role: i === 0 ? ("admin" as const) : ("miembro" as const), payment_alias: `${p.name.split(" ")[0].toLowerCase()}.mp` }))).returning({ id: group_members.id });
   for (const it of items) {
     const [e] = await db.insert(expenses).values({ group_id: g.id, description: it.desc, amount: cents(it.amount), currency: it.currency ?? "ARS", fx_rate: it.currency === "USD" ? "1180" : null, fx_source: it.currency === "USD" ? "mep" : null, date: day(-it.daysAgo), category: it.cat, created_by: members[it.payer].id, created_at: ago(it.daysAgo) }).returning({ id: expenses.id });
-    const base = it.currency === "USD" ? Math.round(cents(it.amount) * 1180) : cents(it.amount);
+    // Pagos y partes en la moneda del gasto (la cotización queda en el gasto)
+    const base = cents(it.amount);
     await db.insert(expense_payers).values({ expense_id: e.id, member_id: members[it.payer].id, amount: base });
     const shares = splitExpense(base, { method: "iguales", members: members.map((m) => m.id) });
     await db.insert(expense_shares).values(Object.entries(shares).map(([member_id, amount]) => ({ expense_id: e.id, member_id, amount })));

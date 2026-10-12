@@ -195,7 +195,7 @@ export function DataTable({
                       aria-pressed={on}
                       onClick={() => toggleFilter(f.key, o.value)}
                       className={cn(
-                        "h-7 rounded-md border px-2.5 text-meta transition-colors",
+                        "h-(--control-h-sm) rounded-md border px-2.5 text-meta transition-colors",
                         on ? "border-navy bg-navy text-paper" : "border-line bg-surface text-ink hover:border-muted",
                       )}
                     >
@@ -248,8 +248,8 @@ export function DataTable({
       ) : (
         <>
           {/* Escritorio: tabla */}
-          <div className="hidden md:block">
-            <table className="w-full border-collapse text-ui">
+          <div className="relative hidden overflow-x-auto md:block">
+            <table className="w-full min-w-[56rem] table-fixed border-collapse text-ui">
               <caption className="sr-only">{caption}</caption>
               <thead className="sticky top-[var(--app-top,3.5rem)] z-10 bg-canvas">
                 <tr className="border-b border-line text-meta text-muted">
@@ -343,7 +343,7 @@ export function DataTable({
                   setPageSize(Number(e.target.value));
                   setPage(0);
                 }}
-                className="h-8 rounded-md border border-line bg-surface px-2 text-ink"
+                className="h-(--control-h-sm) rounded-md border border-line bg-surface px-2 text-ink"
               >
                 {PAGE_SIZES.map((s) => (
                   <option key={s}>{s}</option>
