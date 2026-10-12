@@ -27,6 +27,8 @@ export ARCA_PADRON_URL=http://localhost:4060/sr-padron/webservices/personaServic
 export MERCADOPAGO_API_URL=http://localhost:4070 MERCADOPAGO_AUTH_URL=http://localhost:4070 MERCADOPAGO_MOCK_URL=http://localhost:4070/checkout/v1/redirect
 export MP_CLIENT_ID=mock MP_CLIENT_SECRET=mock MP_MOCK_WEBHOOK_SECRET=mock-webhook-secret
 export WHATSAPP_API_URL=http://localhost:4080 CRON_SECRET=secreto-de-pruebas ALLOW_PRIVATE_URLS=true
+# Marca blanca: con APP_HOSTS cargado, otro host (el dominio propio de f9-navegador) sirve solo el portal
+export APP_HOSTS=localhost
 export FARO_URL=http://localhost:3000 PW="${PW:-/opt/node22/lib/node_modules/playwright/index.mjs}"
 pkill -f "mocks/.*/server.mjs" 2>/dev/null; pkill -f "connector/mock/server.mjs" 2>/dev/null; pkill -f "mock/server.mjs" 2>/dev/null
 for m in openai xubio google dolar arca mercadopago whatsapp; do setsid node "mocks/$m/server.mjs" > "$SALIDA/mock-$m.log" 2>&1 & done
@@ -34,6 +36,8 @@ for m in openai xubio google dolar arca mercadopago whatsapp; do setsid node "mo
 sleep 2
 
 node dist/migrate.mjs 2>/dev/null || npx tsx scripts/migrate.ts > "$SALIDA/migrate.log" 2>&1
+# Como en staging: el admin del seed es también el owner de Faro (las pruebas usan su sesión en el Faro Manager)
+export FARO_OWNER_EMAIL="$ADMIN_EMAIL"
 npx tsx scripts/seed.ts > "$SALIDA/seed.log" 2>&1
 node scripts/pruebas/datos.mjs > "$SALIDA/datos.log" 2>&1
 node scripts/pruebas/proveedor.mjs > "$SALIDA/proveedor.log" 2>&1

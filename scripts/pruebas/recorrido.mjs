@@ -82,10 +82,16 @@ for (const [perfil, cfg] of Object.entries(PERFILES)) {
         // Contraste del texto contra el fondo real (el primer ancestro con fondo opaco)
         const rgb = (c) => (c.match(/[\d.]+/g) ?? []).map(Number);
         const lum = ([r, g, b]) => [r, g, b].map((v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+        // Fondo efectivo: el primer ancestro con color opaco. Con una imagen, un degradé o un
+        // fondo semitransparente en el camino no se puede saber: no se mide (sin falsos positivos)
         const bgOf = (e) => {
           for (let n = e; n; n = n.parentElement) {
-            const c = rgb(getComputedStyle(n).backgroundColor);
-            if (c.length >= 3 && (c[3] ?? 1) > 0.9 && !getComputedStyle(n).backgroundImage.includes("gradient")) return c;
+            const st = getComputedStyle(n);
+            if (st.backgroundImage !== "none") return null;
+            const c = rgb(st.backgroundColor);
+            const a = c[3] ?? 1;
+            if (c.length >= 3 && a > 0.9) return c;
+            if (c.length >= 3 && a > 0.05) return null;
           }
           return null;
         };

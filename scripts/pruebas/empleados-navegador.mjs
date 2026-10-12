@@ -135,7 +135,7 @@ check("recordatorio a quien no firmó", await seen(a, "Le recordamos a 1 persona
 // ─── Comunicados ───
 await a.goto(`${S}/comunicados`);
 await a.getByLabel("Título").fill("Cambio de horario");
-await a.getByLabel("Texto").fill("Desde el lunes entramos a las 9.");
+await a.getByRole("textbox", { name: "Texto", exact: true }).fill("Desde el lunes entramos a las 9.");
 await a.getByLabel("Para").selectOption("Administración");
 await a.locator('input[name="files"]').setInputFiles({ name: "horarios.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n%h\n%%EOF\n") });
 await a.getByRole("button", { name: "Enviar" }).click();
@@ -152,7 +152,7 @@ await a.goto(`${S}/comunicados/${annId}`);
 check("el estudio ve quién confirmó", await seen(a, "Confirmó el"));
 await a.goto(`${S}/comunicados`);
 await a.getByLabel("Título").fill("Aviso a Ventas");
-await a.getByLabel("Texto").fill("Reunión el viernes.");
+await a.getByRole("textbox", { name: "Texto", exact: true }).fill("Reunión el viernes.");
 await a.getByLabel("Para").selectOption("Ventas");
 await a.getByRole("button", { name: "Enviar" }).click();
 const ventasId = a.url().match(/comunicados\/([0-9a-f-]{36})/)?.[1];

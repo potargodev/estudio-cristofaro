@@ -44,6 +44,8 @@ check("pestaña Automatizaciones del Vigía con plantillas", (await seen(a, "Pla
 await a.getByLabel("Contale al Vigía qué querés automatizar").fill("cada vez que entre una factura de proveedor, avisale a administración");
 await a.getByRole("button", { name: "Armar el flujo" }).click();
 check("borrador armado desde la frase", await seen(a, "Armamos un borrador"));
+// El canvas se carga diferido: esperar a que aparezca
+await a.locator(".react-flow__node").first().waitFor({ timeout: 20000 }).catch(() => undefined);
 check("canvas con el disparador y la acción", (await a.locator(".react-flow__node").count()) === 2 && (await seen(a, "Se leyó un documento con IA")));
 await a.getByRole("button", { name: "Activar" }).click();
 check("flujo de la frase activado", await seen(a, "Flujo activo"));
@@ -53,6 +55,7 @@ await a.goto(`${BASE}/admin/vigia?tab=automatizaciones`);
 await a.getByRole("button", { name: "Usar «Cobro con recordatorios»" }).click();
 await seen(a, "Flujo creado en borrador");
 const cobroId = a.url().match(/flujos\/([0-9a-f-]{36})/)[1];
+await a.locator(".react-flow__node").first().waitFor({ timeout: 20000 }).catch(() => undefined);
 check("plantilla en el canvas con 6 pasos", (await a.locator(".react-flow__node").count()) === 6);
 await a.getByRole("button", { name: "Activar" }).click();
 check("plantilla activada", await seen(a, "Flujo activo"));

@@ -14,10 +14,9 @@ const blocked = (r, from) => r.status >= 300 && r.status < 400 && !r.to.includes
 // Nivel plataforma
 check("un contador no entra a Faro Manager", blocked(await go(d.cookies.contadorA, "/faro-manager"), "/faro-manager"));
 check("el dueño de otro estudio no entra a Faro Manager", blocked(await go(d.cookies.adminB, "/faro-manager"), "/faro-manager"));
-// El dueño del estudio A hace de owner de Faro (con 2FA) para esta prueba
+// El dueño del estudio A es el owner de Faro de las pruebas (f1.mts; las siguientes lo usan así)
 await sql`update users set faro_role = 'faro_owner', two_factor_enabled = true where id = ${d.users.adminA}`;
 check("faro_owner entra a Faro Manager", (await go(d.cookies.adminA, "/faro-manager")).status === 200);
-await sql`update users set faro_role = null where id = ${d.users.adminA}`;
 
 // Tenant estudio y tenant personal
 // Un solo Vigía (§2.o): el Asistente es una pestaña del Vigía
