@@ -93,6 +93,8 @@ correr lectura-navegador node scripts/pruebas/lectura-navegador.mjs
 correr lectura-servidor "${S[@]}" scripts/pruebas/lectura-servidor.mts
 # §2.q · Lectura de compras (ítems, tributos, aprendizaje por proveedor y carga masiva)
 correr lectura-compras "${S[@]}" scripts/pruebas/lectura-compras.mts
+# §2.q · Conciliación con tolerancias, grupos y asientos de ajuste
+correr conciliacion-tolerancias "${S[@]}" scripts/pruebas/conciliacion-tolerancias.mts
 # F7 · Cobros
 correr cobros-navegador node scripts/pruebas/cobros-navegador.mjs
 correr cobros-servidor "${S[@]}" scripts/pruebas/cobros-servidor.mts

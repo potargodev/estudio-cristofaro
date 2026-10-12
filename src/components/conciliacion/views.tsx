@@ -1,6 +1,8 @@
-import { ArrowDownLeft, ArrowUpRight, Landmark } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, BookOpenCheck, Landmark, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
-import { deleteRuleAction, importStatementAction, movementAction, ruleAction } from "@/app/admin/conciliacion-actions";
+import { accountAction, deleteRuleAction, entryAction, groupAction, importStatementAction, movementAction, ruleAction } from "@/app/admin/conciliacion-actions";
+import { Table, ToneBadge } from "@/components/ds";
+import type { GroupSuggestion } from "@/modules/bank-rec/core";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import type { StaffUser } from "@/lib/auth";
@@ -179,6 +181,60 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
           </div>
         ))}
       </dl>
+      {v.account && (
+        <details className="rounded-md border border-line bg-surface p-4">
+          <summary className="flex cursor-pointer items-center gap-2 text-ui font-medium">
+            <SlidersHorizontal className="size-4 text-muted" aria-hidden /> Tolerancias y cuentas del ajuste
+            <span className="text-meta font-normal text-muted">
+              · hasta {v.tolerance.days} días y {v.tolerance.kind === "fijo" ? formatMoney(v.tolerance.value * 100) : `${v.tolerance.value} %`}
+            </span>
+          </summary>
+          <form action={accountAction} className="mt-4 grid gap-3 sm:grid-cols-3">
+            <Org id={orgId} />
+            <input type="hidden" name="statement" value={v.st.id} />
+            <input type="hidden" name="account_id" value={v.account.id} />
+            <label className="text-meta text-muted">
+              Días de diferencia
+              <input name="days" type="number" min={0} max={120} defaultValue={v.account.date_tolerance_days} className={field} />
+            </label>
+            <label className="text-meta text-muted">
+              Diferencia de monto
+              <select name="kind" defaultValue={v.account.amount_tolerance_kind} className={field}>
+                <option value="fijo">Fija en pesos</option>
+                <option value="porcentaje">Porcentaje</option>
+              </select>
+            </label>
+            <label className="text-meta text-muted">
+              Hasta
+              <input name="value" inputMode="decimal" defaultValue={v.account.amount_tolerance} className={field} />
+            </label>
+            <label className="text-meta text-muted">
+              Cuenta del banco
+              <input name="ledger" defaultValue={v.account.ledger_account} className={field} />
+            </label>
+            <label className="text-meta text-muted">
+              Diferencias de redondeo
+              <input name="rounding" defaultValue={v.account.rounding_account} className={field} />
+            </label>
+            <label className="text-meta text-muted">
+              Comisiones y gastos bancarios
+              <input name="fees" defaultValue={v.account.fee_account} className={field} />
+            </label>
+            <label className="text-meta text-muted">
+              Deudores (cobros)
+              <input name="receivable" defaultValue={v.account.receivable_account} className={field} />
+            </label>
+            <label className="text-meta text-muted">
+              Proveedores (pagos)
+              <input name="payable" defaultValue={v.account.payable_account} className={field} />
+            </label>
+            <p className="text-caption text-muted sm:col-span-3">Dentro de la tolerancia, Faro sugiere el cruce y, si los importes no dan exacto, arma el asiento de ajuste: hasta $ 10 va a redondeo y arriba, a gastos bancarios. Queda en borrador salvo que actives «Asentar las diferencias de conciliación» en Vigía → Agente → Rutinas.</p>
+            <div className="sm:col-span-3">
+              <SubmitButton variant="secondary" pendingText="…">Guardar tolerancias</SubmitButton>
+            </div>
+          </form>
+        </details>
+      )}
       <section aria-label="Movimientos" className="grid gap-2">
         <h2 className="text-lead font-semibold">Movimientos</h2>
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
@@ -186,6 +242,11 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
             const st = STATUS[m.status] ?? STATUS.sin_conciliar;
             const open = m.status === "sin_conciliar" || m.status === "sugerido";
             const matchable = m.cls === "cobro" || m.cls === "pago";
+            const group = m.match_group_id ? v.groups.find((x) => x.id === m.match_group_id) : null;
+            const gs = (m.group_suggestion as unknown as GroupSuggestion | null) ?? null;
+            const g = group ? { candidateIds: group.candidate_ids, movementIds: group.movement_ids, reasons: group.difference ? [`diferencia de ${formatMoney(Math.abs(group.difference))}`] : ["la suma da exacto"] } : gs;
+            const entry = group?.journal_entry_id ? v.entries.find((e) => e.id === group.journal_entry_id) : null;
+            const leader = !gs || gs.movementIds[0] === m.id;
             return (
               <li key={m.id} className="grid gap-2 px-4 py-3" aria-label={m.description}>
                 <div className="flex items-start gap-3">
@@ -199,7 +260,22 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
                   </div>
                   <span className={`num text-ui ${m.amount > 0 ? "text-[#1f5f36]" : ""}`}>{formatMoney(m.amount)}</span>
                 </div>
-                {(m.status === "sugerido" || m.status === "conciliado") && (
+                {g && (
+                  <div className="grid gap-1 pl-7 text-meta">
+                    <p>
+                      {m.status === "conciliado" ? (group?.kind === "1:1" ? "Cruza con" : "Conciliado en grupo") : "Sugerencia en grupo"}: {g.candidateIds.map((cid) => label(cid)).join(" + ")}
+                      {g.movementIds.length > 1 && <span className="text-muted"> · con {g.movementIds.length} movimientos</span>}
+                    </p>
+                    {(g.reasons?.length ?? 0) > 0 && <p className="text-muted">{g.reasons?.join(", ")}</p>}
+                    {entry && (
+                      <p className="flex flex-wrap items-center gap-2">
+                        <ToneBadge tone={entry.status === "registrado" ? "ok" : "progress"}>Asiento {entry.status}</ToneBadge>
+                        <span className="text-muted">{entry.lines.map((l) => `${l.account} ${l.debit ? `debe ${formatMoney(l.debit)}` : `haber ${formatMoney(l.credit)}`}`).join(" · ")}</span>
+                      </p>
+                    )}
+                  </div>
+                )}
+                {!g && (m.status === "sugerido" || m.status === "conciliado") && (
                   <p className="pl-7 text-meta">
                     {m.status === "sugerido" ? "Sugerencia: " : "Cruza con: "}
                     {label(m.match_id)}
@@ -207,7 +283,20 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
                   </p>
                 )}
                 <div className="flex flex-wrap gap-1.5 pl-7">
-                  {m.status === "sugerido" && (
+                  {m.status === "sugerido" && gs && leader && (
+                    <form action={groupAction}>
+                      <Org id={orgId} />
+                      <input type="hidden" name="statement" value={v.st.id} />
+                      {gs.movementIds.map((x) => (
+                        <input key={x} type="hidden" name="movement" value={x} />
+                      ))}
+                      {gs.candidateIds.map((x) => (
+                        <input key={x} type="hidden" name="candidate" value={x} />
+                      ))}
+                      <SubmitButton pendingText="…">Confirmar el grupo</SubmitButton>
+                    </form>
+                  )}
+                  {m.status === "sugerido" && !gs && (
                     <form action={movementAction}>
                       <Org id={orgId} />
                       <input type="hidden" name="statement" value={v.st.id} />
@@ -231,6 +320,24 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
                       </select>
                       <SubmitButton variant="secondary" pendingText="…">Cruzar con otro</SubmitButton>
                     </form>
+                  )}
+                  {open && matchable && options(m.amount).length > 1 && (
+                    <details className="w-full">
+                      <summary className="cursor-pointer text-meta text-ink underline-offset-4 hover:underline">Cruzar con varios comprobantes</summary>
+                      <form action={groupAction} className="mt-2 grid gap-1.5">
+                        <Org id={orgId} />
+                        <input type="hidden" name="statement" value={v.st.id} />
+                        <input type="hidden" name="movement" value={m.id} />
+                        {options(m.amount).map((c) => (
+                          <label key={c.id} className="flex items-center gap-2 text-meta">
+                            <input type="checkbox" name="candidate" value={c.id} /> {label(c.id)}
+                          </label>
+                        ))}
+                        <div>
+                          <SubmitButton variant="secondary" pendingText="…">Conciliar los elegidos</SubmitButton>
+                        </div>
+                      </form>
+                    </details>
                   )}
                   {open && m.amount < 0 && (
                     <form action={movementAction}>
@@ -269,12 +376,76 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
         <section aria-label="Comprobantes sin movimiento" className="grid gap-2">
           <h2 className="text-lead font-semibold">Comprobantes sin movimiento</h2>
           <ul className="divide-y divide-line rounded-md border border-line bg-surface">
-            {v.pending.map((c) => (
-              <li key={c.id} className="px-4 py-2.5 text-ui">
-                {label(c.id)}
-              </li>
-            ))}
+            {v.pending.map((c) => {
+              const movs = v.movs.filter((m) => (m.status === "sin_conciliar" || m.status === "sugerido") && !m.match_group_id && (m.cls === "cobro" || m.cls === "pago") && (m.amount > 0) === (c.type === "emitido") && Math.abs(m.amount) < c.total);
+              return (
+                <li key={c.id} className="grid gap-1.5 px-4 py-2.5 text-ui">
+                  {label(c.id)}
+                  {movs.length > 1 && (
+                    <details>
+                      <summary className="cursor-pointer text-meta underline-offset-4 hover:underline">Cruzar con varios movimientos</summary>
+                      <form action={groupAction} className="mt-2 grid gap-1.5">
+                        <Org id={orgId} />
+                        <input type="hidden" name="statement" value={v.st.id} />
+                        <input type="hidden" name="candidate" value={c.id} />
+                        {movs.map((m) => (
+                          <label key={m.id} className="flex items-center gap-2 text-meta">
+                            <input type="checkbox" name="movement" value={m.id} /> {formatDate(m.date, "numeric")} · {m.description} · {formatMoney(m.amount)}
+                          </label>
+                        ))}
+                        <div>
+                          <SubmitButton variant="secondary" pendingText="…">Conciliar los elegidos</SubmitButton>
+                        </div>
+                      </form>
+                    </details>
+                  )}
+                </li>
+              );
+            })}
           </ul>
+        </section>
+      )}
+      {v.entries.length > 0 && (
+        <section aria-label="Asientos de ajuste" className="grid gap-2">
+          <h2 className="flex items-center gap-2 text-lead font-semibold">
+            <BookOpenCheck className="size-5 text-rose-deep" aria-hidden /> Asientos de ajuste
+          </h2>
+          <Table label="Asientos de ajuste" minWidth={560}>
+            <thead>
+              <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Cuenta</th>
+                <th scope="col" className="text-right">Debe</th>
+                <th scope="col" className="text-right">Haber</th>
+                <th scope="col">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {v.entries.flatMap((e) =>
+                e.lines.map((l, i) => (
+                  <tr key={`${e.id}-${i}`}>
+                    <td className="num">{i === 0 ? formatDate(e.date, "numeric") : ""}</td>
+                    <td>{l.account}</td>
+                    <td className="num text-right">{l.debit ? formatMoney(l.debit) : ""}</td>
+                    <td className="num text-right">{l.credit ? formatMoney(l.credit) : ""}</td>
+                    <td>
+                      {i === 0 &&
+                        (e.status === "borrador" ? (
+                          <form action={entryAction}>
+                            <Org id={orgId} />
+                            <input type="hidden" name="statement" value={v.st.id} />
+                            <input type="hidden" name="id" value={e.id} />
+                            <SubmitButton variant="secondary" pendingText="…">Registrar</SubmitButton>
+                          </form>
+                        ) : (
+                          <ToneBadge tone={e.status === "registrado" ? "ok" : "neutral"}>{e.status === "registrado" ? "Registrado" : "Anulado"}</ToneBadge>
+                        ))}
+                    </td>
+                  </tr>
+                )),
+              )}
+            </tbody>
+          </Table>
         </section>
       )}
       <RulesSection orgId={orgId} rules={rules} statement={v.st.id} />

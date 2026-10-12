@@ -344,6 +344,13 @@
       "when": 1791818146664,
       "tag": "0048_lectura_compras",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1791819821450,
+      "tag": "0049_conciliacion_tolerancias",
+      "breakpoints": true
     }
   ]
 }

@@ -402,3 +402,15 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Una casilla de mail entrante para recibir comprobantes por mail (pendientes).
+
+## §2.q · Etapa 3: conciliación con tolerancias y ajustes (12 de octubre)
+
+**Qué quedó**
+- **Tolerancias por cuenta bancaria** (días y monto fijo o porcentaje), con las cuentas contables del ajuste; las sugerencias muestran puntaje y motivo y, fuera de la tolerancia, no se sugiere ni se concilia.
+- **Uno con muchos y muchos con uno:** sugeridos cuando la contraparte está en el detalle, o armados a mano; deshacer el grupo entero.
+- **Asiento de ajuste** por la diferencia (redondeo o gastos bancarios contra deudores o proveedores), en borrador para registrar o registrado solo con la automatización «conciliacion.ajuste». Primer pedazo del núcleo contable (`journal_entries`). Migración `0049` (crea las cuentas de los extractos ya importados).
+
+**Qué se probó**
+- `src/modules/bank-rec/core.test.ts` (tolerancias, grupos y asiento).
+- `scripts/pruebas/conciliacion-tolerancias.mts` (27 verificaciones): sugerencia dentro de la tolerancia, fuera de fecha y de monto, asiento en borrador y registrado, automatización, uno con muchos, muchos con uno, deshacer con asiento anulado y aislamiento forzando IDs.
+- `lectura-navegador`, `lectura-servidor` y `lectura-compras` siguen en verde.

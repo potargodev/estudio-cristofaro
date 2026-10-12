@@ -3001,6 +3001,8 @@ export const bank_statements = pgTable(
     rows: jsonb("rows").$type<string[][]>().notNull().default([]),
     total: integer("total").notNull().default(0),
     duplicates: integer("duplicates").notNull().default(0),
+    /** Cuenta bancaria (tolerancias y cuentas del asiento de ajuste, §2.q etapa 3) */
+    bank_account_id: uuid("bank_account_id"),
     created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
     created_at: createdAt(),
   },
@@ -3032,6 +3034,10 @@ export const bank_movements = pgTable(
     match_reasons: jsonb("match_reasons").$type<string[]>(),
     rule_id: uuid("rule_id"),
     note: text("note"),
+    /** Conciliación de uno con muchos o de muchos con uno (bank_matches) */
+    match_group_id: uuid("match_group_id"),
+    /** Sugerencia de grupo: { kind, movementIds, candidateIds, difference, score, reasons } */
+    group_suggestion: jsonb("group_suggestion").$type<Record<string, unknown> | null>(),
     external_id: text("external_id").notNull(),
     raw: jsonb("raw").$type<unknown>(),
     synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
@@ -4380,4 +4386,97 @@ export const smart_batches = pgTable(
     created_at: createdAt(),
   },
   (t) => [index("smart_batches_scope_idx").on(t.studio_id, t.organization_id, t.created_at)],
+);
+
+// ───────────── §2.q · Conciliación con tolerancias, grupos y asientos de ajuste ─────────────
+
+/** Cuenta bancaria de una organización: tolerancias de la conciliación y cuentas contables del ajuste */
+export const bank_accounts = pgTable(
+  "bank_accounts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    bank: text("bank").notNull(),
+    label: text("label"),
+    date_tolerance_days: integer("date_tolerance_days").notNull().default(60),
+    /** fijo (pesos) | porcentaje */
+    amount_tolerance_kind: text("amount_tolerance_kind").notNull().default("porcentaje"),
+    amount_tolerance: numeric("amount_tolerance", { precision: 12, scale: 2 }).notNull().default("2"),
+    ledger_account: text("ledger_account").notNull().default("Banco"),
+    rounding_account: text("rounding_account").notNull().default("Diferencias de redondeo"),
+    fee_account: text("fee_account").notNull().default("Gastos bancarios"),
+    receivable_account: text("receivable_account").notNull().default("Deudores por ventas"),
+    payable_account: text("payable_account").notNull().default("Proveedores"),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  // Una por banco y cuenta (NULLS NOT DISTINCT agregado a mano en la migración)
+  (t) => [uniqueIndex("bank_accounts_idx").on(t.organization_id, t.bank, t.label)],
+);
+
+/** Conciliación confirmada: uno con uno, uno con muchos o muchos con uno, con la diferencia y su ajuste */
+export const bank_matches = pgTable(
+  "bank_matches",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    /** 1:1 | 1:N | N:1 */
+    kind: text("kind").notNull(),
+    movement_ids: jsonb("movement_ids").$type<string[]>().notNull(),
+    candidate_ids: jsonb("candidate_ids").$type<string[]>().notNull(),
+    /** |movimientos| − comprobantes, en centavos */
+    difference: bigint("difference", { mode: "number" }).notNull().default(0),
+    journal_entry_id: uuid("journal_entry_id"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("bank_matches_org_idx").on(t.organization_id, t.created_at)],
+);
+
+/** Línea de un asiento (importes en centavos) */
+export interface JournalLine {
+  account: string;
+  debit: number;
+  credit: number;
+}
+
+/**
+ * Asiento contable de la organización (núcleo propio, principios §22). Hoy los
+ * genera la conciliación (ajustes por diferencias); queda en borrador hasta que
+ * alguien lo registra, salvo con la automatización «conciliacion.ajuste».
+ */
+export const journal_entries = pgTable(
+  "journal_entries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    date: date("date").notNull(),
+    concept: text("concept").notNull(),
+    lines: jsonb("lines").$type<JournalLine[]>().notNull(),
+    /** borrador | registrado | anulado */
+    status: text("status").notNull().default("borrador"),
+    /** conciliacion | manual */
+    source: text("source").notNull(),
+    source_id: uuid("source_id"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    registered_by: uuid("registered_by").references(() => users.id, { onDelete: "set null" }),
+    registered_at: timestamp("registered_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("journal_entries_org_idx").on(t.organization_id, t.date), index("journal_entries_source_idx").on(t.source, t.source_id)],
 );
