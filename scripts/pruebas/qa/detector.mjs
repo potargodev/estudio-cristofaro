@@ -91,6 +91,8 @@ export function detect(opts = {}) {
     }
     const s = cs(c);
     if (scrolls(s)) continue;
+    // Un texto dentro de una línea que termina en puntos suspensivos está cortado a propósito
+    if (s.textOverflow === "ellipsis" && c.contains(e) && r.left < c.getBoundingClientRect().right) continue;
     const cr = c.getBoundingClientRect();
     // Del todo afuera es un carrusel o un panel escondido a propósito; a medias, un recorte
     const outside = r.left >= cr.right - 0.5 || r.right <= cr.left + 0.5 || r.top >= cr.bottom - 0.5 || r.bottom <= cr.top + 0.5;
@@ -131,14 +133,17 @@ export function detect(opts = {}) {
         const ix = Math.min(a.right, b.right) - Math.max(a.left, b.left);
         const iy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
         // Superposición buscada: márgenes negativos (avatares apilados) o una capa con z-index
-        const neg = [kids[i], kids[j]].some((k) => parseFloat(cs(k).marginLeft) < 0 || parseFloat(cs(k).marginTop) < 0 || cs(k).zIndex !== "auto");
+        const neg = [kids[i], kids[j]].some((k) => ["marginLeft", "marginRight", "marginTop", "marginBottom"].some((m) => parseFloat(cs(k)[m]) < 0) || cs(k).zIndex !== "auto");
         if (ix > 2 && iy > 2 && !neg) push("superpuestos", kids[j], `con ${sel(kids[i])} (${Math.round(ix)}×${Math.round(iy)} px)`);
       }
   }
 
   // ── Menús, popovers, diálogos y tooltips: completos y arriba de todo ──
   const floating = all.filter((e) => e.matches("[role=menu],[role=listbox],[role=dialog],[role=alertdialog],[role=tooltip],[data-radix-popper-content-wrapper] > *,[data-popover]"));
+  // Con un diálogo modal abierto, lo que queda debajo está tapado a propósito
+  const modal = [...document.querySelectorAll("[aria-modal=true]")].find((m) => m.getBoundingClientRect().width > 0);
   for (const f of floating) {
+    if (modal && !modal.contains(f) && !f.contains(modal)) continue;
     const r = f.getBoundingClientRect();
     if (r.left < -1 || r.top < -1 || r.right > W + 1 || r.bottom > H + 1) push("flotante cortado por la pantalla", f, `${Math.round(r.left)},${Math.round(r.top)} → ${Math.round(r.right)},${Math.round(r.bottom)} en ${W}×${H}`);
     const c = clipOf(f);
@@ -151,9 +156,12 @@ export function detect(opts = {}) {
       [r.left + 8, r.bottom - 8],
       [r.right - 8, r.top + 8],
     ];
-    for (const [x, y] of pts) {
-      if (x < 0 || y < 0 || x > W || y > H) continue;
-      const top = document.elementFromPoint(x, y);
+    // elementFromPoint saltea lo que tiene pointer-events: none (los tooltips): se prende un momento para medir
+    const prevPE = f.style.pointerEvents;
+    f.style.pointerEvents = "auto";
+    const tops = pts.map(([x, y]) => (x < 0 || y < 0 || x > W || y > H ? null : document.elementFromPoint(x, y)));
+    f.style.pointerEvents = prevPE;
+    for (const top of tops) {
       if (top && !f.contains(top) && !top.closest("[data-qa-ignore]")) {
         push("flotante tapado", f, `por ${sel(top)}`);
         break;
