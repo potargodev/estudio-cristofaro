@@ -1,4 +1,6 @@
-# Resumen ejecutivo — Plataforma Estudio Cristofaro
+# Resumen ejecutivo — Estudio Cristofaro con Faro
+
+> **Alcance de este resumen:** lo que Estudio Cristofaro (el tenant #1 de Faro, cliente cero) ofrece a sus empresas cliente desde el portal. La plataforma completa (personas, autónomos, otros estudios, planes de Faro, Red Contable, Mis cajas, Vigía) está en `docs/faro-producto.md`, y la ley conceptual en `docs/principios-producto.md`, que manda sobre todo lo demás. Los planes de abajo son los **planes de servicio del estudio** para sus organizaciones (se editan en Configuración → Sitio web → Planes), no los planes de Faro.
 
 ## Qué estamos construyendo
 
@@ -95,7 +97,9 @@ Tango es una fuente interna, no el producto que se vende al cliente. Su integrac
 3. Planes, límites y activación de módulos por organización.
 4. Responsable asignado, onboarding, tareas, línea de tiempo y auditoría.
 5. Resumen mensual, automatizaciones y bandeja de aprobaciones.
-6. Extracción documental, copiloto de IA y ampliación de Tango.
+6. Extracción documental, asistente de IA (hoy el **Vigía**) y ampliación de Tango.
+
+Estado (octubre 2026): las seis prioridades están construidas; lo que falta configurar está en `docs/pendientes-configuracion.md`.
 
 ## Resultado esperado
 

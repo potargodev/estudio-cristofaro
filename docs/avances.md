@@ -1,6 +1,8 @@
 # Avances
 
-Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta configurar. El detalle de lo pendiente está en `docs/pendientes-configuracion.md` y las decisiones en `docs/decisiones.md`.
+Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta configurar. El detalle de lo pendiente está en `docs/pendientes-configuracion.md` (una sola lista por prioridad) y las decisiones en `docs/decisiones.md`.
+
+F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de navegación se cerraron antes de que existiera este registro; su estado está en `docs/faro-producto.md` §6. Donde una fase vieja dice «Red de estudios», hoy es la **Red Contable** (etapa 6 de principios).
 
 ## F3 · ARCA + Faro Personal (octubre 2026)
 
@@ -132,7 +134,7 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 - **Indicadores** (`insights`, plan Avanzado): pestaña **Indicadores** en Inicio (organizaciones, honorarios cobrados y por cobrar, primera respuesta, tareas, facturación de los clientes, vencimientos a término y solicitudes) y **Resumen → Indicadores** en la ficha (ventas, gastos, resultado, próximos vencimientos, honorarios pendientes). Gráficos SVG con tabla para lectores de pantalla. Herramientas `indicadores_estudio` e `indicadores_organizacion`.
 - **Marca blanca** (`white_label`, plan Avanzado, **Configuración → Avanzado**): nombre, colores con control de contraste y logo en el portal y en su ingreso, siempre con «Con tecnología de Faro»; dominio propio con verificación por TXT y ruteo por host en el middleware (`APP_HOSTS`, como `FARO_HOSTS`).
 - **WhatsApp Business Cloud API** (`whatsapp`, simulador en `mocks/whatsapp`): número de Faro en **Faro Manager → Plataforma → WhatsApp** y, por estudio, número de Faro compartido o propio en **Configuración → Avanzado → WhatsApp**; plantillas sincronizadas con su estado; verificación del número del cliente con código (portal → Mi cuenta → WhatsApp) y baja de avisos; los avisos de vencimientos, documentos y respuestas también salen por WhatsApp; webhook firmado e idempotente: texto → solicitud, foto o PDF → Lectura inteligente o Documentos, número desconocido → se le explica cómo verificar; acuses de entrega y lectura. Cada mensaje guarda fuente, ID externo, fecha, validación de la firma y el original. Herramientas `listar_mensajes_whatsapp` y `enviar_whatsapp` (sensible → Aprobaciones). Evento `whatsapp.recibido`.
-- **Red de estudios:** pestaña **Mapa** (SVG propio, por provincia) y **Agendar llamada** desde la ficha del estudio con su agenda pública.
+- **Red de estudios** (hoy Red Contable): pestaña **Mapa** (SVG propio, por provincia) y **Agendar llamada** desde la ficha del estudio con su agenda pública.
 - Migración `0034_f9_consultas_marca_whatsapp`; módulos `crm`, `ai_consults`, `insights`, `white_label` y `whatsapp` disponibles en el registro con plan, roles, ubicación, eventos y herramientas. Ayuda nueva: Tareas, Consultas con IA, Indicadores, Marca blanca y WhatsApp; actualizada: Buscar un estudio en la Red.
 
 **Qué se probó**
@@ -230,7 +232,7 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 - **Desconexión con mediación:** cualquiera inicia con motivo → En cierre (solo lectura 30 días) → checklist (honorarios en cero, pendientes entregados y constancia de los dos) → cerrada, sin acceso y con el registro del período; si hay diferencias, en disputa con canal de mensajes.
 - **Calificaciones:** a los 30 días, cada 6 meses (salteables) y al cierre. Solo se guardan; el estudio ve las suyas. Lo público no cambia.
 - **Vigía:** `consultar_contador` en el Vigía personal y `listar_cuentas_conectadas` en el del estudio. Todo auditado (`conexion.*`).
-- Ayuda: nuevos `red-de-estudios/conectar-un-contador` y `organizaciones/cuentas-conectadas`.
+- Ayuda: nuevos `red-de-estudios/conectar-un-contador` (hoy `red-contable/conectar-un-contador`) y `organizaciones/cuentas-conectadas`.
 
 **Qué se probó**
 - `principios-servidor.mts 5` (46/46): estudio sin conexión no ve nada; otro estudio forzando el ID no ve ni opera; admisión con resumen de lo autorizado y sin cajas personales; entrevista, información, aceptar, rechazar con motivo; firmas (políticas, nombre) y activación con el acuerdo; datos en vivo sin copia; con alcance fiscal no ve las cajas personales (y sí al activarlas, y deja de verlas al apagarlas); delegar y mirar con antes y después; proponer y aprobar; cierre con solo lectura, disputa, checklist y constancia de los dos; conexión cerrada sin acceso y el dato en la cuenta de la persona; auditoría; encuestas a los 30 días, salteadas, a los 6 meses y al cierre; migración de Flotas.
@@ -342,3 +344,24 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 
 **Qué falta configurar**
 - Cargar la demo en staging desde el Faro Manager (o `node dist/demo.mjs seed` en la consola de `web`) y guardar las contraseñas que muestra.
+
+## Auditoría de octubre 2026 (12 de octubre)
+
+**Qué quedó**
+- **«Ver como…»** (Faro Manager → Plataforma → Demo): solo `faro_owner` con 2FA y solo sobre usuarios de la demo; sesión real de hasta 2 horas, franja «Viendo como…» con «Volver a mi usuario» y auditoría (`demo_impersonations`, migración `0044`).
+- **La demo y lo real no se cruzan:** Red Contable, fichas, conexiones con contador, postulantes, invitaciones (organizaciones, grupos, Bitácora compartida, Flotas) y uniones por enlace (grupos y cajas) solo dentro del mismo mundo; el registro no acepta el dominio de la demo; borrar la demo se frena si encuentra usuarios reales adentro.
+- **Seguridad:** 2FA del estudio exigido en todas las rutas con datos (API, descargas, exportaciones y facturas); cabeceras CSP, HSTS, X-Frame-Options, nosniff, Referrer-Policy y Permissions-Policy; mismo origen en las APIs que modifican datos; URLs elegidas por un tenant (IA, MCP externos, Tango) sin acceso a la red interna; webhooks de Mercado Pago, WhatsApp y Tango con tope de cuerpo y límite por IP, y Tango sin reenvíos (replay).
+- **Enlace mágico** con la misma respuesta para cualquier mail («Si … tiene acceso, te llega un enlace»); una cuenta del estudio recibe en su casilla el aviso de que entra con contraseña.
+- **Acceso asistido acotado:** no cambia equipo, credenciales de IA, Mercado Pago, MCP, conexiones ni plan; un usuario de la demo nunca lo usa.
+- **Agenda:** mails, evento e ICS con el nombre del estudio que atiende; el emisor del 2FA es «Faro».
+- **Portal:** tarjeta Sueldos en el Inicio para los roles con sueldos.
+- **Tareas internas con turno** (`job_leases`, migración `0045`): cada tarea y su cron externo corren en una sola instancia a la vez; `JOBS=off` las apaga todas y `<TAREA>_JOBS=off`, una.
+- **Backup:** `scripts/backup/` (base y `/data/uploads`, con verificación y retención) y restauración probada en local (`docs/backup.md`). 28 índices nuevos (migración `0046`).
+- **Limpieza y rendimiento:** ESLint y knip sin errores, un solo formato de montos y fechas, `npm audit` sin altas ni críticas en producción, la app sin tamaños, alturas, radios ni colores a mano, y carga diferida del canvas de flujos y del Markdown de los chats.
+
+**Qué se probó**
+- `scripts/pruebas/ver-como.mjs`, `scripts/pruebas/auditoria-seguridad.mts` y `scripts/pruebas/tareas-internas.mts`.
+- Restauración del backup en una base vacía con la demo cargada: mismas cantidades y archivos idénticos (`docs/backup.md`).
+
+**Qué falta configurar**
+- Instalar el backup con cron en el VPS, confirmar que Traefik no deja pasar un `X-Forwarded-For` del cliente y borrar las ramas remotas viejas (ver pendientes).

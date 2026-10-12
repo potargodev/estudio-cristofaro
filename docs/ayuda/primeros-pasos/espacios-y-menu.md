@@ -11,15 +11,15 @@ Faro junta varias cosas en una sola cuenta: tus finanzas personales, el estudio 
 
 ## Los espacios
 
-- **Personal:** lo tuyo y de nadie más. **Inicio** (el resumen del mes), **Bitácora**, **Grupos** y, si tenés una cuenta personal, **Contador** (la Red Contable, tus Flotas y tu estudio, si contrataste uno).
+- **Personal:** lo tuyo y de nadie más. **Inicio** (el resumen del mes), **Mis cajas** (tu caja personal, la de negocio y las compartidas), **Bitácora**, **Grupos** y, si tenés una cuenta personal, **Contador** (tu contador conectado, la Red Contable, tu postulación y tus Flotas). Si sos autónomo, también **Facturación**.
 - **Estudio:** el trabajo del estudio con sus organizaciones. Lo ve el equipo del estudio.
-  - **Operación:** Inicio, Organizaciones, Vencimientos y Solicitudes.
-  - **Negocio:** Comercial, con las pestañas Consultas, Agenda y Perfil en la Red.
-  - **Configuración** (fija abajo del menú), con las pestañas Equipo y usuarios, Plan y módulos, Conexiones, IA, Rubros y plantillas, Sitio web (si el estudio tiene sitio) y Seguridad. Cada rol ve las que puede usar.
-  - La ficha de cada organización tiene las pestañas **Resumen** (datos, rubro, plan, miembros del portal, equipo, gastos y actividad), **Vencimientos**, **Documentos**, **Solicitudes** y **Conexiones**.
-- **Organización:** el portal de la empresa que atiende el estudio. Lo ve cada persona según su rol: **Inicio**, **Vencimientos**, **Documentos**, **Solicitudes** y **Empresa** (con las pestañas Gastos de la empresa, Rendiciones y los módulos activos). **Agendar una llamada** y **Reseñar al estudio** están en la tarjeta del estudio del Inicio, y **Mi equipo**, en el menú de tu cuenta. Si tu rol ve sueldos y la organización tiene el módulo, el Inicio arranca con la tarjeta **Sueldos**: recibos firmados no conformes, recibos sin firmar, recibos en revisión del estudio y novedades de personal abiertas.
-- **Empleado:** **Inicio**, **Rendiciones** y **Grupos**. Nada más.
-- **Faro Manager:** la administración de la plataforma. Solo para el equipo de Faro: **Resumen**, **Tenants** (lista, pedidos de plan y alta manual), **Catálogo** (planes y precios, módulos, plantillas e IA de la plataforma), **Red** y **Plataforma** (auditoría, opiniones de la ayuda, mensajes reportados y uso y costos de IA).
+  - **Operación:** Inicio, Organizaciones, Vencimientos, Solicitudes y, si el plan lo incluye, Tareas.
+  - **Negocio:** Comercial, con las pestañas Consultas, Buscar clientes (la Red Contable), Agenda, Conexiones (con las personas que conectan su cuenta) y Perfil en la Red; y, si el plan lo incluye, Honorarios.
+  - **Configuración** (fija abajo del menú), con las pestañas Equipo y usuarios, Plan y módulos, Conexiones, IA, Rubros y plantillas, Sitio web (si el estudio tiene sitio), Seguridad y Avanzado (marca blanca y WhatsApp). Cada rol ve las que puede usar.
+  - La ficha de cada organización tiene las pestañas **Resumen** (datos, rubro, plan, miembros del portal, equipo, gastos, actividad e indicadores), **Vencimientos**, **Documentos**, **Solicitudes**, **ARCA**, **Conciliación**, **Sueldos** y **Conexiones**, según el plan y el rol.
+- **Organización:** el portal de la empresa que atiende el estudio. Lo ve cada persona según su rol: **Inicio**, **Vencimientos**, **Documentos**, **Solicitudes** y **Empresa** (con las pestañas Gastos de la empresa, Estado de cuenta, Rendiciones, Red Contable y los módulos activos, según el rol). **Agendar una llamada** y **Reseñar al estudio** están en la tarjeta del estudio del Inicio, y **Mi equipo**, en el menú de tu cuenta. Si tu rol ve sueldos y la organización tiene el módulo, el Inicio arranca con la tarjeta **Sueldos**: recibos firmados no conformes, recibos sin firmar, recibos en revisión del estudio y novedades de personal abiertas.
+- **Empleado:** **Inicio**, **Mis recibos**, **Rendiciones** y **Grupos**. Nada más.
+- **Faro Manager:** la administración de la plataforma. Solo para el equipo de Faro: **Resumen**, **Tenants** (lista, pedidos de plan, suscripciones y alta manual), **Catálogo** (planes y precios, módulos, plantillas, IA de la plataforma, monotributo, índices y escudo), **Red** y **Plataforma** (auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA, ARCA, Mercado Pago, WhatsApp y la [demo](/ayuda/primeros-pasos/demo)).
 
 ## Cambiar de espacio
 
@@ -29,9 +29,9 @@ Arriba del menú está el **selector de espacio**: muestra el nombre y el tipo d
 
 La barra de abajo tiene tres accesos del espacio, el **Vigía** al centro y **Más** (el resto del menú y tus espacios):
 
-- **Personal:** Inicio, Bitácora, Vigía, Grupos y Más.
+- **Personal:** Inicio, Mis cajas, Vigía, Grupos y Más.
 - **Estudio:** Inicio, Organizaciones, Vigía, Vencimientos y Más.
-- **Organización:** Inicio, Vencimientos, Vigía, Documentos y Más.
+- **Organización:** los tres primeros ítems de tu menú (por ejemplo Inicio, Vencimientos y Documentos), el Vigía y Más.
 
 Faro **recuerda el último espacio que usaste**: la próxima vez que entres, arrancás ahí.
 

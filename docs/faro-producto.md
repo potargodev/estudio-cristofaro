@@ -12,10 +12,10 @@ Este documento manda sobre `docs/brief-producto.md` en todo lo que sea plataform
 
 - **Faro es una herramienta, no un estudio contable.** Nunca se presenta como un estudio ni compite con los estudios: los potencia, los automatiza y los hace evolucionar.
 - **Faro es para todos, no solo para estudios.** La puerta de entrada universal es **Bitácora**, gratis, para llevar tus finanzas personales. Desde ahí cada uno escala según quién es:
-  - **Persona:** Bitácora gratis. Si necesita un contador, lo encuentra en la Red de estudios Faro (§2.i), con estudios confiables, calificados, puntuados y reseñados, y lo contrata desde ahí.
+  - **Persona:** Bitácora gratis. Si necesita un contador, lo encuentra en la Red Contable (§2.i), con estudios confiables, calificados, puntuados y reseñados, y lo contrata desde ahí.
   - **Autónomo:** activa Faro Personal (facturación, ARCA, semáforo de monotributo).
   - **Contador o estudio:** gestiona su cartera con Faro y conecta a sus clientes y a los empleados de sus clientes.
-- **Origen:** Faro fue creado por contadores (el equipo fundador de Estudio Cristofaro), lo que le da credibilidad profesional. En la landing se cuenta en "Quiénes somos" o "Nuestra historia", nunca como si Faro fuera un estudio. En la Red de estudios, Estudio Cristofaro es uno más, sin prioridad.
+- **Origen:** Faro fue creado por contadores (el equipo fundador de Estudio Cristofaro), lo que le da credibilidad profesional. En la landing se cuenta en "Quiénes somos" o "Nuestra historia", nunca como si Faro fuera un estudio. En la Red Contable, Estudio Cristofaro es uno más, sin prioridad.
 - **Mensaje madre:** "Faro: tu gestión y tus finanzas, a la vista. Para personas, autónomos y estudios contables."
 
 ## 1. Niveles (multi-tenant de cuatro capas)
@@ -29,7 +29,9 @@ Este documento manda sobre `docs/brief-producto.md` en todo lo que sea plataform
 
 Reglas:
 - Aislamiento total entre estudios y, dentro de un estudio, entre organizaciones. Toda query valida el nivel en el servidor.
-- El Faro Manager no ve datos de clientes salvo en un acceso asistido explícito, temporal y auditado.
+- El Faro Manager no ve datos de clientes salvo en un acceso asistido explícito, temporal y auditado. En ese acceso no puede cambiar el equipo, las credenciales de IA, Mercado Pago, los accesos MCP, las conexiones ni el plan.
+- Los datos de demostración (tenants y usuarios `is_demo`) son un mundo aparte: no se cruzan con estudios ni personas reales (`docs/demo.md`).
+- El equipo del estudio entra con contraseña y 2FA obligatorio en todas las pantallas y rutas con datos; los miembros de una organización, con Google o enlace por mail y solo con invitación; personas y autónomos, con Google o enlace por mail. El enlace por mail responde lo mismo para cualquier dirección (no revela qué cuentas existen).
 - Roles por nivel:
   - Faro: owner, soporte.
   - Estudio: dueño, contador, colaborador.
@@ -44,7 +46,7 @@ Reglas:
 
 | Clave | Módulo | Qué resuelve |
 |---|---|---|
-| `ai` | Asistente IA | Chat tipo Claude/ChatGPT con caja de contexto que opera sobre toda la plataforma. Multi-proveedor (Anthropic, OpenAI, Google, OpenRouter, modelos locales compatibles con OpenAI). Clave propia del estudio, cifrada. Las acciones de escritura requieren aprobación humana. |
+| `ai` | Vigía del estudio (Asistente IA y MCP) | Chat tipo Claude/ChatGPT con caja de contexto que opera sobre toda la plataforma; en la interfaz es el **Vigía** (pestaña Asistente, §2.o). Multi-proveedor (Anthropic, OpenAI, Google, OpenRouter, modelos locales compatibles con OpenAI). Clave propia del estudio, cifrada. Las acciones de escritura requieren aprobación humana. |
 | `flows` | Flujos | Canvas visual tipo n8n/Make: disparadores, condiciones y acciones, con plantillas listas para usar. |
 | `payroll` | Recibos de sueldo | Envío masivo de recibos a la nómina (cientos de empleados en pocos pasos), notificación y firma conforme / no conforme con registro. |
 | `employees` | Legajo de empleados | La organización administra a sus empleados: datos, documentos, altas y bajas. |
@@ -60,7 +62,7 @@ Reglas:
 | `whatsapp` | WhatsApp | Avisos y recepción de comprobantes por WhatsApp Business API. |
 | `white_label` | Marca blanca | Logo, colores y dominio propio del estudio en el portal de sus clientes. |
 
-Cada módulo define: clave, nombre, descripción, plan mínimo, permisos por rol, ítems de navegación, eventos que emite (para Flujos), herramientas que expone (para el Asistente IA) y límites de uso.
+Cada módulo define: clave, nombre, descripción, plan mínimo, permisos por rol, ítems de navegación, eventos que emite (para Flujos), herramientas que expone (para el Vigía) y límites de uso.
 
 ## 2.b IA, MCP y conexiones (en todos los planes)
 
@@ -74,17 +76,17 @@ Cada módulo define: clave, nombre, descripción, plan mínimo, permisos por rol
 - Endpoint MCP remoto (Streamable HTTP) del estudio, con OAuth 2.1 o tokens de acceso con alcances (lectura / escritura por módulo y por organización), vencimiento y revocación.
 - Las herramientas salen del registro de módulos: cada módulo expone las suyas, con los permisos del rol que creó el acceso.
 - Toda llamada queda en la auditoría. Las acciones sensibles (fiscales, pagos, comunicaciones a clientes) no se ejecutan directo: crean una propuesta en la bandeja de aprobaciones.
-- El Asistente IA interno usa exactamente el mismo registro de herramientas.
+- El Vigía (el asistente interno) usa exactamente el mismo registro de herramientas.
 
 **Conexiones (hub de integraciones).** El estudio conecta sus herramientas contables y las opera desde Faro. Cada conector declara su vía:
 
 | Vía | Cuándo | Ejemplos |
 |---|---|---|
-| API oficial | La herramienta tiene API pública | Xubio (REST, OAuth2 con Client ID/Secret, planes empresa y emprendedor), Alegra (REST), Colppy, Contabilium, Finnegans, Odoo (JSON-RPC), Mercado Pago, Google (Drive, Calendar, Gmail) |
-| Conector local | La herramienta corre en la PC o servidor del estudio | Tango (API Delta, ya implementado) |
-| MCP externo | Existe un servidor MCP de la herramienta | Faro actúa como cliente MCP y suma esas herramientas al Asistente (por ejemplo, el MCP comunitario de Xubio, de solo lectura) |
+| API oficial | La herramienta tiene API pública | Hoy: Xubio (REST, Client ID/Secret, lectura) y Google Drive (beta); Google Calendar en la Agenda y Gmail en la Bitácora. Próximamente en el hub: Alegra, Colppy, Contabilium, Finnegans y Odoo |
+| Conector local | La herramienta corre en la PC o servidor del estudio | Tango (API Delta, solo lectura). La escritura en Tango y sus webhooks van por el enlace con la API (principios §14) |
+| MCP externo | Existe un servidor MCP de la herramienta | Faro actúa como cliente MCP y suma esas herramientas al Vigía (beta; por ejemplo, el MCP comunitario de Xubio, de solo lectura) |
 | Archivos | No hay API | Holistor, Bejerman y otros de escritorio: importación de exportaciones con plantillas de mapeo |
-| Web services oficiales | Organismos | ARCA (con certificado digital y delegación) |
+| Web services oficiales | Organismos | ARCA (con certificado digital y delegación): funciona en la pestaña ARCA de la ficha y en Faro Personal; en el hub figura como próximamente. Mercado Pago, igual: funciona en Honorarios y Plan y facturación |
 
 Reglas de las conexiones:
 - Se configuran a nivel estudio y se mapean por organización: cada cliente puede tener su propia cuenta en la herramienta.
@@ -106,10 +108,10 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 - **Lo que no tiene web service oficial** (deuda en cuenta corriente, multas, intimaciones): Faro no lo inventa. Ofrece chequeos guiados (qué revisar en ARCA, con el link directo y un paso a paso en lenguaje simple), la carga de lo que el usuario ve y recordatorios periódicos. Si ARCA habilita un servicio oficial, se integra.
 - **Calendario personal:** vencimientos según CUIT y régimen (monotributo, IIBB, autónomos, IVA y Ganancias si es RI), con alertas por mail y WhatsApp y el importe cuando se puede calcular.
 - **Ingresos y gastos:** registro simple, comprobantes de compra (con lectura inteligente) y un resumen mensual "cuánto entró, cuánto salió, cuánto es para impuestos".
-- **Asistente IA en modo simple:** explica cada obligación sin jerga y responde "¿qué tengo que hacer este mes?". Nunca presenta nada solo.
-- **"Necesito un contador":** abre la Red de estudios Faro (§2.i) para elegir un estudio cercano y del rubro. Genera clientes para los estudios.
+- **Vigía en modo simple:** explica cada obligación sin jerga y responde "¿qué tengo que hacer este mes?". Nunca presenta nada solo.
+- **"Necesito un contador":** abre la Red Contable (§2.i) para elegir un estudio cercano y del rubro. Genera clientes para los estudios.
 
-**Requisito técnico de ARCA:** para facturar en nombre de cada usuario, el usuario delega el servicio web de facturación electrónica a la CUIT de Faro en el Administrador de Relaciones de ARCA (así trabajan los facturadores en la nube). Esto requiere que la empresa que opera Faro tenga CUIT, certificado digital de producción y una homologación previa. Mientras tanto, se trabaja en el ambiente de homologación.
+**Requisito técnico de ARCA:** para facturar en nombre de cada usuario, el usuario delega el servicio web de facturación electrónica a la CUIT de Faro en el Administrador de Relaciones de ARCA (así trabajan los facturadores en la nube). Esto requiere que la empresa que opera Faro tenga CUIT, certificado digital de producción y una homologación previa. Mientras tanto, se trabaja contra el simulador y el ambiente de homologación (ver `docs/pendientes-configuracion.md`).
 
 **Planes de Faro Personal:**
 
@@ -119,9 +121,9 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 | Situación con ARCA y semáforo de monotributo | ✓ | ✓ |
 | Calendario y alertas | Mail | Mail y WhatsApp |
 | Ingresos y gastos | Básico | Con lectura inteligente de comprobantes |
-| Asistente IA | Consultas | Consultas y acciones con aprobación |
+| Vigía | Consultas | Consultas y acciones con aprobación |
 | Pedir ayuda a un contador | ✓ | ✓ |
-| Precio | Gratis | $[precio] / mes |
+| Precio de referencia | Gratis | USD 9 / mes (prueba de 30 días) |
 
 ## 2.e Grupos de gastos (núcleo, para todos los tipos de usuario)
 
@@ -141,7 +143,7 @@ Inspirado en Splitwise, pero conectado con la contabilidad: lo que se reparte ta
   - **Rendición de gastos de empleados:** el empleado paga, sube el ticket y la empresa aprueba y reintegra. Queda como gasto de la organización.
   - **Socios:** aportes y retiros entre socios, con el saldo de cada uno.
   - **Contabilidad:** un gasto marcado "de la empresa" o "deducible" pasa a los gastos de la organización o del autónomo, con su comprobante, y lo ve el estudio.
-  - **Asistente IA:** "cargá que pagué $48.000 de la cena con Juan y Ana, dividido igual".
+  - **Vigía:** "cargá que pagué $48.000 de la cena con Juan y Ana, dividido igual".
   - **Exportación** a planilla y resumen del grupo.
 
 ## 2.f Ecosistemas por industria (plantillas preconfiguradas)
@@ -195,11 +197,11 @@ Módulo de finanzas personales de Faro, disponible para cualquier persona: usuar
 - **Metas** (viaje, fondo de emergencia, un objetivo puntual) con ahorro sugerido por semana.
 - **Resumen semanal de un minuto:** el domingo, por la app o WhatsApp, en texto o audio.
 - **Coach de finanzas:** el agente de Bitácora explica, aconseja hábitos y compara alternativas generales para el ahorro (plazo fijo, fondos money market, dólar MEP) con fines educativos.
-  - El asesoramiento de inversión personalizado es una actividad regulada (CNV, idóneos registrados). Bitácora da educación e información general y, si la persona quiere asesoramiento, la deriva a un asesor matriculado. Los asesores se encuentran en la Red de estudios Faro (§2.i), con el filtro de asesoramiento financiero.
+  - El asesoramiento de inversión personalizado es una actividad regulada (CNV, idóneos registrados). Bitácora da educación e información general y, si la persona quiere asesoramiento, la deriva a un asesor matriculado. Los asesores se encuentran en la Red Contable (§2.i), con el filtro de asesoramiento financiero.
 
 **Conexión con el resto de Faro:**
 - **Gastos compartidos:** los gastos de grupos ya cuentan en Bitácora.
-- **Hogar o pareja:** finanzas compartidas con permisos.
+- **Hogar o pareja:** finanzas compartidas con permisos (Hogar) y cajas compartidas en **Mis cajas** (principios §17 y §18).
 - **Si sos autónomo:** separa lo personal de lo profesional y pasa lo deducible a Faro Personal.
 
 **Privacidad:**
@@ -207,16 +209,20 @@ Módulo de finanzas personales de Faro, disponible para cualquier persona: usuar
 - Los datos financieros personales se cifran.
 
 **Modelo:**
-- Bitácora gratis (captura por audio limitada al mes) y Bitácora Plus (captura ilimitada, WhatsApp, conexiones de mail y Mercado Pago, coach y metas).
+- Bitácora gratis (1 meta activa y 2 importaciones por mes; sobres, fijos, fugas, avisos y coach para todos) y Bitácora Plus, que es cualquier plan pago del tenant (Personas · Plus, Autónomos · Pro o un plan pago de estudio): sin esos límites y con las conexiones de Gmail y Mercado Pago.
 - Las organizaciones y los estudios pueden regalar Bitácora Plus a sus empleados como beneficio.
 
-## 2.i Red de estudios Faro (directorio)
+## 2.i Red Contable (directorio de doble mano)
+
+**Nombre provisorio** (principios §15 y decisión abierta (b)); antes se llamaba «Red de estudios» y las rutas viejas redirigen a `/red-contable`. Es un marketplace de doble mano: la persona busca estudio y el estudio busca clientes (principios §15).
 
 Cuando un autónomo, una persona con Bitácora o una empresa busca un contador, Faro le muestra un directorio neutral de los estudios y contadores que usan Faro y aceptan clientes nuevos.
 
 - **Ficha del estudio:** nombre, foto o logo, zona y modalidad (presencial, remoto o ambas), rubros en los que se especializa (de las plantillas de §2.f), servicios, matrícula verificada, idiomas, rango de honorarios orientativo, tiempo de respuesta real medido en Faro y reseñas de clientes verificados.
 - **Búsqueda:** por cercanía (ubicación o barrio), rubro, servicio, modalidad y disponibilidad. Vista de lista y de mapa.
-- **Contacto:** "Pedir propuesta" o "Agendar una llamada" con la agenda del estudio. Al aceptar, la persona comparte sus datos con consentimiento explícito y revocable, y pasa a ser organización del estudio sin migrar nada.
+- **Contacto:** "Pedir propuesta", "Agendar una llamada" con la agenda del estudio o "Conectar mi cuenta". La conexión es por permiso, no por copia (principios §4 a §8): admisión, acuerdo firmado por los dos, el estudio trabaja sobre los datos en vivo y la persona puede cerrar la relación con mediación.
+- **Buscar clientes (el estudio):** personas, autónomos, empresas y Flotas que activan **"Disponible, busco contador"** aparecen en un listado anónimo (Comercial → Buscar clientes). El estudio contacta; recién cuando la persona acepta ve sus datos y empieza la admisión.
+- **Demo aparte:** los estudios y postulantes de la demo solo se ven y se contactan entre ellos; nunca se cruzan con estudios o personas reales.
 - **Neutralidad:**
   - El orden se basa solo en criterios objetivos (cercanía, coincidencia de rubro, disponibilidad, tiempo de respuesta y reseñas).
   - Estudio Cristofaro aparece como uno más, sin prioridad.
@@ -231,13 +237,13 @@ Cuando un autónomo, una persona con Bitácora o una empresa busca un contador, 
 Una **Flota** es un grupo informal de 3 a 20 personas que se juntan para conseguir mejores condiciones con un estudio o contador de la Red. No reemplaza a los grupos de gastos compartidos (§2.e), que siguen libres y sin requisitos para cualquier usuario.
 
 - **Creación:** cualquier usuario (Bitácora incluida) crea la Flota e invita. Cada miembro declara su perfil: monotributista, responsable inscripto, en relación de dependencia o sin actividad.
-- **Pedido de propuesta grupal:** la Flota lo publica en la Red de estudios (§2.i), con la cantidad de miembros por perfil y la zona (sin datos personales). Los estudios ofertan un precio por miembro según su perfil (por ejemplo: monotributo, RI y un paquete para empleados con deducciones de Ganancias y Bienes Personales), con lo que incluye y un mínimo de miembros.
+- **Pedido de propuesta grupal:** la Flota lo publica en la Red Contable (§2.i), con la cantidad de miembros por perfil y la zona (sin datos personales). Los estudios ofertan un precio por miembro según su perfil (por ejemplo: monotributo, RI y un paquete para empleados con deducciones de Ganancias y Bienes Personales), con lo que incluye y un mínimo de miembros.
 - **Contratación individual:** cada miembro acepta o no la propuesta elegida. El vínculo y la facturación son entre el estudio y cada persona, con la tarifa grupal. Al aceptar, queda como organización del estudio (con consentimiento explícito).
 - **La propuesta grupal define:** servicios incluidos por perfil, precio mensual por miembro y perfil, frecuencia de pago (mensual por adelantado), mínimo de miembros, preaviso de baja (máximo 30 días, sin penalidades) y qué pasa si se baja del mínimo.
 - **Acuerdo individual:** cada tripulante que acepta firma digitalmente en Faro su propio "Acuerdo de servicio" con el estudio, con las condiciones de la propuesta. No hay contrato de la Flota ni pozo común.
 - **Pagos (nadie paga ni debe por otro):**
   - Cada tripulante paga solo su abono, directamente al estudio.
-  - En Faro, por suscripción de Mercado Pago con débito automático a la cuenta del estudio (cuando esté la integración, F7), o por el medio que acuerde con el estudio, que lo registra.
+  - En Faro, por suscripción de Mercado Pago con débito automático a la cuenta del estudio (hecho en F7; necesita que el estudio conecte su cuenta de Mercado Pago), o por el medio que acuerde con el estudio, que lo registra.
   - Cada tripulante ve en "Mis servicios" su estado de cuenta con el estudio: al día, próximo vencimiento o pendiente.
 - **Irse:**
   - **Salir de la Flota** no rescinde el acuerdo con el estudio: lo mantiene con la tarifa grupal hasta el próximo cambio de condiciones, o lo da de baja.
@@ -257,20 +263,20 @@ Una **Flota** es un grupo informal de 3 a 20 personas que se juntan para consegu
 - **Nombres:** libres, pero sin palabras que sugieran un tipo legal ("S.A.", "Sociedad Anónima", "SRL", "SAS", "Sociedad", "Cooperativa", "Asociación civil", "Fundación" y similares). Si alguien las usa, la app las rechaza con una explicación amable. El nombre siempre se muestra con la etiqueta "Flota · grupo informal".
 - **Privacidad:** los miembros solo ven el nombre, el perfil y el estado de cada uno respecto de la propuesta. Nunca sus finanzas.
 - **Para el estudio:** un bloque de clientes con perfiles similares, ideal para estandarizar trabajo. Los estudios fijan libremente sus precios.
-- **Para Faro:** activa la Red de estudios y trae clientes nuevos a los estudios en Profesional y Avanzado.
+- **Para Faro:** activa la Red Contable y trae clientes nuevos a los estudios en Profesional y Avanzado.
 
 ## 2.h Mapa de roles y jerarquías
 
 | Nivel | Tipo de cuenta | Roles | Ve y gestiona |
 |---|---|---|---|
-| Plataforma | Faro | faro_owner, faro_support | Tenants, planes, módulos, plantillas, métricas. Datos de clientes solo en acceso asistido. |
+| Plataforma | Faro | faro_owner, faro_support | Tenants, planes, módulos, plantillas, métricas. Datos de clientes solo en acceso asistido (que no puede cambiar equipo, credenciales, Mercado Pago, MCP, conexiones ni plan). El faro_owner, además, «Ver como…» sobre usuarios de la demo. |
 | Tenant | Estudio | dueño, contador, colaborador | Su cartera de organizaciones, su equipo, IA, MCP, conexiones y flujos |
 | Tenant | Personal (autónomo) | titular | Su facturación, ARCA, su organización propia |
 | Organización | Cliente de un estudio | administrador, dirección, administración, RRHH, consulta | Su empresa según el rol; sus empleados (RRHH) |
 | Empleado | De una organización | empleado | Sus recibos, comunicaciones, rendiciones de gastos |
 | Persona | Cualquier usuario | titular | Su Bitácora y sus grupos de gastos compartidos |
 | Invitado | Sin cuenta | invitado | Solo el grupo de gastos al que fue invitado |
-| Flota | Grupo informal de personas | creador, miembro | Nombre, perfil y estado de cada miembro frente a la propuesta grupal; nunca sus finanzas |
+| Flota | Grupo informal de personas | capitán, tripulante | Nombre, perfil y estado de cada miembro frente a la propuesta grupal; nunca sus finanzas |
 
 Una misma persona puede tener varias "puertas" a la vez (por ejemplo, contador en un estudio, empleado en otra organización y titular de su Bitácora). La app muestra un selector de espacio, y cada espacio tiene su propio aislamiento.
 
@@ -305,33 +311,33 @@ Una misma persona puede tener varias "puertas" a la vez (por ejemplo, contador e
 | Estudios · Avanzado (hasta 120) | 249 |
 | Organización extra (estudios) | 2 |
 
-Prueba gratis de 30 días en los planes pagos. Pago anual: 2 meses de regalo. Son valores de referencia: el Faro Manager los ajusta sin tocar código. **Inicial es gratis** (decisión de modelo de negocio, `docs/principios-producto.md` §20): es la puerta de entrada del contador independiente; para sumar más organizaciones o usuarios se pasa a Profesional.
+Prueba gratis de 30 días en los planes pagos. Pago anual: 2 meses de regalo. Son valores de referencia: el Faro Manager los ajusta sin tocar código (Catálogo → Planes y precios). **Inicial es gratis** (decisión de modelo de negocio, `docs/principios-producto.md` §20, ya aplicada en la app): es la puerta de entrada del contador independiente; para sumar más organizaciones o usuarios se pasa a Profesional.
 
-Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Red de estudios, Flotas, Grupos de gastos). Todo lo demás se nombra por lo que es.
+Los nombres de producto que la gente usa se mantienen (Faro, Bitácora, Vigía, Mis cajas, Red Contable, Flotas, Grupos de gastos). «Red Contable» es provisorio y renombrar Bitácora, Vigía o Flotas es una decisión abierta (principios, decisiones (b) y (c)). Todo lo demás se nombra por lo que es.
 
 ## 2.l Onboarding guiado y Centro de ayuda
 
 **Onboarding por perfil:** persona (Bitácora), autónomo, estudio o contador, miembro de una organización, empleado y capitán o tripulante de una Flota.
-- Una checklist de primeros pasos con progreso, tours contextuales que señalan los elementos de la pantalla, estados vacíos que invitan a dar el siguiente paso y un "¿qué hago ahora?" con el Asistente IA.
+- Una checklist de primeros pasos con progreso, tours contextuales que señalan los elementos de la pantalla, estados vacíos que invitan a dar el siguiente paso y un "¿qué hago ahora?" con el Vigía.
 - Se puede desactivar cuando se quiera. Queda siempre un botón visible arriba en el menú ("Guía") para volver a activarla o retomar un paso, y el progreso se guarda por usuario y por espacio.
 
 **Centro de ayuda (base de conocimientos):**
 - Visible siempre (ícono de ayuda en el menú y en cada pantalla, con el artículo relacionado).
 - Explica el qué y el para qué de todo: cada módulo, cada rol, cada plan, los flujos más comunes paso a paso y preguntas frecuentes.
 - Artículos en Markdown versionados en el repo (docs/ayuda), con buscador, capturas o videos cortos, y "¿te sirvió?".
-- El Asistente IA responde usando estos artículos y cita el artículo de donde sacó la respuesta.
+- El Vigía responde usando estos artículos y cita el artículo de donde sacó la respuesta.
 - Los artículos se actualizan en el mismo commit que cambia una función.
 
 ## 2.m Vigía (la puerta de entrada de la app)
 
-Lo primero que ve cualquier usuario al entrar es **su Vigía**: un chat estilo WhatsApp con su agente. Es la forma principal de cargar información en Faro.
+La puerta de entrada de cada persona es **su Vigía**: un chat estilo WhatsApp con su agente, arriba del Inicio personal y en la barra superior de todos los espacios. Es la forma principal de cargar información en Faro.
 - **Entradas:** texto, audio (mantener para hablar), foto, captura de pantalla, PDF. Desde el celular como app instalable (PWA).
 - **Decantación:** el Vigía interpreta y lo convierte en registros del panel: gastos e ingresos de Bitácora, gastos de un grupo, recordatorios, documentos. Cada interpretación aparece como una tarjeta en el chat ("Gasto $3.500 · Kiosco · Comida · hoy") con **Confirmar**, **Editar** y **Deshacer**.
 - **Aprobación:** lo personal de Bitácora puede registrarse en un toque (o solo, si el usuario lo activa, siempre con Deshacer). Todo lo que afecta a otras personas (un gasto en un grupo) o es fiscal, de pagos o una comunicación sensible requiere confirmación explícita.
 - **Consultas:** "¿cuánto gasté en delivery este mes?", "¿cuánto le debo a Juan?" responden con datos reales del usuario y enlazan a la pantalla.
 - **Origen:** cada registro creado por el Vigía guarda el mensaje original (texto, audio, imagen), la transcripción y la fecha, y se ve desde el registro.
 - **Proveedor de IA:** para personas y autónomos, Faro pone el modelo (clave de la plataforma en Faro Manager, con límite de uso por plan). Los estudios pueden usar su propia clave (§2.b).
-- **WhatsApp real** (número de Faro) llega en F9; el Vigía en la app es el MVP.
+- **WhatsApp:** hecho en F9 contra el simulador; el número real de Faro depende de la verificación de Meta (ver `docs/pendientes-configuracion.md`).
 
 ## 2.n Mensajes (chat interno entre personas)
 
@@ -349,26 +355,26 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 
 **Reglas:**
 1. **Un espacio a la vez.** El menú muestra solo lo del espacio activo (Personal, el estudio, una organización, Faro Manager). Se cambia con el selector de espacio, arriba del sidebar. Lo personal (Bitácora, Grupos) no aparece dentro del espacio del estudio ni de una organización.
-2. **Máximo 7 ítems principales por espacio** (9 cuando estén todos los módulos), en no más de 3 grupos. Un ítem entra al menú solo si se usa todas las semanas. Lo demás va como **pestaña** dentro de una sección, en **Configuración** o en el **menú de la cuenta**.
+2. **Máximo 7 ítems principales por espacio** (9 con todos los módulos del plan), en no más de 3 grupos. Un ítem entra al menú solo si se usa todas las semanas. Lo demás va como **pestaña** dentro de una sección, en **Configuración** o en el **menú de la cuenta**.
 3. **Las secciones crecen hacia adentro, no hacia el menú:** un módulo nuevo suma una pestaña o una tarjeta en una sección existente antes que un ítem nuevo.
 4. **Barra superior fija y igual en todos los espacios:** Vigía (botón destacado), Mensajes (con badge), avisos (campana), ayuda "?" y la cuenta (avatar).
    - Mensajes y los avisos son globales: siguen a la persona en cualquier espacio.
    - El "?" junta todo lo de ayuda: tour de esta pantalla, Primeros pasos, Centro de ayuda e interruptor de la Guía. La ayuda sale del sidebar.
    - El menú de la cuenta tiene: Mi cuenta, Plan y facturación, Accesos MCP, tema claro/oscuro, cambiar de espacio y Salir.
-5. **Un solo Vigía.** Es la misma puerta en todos los espacios y sabe dónde estás. En Personal es el chat de tus finanzas. En el estudio es el asistente del estudio, con sus herramientas y su clave. Se abre como panel lateral desde la barra superior, sin perder la pantalla, o a pantalla completa en /vigia. Las **Aprobaciones** son una pestaña del Vigía ("Propuestas para aprobar"), con badge en el botón.
-6. **Configuración es una sola entrada**, con pestañas: Equipo y usuarios, Plan y módulos, Conexiones, IA, Rubros y plantillas, Sitio web, Seguridad y *(F9)* Avanzado (marca blanca y WhatsApp del estudio, plan Avanzado).
+5. **Un solo Vigía.** Es la misma puerta en todos los espacios y sabe dónde estás. En Personal es el chat de tus finanzas. En el estudio es el asistente del estudio, con sus herramientas y su clave. Se abre como panel lateral desde la barra superior, sin perder la pantalla, o a pantalla completa en /vigia. En el estudio, el Vigía tiene las pestañas **Asistente**, **Propuestas para aprobar** (las Aprobaciones, con badge en el botón) y **Automatizaciones** (Flujos).
+6. **Configuración es una sola entrada**, con pestañas: Equipo y usuarios, Plan y módulos, Conexiones, IA, Rubros y plantillas, Sitio web (solo el estudio con sitio propio), Seguridad y Avanzado (marca blanca y WhatsApp del estudio, plan Avanzado).
 7. **Plantilla de pantalla única:** encabezado compacto (título de 28 a 32 px, una línea de contexto, una acción principal), pestañas debajo si la sección tiene varias vistas, y contenido. Los títulos gigantes quedan para las landings.
-8. **Celular:** barra inferior con 4 accesos del espacio y el Vigía al centro como botón destacado. Lo demás va en "Más".
+8. **Celular:** barra inferior con 3 accesos del espacio, el Vigía al centro como botón destacado y "Más" con el resto.
 
-**Menú de cada espacio (hoy → con todos los módulos):**
+**Menú de cada espacio (como está hoy, con todos los módulos hechos):**
 
 | Espacio | Menú principal | Pestañas y lugar de lo que hoy está suelto |
 |---|---|---|
-| **Personal** (persona y autónomo) | Inicio · Mis cajas · Bitácora · Grupos · Contador · *(F3)* Facturación | Mis cajas = todas las cajas (personal, negocio y compartidas, principios §17); la Bitácora es la caja personal. Contador = Mi contador (la conexión) + Red Contable (Estudios y contadores · Mi postulación) + Flotas + "mi estudio" si tiene uno. Inicio = resumen del mes con el Vigía arriba. Facturación (autónomo): comprobantes, ARCA, monotributo. |
-| **Estudio** | **Operación:** Inicio · Organizaciones · Vencimientos · Solicitudes · *(F9)* Tareas. **Negocio:** Comercial · *(F7)* Honorarios. Abajo, fijo: Configuración | Comercial = Consultas + Buscar clientes (Red Contable: postulaciones y estudios, con badge de candidatos nuevos) + Agenda + Conexiones + Perfil en la Red. Organizaciones = ficha con pestañas (resumen, vencimientos, documentos, solicitudes, *F5* sueldos, *F3* ARCA, conexiones). Contenidos del sitio y Rubros → Configuración. *F4* Flujos → pestaña "Automatizaciones" del Vigía. *F6* Lectura inteligente → dentro de Documentos. *F9* Indicadores → pestaña de Inicio y de Resumen en la ficha; Consultas con IA → dentro de Solicitudes. |
-| **Organización** (portal) | Inicio · Vencimientos · Documentos · Solicitudes · Empresa | Empresa = gastos de la empresa, rendiciones, módulos activos (*F5* sueldos y equipo, *F7* pagos). Agendar llamada y Reseñar al estudio → Inicio (tarjeta del estudio). Mi equipo → Configuración de la organización. |
-| **Empleado** (portal) | Inicio · Mis recibos *(F5)* · Rendiciones · Grupos | Todo lo demás, oculto. |
-| **Faro Manager** | Resumen · Tenants · Catálogo · Red · Plataforma | Tenants = lista + pedidos de plan + alta manual. Catálogo = planes y precios, módulos, plantillas, IA de la plataforma. Plataforma = auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA. |
+| **Personal** (persona y autónomo) | Inicio · Mis cajas · Bitácora · Grupos · Contador · Facturación (autónomo) | Mis cajas = todas las cajas (personal, negocio y compartidas, principios §17); la Bitácora es la caja personal. Contador = Mi contador (la conexión) + Red Contable (Estudios y contadores · Mi postulación) + Flotas + "mi estudio" si tiene uno. Inicio = resumen del mes con el Vigía arriba. Facturación (autónomo): comprobantes, ARCA, monotributo. |
+| **Estudio** | **Operación:** Inicio · Organizaciones · Vencimientos · Solicitudes · Tareas (plan con Cartera y tareas). **Negocio:** Comercial · Honorarios (plan con Cobranza). Abajo, fijo: Configuración | Comercial = Consultas + Buscar clientes (Red Contable: postulaciones y estudios, con badge de candidatos nuevos) + Agenda + Conexiones (con contadores) + Perfil en la Red. Organizaciones = ficha con pestañas (Resumen, Vencimientos, Documentos, Solicitudes, ARCA, Conciliación, Sueldos y Conexiones); las cuentas conectadas por la Red tienen su propia ficha en vivo. Contenidos del sitio y Rubros → Configuración. Flujos → pestaña "Automatizaciones" del Vigía. Lectura inteligente → dentro de Documentos. Indicadores → pestaña de Inicio y de Resumen en la ficha; Consultas con IA → dentro de Solicitudes. |
+| **Organización** (portal) | Inicio · Vencimientos · Documentos · Solicitudes · Empresa | Empresa = gastos de la empresa, estado de cuenta, rendiciones, Red Contable (administrador o dirección) y módulos activos (sueldos y empleados). El Inicio suma la tarjeta Sueldos para los roles que ven sueldos. Agendar llamada y Reseñar al estudio → Inicio (tarjeta del estudio). Mi equipo → menú de la cuenta. |
+| **Empleado** (portal) | Inicio · Mis recibos · Rendiciones · Grupos | Todo lo demás, oculto. |
+| **Faro Manager** | Resumen · Tenants · Catálogo · Red · Plataforma | Tenants = lista + pedidos de plan + suscripciones + alta manual. Catálogo = planes y precios, módulos, plantillas, IA de la plataforma, monotributo, índices y escudo. Plataforma = auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA, ARCA, Mercado Pago, WhatsApp y Demo (cargar y borrar la demo y «Ver como…»). |
 
 ## 3. Planes de Faro (para estudios)
 
@@ -376,13 +382,13 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 |---|---|---|---|
 | Para quién | Contador independiente que arranca | Estudio chico en crecimiento | Estudio mediano que quiere automatizar |
 | Precio de referencia | Gratis | USD 119 / mes | USD 249 / mes |
-| Organizaciones incluidas | Hasta 5 (a confirmar) | Hasta 40 | Hasta 120 |
+| Organizaciones incluidas | Hasta 5 (límite a confirmar con el uso) | Hasta 40 | Hasta 120 |
 | Organización extra | — (se pasa a Profesional) | USD 2 / mes | USD 2 / mes |
 | Prueba gratis | No aplica (es gratis) | 30 días | 30 días |
-| Red de estudios (aparecer en el directorio) | — | ✓ | ✓ |
+| Red Contable (aparecer en el directorio y buscar clientes) | — | ✓ | ✓ |
 | Usuarios del estudio | 1 | Hasta 5 | Hasta 25 |
 | Núcleo | ✓ | ✓ | ✓ |
-| Asistente IA | Con clave propia, consultas | Con clave propia, consultas y acciones | Acciones avanzadas y agentes |
+| Vigía (IA) | Con clave propia, consultas | Con clave propia, consultas y acciones | Acciones avanzadas y agentes |
 | Flujos | 1 plantilla activa | 10 flujos, plantillas | Ilimitados, editor libre |
 | Recibos, legajo y comunicación interna | — | ✓ | ✓ |
 | Lectura inteligente | 30 documentos/mes | 1.000 documentos/mes | 10.000 documentos/mes |
@@ -407,15 +413,24 @@ Los precios son de referencia y se editan desde el Faro Manager (USD con convers
 
 ## 6. Hoja de ruta
 
-**Orden de trabajo acordado (octubre 2026):** MVP personal (hecho) → esqueleto de navegación (§2.o, hecho) → F3 ARCA + Faro Personal (hecha) → F8 Bitácora completa (hecha) → F6 Lectura inteligente (hecha) → F7 Cobros (hecha) → F5 Empleados (hecha) → F4 Flujos (hecha) → F9 (hecha) → **pulido final de experiencia** (espaciados, densidad, ritmo visual y microinteracciones, sobre la app completa). Cada módulo nuevo entra respetando §2.o.
+**Estado al 12 de octubre de 2026:** todas las fases están hechas. Lo que depende de terceros (certificados, credenciales, verificaciones y SMTP) funciona contra simuladores y está ordenado por prioridad en `docs/pendientes-configuracion.md`. El detalle de cada cierre está en `docs/avances.md`.
 
-**Prioridad actual · MVP personal (antes de seguir con el resto):** Vigía (§2.m) + Bitácora básica (gastos e ingresos diarios, categorías, tablero simple) + Grupos de gastos con amigos, operativos de punta a punta en staging, más la landing de Faro en `app.estudiocristofaro.com/faro`. Precios de personas y autónomos de referencia: Plus USD 4/mes, Pro USD 9/mes.
-1. **F1 · Núcleo Faro:** marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Inicial), landing de Faro y mención de Faro en la web de Cristofaro.
-2. **F2 · IA, MCP y Conexiones:** configuración de IA multi-proveedor, Asistente con caja de contexto, servidor MCP por estudio, bandeja de aprobaciones, hub de conexiones (Xubio, Alegra y Google primero; Tango migrado al hub).
-3. **F3 · ARCA + Faro Personal** ✅ *hecha (octubre 2026, contra el simulador; falta el certificado real, ver docs/pendientes-configuracion.md)*: web services de ARCA (homologación primero), facturación con PDF personalizado, situación y semáforo de monotributo, calendario personal y planes Gratis y Pro.
-4. **F4 · Flujos:** canvas, motor de ejecución y plantillas ✅ *hecha (octubre 2026)*. Pestaña «Automatizaciones» del Vigía; lo sensible pasa por Aprobaciones dentro del flujo.
-5. **F5 · Empleados:** legajo, recibos masivos con firma y comunicación interna ✅ *hecha (octubre 2026)*. Incluye novedades de personal tipificadas y el portal del empleado (Mis recibos).
-6. **F6 · Lectura inteligente** y conciliación bancaria ✅ *hecha (octubre 2026, contra simuladores; falta autorizar WSCDC en la CUIT de Faro y configurar un modelo con visión, ver docs/pendientes-configuracion.md)*.
-7. **F7 · Cobranza** de honorarios y suscripciones de Faro (Mercado Pago) ✅ *hecha (octubre 2026, contra el simulador; faltan las credenciales y webhooks de producción de Faro y de cada estudio, ver docs/pendientes-configuracion.md)*. Incluye débito individual de flotas y links de pago en facturas de Faro Personal.
-8. **F8 · Bitácora** ✅ *hecha (octubre 2026, contra simuladores; faltan la app de Mercado Pago, la verificación de Gmail y la serie del IPC, ver docs/pendientes-configuracion.md)* (finanzas personales): captura por audio, mails, Mercado Pago, coach y metas; sobres, fijos, fugas, valores reales, importación, hogar compartido y planes Gratis y Plus.
-9. **F9 · Cartera y tareas**, WhatsApp y marca blanca ✅ *hecha (octubre 2026, WhatsApp contra el simulador; faltan la verificación de Meta, el número real y el certificado de cada dominio propio, ver docs/pendientes-configuracion.md)*. Incluye consultas laborales y fiscales con IA (con aprobación del estudio), indicadores del estudio y por organización, y mapa y agenda en la Red de estudios.
+**Orden de trabajo que se siguió (octubre 2026):** MVP personal → esqueleto de navegación (§2.o) → F3 ARCA + Faro Personal → F8 Bitácora completa → F6 Lectura inteligente → F7 Cobros → F5 Empleados → F4 Flujos → F9 → principios de producto (8 etapas, `docs/brechas-principios.md`) → pulido final de experiencia (Diseño, etapas 0 a 6, `docs/auditoria-diseno.md`) → auditoría de octubre 2026 (seguridad, limpieza, rendimiento y backup). Cada módulo nuevo entra respetando §2.o.
+
+- **MVP personal** ✅ *hecho*: Vigía (§2.m) + Bitácora básica + Grupos de gastos, operativos de punta a punta en staging, y la landing de Faro en `app.estudiocristofaro.com/faro`.
+- **Esqueleto de navegación** (§2.o) ✅ *hecho*.
+
+1. **F1 · Núcleo Faro** ✅ *hecho*: marca, cuatro niveles, Faro Manager, planes, módulos y entitlements, alta de estudios (manual y autoregistro en Inicial), landing de Faro y mención de Faro en la web de Cristofaro. Falta lo de marca y dominio propios (§4 y §5).
+2. **F2 · IA, MCP y Conexiones** ✅ *hecho*: IA multi-proveedor por estudio, Vigía con caja de contexto (pestaña Asistente), servidor MCP por estudio, bandeja de aprobaciones (Propuestas para aprobar) y hub de conexiones con Tango (conector local), Xubio (lectura), Google Drive (beta), MCP externo (beta) y archivos. Alegra, Colppy, Contabilium, Finnegans y Odoo figuran como próximamente.
+3. **F3 · ARCA + Faro Personal** ✅ *hecha (contra el simulador; falta el certificado real)*: web services de ARCA, facturación con PDF personalizado, situación y semáforo de monotributo, calendario personal y planes Gratis y Pro.
+4. **F4 · Flujos** ✅ *hecha*: canvas, motor de ejecución y plantillas, en la pestaña «Automatizaciones» del Vigía; lo sensible pasa por Aprobaciones dentro del flujo.
+5. **F5 · Empleados** ✅ *hecha*: legajo, recibos masivos con firma, comunicación interna, novedades de personal tipificadas y el portal del empleado (Mis recibos).
+6. **F6 · Lectura inteligente y conciliación bancaria** ✅ *hecha (contra simuladores; falta autorizar WSCDC en la CUIT de Faro y configurar un modelo con visión)*.
+7. **F7 · Cobranza de honorarios y suscripciones de Faro** (Mercado Pago) ✅ *hecha (contra el simulador; faltan las credenciales y webhooks de producción de Faro y de cada estudio)*. Incluye débito individual de flotas y links de pago en facturas de Faro Personal.
+8. **F8 · Bitácora** ✅ *hecha (contra simuladores; faltan la app de Mercado Pago, la verificación de Gmail y la serie del IPC)*: captura por audio, mails, Mercado Pago, coach y metas; sobres, fijos, fugas, valores reales, importación, hogar compartido y planes Gratis y Plus.
+9. **F9 · Cartera y tareas, WhatsApp y marca blanca** ✅ *hecha (WhatsApp contra el simulador; faltan la verificación de Meta, el número real y el certificado de cada dominio propio)*. Incluye consultas laborales y fiscales con IA (con aprobación del estudio), indicadores del estudio y por organización, y mapa y agenda en la Red Contable (entonces «Red de estudios»).
+10. **Principios de producto** ✅ *hechos (8 etapas)*: Inicial gratis, escudo de responsabilidad, Mis cajas y sueldo del dueño, registro compartido, conexión con un contador, Red Contable de doble mano, changa en zona gris y Tango en los dos sentidos. Quedan las validaciones de un contador y la revisión legal.
+11. **Pulido final de experiencia (Diseño, etapas 0 a 6)** ✅ *hecho*: herramientas (Impeccable, `PRODUCT.md`, `DESIGN.md`), diagnóstico, sistema único (`@/components/ds`, roles de texto, alturas y radios por token), pantalla por pantalla, sidebar animado, datos de demostración y Red Contable visible en todos los espacios. El recorrido de 134 pantallas a 390 y 1.440 px terminó con 0 hallazgos.
+12. **Auditoría de octubre 2026** ✅ *hecha*: «Ver como…» sobre la demo, la demo y lo real separados, cabeceras de seguridad, 2FA en todas las rutas con datos del estudio, enlace mágico sin enumerar, acceso asistido acotado, tareas internas con turno, backup probado y rendimiento.
+
+**Lo que sigue** (principios §21): reunión con los contadores de Cristofaro, conectar su Tango real y probar con 2 o 3 clientes de confianza. Antes, lo marcado «Crítico» en `docs/pendientes-configuracion.md`.

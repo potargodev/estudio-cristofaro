@@ -3,7 +3,7 @@ titulo: Conexiones con Tango, Xubio, Google Drive y otros sistemas
 resumen: Cómo conectar las herramientas contables del estudio, qué hace cada conector y por qué todo dato que entra queda trazado.
 perfiles: [estudio]
 modulo: connections
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [ia/mcp, vencimientos/calendario, documentos/subir-documentos]
 ---
 
@@ -19,7 +19,7 @@ El estudio conecta sus herramientas contables para traer sus datos a Faro. Las c
 | **MCP externo** | MCP | Beta | Pegás la URL de un servidor MCP y Faro suma sus herramientas al Asistente, en solo lectura por defecto. |
 | **Archivos** | Archivos | Disponible | Para Holistor, Bejerman y otros sistemas de escritorio sin API: importás exportaciones en Excel o CSV con una plantilla de mapeo. |
 
-**Próximamente:** Alegra, Colppy, Contabilium, Finnegans, Odoo, Mercado Pago y ARCA (por web services oficiales, con certificado digital y delegación).
+**Próximamente en Conexiones:** Alegra, Colppy, Contabilium, Finnegans y Odoo. **ARCA** y **Mercado Pago** ya funcionan, pero fuera de esta pantalla: ARCA en la pestaña **ARCA** de la ficha de cada organización (y en Facturación para autónomos), y Mercado Pago en **Honorarios → Configuración**.
 
 ## Conectar uno
 

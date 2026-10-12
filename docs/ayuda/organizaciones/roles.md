@@ -3,7 +3,7 @@ titulo: Roles del estudio y de la organización
 resumen: Qué puede hacer cada persona según su rol, en el equipo del estudio y en el portal de cada organización.
 perfiles: [estudio, organizacion, empleado]
 modulo: core
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [organizaciones/invitaciones, primeros-pasos/primeros-pasos-estudio, grupos-de-gastos/rendiciones]
 ---
 
@@ -17,7 +17,11 @@ En Faro hay dos equipos: el del **estudio** y el de cada **organización** (clie
 | **Contador** | Trabaja la cartera: crea y edita organizaciones, vencimientos, documentos, solicitudes y consultas comerciales. |
 | **Colaborador** | El día a día: vencimientos, documentos, solicitudes y agenda. No ve las consultas comerciales ni crea o edita organizaciones. |
 
-Al equipo lo suma el dueño desde **Configuración → Equipo y usuarios**. Todos entran con contraseña y segundo factor obligatorio.
+Al equipo lo suma el dueño desde **Configuración → Equipo y usuarios**. Todos entran con contraseña y segundo factor obligatorio: sin el segundo factor no se abre ninguna pantalla ni se descarga ningún archivo del estudio. En la app autenticadora la cuenta aparece como **Faro**.
+
+### Si el equipo de Faro entra a ayudarte
+
+Para darte soporte, alguien del equipo de Faro puede entrar a tu estudio con un **acceso asistido**: con motivo, por un tiempo limitado y registrado en la auditoría. Lo ves en **Configuración → Seguridad → Accesos asistidos de Faro**. Durante ese acceso puede mirar y ayudarte con el trabajo, pero **no puede** cambiar el equipo, las credenciales de IA, la cuenta de Mercado Pago, los accesos MCP, las conexiones ni el plan: eso lo hace siempre el dueño desde su propia cuenta.
 
 ## Roles de la organización
 

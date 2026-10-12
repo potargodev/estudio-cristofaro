@@ -1,6 +1,8 @@
 # Brief funcional para desarrollo
 ## Plataforma de gestión contable inteligente — Estudio Cristofaro
 
+> **Nota (octubre 2026):** este brief describe lo que un estudio ofrece a sus organizaciones (roles de organización, portal, vencimientos, documentos, solicitudes) y sigue vigente para eso. La plataforma es **Faro** y Estudio Cristofaro es su tenant #1: plataforma, planes de Faro, módulos e IA están en `docs/faro-producto.md`, y los principios de producto en `docs/principios-producto.md`, que mandan sobre este documento. El «asistente operativo del estudio» de §8 es hoy el **Vigía** del estudio; el estado de lo construido está en `docs/avances.md`.
+
 ## 1. Objetivo del producto
 
 Construir una plataforma B2B multi-organización que conecte al Estudio Cristofaro con cada empresa cliente y centralice su operación contable, administrativa y documental.
@@ -238,7 +240,7 @@ El usuario debe poder escribir mensajes como “incorporamos una empleada el lun
 
 ## 8. Automatización e inteligencia artificial
 
-Crear una capa de “asistente operativo del estudio”.
+Crear una capa de “asistente operativo del estudio” (en Faro, el **Vigía** del estudio, con sus Flujos y la bandeja de Propuestas para aprobar).
 
 ### 8.1 Automatizaciones
 

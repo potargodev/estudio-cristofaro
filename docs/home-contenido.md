@@ -1,6 +1,6 @@
 # Home · contenido y estructura (aprobado)
 
-Fuente: brief de producto. Público: PyMEs de servicios de CABA y GBA, de 5 a 30 personas, gestionadas por sus dueños y sin área contable propia. Los textos entre corchetes son datos reales a completar.
+Fuente: brief de producto. Público: PyMEs de servicios de CABA y GBA, de 5 a 30 personas, gestionadas por sus dueños y sin área contable propia. Los textos entre corchetes son datos reales a completar. Hoy: los importes de la demo de la home son de ejemplo (`src/lib/home.ts`); los datos del bloque Responsable (§9) muestran valores provisorios a confirmar por el estudio (25 años y 180 empresas, en `src/lib/home.ts`); el equipo de la página `/equipo` tiene placeholders «Nombre Apellido» (`src/lib/content.ts`), y los precios de §7 se cargan en Configuración → Sitio web → Planes (sin precio se muestra «Consultá el precio»). Ver el ítem 12 de `docs/pendientes-configuracion.md`.
 
 ## 1. Hero
 - Línea superior: Estudio contable para PyMEs de servicios en CABA y GBA

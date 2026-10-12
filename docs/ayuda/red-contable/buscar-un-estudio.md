@@ -39,7 +39,7 @@ En la ficha, completá **Pedir propuesta**: tu nombre, email, teléfono (opciona
 
 ## Agendar una llamada
 
-Si el estudio toma clientes nuevos, en su ficha aparece **Agendar llamada**: elegís un día y un horario de su agenda, dejás tus datos y te llega la confirmación por mail con el link de la videollamada y un archivo para tu calendario. Desde ese mail podés reprogramarla o cancelarla. Si el estudio no tiene horarios libres, pedile una propuesta.
+Si el estudio toma clientes nuevos, en su ficha aparece **Agendar llamada**: elegís un día y un horario de su agenda, dejás tus datos y te llega la confirmación por mail, con el nombre del estudio que te atiende, el link de la videollamada y un archivo para tu calendario. Desde ese mail podés reprogramarla o cancelarla. Si el estudio no tiene horarios libres, pedile una propuesta.
 
 Tus datos se comparten solo si vos lo aceptás, y podés revocar ese permiso. Si llegás a un acuerdo, pasás a ser cliente del estudio en Faro sin migrar nada: lo que ya cargaste sigue ahí.
 

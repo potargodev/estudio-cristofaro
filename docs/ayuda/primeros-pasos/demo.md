@@ -30,7 +30,10 @@ Para mostrar Faro o probarlo sin tocar datos reales, el equipo de Faro puede car
 
 ## Tus datos no se tocan
 
-La demo vive en espacios propios, marcados como demostración. No ve ni modifica nada de los estudios, organizaciones o personas reales. Cuando el equipo de Faro la borra, se va entera y solo ella. Los usuarios de la demo entran con usuario y contraseña (sin segundo factor), únicamente a su espacio de prueba.
+La demo vive en espacios propios, marcados como demostración. No ve ni modifica nada de los estudios, organizaciones o personas reales. Los usuarios de la demo entran con usuario y contraseña (sin segundo factor), únicamente a su espacio de prueba.
+
+- **Los dos mundos no se cruzan.** Desde la demo solo se puede invitar, contactar, unirse o conectarse con usuarios de la demo, y desde una cuenta real, con cuentas reales. Vale para la Red Contable, las conexiones con un contador, las invitaciones (organizaciones, grupos, Bitácora compartida y Flotas) y los enlaces de grupos y cajas compartidas. Si alguien lo intenta, Faro le explica que la demo y los datos reales no se mezclan.
+- **Borrarla no toca nada real.** Cuando el equipo de Faro la borra, se va entera y solo ella. Si encontrara una cuenta real metida en un espacio, una caja, un grupo o una Flota de la demo, el borrado se frena sin tocar nada, para revisarlo a mano.
 
 ## Ver como… (equipo de Faro)
 

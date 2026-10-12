@@ -3,7 +3,7 @@ titulo: Cómo invitar personas al portal de una organización
 resumen: El portal es solo con invitación; quién puede invitar, cómo se entra con Google o con un enlace y por qué algunos roles los confirma el estudio.
 perfiles: [estudio, organizacion]
 modulo: core
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [organizaciones/roles, primeros-pasos/primeros-pasos-estudio, documentos/subir-documentos]
 ---
 
@@ -41,3 +41,4 @@ Si el Administrador de la organización invita a alguien como **Dirección** o *
 - **Invitación inválida:** el enlace se reemplazó por uno nuevo. Usá el último mail.
 - **Es para otra cuenta:** entraste con otro email. Cerrá la sesión y entrá con el email invitado.
 - Si el mail no sale, quien invita ve el enlace en pantalla para pasarlo por otro medio.
+- **Pedí el enlace y no llegó:** por seguridad, la pantalla responde lo mismo para cualquier mail («Si tu mail tiene acceso, te llega un enlace en un minuto»), así nadie puede averiguar qué mails tienen cuenta. Si no te llega, revisá el spam y que sea el mail exacto de la invitación, o pedí que te la reenvíen.

@@ -3,7 +3,7 @@ titulo: Planes y precios de Faro
 resumen: Qué planes hay para personas, autónomos y estudios, cuánto cuestan, cómo funciona la prueba gratis y cómo pagar, cambiar o cancelar el plan con Mercado Pago.
 perfiles: [persona, autonomo, estudio]
 modulo: core
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [primeros-pasos/registro, primeros-pasos/primeros-pasos-estudio, red-contable/perfil-del-estudio]
 ---
 
@@ -13,15 +13,15 @@ Los precios son **de referencia en dólares**; en la app los ves **en pesos**, c
 
 | Plan | Precio | Qué suma |
 |---|---|---|
-| **Gratis** | USD 0 | Grupos de gastos y el Asistente para consultas. |
-| **Plus** | USD 4 / mes | Lectura de tickets (hasta 100 por mes) y el Asistente con acciones que confirmás vos. |
+| **Gratis** | USD 0 | Bitácora, Mis cajas, Grupos de gastos y el Vigía para consultas. |
+| **Plus** | USD 4 / mes | Lectura de tickets (hasta 100 por mes), WhatsApp y el Vigía con acciones que confirmás vos. |
 
 ## Autónomos
 
 | Plan | Precio | Qué suma |
 |---|---|---|
-| **Gratis** | USD 0 | Grupos de gastos y el Asistente para consultas. Hasta 10 comprobantes por mes cuando llegue la facturación. |
-| **Pro** | USD 9 / mes | Lectura de tickets (hasta 300 por mes), el Asistente con acciones y facturación sin límite. |
+| **Gratis** | USD 0 | Facturación con ARCA (hasta 10 comprobantes por mes), semáforo de monotributo, Grupos de gastos y el Vigía para consultas. |
+| **Pro** | USD 9 / mes | Facturación sin límite, lectura de tickets (hasta 300 por mes), WhatsApp y el Vigía con acciones. |
 
 
 ## Estudios y contadores

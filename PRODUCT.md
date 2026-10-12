@@ -15,7 +15,7 @@ web (Next.js, mobile first; PWA instalable para Faro y para el portal de cada es
 - **Estudios contables y contadores independientes** (dueño, contador, colaborador): administran su cartera de organizaciones, vencimientos, documentos, solicitudes, honorarios, sueldos y cuentas conectadas. Trabajo diario de escritorio, denso, repetitivo, con muchas tablas.
 - **Organizaciones** (empresas clientes de un estudio, 5 a 30 empleados, dueños sin área administrativa): ven vencimientos, documentos y solicitudes en el portal con la marca del estudio.
 - **Empleados** de esas organizaciones: firman recibos y rinden gastos, casi siempre desde el celular.
-- **Equipo de Faro** (Faro Manager): tenants, planes, catálogo, escudo, auditoría.
+- **Equipo de Faro** (Faro Manager): tenants, planes, catálogo, escudo, auditoría, cuentas de la plataforma (ARCA, Mercado Pago, WhatsApp) y la demo, con «Ver como…» sobre sus usuarios.
 
 ## Product Purpose
 
@@ -52,7 +52,7 @@ Faro es la plataforma de gestión para estudios contables y autónomos: «tu ges
 ## Evidence on Hand
 
 - Estudio Cristofaro es el único tenant real; no hay testimonios, métricas ni clientes de Faro publicables más allá de eso. No inventar ninguno.
-- Datos de demostración: solo en espacios marcados como demo (`is_demo`, mails `@demo.faro.local`).
+- Datos de demostración: solo en espacios marcados como demo (`is_demo`, mails `@demo.faro.local`), un mundo que nunca se cruza con los datos reales (`docs/demo.md`).
 
 ## Product Principles
 

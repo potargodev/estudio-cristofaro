@@ -11,6 +11,8 @@ Un universo de prueba realista para mostrar Faro y recorrer la app con datos de 
 
 Cargar y borrar quedan en la auditoría de la plataforma (`demo.cargada`, `demo.borrada`).
 
+**Borrar se frena si encuentra usuarios reales adentro** (una cuenta real en un espacio de la demo, o en una caja, un grupo o una Flota de la demo): no borra nada y lo avisa para revisarlo a mano, porque el borrado en cascada se los llevaría. Las conversaciones directas se borran solo si son entre usuarios de la demo.
+
 **Desde la consola de `web` en Easypanel:**
 
 ```
@@ -32,7 +34,27 @@ node dist/demo.mjs reset    # borra solo lo de la demo
 | Dueña de organización | `duena.organizacion@demo.faro.local` | /ingresar | Agencia Creativa Norte SRL en el portal |
 | Empleada | `empleada@demo.faro.local` | /ingresar | Recibos para firmar y comunicados |
 
-Los usuarios de demo entran con contraseña y sin segundo factor (los clientes reales siguen con Google o enlace, y el estudio real con 2FA). Los mails a `@demo.faro.local` no se envían nunca (`sendMail` los descarta).
+Los usuarios de demo entran con contraseña y sin segundo factor, y solo a su espacio demo (los clientes reales siguen con Google o enlace, y el estudio real con 2FA). Los mails a `@demo.faro.local` no se envían nunca (`sendMail` los descarta) y el registro no acepta ese dominio.
+
+## Ver como…
+
+Para recorrer la demo sin escribir contraseñas, el owner de Faro usa **Faro Manager → Plataforma → Demo → Ver como…** y elige un usuario de la lista.
+
+- Solo `faro_owner` con 2FA, y solo sobre usuarios activos de la demo (`is_demo`, en un espacio demo y sin rol de Faro). Nunca sobre un usuario real.
+- Abre una sesión real de ese usuario (como máximo 2 horas): las pantallas y los permisos son exactamente los suyos.
+- Arriba de cada pantalla queda la franja **«Viendo como…»** con **Volver a mi usuario**, que cierra la sesión de la demo y vuelve a la cuenta propia en un clic.
+- El inicio y el fin quedan en la auditoría de la plataforma (`demo_impersonations`).
+
+## La demo y lo real no se cruzan
+
+Un usuario o un espacio de la demo solo invita, contacta, se une o se conecta con la demo; uno real, solo con lo real. Se valida en el servidor en cada punto donde dos personas o espacios se encuentran:
+
+- **Red Contable:** fichas de estudios, postulaciones «Disponible, busco contador» y contactos.
+- **Conexiones con un contador:** solicitudes, invitaciones y admisión.
+- **Invitaciones** a organizaciones, grupos de gastos, Bitácora compartida (Hogar) y Flotas.
+- **Uniones por enlace** a grupos y cajas compartidas.
+
+Si alguien lo intenta, ve «La demo y los datos reales no se mezclan…». Además, un usuario de la demo nunca puede usar el acceso asistido del equipo de Faro.
 
 ## Qué hay
 

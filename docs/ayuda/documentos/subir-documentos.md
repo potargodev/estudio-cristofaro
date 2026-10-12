@@ -3,7 +3,7 @@ titulo: Cómo subir y ver documentos
 resumen: Cómo el cliente y el estudio se pasan comprobantes, constancias y recibos, ordenados por período y categoría, y por qué los archivos son privados.
 perfiles: [estudio, organizacion]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-12
 relacionados: [solicitudes/solicitudes, vencimientos/calendario, organizaciones/roles]
 ---
 
@@ -46,6 +46,6 @@ Comprobantes, Constancias, Declaraciones juradas, Recibos de sueldo, VEP y bolet
 - Si alguien sin permiso intenta abrir un archivo, no ve nada y el intento queda registrado.
 - Toda descarga queda en la auditoría.
 
-## Próximamente
+## Con Google Drive (beta)
 
-Con Google Drive (en beta) cada organización puede tener una carpeta: lo que el cliente sube ahí entra a sus documentos en Faro. Ver [Conexiones](/ayuda/conexiones/conexiones).
+Con Google Drive cada organización puede tener una carpeta: lo que el cliente sube ahí entra a sus documentos en Faro. Ver [Conexiones](/ayuda/conexiones/conexiones).

@@ -3,7 +3,7 @@ titulo: Cómo crear tu cuenta en Faro
 resumen: Elegí qué sos, entrá con Google, con un enlace a tu mail o con contraseña y segundo factor si sos un estudio, y seguí la guía de primeros pasos.
 perfiles: [persona, autonomo, estudio]
 modulo: core
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [primeros-pasos/planes, primeros-pasos/primeros-pasos-estudio, grupos-de-gastos/crear-un-grupo]
 ---
 
@@ -19,8 +19,8 @@ Si te invitaron a un grupo de gastos, también podés crear la cuenta desde el e
 
 ## 2. Cómo vas a entrar
 
-- **Personas y autónomos no usan contraseña.** Elegí **Continuar con Google** o **Enviame el enlace**: te llega un mail con un enlace que vence en 15 minutos. Abrilo desde el mismo dispositivo y tu cuenta queda activa.
-- **Estudios:** entran con email y contraseña, y el **segundo factor (2FA) es obligatorio**, porque manejan datos de clientes. Apenas creás la cuenta te llevamos a configurarlo: escaneás un código QR con tu app autenticadora, guardás los códigos de respaldo (cada uno sirve una sola vez) y confirmás con el código de 6 números.
+- **Personas y autónomos no usan contraseña.** Elegí **Continuar con Google** o **Enviame el enlace**: te llega un mail con un enlace que vence en 15 minutos. Abrilo desde el mismo dispositivo y tu cuenta queda activa. Para volver a entrar, en **Ingresar** pedís otro enlace: la pantalla responde siempre «Si tu mail tiene acceso, te llega un enlace», tenga cuenta o no, para que nadie pueda averiguar qué mails están en Faro.
+- **Estudios:** entran con email y contraseña, y el **segundo factor (2FA) es obligatorio**, porque manejan datos de clientes. Apenas creás la cuenta te llevamos a configurarlo: escaneás un código QR con tu app autenticadora, guardás los códigos de respaldo (cada uno sirve una sola vez) y confirmás con el código de 6 números. En la app autenticadora la cuenta aparece como **Faro**. Si alguien pide un enlace por mail con la dirección de una cuenta del estudio, no entra: a esa casilla le llega un aviso de que la cuenta entra con contraseña.
 
 ## 3. El asistente de bienvenida
 

@@ -3,7 +3,7 @@ titulo: El calendario de vencimientos
 resumen: Cómo carga el estudio los vencimientos de cada organización y cómo los ve el cliente en su portal, con montos y links de pago.
 perfiles: [estudio, organizacion]
 modulo: core
-actualizado: 2026-10-10
+actualizado: 2026-10-12
 relacionados: [organizaciones/rubros, documentos/subir-documentos, solicitudes/solicitudes]
 ---
 
@@ -46,6 +46,6 @@ Ven los vencimientos los roles Administrador, Dirección, Administración y Cons
 
 El Asistente puede listarte los vencimientos o cargar uno. Si el vencimiento lleva monto, link de pago o aviso al cliente, es una acción sensible y queda en **Aprobaciones**.
 
-## Próximamente
+## Si sos autónomo
 
-El calendario personal del autónomo, armado según su CUIT y régimen, llega con Faro Personal.
+Tu calendario personal, armado según tu CUIT y tu régimen, está en **Facturación → Calendario**. Ver [Calendario y chequeos](/ayuda/facturacion/calendario-y-chequeos).

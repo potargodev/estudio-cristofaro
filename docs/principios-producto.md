@@ -47,7 +47,7 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
   - varias actividades;
   - pase a responsable inscripto;
   - preguntas al Vigía sobre temas que requieren criterio profesional.
-- La sugerencia lleva a la Red de estudios con el contexto ya armado (qué necesita y por qué).
+- La sugerencia lleva a la Red Contable con el contexto ya armado (qué necesita y por qué).
 
 ## 2. Dos modos de responsabilidad (el corazón del negocio)
 
@@ -66,7 +66,7 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
 
 - El usuario crece ordenado desde que es una persona común. El día que suma un contador, le entrega su historia completa, limpia y lista para trabajar.
 - El contador no recibe "el cliente que le sacaron", sino un cliente ya ordenado, y se ahorra la peor parte del trabajo: ordenar el pasado.
-- Faro no le roba clientes al contador: **se los prepara y se los trae** por la Red de estudios.
+- Faro no le roba clientes al contador: **se los prepara y se los trae** por la Red Contable.
 - **Comunicación hacia los contadores:** ningún texto de Faro (landing, publicidad, ayuda, Vigía) puede sugerir que una persona "ya no necesita contador". El límite de la autogestión (§1 y §2) se comunica como una virtud del producto. Es el mismo mensaje que tranquiliza al contador: Faro no opina, no valida y no invade su trabajo.
 
 ## 4. El dato es del usuario (conexión, no copia)
@@ -80,7 +80,7 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
 
 - Las finanzas personales (la cena, el gimnasio, el súper) son del usuario y **no se reportan a ningún contador**.
 - Al contador le interesa la **actividad**: lo facturado, los gastos del trabajo y lo deducible.
-- El único cruce entre los dos mundos es cuando el usuario **marca un gasto como "de mi actividad"** (deducible). Ahí pasa de lo personal a lo fiscal y el contador lo ve. Ya está implementado en parte: Bitácora → marcar como deducible → Faro Personal.
+- El único cruce entre los dos mundos es cuando el usuario **marca un gasto como "de mi actividad"** (deducible). Ahí pasa de lo personal a lo fiscal y el contador lo ve. Ya está implementado: marcarlo «de mi actividad» lo mueve a la caja de negocio (§10), sin copiarlo.
 
 ## 6. Cómo trabaja el contador conectado: delegar, no gestionar
 
@@ -165,7 +165,7 @@ La lista se mantiene en un solo lugar, con validación de un contador (Estudio C
 - **Dato de contexto (búsqueda web, a validar):** la API de Tango permite escribir (crear comprobantes y crear, modificar o anular pedidos) y ofrece webhooks; no es solo de lectura.
 - **Límites a validar con la cuenta real del estudio:**
   - qué operaciones se pueden escribir por API y cuáles hay que hacer sí o sí en Tango;
-  - si los webhooks están disponibles en la versión que usa el estudio (el conector actual de Faro usa Tango Delta local y hoy solo lee);
+  - si los webhooks están disponibles en la versión que usa el estudio (el conector local de Tango Delta solo lee; la escritura por API y los webhooks están hechos y probados contra el simulador, falta probarlos con la cuenta real);
   - el costo de la API.
 - Tango sigue siendo una fuente intercambiable (CLAUDE.md): todo tiene que funcionar también con importación y exportación de archivos.
 
@@ -202,7 +202,7 @@ Usan la misma lógica de cajas compartidas y sueldo (§10 y §11), aplicada a us
   1. **Cada caja es un mundo cerrado.** La plata y la gente de una no se mezclan con las de otra. Lo único que pasa de una caja a otra es un movimiento explícito (por ejemplo, el sueldo del dueño de §11, o el aporte a una caja compartida).
   2. **El usuario elige qué comparte de cada caja y con quién.** Al contador le abre solo la caja del negocio; a un hermano, solo la de los padres.
 - Cada caja tiene un **propósito** que adapta lo que muestra: reparto justo entre integrantes, metas de ahorro, gastos del negocio, o facturación y lo fiscal cuando es de una actividad.
-- **Unifica lo que hoy está separado en la app:** Bitácora (movimientos, sobres, fijos, metas), Hogar, Grupos de gastos, Flotas y los gastos "de mi actividad" de Faro Personal pasan a ser cajas bajo esta misma lógica. La migración a este modelo se planifica aparte, sin perder datos.
+- **Unifica lo que estaba separado en la app.** Hoy (octubre 2026) **Mis cajas** reúne la caja personal (la Bitácora, con sus movimientos, sobres, fijos y metas), la caja de negocio (adonde se movieron, sin perder datos, los gastos "de mi actividad") y las cajas compartidas (§18). Grupos de gastos, Hogar y Flotas siguen como estaban: Hogar puede armar una caja de pareja y Grupos sigue siendo la forma de dividir gastos con deuda.
 
 ## 18. Registro compartido (distinto de Grupos de gastos)
 
@@ -256,7 +256,7 @@ Las personas sueltas, que llegan por la Bitácora y el registro compartido, se d
   | Personas | Gratis · Plus USD 4 |
   | Autónomos | Gratis · Pro USD 9 |
 
-  Ya está actualizado en `docs/faro-producto.md` (§2.k y §3). **Falta aplicarlo en la app:** hoy el plan Inicial del código y de Faro Manager sigue en USD 49, con 10 organizaciones y prueba de 30 días.
+  Está en `docs/faro-producto.md` (§2.k y §3) y **aplicado en la app** (octubre 2026): Inicial es gratis, sin prueba ni débito, con hasta 5 organizaciones y 1 usuario (`src/lib/faro/plans.ts` y la migración `0035_inicial_gratis`, que pasó sin cobro y con auditoría a los estudios que estaban en Inicial). Los precios de referencia se editan en Faro Manager → Catálogo → Planes y precios.
 - **Sin comisión por clientes de la Red Contable (decisión firme).** Faro no le cobra una comisión al estudio por los clientes que le llegan desde la Red Contable. La Red es gratuita y funciona como imán para que los estudios se sumen sin miedo; la plata viene de los planes, no de una parte de cada cliente. Por qué:
   - En la etapa inicial hay que seducir a los estudios, no asustarlos.
   - Cobrar comisión obligaría a controlar quién contrató a quién, y eso genera más conflicto que ingresos.
@@ -276,11 +276,11 @@ El primer movimiento real para arrancar con Estudio Cristofaro, en orden:
 
 **Antes de la reunión hay que tener:**
 - staging revisado;
-- la IA cargada en Faro Manager;
+- la IA de la plataforma cargada en Faro Manager;
 - los mails saliendo (SMTP);
-- el plan Inicial gratis aplicado en la app.
+- ~~el plan Inicial gratis aplicado en la app~~ **hecho** (§20).
 
-El registro compartido (§18) y la conexión con el contador (§4 a §8) todavía no están construidos. Si se quieren mostrar en la reunión, hay que construirlos antes.
+El registro compartido (§18, cajas compartidas) y la conexión con el contador (§4 a §8: admisión, acuerdo, delegar o proponer, cierre con mediación y calificaciones) **ya están construidos** y se pueden mostrar en la reunión; también hay una demo completa para recorrerlos sin datos reales (`docs/demo.md`). La lista completa de lo que falta configurar, por prioridad, está en `docs/pendientes-configuracion.md`.
 
 ---
 
