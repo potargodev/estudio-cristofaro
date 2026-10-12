@@ -465,3 +465,23 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Escalas oficiales de los 26 convenios, parámetros de seguridad social, formatos de ARCA y bancos, y la decisión sobre Ganancias (pendientes, ítem 8).
+
+## §2.q · Etapa 7: stock simple con tiendas (12 de octubre)
+
+**Qué quedó**
+- Módulo **Stock** (Profesional, Avanzado y Autónomos Pro), activado por el estudio para cada organización en Plan y módulos: ficha → **Stock**, portal → Empresa → **Stock** y Facturación → **Stock** del autónomo.
+- Productos (código, código de barras, descripción, unidad, alícuota, costo, precio, mínimo), importación de Excel o CSV con existencia inicial y **hasta 3 depósitos**.
+- **Movimientos automáticos e idempotentes:** compras leídas suman (con lo aprendido del proveedor), lo facturado en Faro resta y la nota de crédito devuelve, las ventas de tiendas restan y la cancelación o devolución repone; la misma venta dos veces no resta dos veces. Lo no vinculado queda en **Sin vincular** (ventas y compras) y no mueve stock.
+- Vínculos por código, aprendidos o sugeridos por el nombre; al vincular se descuenta lo que esperaba y se aprende para las otras tiendas.
+- **Ajustes** con motivo, **conteo** con la cámara del celular, **alertas de mínimo** (app, mail y WhatsApp), **inventario valorizado a una fecha** (último costo o promedio ponderado) exportable y **CMV estimado**.
+- **Tiendas:** adaptadores por plataforma (Mercado Libre, Tiendanube, Empretienda, Shopify, WooCommerce, VTEX, Mercado Pago y tienda física por archivo) contra el simulador `mocks/tiendas`; ventas por aviso (webhook con token) o por consulta (tarea interna `stock`, `STOCK_JOBS`).
+- **Publicación hacia las tiendas:** apagada por defecto, por tienda, solo lo vinculado, con margen de seguridad; si la tienda no coincide, **conflicto sin pisar** (publicar lo de Faro, ajustar Faro o descartar); registro, reintentos y pausa.
+- Vigía y Agente: `consultar_stock`, `stock_bajo_minimo`, `mas_vendidos`, `inventario_valorizado` y la tarea «Inventario valorizado y stock bajo». Migración `0053`.
+- Demo: Indumentaria Lola (tienda online y Mercado Libre simuladas, pedidos, una venta sin vincular y una diferencia) y Pinturería Arcoíris.
+
+**Qué se probó**
+- `src/modules/stock/stock.test.ts` (valuación a una fecha, promedio ponderado, CMV, disponible a publicar y sugerencias).
+- `scripts/pruebas/stock.mts` (49 verificaciones, repetible): compra leída que suma y aprendizaje del proveedor, venta facturada y nota de crédito, venta de tienda por webhook HTTP, la misma venta dos veces, devolución, venta sin vincular, vínculo con descuento de lo que esperaba, tienda por consulta, publicación apagada, conflictos sin pisar, reintento, pausa, conteo, inventario a una fecha pasada, CMV, Vigía, Agente y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Las APIs reales de cada tienda (pendientes, ítem 28).

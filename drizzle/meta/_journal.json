@@ -372,6 +372,13 @@
       "when": 1791825348765,
       "tag": "0052_liquidacion_sueldos",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1791827807350,
+      "tag": "0053_stock",
+      "breakpoints": true
     }
   ]
 }

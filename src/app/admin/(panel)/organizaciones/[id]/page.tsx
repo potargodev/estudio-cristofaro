@@ -19,6 +19,8 @@ import { ActivityTimeline } from "@/components/admin/ActivityTimeline";
 import { ArcaOrgTab } from "@/components/facturacion/ArcaOrgTab";
 import { BankRecTab } from "@/components/conciliacion/views";
 import { IvaTab } from "@/components/iva/IvaTab";
+import { StockScreen } from "@/components/stock/StockScreen";
+import { resolveStock } from "@/modules/stock/scope";
 import { SueldosTab } from "@/components/sueldos/SueldosTab";
 import { OrgExpensesTab } from "@/components/admin/OrgExpensesTab";
 import { OrgIndustryTab } from "@/components/admin/OrgIndustryTab";
@@ -265,6 +267,7 @@ export default async function OrganizacionPage({
         {tab === "iva" && <IvaTab me={me} orgId={org.id} sp={sp} />}
         {tab === "conciliacion" && <BankRecTab me={me} orgId={org.id} sp={sp} />}
         {tab === "sueldos" && <SueldosTab orgId={org.id} sp={sp} />}
+        {tab === "stock" && <StockScreen r={await resolveStock("estudio", org.id)} sp={sp} />}
       </div>
       {tab === "plan" && <PlanTab orgId={org.id} studioId={studioId} planId={org.service_plan_id} />}
     </div>

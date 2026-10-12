@@ -32,7 +32,8 @@ export type FaroModuleKey =
   | "flotas"
   | "red_estudios"
   | "bitacora"
-  | "agent";
+  | "agent"
+  | "stock";
 
 export type ModuleStatus = "disponible" | "beta" | "proximamente";
 type StudioRoleKey = "dueno" | "contador" | "colaborador" | "titular";
@@ -423,6 +424,19 @@ FARO_MODULES.push(
     events: ["agente.tarea_completada"],
     tools: ["encargar_al_agente", "ver_tareas_agente"],
     limit: "agentTasksPerMonth",
+  },
+  {
+    key: "stock",
+    name: "Stock",
+    icon: "Boxes",
+    description: "Stock simple para los clientes (§2.q): productos, hasta 3 depósitos, ajustes con motivo, conteo con el escáner del celular, alertas de mínimo, valuación por último costo y promedio ponderado, inventario a una fecha y CMV estimado. Las compras leídas suman, lo facturado y las ventas de tiendas restan (sin contar dos veces) y la existencia se puede publicar en las tiendas sin pisar diferencias.",
+    status: "disponible",
+    minPlan: { studio: "profesional", personal: "autonomo_pro" },
+    roles: [...ALL_STAFF, "titular"],
+    // §2.o: el estudio lo activa por organización (Plan y módulos); ficha → Stock; portal → Empresa → Stock; autónomos → Facturación → Stock
+    nav: [{ href: "/admin/organizaciones", label: "Organización → Stock" }, { href: "/facturacion/stock", label: "Facturación → Stock" }],
+    events: [],
+    tools: ["consultar_stock", "stock_bajo_minimo", "mas_vendidos", "inventario_valorizado"],
   },
 );
 

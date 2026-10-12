@@ -22,7 +22,7 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 - SMTP pendiente: el mail del dominio está en el cPanel de Duplika (`mail.estudiocristofaro.com`). Hasta configurarlo, los mails no salen (se registran en el log).
 - Reset de contraseña del estudio desde la consola de `web`: `node dist/reset-password.mjs <email>`.
 - `ENCRYPTION_KEY` cifra los secretos guardados (tokens de Google, claves de IA, credenciales de conexiones, ARCA y Mercado Pago): no cambiarla.
-- Tareas internas (instrumentation.ts): agenda, gastos, Vigía, flujos, ARCA, Bitácora, cobros, Tango, Agente contable y la cola de lectura. Cada una corre en una sola instancia a la vez (turno en `job_leases`) y se apaga con su variable en `off` (o todas con `JOBS=off`); el cron externo usa `CRON_SECRET` y el mismo turno. Lista en `.env.example`.
+- Tareas internas (instrumentation.ts): agenda, gastos, Vigía, flujos, ARCA, Bitácora, cobros, Tango, Agente contable, la cola de lectura y stock (tiendas y mínimos). Cada una corre en una sola instancia a la vez (turno en `job_leases`) y se apaga con su variable en `off` (o todas con `JOBS=off`); el cron externo usa `CRON_SECRET` y el mismo turno. Lista en `.env.example`.
 - Backup: `scripts/backup/` (pg_dump + `/data/uploads`) con cron en el VPS; restauración probada en `docs/backup.md`.
 - Acceso: el estudio entra con contraseña + 2FA obligatorio; los clientes, con Google o enlace por mail y solo con invitación. Los usuarios de la demo (`is_demo`, `@demo.faro.local`) entran con contraseña y sin 2FA, solo a sus espacios de la demo; el owner de Faro puede «Ver como…» uno de ellos (Faro Manager → Plataforma → Demo).
 

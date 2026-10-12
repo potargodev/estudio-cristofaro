@@ -88,6 +88,17 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     routine: true,
   },
   {
+    key: "inventario",
+    title: "Inventario valorizado y stock bajo",
+    description: "Inventario valorizado a una fecha (por ejemplo al 31/12) con el CMV estimado del año, y los productos debajo del mínimo.",
+    example: "Inventario al 31/12 de Distribuidora Oeste",
+    scopes: ["organizacion", "cartera", "personal"],
+    needs: ["fecha"],
+    module: "stock",
+    keywords: /inventario|\bstock\b|existencia/,
+    routine: true,
+  },
+  {
     key: "libre",
     title: "Otra tarea",
     description: "Contale qué necesitás: arma un plan con las herramientas de Faro, investiga y te deja un informe. Necesita un modelo de IA configurado.",

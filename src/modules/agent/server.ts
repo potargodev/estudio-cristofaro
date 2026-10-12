@@ -113,8 +113,17 @@ async function buildPlan(studioId: string, t: AgentTemplate, scope: AgentScope, 
     steps.push({ id: "p1", title: "Entender el pedido, armar el plan e investigar con las herramientas", kind: "analisis", status: "pendiente" });
   } else if (scope === "personal") {
     if (t.key === "tope_monotributo") add("Semáforo del monotributo de tu cuenta", "situacion_monotributo", {}, null);
+    if (t.key === "inventario") {
+      add("Inventario valorizado de tu cuenta", "inventario_valorizado", { ...(params.date ? { fecha: params.date } : {}) }, null);
+      add("Productos debajo del mínimo", "stock_bajo_minimo", {}, null);
+    }
   } else {
     const mono = t.key === "tope_monotributo" ? await monotributoOrgs(studioId, orgs.map((o) => o.id)) : null;
+    const withStock = t.key === "inventario" ? await (async () => {
+      const { stockEnabled } = await import("@/modules/stock/server");
+      const ok = await Promise.all(orgs.map((o) => stockEnabled(studioId, o.id)));
+      return new Set(orgs.filter((_, i) => ok[i]).map((o) => o.id));
+    })() : null;
     const staff = t.key === "liquidar_sueldos" ? await (await import("@/modules/liquidacion/server")).orgsWithStaff(studioId, orgs.map((o) => o.id)) : null;
     for (const o of orgs) {
       const of = (s: string) => (orgs.length > 1 ? `${s} · ${o.name}` : s);
@@ -132,6 +141,11 @@ async function buildPlan(studioId: string, t: AgentTemplate, scope: AgentScope, 
         add(of("Estado de la conciliación"), "estado_conciliacion", { organizacion_id: o.id }, o.id);
       } else if (t.key === "tope_monotributo") {
         if (mono?.has(o.id)) add(of("Semáforo del monotributo"), "situacion_monotributo", { organizacion_id: o.id }, o.id);
+      } else if (t.key === "inventario") {
+        if (withStock?.has(o.id)) {
+          add(of("Inventario valorizado"), "inventario_valorizado", { organizacion_id: o.id, ...(params.date ? { fecha: params.date } : {}) }, o.id);
+          add(of("Productos debajo del mínimo"), "stock_bajo_minimo", { organizacion_id: o.id }, o.id);
+        }
       } else if (t.key === "liquidar_sueldos") {
         if (staff?.has(o.id) && params.period) add(of("Liquidación de sueldos (borrador para aprobar)"), "liquidar_sueldos", { organizacion_id: o.id, periodo: params.period }, o.id);
       } else if (t.key === "resumen_mensual") {

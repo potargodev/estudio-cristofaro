@@ -72,6 +72,13 @@ export const MODULES = [
     nav: [{ path: "", label: "Indicadores" }],
   },
   {
+    key: "stock",
+    name: "Stock",
+    description: "Productos, existencia por depósito, conteo con el celular, alertas de mínimo, inventario valorizado y ventas de tiendas online que descuentan solas.",
+    permissions: { view: "finanzas.ver", manage: "finanzas.gestionar" },
+    nav: [{ path: "", label: "Stock" }],
+  },
+  {
     key: "novedades_personal",
     name: "Solicitudes y novedades de personal",
     description: "Altas, bajas, licencias, horas extra y novedades para la liquidación de sueldos.",

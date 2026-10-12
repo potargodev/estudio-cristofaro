@@ -1,4 +1,6 @@
 import {
+  Boxes,
+  BrainCircuit,
   Bot,
   Briefcase,
   NotebookPen,
@@ -30,6 +32,8 @@ import {
 
 // Íconos de los módulos de Faro (el registro guarda el nombre: src/modules/registry.ts)
 const ICONS: Record<string, LucideIcon> = {
+  Boxes,
+  BrainCircuit,
   Bot,
   Briefcase,
   NotebookPen,

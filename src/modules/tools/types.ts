@@ -34,6 +34,7 @@ export const TOOL_MODULES = {
   whatsapp: "WhatsApp",
   indicadores: "Indicadores",
   agente: "Agente contable",
+  stock: "Stock",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 

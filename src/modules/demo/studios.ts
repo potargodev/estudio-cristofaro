@@ -38,6 +38,7 @@ import {
 import { TEMPLATES } from "@/modules/flows/core";
 import { seedAgent } from "./agent";
 import { seedPayroll } from "./payroll";
+import { seedStock } from "./stock";
 import { ago, cents, cuit, dateIn, day, demoFile, demoTenant, demoUser, month, rng, tinyPdf, type DemoUser } from "./base";
 
 type R = ReturnType<typeof rng>;
@@ -332,6 +333,7 @@ export async function seedStudios(db: Db, pass: Record<string, string>) {
   await seedBank(db, r, big.studioId, bigOrgs[3].id, contador);
   await seedFlows(db, big.studioId, big.owner);
   await seedAgent(db, big.studioId, big.owner, contador, bigOrgs);
+  await seedStock(db, big.studioId, contador, bigOrgs);
   await seedLeads(db, r, big.studioId, big.owner);
   await db.insert(billing_settings).values({ studio_id: big.studioId, issuer_organization_id: null, reminders: true, due_day: 10 });
   await seedDirectory(

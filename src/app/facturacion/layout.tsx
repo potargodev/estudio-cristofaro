@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CalendarClock, FileText, Gauge, ListChecks, ScanText, Settings2, ShieldCheck, Users } from "lucide-react";
+import { Boxes, CalendarClock, FileText, Gauge, ListChecks, ScanText, Settings2, ShieldCheck, Users } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { AppFrame } from "@/components/app/shell/AppFrame";
 import { requirePersonal } from "@/lib/auth";
@@ -21,6 +21,7 @@ export default async function FacturacionLayout({ children }: { children: React.
           { href: "/facturacion", label: "Comprobantes", icon: FileText, match: ["/facturacion/nueva"] },
           { href: "/facturacion/recibidos", label: "Recibidos", icon: ScanText },
           { href: "/facturacion/clientes", label: "Clientes y productos", icon: Users },
+          { href: "/facturacion/stock", label: "Stock", icon: Boxes },
           { href: "/facturacion/arca", label: "Mi situación", icon: ShieldCheck },
           { href: "/facturacion/monotributo", label: "Monotributo", icon: Gauge },
           { href: "/facturacion/calendario", label: "Calendario", icon: CalendarClock },

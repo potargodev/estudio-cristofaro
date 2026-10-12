@@ -17,6 +17,7 @@ import { tareasTools } from "./modulos/tareas";
 import { consultasIaTools } from "./modulos/consultas-ia";
 import { indicadoresTools } from "./modulos/indicadores";
 import { ivaTools } from "./modulos/iva";
+import { stockTools } from "./modulos/stock";
 import { whatsappTools } from "./modulos/whatsapp";
 import { gastosTools } from "./modulos/gastos";
 import { industriasTools } from "./modulos/industrias";
@@ -42,6 +43,7 @@ export const TOOLS: ToolDefinition[] = [
   ...ayudaTools,
   ...agenteTools,
   ...ivaTools,
+  ...stockTools,
   ...facturacionTools,
   ...lecturaTools,
   ...cobrosTools,

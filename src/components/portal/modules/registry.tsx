@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import type { PortalUser } from "@/lib/auth";
 import { SueldosPortal } from "@/components/sueldos/PortalScreens";
+import { StockPortal } from "@/components/stock/StockPortal";
 
 // Pantallas de los módulos del catálogo (src/lib/modules/catalog.ts). Cuando un
 // módulo tenga la suya, se registra acá con su clave y el portal la muestra a
@@ -15,6 +16,6 @@ export interface ModuleScreenProps {
   sp?: Record<string, string | undefined>;
 }
 
-export const MODULE_SCREENS: Partial<Record<string, ComponentType<ModuleScreenProps>>> = { sueldos: SueldosPortal };
+export const MODULE_SCREENS: Partial<Record<string, ComponentType<ModuleScreenProps>>> = { sueldos: SueldosPortal, stock: StockPortal };
 
 export const isModuleAvailable = (key: string) => key in MODULE_SCREENS;

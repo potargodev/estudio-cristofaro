@@ -2543,6 +2543,8 @@ export const invoice_products = pgTable(
 );
 
 export interface InvoiceItem {
+  /** Código del producto de Stock (§2.q etapa 7), si se eligió del catálogo */
+  code?: string | null;
   description: string;
   quantity: number;
   unitPrice: number;
@@ -4691,3 +4693,291 @@ export const iva_marks = pgTable(
   },
   (t) => [uniqueIndex("iva_marks_row_idx").on(t.organization_id, t.book, t.row_id), index("iva_marks_period_idx").on(t.organization_id, t.period)],
 );
+
+// ───────────────────────── Stock (§2.q etapa 7) ─────────────────────────
+
+/** Depósitos de una organización (hasta 3) */
+export const stock_deposits = pgTable(
+  "stock_deposits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    position: integer("position").notNull().default(0),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("stock_deposits_org_name_idx").on(t.organization_id, t.name)],
+);
+
+/** Productos propios (el código es único por organización) */
+export const stock_products = pgTable(
+  "stock_products",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    code: text("code").notNull(),
+    barcode: text("barcode"),
+    description: text("description").notNull(),
+    unit: text("unit").notNull().default("unidad"),
+    iva_rate: numeric("iva_rate", { precision: 5, scale: 2 }).notNull().default("21"),
+    cost: numeric("cost", { precision: 14, scale: 2 }).notNull().default("0"),
+    price: numeric("price", { precision: 14, scale: 2 }).notNull().default("0"),
+    min_stock: numeric("min_stock", { precision: 12, scale: 3 }),
+    active: boolean("active").notNull().default(true),
+    /** manual | importacion | compra | tienda */
+    source: text("source").notNull().default("manual"),
+    alerted_at: timestamp("alerted_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("stock_products_org_code_idx").on(t.organization_id, t.code), index("stock_products_barcode_idx").on(t.organization_id, t.barcode)],
+);
+
+/**
+ * Movimientos de stock: la única fuente de la existencia y de la valuación.
+ * idem_key evita contar dos veces lo mismo (una venta que llega dos veces).
+ */
+export const stock_movements = pgTable(
+  "stock_movements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    product_id: uuid("product_id")
+      .notNull()
+      .references(() => stock_products.id, { onDelete: "cascade" }),
+    deposit_id: uuid("deposit_id")
+      .notNull()
+      .references(() => stock_deposits.id, { onDelete: "cascade" }),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+    /** compra | venta | venta_tienda | devolucion | anulacion | ajuste | conteo | inicial */
+    kind: text("kind").notNull(),
+    qty: numeric("qty", { precision: 14, scale: 3 }).notNull(),
+    unit_cost: numeric("unit_cost", { precision: 14, scale: 2 }),
+    /** smart_document | invoice | store_order | manual | count | import */
+    source_type: text("source_type").notNull(),
+    source_id: text("source_id"),
+    idem_key: text("idem_key"),
+    reason: text("reason"),
+    actor_id: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("stock_movements_prod_idx").on(t.product_id, t.at), index("stock_movements_org_idx").on(t.organization_id, t.at), uniqueIndex("stock_movements_idem_idx").on(t.organization_id, t.idem_key).where(sql`${t.idem_key} is not null`)],
+);
+
+/** Conteo físico (con el escáner del celular): al cerrarlo, las diferencias se ajustan */
+export const stock_counts = pgTable("stock_counts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  organization_id: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  deposit_id: uuid("deposit_id")
+    .notNull()
+    .references(() => stock_deposits.id, { onDelete: "cascade" }),
+  lines: jsonb("lines").$type<{ productId: string; counted: number; expected: number }[]>().notNull().default([]),
+  status: text("status").notNull().default("cerrado"),
+  created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+});
+
+/** Equivalencias aprendidas: SKU, código de proveedor o nombre de una tienda → producto propio */
+export const stock_aliases = pgTable(
+  "stock_aliases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    alias: text("alias").notNull(),
+    product_id: uuid("product_id")
+      .notNull()
+      .references(() => stock_products.id, { onDelete: "cascade" }),
+    source: text("source").notNull(), // tienda | proveedor | factura
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("stock_aliases_idx").on(t.organization_id, t.alias)],
+);
+
+/** Tiendas conectadas (adaptadores intercambiables, principios §22) */
+export const stock_stores = pgTable("stock_stores", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  organization_id: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  platform: text("platform").notNull(),
+  name: text("name").notNull(),
+  shop_id: text("shop_id").notNull(),
+  credentials_enc: text("credentials_enc"),
+  deposit_id: uuid("deposit_id").references(() => stock_deposits.id, { onDelete: "set null" }),
+  /** Publicar la existencia en la tienda (apagado por defecto) */
+  sync_enabled: boolean("sync_enabled").notNull().default(false),
+  safety_margin: numeric("safety_margin", { precision: 12, scale: 3 }).notNull().default("0"),
+  paused: boolean("paused").notNull().default(false),
+  webhook_token: text("webhook_token").notNull(),
+  last_poll_at: timestamp("last_poll_at", { withTimezone: true }),
+  last_error: text("last_error"),
+  created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+  updated_at: updatedAt(),
+}, (t) => [uniqueIndex("stock_stores_token_idx").on(t.webhook_token), index("stock_stores_org_idx").on(t.organization_id)]);
+
+/** Publicaciones de cada tienda y su producto propio (vínculo, sugerencia y lo último publicado) */
+export const stock_listings = pgTable(
+  "stock_listings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    store_id: uuid("store_id")
+      .notNull()
+      .references(() => stock_stores.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    external_id: text("external_id").notNull(),
+    sku: text("sku"),
+    title: text("title").notNull(),
+    product_id: uuid("product_id").references(() => stock_products.id, { onDelete: "set null" }),
+    /** sku | aprendido | manual */
+    linked_by: text("linked_by"),
+    suggested_product_id: uuid("suggested_product_id").references(() => stock_products.id, { onDelete: "set null" }),
+    suggestion_score: numeric("suggestion_score", { precision: 4, scale: 3 }),
+    suggestion_reason: text("suggestion_reason"),
+    last_published_qty: numeric("last_published_qty", { precision: 14, scale: 3 }),
+    remote_qty: numeric("remote_qty", { precision: 14, scale: 3 }),
+    synced_at: timestamp("synced_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("stock_listings_store_ext_idx").on(t.store_id, t.external_id)],
+);
+
+/** Pedidos recibidos de las tiendas (webhook o consulta), con el registro original */
+export const stock_store_orders = pgTable(
+  "stock_store_orders",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    store_id: uuid("store_id")
+      .notNull()
+      .references(() => stock_stores.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    external_id: text("external_id").notNull(),
+    /** pagada | cancelada | devuelta */
+    status: text("status").notNull(),
+    lines: jsonb("lines").$type<{ listingId: string; sku: string | null; title: string; qty: number; price: number }[]>().notNull(),
+    raw: jsonb("raw").$type<unknown>(),
+    via: text("via").notNull(), // webhook | consulta | importacion
+    received_at: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("stock_store_orders_ext_idx").on(t.store_id, t.external_id)],
+);
+
+/** Ventas sin vincular: no descuentan hasta que se vinculan a un producto */
+export const stock_unlinked = pgTable(
+  "stock_unlinked",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    /** tienda | factura */
+    source_type: text("source_type").notNull(),
+    source_id: text("source_id").notNull(),
+    line: integer("line").notNull(),
+    store_id: uuid("store_id").references(() => stock_stores.id, { onDelete: "cascade" }),
+    listing_external_id: text("listing_external_id"),
+    sku: text("sku"),
+    title: text("title").notNull(),
+    qty: numeric("qty", { precision: 14, scale: 3 }).notNull(),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+    status: text("status").notNull().default("pendiente"), // pendiente | vinculada | ignorada
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("stock_unlinked_src_idx").on(t.organization_id, t.source_type, t.source_id, t.line)],
+);
+
+/** Conflictos: la tienda tiene otra existencia que la última que publicó Faro. Nada se pisa */
+export const stock_conflicts = pgTable("stock_conflicts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  store_id: uuid("store_id")
+    .notNull()
+    .references(() => stock_stores.id, { onDelete: "cascade" }),
+  listing_id: uuid("listing_id")
+    .notNull()
+    .references(() => stock_listings.id, { onDelete: "cascade" }),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  organization_id: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  faro_qty: numeric("faro_qty", { precision: 14, scale: 3 }).notNull(),
+  remote_qty: numeric("remote_qty", { precision: 14, scale: 3 }).notNull(),
+  published_qty: numeric("published_qty", { precision: 14, scale: 3 }),
+  status: text("status").notNull().default("abierto"), // abierto | resuelto
+  resolution: text("resolution"),
+  resolved_by: uuid("resolved_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+  resolved_at: timestamp("resolved_at", { withTimezone: true }),
+});
+
+/** Registro de publicaciones hacia las tiendas, con reintentos */
+export const stock_publications = pgTable(
+  "stock_publications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    store_id: uuid("store_id")
+      .notNull()
+      .references(() => stock_stores.id, { onDelete: "cascade" }),
+    listing_id: uuid("listing_id")
+      .notNull()
+      .references(() => stock_listings.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    qty: numeric("qty", { precision: 14, scale: 3 }).notNull(),
+    status: text("status").notNull(), // ok | error | conflicto
+    attempts: integer("attempts").notNull().default(1),
+    error: text("error"),
+    next_retry_at: timestamp("next_retry_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("stock_publications_store_idx").on(t.store_id, t.created_at)],
+);
+

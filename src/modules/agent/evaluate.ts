@@ -76,6 +76,15 @@ export function findingsFor(step: AgentPlanStep, outcome: StepOutcome, c: Ctx): 
       if (toValidate.length) out.push({ ...base, severity: "baja", title: `Escalas a validar: ${toValidate.join(", ")}`, detail: "Calculada con la escala de referencia: revisá los básicos con el acta vigente.", href: (r.enlace as string) ?? null });
       break;
     }
+    case "inventario_valorizado": {
+      out.push({ ...base, severity: "baja", title: `Inventario valorizado al ${dmy(r.fecha)}: $ ${n(r.total).toLocaleString("es-AR", { minimumFractionDigits: 2 })} (${String(r.metodo ?? "")})`, detail: `${((r.productos as Row[] | undefined) ?? []).length} productos con existencia · CMV estimado del año $ ${n(r.cmv_estimado_del_anio).toLocaleString("es-AR", { minimumFractionDigits: 2 })}. Es una valuación de gestión.`, href: c.orgId ? `/admin/organizaciones/${c.orgId}?tab=stock&ver=inventario` : "/facturacion/stock?ver=inventario" });
+      break;
+    }
+    case "stock_bajo_minimo": {
+      const rows = (r.productos as Row[] | undefined) ?? [];
+      if (rows.length) out.push({ ...base, severity: "media", title: `${plural(rows.length, "producto está", "productos están")} debajo del mínimo`, detail: rows.slice(0, 6).map((x) => `${x.descripcion} (${x.existencia}; mínimo ${x.minimo})`).join(" · "), href: c.orgId ? `/admin/organizaciones/${c.orgId}?tab=stock` : "/facturacion/stock" });
+      break;
+    }
     case "listar_comprobantes": {
       const rows = ((r.comprobantes ?? r.facturas) as Row[] | undefined) ?? [];
       const bad = rows.filter((x) => ["rechazada", "error"].includes(String(x.estado)));

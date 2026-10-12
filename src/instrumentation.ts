@@ -16,6 +16,7 @@
 // | escaneo    | FLOWS_JOBS       | 1 h     | Eventos por tiempo, tareas por vencimiento y corridas trabadas    |
 // | tango      | TANGO_JOBS       | 15 min  | Bandeja de salida a Tango y sondeo de los enlaces sin webhooks    |
 // | agente     | AGENT_JOBS       | 30 s    | Cola del Agente contable (tareas en pasos) y sus rutinas          |
+// | stock      | STOCK_JOBS       | 5 min   | Pedidos de tiendas por consulta, publicación de stock y mínimos   |
 // | lectura    | READ_JOBS        | 30 s    | Cola de la carga masiva de comprobantes (lectura inteligente)     |
 
 interface Job {
@@ -133,6 +134,16 @@ const JOBS: Job[] = [
     run: async () => {
       const r = await (await import("./modules/agent/server")).runAgentWorker();
       return r.tareas || r.rutinas ? `${r.tareas} tareas avanzadas, ${r.rutinas} rutinas disparadas` : null;
+    },
+  },
+  {
+    name: "stock",
+    env: "STOCK_JOBS",
+    every: 5 * MIN,
+    firstDelay: 70_000,
+    run: async () => {
+      await (await import("./modules/stock/server")).runStockJobs();
+      return null;
     },
   },
   {

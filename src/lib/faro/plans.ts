@@ -116,7 +116,7 @@ export const PLANS: FaroPlan[] = [
     recommended: true,
     ai: "acciones",
     limits: { ...NO_LIMITS, smartDocsPerMonth: 300, agentTasksPerMonth: 20 },
-    modules: ["ai", "shared_expenses", "personal_invoicing", "arca", "smart_docs", "whatsapp", "agent"],
+    modules: ["ai", "shared_expenses", "personal_invoicing", "arca", "smart_docs", "whatsapp", "agent", "stock"],
     support: "Mail prioritario",
   },
   {
@@ -148,7 +148,7 @@ export const PLANS: FaroPlan[] = [
     recommended: true,
     ai: "acciones",
     limits: { organizations: 40, staffUsers: 5, smartDocsPerMonth: 1000, flows: 10, invoicesPerMonth: null, agentTasksPerMonth: 60 },
-    modules: [...CORE_STUDIO, "smart_docs", "flows", "tango_files", "tango", "arca", "crm", "payroll", "employees", "comms", "billing", "ai_consults", "red_estudios", "agent"],
+    modules: [...CORE_STUDIO, "smart_docs", "flows", "tango_files", "tango", "arca", "crm", "payroll", "employees", "comms", "billing", "ai_consults", "red_estudios", "agent", "stock"],
     support: "Mail prioritario",
   },
   {
@@ -182,6 +182,7 @@ export const PLANS: FaroPlan[] = [
       "whatsapp",
       "white_label",
       "agent",
+      "stock",
     ],
     support: "Dedicado",
   },

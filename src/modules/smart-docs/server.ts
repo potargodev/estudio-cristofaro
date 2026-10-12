@@ -368,6 +368,11 @@ export async function confirmDoc(s: DocScope, actor: Actor, id: string, edited: 
     .update(smart_documents)
     .set({ status: "confirmado", extracted: edited as unknown as Record<string, unknown>, validation: v as unknown as Record<string, unknown>, fingerprint: fingerprint(edited), low_fields: [], account: account.slice(0, 60), decisions: decisions as unknown as Record<string, unknown>, corrected_fields: learned.corrected, supplier_cuit: cuit, confirmed_by: actor.id, confirmed_at: new Date(), target_id: targetId })
     .where(eq(smart_documents.id, d.id));
+  // §2.q etapa 7: lo comprado y vinculado a un producto suma al stock
+  if (s.scope !== "bitacora" && s.organizationId) {
+    const { onPurchaseConfirmed } = await import("@/modules/stock/server");
+    await onPurchaseConfirmed({ studioId: s.studioId, organizationId: s.organizationId }, { id: d.id, cuit, kind: edited.tipo_documento ?? "factura", items: edited.items ?? [], productLinks: decisions.productLinks ?? {} }, actor.id).catch((e) => console.error("[stock] compra", (e as Error).message));
+  }
   if (s.scope !== "bitacora") await emitEvent(s.studioId, "documento.confirmado", { documento_id: d.id, organizacion_id: s.organizationId, emisor: edited.razon_social_emisor, total: edited.total, cuenta: account }, d.id);
   await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "lectura.confirmado", entityType: "documento_leido", entityId: d.id, metadata: { total: edited.total, cuenta: account, cuit: edited.cuit_emisor } });
 }

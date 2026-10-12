@@ -8,7 +8,7 @@ Actualizado el 12 de octubre de 2026.
 |---|---|
 | **Crítico para la reunión con Cristofaro** | 1 SMTP · 2 IA de la plataforma · 3 Staging revisado y demo cargada |
 | **Alto** | 4 Tango real · 5 ARCA · 6 Mercado Pago de Faro · 7 Mercado Pago del estudio · 8 Validaciones del contador · 9 Revisión legal · 10 Backup en el VPS · 11 IP real detrás del proxy · 12 Contenido real de la web · 13 WhatsApp de Faro |
-| **Medio** | 14 Verificación de Google · 15 Mercado Pago para la Bitácora · 16 Serie del IPC · 17 IA de cada estudio · 18 Empleados · 19 Archivos de Tango y Xubio · 20 Factura de Faro por la suscripción · 21 Agenda pública en la Red |
+| **Medio** | 14 Verificación de Google · 15 Mercado Pago para la Bitácora · 16 Serie del IPC · 17 IA de cada estudio · 18 Empleados · 19 Archivos de Tango y Xubio · 20 Factura de Faro por la suscripción · 21 Agenda pública en la Red · 28 Tiendas online reales (Stock) |
 | **Bajo** | 22 Dominio e isotipo de Faro · 23 Dominio propio de un estudio · 24 WhatsApp propio de un estudio · 25 Tareas internas y cron externo · 26 Débitos viejos de Inicial · 27 Ramas remotas viejas |
 
 ---
@@ -206,3 +206,8 @@ Actualizado el 12 de octubre de 2026.
 - **Quién:** Faro (owner del repo).
 - **Dónde:** GitHub → Branches.
 - **Cómo se verifica:** solo queda `main` (y las ramas de trabajo activas).
+
+### 28. Tiendas online reales (Stock)
+- **Qué falta:** hoy las tiendas funcionan contra el simulador `mocks/tiendas` (`TIENDAS_API_URL`). Para cada plataforma real: Mercado Libre (app en developers, OAuth del vendedor, notificaciones `orders_v2`, `available_quantity`), Tiendanube (app de Partners, OAuth, webhooks `order/paid` y `order/cancelled`, stock por variante), Empretienda (API key y endpoints de pedidos y stock), Shopify (app con `read_orders` y `write_inventory`, `inventory_levels/set`), WooCommerce (claves REST por sitio, webhook `order.updated`), VTEX (app key y token, OMS y Logistics) y Mercado Pago (referencia del producto en el pago). Cada adaptador real reemplaza la llamada al simulador en `src/modules/stock/adapters.ts`; el núcleo (idempotencia, vínculos, conflictos, reintentos) no cambia. Las credenciales de cada tienda se guardan cifradas (`stock_stores.credentials_enc`).
+- **Quién:** Faro (registrar las apps) y cada cliente (autorizar su tienda).
+- **Cómo se verifica:** una venta de prueba en la tienda real descuenta en Faro una sola vez, una cancelación repone y, con la publicación activada, la existencia de Faro aparece en la tienda sin pisar un cambio hecho a mano.

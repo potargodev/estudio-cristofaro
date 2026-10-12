@@ -382,7 +382,7 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
   const issueDate = isDate(i.issueDate) ? i.issueDate : today();
   const concept = [1, 2, 3].includes(Number(i.concept)) ? Number(i.concept) : 2;
   const items = (i.items ?? [])
-    .map((x) => ({ description: String(x.description ?? "").trim().slice(0, 200), quantity: Number(x.quantity), unitPrice: Number(x.unitPrice), ivaRate: CBTE_TYPES[cbteType].letter === "C" || CBTE_TYPES[cbteType].letter === "E" ? null : x.ivaRate == null ? 21 : Number(x.ivaRate) }))
+    .map((x) => ({ ...(x.code ? { code: String(x.code).trim().slice(0, 40) } : {}), description: String(x.description ?? "").trim().slice(0, 200), quantity: Number(x.quantity), unitPrice: Number(x.unitPrice), ivaRate: CBTE_TYPES[cbteType].letter === "C" || CBTE_TYPES[cbteType].letter === "E" ? null : x.ivaRate == null ? 21 : Number(x.ivaRate) }))
     .filter((x) => x.description && x.quantity > 0 && x.unitPrice >= 0);
   if (!items.length) throw new ArcaError("Agregá al menos un ítem con descripción, cantidad y precio.");
   const totals = invoiceTotals(cbteType, items);
@@ -540,6 +540,8 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
       const r = await finish({ status: "autorizada", legends, cae: res.cae, cae_due: fromArcaDate(res.caeDue ?? ""), observations: res.observations, raw_request: { xml: res.request }, raw_response: { xml: res.raw }, authorized_by: actor.id, authorized_at: new Date(), public_token: randomBytes(18).toString("base64url"), error: null });
       await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.emitida", entityType: "factura", entityId: inv.id, metadata: { tipo: CBTE_TYPES[inv.cbte_type].label, numero: number, cae: res.cae, total: Number(inv.total), origen: origin, ambiente: cred.env } });
       await emitEvent(scope.studioId, "factura.emitida", { factura_id: inv.id, organizacion_id: scope.organizationId, total: Number(inv.total), cliente: inv.customer_name, tipo: CBTE_TYPES[inv.cbte_type].label }, inv.id);
+      // §2.q etapa 7: lo facturado resta del stock (una nota de crédito devuelve)
+      await import("@/modules/stock/server").then((m) => m.onInvoiceAuthorized(r)).catch((e) => console.error("[stock] factura", (e as Error).message));
       // Una sola verdad con Tango: lo facturado en Faro se escribe allá (si el estudio lo habilitó)
       void syncToTango(scope.studioId, inv.id);
       return r;

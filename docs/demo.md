@@ -65,6 +65,7 @@ Si alguien lo intenta, ve «La demo y los datos reales no se mezclan…». Adem�
   - Solicitudes con su conversación y tareas.
   - Honorarios pagados, pendientes y en mora.
 - **Casos extremos:** montos de más de $ 1.000 millones y de menos de $ 5.000, un nombre de 86 caracteres, una organización sin datos («Kiosco Don Pepe») y gastos en dólares.
+- **Stock:** Indumentaria Lola (con tienda online y Mercado Libre simuladas, pedidos, una venta sin vincular y una diferencia con la tienda para revisar) y Pinturería Arcoíris, con dos depósitos, compras, ventas, un producto debajo del mínimo e inventario a cualquier fecha.
 - **Empleados:** liquidación de sueldos de Comercio (dos meses aprobados y el borrador del mes que dejó el Agente con su registro de cambios), recibos conformes, no conformes (con motivo) y sin firmar, y comunicados con y sin conformidad. Hay una conciliación bancaria con movimientos conciliados, sugeridos, sin conciliar, sin factura e ignorados, y flujos con corridas exitosas y fallidas.
 - **Quince personas y autónomos:**
   - Bitácora (6 meses en los perfiles principales), con sobres, fijos, suscripciones con aumento de precio y metas.
