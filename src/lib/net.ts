@@ -3,7 +3,7 @@ import { isIP } from "node:net";
 // Reglas de red para las URLs que elige un tenant (ver safe-fetch.ts).
 // Sin server-only: las prueban los tests unitarios.
 
-export class UnsafeUrlError extends Error {}
+class UnsafeUrlError extends Error {}
 
 export const allowPrivate = () => process.env.ALLOW_PRIVATE_URLS === "true";
 

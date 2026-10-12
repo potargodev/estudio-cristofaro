@@ -4,6 +4,7 @@
 // escalonados y liquidación al salir de una flota. Montos en centavos.
 
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { UUID } from "@/lib/ids";
 
 // ───────────── Webhooks de Mercado Pago ─────────────
 
@@ -28,7 +29,6 @@ export function verifySignature(header: string | null, requestId: string | null,
 
 /** external_reference: de quién es el cobro (suscripción de Faro, honorario, flota o factura personal) */
 type ChargeRef = { kind: "sub"; id: string } | { kind: "hon"; id: string } | { kind: "flota"; id: string } | { kind: "fac"; id: string };
-const UUID = /^[0-9a-f-]{36}$/i;
 export const refOf = (r: ChargeRef) => `faro:${r.kind}:${r.id}`;
 export function parseRef(s: string | null | undefined): ChargeRef | null {
   const m = /^faro:(sub|hon|flota|fac):([0-9a-f-]{36})$/i.exec(s ?? "");

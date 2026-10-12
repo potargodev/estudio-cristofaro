@@ -277,11 +277,3 @@ export async function tenantForApi(): Promise<StaffUser | null> {
   if (user.tenantSuspended && !user.assisted) return null;
   return user;
 }
-
-export async function staffForApi(): Promise<StaffUser | null> {
-  const user = await getCurrentUser();
-  if (!user || !isStudioRole(user.role)) return null;
-  if (user.mustChangePassword || !user.twoFactorEnabled) return null;
-  if (user.tenantSuspended && !user.assisted) return null;
-  return user;
-}

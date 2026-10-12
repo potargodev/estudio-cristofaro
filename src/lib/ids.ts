@@ -1,6 +1,8 @@
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Validaciones de formato que se repiten en toda la app: un solo lugar.
 
-/** Las rutas /admin/.../[id] solo aceptan uuids (otro valor haría fallar la query). */
-export function isUuid(value: string) {
-  return UUID_RE.test(value);
-}
+/** UUID (los IDs de la base): cualquier otro valor haría fallar la query */
+export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const isUuid = (value: unknown): value is string => typeof value === "string" && UUID.test(value);
+
+/** Email con forma válida (la casilla la confirma el enlace o la invitación) */
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

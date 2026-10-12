@@ -9,6 +9,7 @@ import { publicProfile } from "@/modules/red/server";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { formatDate } from "@/lib/format";
 import { getSessionUser } from "@/lib/auth";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Agenda pública (/agendar y el link para reprogramar o cancelar). El horario
 // se vuelve a validar en el servidor contra la disponibilidad real.
@@ -26,7 +27,6 @@ function s(fd: FormData, k: string) {
   return typeof v === "string" && v.trim() ? v.trim().slice(0, 500) : null;
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function bookCall(_prev: BookingState, fd: FormData): Promise<BookingState> {
   if (s(fd, "website")) return { ok: false, message: "No se pudo agendar." }; // honeypot

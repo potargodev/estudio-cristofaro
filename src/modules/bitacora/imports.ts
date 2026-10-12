@@ -6,6 +6,7 @@ import { listCategories } from "./server";
 import { bitacoraPlan } from "./plus";
 import { mapRows, mercadoPagoMapping, merchantKey, parseAmount, parseCsv, parseDate, rowsFromPdfText, type ImportRow, type Mapping } from "./smart";
 import { pdfPages } from "@/lib/text/extract";
+import { UUID } from "@/lib/ids";
 
 // Importación de resúmenes bancarios y de tarjeta (CSV y PDF con texto) y del
 // CSV de movimientos de Mercado Pago: vista previa con el mapeo de columnas,
@@ -13,7 +14,6 @@ import { pdfPages } from "@/lib/text/extract";
 // ID externo y la fila original.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class ImportError extends Error {}
 
 /** Adivina el mapeo de columnas mirando las filas */

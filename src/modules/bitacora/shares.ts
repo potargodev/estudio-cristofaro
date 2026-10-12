@@ -9,19 +9,20 @@ import { mailLayout } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { notify } from "@/modules/notifications/server";
 import { crossesWorld, userIsDemo, WORLD_MESSAGE } from "@/lib/demo-world";
+import { UUID } from "@/lib/ids";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Bitácora compartida (hogar o pareja): quien comparte elige con quién y con
 // qué permiso (ver o también cargar). Es explícito y revocable por cualquiera
 // de las dos personas en cualquier momento. Queda en la auditoría.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class ShareError extends Error {}
 type Who = { id: string; name: string; email: string; studioId: string };
 
 export async function createShare(owner: Who, email: string, permission: "ver" | "cargar") {
   const to = email.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) throw new ShareError("Revisá el mail.");
+  if (!EMAIL_RE.test(to)) throw new ShareError("Revisá el mail.");
   if (to === owner.email.toLowerCase()) throw new ShareError("No te podés invitar a vos.");
   if (crossesWorld(await userIsDemo(owner.id), to)) throw new ShareError(WORLD_MESSAGE);
   const active = await db().select({ id: bitacora_shares.id }).from(bitacora_shares).where(and(eq(bitacora_shares.owner_id, owner.id), eq(bitacora_shares.invited_email, to), inArray(bitacora_shares.status, ["invitada", "activa"])));

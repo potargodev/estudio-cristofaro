@@ -35,6 +35,7 @@ import { fxRate } from "./fx";
 import { paymentLinks } from "./mercadopago";
 import { formatMoney, todayAR } from "@/lib/format";
 import { crossesWorld, studioIsDemo, userIsDemo, WORLD_MESSAGE } from "@/lib/demo-world";
+import { EMAIL_RE } from "@/lib/ids";
 
 /** Error para mostrar tal cual a la persona */
 export class GastosError extends Error {}
@@ -176,7 +177,6 @@ export async function archiveGroup(actor: GastosActor, groupId: string) {
 
 // ── Integrantes ───────────────────────────────────────────────────────────
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function inviteMember(actor: GastosActor, groupId: string, input: { name: string; email?: string }) {
   const { group, me } = await need(actor, groupId);

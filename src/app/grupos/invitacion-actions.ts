@@ -8,7 +8,7 @@ import { signup_requests, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { AUTH_ERRORS, getAuth, googleEnabled, googleSignInUrl, type AuthErrorCode } from "@/lib/auth-server";
 import { LEGAL_VERSION } from "@/lib/faro/legal-version";
-import { EMAIL_RE } from "@/lib/faro/tenants";
+import { EMAIL_RE } from "@/lib/ids";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { GUEST_COOKIE } from "@/modules/gastos/server/actor";

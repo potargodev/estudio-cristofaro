@@ -2,12 +2,12 @@
 // navegador). Todo en español de Argentina y con la hora de Buenos Aires: el
 // servidor corre en UTC y una fecha sin zona se mostraría corrida.
 
-export const TZ = "America/Argentina/Buenos_Aires";
+const TZ = "America/Argentina/Buenos_Aires";
 
 // ───────────── Montos ─────────────
 
 type Decimals = "fixed" | "auto" | "none";
-export interface MoneyOptions {
+interface MoneyOptions {
   /** fixed: siempre 2 decimales (por defecto) · auto: solo si hay centavos · none: redondeado */
   decimals?: Decimals;
   /** +$ 10 / -$ 10 */
@@ -92,7 +92,7 @@ const DATE_STYLES = {
   monthName: { month: "long" },
 } satisfies Record<string, Intl.DateTimeFormatOptions>;
 
-export type DateStyle = keyof typeof DATE_STYLES;
+type DateStyle = keyof typeof DATE_STYLES;
 
 const dateFormats = new Map<DateStyle, Intl.DateTimeFormat>();
 

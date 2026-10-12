@@ -17,7 +17,8 @@ const COOKIE = process.env.FARO_COOKIE ?? (existsSync(salida) ? JSON.parse(readF
 const SAMPLES: Record<string, string[]> = {
   "/admin/consultas": ["nueva"],
   "/admin/red": ["flotas"],
-  "/red": ["cristofaro"],
+  // Una ficha publicada en la Red de ese entorno (los anónimos solo ven estudios reales)
+  "/red": [process.env.FARO_RED_SLUG ?? "cristofaro"],
   "/ayuda/red-de-estudios": ["buscar-un-estudio"],
   "/admin/modulos": ["ai"],
   "/admin/conexiones": ["tango", "tango/clientes", "xubio", "google-drive", "mcp-externo", "archivos"],

@@ -3,12 +3,12 @@ import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { hasModule } from "@/lib/faro/entitlements";
 import { lastMonths, series } from "./core";
+import { UUID } from "@/lib/ids";
 
 // Indicadores (insights): tableros financieros y de gestión del estudio y de
 // cada organización. Todo se calcula en el servidor con el estudio de la
 // sesión; la organización se valida contra ese estudio antes de consultar.
 
-const UUID = /^[0-9a-f-]{36}$/i;
 type Row = { m: string; v: string | number | null };
 const rows = async (q: ReturnType<typeof sql>) => (await getDb().execute(q)) as unknown as Row[];
 const one = async <T>(q: ReturnType<typeof sql>) => ((await getDb().execute(q)) as unknown as T[])[0];

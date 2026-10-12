@@ -42,7 +42,7 @@ export async function demoState(db: Db): Promise<DemoState> {
  * invitaciones y uniones no cruzan de mundo). Si hay, borrar la demo se los
  * llevaría en cascada, así que el reset se frena.
  */
-export async function mixedWithReal(db: Db) {
+async function mixedWithReal(db: Db) {
   const q = async (text: ReturnType<typeof sql>) => Number(((await db.execute(text)) as unknown as { n: number }[])[0]?.n ?? 0);
   const [cuentas, cajas, grupos, flotas] = await Promise.all([
     q(sql`select count(*)::int n from users u join studios s on s.id = u.studio_id where s.is_demo and not u.is_demo`),

@@ -8,6 +8,7 @@ import { notify } from "@/modules/notifications/server";
 import { PROVINCES, RED_SERVICES } from "./catalog";
 import { getProfile, visibilityIssue } from "./server";
 import { studioIsDemo } from "@/lib/demo-world";
+import { UUID } from "@/lib/ids";
 
 // Red Contable de doble mano (principios §15). Las personas, los autónomos,
 // las empresas y las Flotas se muestran solo si activan «Disponible, busco
@@ -17,7 +18,6 @@ import { studioIsDemo } from "@/lib/demo-world";
 
 export class SeekerError extends Error {}
 
-const UUID = /^[0-9a-f-]{36}$/i;
 const db = () => getDb();
 type Person = { id: string; name: string; email: string; studioId: string; role: string; tenantKind: string; assisted?: unknown };
 type Staff = { id: string; name: string; email: string; studioId: string; role: string; tenantKind: string };

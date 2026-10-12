@@ -8,7 +8,7 @@ import { studios, users } from "@/db/schema";
 // real solo con reales. Cada punto donde dos personas o espacios se encuentran
 // (invitaciones, Red Contable, conexiones, grupos, cajas, Flotas) lo valida acá.
 
-export const DEMO_EMAIL_DOMAIN = "demo.faro.local";
+const DEMO_EMAIL_DOMAIN = "demo.faro.local";
 
 export const isDemoEmail = (email: string | null | undefined) => (email ?? "").trim().toLowerCase().endsWith(`@${DEMO_EMAIL_DOMAIN}`);
 

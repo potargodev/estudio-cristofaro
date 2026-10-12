@@ -6,13 +6,13 @@ import { SERVICE_PLANS } from "@/lib/service-plans";
 import { createUserWithPassword } from "@/lib/users";
 import { DEFAULT_PLAN, getPlan, type TenantKind } from "./plans";
 import { isDemoEmail } from "@/lib/demo-world";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Alta de tenants (estudios y autónomos). La usan el Faro Manager (alta
 // manual) y el autoregistro de la landing: misma validación para los dos.
 
 export const SITE_STUDIO_SLUG = () => process.env.STUDIO_SLUG?.trim() || "cristofaro";
 
-export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** CUIT válido (11 dígitos con dígito verificador) o null */
 export function normalizeCuit(v: string | null | undefined): string | null {

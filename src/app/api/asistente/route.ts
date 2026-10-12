@@ -10,12 +10,12 @@ import { tenantForApi } from "@/lib/auth";
 import { aiCanAct } from "@/lib/faro/entitlements";
 import { forbidden, sameOrigin } from "@/lib/http";
 import { rateLimit } from "@/lib/rate-limit";
+import { UUID } from "@/lib/ids";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
 const fail = (status: number, message: string) => new Response(message, { status, headers: { "Content-Type": "text/plain; charset=utf-8" } });
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const FILE_TYPES = /^(image\/(png|jpeg|webp|gif)|application\/pdf|text\/(plain|csv|markdown))$/;
 const MAX_FILE_CHARS = 6 * 1024 * 1024; // data URL de ~4,5 MB
 

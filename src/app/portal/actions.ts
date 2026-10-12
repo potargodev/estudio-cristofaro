@@ -21,6 +21,7 @@ import { findSlot } from "@/lib/agenda/slots";
 import { can } from "@/lib/permissions";
 import { REQUEST_TYPES, type RequestType } from "@/lib/portal-types";
 import { checkUpload, fileFromForm, storeUpload } from "@/lib/uploads";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Acciones del portal. La organización sale SIEMPRE de la sesión
 // (requireMember, que valida la membresía activa): nunca se usa un
@@ -52,7 +53,7 @@ function authMessage(error: unknown, fallback: string) {
 /** Enlace mágico: solo sale si el email tiene invitación vigente o membresía activa */
 export async function requestMagicLink(_prev: PortalLoginState, fd: FormData): Promise<PortalLoginState> {
   const email = s(fd, "email")?.toLowerCase() ?? null;
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, message: "Revisá el email." };
+  if (!email || !EMAIL_RE.test(email)) return { ok: false, message: "Revisá el email." };
   const next = safeNext(s(fd, "next"));
   try {
     await getAuth().api.signInMagicLink({

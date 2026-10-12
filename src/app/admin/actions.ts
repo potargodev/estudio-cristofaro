@@ -14,6 +14,8 @@ import { staffLimitError } from "@/lib/faro/entitlements";
 import { AUTH_ERRORS, getAuth, type AuthErrorCode } from "@/lib/auth-server";
 import type { LeadStatus, UserRole } from "@/lib/types";
 import { createUserWithPassword } from "@/lib/users";
+import { UUID as UUID_RE } from "@/lib/ids";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Cada action valida la sesión y el rol con requireStaff/requireAdmin y
 // todas las queries filtran por el studio_id del usuario.
@@ -37,7 +39,6 @@ function slugify(text: string) {
     .slice(0, 80);
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** Id de un formulario, solo si es un uuid válido (si no, Postgres tira error). */
 function id(fd: FormData, key = "id"): string | null {
@@ -337,7 +338,7 @@ export async function createStaffUser(fd: FormData) {
   const password = s(fd, "password");
   const role = s(fd, "role") as UserRole | null;
   if (!name || !email || !password) redirect("/admin/configuracion/equipo?error=campos");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) redirect("/admin/configuracion/equipo?error=email");
+  if (!EMAIL_RE.test(email)) redirect("/admin/configuracion/equipo?error=email");
   if (password.length < 8) redirect("/admin/configuracion/equipo?error=password");
   const limit = await staffLimitError(admin.studioId);
   if (limit) redirect(`/admin/configuracion/equipo?error=limite&msg=${encodeURIComponent(limit)}`);

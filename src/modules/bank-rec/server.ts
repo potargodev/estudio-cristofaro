@@ -11,6 +11,7 @@ import { mapRows, parseCsv, rowsFromPdfText, type Mapping } from "@/modules/bita
 import type { Extraction } from "@/modules/smart-docs/core";
 import { classify, matchRule, suggest, summarize, type Candidate, type MovStatus, type MovementClass, type Rule } from "./core";
 import { pdfPages } from "@/lib/text/extract";
+import { UUID } from "@/lib/ids";
 
 // Conciliación bancaria (bank_rec): extractos importados por organización,
 // clasificación, sugerencias de cruce con comprobantes (emitidos por ARCA y
@@ -18,7 +19,6 @@ import { pdfPages } from "@/lib/text/extract";
 // sugerencias se confirman a mano. Todo filtra por estudio y organización.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class BankRecError extends Error {}
 export interface RecScope {
   studioId: string;

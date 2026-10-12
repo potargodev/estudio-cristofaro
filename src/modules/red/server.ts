@@ -10,6 +10,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { MODALITIES, RED_SERVICES, TEAM_SIZES } from "./catalog";
 import { studioIsDemo, userIsDemo } from "@/lib/demo-world";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Red Contable (docs/faro-producto.md §2.i). Directorio neutral: solo
 // estudios que se sumaron (opt-in), con la matrícula verificada por Faro y el
@@ -74,7 +75,7 @@ export async function saveProfile(studioId: string, input: ProfileInput) {
     languages: [...new Set(input.languages.map((l) => l.trim().toLowerCase()).filter(Boolean))].slice(0, 6),
     team_size: TEAM_SIZES.some((t) => t.key === input.teamSize) ? input.teamSize : null,
     fee_range: input.feeRange.slice(0, 80) || null,
-    contact_email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.contactEmail) ? input.contactEmail.toLowerCase() : null,
+    contact_email: EMAIL_RE.test(input.contactEmail) ? input.contactEmail.toLowerCase() : null,
     accepting_clients: input.acceptingClients,
     license_body: input.licenseBody.slice(0, 120) || null,
     license_number: input.licenseNumber.slice(0, 40) || null,

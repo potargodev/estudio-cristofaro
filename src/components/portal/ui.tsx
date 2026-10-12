@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { ToneBadge } from "@/components/admin/kit/StatusBadge";
-import { cn } from "@/lib/utils";
 
 // Piezas visuales del portal (server components).
 
@@ -21,9 +20,8 @@ export function requestTone(status: string): keyof typeof tones {
   return status === "resuelta" ? "ok" : status === "en_curso" ? "neutral" : "warn";
 }
 
-export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={cn("rounded-md border border-line bg-surface p-4 sm:p-5", className)}>{children}</section>;
-}
+// La tarjeta del portal es la del sistema (DESIGN.md)
+export { Card } from "@/components/ds/primitives";
 
 /** Encabezado de las pantallas del portal: el mismo PageHeader de toda la app */
 export function PageTitle({ title, intro, children, level }: { title: string; intro?: string; children?: React.ReactNode; level?: 1 | 2 }) {

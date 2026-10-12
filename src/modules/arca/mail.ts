@@ -10,13 +10,14 @@ import { CBTE_TYPES } from "./config";
 import { fullNumber, money } from "./calc";
 import { invoicePdf } from "./pdf";
 import { ArcaError, getInvoice, settingsForInvoice, type ArcaActor, type IssuerScope } from "./server";
+import { EMAIL_RE } from "@/lib/ids";
 
 /** Manda el comprobante autorizado por mail (PDF adjunto y link) */
 export async function emailInvoice(scope: IssuerScope, id: string, to: string, actor: ArcaActor) {
   const inv = await getInvoice(scope, id);
   if (!inv || inv.status !== "autorizada") throw new ArcaError("Solo se envían comprobantes autorizados.");
   const email = to.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new ArcaError("Revisá el mail.");
+  if (!EMAIL_RE.test(email)) throw new ArcaError("Revisá el mail.");
   const s = await settingsForInvoice(inv);
   const pdf = await invoicePdf(inv, s);
   const label = `${CBTE_TYPES[inv.cbte_type].label} ${fullNumber(inv.point_of_sale, inv.number)}`;

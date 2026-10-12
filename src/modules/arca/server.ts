@@ -33,6 +33,7 @@ import { SEED_SCALE, semaforo, type ScaleCategory } from "./monotributo";
 import { getPersona } from "./padron";
 import { ArcaError } from "./soap";
 import { consultarComprobante, lastAuthorized, salesPoints, solicitarCae } from "./wsfe";
+import { UUID } from "@/lib/ids";
 
 // Facturación, situación fiscal, semáforo, calendario y chequeos de un
 // emisor: el autónomo (su organización propia) o una organización del estudio.
@@ -61,7 +62,6 @@ export interface IssuerScope {
   home: string;
 }
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const NOT_FOUND = "No encontramos ese comprobante.";
 const db = () => getDb();
 

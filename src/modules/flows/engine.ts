@@ -12,6 +12,7 @@ import { notify } from "@/modules/notifications/server";
 import { executeTool, getTool } from "@/modules/tools";
 import { moduleOfTool } from "@/modules/registry";
 import { EVENTS, evalCondition, flowFromPhrase, getTemplate, interpolate, nextNodes, nextScheduled, retryAt, validateGraph, type ActionData, type ConditionData, type Graph, type Trigger } from "./core";
+import { UUID } from "@/lib/ids";
 
 // Motor de flujos: cola en Postgres (FOR UPDATE SKIP LOCKED), reintentos con
 // espera creciente, idempotencia por corrida y por paso, registro de cada
@@ -20,7 +21,6 @@ import { EVENTS, evalCondition, flowFromPhrase, getTemplate, interpolate, nextNo
 // Aprobaciones y la corrida espera hasta que una persona decide.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class FlowError extends Error {}
 type Actor = { id: string; email: string; name?: string };
 type Flow = typeof flows.$inferSelect;

@@ -7,12 +7,12 @@ import { monthOf, prevMonth } from "./catalog";
 import { bitacoraPlan } from "./plus";
 import { listCategories, movements } from "./server";
 import { realValue, suggestBudgets, weeklySaving } from "./smart";
+import { UUID } from "@/lib/ids";
 
 // Sobres, metas, valores reales (IPC y dólar MEP) y separación de lo
 // profesional. Todo por el user_id de la sesión.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class PlanningError extends Error {}
 
 // ───────────── Sobres ─────────────

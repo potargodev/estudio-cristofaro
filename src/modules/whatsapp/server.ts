@@ -10,6 +10,7 @@ import { can, type Permission } from "@/lib/permissions";
 import { storeUpload } from "@/lib/uploads";
 import { emitEvent } from "@/modules/flows/events";
 import { advances, maskPhone, normalizePhone, paramCount, parseWebhook, renderTemplate, verifySignature, type InboundMessage } from "./core";
+import { UUID } from "@/lib/ids";
 
 // WhatsApp Business Cloud API (módulo whatsapp, plan Avanzado). Faro tiene su
 // número (Faro Manager) y cada estudio usa ese número compartido o conecta el
@@ -24,7 +25,6 @@ type WaAccount = typeof whatsapp_accounts.$inferSelect;
 type Actor = { id: string; email: string };
 const db = () => getDb();
 const API = () => (process.env.WHATSAPP_API_URL?.trim() || "https://graph.facebook.com/v21.0").replace(/\/+$/, "");
-const UUID = /^[0-9a-f-]{36}$/i;
 const hash = (s: string) => createHash("sha256").update(s).digest("hex");
 
 // ───────────── Cuentas ─────────────

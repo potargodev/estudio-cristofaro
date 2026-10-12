@@ -7,6 +7,7 @@ import { hasModule } from "@/lib/faro/entitlements";
 import { notify } from "@/modules/notifications/server";
 import { emitEvent } from "@/modules/flows/events";
 import { formatDate } from "@/lib/format";
+import { UUID } from "@/lib/ids";
 
 // Cartera y tareas (módulo crm, ítem Tareas del grupo Operación): el trabajo
 // del equipo por cliente, con responsables, estados y vencimientos. Las
@@ -14,7 +15,6 @@ import { formatDate } from "@/lib/format";
 // vencimiento se presenta o se paga). Todo filtra por estudio.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class TaskError extends Error {}
 type Actor = { id: string; email: string; name?: string };
 export const TASK_STATUS = { pendiente: "Pendiente", en_curso: "En curso", hecha: "Hecha" } as const;

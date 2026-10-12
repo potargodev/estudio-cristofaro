@@ -15,6 +15,8 @@ import { notify } from "@/modules/notifications/server";
 import { cuilFromName, cuilsIn, deviceOf, groupPages, periodIn, seal, sha256, signReminderDue, validCuil, type SignatureRecord } from "./core";
 import { formatDate } from "@/lib/format";
 import { pdfPages } from "@/lib/text/extract";
+import { UUID } from "@/lib/ids";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Empleados (módulos employees, payroll y comms): legajo, recibos de sueldo
 // con firma conforme / no conforme y constancia, comunicados internos con
@@ -24,7 +26,6 @@ import { pdfPages } from "@/lib/text/extract";
 // query vuelve a filtrar por estudio y organización.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class PayrollError extends Error {}
 export interface PayrollScope {
   studioId: string;
@@ -95,7 +96,7 @@ export async function saveEmployee(s: PayrollScope, actor: Actor, i: EmployeeInp
   const cuil = i.cuil?.replace(/\D/g, "") || null;
   if (cuil && !validCuil(cuil)) throw new PayrollError("Revisá el CUIL (el dígito verificador no coincide).");
   const email = i.email?.trim().toLowerCase() || null;
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new PayrollError("Revisá el mail.");
+  if (email && !EMAIL_RE.test(email)) throw new PayrollError("Revisá el mail.");
   const v = { first_name: i.firstName.trim().slice(0, 80), last_name: i.lastName.trim().slice(0, 80), email, cuil, dni: i.dni?.replace(/\D/g, "") || null, birth_date: isDate(i.birthDate), phone: i.phone?.trim().slice(0, 40) || null, address: i.address?.trim().slice(0, 200) || null, position: i.position?.trim().slice(0, 80) || null, area: i.area?.trim().slice(0, 60) || null, contract_type: i.contractType?.trim().slice(0, 60) || null, agreement: i.agreement?.trim().slice(0, 80) || null, start_date: isDate(i.startDate), notes: i.notes?.trim().slice(0, 1000) || null };
   if (cuil) {
     const [dup] = await db().select({ id: employees.id }).from(employees).where(and(eq(employees.organization_id, s.organizationId), eq(employees.cuil, cuil)));

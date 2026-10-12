@@ -66,8 +66,8 @@ const nextConfig: NextConfig = {
       { source: "/admin/clientes/nuevo", destination: "/admin/organizaciones/nueva", permanent: true },
       { source: "/admin/clientes/:id", destination: "/admin/organizaciones/:id", permanent: true },
       // Tango pasó al hub de Conexiones
-      { source: "/admin/integraciones", destination: "/admin/conexiones/tango", permanent: true },
-      { source: "/admin/integraciones/tango/clientes", destination: "/admin/conexiones/tango/clientes", permanent: true },
+      { source: "/admin/integraciones", destination: "/admin/configuracion/conexiones/tango", permanent: true },
+      { source: "/admin/integraciones/tango/clientes", destination: "/admin/configuracion/conexiones/tango/clientes", permanent: true },
       // El Copiloto pasó a llamarse Vigía
       { source: "/copiloto", destination: "/vigia", permanent: true },
       { source: "/copiloto/:path*", destination: "/vigia/:path*", permanent: true },
@@ -75,7 +75,8 @@ const nextConfig: NextConfig = {
       // Gastos compartidos pasó a llamarse Grupos de gastos (§2.e): los links viejos siguen andando
       { source: "/gastos", destination: "/grupos", permanent: true },
       { source: "/gastos/:path*", destination: "/grupos/:path*", permanent: true },
-      // Rutas del panel del estudio con el nombre de la visión de Faro (/estudio/…)
+      // Rutas del panel del estudio con el nombre de la visión de Faro (/estudio/…), directo al lugar nuevo (sin cadenas)
+      ...NAV_REDIRECTS.filter((r) => r.source.startsWith("/admin/")).map((r) => ({ ...r, source: r.source.replace(/^\/admin\//, "/estudio/"), permanent: false })),
       { source: "/estudio", destination: "/admin", permanent: false },
       { source: "/estudio/:path*", destination: "/admin/:path*", permanent: false },
       // Esqueleto de navegación (§2.o): cada cosa en su nuevo lugar

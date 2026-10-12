@@ -7,6 +7,7 @@ import { getDb } from "@/db";
 import { directory_profiles, directory_reviews } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { requireFaro } from "@/lib/auth";
+import { UUID } from "@/lib/ids";
 
 // Faro Manager · Red Contable: verificación manual de matrículas y
 // moderación de reseñas. Todo queda en la auditoría del estudio afectado.
@@ -16,7 +17,6 @@ const s = (fd: FormData, k: string) => {
   return typeof v === "string" ? v.trim() : "";
 };
 const back = (q: string): never => redirect(`/faro-manager/red?${q}`);
-const UUID = /^[0-9a-f-]{36}$/i;
 
 export async function reviewLicenseAction(fd: FormData) {
   const faro = await requireFaro();

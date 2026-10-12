@@ -6,6 +6,7 @@ import { audit } from "@/lib/audit";
 import { monthRange, prevMonth } from "@/modules/bitacora/catalog";
 import { businessCategoryFor, categoriesFor, looksLikeBusiness, nextSalaryDate, SALARY_FREQUENCIES, suggestedSalary, type BoxKind, type SalaryFrequency } from "./catalog";
 import { todayAR } from "@/lib/format";
+import { UUID } from "@/lib/ids";
 
 // Cajas del lado del servidor (principios §10, §11 y §17). Una sola cuenta por
 // usuario y varias cajas: la personal (es la Bitácora: sus movimientos siguen
@@ -16,7 +17,6 @@ import { todayAR } from "@/lib/format";
 
 export class CajaError extends Error {}
 
-const UUID = /^[0-9a-f-]{36}$/i;
 const db = () => getDb();
 export type Box = typeof boxes.$inferSelect;
 type Me = { id: string; name?: string; email?: string | null; studioId?: string };

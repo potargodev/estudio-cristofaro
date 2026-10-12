@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { bitacora_categories, bitacora_entries, expense_groups, expense_shares, expenses, group_members } from "@/db/schema";
 import { BITACORA_CURRENCIES, DEFAULT_CATEGORIES, GROUP_CATEGORY_MAP, isPaymentMethod, monthRange, prevMonth, type PaymentMethodKey } from "./catalog";
 import { toCsv } from "@/lib/csv";
+import { UUID } from "@/lib/ids";
 
 // Bitácora (docs/faro-producto.md §2.g): finanzas personales, siempre
 // privadas. Toda función recibe el id del usuario de la sesión y filtra por
@@ -12,7 +13,6 @@ import { toCsv } from "@/lib/csv";
 
 export class BitacoraError extends Error {}
 
-const UUID = /^[0-9a-f-]{36}$/i;
 const db = () => getDb();
 
 export async function ensureCategories(userId: string) {

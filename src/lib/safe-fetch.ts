@@ -3,7 +3,7 @@ import { lookup, type LookupAddress } from "node:dns";
 import { Agent, fetch as undiciFetch } from "undici";
 import { allowPrivate, assertPublicUrl, isPrivateAddress } from "./net";
 
-export { assertPublicUrl, UnsafeUrlError } from "./net";
+export { assertPublicUrl } from "./net";
 
 // fetch para URLs que elige un tenant (proveedores de IA, servidores MCP
 // externos, la API de Tango): nunca llega a la red interna del servidor

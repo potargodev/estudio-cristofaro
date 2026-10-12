@@ -8,6 +8,7 @@ import { audit } from "@/lib/audit";
 import { esc, sendMail } from "@/lib/email";
 import { mailLayout } from "@/lib/notify";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { EMAIL_RE } from "@/lib/ids";
 
 export interface DemoState {
   ok: boolean;
@@ -26,7 +27,7 @@ export async function requestDemo(_prev: DemoState, fd: FormData): Promise<DemoS
   if (!rateLimit(`demo:${ip}`, 3, 3600_000)) return { ok: false, message: "Ya recibimos tu pedido. Te escribimos pronto." };
   const name = v(fd, "name").slice(0, 120);
   const email = v(fd, "email").toLowerCase();
-  if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, message: "Completá tu nombre y un email válido." };
+  if (name.length < 2 || !EMAIL_RE.test(email)) return { ok: false, message: "Completá tu nombre y un email válido." };
   const kind = ["estudio", "contador", "empresa", "otro"].includes(v(fd, "kind")) ? v(fd, "kind") : "otro";
   const size = v(fd, "size").slice(0, 40);
   const message = v(fd, "message").slice(0, 1500);

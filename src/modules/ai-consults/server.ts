@@ -11,13 +11,13 @@ import { notifyOrganization } from "@/lib/notify";
 import { costUsd, getPlatformAi, isConfigured, platformModel } from "@/modules/copilot/platform";
 import { emitEvent } from "@/modules/flows/events";
 import { consultPrompt, isTopic, wasEdited, type ConsultTopic } from "./core";
+import { UUID } from "@/lib/ids";
 
 // Consultas laborales y fiscales (ai_consults). La IA propone, una persona
 // aprueba: el borrador nunca le llega al cliente sin que alguien del estudio
 // lo revise. Cada función vuelve a filtrar por el estudio de la sesión.
 
 export class ConsultError extends Error {}
-const UUID = /^[0-9a-f-]{36}$/i;
 type Actor = { id: string; email: string; name?: string; studioId: string };
 export type AiConsult = typeof ai_consults.$inferSelect;
 

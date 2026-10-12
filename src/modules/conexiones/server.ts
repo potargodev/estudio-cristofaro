@@ -11,6 +11,7 @@ import { BUSINESS_CATEGORIES } from "@/modules/cajas/catalog";
 import { businessBoxOf, businessSummary, openBusinessBox } from "@/modules/cajas/server";
 import { notify } from "@/modules/notifications/server";
 import { studioIsDemo, userIsDemo } from "@/lib/demo-world";
+import { UUID } from "@/lib/ids";
 
 // Conexión con un contador (principios §2 y §4 a §9). Conexión, no copia: el
 // estudio accede con un permiso sobre la cuenta del usuario y trabaja sobre
@@ -23,7 +24,6 @@ import { studioIsDemo, userIsDemo } from "@/lib/demo-world";
 
 export class ConexionError extends Error {}
 
-const UUID = /^[0-9a-f-]{36}$/i;
 const DAY = 86400000;
 const db = () => getDb();
 type Connection = typeof account_connections.$inferSelect;

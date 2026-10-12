@@ -23,6 +23,7 @@ import { checkQuota, recordAlert, type Quota } from "./limits";
 import { costUsd, getPlatformAi, isConfigured, platformModel, transcribeAudio } from "./platform";
 import { consultarBitacora, consultarSaldos, isProposalTool, PROPOSAL_TOOLS, type ProposalTool } from "./tools";
 import { formatDate, formatMoney, todayAR } from "@/lib/format";
+import { UUID } from "@/lib/ids";
 
 // Vigía (docs/faro-producto.md §2.m). Todo opera como el usuario de la
 // sesión: sus movimientos, sus grupos (memberOf en grupos de gastos) y su
@@ -39,7 +40,6 @@ interface CopilotUser {
   role: string;
 }
 
-const UUID = /^[0-9a-f-]{36}$/i;
 const db = () => getDb();
 const actorOf = (u: CopilotUser): GastosActor => ({ kind: "user", studioId: u.studioId, userId: u.id, name: u.name, email: u.email, role: u.role as never });
 

@@ -11,12 +11,12 @@ import { applyFeePayment } from "./fees";
 import { BillingError, createPreapproval, createPreference, getPayment, getPreapproval, loadAccount, updatePreapproval } from "./mp";
 import { applyPreapprovalStatus, applySubscriptionPayment } from "./subscriptions";
 import { formatAmount } from "@/lib/format";
+import { UUID } from "@/lib/ids";
 
 // Débito de flotas, links de pago de facturas personales y el procesamiento
 // de los webhooks de Mercado Pago (firma, idempotencia y despacho).
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 type Me = { id: string; email: string; name: string };
 
 // ───────────── Flotas: débito automático individual ─────────────

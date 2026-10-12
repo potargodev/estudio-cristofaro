@@ -12,6 +12,7 @@ import { breakdown, type LedgerEntry } from "./ledger";
 import { boxFor, CajaError } from "./server";
 import { todayAR } from "@/lib/format";
 import { userIsDemo } from "@/lib/demo-world";
+import { UUID } from "@/lib/ids";
 
 // Cajas compartidas: el registro compartido (principios §16 y §18). No es un
 // grupo de gastos: llevar la cuenta juntos. Cada integrante carga lo que gasta
@@ -22,7 +23,6 @@ import { userIsDemo } from "@/lib/demo-world";
 // seguimiento de una persona hasta que ella confirma que lo pagó. Solo los
 // integrantes ven la caja: todo se valida con boxFor().
 
-const UUID = /^[0-9a-f-]{36}$/i;
 const db = () => getDb();
 const MAX_MEMBERS = 30;
 type Me = { id: string; name?: string; email?: string | null; studioId?: string };

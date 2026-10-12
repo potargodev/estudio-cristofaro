@@ -2,6 +2,7 @@ import "server-only";
 import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { notifications } from "@/db/schema";
+import { UUID } from "@/lib/ids";
 
 // Avisos dentro de la app (campanita). Cada aviso es de una sola persona:
 // toda lectura y toda marca filtra por el usuario de la sesión.
@@ -14,7 +15,6 @@ interface NewNotice {
   refId?: string | null;
 }
 
-const UUID = /^[0-9a-f-]{36}$/i;
 
 export async function notify(userIds: (string | null | undefined)[], n: NewNotice) {
   const ids = [...new Set(userIds.filter((x): x is string => !!x))];

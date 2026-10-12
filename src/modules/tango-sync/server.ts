@@ -11,6 +11,7 @@ import { CBTE_TYPES } from "@/modules/arca/config";
 import { applyRules, normKey, suggest } from "./normalize";
 import { assertPublicUrl, safeFetch } from "@/lib/safe-fetch";
 import { toCsv } from "@/lib/csv";
+import { UUID } from "@/lib/ids";
 
 // Tango en los dos sentidos (principios §14), contra la API de Tango (hoy el
 // simulador de mocks/tango). Una sola verdad:
@@ -25,7 +26,6 @@ import { toCsv } from "@/lib/csv";
 export class TangoSyncError extends Error {}
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 const PROCESS = TANGO_PROCESS.comprobantesVenta;
 type Actor = { id: string; email?: string | null; studioId: string };
 type TangoDoc = typeof tango_documents.$inferSelect;

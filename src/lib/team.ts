@@ -11,6 +11,7 @@ import { checkLimit, getOrgLimits, usableInvitation } from "./organizations";
 import { ORG_ROLE_LABELS, SENSITIVE_ROLES, canGrant, isOrgRole, type OrgRole } from "./permissions";
 import { getSiteUrl } from "./runtime-config";
 import { crossesWorld, studioIsDemo, WORLD_MESSAGE } from "@/lib/demo-world";
+import { EMAIL_RE } from "@/lib/ids";
 
 // Lógica de miembros e invitaciones, compartida por el backoffice (el estudio)
 // y por "Mi equipo" del portal (el administrador de la organización). Las
@@ -29,7 +30,6 @@ export type TeamActor = { kind: "estudio"; user: StaffUser } | { kind: "miembro"
 export type TeamResult = { ok: true; message: string; link?: string; mailed?: boolean } | { ok: false; message: string };
 
 const fail = (message: string): TeamResult => ({ ok: false, message });
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
 const newToken = () => {

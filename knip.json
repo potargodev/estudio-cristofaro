@@ -17,8 +17,7 @@
   "ignoreDependencies": [
     "tailwindcss",
     "tw-animate-css",
-    "eslint-config-next",
-    "postcss"
+    "eslint-config-next"
   ],
   "next": true
 }

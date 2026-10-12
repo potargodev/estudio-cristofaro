@@ -15,6 +15,7 @@ import { notify } from "@/modules/notifications/server";
 import { dueReminder, feeFor, refOf, reminderTone, type Adjustment } from "./core";
 import { BillingError, createPreference, loadAccount, type MpPayment } from "./mp";
 import { formatDate, formatMoney } from "@/lib/format";
+import { UUID } from "@/lib/ids";
 
 // Cobranza de honorarios del estudio (módulo billing, pestaña Honorarios del
 // grupo Negocio): abonos por organización con ajuste periódico, cargos del
@@ -23,7 +24,6 @@ import { formatDate, formatMoney } from "@/lib/format";
 // cuenta visible en el portal. Todo filtra por estudio y organización.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 type Actor = { id: string; email: string; name?: string };
 
 export async function requireBilling(studioId: string) {

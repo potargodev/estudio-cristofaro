@@ -17,6 +17,7 @@ import { constatar } from "@/modules/arca/wscdc";
 import { categoryByHint, createEntry } from "@/modules/bitacora/server";
 import { costUsd, getPlatformAi, isConfigured, platformModel } from "@/modules/copilot/platform";
 import { EXTRACTION_SCHEMA, exportRow, fingerprint, lowFields, normalize, overallConfidence, suggestAccount, validate, type Extraction, type ExportRow, type Validation } from "./core";
+import { UUID } from "@/lib/ids";
 
 // Lectura inteligente (smart_docs): lee facturas, tickets y extractos con un
 // modelo con visión, valida (CUIT, CAE y totales, contra ARCA si está
@@ -26,7 +27,6 @@ import { EXTRACTION_SCHEMA, exportRow, fingerprint, lowFields, normalize, overal
 // por estudio y organización (o por la persona, en la Bitácora).
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 export class SmartDocError extends Error {}
 
 export interface DocScope {

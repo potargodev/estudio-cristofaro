@@ -21,6 +21,7 @@ import { isStudioRole } from "@/lib/roles";
 import { checkUpload, storeUpload } from "@/lib/uploads";
 import { notify } from "@/modules/notifications/server";
 import { publish } from "./realtime";
+import { UUID } from "@/lib/ids";
 
 // Mensajes (chat interno). Regla de oro: solo entre personas que comparten un
 // espacio (mismo estudio; el estudio con los usuarios de sus organizaciones;
@@ -39,7 +40,6 @@ export interface ChatUser {
 }
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 const MAX_BODY = 4000;
 const ok = (id: string) => UUID.test(id);
 

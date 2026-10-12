@@ -8,6 +8,7 @@ import { getSessionUser } from "@/lib/auth";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { RedError, requestProposal } from "@/modules/red/server";
 import { markSuggestionSent } from "@/modules/escudo/server";
+import { EMAIL_RE } from "@/lib/ids";
 
 export interface ProposalState {
   ok: boolean;
@@ -35,7 +36,7 @@ async function send(fd: FormData): Promise<ProposalState> {
   const name = v(fd, "name");
   const email = v(fd, "email").toLowerCase();
   if (name.length < 2) return { ok: false, message: "Completá tu nombre." };
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, message: "Revisá el email." };
+  if (!EMAIL_RE.test(email)) return { ok: false, message: "Revisá el email." };
   const [st] = await getDb().select({ id: studios.id, kind: studios.kind }).from(studios).where(eq(studios.slug, v(fd, "studio")));
   if (!st || st.kind !== "studio") return { ok: false, message: "Ese estudio no está disponible en la Red." };
   const user = await getSessionUser().catch(() => null);

@@ -4,7 +4,7 @@
 
 const NUMERIC = /^-?\d+([.,]\d+)?$/;
 
-export interface CsvOptions {
+interface CsvOptions {
   /** Separador de columnas (por defecto ";", el de Excel en español) */
   sep?: string;
   /** Números con coma decimal (planillas en español) */

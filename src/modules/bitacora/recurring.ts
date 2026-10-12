@@ -6,13 +6,13 @@ import { listCategories } from "./server";
 import { budgetView, PlanningError } from "./planning";
 import { detectLeaks, detectRecurring, merchantKey, type Mov } from "./smart";
 import { formatDate, formatMoney } from "@/lib/format";
+import { UUID } from "@/lib/ids";
 
 // Gastos fijos y suscripciones (detección por recurrencia), fugas y avisos
 // (vencimientos, renovaciones, aumentos y sobres excedidos). Todo de la
 // persona; los avisos son preventivos y se pueden descartar.
 
 const db = () => getDb();
-const UUID = /^[0-9a-f-]{36}$/i;
 const today = () => new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 10);
 
 /** Movimientos propios de los últimos 6 meses, con la hora de carga (Argentina) */
