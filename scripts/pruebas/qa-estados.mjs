@@ -40,7 +40,7 @@ const today = new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 10);
 const day = (n) => new Date(Date.parse(today) + n * 86400000).toISOString().slice(0, 10);
 const taxes = ["IVA", "Ingresos Brutos Convenio Multilateral", "Ganancias sociedades · anticipo", "Cargas sociales F.931", "Impuesto sobre los débitos y créditos bancarios"];
 await sql`insert into obligations ${sql(
-  Array.from({ length: 200 }, (_, i) => ({ studio_id: studio.id, organization_id: qa.id, tax: taxes[i % taxes.length], period: `2026-${String((i % 12) + 1).padStart(2, "0")}`, due_date: day((i % 40) - 10), status: i % 7 === 0 ? "vencido" : "pendiente", amount: i % 3 === 0 ? "999999999999.99" : i % 3 === 1 ? "-123456789012.34" : "0", notes: i % 5 === 0 ? `${LONG} · ${LONG}` : null })),
+  Array.from({ length: 200 }, (_, i) => ({ studio_id: studio.id, organization_id: qa.id, tax: taxes[i % taxes.length], period: `${2010 + Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, "0")}`, due_date: day((i % 40) - 10), status: i % 7 === 0 ? "vencido" : "pendiente", amount: i % 3 === 0 ? "999999999999.99" : i % 3 === 1 ? "-123456789012.34" : "0", notes: i % 5 === 0 ? `${LONG} · ${LONG}` : null })),
 )}`;
 const [lola] = await sql`select o.id from organizations o where o.studio_id = ${studio.id} and o.name ilike 'Indumentaria Lola%' limit 1`;
 await sql`delete from stock_products where organization_id = ${lola.id} and code like 'QA-%'`;
