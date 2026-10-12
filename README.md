@@ -136,7 +136,7 @@ La app corre como un contenedor Docker (este repo trae el `Dockerfile`) y la bas
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Credenciales OAuth de Google para el login de clientes y la agenda (opcional: sin ellas no aparece el botón y la agenda funciona sin Google) |
 | `ENCRYPTION_KEY` | Clave para cifrar los tokens de Google Calendar: `openssl rand -base64 32`. No cambiarla después |
 | `CRON_SECRET` | Opcional: para disparar los recordatorios de la agenda (`/api/agenda/recordatorios`) y las tareas de gastos compartidos (`/api/gastos/cron`) desde un cron externo |
-| `FARO_OWNER_EMAIL` | Owner de la plataforma (`faro_owner`, entra al Faro Manager). El seed lo marca (y si no existe lo crea: después `node dist/reset-password.mjs <email>`). Por defecto `potargo.dev@gmail.com` |
+| `FARO_OWNER_EMAIL` | Owner de la plataforma (`faro_owner`, entra al Faro Manager). El seed lo marca (y si no existe lo crea: después `node dist/reset-password.mjs <email>`). Por defecto `cristofaro.dev@gmail.com` |
 | `FARO_HOSTS` / `FARO_CONTACT_EMAIL` | Opcional: dominios que muestran la landing de Faro en `/` y su email de contacto |
 | `FX_API_URL` | Opcional: API de cotizaciones para gastos en otra moneda (formato DolarApi; por defecto `https://dolarapi.com`). Sin respuesta, la cotización se carga a mano |
 | `GASTOS_JOBS` | Opcional: `off` apaga los gastos recurrentes y recordatorios internos (corren cada hora) |

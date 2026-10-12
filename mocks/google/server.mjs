@@ -30,7 +30,7 @@ const read = async (req) => {
   for await (const c of req) chunks.push(c);
   return Buffer.concat(chunks);
 };
-let nextLogin = { email: "persona@gmail.com", name: "Persona de Prueba" };
+let nextLogin = { email: "persona@example.com", name: "Persona de Prueba" };
 const logins = new Map(); // code / token → identidad
 const MIME = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
@@ -39,7 +39,7 @@ const MAILS = [
   { id: "m1", from: "Edenor <facturas@edenor.com>", subject: "Tu factura de luz de octubre", snippet: "Total a pagar $ 25.430,10. Vence el 20/10.", at: day(2) },
   { id: "m2", from: "Netflix <info@mailer.netflix.com>", subject: "Tu recibo de Netflix", snippet: "Cobramos $ 8.999,00 de tu tarjeta terminada en 1234.", at: day(5) },
   { id: "m3", from: "Visa <resumen@visa.com.ar>", subject: "Tu resumen de tarjeta ya está disponible", snippet: "Saldo actual $ 345.000,00 · Pago mínimo $ 34.500,00", at: day(7) },
-  { id: "m4", from: "Juan <juan@gmail.com>", subject: "Asado del sábado", snippet: "¿Quién lleva el carbón?", at: day(1) },
+  { id: "m4", from: "Juan <juan@example.com>", subject: "Asado del sábado", snippet: "¿Quién lleva el carbón?", at: day(1) },
 ];
 
 createServer(async (req, res) => {
@@ -89,7 +89,7 @@ createServer(async (req, res) => {
     return json(res, 200, { id: `mock-${who.email}`, sub: `mock-${who.email}`, email: who.email, email_verified: true, name: who.name });
   }
   if (p === "/token") return json(res, 200, { access_token: `mock-at-${id()}`, refresh_token: "mock-rt", expires_in: 3600, scope: "https://www.googleapis.com/auth/drive" });
-  if (p === "/oauth2/v3/userinfo") return json(res, 200, { email: "estudio@gmail.com" });
+  if (p === "/oauth2/v3/userinfo") return json(res, 200, { email: "estudio@example.com" });
   if (p === "/__upload" && req.method === "POST") {
     const name = url.searchParams.get("name") ?? "archivo.pdf";
     const f = { id: id(), name, mimeType: MIME[name.split(".").pop()] ?? "application/octet-stream", parents: [url.searchParams.get("folder")], data: await read(req), modifiedTime: new Date().toISOString() };

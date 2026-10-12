@@ -190,7 +190,7 @@ async function main() {
     }
 
     // Nivel plataforma: owner de Faro (FARO_OWNER_EMAIL), independiente de su rol en el tenant
-    const faroOwner = (process.env.FARO_OWNER_EMAIL?.trim() || "potargo.dev@gmail.com").toLowerCase();
+    const faroOwner = (process.env.FARO_OWNER_EMAIL?.trim() || "cristofaro.dev@gmail.com").toLowerCase();
     const [fo] = await db.select({ id: users.id }).from(users).where(eq(users.email, faroOwner));
     if (fo) {
       await db.update(users).set({ faroRole: "faro_owner" }).where(eq(users.id, fo.id));
