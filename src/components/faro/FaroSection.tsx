@@ -1,4 +1,4 @@
-import { ShieldHalf, ClipboardList, Landmark, Factory, Gauge, MessageSquareText, MessagesSquare, ScrollText, Sparkles, Blocks, Tags, UserPlus, Building2, type LucideIcon, LineChart, Repeat, Wallet, MessageCircle } from "lucide-react";
+import { Blocks, Building2, ClipboardList, Database, Factory, Gauge, Landmark, LineChart, MessageCircle, MessageSquareText, MessagesSquare, Repeat, ScrollText, ShieldHalf, Sparkles, Tags, UserPlus, Wallet, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 
 // Secciones del Faro Manager (docs/faro-producto.md §2.o): Tenants, Catálogo
@@ -38,7 +38,7 @@ export const FARO_SECTIONS = {
   },
   plataforma: {
     title: "Plataforma",
-    description: "Auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA y las cuentas de la plataforma (ARCA, Mercado Pago y WhatsApp).",
+    description: "Auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA, las cuentas de la plataforma (ARCA, Mercado Pago y WhatsApp) y la demo.",
     tabs: [
       { href: "/faro-manager/auditoria", label: "Auditoría", icon: ScrollText },
       { href: "/faro-manager/ayuda", label: "Opiniones de la ayuda", icon: MessageSquareText },
@@ -47,6 +47,7 @@ export const FARO_SECTIONS = {
       { href: "/faro-manager/arca", label: "ARCA", icon: Landmark },
       { href: "/faro-manager/mercadopago", label: "Mercado Pago", icon: Wallet },
       { href: "/faro-manager/whatsapp", label: "WhatsApp", icon: MessageCircle },
+      { href: "/faro-manager/demo", label: "Demo", icon: Database },
     ],
   },
 } satisfies Record<string, { title: string; description: string; tabs: Tab[] }>;

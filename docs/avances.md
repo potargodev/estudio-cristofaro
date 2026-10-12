@@ -293,3 +293,29 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 **Qué falta configurar**
 - Validar con la cuenta real de Tango qué se puede escribir, si hay webhooks, el costo y local vs nube (ver pendientes).
 
+
+## Diseño · Etapas 0 a 2 y 5 (octubre 2026)
+
+**Qué quedó**
+- **Etapa 0 (herramientas):** Impeccable como skill del proyecto, `PRODUCT.md` y `DESIGN.md` (citado en CLAUDE.md).
+- **Etapa 1 (diagnóstico):** `docs/auditoria-diseno.md`, con capturas, medidas y el detector de Impeccable.
+- **Etapa 2 (sistema único):**
+  - Escala tipográfica por roles y alturas de control con tokens.
+  - Un radio, una sombra y dos anchos de contenido.
+  - Placeholders AA y tablas que no desbordan en el celular.
+  - Componentes en `@/components/ds`.
+- **Etapa 5 (datos de demostración):**
+  - `npm run demo:seed` / `demo:reset`, `dist/demo.mjs` y Faro Manager → Plataforma → Demo.
+  - Universo completo marcado `is_demo` (ver `docs/demo.md`), con la franja «Demostración» en la app.
+  - Ayuda: `primeros-pasos/demo`.
+
+**Qué se probó**
+- `demo-navegador.mjs` (33/33, dos corridas seguidas):
+  - Carga y borrado desde el Faro Manager, con auditoría y sin contraseñas guardadas.
+  - Los seis perfiles entran con usuario y contraseña, ven la franja y ningún dato real, sin scroll a 390 px.
+  - Un cliente real sigue sin poder usar contraseña.
+  - Al borrar no queda nada de la demo y los datos reales quedan intactos.
+- Regresión con la demo cargada: `principios-navegador` 112/112, `principios-servidor` todo bien, `npm test` 94/94, `red.mts` y `flotas.mts` OK.
+
+**Qué falta configurar**
+- Cargar la demo en staging desde el Faro Manager (o `node dist/demo.mjs seed` en la consola de `web`) y guardar las contraseñas que muestra.

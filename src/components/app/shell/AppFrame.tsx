@@ -45,7 +45,7 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
   let studioBrand: string | null = null;
   let brand: PortalBrand | null = null;
   let roleLabel = ROLE_LABEL[user.role] ?? user.role;
-  const [studio] = await db.select({ name: studios.name, slug: studios.slug }).from(studios).where(eq(studios.id, user.studioId));
+  const [studio] = await db.select({ name: studios.name, slug: studios.slug, isDemo: studios.is_demo }).from(studios).where(eq(studios.id, user.studioId));
 
   if (space === "studio") {
     const today = new Date().toISOString().slice(0, 10);
@@ -143,6 +143,7 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
         studioAccess={space === "studio" ? input.studio : null}
         assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}
         endAssisted={endAssistedAccess}
+        demo={!!studio?.isDemo}
         signOut={user.role === "cliente" ? portalSignOut : signOut}
         notices={user.assisted ? undefined : { unread: noticeCount, items: noticeList.map((n) => ({ id: n.id, title: n.title, body: n.body, href: n.href, read: !!n.read_at, at: n.created_at.toISOString() })) }}
         switchOrg={user.role === "cliente" ? switchOrganization : undefined}

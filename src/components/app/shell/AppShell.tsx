@@ -154,6 +154,8 @@ export interface ShellProps {
   studioAccess?: NavAccess | null;
   assisted?: { studioName: string; expiresAt: string } | null;
   endAssisted?: () => void | Promise<void>;
+  /** Espacio de demostración: franja fija para no confundirlo con datos reales */
+  demo?: boolean;
   signOut: () => void | Promise<void>;
   switchOrg?: (fd: FormData) => void | Promise<void>;
   notices?: { items: Notice[]; unread: number };
@@ -492,6 +494,11 @@ export function AppShell(p: ShellProps) {
           <HelpMenu className="rounded-md text-ink hover:bg-surface" />
           <AccountMenu user={p.user} spaceName={p.spaceName} links={p.links} spaces={p.spaces} switchOrg={p.switchOrg} signOut={p.signOut} />
         </header>
+        {p.demo && (
+          <div role="note" data-demo className="border-b border-line bg-rose-soft px-4 py-1.5 text-meta text-rose-deep sm:px-6 lg:px-8">
+            <strong className="font-semibold">Demostración.</strong> Estos datos son ficticios y se borran con la demo; nada de acá es real.
+          </div>
+        )}
         {p.assisted && (
           <div role="status" className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[#e3cf9f] bg-[#fbf5e6] px-4 py-2 text-meta text-[#7a5410] sm:px-6 lg:px-8">
             <span>

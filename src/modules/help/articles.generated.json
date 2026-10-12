@@ -817,6 +817,28 @@
   "text": "Tareas está en el grupo Operación del menú plan Profesional o Avanzado . Tres vistas Tabla: todas las tareas con organización, vencimiento, responsable y estado; cambiás el responsable o el estado desde la misma fila. Las vencidas se marcan en rojo. Kanban: columnas Pendiente, En curso y Hecha; mové cada tarjeta con los botones «→ En curso» o «→ Hecha». Calendario: las tareas en el día en que vencen, mes por mes. Filtrá por estado, por responsable «Mías», «Sin responsable» o una persona y por organización. Tareas de los vencimientos Por cada vencimiento pendiente de los próximos 30 días, Faro crea una tarea «Preparar IVA 2026 09 · Cliente» que vence 3 días antes y queda a cargo del responsable de esa organización el primero asignado en Equipo del estudio . Cuando el vencimiento se marca presentado o pagado, la tarea se cierra sola. Se generan cada hora; con Crear las de vencimientos las traés en el momento. Otras formas de crear tareas A mano, con el formulario de abajo. Desde un flujo acción «Crear una tarea» . Pidiéndoselo al Vigía «creame una tarea para pedir los extractos de Agencia Norte» : te pide confirmación. Al asignarle una tarea a alguien le llega un aviso en la campanita."
  },
  {
+  "id": "primeros-pasos/demo",
+  "categoria": "primeros-pasos",
+  "slug": "demo",
+  "titulo": "Probar Faro con la demo",
+  "resumen": "Qué es un espacio de demostración, cómo se reconoce y por qué nunca se mezcla con tus datos.",
+  "perfiles": [
+   "persona",
+   "autonomo",
+   "estudio",
+   "organizacion",
+   "empleado"
+  ],
+  "modulo": "core",
+  "actualizado": "2026-10-12",
+  "relacionados": [
+   "primeros-pasos/espacios-y-menu",
+   "primeros-pasos/primeros-pasos-estudio"
+  ],
+  "body": "Para mostrar Faro o probarlo sin tocar datos reales, el equipo de Faro puede cargar una **demo**: un mundo de prueba completo, con estudios, organizaciones, personas, autónomos, cajas, conexiones con contadores, la Red Contable y Flotas.\n\n## Cómo se reconoce\n\n- Arriba de cada pantalla aparece la franja **«Demostración. Estos datos son ficticios…»**.\n- Los usuarios de la demo tienen mails que terminan en `@demo.faro.local`. Esos mails no existen: Faro nunca les manda nada.\n- Los estudios de la demo llevan «(demo)» en el nombre.\n\n## Qué hay adentro\n\n- **Tres estudios:** uno grande con equipo y ocho organizaciones de distintos rubros, uno chico y una contadora independiente. Tienen vencimientos pagados, por vencer y vencidos, documentos, solicitudes, tareas, honorarios al día y en mora, recibos firmados y sin firmar, conciliación bancaria y flujos.\n- **Quince personas y autónomos:**\n  - Bitácora de seis meses, con sobres, fijos, suscripciones y metas.\n  - Caja de negocio y sueldo del dueño.\n  - Cajas compartidas de pareja, familia, amigos, negocio, y padres y abuelos.\n  - Grupos de gastos con deudas.\n  - Facturas con el semáforo de monotributo en verde, amarillo y rojo.\n  - Una changa en zona gris.\n- **Conexiones con un contador en todos los estados:** invitación, admisión, acuerdo, conectada (delegar y mirar o proponer y aprobar), en cierre, en disputa y cerrada.\n- **Red Contable de doble mano:** estudios con su ficha y personas, empresas y Flotas «Disponible, busco contador».\n\n## Tus datos no se tocan\n\nLa demo vive en espacios propios, marcados como demostración. No ve ni modifica nada de los estudios, organizaciones o personas reales. Cuando el equipo de Faro la borra, se va entera y solo ella. Los usuarios de la demo entran con usuario y contraseña (sin segundo factor), únicamente a su espacio de prueba.",
+  "text": "Para mostrar Faro o probarlo sin tocar datos reales, el equipo de Faro puede cargar una demo : un mundo de prueba completo, con estudios, organizaciones, personas, autónomos, cajas, conexiones con contadores, la Red Contable y Flotas. Cómo se reconoce Arriba de cada pantalla aparece la franja «Demostración. Estos datos son ficticios…» . Los usuarios de la demo tienen mails que terminan en @demo.faro.local . Esos mails no existen: Faro nunca les manda nada. Los estudios de la demo llevan « demo » en el nombre. Qué hay adentro Tres estudios: uno grande con equipo y ocho organizaciones de distintos rubros, uno chico y una contadora independiente. Tienen vencimientos pagados, por vencer y vencidos, documentos, solicitudes, tareas, honorarios al día y en mora, recibos firmados y sin firmar, conciliación bancaria y flujos. Quince personas y autónomos: Bitácora de seis meses, con sobres, fijos, suscripciones y metas. Caja de negocio y sueldo del dueño. Cajas compartidas de pareja, familia, amigos, negocio, y padres y abuelos. Grupos de gastos con deudas. Facturas con el semáforo de monotributo en verde, amarillo y rojo. Una changa en zona gris. Conexiones con un contador en todos los estados: invitación, admisión, acuerdo, conectada delegar y mirar o proponer y aprobar , en cierre, en disputa y cerrada. Red Contable de doble mano: estudios con su ficha y personas, empresas y Flotas «Disponible, busco contador». Tus datos no se tocan La demo vive en espacios propios, marcados como demostración. No ve ni modifica nada de los estudios, organizaciones o personas reales. Cuando el equipo de Faro la borra, se va entera y solo ella. Los usuarios de la demo entran con usuario y contraseña sin segundo factor , únicamente a su espacio de prueba."
+ },
+ {
   "id": "primeros-pasos/espacios-y-menu",
   "categoria": "primeros-pasos",
   "slug": "espacios-y-menu",

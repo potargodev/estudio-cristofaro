@@ -213,7 +213,7 @@ function createAuth() {
         create: {
           before: async (session, ctx) => {
             const [user] = await db
-              .select({ active: users.active, role: users.role, email: users.email, studioId: users.studioId })
+              .select({ active: users.active, role: users.role, email: users.email, studioId: users.studioId, isDemo: users.isDemo })
               .from(users)
               .where(eq(users.id, session.userId));
             const path = ctx?.path;
@@ -229,7 +229,8 @@ function createAuth() {
             };
             if (!user?.active) throw await reject("USUARIO_DESACTIVADO");
             if (user.role === "cliente") {
-              if (path === "/sign-in/email") throw await reject("CLIENTE_SIN_CLAVE");
+              // Los clientes entran con Google o enlace; los de la demo (@demo.faro.local, sin casilla), con contraseña
+              if (path === "/sign-in/email" && !user.isDemo) throw await reject("CLIENTE_SIN_CLAVE");
               if ((isSocial(path) || isMagic(path)) && !(await hasAccessByEmail(user.email))) throw await reject("SIN_ACCESO");
             } else if (user.role === "titular") {
               // Persona o autónomo: Google, enlace o contraseña

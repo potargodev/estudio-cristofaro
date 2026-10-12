@@ -12,3 +12,4 @@ dist
 .uploads
 scripts/pruebas/.salida.json
 scripts/pruebas/_*.mjs
+scripts/pruebas/.demo*.json

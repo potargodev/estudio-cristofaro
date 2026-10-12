@@ -103,7 +103,12 @@ export async function sendMail({
   attachments?: { filename: string; content: string; contentType?: string; encoding?: string }[];
 }): Promise<boolean> {
   const transport = getTransport();
-  const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
+  // Los usuarios de la demo (@demo.faro.local) nunca reciben mails: no existen
+  const recipients = (Array.isArray(to) ? to : [to]).filter((r) => r && !/@demo\.faro\.local$/i.test(r.trim()));
+  if (!recipients.length && (Array.isArray(to) ? to.length : !!to)) {
+    console.info(`[mail] Demo: no se envía "${subject}"`);
+    return true;
+  }
   if (!transport || recipients.length === 0) {
     if (recipients.length) console.info(`[mail] SMTP sin configurar: no se envió "${subject}" a ${recipients.join(", ")}`);
     return false;

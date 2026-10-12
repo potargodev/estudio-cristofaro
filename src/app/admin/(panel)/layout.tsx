@@ -4,7 +4,7 @@ import { isDbConfigured } from "@/db";
 import { requireTenant } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: { default: "Faro", template: "%s · Faro" },
+  title: { absolute: "Faro", template: "%s · Faro" },
   robots: { index: false, follow: false },
 };
 

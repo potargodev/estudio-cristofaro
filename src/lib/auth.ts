@@ -46,7 +46,7 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
   };
   if (!u.studioId || u.active === false) return null;
   const db = getDb();
-  const [row] = await db.select({ faroRole: users.faroRole, status: studios.status, kind: studios.kind }).from(users).innerJoin(studios, eq(studios.id, users.studioId)).where(eq(users.id, u.id));
+  const [row] = await db.select({ faroRole: users.faroRole, status: studios.status, kind: studios.kind, isDemo: users.isDemo }).from(users).innerJoin(studios, eq(studios.id, users.studioId)).where(eq(users.id, u.id));
   const faroRole = row?.faroRole === "faro_owner" || row?.faroRole === "faro_support" ? row.faroRole : null;
   const base: StaffUser = {
     id: u.id,
@@ -55,8 +55,9 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
     role: (u.role ?? "contador") as UserRole,
     studioId: u.studioId,
     mustChangePassword: Boolean(u.mustChangePassword),
-    twoFactorEnabled: Boolean(u.twoFactorEnabled),
-    faroRole,
+    // Usuarios de la demo: espacios ficticios y aislados, sin 2FA para poder recorrerlos
+    twoFactorEnabled: Boolean(u.twoFactorEnabled) || Boolean(row?.isDemo),
+    faroRole: row?.isDemo ? null : faroRole,
     assisted: null,
     tenantSuspended: row?.status === "suspendido",
     tenantKind: row?.kind ?? "studio",

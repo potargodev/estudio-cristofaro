@@ -95,6 +95,8 @@ export const studios = pgTable("studios", {
   notes: text("notes"),
   /** Pasos del onboarding completados */
   onboarding: jsonb("onboarding").$type<Record<string, boolean>>().notNull().default({}),
+  /** Espacio de demostración (npm run demo:seed): se borra con demo:reset y nunca se mezcla con datos reales */
+  is_demo: boolean("is_demo").notNull().default(false),
   created_at: createdAt(),
 });
 
@@ -122,6 +124,8 @@ export const users = pgTable(
     twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
     // Nivel plataforma (Faro Manager): faro_owner | faro_support, independiente del rol de tenant. Null para el resto.
     faroRole: text("faro_role"),
+    /** Usuario de demostración (mail @demo.faro.local): entra con contraseña y sin 2FA, solo a su espacio de demo */
+    isDemo: boolean("is_demo").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
@@ -1775,6 +1779,8 @@ export const fleets = pgTable("fleets", {
   request_message: text("request_message"),
   request_published_at: timestamp("request_published_at", { withTimezone: true }),
   created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  /** Flota de demostración (se borra con demo:reset) */
+  is_demo: boolean("is_demo").notNull().default(false),
   created_at: createdAt(),
   updated_at: updatedAt(),
 });
