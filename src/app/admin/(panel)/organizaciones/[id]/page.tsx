@@ -18,6 +18,7 @@ import {
 import { ActivityTimeline } from "@/components/admin/ActivityTimeline";
 import { ArcaOrgTab } from "@/components/facturacion/ArcaOrgTab";
 import { BankRecTab } from "@/components/conciliacion/views";
+import { IvaTab } from "@/components/iva/IvaTab";
 import { SueldosTab } from "@/components/sueldos/SueldosTab";
 import { OrgExpensesTab } from "@/components/admin/OrgExpensesTab";
 import { OrgIndustryTab } from "@/components/admin/OrgIndustryTab";
@@ -261,6 +262,7 @@ export default async function OrganizacionPage({
         {tab === "indicadores" && (me.role === "colaborador" ? <p className="text-muted">Los indicadores los ven los dueños y contadores del estudio.</p> : (await insightsEnabled(studioId)) ? <OrgInsights studioId={studioId} orgId={org.id} /> : <InsightsLocked />)}
         {tab === "actividad" && <ActivityTimeline orgId={org.id} studioId={studioId} before={sp.antes} />}
         {tab === "arca" && <ArcaOrgTab me={me} orgId={org.id} sp={sp} />}
+        {tab === "iva" && <IvaTab me={me} orgId={org.id} sp={sp} />}
         {tab === "conciliacion" && <BankRecTab me={me} orgId={org.id} sp={sp} />}
         {tab === "sueldos" && <SueldosTab orgId={org.id} sp={sp} />}
       </div>

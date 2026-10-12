@@ -351,6 +351,13 @@
       "when": 1791819821450,
       "tag": "0049_conciliacion_tolerancias",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1791821266970,
+      "tag": "0050_libro_iva",
+      "breakpoints": true
     }
   ]
 }

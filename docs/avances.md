@@ -414,3 +414,15 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 - `src/modules/bank-rec/core.test.ts` (tolerancias, grupos y asiento).
 - `scripts/pruebas/conciliacion-tolerancias.mts` (27 verificaciones): sugerencia dentro de la tolerancia, fuera de fecha y de monto, asiento en borrador y registrado, automatización, uno con muchos, muchos con uno, deshacer con asiento anulado y aislamiento forzando IDs.
 - `lectura-navegador`, `lectura-servidor` y `lectura-compras` siguen en verde.
+
+## §2.q · Etapa 4: análisis del Libro IVA (12 de octubre)
+
+**Qué quedó**
+- **ARCA → Libro IVA** en la ficha de la organización: libros de compras y ventas del período con crédito o débito fiscal por proveedor o cliente, por condición frente al IVA y por alícuota, gráficos y comparación con los 3 períodos anteriores.
+- **Anomalías explicadas:** concentración, monotributistas, CUIT con problemas en el padrón, CAE no encontrado (WSCDC), duplicados, fuera de período, importes atípicos, alícuotas según el rubro, IVA en facturas B o C; en ventas, rechazados, saltos de numeración y concentración en un cliente.
+- **Marcas «a revisar»** con nota, filtro y «Resuelto»; **checklist** de lo que falta antes de presentar («Sin pendientes», nunca «está bien»). Migración `0050`.
+- Herramienta `analizar_libro_iva` (Vigía, MCP y Agente): la revisión de IVA y el cierre del mes del Agente la usan, y queda como rutina.
+
+**Qué se probó**
+- `src/modules/iva/iva.test.ts` (crédito fiscal, libro del período, anomalías de compras y ventas).
+- `scripts/pruebas/libro-iva.mts` (20 verificaciones): 7 tipos de anomalía en un período, resumen y comparación, marcas y checklist, ventas, el Vigía y el Agente, y aislamiento forzando IDs.

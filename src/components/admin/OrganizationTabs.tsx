@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { BadgeCheck, ChartLine, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
+import { BadgeCheck, ChartLine, ClipboardCheck, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
 import Link from "next/link";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
@@ -56,6 +56,7 @@ export const ORG_TABS = [
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare },
   { key: "integraciones", label: "Integraciones", icon: PlugZap },
   { key: "arca", label: "ARCA", icon: Landmark },
+  { key: "iva", label: "Libro IVA", icon: ClipboardCheck },
   { key: "conciliacion", label: "Conciliación", icon: Scale },
   { key: "sueldos", label: "Sueldos", icon: BadgeCheck },
   { key: "gastos", label: "Gastos", icon: Wallet },
@@ -79,13 +80,13 @@ const MAIN_TABS: { key: string; label: string; icon: (typeof ORG_TABS)[number]["
   { key: "vencimientos", label: "Vencimientos", icon: CalendarClock, href: "vencimientos", keys: ["vencimientos"] },
   { key: "documentos", label: "Documentos", icon: FileText, href: "documentos", keys: ["documentos"] },
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare, href: "solicitudes", keys: ["solicitudes"] },
-  { key: "arca", label: "ARCA", icon: Landmark, href: "arca", keys: ["arca"] },
+  { key: "arca", label: "ARCA", icon: Landmark, href: "arca", keys: ["arca", "iva"] },
   { key: "conciliacion", label: "Conciliación", icon: Scale, href: "conciliacion", keys: ["conciliacion"] },
   { key: "sueldos", label: "Sueldos", icon: BadgeCheck, href: "sueldos", keys: ["sueldos"] },
   { key: "conexiones", label: "Conexiones", icon: PlugZap, href: "integraciones", keys: ["integraciones"] },
 ];
 
-const SUB_LABEL: Partial<Record<OrgTabKey, string>> = { general: "Datos y razones sociales", miembros: "Miembros del portal" };
+const SUB_LABEL: Partial<Record<OrgTabKey, string>> = { general: "Datos y razones sociales", miembros: "Miembros del portal", arca: "ARCA y facturación" };
 
 export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTabKey; counts: Partial<Record<OrgTabKey, number>> }) {
   const main = MAIN_TABS.find((t) => t.keys.includes(active)) ?? MAIN_TABS[0];

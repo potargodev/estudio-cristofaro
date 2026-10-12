@@ -62,6 +62,12 @@ export function findingsFor(step: AgentPlanStep, outcome: StepOutcome, c: Ctx): 
       else if (light === "amarillo") out.push({ ...base, severity: "media", title: "Se acerca al tope de su categoría", detail });
       break;
     }
+    case "analizar_libro_iva": {
+      const list = (r.anomalias as Row[] | undefined) ?? [];
+      for (const a of list)
+        out.push({ ...base, severity: (["alta", "media", "baja"].includes(String(a.importancia)) ? a.importancia : "media") as AgentFinding["severity"], title: `IVA ${a.libro}: ${a.titulo}`, detail: String(a.detalle ?? ""), href: (r.enlace as string) ?? null });
+      break;
+    }
     case "listar_comprobantes": {
       const rows = ((r.comprobantes ?? r.facturas) as Row[] | undefined) ?? [];
       const bad = rows.filter((x) => ["rechazada", "error"].includes(String(x.estado)));

@@ -121,10 +121,12 @@ async function buildPlan(studioId: string, t: AgentTemplate, scope: AgentScope, 
         add(of("Vencimientos abiertos"), "listar_vencimientos", { organizacion_id: o.id, estados: open, hasta: addDays(params.today, 5), limite: 50 }, o.id);
         add(of("Comprobantes para confirmar"), "comprobantes_para_confirmar", { organizacion_id: o.id, limite: 50 }, o.id);
         if (bankRec) add(of("Conciliación bancaria"), "estado_conciliacion", { organizacion_id: o.id }, o.id);
+        add(of("Análisis del Libro IVA del período"), "analizar_libro_iva", { organizacion_id: o.id, ...(params.period ? { periodo: params.period } : {}) }, o.id);
         add(of("Resumen del mes para el cliente (borrador)"), "enviar_resumen_mensual", { organizacion_id: o.id }, o.id);
       } else if (t.key === "revision_iva") {
         add(of("Vencimientos de los próximos 15 días"), "listar_vencimientos", { organizacion_id: o.id, estados: open, hasta: addDays(params.today, 15), limite: 50 }, o.id);
         add(of("Comprobantes de compra sin confirmar"), "comprobantes_para_confirmar", { organizacion_id: o.id, limite: 50 }, o.id);
+        add(of("Análisis del Libro IVA (compras y ventas)"), "analizar_libro_iva", { organizacion_id: o.id, ...(params.period ? { periodo: params.period } : {}) }, o.id);
       } else if (t.key === "conciliar_extracto") {
         add(of("Estado de la conciliación"), "estado_conciliacion", { organizacion_id: o.id }, o.id);
       } else if (t.key === "tope_monotributo") {

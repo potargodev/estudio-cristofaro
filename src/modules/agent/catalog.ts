@@ -28,7 +28,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
   {
     key: "cierre_mensual",
     title: "Cierre del mes",
-    description: "Revisa vencimientos, comprobantes para confirmar y conciliación del período; deja hallazgos, tareas y el resumen mensual como borrador.",
+    description: "Revisa vencimientos, comprobantes para confirmar, conciliación y el Libro IVA del período; deja hallazgos, tareas y el resumen mensual como borrador.",
     example: "Cerrá octubre de Agencia Norte",
     scopes: ["organizacion", "cartera"],
     needs: ["periodo"],
@@ -38,7 +38,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
   {
     key: "revision_iva",
     title: "Revisión del crédito fiscal (IVA)",
-    description: "Antes del vencimiento: comprobantes de compra sin confirmar, repetidos o con datos a revisar y el vencimiento de IVA de cada cliente.",
+    description: "Antes del vencimiento: analiza el Libro IVA compras y ventas de cada cliente (anomalías y lo que falta para presentar), los comprobantes sin confirmar y el vencimiento.",
     example: "Revisá el crédito fiscal de todos mis clientes antes del vencimiento",
     scopes: ["organizacion", "cartera"],
     needs: ["periodo"],

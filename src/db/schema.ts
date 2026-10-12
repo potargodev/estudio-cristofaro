@@ -4480,3 +4480,32 @@ export const journal_entries = pgTable(
   },
   (t) => [index("journal_entries_org_idx").on(t.organization_id, t.date), index("journal_entries_source_idx").on(t.source, t.source_id)],
 );
+
+// ───────────── §2.q · Análisis del Libro IVA ─────────────
+
+/** Comprobante marcado «a revisar» en el análisis del Libro IVA de un período, con su nota */
+export const iva_marks = pgTable(
+  "iva_marks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    period: text("period").notNull(),
+    /** compras | ventas */
+    book: text("book").notNull(),
+    /** smart_documents.id (compras) o invoices.id (ventas) */
+    row_id: uuid("row_id").notNull(),
+    note: text("note"),
+    /** a_revisar | resuelta */
+    status: text("status").notNull().default("a_revisar"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    resolved_by: uuid("resolved_by").references(() => users.id, { onDelete: "set null" }),
+    resolved_at: timestamp("resolved_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("iva_marks_row_idx").on(t.organization_id, t.book, t.row_id), index("iva_marks_period_idx").on(t.organization_id, t.period)],
+);

@@ -95,6 +95,8 @@ correr lectura-servidor "${S[@]}" scripts/pruebas/lectura-servidor.mts
 correr lectura-compras "${S[@]}" scripts/pruebas/lectura-compras.mts
 # §2.q · Conciliación con tolerancias, grupos y asientos de ajuste
 correr conciliacion-tolerancias "${S[@]}" scripts/pruebas/conciliacion-tolerancias.mts
+# §2.q · Análisis del Libro IVA
+correr libro-iva "${S[@]}" scripts/pruebas/libro-iva.mts
 # F7 · Cobros
 correr cobros-navegador node scripts/pruebas/cobros-navegador.mjs
 correr cobros-servidor "${S[@]}" scripts/pruebas/cobros-servidor.mts
