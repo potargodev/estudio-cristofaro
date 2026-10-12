@@ -426,3 +426,20 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 **Qué se probó**
 - `src/modules/iva/iva.test.ts` (crédito fiscal, libro del período, anomalías de compras y ventas).
 - `scripts/pruebas/libro-iva.mts` (20 verificaciones): 7 tipos de anomalía en un período, resumen y comparación, marcas y checklist, ventas, el Vigía y el Agente, y aislamiento forzando IDs.
+
+## §2.q · Etapa 5: leyendas obligatorias en los comprobantes (12 de octubre)
+
+**Qué quedó**
+- **Motor de leyendas** por jurisdicción y régimen (`src/modules/leyendas`): transparencia fiscal (Ley 27.743, RG 5614/2024) con el IVA contenido, ISIB CABA (Res. 169/AGIP/26: alícuota, Convenio Multilateral, promoción y exención; no alcanza al Régimen Simplificado), factura A sujeta a retención (RG 5762), FCE «PAGO EN CBU INFORMADA» (para cuando Faro emita FCE) y la nota de monotributo.
+- **Perfil de leyendas** del emisor, una sola vez, en los datos de facturación (con la vista de «cómo salen hoy»); auditado.
+- Las leyendas se ven en el borrador, se **fijan al autorizar** y se imprimen solas en el PDF, abajo a la izquierda junto a los totales.
+- **Faro Manager → Escudo → Leyendas obligatorias:** texto, norma, enlace, vigencia, estado (vigente, a validar, derogada) y condición; cada cambio sube la versión, guarda la historia, queda en la auditoría y, si se marca, avisa a los dueños y titulares afectados. Migración `0051`.
+- Ninguna norma se pudo leer en el sitio oficial desde el entorno: **las 8 reglas quedan «a validar»** (decisiones §2.q y pendientes, ítem 8).
+
+**Qué se probó**
+- `src/modules/leyendas/leyendas.test.ts` (condiciones, vigencias, derogadas, perfil y afectados).
+- `scripts/pruebas/leyendas.mts` (20 verificaciones): perfil, borrador, emisión en el simulador de ARCA, PDF con las leyendas, cambio de norma con versión, historia, auditoría y aviso, los autorizados no cambian, derogada, validaciones y aislamiento forzando IDs.
+- `arca-cliente`, `arca-navegador` y `arca-vigia` siguen en verde; pantallas a 390 y 1.440 px.
+
+**Qué falta configurar**
+- Que un contador coteje las 8 reglas con el Boletín Oficial y las pase a «Vigente» (pendientes, ítem 8).

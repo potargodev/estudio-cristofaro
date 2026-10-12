@@ -29,6 +29,7 @@ import { fromArcaDate, invoiceTotals, ivaCode, toArcaDate } from "./calc";
 import { deadlines, type TaxProfileInput } from "./calendar";
 import { checkByKey, GUIDED_CHECKS } from "./checks";
 import { activeEnv, loadCredential } from "./credentials";
+import { legendsForInvoice } from "@/modules/leyendas/server";
 import { SEED_SCALE, semaforo, type ScaleCategory } from "./monotributo";
 import { getPersona } from "./padron";
 import { ArcaError } from "./soap";
@@ -415,6 +416,8 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
     total: String(totals.total),
     iva_breakdown: totals.ivaBreakdown,
     associated_invoice_id: associated?.id ?? null,
+    // §2.q etapa 5: las leyendas obligatorias se ven desde el borrador y se fijan al autorizar
+    legends: await legendsForInvoice({ cbte_type: cbteType, customer_iva_condition: customer.ivaCondition, issue_date: issueDate, net: String(totals.net), iva: String(totals.iva), total: String(totals.total) }, settings),
     notes: i.notes?.slice(0, 500) || null,
     origin,
     status: "borrador",
@@ -509,6 +512,7 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
       if (a?.number) asociados = [{ tipo: a.cbte_type, ptoVta: a.point_of_sale, nro: a.number, cuit: a.cuit, cbteFch: toArcaDate(a.issue_date) }];
     }
     const letter = CBTE_TYPES[inv.cbte_type].letter;
+    const legends = await legendsForInvoice(inv, await settingsForInvoice(inv));
     const res = await solicitarCae(cred, inv.cuit, {
       ptoVta: inv.point_of_sale,
       cbteTipo: inv.cbte_type,
@@ -533,7 +537,7 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
       asociados,
     });
     if (res.approved && res.cae) {
-      const r = await finish({ status: "autorizada", cae: res.cae, cae_due: fromArcaDate(res.caeDue ?? ""), observations: res.observations, raw_request: { xml: res.request }, raw_response: { xml: res.raw }, authorized_by: actor.id, authorized_at: new Date(), public_token: randomBytes(18).toString("base64url"), error: null });
+      const r = await finish({ status: "autorizada", legends, cae: res.cae, cae_due: fromArcaDate(res.caeDue ?? ""), observations: res.observations, raw_request: { xml: res.request }, raw_response: { xml: res.raw }, authorized_by: actor.id, authorized_at: new Date(), public_token: randomBytes(18).toString("base64url"), error: null });
       await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.emitida", entityType: "factura", entityId: inv.id, metadata: { tipo: CBTE_TYPES[inv.cbte_type].label, numero: number, cae: res.cae, total: Number(inv.total), origen: origin, ambiente: cred.env } });
       await emitEvent(scope.studioId, "factura.emitida", { factura_id: inv.id, organizacion_id: scope.organizationId, total: Number(inv.total), cliente: inv.customer_name, tipo: CBTE_TYPES[inv.cbte_type].label }, inv.id);
       // Una sola verdad con Tango: lo facturado en Faro se escribe allá (si el estudio lo habilitó)

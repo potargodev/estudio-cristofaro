@@ -85,6 +85,7 @@ correr mensajes "${T[@]}" scripts/pruebas/mensajes.mts
 correr arca-cliente "${S[@]}" scripts/pruebas/arca-cliente.mts
 correr arca-navegador node scripts/pruebas/arca-navegador.mjs
 correr arca-vigia "${S[@]}" scripts/pruebas/arca-vigia.mts
+correr leyendas "${S[@]}" scripts/pruebas/leyendas.mts
 # F8 · Bitácora
 correr bitacora-navegador node scripts/pruebas/bitacora-navegador.mjs
 correr bitacora-servidor "${S[@]}" scripts/pruebas/bitacora-servidor.mts

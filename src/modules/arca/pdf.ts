@@ -157,6 +157,7 @@ export async function invoicePdf(inv: Invoice, s: Settings): Promise<Uint8Array>
 
   // Totales
   y -= 8;
+  const totalsTop = y;
   const totals: [string, string, boolean][] = discriminate
     ? [["Neto gravado", money(Number(inv.net), inv.currency), false], ...inv.iva_breakdown.map((b) => [`IVA ${b.rate}%`, money(b.amount, inv.currency), false] as [string, string, boolean]), ["Total", money(Number(inv.total), inv.currency), true]]
     : [["Subtotal", money(Number(inv.net), inv.currency), false], ["Total", money(Number(inv.total), inv.currency), true]];
@@ -168,9 +169,20 @@ export async function invoicePdf(inv: Invoice, s: Settings): Promise<Uint8Array>
     y -= strong ? 18 : 13;
   }
   if (inv.currency === "DOL") text(page, `Moneda: dólares · Tipo de cambio ${Number(inv.exchange_rate)}`, width - M - 200, y, 8, font, muted);
-  if (t?.letter === "C") {
-    y -= 4;
-    text(page, "Comprobante de un responsable monotributo: no discrimina IVA.", M, y, 8, font, muted);
+  // Leyendas obligatorias (§2.q etapa 5), abajo a la izquierda junto a los totales
+  const legends = inv.legends ?? (t?.letter === "C" ? [{ key: "monotributo_c", lines: ["Comprobante de un responsable monotributo: no discrimina IVA."], status: "a_validar" }] : []);
+  let ly = totalsTop;
+  const lw = width - 2 * M - 216;
+  for (const l of legends) {
+    l.lines.forEach((ln, i) => {
+      const strong = l.lines.length > 1 && i === 0;
+      for (const w of wrap(strong ? bold : font, ln, 7.5, lw)) {
+        if (ly < 148) return; // encima del pie (CAE y QR)
+        text(page, w, M, ly, 7.5, strong ? bold : font, strong ? ink : muted);
+        ly -= 9.5;
+      }
+    });
+    ly -= 3;
   }
 
   // Pie: CAE y QR (o marca de borrador)

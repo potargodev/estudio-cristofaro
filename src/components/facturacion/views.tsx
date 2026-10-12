@@ -17,6 +17,7 @@ import {
   saveProductAction,
   saveProfileAction,
   saveSettingsAction,
+  saveLegendsAction,
   shareAction,
   syncPointsAction,
 } from "@/app/facturacion/actions";
@@ -46,6 +47,9 @@ import {
 } from "@/modules/arca/server";
 import type { TaxpayerData } from "@/modules/arca/padron";
 import { InvoiceForm } from "./InvoiceForm";
+import { asProfile, legendsFor, type LegendProfile } from "@/modules/leyendas/catalog";
+import { getLegendRules } from "@/modules/leyendas/server";
+import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatAmount, formatDate } from "@/lib/format";
 
@@ -237,6 +241,19 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           </p>
         )}
         {inv.error && <p className="mt-3 text-ui text-danger">{inv.error}</p>}
+        {!!inv.legends?.length && (
+          <div className="mt-3 border-t border-line pt-3">
+            <p className="text-meta font-medium text-muted">Leyendas obligatorias que lleva el PDF</p>
+            <ul className="mt-1 grid gap-1 text-meta">
+              {inv.legends.map((l) => (
+                <li key={l.key}>
+                  {l.lines.join(" · ")}
+                  {l.status === "a_validar" && <span className="text-muted"> (texto a validar con la norma)</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -696,6 +713,7 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
           <MpAccountForm summary={mp} save={savePersonalMpAction} remove={deletePersonalMpAction} webhookUrl={notificationUrl(scope.studioId)} />
         </section>
       )}
+      <div className="grid content-start gap-4">
       <form action={saveSettingsAction} encType="multipart/form-data" className={cn(card, "grid gap-3 sm:grid-cols-2")}>
         <ScopeFields scope={scope} volver={volver} />
         <div className="sm:col-span-2">
@@ -759,6 +777,8 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
           <SubmitButton pendingText="Guardando…">Guardar</SubmitButton>
         </div>
       </form>
+      <LegendProfileForm scope={scope} volver={volver} saved={!!s.id} profile={asProfile(s.legend_profile)} ivaCondition={s.iva_condition} />
+      </div>
       <div className={cn(card, "grid content-start gap-3")}>
         <p className="text-body font-semibold">Puntos de venta y delegación</p>
         <p className="text-ui text-muted">Para que Faro emita en nombre de CUIT {formatCuit(scope.cuit)}, la CUIT tiene que delegarle a Faro el servicio de factura electrónica en ARCA.</p>
@@ -785,6 +805,59 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
         </form>
       </div>
     </div>
+  );
+}
+
+/** §2.q etapa 5: perfil de leyendas obligatorias, se carga una vez y Faro las imprime solas */
+async function LegendProfileForm({ scope, volver, saved, profile, ivaCondition }: { scope: IssuerScope; volver: string; saved: boolean; profile: LegendProfile; ivaCondition: string }) {
+  const rules = await getLegendRules();
+  const sample = (customerIva: string, letter: "A" | "B" | "C") =>
+    legendsFor({ letter, kind: "factura", issuerIva: ivaCondition, customerIva, issueDate: new Date().toISOString().slice(0, 10), net: 100000, iva: letter === "C" ? 0 : 21000, total: letter === "C" ? 100000 : 121000 }, profile, rules);
+  const toConsumer = sample("consumidor_final", ivaCondition === "responsable_inscripto" ? "B" : "C");
+  const toCompany = ivaCondition === "responsable_inscripto" ? sample("responsable_inscripto", "A") : [];
+  return (
+    <form action={saveLegendsAction} id="leyendas" className={cn(card, "grid gap-3 sm:grid-cols-2")}>
+      <ScopeFields scope={scope} volver={volver} />
+      <div className="sm:col-span-2">
+        <p className="text-body font-semibold">Leyendas obligatorias</p>
+        <p className="text-ui text-muted">Lo cargás una vez y Faro imprime solas las leyendas que pide la normativa (transparencia fiscal, Ingresos Brutos de CABA, retenciones). El catálogo lo mantiene Faro y te avisa si cambia una norma. {NO_REEMPLAZA}</p>
+      </div>
+      <label>
+        <span className={lbl}>Ingresos Brutos en CABA</span>
+        <select name="isib_caba" defaultValue={profile.isibCaba} className={field}>
+          <option value="no">No estoy inscripto en CABA</option>
+          <option value="local">Contribuyente local de CABA</option>
+          <option value="convenio">Convenio Multilateral (con CABA)</option>
+          <option value="simplificado">Régimen Simplificado (monotributo)</option>
+        </select>
+      </label>
+      <label>
+        <span className={lbl}>Alícuota ISIB CABA (%; si tenés varias, la menor)</span>
+        <input name="isib_alicuota" inputMode="decimal" defaultValue={profile.isibAlicuota == null ? "" : String(profile.isibAlicuota).replace(".", ",")} placeholder="Ej.: 3" className={field} />
+      </label>
+      <label className="flex items-center gap-2 text-ui">
+        <input type="checkbox" name="isib_promocion" defaultChecked={profile.isibPromocion} className="size-4 accent-navy" /> Mis operaciones tienen promoción económica de CABA
+      </label>
+      <label className="flex items-center gap-2 text-ui">
+        <input type="checkbox" name="isib_exento" defaultChecked={profile.isibExento} className="size-4 accent-navy" /> Mis operaciones están exentas de ISIB CABA
+      </label>
+      <label className="flex items-center gap-2 text-ui">
+        <input type="checkbox" name="sujeta_retencion" defaultChecked={profile.sujetaRetencion} className="size-4 accent-navy" /> ARCA me incluyó en el régimen de facturas A con retención
+      </label>
+      <label>
+        <span className={lbl}>Otros impuestos nacionales indirectos en el precio (% del neto)</span>
+        <input name="otros_nacionales" inputMode="decimal" defaultValue={profile.otrosNacionalesPct ? String(profile.otrosNacionalesPct).replace(".", ",") : ""} placeholder="0" className={field} />
+      </label>
+      <div className="grid gap-1 rounded-md bg-canvas p-3 text-meta sm:col-span-2">
+        <p className="font-medium text-ink">Así salen hoy</p>
+        <p className="text-muted">A consumidor final: {toConsumer.length ? toConsumer.map((l) => l.lines.join(" · ")).join(" — ") : "sin leyendas obligatorias"}</p>
+        {ivaCondition === "responsable_inscripto" && <p className="text-muted">A un responsable inscripto: {toCompany.length ? toCompany.map((l) => l.lines.join(" · ")).join(" — ") : "sin leyendas obligatorias"}</p>}
+        {[...toConsumer, ...toCompany].some((l) => l.status === "a_validar") && <p className="text-muted">Algunos textos están a validar con la norma oficial: Faro los imprime igual y te avisa si cambian.</p>}
+      </div>
+      <div className="sm:col-span-2">
+        {saved ? <SubmitButton variant="secondary" pendingText="Guardando…">Guardar leyendas</SubmitButton> : <p className="text-meta text-muted">Primero guardá los datos del emisor.</p>}
+      </div>
+    </form>
   );
 }
 

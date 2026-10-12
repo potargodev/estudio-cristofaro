@@ -3,7 +3,7 @@ titulo: Emitir facturas electrónicas con ARCA
 resumen: Armá el borrador, revisalo y emitilo: Faro pide el número y el CAE a ARCA, arma el PDF con tu marca y te deja mandarlo por mail o compartir un link.
 perfiles: [autonomo, estudio]
 modulo: arca
-actualizado: 2026-10-11
+actualizado: 2026-10-12
 relacionados: [facturacion/delegar-en-faro, facturacion/semaforo-monotributo, ia/ia-y-aprobaciones]
 ---
 
@@ -28,6 +28,8 @@ Si ARCA lo rechaza, ves el motivo (por ejemplo, un punto de venta que no está h
 ## El PDF
 
 Lo arma Faro con tu **logo, tu color y tus datos de contacto** (en **Ajustes**), y con todo lo obligatorio: letra y código, CAE, vencimiento del CAE y el **código QR** de ARCA. Los borradores salen marcados «sin validez fiscal».
+
+Las **leyendas obligatorias** (transparencia fiscal, Ingresos Brutos de CABA, retención) salen solas según tu perfil: ver [Leyendas obligatorias](/ayuda/facturacion/leyendas-obligatorias).
 
 ## Mandarlo
 

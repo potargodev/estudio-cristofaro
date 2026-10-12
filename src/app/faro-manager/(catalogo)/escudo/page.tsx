@@ -5,7 +5,9 @@ import { Feedback } from "@/components/app/Feedback";
 import { requireFaro } from "@/lib/auth";
 import { NO_REEMPLAZA } from "@/modules/escudo/catalog";
 import { getDerivationRules, getProfessionalTasks } from "@/modules/escudo/server";
-import { saveRuleAction, saveTaskAction } from "../../escudo-actions";
+import { saveLegendAction, saveRuleAction, saveTaskAction } from "../../escudo-actions";
+import { CONDITIONS, LEGEND_STATUS, type LegendStatus } from "@/modules/leyendas/catalog";
+import { getLegendRules } from "@/modules/leyendas/server";
 import { fieldClass } from "@/components/ds/primitives";
 
 export const metadata: Metadata = { title: "Escudo de responsabilidad" };
@@ -19,6 +21,11 @@ function Validation({ state, by }: { state: string; by: string | null }) {
   ) : (
     <span className="rounded-md bg-[#fbf5e6] px-2 py-0.5 text-caption text-[#7a5410]">A validar por un contador</span>
   );
+}
+
+function LegendBadge({ status }: { status: LegendStatus }) {
+  const tone = status === "vigente" ? "bg-[#ecf6ef] text-[#1f5f36]" : status === "derogada" ? "bg-canvas text-muted" : "bg-[#fbf5e6] text-[#7a5410]";
+  return <span className={`rounded-md px-2 py-0.5 text-caption ${tone}`}>{LEGEND_STATUS[status]}</span>;
 }
 
 function ValidationFields({ state, by, disabled }: { state: string; by: string | null; disabled: boolean }) {
@@ -44,7 +51,8 @@ export default async function EscudoPage({ searchParams }: { searchParams: Promi
   const sp = await searchParams;
   const me = await requireFaro();
   const owner = me.faroRole === "faro_owner";
-  const [tasks, rules] = await Promise.all([getProfessionalTasks(), getDerivationRules()]);
+  const [tasks, rules, legends] = await Promise.all([getProfessionalTasks(), getDerivationRules(), getLegendRules()]);
+  const toValidate = legends.filter((l) => l.status === "a_validar" && l.active).length;
   return (
     <div className="grid gap-8">
       <PageHeader
@@ -91,6 +99,117 @@ export default async function EscudoPage({ searchParams }: { searchParams: Promi
             {owner && (
               <div className="sm:text-right">
                 <SubmitButton variant="secondary" pendingText="…">{t ? "Guardar" : "Agregar tarea"}</SubmitButton>
+              </div>
+            )}
+          </form>
+        ))}
+      </section>
+
+      <section aria-labelledby="leyendas" className="grid gap-3">
+        <h2 id="leyendas" className="text-title font-semibold text-ink">
+          Leyendas obligatorias en los comprobantes
+        </h2>
+        <p className="text-ui text-muted">
+          Cada emisor carga una vez su perfil de leyendas y Faro las imprime solas en el PDF. Cuando cambia una norma, editá la regla: sube la versión, queda la historia y, si marcás el aviso, les llega a los dueños de los tenants a los que les puede tocar.
+          {toValidate > 0 && <strong className="font-semibold text-ink"> {toValidate} {toValidate === 1 ? "regla está" : "reglas están"} a validar con la norma oficial.</strong>}
+        </p>
+        {[...legends, null].map((l) => (
+          <form key={l?.key ?? "nueva"} id={l ? `leyenda-${l.key}` : "leyenda-nueva"} action={saveLegendAction} className="grid gap-3 rounded-md border border-line bg-surface p-4 sm:grid-cols-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 sm:col-span-2">
+              <p className="text-body font-medium text-ink">
+                {l ? `${l.title} · ${l.jurisdiction}` : "Nueva leyenda"}
+                {l && <span className="num ml-2 text-meta text-muted">v{l.version}</span>}
+              </p>
+              {l && <LegendBadge status={l.status} />}
+            </div>
+            {l ? <input type="hidden" name="key" value={l.key} /> : (
+              <label className="text-meta text-muted">
+                Clave
+                <input name="key" required disabled={!owner} placeholder="ej.: isib_cordoba" className={input} />
+              </label>
+            )}
+            <label className="text-meta text-muted">
+              Título
+              <input name="title" required defaultValue={l?.title} disabled={!owner} className={input} />
+            </label>
+            <label className="text-meta text-muted">
+              Jurisdicción
+              <input name="jurisdiction" defaultValue={l?.jurisdiction ?? "Nacional"} disabled={!owner} className={input} />
+            </label>
+            <label className="text-meta text-muted">
+              Cuándo se aplica
+              <select name="condition" defaultValue={l?.condition ?? "transparencia"} disabled={!owner} className={input}>
+                {Object.entries(CONDITIONS).map(([k, c]) => (
+                  <option key={k} value={k}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-meta text-muted sm:col-span-2">
+              Texto (una línea por renglón; marcadores: {"{iva_contenido}"}, {"{otros_nacionales}"}, {"{alicuota}"})
+              <textarea name="template" rows={3} required defaultValue={l?.template} disabled={!owner} className={area} />
+            </label>
+            <label className="text-meta text-muted sm:col-span-2">
+              Norma (fuente)
+              <textarea name="source" rows={2} defaultValue={l?.source} disabled={!owner} className={area} />
+            </label>
+            <label className="text-meta text-muted">
+              Enlace a la norma
+              <input name="source_url" type="url" defaultValue={l?.sourceUrl ?? ""} disabled={!owner} className={input} />
+            </label>
+            <label className="text-meta text-muted">
+              Estado
+              <select name="status" defaultValue={l?.status ?? "a_validar"} disabled={!owner} className={input}>
+                {Object.entries(LEGEND_STATUS).map(([k, v]) => (
+                  <option key={k} value={k}>
+                    {v}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-meta text-muted">
+              Vigente desde
+              <input name="valid_from" type="date" required defaultValue={l?.validFrom} disabled={!owner} className={input} />
+            </label>
+            <label className="text-meta text-muted">
+              Hasta (opcional)
+              <input name="valid_to" type="date" defaultValue={l?.validTo ?? ""} disabled={!owner} className={input} />
+            </label>
+            <label className="text-meta text-muted sm:col-span-2">
+              Nota interna
+              <input name="note" defaultValue={l?.note ?? ""} disabled={!owner} className={input} />
+            </label>
+            {owner && (
+              <label className="text-meta text-muted sm:col-span-2">
+                Qué cambió (va en la historia y en el aviso)
+                <input name="change" placeholder="Ej.: AGIP prorrogó la adecuación hasta el 30/09/2026" className={input} />
+              </label>
+            )}
+            <label className="flex items-center gap-2 text-ui text-ink">
+              <input type="checkbox" name="active" defaultChecked={l?.active ?? true} disabled={!owner} className="size-4 accent-navy" /> Activa
+            </label>
+            {owner && (
+              <label className="flex items-center gap-2 text-ui text-ink">
+                <input type="checkbox" name="notify" className="size-4 accent-navy" /> Avisar a los afectados
+              </label>
+            )}
+            {l && l.history.length > 0 && (
+              <details className="text-meta text-muted sm:col-span-2">
+                <summary className="cursor-pointer">Versiones anteriores ({l.history.length})</summary>
+                <ul className="mt-1 grid gap-1">
+                  {[...l.history].reverse().map((h, i) => (
+                    <li key={i}>
+                      v{String(h.version)} · {LEGEND_STATUS[h.status as LegendStatus] ?? String(h.status)} · desde {String(h.valid_from)}
+                      {h.change ? ` · ${String(h.change)}` : ""}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+            {owner && (
+              <div className="sm:col-span-2 sm:text-right">
+                <SubmitButton variant="secondary" pendingText="…">{l ? "Guardar" : "Agregar leyenda"}</SubmitButton>
               </div>
             )}
           </form>

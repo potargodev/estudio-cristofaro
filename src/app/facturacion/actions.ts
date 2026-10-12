@@ -29,6 +29,7 @@ import {
   type DraftInput,
   type IssuerScope,
 } from "@/modules/arca/server";
+import { LegendError, saveLegendProfile } from "@/modules/leyendas/server";
 
 // Acciones de facturación y ARCA. El emisor sale de la sesión: sin `org` es
 // la cuenta personal; con `org`, una organización del estudio (validada).
@@ -213,6 +214,27 @@ export async function saveSettingsAction(fd: FormData) {
   );
   done(scope);
   back(path, { ok: "Datos de facturación guardados." });
+}
+
+/** §2.q etapa 5: perfil de leyendas obligatorias del emisor */
+export async function saveLegendsAction(fd: FormData) {
+  const u = await session();
+  const scope = await issuerFromForm(u, fd);
+  const path = s(fd, "volver") || scope.home;
+  if (!scope.canEmit) back(path, { error: "Las leyendas las configura quien puede emitir." });
+  const num = (k: string) => (s(fd, k) === "" ? null : Number(s(fd, k).replace(",", ".")));
+  try {
+    await saveLegendProfile(
+      scope,
+      { isibCaba: s(fd, "isib_caba") as never, isibAlicuota: num("isib_alicuota"), isibPromocion: fd.get("isib_promocion") === "on", isibExento: fd.get("isib_exento") === "on", sujetaRetencion: fd.get("sujeta_retencion") === "on", otrosNacionalesPct: num("otros_nacionales") ?? 0 },
+      actorOf(u),
+    );
+  } catch (e) {
+    if (e instanceof LegendError) back(path, { error: e.message });
+    throw e;
+  }
+  done(scope);
+  back(path, { ok: "Leyendas guardadas: salen solas en los próximos comprobantes." });
 }
 
 export async function saveCustomerAction(fd: FormData) {

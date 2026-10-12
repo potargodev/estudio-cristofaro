@@ -2463,6 +2463,8 @@ export const invoice_settings = pgTable(
     phone: text("phone"),
     website: text("website"),
     footer: text("footer"),
+    /** §2.q etapa 5: perfil de leyendas obligatorias (ISIB CABA, retención…), se carga una vez */
+    legend_profile: jsonb("legend_profile").$type<Record<string, unknown>>(),
     created_at: createdAt(),
     updated_at: updatedAt(),
   },
@@ -2589,6 +2591,8 @@ export const invoices = pgTable(
     payment_url: text("payment_url"),
     emailed_at: timestamp("emailed_at", { withTimezone: true }),
     notes: text("notes"),
+    /** §2.q etapa 5: leyendas obligatorias calculadas al preparar y fijadas al autorizar */
+    legends: jsonb("legends").$type<{ key: string; lines: string[]; status: string }[]>(),
     origin: text("origin").notNull().default("manual"), // manual | vigia | aprobacion | flujo
     // F7: preferencia de Mercado Pago del link de pago (en la cuenta del emisor) y cobro
     mp_preference_id: text("mp_preference_id"),
@@ -2605,6 +2609,28 @@ export const invoices = pgTable(
     uniqueIndex("invoices_token_idx").on(t.public_token),
   ],
 );
+
+/** §2.q etapa 5: catálogo de leyendas obligatorias (pisa los valores por defecto del código) */
+export const legend_rules = pgTable("legend_rules", {
+  key: text("key").primaryKey(),
+  jurisdiction: text("jurisdiction").notNull(),
+  title: text("title").notNull(),
+  template: text("template").notNull(),
+  condition: text("condition").notNull(),
+  source: text("source").notNull(),
+  source_url: text("source_url"),
+  status: text("status").notNull().default("a_validar"), // vigente | a_validar | derogada
+  valid_from: date("valid_from").notNull(),
+  valid_to: date("valid_to"),
+  active: boolean("active").notNull().default(true),
+  version: integer("version").notNull().default(1),
+  note: text("note"),
+  /** Versiones anteriores: { version, template, status, valid_from, valid_to, changed_at, change } */
+  history: jsonb("history").$type<Record<string, unknown>[]>().notNull().default([]),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+  updated_at: updatedAt(),
+});
 
 /** Escalas de monotributo versionadas por vigencia (las mantiene el Faro Manager) */
 export const monotributo_scales = pgTable(
