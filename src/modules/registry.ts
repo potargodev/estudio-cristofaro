@@ -90,6 +90,8 @@ export const FARO_MODULES: FaroModule[] = [
       "listar_consultas",
       "mover_consulta",
       "resumen_estudio",
+      // Cuentas conectadas con el estudio (principios §4 a §8): núcleo, en todos los planes
+      "listar_cuentas_conectadas",
     ],
   },
   {
@@ -279,7 +281,7 @@ export const FARO_MODULES: FaroModule[] = [
     roles: ["dueno"],
     nav: [{ href: "/admin/configuracion/conexiones/tango", label: "Tango" }],
     events: ["tango.sincronizado"],
-    tools: [],
+    tools: ["estado_sincronizacion_tango"],
   },
   {
     key: "tango_files",

@@ -76,7 +76,8 @@ check("nota de crédito armada como borrador (tipo 13)", (await page.locator('in
 
 // Semáforo y calendario
 await page.goto(`${BASE}/facturacion/monotributo`);
-check("semáforo con lo facturado", (await page.content()).includes("150.000") && (await page.content()).includes("Vas bien"));
+// Sin «vas bien» (principio madre §1): el semáforo dice dónde está respecto del tope, no que esté bien
+check("semáforo con lo facturado", (await page.content()).includes("150.000") && (await page.content()).includes("Lejos del tope"));
 await page.goto(`${BASE}/facturacion/calendario`);
 await page.getByRole("button", { name: /Guardar y armar/ }).click();
 check("calendario armado (cuota de monotributo)", await seen("Cuota mensual"));

@@ -26,6 +26,8 @@ await sql`update studios set plan_key = 'autonomo_gratis' where id = ${d.studios
 await fetch("http://localhost:4070/__reset", { method: "POST" });
 
 // Tres meses de historia: Netflix todos los meses (con aumento), delivery chico y frecuente, súper
+// Las categorías del usuario se crean al abrir la Bitácora por primera vez (en una base nueva todavía no existen)
+await fetch(`${BASE}/bitacora`, { headers: { Cookie: d.cookies.titular } });
 const [cat] = await sql`select id from bitacora_categories where user_id = ${T} and key = 'comida'`.catch(() => [null]);
 const iso = (daysAgo) => new Date(Date.now() - daysAgo * 86400000).toISOString().slice(0, 10);
 const seed = [];

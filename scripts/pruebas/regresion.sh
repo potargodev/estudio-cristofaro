@@ -26,12 +26,14 @@ export ARCA_WSAA_URL=http://localhost:4060/ws/services/LoginCms ARCA_WSFE_URL=ht
 export ARCA_PADRON_URL=http://localhost:4060/sr-padron/webservices/personaServiceA5 ARCA_WSCDC_URL=http://localhost:4060/WSCDC/service.asmx
 export MERCADOPAGO_API_URL=http://localhost:4070 MERCADOPAGO_AUTH_URL=http://localhost:4070 MERCADOPAGO_MOCK_URL=http://localhost:4070/checkout/v1/redirect
 export MP_CLIENT_ID=mock MP_CLIENT_SECRET=mock MP_MOCK_WEBHOOK_SECRET=mock-webhook-secret
-export WHATSAPP_API_URL=http://localhost:4080 CRON_SECRET=secreto-de-pruebas ALLOW_PRIVATE_URLS=true
+export WHATSAPP_API_URL=http://localhost:4090 CRON_SECRET=secreto-de-pruebas ALLOW_PRIVATE_URLS=true
 # Marca blanca: con APP_HOSTS cargado, otro host (el dominio propio de f9-navegador) sirve solo el portal
 export APP_HOSTS=localhost
 export FARO_URL=http://localhost:3000 PW="${PW:-/opt/node22/lib/node_modules/playwright/index.mjs}"
 pkill -f "mocks/.*/server.mjs" 2>/dev/null; pkill -f "connector/mock/server.mjs" 2>/dev/null; pkill -f "mock/server.mjs" 2>/dev/null
-for m in openai xubio google dolar arca mercadopago whatsapp; do setsid node "mocks/$m/server.mjs" > "$SALIDA/mock-$m.log" 2>&1 & done
+for m in openai xubio google dolar arca mercadopago; do setsid node "mocks/$m/server.mjs" > "$SALIDA/mock-$m.log" 2>&1 & done
+# WhatsApp en 4090: el 4080 es del simulador de Tango, que levantan las pruebas de principios
+PORT=4090 setsid node mocks/whatsapp/server.mjs > "$SALIDA/mock-whatsapp.log" 2>&1 &
 (cd connector && setsid node mock/server.mjs > "$SALIDA/mock-tango-delta.log" 2>&1 &)
 sleep 2
 
@@ -71,8 +73,9 @@ correr gastos "${T[@]}" scripts/pruebas/gastos.mts
 correr gastos-ia node scripts/pruebas/gastos-ia.mjs
 correr industrias "${T[@]}" scripts/pruebas/industrias.mts
 correr industrias-ia node scripts/pruebas/industrias-ia.mjs
-correr flotas "${T[@]}" scripts/pruebas/flotas.mts
+# La Red crea la ficha publicada del estudio A que usan las Flotas
 correr red "${T[@]}" scripts/pruebas/red.mts
+correr flotas "${T[@]}" scripts/pruebas/flotas.mts
 correr copiloto "${T[@]}" scripts/pruebas/copiloto.mts
 correr vigia-aislamiento node scripts/pruebas/vigia-aislamiento.mjs
 correr bitacora "${T[@]}" scripts/pruebas/bitacora.mts

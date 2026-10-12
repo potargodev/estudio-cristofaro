@@ -122,7 +122,8 @@ await page.goto(`${BASE}/admin/organizaciones/${NORTE}?tab=documentos`);
 await page.locator("#doc-file").setInputFiles(pdf("edenor-77"));
 await page.getByRole("button", { name: "Subir y avisar al cliente" }).click();
 await seen("edenor-77.pdf");
-await page.getByRole("button", { name: "Leer con IA" }).first().click();
+// El botón de la fila del documento recién subido (no el primero de la lista)
+await page.locator("li", { hasText: "edenor-77.pdf" }).getByRole("button", { name: "Leer con IA" }).click();
 check("leído desde Documentos", await seen("Revisá los datos y confirmá"));
 const [fromDocs] = await sql`select document_id, source from smart_documents where studio_id = ${A} and file_name = 'edenor-77.pdf'`;
 check("vinculado al documento", !!fromDocs?.document_id && fromDocs.source === "documentos");

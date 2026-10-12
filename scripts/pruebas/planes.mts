@@ -34,7 +34,8 @@ check("Inicial no usa módulos de Profesional (Tango local, Cartera)", !(await h
 check("el núcleo está en todos los planes (gastos, IA, conexiones)", (await hasModule(B, "shared_expenses")) && (await hasModule(B, "ai")) && (await hasModule(B, "connections")));
 const av = await moduleAvailability(B, "tango");
 check("Tango local figura como disponible en el plan Profesional", av.state === "plan" && av.plan?.key === "profesional");
-check("Flujos figura como próximamente", (await moduleAvailability(B, "flows")).state === "proximamente");
+// Flujos ya está construido (F4) y entra en Inicial con 1 flujo activo (faro-producto §3)
+check("Flujos está incluido en Inicial", await hasModule(B, "flows"));
 
 // Override del Faro Manager
 await db.insert(tenant_modules).values({ studio_id: B, module_key: "tango", enabled: true, reason: "piloto" });
@@ -64,9 +65,7 @@ check("Inicial: la pantalla de Tango lleva a 'Disponible en el plan'", r1.status
 const r2 = await fetch(`${BASE}/admin/configuracion/modulos/tango`, { headers: { Cookie: d.cookies.adminB } });
 const html = await r2.text();
 check("Tango muestra 'Disponible en el plan Profesional' con CTA", html.includes("Disponible en el plan") && html.includes("Profesional") && html.includes("Quiero mejorar mi plan"));
-const r3 = await fetch(`${BASE}/admin/configuracion/modulos/flows`, { headers: { Cookie: d.cookies.adminB } });
-check("Flujos muestra 'Próximamente'", (await r3.text()).includes("Próximamente"));
-
-await db.update(studios).set({ plan_key: "avanzado" }).where(eq(studios.id, B));
+// Deja al estudio B en Inicial, como lo encuentran las pruebas siguientes (flujos, F9)
+await db.update(studios).set({ plan_key: "inicial", limits: {} }).where(eq(studios.id, B));
 console.log(failures ? `\n${failures} prueba(s) fallaron` : "\nTodo OK");
 process.exit(failures ? 1 : 0);
