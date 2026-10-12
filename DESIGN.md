@@ -166,7 +166,7 @@ Azul noche como estructura, rosé como luz y pizarras para el texto.
 - **Placeholder** (#6b7184; oscuro #8c93a8): contraste AA (4,9:1 y 5,7:1).
 
 ### Estados
-La paleta de `StatusBadge` es la única para estados, en toda la app: neutral, info, en curso (ámbar), ok (verde), hecho, peligro (rojo) y rosé. Siempre ícono y texto, nunca solo color.
+La paleta de `StatusBadge` es la única para estados, en toda la app: neutral, info, en curso (ámbar), ok (verde), hecho, peligro (rojo) y rosé. Siempre ícono y texto, nunca solo color. Para texto o una caja de estado fuera de una etiqueta, los tokens con nombre `text-ok`, `text-warn`, `bg-warn-soft` y `border-warn-line` (se aclaran solos en oscuro); nada de hex sueltos.
 
 **The One Light Rule.** El rosé marca lo que importa (el ícono de un bloque, la pestaña activa, el foco). Si todo está en rosé, nada está en rosé.
 
@@ -266,6 +266,7 @@ Todo sale de `@/components/ds`.
 - **Sidebar:** azul noche fijo, ítems de 14 px, el activo con fondo y el ícono en rosé; badges `micro`. Se colapsa a una barra horizontal de íconos (botón o tecla `[`).
 - **Animación del colapso (la firma de la app):** las etiquetas se van de a una, de arriba hacia abajo, con 35 ms entre ítems. Mientras tanto, cada ícono viaja a su lugar en la barra superior con un `layoutId` compartido y el mismo escalonado (resorte 260/30). El fondo del sidebar sale con `transform` y el contenido se corre con una animación de posición. Al expandir pasa lo inverso. Solo `transform` y `opacity`: 60 cuadros por segundo y sin bloquear clics. Con `prefers-reduced-motion`, el cambio es directo. Ver `docs/diseno/sidebar.gif`.
 - **ViewSwitch:** selector segmentado de vistas de una misma pantalla (links, con contador y una línea que explica la vista activa). Ej.: Red Contable → Postulaciones / Estudios y contadores.
+- **Chips (`chipClass`):** sub-navegación o filtro en chips (subsecciones de Sueldos, ARCA / Libro IVA, tiendas, estados): alto chico, radio de 6 px y el activo en azul noche. Nunca píldoras `rounded-full` hechas a mano.
 - **Chips de filtro:** altura `--control-h-sm` (32 px).
 - **Tabs** (`PageHeader tabs`): subrayado azul noche de 2 px en la activa; scrollean en el celular.
 - **Barra inferior** (celular): cuatro accesos y el Vigía al centro.
