@@ -108,7 +108,7 @@ async function Products({ r, sp }: { r: ResolvedStock; sp: SP }) {
             {list.map((x) => (
               <tr key={x.p.id} className="border-b border-line last:border-0">
                 <td className="num whitespace-nowrap px-3 py-2">{x.p.code}</td>
-                <td className="px-3 py-2">
+                <td className="min-w-56 px-3 py-2">
                   {r.scope.canManage ? (
                     <Link href={`${r.base}${r.sep}ver=productos&editar=${x.p.id}#producto`} className="underline-offset-4 hover:underline">
                       {x.p.description}

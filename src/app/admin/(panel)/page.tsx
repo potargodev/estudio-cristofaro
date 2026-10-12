@@ -411,13 +411,21 @@ async function Today({ studioId }: { studioId: string }) {
 }
 
 async function RecentActivity({ studioId }: { studioId: string }) {
-  const rows = await getDb()
+  const raw = await getDb()
     .select({ id: audit_log.id, action: audit_log.action, actor: audit_log.actor_label, at: audit_log.created_at, result: audit_log.result, orgId: audit_log.organization_id, org: organizations.name })
     .from(audit_log)
     .leftJoin(organizations, eq(organizations.id, audit_log.organization_id))
     .where(and(eq(audit_log.studio_id, studioId), notInArray(audit_log.action, ["sesion.iniciar", "sesion.rechazada"])))
     .orderBy(desc(audit_log.created_at))
-    .limit(8);
+    .limit(24);
+  // Eventos iguales seguidos (misma acción, organización, persona y minuto) van en una sola fila: «2 veces»
+  const minute = (d: Date) => Math.floor(d.getTime() / 60000);
+  const rows: ((typeof raw)[number] & { times: number })[] = [];
+  for (const r of raw) {
+    const last = rows[rows.length - 1];
+    if (last && last.action === r.action && last.orgId === r.orgId && last.actor === r.actor && last.result === r.result && minute(last.at) === minute(r.at)) last.times++;
+    else if (rows.length < 8) rows.push({ ...r, times: 1 });
+  }
   return (
     <Panel title="Actividad reciente" icon={Activity} bodyClassName="p-0">
       {rows.length === 0 ? (
@@ -441,6 +449,7 @@ async function RecentActivity({ studioId }: { studioId: string }) {
                 </span>
                 <span className="block truncate text-meta text-muted">
                   {r.actor ?? "Sistema"} · {formatDate(r.at, "shortTime")}
+                  {r.times > 1 && ` · ${r.times} veces`}
                 </span>
               </span>
               {r.result !== "ok" && <StatusBadge status="vencido" label={r.result === "denegado" ? "Denegado" : "Error"} />}

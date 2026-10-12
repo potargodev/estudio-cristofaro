@@ -86,7 +86,7 @@ export function Benefits() {
             {BENEFITS.map((b, i) => (
               <li
                 key={b.t}
-                className="flex flex-col justify-between gap-5 lg:motion-safe:h-[52vh] lg:motion-safe:w-[30rem] xl:motion-safe:w-[34rem]"
+                className="flex flex-col justify-between gap-5 lg:motion-reduce:justify-start lg:motion-safe:h-[52vh] lg:motion-safe:w-[30rem] xl:motion-safe:w-[34rem]"
               >
                 <span className="tabular font-display text-[2.75rem] leading-none text-[#1c2235] lg:text-[clamp(4rem,8vw,7.5rem)]">0{i + 1}</span>
                 <div className="bg-[#1c2235] p-6 lg:min-h-[15rem] lg:p-8">
