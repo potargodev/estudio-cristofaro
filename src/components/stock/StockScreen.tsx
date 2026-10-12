@@ -2,7 +2,7 @@ import { AlertTriangle, Boxes, Download, PackageSearch, Store, Wallet } from "lu
 import Link from "next/link";
 import { adjustAction, conflictAction, connectStoreAction, countAction, depositAction, importProductsAction, linkListingAction, productAction, purchaseLinkAction, storeAction, unlinkedAction } from "@/app/stock-actions";
 import { Feedback } from "@/components/app/Feedback";
-import { Card, EmptyState, MetricCard, SubmitButton, Table, ToneBadge, ViewSwitch } from "@/components/ds";
+import { Card, EmptyState, MetricCard, SubmitButton, Table, ToneBadge, ViewSwitch, chipClass } from "@/components/ds";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate, formatMoney, todayAR } from "@/lib/format";
 import { getSiteUrl } from "@/lib/runtime-config";
@@ -56,7 +56,7 @@ export async function StockScreen({ r, sp }: { r: ResolvedStock; sp: SP }) {
   const [unlinked, stores] = await Promise.all([listUnlinked(r.scope), listStores(r.scope)]);
   const href = (k: string) => `${r.base}${r.sep}ver=${k}`;
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
       <Feedback sp={sp} />
       <ViewSwitch label="Stock" views={VIEWS.map(([k, label]) => ({ href: href(k), label, active: ver === k, count: k === "sin-vincular" ? unlinked.length : k === "tiendas" ? stores.length : undefined }))} />
       {ver === "movimientos" ? await Movements({ r }) : ver === "conteo" ? await Count({ r }) : ver === "tiendas" ? await Stores({ r, sp }) : ver === "sin-vincular" ? await Unlinked({ r }) : ver === "inventario" ? await Inventory({ r, sp }) : await Products({ r, sp })}
@@ -138,9 +138,9 @@ async function Products({ r, sp }: { r: ResolvedStock; sp: SP }) {
       )}
       {r.scope.canManage && (
         <div className="grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <Card className="grid gap-2" id="producto">
-            <p className="text-body font-semibold">{edit ? `Editar ${edit.description}` : "Nuevo producto"}</p>
-            <form action={productAction} className="grid gap-2 sm:grid-cols-4">
+          <Card className="grid gap-4" id="producto">
+            <p className="text-title font-semibold text-ink">{edit ? `Editar ${edit.description}` : "Nuevo producto"}</p>
+            <form action={productAction} className="grid gap-3 sm:grid-cols-4">
               <Hidden r={r} />
               {edit && <input type="hidden" name="id" value={edit.id} />}
               <label className={lbl}>
@@ -181,14 +181,14 @@ async function Products({ r, sp }: { r: ResolvedStock; sp: SP }) {
                 Stock mínimo (alerta)
                 <input name="min_stock" inputMode="decimal" defaultValue={edit?.min_stock == null ? "" : String(Number(edit.min_stock)).replace(".", ",")} className={field} />
               </label>
-              <div className="self-end">
+              <div className="sm:col-span-4">
                 <SubmitButton pendingText="…">{edit ? "Guardar" : "Agregar"}</SubmitButton>
               </div>
             </form>
           </Card>
           <div className="grid content-start gap-3">
             <Card className="grid gap-2">
-              <p className="text-body font-semibold">Importar del Excel o CSV</p>
+              <p className="text-title font-semibold text-ink">Importar del Excel o CSV</p>
               <p className="text-meta text-muted">Columnas: código, código de barras, descripción, unidad, alícuota, costo, precio, mínimo y existencia (opcional, como existencia inicial).</p>
               <form action={importProductsAction} className="flex flex-wrap items-end gap-2">
                 <Hidden r={r} />
@@ -200,7 +200,7 @@ async function Products({ r, sp }: { r: ResolvedStock; sp: SP }) {
             </Card>
             {deps.length < 3 && (
               <Card className="grid gap-2">
-                <p className="text-body font-semibold">Depósitos ({deps.length} de 3)</p>
+                <p className="text-title font-semibold text-ink">Depósitos ({deps.length} de 3)</p>
                 <form action={depositAction} className="flex flex-wrap items-end gap-2">
                   <Hidden r={r} />
                   <label className={`${lbl} min-w-0 flex-1`}>
@@ -226,7 +226,7 @@ async function Movements({ r }: { r: ResolvedStock }) {
     <>
       {r.scope.canManage && products.length > 0 && (
         <Card className="grid gap-2">
-          <p className="text-body font-semibold">Ajuste manual</p>
+          <p className="text-title font-semibold text-ink">Ajuste manual</p>
           <form action={adjustAction} className="grid gap-2 sm:grid-cols-5">
             <Hidden r={r} />
             <label className={`${lbl} sm:col-span-2`}>
@@ -307,7 +307,7 @@ async function Count({ r }: { r: ResolvedStock }) {
   if (!r.scope.canManage) return <p className="text-ui text-muted">El conteo lo hace quien administra el stock.</p>;
   return (
     <Card className="grid gap-3">
-      <p className="text-body font-semibold">Conteo físico</p>
+      <p className="text-title font-semibold text-ink">Conteo físico</p>
       <p className="text-ui text-muted">Escaneá cada producto con la cámara del celular (o tipeá el código). Al cerrar, Faro compara lo contado con lo que debería haber y registra las diferencias como ajustes, con la auditoría.</p>
       <form action={countAction} className="grid gap-3">
         <Hidden r={r} />
@@ -339,9 +339,9 @@ async function Stores({ r, sp }: { r: ResolvedStock; sp: SP }) {
     <>
       <div className="flex flex-wrap gap-2">
         {stores.map((st) => (
-          <Link key={st.id} href={`${r.base}${r.sep}ver=tiendas&tienda=${st.id}`} aria-current={current?.st.id === st.id ? "page" : undefined} className={`inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-meta ${current?.st.id === st.id ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted"}`}>
+          <Link key={st.id} href={`${r.base}${r.sep}ver=tiendas&tienda=${st.id}`} aria-current={current?.st.id === st.id ? "page" : undefined} className={chipClass(current?.st.id === st.id)}>
             <Store className="size-3.5" aria-hidden /> {st.name}
-            {st.sync_enabled && !st.paused && <span className="text-caption">· publica</span>}
+            {st.sync_enabled && !st.paused && <span className="text-caption">· publicando</span>}
           </Link>
         ))}
       </div>
@@ -350,7 +350,7 @@ async function Stores({ r, sp }: { r: ResolvedStock; sp: SP }) {
       ) : (
         r.scope.canManage && (
           <Card className="grid gap-2">
-            <p className="text-body font-semibold">Conectar una tienda</p>
+            <p className="text-title font-semibold text-ink">Conectar una tienda</p>
             <p className="text-meta text-muted">Las ventas restan solas (sin contar dos veces). Publicar la existencia en la tienda está apagado hasta que lo actives, y solo publica lo vinculado.</p>
             <form action={connectStoreAction} className="grid gap-2 sm:grid-cols-4">
               <Hidden r={r} />
@@ -404,10 +404,10 @@ function StoreDetail({ r, v, products }: { r: ResolvedStock; v: NonNullable<Awai
     </>
   );
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
       <Card className="grid gap-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-body font-semibold">
+          <p className="text-title font-semibold text-ink">
             {st.name} <span className="font-normal text-muted">· {info?.label} · {st.shop_id}</span>
           </p>
           {st.sync_enabled ? <ToneBadge tone={st.paused ? "neutral" : "ok"}>{st.paused ? "Publicación en pausa" : "Publica la existencia"}</ToneBadge> : <ToneBadge tone="neutral">No publica</ToneBadge>}
@@ -475,9 +475,9 @@ function StoreDetail({ r, v, products }: { r: ResolvedStock; v: NonNullable<Awai
       </Card>
 
       {v.conflicts.length > 0 && (
-        <Card className="grid gap-2 border-[#e3cf9f]">
-          <p className="flex items-center gap-2 text-body font-semibold">
-            <AlertTriangle className="size-4 text-[#7a5410]" aria-hidden /> Diferencias para revisar
+        <Card className="grid gap-2 border-warn-line">
+          <p className="flex items-center gap-2 text-title font-semibold text-ink">
+            <AlertTriangle className="size-4 text-warn" aria-hidden /> Diferencias para revisar
           </p>
           <p className="text-meta text-muted">La tienda tiene otra existencia que la última que publicó Faro. No se pisó nada: elegí qué hacer.</p>
           <ul className="grid gap-2">
@@ -545,7 +545,7 @@ function StoreDetail({ r, v, products }: { r: ResolvedStock; v: NonNullable<Awai
                 ) : (
                   (description ?? "Sin vincular")
                 )}
-                {l.product_id ? <span className="mt-1 block text-meta text-muted">{l.linked_by === "sku" ? "Vinculado por el código" : l.linked_by === "aprendido" ? "Aprendido de un vínculo anterior" : `Vinculado a mano${code ? ` (${code})` : ""}`}</span> : l.suggestion_reason ? <span className="mt-1 block text-meta text-[#7a5410]">Sugerencia: {l.suggestion_reason}</span> : null}
+                {l.product_id ? <span className="mt-1 block text-meta text-muted">{l.linked_by === "sku" ? "Vinculado por el código" : l.linked_by === "aprendido" ? "Aprendido de un vínculo anterior" : `Vinculado a mano${code ? ` (${code})` : ""}`}</span> : l.suggestion_reason ? <span className="mt-1 block text-meta text-warn">Sugerencia: {l.suggestion_reason}</span> : null}
               </td>
               <td className="num px-3 py-2 text-right">{l.remote_qty == null ? "—" : qtyFmt(Number(l.remote_qty))}</td>
               <td className="num px-3 py-2 text-right">{l.last_published_qty == null ? "—" : qtyFmt(Number(l.last_published_qty))}</td>
@@ -556,7 +556,7 @@ function StoreDetail({ r, v, products }: { r: ResolvedStock; v: NonNullable<Awai
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="grid content-start gap-2">
-          <p className="text-ui font-medium">Pedidos recibidos</p>
+          <p className="text-title font-semibold text-ink">Pedidos recibidos</p>
           {v.orders.length === 0 ? (
             <p className="text-meta text-muted">Sin pedidos todavía.</p>
           ) : (
@@ -573,14 +573,14 @@ function StoreDetail({ r, v, products }: { r: ResolvedStock; v: NonNullable<Awai
           )}
         </Card>
         <Card className="grid content-start gap-2">
-          <p className="text-ui font-medium">Registro de publicaciones</p>
+          <p className="text-title font-semibold text-ink">Registro de publicaciones</p>
           {v.publications.length === 0 ? (
             <p className="text-meta text-muted">Faro todavía no publicó nada en esta tienda.</p>
           ) : (
             <ul className="grid gap-1 text-meta">
               {v.publications.map(({ p, title }) => (
                 <li key={p.id}>
-                  <span className={p.status === "ok" ? "" : p.status === "conflicto" ? "text-[#7a5410]" : "text-danger"}>{p.status === "ok" ? "Publicado" : p.status === "conflicto" ? "Diferencia" : `Error (intento ${p.attempts})`}</span> · {title}: <span className="num">{qtyFmt(Number(p.qty))}</span>
+                  <span className={p.status === "ok" ? "" : p.status === "conflicto" ? "text-warn" : "text-danger"}>{p.status === "ok" ? "Publicado" : p.status === "conflicto" ? "Diferencia" : `Error (intento ${p.attempts})`}</span> · {title}: <span className="num">{qtyFmt(Number(p.qty))}</span>
                   {p.error && <span className="text-muted"> · {p.error}</span>}
                 </li>
               ))}
@@ -596,9 +596,9 @@ async function Unlinked({ r }: { r: ResolvedStock }) {
   const [sales, purchases, products] = await Promise.all([listUnlinked(r.scope), unlinkedPurchases(r.scope), listProducts(r.scope)]);
   const options = products.map((x) => x.p);
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
       <section className="grid gap-2" aria-labelledby="ventas-sv">
-        <h2 id="ventas-sv" className="text-body font-semibold">
+        <h2 id="ventas-sv" className="text-title font-semibold text-ink">
           Ventas sin vincular
         </h2>
         <p className="text-meta text-muted">No descuentan hasta que digas a qué producto corresponden. Al vincular, Faro descuenta y lo recuerda para la próxima.</p>
@@ -634,7 +634,7 @@ async function Unlinked({ r }: { r: ResolvedStock }) {
         )}
       </section>
       <section className="grid gap-2" aria-labelledby="compras-sv">
-        <h2 id="compras-sv" className="text-body font-semibold">
+        <h2 id="compras-sv" className="text-title font-semibold text-ink">
           Compras sin vincular
         </h2>
         <p className="text-meta text-muted">Ítems de compras leídas que todavía no suman al stock. Vinculalos a un producto o crealo desde la compra; Faro aprende el código del proveedor.</p>
@@ -651,7 +651,7 @@ async function Unlinked({ r }: { r: ResolvedStock }) {
                     · {qtyFmt(x.qty)} · {x.supplier ?? "Proveedor"}
                     {x.code ? ` · código ${x.code}` : ""}
                   </span>
-                  {x.suggestion && <span className="block text-meta text-[#7a5410]">Sugerencia: {x.suggestion.reason}</span>}
+                  {x.suggestion && <span className="block text-meta text-warn">Sugerencia: {x.suggestion.reason}</span>}
                 </span>
                 {r.scope.canManage && (
                   <form action={purchaseLinkAction} className="flex flex-wrap items-center gap-2">

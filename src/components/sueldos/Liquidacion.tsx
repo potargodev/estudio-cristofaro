@@ -48,7 +48,7 @@ export async function PayrollDataForm({ r, e }: { r: ResolvedPayroll; e: { id: s
     <form action={payrollDataAction} id="liquidacion" className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-2">
       <Hidden r={r} />
       <input type="hidden" name="id" value={e.id} />
-      <p className="text-body font-semibold sm:col-span-2">Datos para liquidar</p>
+      <p className="text-title font-semibold text-ink sm:col-span-2">Datos para liquidar</p>
       <fieldset disabled={!r.scope.canManage} className="contents">
         <label className={lbl}>
           Convenio
@@ -130,7 +130,7 @@ async function Runs({ r }: { r: ResolvedPayroll }) {
     <>
       {r.scope.canManage && (
         <Card className="grid gap-3">
-          <p className="text-body font-semibold">Liquidar</p>
+          <p className="text-title font-semibold text-ink">Liquidar</p>
           <form action={liquidateAction} className="grid gap-3 sm:grid-cols-4">
             <Hidden r={r} />
             <label className={lbl}>
@@ -193,7 +193,7 @@ async function Runs({ r }: { r: ResolvedPayroll }) {
             </details>
           </form>
           {missing.length > 0 && (
-            <p className="flex items-start gap-2 text-meta text-[#7a5410]">
+            <p className="flex items-start gap-2 text-meta text-warn">
               <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden /> {missing.length} {missing.length === 1 ? "empleado no tiene" : "empleados no tienen"} convenio cargado: {missing.slice(0, 4).map((e) => `${e.first_name} ${e.last_name}`).join(", ")}
               {missing.length > 4 ? "…" : ""}. Completalo en el legajo (Datos para liquidar).
             </p>
@@ -256,7 +256,7 @@ async function Novelties({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
       {r.scope.canManage && (
         <div className="grid gap-3 lg:grid-cols-2">
           <Card className="grid gap-2">
-            <p className="text-body font-semibold">Cargar una novedad</p>
+            <p className="text-title font-semibold text-ink">Cargar una novedad</p>
             <form action={noveltyAction} className="grid gap-2 sm:grid-cols-2">
               <Hidden r={r} />
               <input type="hidden" name="period" value={period} />
@@ -300,7 +300,7 @@ async function Novelties({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
             </form>
           </Card>
           <Card className="grid content-start gap-2">
-            <p className="text-body font-semibold">Importar del Excel o CSV</p>
+            <p className="text-title font-semibold text-ink">Importar del Excel o CSV</p>
             <p className="text-meta text-muted">Columnas: CUIL, concepto (horas, horas extra 50, horas extra 100, ausencia, licencia, vacaciones, adelanto, embargo, ganancias, descuento), cantidad, importe y detalle.</p>
             <form action={importNoveltiesAction} className="flex flex-wrap items-end gap-2">
               <Hidden r={r} />
@@ -424,8 +424,10 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
   const toValidate = scales.filter(([, x]) => x.status === "a_validar").map(([k]) => cctOf(k)?.name ?? k);
   const exportable = ["aprobada", "publicada"].includes(run.status);
   const file = (f: string) => `/api/sueldos/liquidacion/${run.id}?formato=${f}`;
+  // Los avisos de escalas o parámetros «a validar» van en la nota de arriba, no en cada recibo
+  const receiptWarnings = items.reduce((n, it) => n + (it.warnings as string[]).filter((w) => !/a validar|de referencia/.test(w)).length, 0);
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
       <Link href={`${r.base}/liquidacion`} className="text-meta text-muted hover:text-ink">
         ← Liquidaciones
       </Link>
@@ -442,10 +444,10 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
         <MetricCard icon={Users} label="Empleados" value={run.totals.employees} hint={`Pago el ${formatDate(run.pay_date, "numeric")}`} />
         <MetricCard icon={Wallet} label="Neto a pagar" value={run.totals.net / 100} display={formatMoney(run.totals.net)} hint={`Remunerativo ${formatMoney(run.totals.rem)}`} />
         <MetricCard icon={Calculator} label="Costo laboral" value={run.totals.cost / 100} display={formatMoney(run.totals.cost)} hint={`Contribuciones ${formatMoney(run.totals.contrib)}`} />
-        <MetricCard icon={AlertTriangle} label="Avisos" value={run.warnings} hint="Revisalos antes de aprobar" />
+        <MetricCard icon={AlertTriangle} label="Avisos" value={run.warnings} hint={run.warnings > receiptWarnings ? `${receiptWarnings} en los recibos · ${run.warnings - receiptWarnings} de escalas o parámetros a validar` : "Revisalos antes de aprobar"} />
       </section>
       {(toValidate.length > 0 || params?.estado === "a_validar") && (
-        <p className="flex items-start gap-2 rounded-md border border-[#e9d9b0] bg-[#fbf5e6] px-3 py-2 text-meta text-[#7a5410]">
+        <p className="flex items-start gap-2 rounded-md border border-warn-line bg-warn-soft px-3 py-2 text-meta text-warn">
           <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />
           Calculada con {toValidate.length ? `escalas a validar (${toValidate.join(", ")})` : ""}
           {toValidate.length && params?.estado === "a_validar" ? " y " : ""}
@@ -515,7 +517,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
 
       {exportable && r.scope.canManage && (
         <Card className="grid gap-2">
-          <p className="flex items-center gap-2 text-body font-semibold">
+          <p className="flex items-center gap-2 text-title font-semibold text-ink">
             <FileDown className="size-4" aria-hidden /> Archivos
           </p>
           <ul className="flex flex-wrap gap-2 text-ui">
@@ -545,12 +547,12 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
         ]}
       />
       {tab === "recibos" && (
-        <div className="grid gap-2">
+        <div className="divide-y divide-line rounded-md border border-line bg-surface">
           {items.map((it) => {
             const sn = it.snapshot as Record<string, string | null>;
             const warnings = (it.warnings as string[]).filter((w) => !/a validar|de referencia/.test(w));
             return (
-              <details key={it.id} className="rounded-md border border-line bg-surface">
+              <details key={it.id}>
                 <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2 px-4 py-3">
                   <span className="font-medium">
                     {sn.name} <span className="text-meta font-normal text-muted">· {sn.category}</span>
@@ -564,7 +566,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
                 </summary>
                 <div className="grid gap-2 border-t border-line px-4 py-3">
                   {warnings.map((w) => (
-                    <p key={w} className="text-meta text-[#7a5410]">
+                    <p key={w} className="text-meta text-warn">
                       {w}
                     </p>
                   ))}
@@ -598,7 +600,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
             <BarList title="Costo laboral por área" bars={rep.byArea.map((x) => ({ label: x.area, value: x.cost, display: formatMoney(x.cost), hint: `${x.employees} ${x.employees === 1 ? "empleado" : "empleados"}` }))} />
           </Card>
           <Card className="grid gap-2">
-            <p className="text-ui font-medium">Cargas sociales</p>
+            <p className="text-title font-semibold text-ink">Cargas sociales</p>
             <dl className="grid grid-cols-2 gap-1 text-ui">
               <dt className="text-muted">Aportes (jubilación, PAMI, obra social)</dt>
               <dd className="num text-right">{formatMoney(rep.charges.aportes)}</dd>
@@ -613,12 +615,12 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
             </dl>
           </Card>
           <Card className="grid gap-2">
-            <p className="text-ui font-medium">Acreditaciones</p>
+            <p className="text-title font-semibold text-ink">Acreditaciones</p>
             <p className="num text-title">{formatMoney(rep.credits.total)}</p>
-            {rep.credits.missing.length > 0 && <p className="text-meta text-[#7a5410]">Sin CBU (no entran en el archivo): {rep.credits.missing.join(", ")}</p>}
+            {rep.credits.missing.length > 0 && <p className="text-meta text-warn">Sin CBU (no entran en el archivo): {rep.credits.missing.join(", ")}</p>}
           </Card>
           <Card className="grid gap-2 lg:col-span-2">
-            <p className="text-ui font-medium">Variaciones contra el período anterior</p>
+            <p className="text-title font-semibold text-ink">Variaciones contra el período anterior</p>
             <Table label="Variaciones" minWidth={560}>
               <thead>
                 <tr className="border-b border-line text-meta text-muted">
@@ -648,7 +650,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
             </Table>
           </Card>
           <Card className="grid gap-2 lg:col-span-2">
-            <p className="text-ui font-medium">Nómina</p>
+            <p className="text-title font-semibold text-ink">Nómina</p>
             <Table label="Nómina" minWidth={640}>
               <thead>
                 <tr className="border-b border-line text-meta text-muted">

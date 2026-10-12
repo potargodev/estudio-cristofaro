@@ -66,7 +66,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         {t.error && <p role="alert" className="rounded-md border border-danger/30 bg-danger/5 px-4 py-3 text-ui text-danger">{t.error}</p>}
         <Panel title="Plan" icon={ListChecks} action={<span className="text-meta text-muted">Costo de IA: <span className="num">{formatUsd(Number(t.cost_usd))}</span></span>}>
           <div className="mb-4">
-            <AgentProgress done={done} total={t.plan.length} />
+            <AgentProgress done={done} total={t.plan.length} wide />
           </div>
           {/* Un plan largo (la cartera entera) se resume: en curso y con error a la vista, el resto plegado */}
           {t.plan.length > 12 && (

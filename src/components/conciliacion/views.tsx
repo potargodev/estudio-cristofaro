@@ -49,7 +49,7 @@ export async function BankRecTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
         </div>
       </form>
       <section aria-label="Extractos" className="grid gap-2">
-        <h2 className="text-lead font-semibold">Extractos</h2>
+        <h2 className="text-title font-semibold text-ink">Extractos</h2>
         {statements.length === 0 ? (
           <p className="text-ui text-muted">Todavía no importaste extractos.</p>
         ) : (
@@ -80,10 +80,11 @@ export async function BankRecTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
 
 function RulesSection({ orgId, rules, statement }: { orgId: string; rules: Awaited<ReturnType<typeof listRules>>; statement?: string }) {
   return (
-    <section aria-label="Reglas" className="grid gap-2">
-      <h2 className="text-lead font-semibold">Reglas</h2>
-      {rules.length > 0 && (
-        <ul className="divide-y divide-line rounded-md border border-line bg-surface">
+    <section aria-label="Reglas" className="grid gap-3">
+      <h2 className="text-title font-semibold text-ink">Reglas</h2>
+      <div className="rounded-md border border-line bg-surface">
+        {rules.length > 0 && (
+          <ul className="divide-y divide-line border-b border-line">
           {rules.map((r) => (
             <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-ui">
               <span>
@@ -100,7 +101,7 @@ function RulesSection({ orgId, rules, statement }: { orgId: string; rules: Await
           ))}
         </ul>
       )}
-      <form action={ruleAction} className="grid gap-2 rounded-md border border-line bg-surface p-4 sm:grid-cols-4 sm:items-end">
+        <form action={ruleAction} className="grid gap-3 p-4 sm:grid-cols-4 sm:items-end">
         <Org id={orgId} />
         {statement && <input type="hidden" name="statement" value={statement} />}
         <label className="text-meta text-muted">
@@ -128,19 +129,22 @@ function RulesSection({ orgId, rules, statement }: { orgId: string; rules: Await
           Nombre
           <input name="label" placeholder="Ej.: Seguro del local" className={field} />
         </label>
-        <label className="flex items-center gap-2 text-meta text-muted sm:col-span-3">
-          <input type="checkbox" name="all_orgs" /> Para todas las organizaciones del estudio
-        </label>
-        <SubmitButton variant="secondary" pendingText="…">Guardar regla</SubmitButton>
-      </form>
+        <div className="flex flex-wrap items-center justify-between gap-3 sm:col-span-4">
+          <label className="flex items-center gap-2 text-meta text-muted">
+            <input type="checkbox" name="all_orgs" /> Para todas las organizaciones del estudio
+          </label>
+          <SubmitButton variant="secondary" pendingText="…">Guardar regla</SubmitButton>
+        </div>
+        </form>
+      </div>
     </section>
   );
 }
 
 const STATUS: Record<string, { label: string; tone: string }> = {
   sin_conciliar: { label: "Sin conciliar", tone: "text-danger" },
-  sugerido: { label: "Sugerido", tone: "text-[#7a5410]" },
-  conciliado: { label: "Conciliado", tone: "text-[#1f5f36]" },
+  sugerido: { label: "Sugerido", tone: "text-warn" },
+  conciliado: { label: "Conciliado", tone: "text-ok" },
   sin_factura: { label: "Pago sin factura", tone: "text-muted" },
   ignorado: { label: "Ignorado", tone: "text-muted" },
 };
@@ -236,7 +240,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
         </details>
       )}
       <section aria-label="Movimientos" className="grid gap-2">
-        <h2 className="text-lead font-semibold">Movimientos</h2>
+        <h2 className="text-title font-semibold text-ink">Movimientos</h2>
         <ul className="divide-y divide-line rounded-md border border-line bg-surface">
           {v.movs.map((m) => {
             const st = STATUS[m.status] ?? STATUS.sin_conciliar;
@@ -250,7 +254,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
             return (
               <li key={m.id} className="grid gap-2 px-4 py-3" aria-label={m.description}>
                 <div className="flex items-start gap-3">
-                  {m.amount > 0 ? <ArrowDownLeft className="mt-0.5 size-4 shrink-0 text-[#1f5f36]" aria-hidden /> : <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />}
+                  {m.amount > 0 ? <ArrowDownLeft className="mt-0.5 size-4 shrink-0 text-ok" aria-hidden /> : <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />}
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-ui">{m.description}</p>
                     <p className="text-caption text-muted">
@@ -258,7 +262,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
                       {m.status === "sugerido" && m.match_score && ` (${Math.round(Number(m.match_score) * 100)}%)`}
                     </p>
                   </div>
-                  <span className={`num text-ui ${m.amount > 0 ? "text-[#1f5f36]" : ""}`}>{formatMoney(m.amount)}</span>
+                  <span className={`num text-ui ${m.amount > 0 ? "text-ok" : ""}`}>{formatMoney(m.amount)}</span>
                 </div>
                 {g && (
                   <div className="grid gap-1 pl-7 text-meta">
@@ -374,7 +378,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
       </section>
       {v.pending.length > 0 && (
         <section aria-label="Comprobantes sin movimiento" className="grid gap-2">
-          <h2 className="text-lead font-semibold">Comprobantes sin movimiento</h2>
+          <h2 className="text-title font-semibold text-ink">Comprobantes sin movimiento</h2>
           <ul className="divide-y divide-line rounded-md border border-line bg-surface">
             {v.pending.map((c) => {
               const movs = v.movs.filter((m) => (m.status === "sin_conciliar" || m.status === "sugerido") && !m.match_group_id && (m.cls === "cobro" || m.cls === "pago") && (m.amount > 0) === (c.type === "emitido") && Math.abs(m.amount) < c.total);
@@ -407,7 +411,7 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
       )}
       {v.entries.length > 0 && (
         <section aria-label="Asientos de ajuste" className="grid gap-2">
-          <h2 className="flex items-center gap-2 text-lead font-semibold">
+          <h2 className="flex items-center gap-2 text-title font-semibold text-ink">
             <BookOpenCheck className="size-5 text-rose-deep" aria-hidden /> Asientos de ajuste
           </h2>
           <Table label="Asientos de ajuste" minWidth={560}>

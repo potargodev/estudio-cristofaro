@@ -44,7 +44,7 @@ export async function AgentTab({ user, sp, base }: { user: StaffUser; sp: Record
   const orgs = studio ? await getDb().select({ id: organizations.id, name: organizations.name }).from(organizations).where(and(eq(organizations.studio_id, user.studioId), inArray(organizations.status, ["onboarding", "activa", "pausada"]))).orderBy(asc(organizations.name)) : [];
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-6">
       <Feedback sp={sp} />
       <div className="grid gap-3 sm:grid-cols-3">
         <MetricCard icon={ListChecks} label="Tareas este mes" value={usage.tasks} suffix={max != null ? ` de ${max}` : undefined} />
@@ -67,7 +67,7 @@ function NewTask({ actor, orgs, sp, base }: { actor: AgentActor; orgs: { id: str
   const studio = actor.tenantKind === "studio";
   const month = todayAR().slice(0, 7);
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-6">
       <Panel title="Nueva tarea" icon={Plus}>
         <form action={createAgentTaskAction} className="grid gap-4">
           <Field label="¿Qué necesitás?" htmlFor="pedido" hint={chosen ? `Elegiste «${chosen.title}». Podés sumar detalles o dejarlo así.` : "Por ejemplo: «Cerrá octubre de Agencia Norte» o «¿Qué clientes están cerca del tope del monotributo?»."}>

@@ -11,6 +11,7 @@ import { announcementView, batchView, getEmployee, listAnnouncements, listBatche
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate } from "@/lib/format";
 import { LiquidacionView, PayrollDataForm, RunDetail } from "./Liquidacion";
+import { chipClass } from "@/components/ds";
 
 // Sueldos y empleados: la misma pantalla en la ficha de la organización (el
 // estudio en su nombre) y en el portal (Empresa → Sueldos y empleados).
@@ -22,8 +23,8 @@ const per = (p: string) => `${p.slice(5)}/${p.slice(0, 4)}`;
 const SLIP: Record<string, { label: string; tone: string }> = {
   sin_asignar: { label: "Sin asignar", tone: "text-danger" },
   asignado: { label: "Listo para publicar", tone: "text-muted" },
-  publicado: { label: "Falta firmar", tone: "text-[#7a5410]" },
-  conforme: { label: "Firmado conforme", tone: "text-[#1f5f36]" },
+  publicado: { label: "Falta firmar", tone: "text-warn" },
+  conforme: { label: "Firmado conforme", tone: "text-ok" },
   no_conforme: { label: "Firmado no conforme", tone: "text-danger" },
 };
 
@@ -49,7 +50,7 @@ function SubNav({ r, active }: { r: ResolvedPayroll; active: string }) {
       <ul className="flex min-w-max gap-1.5">
         {items.map(([k, label, Icon]) => (
           <li key={k}>
-            <Link href={k ? `${r.base}/${k}` : r.base} aria-current={active === k ? "page" : undefined} className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-meta", active === k ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
+            <Link href={k ? `${r.base}/${k}` : r.base} aria-current={active === k ? "page" : undefined} className={chipClass(active === k)}>
               <Icon className="size-3.5" aria-hidden /> {label}
             </Link>
           </li>
@@ -184,7 +185,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
       </form>
       <PayrollDataForm r={r} e={e} />
       <section aria-label="Documentos" className="grid gap-2">
-        <h3 className="text-body font-semibold">Documentos</h3>
+        <h3 className="text-title font-semibold text-ink">Documentos</h3>
         {v.docs.length > 0 ? (
           <ul className="divide-y divide-line rounded-md border border-line bg-surface text-ui">
             {v.docs.map((doc) => (
@@ -217,7 +218,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
         )}
       </section>
       <section aria-label="Recibos" className="grid gap-2">
-        <h3 className="text-body font-semibold">Recibos</h3>
+        <h3 className="text-title font-semibold text-ink">Recibos</h3>
         {v.slips.length ? (
           <ul className="divide-y divide-line rounded-md border border-line bg-surface text-ui">
             {v.slips.map((p) => (
@@ -237,7 +238,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
         )}
       </section>
       <section aria-label="Historial" className="grid gap-2">
-        <h3 className="text-body font-semibold">Historial</h3>
+        <h3 className="text-title font-semibold text-ink">Historial</h3>
         <ol className="grid gap-1 text-ui">
           {v.events.map((ev) => (
             <li key={ev.id} className="flex gap-3">
@@ -446,7 +447,7 @@ async function AnnouncementsView({ r, sp }: { r: ResolvedPayroll; sp: SP }) {
       {r.scope.canManage && (
         <form action={announcementAction} className="grid gap-2 rounded-md border border-line bg-surface p-4" encType="multipart/form-data">
           <Hidden r={r} />
-          <p className="text-ui font-medium">Nuevo comunicado{r.scope.fromStudio ? ` (en nombre de ${r.orgName})` : ""}</p>
+          <p className="text-title font-semibold text-ink">Nuevo comunicado{r.scope.fromStudio ? ` (en nombre de ${r.orgName})` : ""}</p>
           <label className={lbl}>
             Título
             <input name="title" required className={field} />
@@ -524,7 +525,7 @@ async function AnnouncementView({ r, id, sp }: { r: ResolvedPayroll; id: string;
             <span>
               {first} {last}
             </span>
-            <span className={rd.ack_at ? "text-[#1f5f36]" : "text-muted"}>
+            <span className={rd.ack_at ? "text-ok" : "text-muted"}>
               {rd.ack_at ? `Confirmó el ${formatDate(rd.ack_at, "numericTime")}` : rd.read_at ? "Leído" : "Sin leer"}
             </span>
           </li>

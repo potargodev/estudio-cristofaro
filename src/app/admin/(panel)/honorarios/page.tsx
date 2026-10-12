@@ -11,6 +11,7 @@ import { getBillingSettings, listCharges } from "@/modules/billing/fees";
 import { accountSummary } from "@/modules/billing/mp";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate, formatMoney } from "@/lib/format";
+import { chipClass } from "@/components/ds";
 
 export const metadata = { title: "Honorarios" };
 
@@ -44,7 +45,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </form>
         <nav aria-label="Filtrar" className="ml-auto flex flex-wrap gap-1.5 text-meta">
           {["pendiente", "pagado", "anulado"].map((st) => (
-            <Link key={st} href={`?estado=${st}`} aria-current={estado === st ? "page" : undefined} className={`rounded-full px-3 py-1 ${estado === st ? "bg-navy text-paper" : "border border-line"}`}>
+            <Link key={st} href={`?estado=${st}`} aria-current={estado === st ? "page" : undefined} className={chipClass(estado === st)}>
               {STATUS[st]}
             </Link>
           ))}

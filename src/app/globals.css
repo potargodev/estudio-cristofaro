@@ -34,6 +34,11 @@
   --color-gold-ink: #7d5848;
 
   --color-danger: #a33a2a;
+  /* Estados con nombre (los tonos de StatusBadge): bien, para revisar y su caja suave; en oscuro se aclaran */
+  --color-ok: #1f5f36;
+  --color-warn: #7a5410;
+  --color-warn-soft: #fbf5e6;
+  --color-warn-line: #e3cf9f;
   /* Placeholders con contraste AA (4,9:1 sobre blanco) */
   --color-placeholder: #6b7184;
 
@@ -887,6 +892,10 @@ body {
 }
 :root[data-theme="dark"] .app-ui {
   color-scheme: dark;
+  --color-ok: #8fd1a6;
+  --color-warn: #e2c3b6;
+  --color-warn-soft: rgb(201 165 150 / 0.14);
+  --color-warn-line: rgb(205 211 232 / 0.18);
   --shell-line: #283044;
   --color-canvas: #0d111b;
   --color-surface: #151a27;
@@ -953,6 +962,11 @@ body {
   --color-rose-soft: #f1e7e2;
   --color-gold-ink: #7d5848;
   --color-danger: #a33a2a;
+  /* Estados con nombre (los mismos tonos de StatusBadge): bien, para revisar y su caja suave */
+  --color-ok: #1f5f36;
+  --color-warn: #7a5410;
+  --color-warn-soft: #fbf5e6;
+  --color-warn-line: #e3cf9f;
 }
 /* Estados de color fijo (pastillas claras) en oscuro: fondos translúcidos */
 :root[data-theme="dark"] .app-ui :not(.keep-dark *) {

@@ -130,14 +130,14 @@ export function CommandPalette({ open, onClose, access, items }: { open: boolean
                   type="button"
                   onMouseEnter={() => setActive(i)}
                   onClick={() => go(h.href)}
-                  className={cn("flex w-full items-center gap-3 px-4 py-2.5 text-left text-ui", i === active ? "bg-navy-soft" : "")}
+                  className={cn("flex w-full items-start gap-3 px-4 py-2.5 text-left text-ui", i === active ? "bg-navy-soft" : "")}
                 >
-                  <Icon className="size-4 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
+                  <Icon className="mt-0.5 size-4 shrink-0 text-rose-deep" strokeWidth={1.5} aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-ink">{h.title}</span>
                     {h.detail && <span className="block truncate text-meta text-muted">{h.detail}</span>}
                   </span>
-                  {i === active && <CornerDownLeft className="size-3.5 text-muted" aria-hidden />}
+                  {i === active && <CornerDownLeft className="mt-1 size-3.5 text-muted" aria-hidden />}
                 </button>
               </li>
             );

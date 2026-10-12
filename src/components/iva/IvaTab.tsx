@@ -35,7 +35,7 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
   const topParties = a.summary.byParty.slice(0, 8);
   const rest = a.summary.byParty.slice(8);
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-6">
       <Feedback sp={sp} />
       <form method="get" className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="tab" value="iva" />
@@ -65,7 +65,7 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
         <ul className="grid gap-2">
           {a.checklist.map((c) => (
             <li key={c.label} className="flex items-start gap-2 text-ui">
-              {c.state === "ok" ? <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#1f5f36]" aria-hidden /> : c.state === "pendiente" ? <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[#7a5410]" aria-hidden /> : <CircleDashed className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />}
+              {c.state === "ok" ? <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-ok" aria-hidden /> : c.state === "pendiente" ? <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden /> : <CircleDashed className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />}
               <span>
                 {c.label}
                 <span className="sr-only"> · {c.state === "ok" ? "listo" : c.state === "pendiente" ? "pendiente" : "sin verificar"}</span>
@@ -107,7 +107,7 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
         )}
       </Panel>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid items-start gap-6 lg:grid-cols-2">
         <Card>
           <BarList
             title={`${fiscalLabel} por ${book === "compras" ? "proveedor" : "cliente"}`}
@@ -127,7 +127,7 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
 
       <section id="libro" aria-label={`Libro IVA ${book}`} className="grid gap-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lead font-semibold">Libro IVA {book}</h2>
+          <h2 className="text-title font-semibold text-ink">Comprobantes del período</h2>
           <Link href={base(onlyMarked ? {} : { filtro: "marcados" }) + "#libro"} className="text-meta underline underline-offset-4">
             {onlyMarked ? "Ver todos" : `Solo los marcados (${a.marks.length})`}
           </Link>

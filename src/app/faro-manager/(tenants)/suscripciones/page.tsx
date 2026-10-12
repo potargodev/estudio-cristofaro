@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { requireFaro } from "@/lib/auth";
 import { subscriptionsOverview } from "@/modules/billing/subscriptions";
 import { formatDate, formatMoney } from "@/lib/format";
+import { chipClass } from "@/components/ds";
 
 export const metadata: Metadata = { title: "Suscripciones" };
 
@@ -39,7 +40,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
       </dl>
       <nav aria-label="Filtrar por estado" className="flex flex-wrap gap-1.5 text-meta">
         {["", "activa", "prueba", "morosa", "suspendida", "cancelada"].map((st) => (
-          <Link key={st} href={st ? `?estado=${st}` : "?"} aria-current={(sp.estado ?? "") === st ? "page" : undefined} className={`rounded-full px-3 py-1 ${(sp.estado ?? "") === st ? "bg-navy text-paper" : "border border-line"}`}>
+          <Link key={st} href={st ? `?estado=${st}` : "?"} aria-current={(sp.estado ?? "") === st ? "page" : undefined} className={chipClass((sp.estado ?? "") === st)}>
             {st ? STATUS[st] : "Todas"}
           </Link>
         ))}

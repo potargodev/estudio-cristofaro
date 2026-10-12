@@ -41,6 +41,7 @@ import {
 import { ACCEPT_ATTR, ALLOWED_LABEL, formatBytes } from "@/lib/uploads-shared";
 import { cn } from "@/lib/utils";
 import { formatAmountOrDash, formatDate, todayAR } from "@/lib/format";
+import { chipClass } from "@/components/ds";
 
 // Pestañas de la ficha de la organización en el backoffice. La página ya validó
 // que la organización es del estudio; igual cada query filtra también por studio_id.
@@ -124,7 +125,7 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
                 <Link
                   href={`/admin/organizaciones/${orgId}?tab=${t.key}`}
                   aria-current={active === t.key ? "page" : undefined}
-                  className={cn("inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-meta", active === t.key ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}
+                  className={chipClass(active === t.key)}
                 >
                   {SUB_LABEL[t.key] ?? t.label}
                 </Link>

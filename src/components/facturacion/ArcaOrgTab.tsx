@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { chipClass } from "@/components/ds";
 import type { StaffUser } from "@/lib/auth";
-import { cn } from "@/lib/utils";
 import { formatCuit } from "@/modules/arca/config";
 import { ArcaError, orgIssuer } from "@/modules/arca/server";
 import { getDb } from "@/db";
@@ -41,7 +41,7 @@ export async function ArcaOrgTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
           <ul className="flex min-w-max gap-1.5">
             {VIEWS.map((v) => (
               <li key={v.key}>
-                <Link href={href(v.key)} aria-current={ver === v.key ? "page" : undefined} className={cn("inline-flex h-8 items-center rounded-full px-3 text-meta", ver === v.key ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
+                <Link href={href(v.key)} aria-current={ver === v.key ? "page" : undefined} className={chipClass(ver === v.key)}>
                   {v.label}
                 </Link>
               </li>

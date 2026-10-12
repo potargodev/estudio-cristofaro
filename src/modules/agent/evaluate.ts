@@ -111,12 +111,14 @@ export function buildReport(plan: AgentPlanStep[], results: Record<string, StepO
     findings.push(...findingsFor(s, o, { today: ctx.today, orgId: s.organizationId ?? null, orgName }));
   }
   const order = { alta: 0, media: 1, baja: 2 } as const;
+  // «1 de alta y 2 de media»: sin nombrar las que quedaron en cero
+  const joinAnd = (xs: string[]) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} y ${xs[xs.length - 1]}` : xs[0]);
   findings.sort((a, b) => order[a.severity] - order[b.severity]);
   const count = (sev: keyof typeof order) => findings.filter((f) => f.severity === sev).length;
   const orgs = new Set(plan.map((s) => s.organizationId).filter(Boolean)).size;
   const parts = [
     `${ctx.title}: revisé ${orgs > 1 ? `${orgs} organizaciones` : orgs === 1 ? "1 organización" : "tu cuenta"} con ${plural(ok, "consulta", "consultas")}${failed ? ` (${plural(failed, "no se pudo hacer", "no se pudieron hacer")})` : ""}.`,
-    findings.length ? `Encontré ${plural(count("alta"), "hallazgo de importancia alta", "hallazgos de importancia alta")}, ${count("media")} de importancia media y ${count("baja")} de importancia baja.` : "No encontré nada para marcar en lo que pude revisar.",
+    findings.length ? `Encontré ${joinAnd((["alta", "media", "baja"] as const).filter((k) => count(k) > 0).map((k, i) => (i === 0 ? plural(count(k), `hallazgo de importancia ${k}`, `hallazgos de importancia ${k}`) : `${count(k)} de importancia ${k}`)))}.` : "No encontré nada para marcar en lo que pude revisar.",
     drafts.length ? `Dejé ${plural(drafts.length, "borrador", "borradores")} en Propuestas para aprobar.` : "",
     "Son datos y borradores según lo cargado en Faro: no reemplazan el criterio de un contador.",
   ];

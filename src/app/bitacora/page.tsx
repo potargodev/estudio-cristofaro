@@ -12,6 +12,7 @@ import { requireUser } from "@/modules/bitacora/session";
 import { mySharedBoxes } from "@/modules/cajas/shared";
 import { createEntryAction, restoreEntryAction } from "./actions";
 import { formatDate, formatMoney, formatPeriod } from "@/lib/format";
+import { chipClass } from "@/components/ds";
 
 export const metadata: Metadata = { title: { absolute: "Bitácora · Faro" } };
 
@@ -91,7 +92,7 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
             { k: "real", l: "Ajustado por inflación" },
             { k: "mep", l: "Dólares MEP" },
           ].map((v) => (
-            <Link key={v.l} href={q({ ver: v.k || null })} aria-current={(sp.ver ?? "") === v.k ? "true" : undefined} className={cn("inline-flex h-8 items-center rounded-full px-3", (sp.ver ?? "") === v.k ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted")}>
+            <Link key={v.l} href={q({ ver: v.k || null })} aria-current={(sp.ver ?? "") === v.k ? "true" : undefined} className={chipClass((sp.ver ?? "") === v.k)}>
               {v.l}
             </Link>
           ))}

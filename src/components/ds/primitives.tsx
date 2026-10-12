@@ -11,6 +11,9 @@ export const fieldInlineClass = "rounded-md border border-line bg-surface px-3 t
 /** Título de pantalla (Gilda Display, 28 px en el celular y 32 px en escritorio). Lo usa PageHeader;
  *  las pantallas con un encabezado propio lo toman de acá en vez de escribir el tamaño a mano. */
 export const pageTitleClass = "font-display text-page text-ink";
+/** Chip de una sub-navegación o un filtro (subsecciones, estados, tiendas): alto chico, el radio único y el activo en azul noche */
+export const chipClass = (active: boolean) =>
+  cn("inline-flex h-(--control-h-sm) shrink-0 items-center gap-1.5 rounded-md px-3 text-meta", active ? "bg-navy text-paper" : "border border-line text-ink hover:border-muted");
 /** Etiqueta de un campo */
 export const labelClass = "text-ui font-medium text-ink/80";
 
