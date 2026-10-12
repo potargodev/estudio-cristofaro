@@ -131,6 +131,10 @@ correr agente "${S[@]}" scripts/pruebas/agente.mts
 correr red-con-demo "${T[@]}" scripts/pruebas/red.mts
 correr principios-con-demo "${S[@]}" scripts/pruebas/principios-servidor.mts
 correr recorrido env SALIDA="$SALIDA/recorrido.json" node scripts/pruebas/recorrido.mjs 200
+# QA visual al píxel (npm run qa:visual): detector en pantallas y estados, datos extremos y capturas de referencia
+correr qa-visual env SALIDA="$SALIDA/qa-visual.json" node scripts/pruebas/qa-visual.mjs --estados --max=25 --capturas="$SALIDA/qa-visual"
+correr qa-estados env SALIDA="$SALIDA/qa-estados.json" node scripts/pruebas/qa-estados.mjs --capturas="$SALIDA/qa-estados"
+correr qa-capturas env SALIDA="$SALIDA/qa-capturas" node scripts/pruebas/qa-capturas.mjs
 correr enlaces-con-demo npx tsx scripts/verificar-enlaces.mts
 
 echo; echo "Resumen en $RESUMEN"
