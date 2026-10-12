@@ -3,11 +3,13 @@ titulo: Recibos de sueldo con firma
 resumen: Cargá los recibos de todo el personal de una vez (un PDF por persona o uno único que se divide por CUIL), publicalos y seguí quién firmó conforme o no conforme.
 perfiles: [estudio, organizacion, empleado]
 modulo: payroll
-actualizado: 2026-10-11
-relacionados: [empleados/legajo-y-novedades, empleados/comunicados]
+actualizado: 2026-10-12
+relacionados: [empleados/liquidacion-de-sueldos, empleados/legajo-y-novedades, empleados/comunicados]
 ---
 
 ## Cargar y publicar (estudio u organización)
+
+Si liquidás en Faro, los recibos salen solos: en **Sueldos → Liquidación**, aprobá la liquidación y tocá **Publicar recibos para la firma** (ver [Liquidación de sueldos](/ayuda/empleados/liquidacion-de-sueldos)). Si liquidás en otro sistema, cargalos así:
 
 1. En **Sueldos → Recibos**, elegí el **período** y subí los PDF:
    - **un PDF por empleado**, con el CUIL en el nombre del archivo (por ejemplo `20304050609_2026-09.pdf`) o adentro del recibo; o

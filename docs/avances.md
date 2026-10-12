@@ -443,3 +443,25 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Que un contador coteje las 8 reglas con el Boletín Oficial y las pase a «Vigente» (pendientes, ítem 8).
+
+## §2.q · Etapa 6: liquidación de sueldos (12 de octubre)
+
+**Qué quedó**
+- **Sueldos → Liquidación** en la ficha y en el portal: mensual, SAC, vacaciones y final, con **26 convenios** (Comercio, UOCRA, Gastronómicos, Hoteleros, Sanidad, Camioneros, Seguridad, Bancarios, UOM, SUTERH, Textiles, Alimentación y más) y «Fuera de convenio» con escala propia.
+- Datos para liquidar en el legajo (convenio, categoría, básico pactado, jornada, afiliación, CBU, legajo) y parámetros por organización (ART, seguro de vida, tipo de empleador, lugar de pago, último depósito).
+- **Novedades** a mano, importadas de Excel o CSV (errores por fila) o traídas del portal: horas, extras al 50 y 100 %, ausencias, licencias, vacaciones, adelantos, embargos (con el límite legal), Ganancias y otros conceptos.
+- Borrador → re-liquidar con **registro de cambios** → **aprobación de una persona** → **duplicar** para re-liquidar una aprobada (versión nueva que reemplaza a la anterior).
+- **Recibos en PDF** (art. 140 LCT, neto en letras) publicados al lote de recibos para la firma conforme / no conforme; la carga manual de F5 sigue.
+- **Archivos:** Libro de Sueldos Digital, importación para el F.931 y acreditación bancaria (CSV y TXT), «a validar».
+- **Informes:** costo laboral por empleado y por área, cargas sociales, acreditaciones, nómina y variaciones contra el mes anterior.
+- **Faro Manager → Catálogo → Convenios:** escalas versionadas con vigencia, fuente y estado, auditadas y con aviso a los estudios con empleados en el convenio.
+- **Agente:** «Liquidá octubre de X» (plantilla y herramienta `liquidar_sueldos`) arma el borrador, marca lo raro y lo deja para aprobar; `resumen_liquidaciones` para el Vigía. Migración `0052`.
+- Demo: la primera organización de Ferreyra con Comercio, dos meses aprobados y el borrador del Agente.
+
+**Qué se probó**
+- `src/modules/liquidacion/liquidacion.test.ts` (convenios, mensual, novedades, UOCRA y fuera de convenio, SAC, vacaciones, final, variaciones y número en letras).
+- `scripts/pruebas/liquidacion.mts` (40 verificaciones): Comercio de julio a noviembre aprobado, SAC de diciembre, re-liquidación con registro, escala nueva con aviso, duplicar, recibos publicados, LSD, F.931, acreditación, informes, final por despido, el Agente sobre la organización y aislamiento forzando IDs.
+- Pantallas a 390 y 1.440 px en claro y oscuro.
+
+**Qué falta configurar**
+- Escalas oficiales de los 26 convenios, parámetros de seguridad social, formatos de ARCA y bancos, y la decisión sobre Ganancias (pendientes, ítem 8).

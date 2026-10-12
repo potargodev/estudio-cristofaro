@@ -1,4 +1,4 @@
-import { CheckCircle2, FileSignature, IdCard, Megaphone, UserPlus } from "lucide-react";
+import { Calculator, CheckCircle2, FileSignature, IdCard, Megaphone, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { announcementAction, applyNovedadAction, assignPayslipAction, employeeDocumentAction, employeeEventAction, novedadAction, publishBatchAction, remindAction, saveEmployeeAction, terminateEmployeeAction, uploadPayslipsAction } from "@/app/sueldos-actions";
@@ -10,6 +10,7 @@ import type { ResolvedPayroll } from "@/modules/payroll/scope";
 import { announcementView, batchView, getEmployee, listAnnouncements, listBatches, listEmployees, listNovedades, NOVEDADES, payrollEnabled } from "@/modules/payroll/server";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate } from "@/lib/format";
+import { LiquidacionView, PayrollDataForm, RunDetail } from "./Liquidacion";
 
 // Sueldos y empleados: la misma pantalla en la ficha de la organización (el
 // estudio en su nombre) y en el portal (Empresa → Sueldos y empleados).
@@ -38,6 +39,7 @@ function Hidden({ r }: { r: ResolvedPayroll }) {
 function SubNav({ r, active }: { r: ResolvedPayroll; active: string }) {
   const items = [
     ["", "Legajo", IdCard],
+    ["liquidacion", "Liquidación", Calculator],
     ["recibos", "Recibos", FileSignature],
     ["comunicados", "Comunicados", Megaphone],
     ["novedades", "Novedades", UserPlus],
@@ -62,7 +64,7 @@ export async function SueldosScreen({ r, path, sp }: { r: ResolvedPayroll; path:
   const on = await payrollEnabled(r.scope.studioId);
   if (!on.employees && !on.payroll) return <p className="rounded-md border border-line bg-surface p-4 text-ui">Sueldos y empleados viene con el plan Profesional del estudio.</p>;
   const body =
-    section === "empleado" && id ? await EmployeeView({ r, id, sp }) : section === "recibos" && id ? await BatchView({ r, id, sp }) : section === "recibos" ? await BatchesView({ r, sp }) : section === "comunicados" && id ? await AnnouncementView({ r, id, sp }) : section === "comunicados" ? await AnnouncementsView({ r, sp }) : section === "novedades" ? await NovedadesView({ r, sp }) : await EmployeesView({ r, sp });
+    section === "empleado" && id ? await EmployeeView({ r, id, sp }) : section === "liquidacion" && id ? await RunDetail({ r, id, sp }) : section === "liquidacion" ? (on.payroll ? await LiquidacionView({ r, sp }) : <p className="rounded-md border border-line bg-surface p-4 text-ui">La liquidación de sueldos viene con el plan Profesional del estudio.</p>) : section === "recibos" && id ? await BatchView({ r, id, sp }) : section === "recibos" ? await BatchesView({ r, sp }) : section === "comunicados" && id ? await AnnouncementView({ r, id, sp }) : section === "comunicados" ? await AnnouncementsView({ r, sp }) : section === "novedades" ? await NovedadesView({ r, sp }) : await EmployeesView({ r, sp });
   if (!body) notFound();
   return (
     <div>
@@ -180,6 +182,7 @@ async function EmployeeView({ r, id, sp }: { r: ResolvedPayroll; id: string; sp:
           </div>
         )}
       </form>
+      <PayrollDataForm r={r} e={e} />
       <section aria-label="Documentos" className="grid gap-2">
         <h3 className="text-body font-semibold">Documentos</h3>
         {v.docs.length > 0 ? (

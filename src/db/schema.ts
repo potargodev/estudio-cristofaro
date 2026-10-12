@@ -422,6 +422,14 @@ export const employees = pgTable(
     end_date: date("end_date"),
     end_reason: text("end_reason"),
     notes: text("notes"),
+    // §2.q etapa 6: datos para liquidar
+    cct_key: text("cct_key"), // convenio (src/modules/liquidacion/convenios.ts) o fuera_convenio
+    category: text("category"),
+    basic_override: numeric("basic_override", { precision: 14, scale: 2 }),
+    hours: integer("hours"),
+    affiliated: boolean("affiliated").notNull().default(false),
+    cbu: text("cbu"),
+    legajo: text("legajo"),
     created_at: createdAt(),
   },
   (t) => [ index("employees_user_idx").on(t.user_id), index("employees_studio_idx").on(t.studio_id),
@@ -3367,6 +3375,154 @@ export const payslips = pgTable(
     created_at: createdAt(),
   },
   (t) => [ index("payslips_org_status_idx").on(t.organization_id, t.status),index("payslips_batch_idx").on(t.batch_id), index("payslips_emp_idx").on(t.employee_id, t.period)],
+);
+
+/** §2.q etapa 6: parámetros de liquidación de la organización (ART, seguro de vida, escala propia) */
+export const payroll_settings = pgTable(
+  "payroll_settings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    employer_kind: text("employer_kind").notNull().default("general"), // general | grande
+    art_pct: numeric("art_pct", { precision: 6, scale: 3 }).notNull().default("2.5"),
+    art_fixed: numeric("art_fixed", { precision: 12, scale: 2 }).notNull().default("800"),
+    life_insurance: numeric("life_insurance", { precision: 12, scale: 2 }).notNull().default("350"),
+    own_categories: jsonb("own_categories").$type<{ code: string; name: string; basic: number }[]>().notNull().default([]),
+    pay_place: text("pay_place"),
+    last_deposit: text("last_deposit"),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("payroll_settings_org_idx").on(t.organization_id)],
+);
+
+/** §2.q etapa 6: escalas de convenio versionadas (las carga el Faro Manager) */
+export const cct_scales = pgTable(
+  "cct_scales",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    cct_key: text("cct_key").notNull(),
+    valid_from: date("valid_from").notNull(),
+    status: text("status").notNull().default("a_validar"), // a_validar | validada
+    source: text("source").notNull(),
+    categories: jsonb("categories").$type<{ code: string; name: string; basic: number }[]>().notNull(),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("cct_scales_key_from_idx").on(t.cct_key, t.valid_from)],
+);
+
+/** §2.q etapa 6: novedades del período para liquidar (a mano, importadas, del portal o del Agente) */
+export const payroll_novelties = pgTable(
+  "payroll_novelties",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    employee_id: uuid("employee_id")
+      .notNull()
+      .references(() => employees.id, { onDelete: "cascade" }),
+    period: text("period").notNull(), // AAAA-MM
+    kind: text("kind").notNull(),
+    quantity: numeric("quantity", { precision: 10, scale: 2 }),
+    amount: numeric("amount", { precision: 14, scale: 2 }),
+    detail: text("detail"),
+    source: text("source").notNull().default("manual"), // manual | importacion | portal | agente
+    /** Novedad del portal de la que vino (para no traerla dos veces) */
+    ref: text("ref"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("payroll_novelties_org_idx").on(t.organization_id, t.period), uniqueIndex("payroll_novelties_ref_idx").on(t.organization_id, t.ref).where(sql`${t.ref} is not null`)],
+);
+
+export interface PayrollChange {
+  at: string;
+  actor: string | null;
+  reason: string | null;
+  employee: string;
+  before: number | null;
+  after: number | null;
+  detail: string;
+}
+
+/** §2.q etapa 6: liquidación de un período (mensual, SAC, vacaciones o final), versionada */
+export const payroll_runs = pgTable(
+  "payroll_runs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    period: text("period").notNull(),
+    kind: text("kind").notNull(), // mensual | sac | vacaciones | final
+    status: text("status").notNull().default("borrador"), // borrador | aprobada | publicada | reemplazada | anulada
+    version: integer("version").notNull().default(1),
+    parent_id: uuid("parent_id").references((): AnyPgColumn => payroll_runs.id, { onDelete: "set null" }),
+    pay_date: date("pay_date").notNull(),
+    /** Liquidación final: empleado, fecha y motivo */
+    final_info: jsonb("final_info").$type<{ employeeId: string; endDate: string; reason: string; vacationsTaken: number; noticeGiven: boolean }>(),
+    changes: jsonb("changes").$type<PayrollChange[]>().notNull().default([]),
+    /** Escalas y parámetros con los que se calculó (con su estado de validación) */
+    basis: jsonb("basis").$type<Record<string, unknown>>().notNull().default({}),
+    totals: jsonb("totals").$type<{ employees: number; rem: number; norem: number; desc: number; net: number; contrib: number; cost: number }>().notNull().default({ employees: 0, rem: 0, norem: 0, desc: 0, net: 0, contrib: 0, cost: 0 }),
+    warnings: integer("warnings").notNull().default(0),
+    origin: text("origin").notNull().default("manual"), // manual | agente
+    batch_id: uuid("batch_id").references(() => payslip_batches.id, { onDelete: "set null" }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    approved_by: uuid("approved_by").references(() => users.id, { onDelete: "set null" }),
+    approved_at: timestamp("approved_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("payroll_runs_org_idx").on(t.organization_id, t.period, t.kind)],
+);
+
+/** §2.q etapa 6: liquidación de un empleado dentro de una corrida (importes en centavos) */
+export const payroll_items = pgTable(
+  "payroll_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    run_id: uuid("run_id")
+      .notNull()
+      .references(() => payroll_runs.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    employee_id: uuid("employee_id")
+      .notNull()
+      .references(() => employees.id, { onDelete: "cascade" }),
+    /** Datos del legajo con los que se liquidó */
+    snapshot: jsonb("snapshot").$type<Record<string, unknown>>().notNull(),
+    lines: jsonb("lines").$type<{ code: string; name: string; kind: string; quantity: number | null; amount: number }[]>().notNull(),
+    rem: bigint("rem", { mode: "number" }).notNull(),
+    norem: bigint("norem", { mode: "number" }).notNull(),
+    desc: bigint("desc", { mode: "number" }).notNull(),
+    net: bigint("net", { mode: "number" }).notNull(),
+    contrib: bigint("contrib", { mode: "number" }).notNull(),
+    cost: bigint("cost", { mode: "number" }).notNull(),
+    bases: jsonb("bases").$type<{ aportes: number; contribuciones: number }>().notNull(),
+    warnings: jsonb("warnings").$type<string[]>().notNull().default([]),
+    created_at: createdAt(),
+  },
+  (t) => [index("payroll_items_run_idx").on(t.run_id), index("payroll_items_emp_idx").on(t.employee_id)],
 );
 
 /** Comunicado interno de la organización (o del estudio en su nombre) */

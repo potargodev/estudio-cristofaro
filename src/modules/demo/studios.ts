@@ -37,6 +37,7 @@ import {
 } from "@/db/schema";
 import { TEMPLATES } from "@/modules/flows/core";
 import { seedAgent } from "./agent";
+import { seedPayroll } from "./payroll";
 import { ago, cents, cuit, dateIn, day, demoFile, demoTenant, demoUser, month, rng, tinyPdf, type DemoUser } from "./base";
 
 type R = ReturnType<typeof rng>;
@@ -191,6 +192,7 @@ async function seedEmployees(db: Db, r: R, studioId: string, orgId: string, by: 
   const [a1] = await db.insert(announcements).values({ studio_id: studioId, organization_id: orgId, title: "Cambio de horario en diciembre", body: "Desde el 15 de diciembre el horario de oficina es de 9 a 15 h.", require_ack: true, author_id: by.id }).returning({ id: announcements.id });
   await db.insert(announcements).values({ studio_id: studioId, organization_id: orgId, title: "Recibos disponibles", body: `Ya están los recibos de ${period}. Revisalos y firmalos desde Faro.`, require_ack: false, from_studio: true, author_id: by.id });
   await db.insert(announcement_reads).values(ids.slice(0, 2).map((id, i) => ({ announcement_id: a1.id, employee_id: id, read_at: ago(3), ack_at: i === 0 ? ago(3) : null })));
+  await seedPayroll(db, studioId, orgId, by, ids);
 }
 
 async function seedBank(db: Db, r: R, studioId: string, orgId: string, by: DemoUser) {

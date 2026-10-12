@@ -115,6 +115,7 @@ async function buildPlan(studioId: string, t: AgentTemplate, scope: AgentScope, 
     if (t.key === "tope_monotributo") add("Semáforo del monotributo de tu cuenta", "situacion_monotributo", {}, null);
   } else {
     const mono = t.key === "tope_monotributo" ? await monotributoOrgs(studioId, orgs.map((o) => o.id)) : null;
+    const staff = t.key === "liquidar_sueldos" ? await (await import("@/modules/liquidacion/server")).orgsWithStaff(studioId, orgs.map((o) => o.id)) : null;
     for (const o of orgs) {
       const of = (s: string) => (orgs.length > 1 ? `${s} · ${o.name}` : s);
       if (t.key === "cierre_mensual") {
@@ -131,6 +132,8 @@ async function buildPlan(studioId: string, t: AgentTemplate, scope: AgentScope, 
         add(of("Estado de la conciliación"), "estado_conciliacion", { organizacion_id: o.id }, o.id);
       } else if (t.key === "tope_monotributo") {
         if (mono?.has(o.id)) add(of("Semáforo del monotributo"), "situacion_monotributo", { organizacion_id: o.id }, o.id);
+      } else if (t.key === "liquidar_sueldos") {
+        if (staff?.has(o.id) && params.period) add(of("Liquidación de sueldos (borrador para aprobar)"), "liquidar_sueldos", { organizacion_id: o.id, periodo: params.period }, o.id);
       } else if (t.key === "resumen_mensual") {
         add(of("Resumen del mes (borrador)"), "enviar_resumen_mensual", { organizacion_id: o.id }, o.id);
       }

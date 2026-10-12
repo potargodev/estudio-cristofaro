@@ -75,7 +75,7 @@ export function interpret(text: string, ctx: { orgs: { id: string; name: string 
 /** Sin período en el pedido: el cierre, el resumen y el IVA son del mes anterior (el que se presenta); lo demás, del mes en curso */
 function defaultPeriod(templateKey: string, today: string) {
   const [y, m] = today.split("-").map(Number);
-  if (["cierre_mensual", "resumen_mensual", "revision_iva"].includes(templateKey)) return m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, "0")}`;
+  if (["cierre_mensual", "resumen_mensual", "revision_iva", "liquidar_sueldos"].includes(templateKey)) return m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, "0")}`;
   return today.slice(0, 7);
 }
 

@@ -17,6 +17,7 @@ Escribí lo que necesitás o elegí una **tarea frecuente**:
 - **Revisión del crédito fiscal (IVA)**: «Revisá el crédito fiscal de todos mis clientes antes del vencimiento».
 - **Conciliación del extracto**: «Conciliá el extracto de septiembre» (con Conciliación bancaria en el plan).
 - **Clientes cerca del tope del monotributo**.
+- **Liquidar sueldos**: «Liquidá octubre de Panadería La Espiga» (con Liquidación de sueldos en el plan): arma el borrador con el convenio y las novedades, marca lo raro y lo deja para que lo apruebe una persona.
 - **Resumen mensual para los clientes**: prepara el resumen de cada uno.
 - **Otra tarea**: cualquier otro pedido. El Agente arma el plan con un modelo de IA y usa las herramientas de Faro (hace falta un modelo configurado en **Configuración → IA**).
 

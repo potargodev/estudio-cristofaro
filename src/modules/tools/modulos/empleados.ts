@@ -89,4 +89,46 @@ export const empleadosTools = [
       return { enviado: true, destinatarios: r.recipients, enlace: `/admin/organizaciones/${org.id}/sueldos/comunicados/${r.a.id}` };
     },
   }),
+  defineTool<{ organizacion_id: string; periodo: string; tipo?: "mensual" | "sac" | "vacaciones" }, unknown>({
+    name: "liquidar_sueldos",
+    title: "Liquidar sueldos (borrador)",
+    description: "Arma (o re-liquida) el borrador de la liquidación de sueldos de una organización para un período AAAA-MM con el convenio, la categoría y las novedades de cada empleado. Devuelve neto, costo laboral y lo raro (variaciones mayores al 20 %, faltas de datos, embargos, horas extra). Queda en borrador: una persona la revisa y la aprueba.",
+    module: "empleados",
+    level: "escritura",
+    roles: ["dueno", "contador", "colaborador"],
+    input: z.object({ organizacion_id: uuid("ID de la organización"), periodo: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).describe("AAAA-MM"), tipo: z.enum(["mensual", "sac", "vacaciones"]).optional() }),
+    async organizationOf(input) {
+      return input.organizacion_id;
+    },
+    describe: (i) => `Liquidar sueldos de ${i.periodo} (borrador)`,
+    async handler(input, ctx) {
+      const org = await ctx.organization(input.organizacion_id);
+      const { liquidateForAgent, LiquidacionError } = await import("@/modules/liquidacion/server");
+      try {
+        const r = await liquidateForAgent(scopeOf(ctx.studioId, org.id), ctx.actor, input.periodo, input.tipo ?? "mensual");
+        return { organizacion: org.name, liquidacion_id: r.runId, estado: r.status, empleados: r.employees, neto: r.net / 100, costo_laboral: r.cost / 100, alertas: r.alerts, escalas_a_validar: r.scalesToValidate, enlace: `/admin/organizaciones/${org.id}/sueldos/liquidacion/${r.runId}`, aviso: "Queda en borrador para revisar y aprobar. Esto no reemplaza el criterio de un contador." };
+      } catch (e) {
+        if (e instanceof LiquidacionError) throw new ToolError(e.message, "entrada_invalida");
+        throw e;
+      }
+    },
+  }),
+  defineTool<{ organizacion_id: string }, unknown>({
+    name: "resumen_liquidaciones",
+    title: "Liquidaciones de sueldos",
+    description: "Últimas liquidaciones de sueldos de una organización: período, tipo, estado, empleados, neto y costo laboral.",
+    module: "empleados",
+    level: "lectura",
+    roles: ["dueno", "contador", "colaborador"],
+    input: z.object({ organizacion_id: uuid("ID de la organización") }),
+    async organizationOf(input) {
+      return input.organizacion_id;
+    },
+    async handler(input, ctx) {
+      const org = await ctx.organization(input.organizacion_id);
+      const { listRuns } = await import("@/modules/liquidacion/server");
+      const runs = await listRuns(scopeOf(ctx.studioId, org.id));
+      return { organizacion: org.name, liquidaciones: runs.slice(0, 12).map((r) => ({ id: r.id, periodo: r.period, tipo: r.kind, estado: r.status, version: r.version, empleados: r.totals.employees, neto: r.totals.net / 100, costo_laboral: r.totals.cost / 100, enlace: `/admin/organizaciones/${org.id}/sueldos/liquidacion/${r.id}` })) };
+    },
+  }),
 ];

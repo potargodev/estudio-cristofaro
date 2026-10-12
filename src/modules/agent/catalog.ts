@@ -77,6 +77,17 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     routine: true,
   },
   {
+    key: "liquidar_sueldos",
+    title: "Liquidar sueldos",
+    description: "Arma la liquidación del período con el convenio y las novedades de cada empleado, marca lo raro (variaciones, datos que faltan, embargos, escalas a validar) y la deja en borrador para aprobar.",
+    example: "Liquidá octubre de Panadería La Espiga",
+    scopes: ["organizacion", "cartera"],
+    needs: ["periodo"],
+    module: "payroll",
+    keywords: /liquid[aá]|sueldo|n[oó]mina|aguinaldo/,
+    routine: true,
+  },
+  {
     key: "libre",
     title: "Otra tarea",
     description: "Contale qué necesitás: arma un plan con las herramientas de Faro, investiga y te deja un informe. Necesita un modelo de IA configurado.",

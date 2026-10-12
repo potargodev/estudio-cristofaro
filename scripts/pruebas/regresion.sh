@@ -104,6 +104,7 @@ correr cobros-servidor "${S[@]}" scripts/pruebas/cobros-servidor.mts
 # F5 · Empleados
 correr empleados-navegador node scripts/pruebas/empleados-navegador.mjs
 correr empleados-servidor "${S[@]}" scripts/pruebas/empleados-servidor.mts
+correr liquidacion "${S[@]}" scripts/pruebas/liquidacion.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

@@ -1,4 +1,4 @@
-import { Blocks, Building2, ClipboardList, Database, Factory, Gauge, Landmark, LineChart, MessageCircle, MessageSquareText, MessagesSquare, Repeat, ScrollText, ShieldHalf, Sparkles, Tags, UserPlus, Wallet, type LucideIcon } from "lucide-react";
+import { Blocks, Building2, ClipboardList, Database, HardHat, Factory, Gauge, Landmark, LineChart, MessageCircle, MessageSquareText, MessagesSquare, Repeat, ScrollText, ShieldHalf, Sparkles, Tags, UserPlus, Wallet, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 
 // Secciones del Faro Manager (docs/faro-producto.md §2.o): Tenants, Catálogo
@@ -25,7 +25,7 @@ const FARO_SECTIONS = {
   },
   catalogo: {
     title: "Catálogo",
-    description: "Lo que Faro ofrece: planes y precios, módulos, plantillas por industria, la IA de la plataforma y el escudo de responsabilidad.",
+    description: "Lo que Faro ofrece: planes y precios, módulos, plantillas por industria, la IA de la plataforma, los convenios de sueldos y el escudo de responsabilidad.",
     tabs: [
       { href: "/faro-manager/planes", label: "Planes y precios", icon: Tags },
       { href: "/faro-manager/modulos", label: "Módulos", icon: Blocks },
@@ -33,6 +33,7 @@ const FARO_SECTIONS = {
       { href: "/faro-manager/ia", label: "IA de la plataforma", icon: Sparkles },
       { href: "/faro-manager/monotributo", label: "Monotributo", icon: Gauge },
       { href: "/faro-manager/indices", label: "Índices", icon: LineChart },
+      { href: "/faro-manager/convenios", label: "Convenios", icon: HardHat },
       { href: "/faro-manager/escudo", label: "Escudo", icon: ShieldHalf },
     ],
   },

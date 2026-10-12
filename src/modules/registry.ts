@@ -167,16 +167,16 @@ export const FARO_MODULES: FaroModule[] = [
   },
   {
     key: "payroll",
-    name: "Recibos de sueldo",
+    name: "Liquidación y recibos de sueldo",
     icon: "FileSignature",
-    description: "Carga masiva de recibos (un PDF por empleado o uno único dividido por CUIL), asignación automática con revisión, publicación con aviso y firma conforme / no conforme con constancia (fecha, hora, IP, dispositivo y hash). Recordatorios a quien no firmó.",
+    description: "Liquidación de sueldos (§2.q): mensual, SAC, vacaciones y final con más de 25 convenios y escalas versionadas, novedades importadas, re-liquidación con registro de cambios, Libro de Sueldos Digital, F.931 y acreditación bancaria. Carga masiva de recibos (un PDF por empleado o uno único dividido por CUIL), asignación automática con revisión, publicación con aviso y firma conforme / no conforme con constancia (fecha, hora, IP, dispositivo y hash). Recordatorios a quien no firmó.",
     status: "disponible",
     minPlan: { studio: "profesional" },
     roles: ALL_STAFF,
     // §2.o: pestaña Sueldos de la ficha; portal: Empresa → Sueldos y empleados; empleado: Mis recibos
     nav: [{ href: "/admin/organizaciones", label: "Organización → Sueldos → Recibos" }, { href: "/portal/recibos", label: "Mis recibos (empleado)" }],
     events: ["recibo.publicado", "recibo.firmado", "recibo.no_conforme", "recibo.sin_firmar"],
-    tools: ["estado_recibos", "recordar_firma_recibos"],
+    tools: ["estado_recibos", "recordar_firma_recibos", "liquidar_sueldos", "resumen_liquidaciones"],
   },
   {
     key: "employees",

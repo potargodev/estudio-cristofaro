@@ -68,6 +68,14 @@ export function findingsFor(step: AgentPlanStep, outcome: StepOutcome, c: Ctx): 
         out.push({ ...base, severity: (["alta", "media", "baja"].includes(String(a.importancia)) ? a.importancia : "media") as AgentFinding["severity"], title: `IVA ${a.libro}: ${a.titulo}`, detail: String(a.detalle ?? ""), href: (r.enlace as string) ?? null });
       break;
     }
+    case "liquidar_sueldos": {
+      const alerts = (r.alertas as string[] | undefined) ?? [];
+      const toValidate = (r.escalas_a_validar as string[] | undefined) ?? [];
+      out.push({ ...base, severity: "media", title: `Liquidación de sueldos en borrador para aprobar (${plural(n(r.empleados), "empleado", "empleados")})`, detail: `Neto $ ${n(r.neto).toLocaleString("es-AR", { minimumFractionDigits: 2 })} · costo laboral $ ${n(r.costo_laboral).toLocaleString("es-AR", { minimumFractionDigits: 2 })}. Revisala y aprobala: recién ahí se publican los recibos.`, href: (r.enlace as string) ?? null });
+      for (const a of alerts.slice(0, 8)) out.push({ ...base, severity: /embargo|Falta el convenio|no está en la escala/.test(a) ? "alta" : "media", title: `Sueldos: ${a}`, href: (r.enlace as string) ?? null });
+      if (toValidate.length) out.push({ ...base, severity: "baja", title: `Escalas a validar: ${toValidate.join(", ")}`, detail: "Calculada con la escala de referencia: revisá los básicos con el acta vigente.", href: (r.enlace as string) ?? null });
+      break;
+    }
     case "listar_comprobantes": {
       const rows = ((r.comprobantes ?? r.facturas) as Row[] | undefined) ?? [];
       const bad = rows.filter((x) => ["rechazada", "error"].includes(String(x.estado)));
