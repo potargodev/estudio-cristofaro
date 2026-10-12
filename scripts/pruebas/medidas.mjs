@@ -19,7 +19,8 @@ const browser = await chromium.launch({ executablePath: process.env.CHROME ?? "/
 const rows = [];
 for (const [perfil, routes] of Object.entries(ROUTES)) {
   if (perfil === "publico") continue;
-  const cookie = await cookieFor(P[perfil]);
+  const cookie = P[perfil] ? await cookieFor(P[perfil]) : null;
+  if (!cookie) continue;
   for (const [name, path] of Object.entries(routes)) {
     const r = { pantalla: `${perfil}/${name}` };
     for (const width of [1440, 390]) {

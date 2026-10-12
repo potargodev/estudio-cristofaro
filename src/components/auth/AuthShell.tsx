@@ -46,7 +46,7 @@ export function AuthShell({
           {children}
         </div>
         {footer && <div className="mt-5 text-center text-ui text-paper/70">{footer}</div>}
-        {brand === "studio" && <p className="mt-6 text-center text-caption text-paper/45">Con tecnología de Faro</p>}
+        {brand === "studio" && <p className="mt-6 text-center text-caption text-paper/60">Con tecnología de Faro</p>}
       </div>
     </div>
   );

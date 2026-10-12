@@ -62,7 +62,7 @@ export function FaroIndustries({ items }: { items: IndustryPreview[] }) {
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {cols.map((c, ci) => (
               <div key={c.title}>
-                <p className="text-micro uppercase tracking-[0.12em] text-paper/45">{c.title}</p>
+                <p className="text-micro uppercase tracking-[0.12em] text-paper/60">{c.title}</p>
                 <ul className="mt-3 grid gap-2">
                   {c.list.slice(0, 5).map((x, i) => (
                     <li key={x} className="faro-demo-in flex items-start gap-2 text-meta text-paper/85" style={{ "--d": ci * 120 + i * 60 } as React.CSSProperties}>

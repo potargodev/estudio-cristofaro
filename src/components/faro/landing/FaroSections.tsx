@@ -30,7 +30,7 @@ export function FaroProblem() {
         </SplitHeading>
         <div className="mt-12 grid gap-px overflow-hidden rounded-lg bg-hair md:grid-cols-2">
           <div className="bg-night p-6 sm:p-8">
-            <p className="text-caption uppercase tracking-[0.14em] text-paper/45">Hoy</p>
+            <p className="text-caption uppercase tracking-[0.14em] text-paper/60">Hoy</p>
             <Reveal as="ul" className="mt-5 grid gap-3">
               {BEFORE.map((x) => (
                 <li key={x} data-reveal className="text-body leading-relaxed text-paper/60 line-through decoration-paper/25">
@@ -84,7 +84,7 @@ export function FaroLevels() {
               <span className="tabular text-caption text-gold">0{i + 1}</span>
               <l.icon className="mt-4 size-6 text-paper" strokeWidth={1.25} aria-hidden />
               <p className="mt-4 font-display text-[26px] leading-none text-paper">{l.name}</p>
-              <p className="mt-1 text-caption text-paper/50">{l.who}</p>
+              <p className="mt-1 text-caption text-paper/60">{l.who}</p>
               <p className="mt-3 text-meta leading-relaxed text-paper/65">{l.text}</p>
             </li>
           ))}

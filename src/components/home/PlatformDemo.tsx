@@ -217,8 +217,8 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
           <p className="text-caption text-paper/55">Mensajes · Lucía G. (Estudio)</p>
           <p className="max-w-[85%] self-start border border-hair bg-paper/[0.04] px-3 py-2 text-paper/85">¿Te llegó el F.931? Lo dejé en Documentos.</p>
           <p className="max-w-[85%] self-end bg-rose-light/15 px-3 py-2 text-paper">Sí, ya lo pagamos. ¡Gracias!</p>
-          <p className="self-end text-micro text-paper/45">Visto</p>
-          <p className="text-caption text-paper/45">Lucía está escribiendo…</p>
+          <p className="self-end text-micro text-paper/60">Visto</p>
+          <p className="text-caption text-paper/60">Lucía está escribiendo…</p>
         </div>
         <div className="flex flex-col gap-3 border border-hair p-4 text-meta">
           <p className="flex items-center gap-2 text-caption text-paper/60">
@@ -226,12 +226,12 @@ function Screen({ tab }: { tab: PlatformTabKey }) {
           </p>
           <p className="self-end bg-rose-light/15 px-3 py-2 text-paper">«Almuerzo con el cliente, 18.450, con la tarjeta de la empresa»</p>
           <div className="border border-hair p-3">
-            <p className="text-micro uppercase tracking-[0.12em] text-paper/45">Gasto de la empresa</p>
+            <p className="text-micro uppercase tracking-[0.12em] text-paper/60">Gasto de la empresa</p>
             <p className="mt-0.5 text-body text-paper">$ 18.450 · Comida</p>
             <p className="text-paper/55">Almuerzo con cliente · hoy</p>
             <p className="mt-2 bg-rose-light py-1.5 text-center text-caption font-medium text-night">Confirmar</p>
           </div>
-          <p className="text-caption text-paper/50">La IA propone; una persona aprueba.</p>
+          <p className="text-caption text-paper/60">La IA propone; una persona aprueba.</p>
         </div>
       </div>
     );

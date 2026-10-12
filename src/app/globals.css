@@ -913,8 +913,13 @@ body {
   .app-ui :where(main) :where(.flex, .inline-flex) > :where(select, input, form) {
     min-width: 0;
   }
-  .app-ui :where(main) :where(p, dd, li, code, td, h2, h3) {
+  .app-ui :where(main) :where(p, dd, li, code, h2, h3) {
     overflow-wrap: anywhere;
+  }
+  /* En celdas, break-word: no achica el ancho mínimo de la columna (con
+     anywhere, la tabla con scroll partía cada palabra en su propia línea) */
+  .app-ui :where(main) :where(td, td *) {
+    overflow-wrap: break-word;
   }
   .app-ui :where(main) :where(table) :where(thead th) {
     padding: 0.625rem 1rem;

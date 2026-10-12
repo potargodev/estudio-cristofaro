@@ -244,12 +244,14 @@ Todo sale de `@/components/ds`.
 - **Table:** contenedor con borde que scrollea en el celular. Cabecera `caption` semibold muted sobre `canvas`; celdas de 12 × 16 px; números tabulares.
 - **DataTable:** la misma tabla con búsqueda, filtros, orden y acciones en lote.
 - **List / ListRow:** filas con título, detalle y lo que va a la derecha (monto, estado o acción), separadas por una línea.
+- Las celdas cortan palabras con `break-word` (nunca `anywhere`, que aplasta las columnas de una tabla con scroll).
 
 ### Badges
 `StatusBadge` (estados conocidos), `ToneBadge` (un tono de la misma paleta) y `Tag` (datos que no son estados). Caption, radio de 6 px, ícono y texto.
 
 ### Empty, loading and error
 - **EmptyState:** ícono rosé en un círculo con borde, título, una línea que explica y una acción secundaria.
+- **Nota vacía** (dentro de un bloque): `rounded-md border border-dashed border-line px-4 py-5 text-ui text-muted`.
 - **Skeletons:** con la misma forma que el componente real (`StatRowSkeleton`, `PanelSkeleton`, `TableSkeleton`, `ListSkeleton`), dentro de `<Suspense>` (nunca `loading.tsx` en layouts con formularios).
 - **ErrorState:** qué pasó y cómo seguir. `Notice` muestra el resultado de una acción (los éxitos como toast).
 
@@ -259,6 +261,8 @@ Todo sale de `@/components/ds`.
 ### Navigation
 - **Sidebar:** azul noche fijo, ítems de 14 px, el activo con fondo y el ícono en rosé; badges `micro`. Se colapsa a una barra horizontal de íconos (botón o tecla `[`).
 - **Animación del colapso (la firma de la app):** las etiquetas se van de a una, de arriba hacia abajo, con 35 ms entre ítems. Mientras tanto, cada ícono viaja a su lugar en la barra superior con un `layoutId` compartido y el mismo escalonado (resorte 260/30). El fondo del sidebar sale con `transform` y el contenido se corre con una animación de posición. Al expandir pasa lo inverso. Solo `transform` y `opacity`: 60 cuadros por segundo y sin bloquear clics. Con `prefers-reduced-motion`, el cambio es directo. Ver `docs/diseno/sidebar.gif`.
+- **ViewSwitch:** selector segmentado de vistas de una misma pantalla (links, con contador y una línea que explica la vista activa). Ej.: Red Contable → Postulaciones / Estudios y contadores.
+- **Chips de filtro:** altura `--control-h-sm` (32 px).
 - **Tabs** (`PageHeader tabs`): subrayado azul noche de 2 px en la activa; scrollean en el celular.
 - **Barra inferior** (celular): cuatro accesos y el Vigía al centro.
 

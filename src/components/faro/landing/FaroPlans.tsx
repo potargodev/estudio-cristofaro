@@ -28,7 +28,7 @@ function Price({ p, usdArs }: { p: FaroPlan; usdArs: number }) {
 
 function Cell({ v }: { v: string }) {
   if (v === "✓") return <span className="text-gold" aria-label="Incluido">✓</span>;
-  if (v === "—") return <span className="text-paper/35" aria-label="No incluido">—</span>;
+  if (v === "—") return <span className="text-paper/60" aria-label="No incluido">—</span>;
   return <>{v}</>;
 }
 

@@ -75,7 +75,7 @@ function Markdown({ text }: { text: string }) {
         remarkPlugins={[remarkGfm]}
         components={{
           table: ({ children }) => (
-            <div className="my-3 overflow-x-auto border border-line">
+            <div className="my-3 overflow-x-auto rounded-md border border-line">
               <table className="w-full min-w-max border-collapse text-left text-ui">{children}</table>
             </div>
           ),

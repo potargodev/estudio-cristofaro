@@ -108,7 +108,7 @@ function Demo({ k }: { k: Key }) {
             <div key={d} className="faro-demo-in border border-hair p-1.5" style={{ "--d": i * 70 } as React.CSSProperties}>
               <p className="text-paper/55">{d}</p>
               <p className="mt-2 font-display text-headline text-paper">{[4, 1, 6, 0, 3][i]}</p>
-              <p className="text-paper/45">venc.</p>
+              <p className="text-paper/60">venc.</p>
             </div>
           ))}
         </div>
@@ -210,7 +210,7 @@ export function FaroForWhom() {
                   </li>
                 ))}
               </ul>
-              {t.note && <p className="mt-4 text-meta text-paper/50">{t.note}</p>}
+              {t.note && <p className="mt-4 text-meta text-paper/60">{t.note}</p>}
               <div className="mt-8">
                 {t.cta.ghost ? <GhostLink href={t.cta.href}>{t.cta.label}</GhostLink> : <CtaLink tone="gold" href={t.cta.href}>{t.cta.label}</CtaLink>}
               </div>

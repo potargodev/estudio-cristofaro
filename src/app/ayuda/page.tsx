@@ -21,8 +21,7 @@ export default async function AyudaPage({ searchParams }: { searchParams: Promis
   const items = pool.map((a) => ({ url: articleUrl(a), titulo: a.titulo, resumen: a.resumen, categoria: categoryName(a.categoria), title: norm(a.titulo), haystack: norm(`${a.titulo} ${a.resumen} ${a.text}`) }));
   return (
     <>
-      <p className="text-meta font-semibold uppercase tracking-[0.12em] text-rose-deep">Centro de ayuda</p>
-      <h1 className="mt-2 font-display text-[40px] leading-tight sm:text-[56px]">¿En qué te ayudamos?</h1>
+      <h1 className="font-display text-[40px] leading-tight sm:text-[56px]">¿En qué te ayudamos?</h1>
       <p className="mt-2 max-w-2xl text-lead text-muted">Guías cortas para cada pantalla de Faro. Si no encontrás lo que buscás, preguntale al asistente: responde citando estos artículos.</p>
       <div className="mt-8">
         <HelpSearch items={items} initial={sp.q ?? ""} />

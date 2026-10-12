@@ -177,7 +177,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
                 Todavía no hubo sincronizaciones. En la PC de Tango corré <code>node index.mjs test</code> y después <code>node index.mjs sync</code>.
               </p>
             ) : (
-              <div className="mt-3 overflow-x-auto border border-line bg-surface">
+              <div className="mt-3 overflow-x-auto rounded-md border border-line bg-surface">
                 <table className="w-full min-w-[640px] text-left text-ui">
                   <thead className="border-b border-line bg-canvas text-muted">
                     <tr>

@@ -95,11 +95,11 @@ export function FaroAi() {
                   {c.logo.text}
                 </span>
                 {c.name.split(" (")[0]}
-                <span className="text-caption text-paper/50">· {VIA_LABEL[c.via]}</span>
+                <span className="text-caption text-paper/60">· {VIA_LABEL[c.via]}</span>
               </li>
             ))}
             {soon.map((c) => (
-              <li key={c.key} className="flex items-center gap-2 border border-hair px-3 py-2 text-ui text-paper/50">
+              <li key={c.key} className="flex items-center gap-2 border border-hair px-3 py-2 text-ui text-paper/60">
                 {c.name} <span className="text-caption">· próximamente</span>
               </li>
             ))}

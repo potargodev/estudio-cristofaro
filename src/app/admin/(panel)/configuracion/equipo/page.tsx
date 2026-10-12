@@ -59,7 +59,7 @@ export default async function UsuariosPage({
         </div>
       )}
 
-      <div className="overflow-x-auto border border-line bg-surface">
+      <div className="overflow-x-auto rounded-md border border-line bg-surface">
         <table className="w-full min-w-[680px] text-left text-ui">
           <thead className="border-b border-line bg-canvas text-meta text-muted">
             <tr>

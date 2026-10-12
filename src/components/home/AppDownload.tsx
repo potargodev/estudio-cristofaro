@@ -72,7 +72,7 @@ function Phone() {
           {/* Menú inferior */}
           <div className="grid grid-cols-5 border-t border-line bg-white px-1 pb-5 pt-2">
             {TABS.map((t) => (
-              <span key={t.label} className={`flex flex-col items-center gap-1 text-[9px] ${t.on ? "text-navy" : "text-muted"}`}>
+              <span key={t.label} className={`flex flex-col items-center gap-1 text-micro ${t.on ? "text-navy" : "text-muted"}`}>
                 <t.icon className={`size-[18px] ${t.on ? "text-rose-deep" : ""}`} strokeWidth={1.5} />
                 {t.label}
               </span>

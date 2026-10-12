@@ -17,7 +17,7 @@ function GoogleIcon() {
   );
 }
 
-const field = "mt-1.5 h-12 w-full border border-paper/20 bg-paper/[0.06] px-3.5 text-lead text-paper placeholder:text-paper/40 focus:border-rose-light focus:outline-none";
+const field = "mt-1.5 h-12 w-full border border-paper/20 bg-paper/[0.06] px-3.5 text-lead text-paper placeholder:text-paper/60 focus:border-rose-light focus:outline-none";
 const label = "block text-meta text-paper/70";
 const primary = "mt-5 inline-flex h-12 w-full items-center justify-center bg-rose-light text-body font-medium text-night transition-colors hover:bg-paper disabled:opacity-60";
 
@@ -51,7 +51,7 @@ export function AccessChooser({ google, error }: { google: boolean; error?: stri
         </form>
       )}
 
-      <div className={cn("flex items-center gap-3 text-caption text-paper/50", google ? "my-6" : "mb-6")}>
+      <div className={cn("flex items-center gap-3 text-caption text-paper/60", google ? "my-6" : "mb-6")}>
         <span className="h-px flex-1 bg-paper/15" />
         {google ? "o entrá con" : "Entrá con"}
         <span className="h-px flex-1 bg-paper/15" />

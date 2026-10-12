@@ -20,7 +20,7 @@ function Frame({ title, children, phone = false }: { title: string; children: Re
           <span className="size-2.5 rounded-full bg-paper/15" />
           <span className="size-2.5 rounded-full bg-paper/15" />
           <span className="size-2.5 rounded-full bg-paper/15" />
-          <span className="ml-3 truncate text-micro text-paper/40">{title}</span>
+          <span className="ml-3 truncate text-micro text-paper/60">{title}</span>
         </div>
       )}
       {children}
@@ -48,7 +48,7 @@ function StudioScreen() {
         <div className="hidden w-14 shrink-0 flex-col items-center gap-4 border-r border-hair bg-night py-4 sm:flex">
           <span className="font-display text-body text-gold">F</span>
           {nav.map((I, i) => (
-            <I key={i} className={cn("size-4", i === 0 ? "text-rose-light" : "text-paper/40")} strokeWidth={1.5} aria-hidden />
+            <I key={i} className={cn("size-4", i === 0 ? "text-rose-light" : "text-paper/60")} strokeWidth={1.5} aria-hidden />
           ))}
         </div>
         <div className="min-w-0 flex-1 p-4 sm:p-5">
@@ -56,18 +56,18 @@ function StudioScreen() {
           <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
             {stats.map((s, i) => (
               <div key={s.l} className="faro-demo-in rounded-md border border-hair p-3" style={d(i * 80)}>
-                <p className="text-micro text-paper/50">{s.l}</p>
+                <p className="text-micro text-paper/60">{s.l}</p>
                 <p className="mt-1 num text-[26px] leading-none text-paper">{s.v}</p>
               </div>
             ))}
           </div>
-          <p className="mt-4 text-micro uppercase tracking-[0.12em] text-paper/45">Requiere atención</p>
+          <p className="mt-4 text-micro uppercase tracking-[0.12em] text-paper/60">Requiere atención</p>
           <ul className="mt-2 divide-y divide-hair rounded-md border border-hair">
             {rows.map((r, i) => (
               <li key={r.o} className="faro-demo-in flex items-center gap-3 px-3 py-2 text-caption" style={d(300 + i * 90)}>
                 <CalendarClock className="size-3.5 shrink-0 text-gold/80" aria-hidden />
                 <span className="min-w-0 flex-1 truncate text-paper/85">
-                  {r.o} <span className="text-paper/45">· {r.t}</span>
+                  {r.o} <span className="text-paper/60">· {r.t}</span>
                 </span>
                 <span className={r.tone}>{r.s}</span>
               </li>
@@ -87,13 +87,13 @@ function PortalScreen() {
   return (
     <Frame title="Portal del cliente" phone>
       <div className="bg-navy-deep px-4 pb-5 pt-6">
-        <p className="text-micro text-paper/45">Panadería La Espiga · tu estudio</p>
+        <p className="text-micro text-paper/60">Panadería La Espiga · tu estudio</p>
         <p className="mt-1 font-display text-headline text-paper">Hola, Rubén</p>
         <div className="faro-demo-in mt-4 rounded-lg border border-hair p-3" style={d(0)}>
-          <p className="text-micro text-paper/50">Próximo vencimiento</p>
+          <p className="text-micro text-paper/60">Próximo vencimiento</p>
           <p className="mt-1 text-body text-paper">IVA de septiembre</p>
           <p className="num text-[28px] leading-tight text-gold">$ 482.900</p>
-          <p className="text-micro text-paper/50">Vence hoy · con link de pago</p>
+          <p className="text-micro text-paper/60">Vence hoy · con link de pago</p>
         </div>
         <ul className="mt-3 grid gap-2 text-caption">
           {[
@@ -104,11 +104,11 @@ function PortalScreen() {
             <li key={x.t} className="faro-demo-in flex items-center gap-2.5 rounded-md border border-hair px-3 py-2" style={d(150 + k * 100)}>
               <x.i className="size-3.5 shrink-0 text-rose-light" aria-hidden />
               <span className="min-w-0 flex-1 truncate text-paper/85">{x.t}</span>
-              <span className="shrink-0 text-paper/45">{x.s}</span>
+              <span className="shrink-0 text-paper/60">{x.s}</span>
             </li>
           ))}
         </ul>
-        <div className="mt-4 grid grid-cols-4 gap-1 border-t border-hair pt-3 text-center text-micro text-paper/50">
+        <div className="mt-4 grid grid-cols-4 gap-1 border-t border-hair pt-3 text-center text-micro text-paper/60">
           {["Inicio", "Vencimientos", "Documentos", "Más"].map((x, i) => (
             <span key={x} className={i === 0 ? "text-paper" : ""}>
               {x}
@@ -143,7 +143,7 @@ function RedScreen() {
                 <span className="grid size-9 shrink-0 place-items-center rounded-md bg-night font-display text-lead text-gold">{x.n.charAt(0)}</span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-ui text-paper">{x.n}</p>
-                  <p className="flex items-center gap-1 text-micro text-paper/50">
+                  <p className="flex items-center gap-1 text-micro text-paper/60">
                     <MapPin className="size-3" aria-hidden /> {x.z}
                   </p>
                   <p className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-micro text-paper/70">
@@ -162,7 +162,7 @@ function RedScreen() {
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-micro text-paper/45">Nadie paga por aparecer primero. Reseñas solo de clientes reales.</p>
+        <p className="mt-3 text-micro text-paper/60">Nadie paga por aparecer primero. Reseñas solo de clientes reales.</p>
       </div>
     </Frame>
   );
@@ -189,21 +189,21 @@ function FlotaScreen() {
             ].map(([n, p, s], i) => (
               <li key={n} className="faro-demo-in flex items-center justify-between gap-2 rounded border border-hair px-2.5 py-1.5" style={d(i * 70)}>
                 <span className="text-paper/85">
-                  {n} <span className="text-paper/45">· {p}</span>
+                  {n} <span className="text-paper/60">· {p}</span>
                 </span>
-                <span className={s === "Aceptó" ? "flex items-center gap-1 text-gold" : "text-paper/50"}>
+                <span className={s === "Aceptó" ? "flex items-center gap-1 text-gold" : "text-paper/60"}>
                   {s === "Aceptó" && <Check className="size-3" aria-hidden />}
                   {s}
                 </span>
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-micro text-paper/45">Nadie ve las finanzas de nadie.</p>
+          <p className="mt-2 text-micro text-paper/60">Nadie ve las finanzas de nadie.</p>
         </div>
         <div>
           <p className="text-meta text-paper">Propuestas · precio por integrante</p>
           <table className="mt-2 w-full text-left text-caption">
-            <thead className="text-micro uppercase tracking-[0.1em] text-paper/45">
+            <thead className="text-micro uppercase tracking-[0.1em] text-paper/60">
               <tr>
                 <th className="pb-1.5 font-medium">Estudio</th>
                 <th className="pb-1.5 text-right font-medium">Monotributo</th>
@@ -274,7 +274,7 @@ export function FaroScreens() {
             <t.C />
           </div>
         </div>
-        <p className="mt-6 text-caption text-paper/40">Ejemplos ilustrativos con datos ficticios.</p>
+        <p className="mt-6 text-caption text-paper/60">Ejemplos ilustrativos con datos ficticios.</p>
       </Container>
     </section>
   );

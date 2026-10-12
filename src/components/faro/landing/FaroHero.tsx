@@ -68,7 +68,7 @@ export function FaroHero() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 text-caption text-paper/50">Ejemplo ilustrativo</p>
+              <p className="mt-4 text-caption text-paper/60">Ejemplo ilustrativo</p>
             </div>
           </div>
         </div>

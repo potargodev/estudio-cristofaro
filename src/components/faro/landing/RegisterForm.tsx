@@ -13,7 +13,7 @@ const KINDS: { kind: TenantKind; title: string; text: string; plan: string; icon
   { kind: "studio", title: "Un estudio o un contador", text: "Gestionás clientes: organizaciones, vencimientos, documentos y equipo.", plan: "Estudios · Inicial, gratis", icon: Building2 },
 ];
 
-const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-body text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
+const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-body text-paper placeholder:text-paper/60 focus:border-gold focus:outline-none";
 const label = "text-meta text-paper/70";
 
 /** Autoregistro: primero "¿Qué sos?", después los datos. Sin tarjeta. */
@@ -74,7 +74,7 @@ export function RegisterForm({ kinds = ["persona", "personal", "studio"], initia
             <label className={label}>
               Tu CUIT
               <input name="cuit" defaultValue={state.values?.cuit} required inputMode="numeric" placeholder="20-12345678-9" className={field} />
-              <span className="mt-1 block text-caption text-paper/45">Con tu CUIT armamos tu calendario y, más adelante, la facturación con ARCA.</span>
+              <span className="mt-1 block text-caption text-paper/60">Con tu CUIT armamos tu calendario y, más adelante, la facturación con ARCA.</span>
             </label>
           )}
           {kind === "personal" && (

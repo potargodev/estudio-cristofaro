@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { requestDemo, type DemoState } from "@/app/faro/demo/actions";
 
-const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-body text-paper placeholder:text-paper/35 focus:border-gold focus:outline-none";
+const field = "mt-1.5 h-11 w-full rounded-[2px] border border-hair-strong bg-night px-3 text-body text-paper placeholder:text-paper/60 focus:border-gold focus:outline-none";
 const label = "text-meta text-paper/70";
 
 export function DemoForm() {

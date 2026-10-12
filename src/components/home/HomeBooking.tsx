@@ -9,7 +9,7 @@ import { TextLink } from "@/components/web/ui";
 import { SCHEDULE_HREF } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-const field = "mt-1.5 h-12 w-full border border-hair-strong bg-paper/[0.04] px-3.5 text-lead text-paper placeholder:text-paper/35 focus:border-rose-light focus:outline-none";
+const field = "mt-1.5 h-12 w-full border border-hair-strong bg-paper/[0.04] px-3.5 text-lead text-paper placeholder:text-paper/60 focus:border-rose-light focus:outline-none";
 
 /**
  * Agenda real dentro de la home: días con horarios libres (la misma agenda de
@@ -93,7 +93,7 @@ export function HomeBooking({ days }: { days: PickerDay[] }) {
                 <span className="sr-only">{d.label}</span>
                 <span aria-hidden className="block text-caption first-letter:uppercase">{wd.slice(0, 3)}</span>
                 <span aria-hidden className="tabular mt-1 block text-headline font-medium leading-none">{Number(d.date.slice(8))}</span>
-                <span aria-hidden className="mt-1 block text-micro text-paper/45">{d.slots.length} horarios</span>
+                <span aria-hidden className="mt-1 block text-micro text-paper/60">{d.slots.length} horarios</span>
                 <span aria-hidden className={cn("absolute inset-x-0 bottom-[-1px] h-px bg-rose-light transition-transform duration-500 motion-reduce:transition-none", on ? "scale-x-100" : "scale-x-0")} />
               </button>
             );
@@ -152,7 +152,7 @@ export function HomeBooking({ days }: { days: PickerDay[] }) {
         </p>
       )}
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-hair px-5 py-4">
-        <p className="text-caption text-paper/50">
+        <p className="text-caption text-paper/60">
           Al confirmar aceptás que usemos tus datos para coordinar la llamada (
           <a href="/privacidad" className="underline">
             privacidad

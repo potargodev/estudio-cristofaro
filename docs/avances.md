@@ -294,6 +294,29 @@ Resumen de cada fase al cerrarla: qué quedó, qué se probó y qué falta confi
 - Validar con la cuenta real de Tango qué se puede escribir, si hay webhooks, el costo y local vs nube (ver pendientes).
 
 
+## Diseño · Etapas 3, 4 y 6 (octubre 2026)
+
+**Qué quedó**
+- **Etapa 3 (pantalla por pantalla):** Personal, Estudio, Organización, empleado, Faro Manager, landings y ayuda llevadas al sistema único.
+  - Jerarquía: un título serif por página y bloques en sans de 18 px.
+  - Estados vacíos que explican el próximo paso y textos largos que no rompen.
+  - Montos grandes y negativos con `num`, sin desbordes a 390 px y contraste AA en las landings.
+  - Antes y después en `docs/auditoria-diseno.md`; hojas de capturas en `docs/diseno/capturas/`.
+- **Etapa 4:** sidebar con animación escalonada (motion, `layoutId` por ícono, 35 ms por ítem, transform y opacity, movimiento reducido = instantáneo). Video en `docs/diseno/sidebar.gif` y `sidebar.webm`.
+- **Etapa 6:** Red Contable visible en todos los espacios.
+  - **Estudio:** Comercial → «Buscar clientes» (segunda pestaña) con badge de candidatos nuevos que coinciden y dos vistas, Postulaciones (anónimas) y Estudios y contadores.
+  - **Personal:** Contador → Red Contable y «Mi postulación».
+  - **Organización:** Empresa → Red Contable (administrador o dirección).
+  - **Flotas:** desde su ficha.
+
+**Qué se probó**
+- `recorrido.mjs`: 134 pantallas × 390 y 1.440 px con los seis perfiles de la demo, 0 hallazgos (desborde, texto chico, alturas, serif, errores de JS).
+- `capturas.mjs`: 184 capturas en claro y oscuro.
+- `impeccable detect` en las landings: de 39 a 25 hallazgos, todos excepciones decididas.
+- `sidebar-video.mjs`: escalonado en los dos sentidos, clics sin bloquear, 60 fps sin grabar y movimiento reducido instantáneo.
+- `diseno-red.mjs` 25/25 (vistas, badge, anonimato, postulación de persona, autónomo, empresa y Flota, aislamiento).
+- `principios-servidor` con la etapa 9 nueva (aislamiento de la postulación de una empresa).
+
 ## Diseño · Etapas 0 a 2 y 5 (octubre 2026)
 
 **Qué quedó**

@@ -26,8 +26,8 @@ export function FaroModules() {
           {SHOWN.map((m) => (
             <li key={m.key} data-reveal className="flex flex-col bg-night p-6">
               <p className="flex items-center justify-between gap-3 text-caption">
-                <span className={m.status === "disponible" ? "text-gold" : "text-paper/50"}>{STATUS[m.status]}</span>
-                <span className="text-paper/45">Desde {getPlan(m.minPlan.studio ?? m.minPlan.personal)?.name}</span>
+                <span className={m.status === "disponible" ? "text-gold" : "text-paper/60"}>{STATUS[m.status]}</span>
+                <span className="text-paper/60">Desde {getPlan(m.minPlan.studio ?? m.minPlan.personal)?.name}</span>
               </p>
               <h3 className="mt-4 font-display text-headline leading-tight text-paper">{m.name}</h3>
               <p className="mt-3 text-ui leading-relaxed text-paper/60">{m.description}</p>

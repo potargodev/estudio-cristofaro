@@ -116,7 +116,7 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
         </form>
       </div>
 
-      <div className="mt-4 overflow-x-auto border border-line bg-surface">
+      <div className="mt-4 overflow-x-auto rounded-md border border-line bg-surface">
         <table className="w-full min-w-[760px] text-left text-ui">
           <thead className="text-caption uppercase tracking-wide text-muted">
             <tr className="border-b border-line">

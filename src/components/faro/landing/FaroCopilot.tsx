@@ -30,7 +30,7 @@ function Phone() {
             <div key={i} className="mt-2 rounded-[8px] border border-[#e5e1dc] p-2">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-[9px] uppercase tracking-[0.12em] text-[#6b7083]">Bitácora</p>
+                  <p className="text-micro uppercase tracking-[0.12em] text-[#565b6d]">Bitácora</p>
                   <p className="text-meta font-semibold">{t as string}</p>
                   <p className="text-micro text-[#6b7083]">{l as string}</p>
                 </div>
@@ -59,7 +59,7 @@ function Phone() {
       </div>
       <div className="flex items-center gap-2 border-t border-[#e5e1dc] px-3 py-2.5">
         <Paperclip className="size-4 text-[#6b7083]" aria-hidden />
-        <span className="flex-1 rounded-full border border-[#e5e1dc] bg-white px-3 py-1.5 text-micro text-[#9095a3]">Contame un gasto…</span>
+        <span className="flex-1 rounded-full border border-[#e5e1dc] bg-white px-3 py-1.5 text-micro text-[#6b7083]">Contame un gasto…</span>
         <span className="grid size-8 place-items-center rounded-full bg-[#c9a596] text-[#1c2235]">
           <Mic className="size-4" aria-hidden />
         </span>
@@ -87,7 +87,7 @@ function BitacoraCard() {
           ["Queda", "$ 337.700"],
         ].map(([l, v]) => (
           <div key={l}>
-            <p className="text-micro text-paper/50">{l}</p>
+            <p className="text-micro text-paper/60">{l}</p>
             <p className="num text-section leading-tight text-paper">{v}</p>
           </div>
         ))}
@@ -97,7 +97,7 @@ function BitacoraCard() {
           <li key={n} className="text-caption text-paper/75">
             <span className="flex justify-between">
               <span>{n}</span>
-              <span className="text-paper/50">{w} %</span>
+              <span className="text-paper/60">{w} %</span>
             </span>
             <span className="mt-1 block h-1.5 rounded-full bg-paper/10">
               <span className="block h-full rounded-full bg-gold" style={{ width: `${w}%` }} />
