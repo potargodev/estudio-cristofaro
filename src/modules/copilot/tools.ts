@@ -7,7 +7,7 @@ import { z } from "zod/v4";
 
 const fecha = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD. Por defecto, hoy. 'ayer' = la fecha de ayer");
 
-export const crearMovimiento = z.object({
+const crearMovimiento = z.object({
   tipo: z.enum(["gasto", "ingreso"]).default("gasto"),
   monto: z.number().positive().describe("Importe en la moneda, en unidades (ej. 3500 para $3.500)"),
   moneda: z.enum(["ARS", "USD"]).default("ARS"),
@@ -19,7 +19,7 @@ export const crearMovimiento = z.object({
   caja: z.enum(["personal", "negocio"]).default("personal").describe('"negocio" si es de su trabajo, su actividad, su emprendimiento o una changa o freelance; si no, "personal"'),
 });
 
-export const crearGastoEnGrupo = z.object({
+const crearGastoEnGrupo = z.object({
   grupo: z.string().max(80).optional().describe("Nombre del grupo. Si no se dice, el grupo donde están las personas nombradas"),
   descripcion: z.string().min(1).max(140),
   monto: z.number().positive().describe("Importe total del gasto, en unidades"),
@@ -33,13 +33,13 @@ export const crearGastoEnGrupo = z.object({
   categoria: z.string().max(30).optional(),
 });
 
-export const crearGrupo = z.object({
+const crearGrupo = z.object({
   nombre: z.string().min(2).max(80),
   tipo: z.enum(["viaje", "personal", "oficina", "equipo", "proyecto", "socios"]).default("personal"),
   integrantes: z.array(z.string().max(80)).max(30).default([]).describe("Nombres de las personas a sumar (sin contar al usuario)"),
 });
 
-export const recordar = z.object({
+const recordar = z.object({
   texto: z.string().min(2).max(200),
   cuando: z.string().describe("Fecha y hora ISO (YYYY-MM-DDTHH:mm) en hora de Argentina"),
 });
@@ -54,7 +54,7 @@ export const consultarSaldos = z.object({
   persona: z.string().max(80).optional().describe("Con quién (ej. Juan)"),
 });
 
-export const registrarEnCajaCompartida = z.object({
+const registrarEnCajaCompartida = z.object({
   caja: z.string().min(2).max(80).describe('Con quién o qué caja compartida: "pareja", "familia", "amigos", "padres" (padres o abuelos), "negocio" o el nombre de la caja'),
   descripcion: z.string().min(1).max(140),
   monto: z.number().positive().describe("Importe total, en unidades"),

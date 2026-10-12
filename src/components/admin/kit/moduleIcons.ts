@@ -1,7 +1,7 @@
 import { ArrowDownLeft, ArrowUpRight, BarChart3, Landmark, Puzzle, Receipt, TrendingUp, UserPlus, Users, type LucideIcon } from "lucide-react";
 
 /** Ícono de cada módulo del catálogo (mismo trazo y tamaño en todo el backoffice) */
-export const MODULE_ICONS: Record<string, LucideIcon> = {
+const MODULE_ICONS: Record<string, LucideIcon> = {
   sueldos: Users,
   cuentas_cobrar: ArrowDownLeft,
   cuentas_pagar: ArrowUpRight,

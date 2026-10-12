@@ -6,13 +6,13 @@ import type { Permission } from "@/lib/permissions";
 // componente en src/components/portal/modules/registry.tsx. Mientras no la
 // tenga, el portal muestra "Próximamente" a las organizaciones que lo activen.
 
-export interface ModuleNavItem {
+interface ModuleNavItem {
   /** Ruta relativa al módulo: "" es la portada (/portal/modulos/<clave>) */
   path: string;
   label: string;
 }
 
-export interface ModuleDefinition {
+interface ModuleDefinition {
   key: string;
   name: string;
   description: string;
@@ -80,7 +80,7 @@ export const MODULES = [
   },
 ] as const satisfies readonly ModuleDefinition[];
 
-export type ModuleKey = (typeof MODULES)[number]["key"];
+type ModuleKey = (typeof MODULES)[number]["key"];
 
 const BY_KEY = new Map<string, ModuleDefinition>(MODULES.map((m) => [m.key, m]));
 

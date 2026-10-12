@@ -20,7 +20,7 @@ import { advances, maskPhone, normalizePhone, paramCount, parseWebhook, renderTe
 // validación de la firma y el registro original.
 
 export class WhatsAppError extends Error {}
-export type WaAccount = typeof whatsapp_accounts.$inferSelect;
+type WaAccount = typeof whatsapp_accounts.$inferSelect;
 type Actor = { id: string; email: string };
 const db = () => getDb();
 const API = () => (process.env.WHATSAPP_API_URL?.trim() || "https://graph.facebook.com/v21.0").replace(/\/+$/, "");
@@ -49,7 +49,7 @@ export async function accountFor(studioId: string) {
   return ready(p) ? p : null;
 }
 
-export interface AccountInput {
+interface AccountInput {
   phoneNumberId: string;
   wabaId: string;
   displayPhone: string;
@@ -132,7 +132,7 @@ interface SendInput {
 }
 
 /** Envía una plantilla aprobada y deja el mensaje registrado */
-export async function sendTemplate(studioId: string | null, a: WaAccount, i: SendInput) {
+async function sendTemplate(studioId: string | null, a: WaAccount, i: SendInput) {
   const [t] = await db().select().from(whatsapp_templates).where(and(eq(whatsapp_templates.account_id, a.id), eq(whatsapp_templates.name, i.template)));
   const base = { studio_id: studioId, organization_id: i.organizationId ?? null, account_id: a.id, direction: "saliente", phone: i.phone, kind: "plantilla", template: i.template, entity_type: i.entity?.type ?? null, entity_id: i.entity?.id ?? null, validation: "firma_ok" };
   if (!t || t.status !== "APPROVED") {

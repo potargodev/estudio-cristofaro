@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { animate, m, useReducedMotion } from "motion/react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { submitLead, type LeadFormState } from "@/app/actions/leads";
@@ -67,9 +68,9 @@ export function DiagnosticForm({ defaultType, plan }: { defaultType?: string; pl
         text="Un contador del estudio lo revisa y te contacta en menos de 24 horas hábiles con una propuesta para tu caso."
       >
         <p className="mt-4">
-          <a href="/agendar" className="inline-flex h-11 items-center rounded-[2px] bg-rose-light px-5 text-body font-medium text-night hover:bg-paper">
+          <Link href="/agendar" className="inline-flex h-11 items-center rounded-[2px] bg-rose-light px-5 text-body font-medium text-night hover:bg-paper">
             ¿Preferís hablar ya? Agendá una llamada
-          </a>
+          </Link>
         </p>
       </SentMessage>
     );

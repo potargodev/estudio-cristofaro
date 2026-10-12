@@ -6,7 +6,7 @@ import RAW from "./articles.generated.json";
 
 export type HelpProfile = "persona" | "autonomo" | "estudio" | "organizacion" | "empleado" | "flota";
 
-export interface HelpArticle {
+interface HelpArticle {
   id: string;
   categoria: string;
   slug: string;

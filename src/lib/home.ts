@@ -2,7 +2,7 @@
 // entre corchetes los datos reales a completar). Cambiarlos acá. Los precios de
 // los planes se cargan en el backoffice (Contenidos > Planes).
 
-/** Datos del bloque "Responsable" — TODO valores reales */
+/** Datos del bloque "Responsable": a confirmar por el estudio (docs/pendientes-configuracion.md) */
 export const STUDIO_FACTS = { years: 25, companies: 180 };
 
 /** Importes de ejemplo de la demo (no son datos de clientes) */

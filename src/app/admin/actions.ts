@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { faqs, leads, posts, service_plans, sessions, users } from "@/db/schema";
-import { requireAdmin, requireOperator, requireStaff } from "@/lib/auth";
+import { requireAdmin, requireOperator } from "@/lib/auth";
 import { takeAfterLogin } from "@/lib/after-login";
 import { homeFor } from "@/lib/roles";
 import { audit, requestIp } from "@/lib/audit";
@@ -25,13 +25,6 @@ function s(fd: FormData, key: string): string | null {
   if (typeof v !== "string") return null;
   const t = v.trim();
   return t === "" ? null : t;
-}
-
-function lines(fd: FormData, key: string): string[] {
-  return (s(fd, key) ?? "")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
 }
 
 function slugify(text: string) {
@@ -65,7 +58,7 @@ function revalidateSite() {
   revalidatePath("/", "layout");
 }
 
-export interface ActionState {
+interface ActionState {
   ok: boolean;
   message?: string;
 }

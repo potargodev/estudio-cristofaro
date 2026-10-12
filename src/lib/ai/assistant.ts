@@ -25,7 +25,7 @@ export function assistantToolContext(user: StaffUser, conversationId: string): T
 }
 
 /** Lo que ve el modelo del resultado de una herramienta */
-export function outcomeForModel(o: ToolOutcome) {
+function outcomeForModel(o: ToolOutcome) {
   switch (o.status) {
     case "ok":
       return o.result;

@@ -5,7 +5,7 @@ import { bitacora_categories, bitacora_entries, box_entries, box_members, box_sa
 import { audit } from "@/lib/audit";
 import { monthRange, prevMonth } from "@/modules/bitacora/catalog";
 import { todayAR } from "@/modules/gastos/constants";
-import { BUSINESS_CATEGORIES, businessCategoryFor, categoriesFor, looksLikeBusiness, nextSalaryDate, SALARY_FREQUENCIES, suggestedSalary, type BoxKind, type SalaryFrequency } from "./catalog";
+import { businessCategoryFor, categoriesFor, looksLikeBusiness, nextSalaryDate, SALARY_FREQUENCIES, suggestedSalary, type BoxKind, type SalaryFrequency } from "./catalog";
 
 // Cajas del lado del servidor (principios §10, §11 y §17). Una sola cuenta por
 // usuario y varias cajas: la personal (es la Bitácora: sus movimientos siguen
@@ -19,13 +19,12 @@ export class CajaError extends Error {}
 const UUID = /^[0-9a-f-]{36}$/i;
 const db = () => getDb();
 export type Box = typeof boxes.$inferSelect;
-export type BoxEntry = typeof box_entries.$inferSelect;
 type Me = { id: string; name?: string; email?: string | null; studioId?: string };
 
 const studioOf = async (userId: string) => (await db().select({ s: users.studioId }).from(users).where(eq(users.id, userId)))[0]?.s ?? null;
 
 /** La caja personal (la Bitácora) existe para todos: se crea al abrir Mis cajas */
-export async function ensurePersonalBox(userId: string) {
+async function ensurePersonalBox(userId: string) {
   const [b] = await db().select().from(boxes).where(and(eq(boxes.owner_id, userId), eq(boxes.kind, "personal")));
   if (b) return b;
   const [row] = await db().insert(boxes).values({ kind: "personal", name: "Personal", owner_id: userId }).onConflictDoNothing().returning();
@@ -99,7 +98,7 @@ export async function myBoxes(userId: string) {
 
 // ── Movimientos de la caja de negocio ────────────────────────────────
 
-export interface BoxEntryInput {
+interface BoxEntryInput {
   kind: "gasto" | "ingreso";
   amount: number;
   currency?: string;
@@ -165,12 +164,6 @@ export async function deleteBoxEntry(me: Me, boxId: string, entryId: string) {
   if (e.transfer_id) return deleteTransfer(me, e.transfer_id);
   await db().update(box_entries).set({ deleted_at: new Date() }).where(eq(box_entries.id, e.id));
   if (e.personal_entry_id) await db().update(bitacora_entries).set({ deleted_at: new Date() }).where(and(eq(bitacora_entries.id, e.personal_entry_id), eq(bitacora_entries.user_id, me.id)));
-}
-
-export async function restoreBoxEntry(me: Me, boxId: string, entryId: string) {
-  const e = await ownBoxEntry(me, boxId, entryId);
-  if (e.created_by !== me.id) throw new CajaError("Solo quien lo cargó puede restaurarlo.");
-  await db().update(box_entries).set({ deleted_at: null }).where(eq(box_entries.id, e.id));
 }
 
 /** Movimientos de un mes de una caja (solo para integrantes) */
@@ -337,4 +330,3 @@ export async function runSalaryJobs(today = todayAR()) {
   return n;
 }
 
-export { BUSINESS_CATEGORIES };

@@ -22,7 +22,7 @@ export function cuilsIn(text: string): string[] {
   return [...out];
 }
 
-export interface PageGroup {
+interface PageGroup {
   cuil: string | null;
   pages: number[]; // índices 0..n-1
 }
@@ -98,7 +98,7 @@ export function seal(r: SignatureRecord) {
 }
 
 /** Recordatorio a quien no firmó: a los 3, 7 y 14 días de publicado */
-export const SIGN_REMINDERS = [3, 7, 14] as const;
+const SIGN_REMINDERS = [3, 7, 14] as const;
 export function signReminderDue(publishedAt: Date, sent: number[], now = new Date()) {
   const days = Math.floor((now.getTime() - publishedAt.getTime()) / 86400000);
   const due = SIGN_REMINDERS.filter((d) => d <= days && !sent.includes(d));

@@ -6,7 +6,7 @@ import { notifications } from "@/db/schema";
 // Avisos dentro de la app (campanita). Cada aviso es de una sola persona:
 // toda lectura y toda marca filtra por el usuario de la sesión.
 
-export interface NewNotice {
+interface NewNotice {
   kind: "gasto" | "pago" | "grupo" | "mensaje" | "fiscal" | "aviso";
   title: string;
   body?: string | null;

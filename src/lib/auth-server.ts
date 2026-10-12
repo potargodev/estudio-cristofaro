@@ -295,7 +295,7 @@ function createAuth() {
   });
 }
 
-export type Auth = ReturnType<typeof createAuth>;
+type Auth = ReturnType<typeof createAuth>;
 
 const globalForAuth = globalThis as unknown as { __auth?: Auth };
 

@@ -12,7 +12,7 @@ interface Tab {
   match?: string[];
 }
 
-export const FARO_SECTIONS = {
+const FARO_SECTIONS = {
   tenants: {
     title: "Tenants",
     description: "Estudios, autónomos y personas que usan Faro, los pedidos de plan y el alta manual.",
@@ -52,10 +52,7 @@ export const FARO_SECTIONS = {
   },
 } satisfies Record<string, { title: string; description: string; tabs: Tab[] }>;
 
-export type FaroSectionKey = keyof typeof FARO_SECTIONS;
-
-/** Rutas de una sección (para marcar activo su ítem del menú) */
-export const sectionPaths = (k: FaroSectionKey) => FARO_SECTIONS[k].tabs.map((t) => t.href);
+type FaroSectionKey = keyof typeof FARO_SECTIONS;
 
 export function FaroSection({ section, owner, counts, children }: { section: FaroSectionKey; owner: boolean; counts?: Record<string, number>; children: React.ReactNode }) {
   const s = FARO_SECTIONS[section];

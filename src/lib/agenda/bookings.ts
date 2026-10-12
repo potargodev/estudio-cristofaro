@@ -17,14 +17,13 @@ import { fmtDateTime, fmtTime } from "./time";
 // Sin Google Calendar todo funciona igual: no hay chequeo de ocupación externa
 // y el link de la llamada es el fijo de la disponibilidad (o lo manda el estudio).
 
-export type Booking = typeof bookings.$inferSelect;
+type Booking = typeof bookings.$inferSelect;
 
 const skip24h = (start: Date) => (start.getTime() - Date.now() < 24 * 3600_000 ? new Date() : null);
 
-export const hashToken = (t: string) => createHash("sha256").update(t).digest("hex");
+const hashToken = (t: string) => createHash("sha256").update(t).digest("hex");
 const newToken = () => randomBytes(24).toString("base64url");
-export const manageUrl = (token: string) => `${getSiteUrl()}/agenda/gestionar/${token}`;
-export const icsUrl = (token: string) => `${getSiteUrl()}/api/agenda/ics/${token}`;
+const manageUrl = (token: string) => `${getSiteUrl()}/agenda/gestionar/${token}`;
 
 async function host(userId: string) {
   const [h] = await getDb()
@@ -156,7 +155,7 @@ async function upsertLead(
   return row.id;
 }
 
-export interface NewBooking {
+interface NewBooking {
   studioId: string;
   hostId: string;
   start: Date;

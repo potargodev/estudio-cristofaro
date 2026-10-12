@@ -27,7 +27,7 @@ const STOPWORDS = new Set("de del en el la los las un una por pague gaste con pa
 
 const n = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
-export interface BasicEntry {
+interface BasicEntry {
   tipo: "gasto" | "ingreso";
   monto: number;
   moneda: "ARS" | "USD";

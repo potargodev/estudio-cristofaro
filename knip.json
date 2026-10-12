@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "scripts/**/*.{ts,mts,mjs}",
+    "mocks/**/*.mjs",
+    "connector/**/*.{js,mjs,ts}",
+    "src/**/*.test.ts",
+    "src/components/ds/index.ts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "scripts/**/*.{ts,mts,mjs}"
+  ],
+  "ignore": [
+    "src/components/ui/**"
+  ],
+  "ignoreDependencies": [
+    "tailwindcss",
+    "tw-animate-css",
+    "eslint-config-next",
+    "postcss"
+  ],
+  "next": true
+}

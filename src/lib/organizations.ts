@@ -18,9 +18,9 @@ export async function studioOrganization(organizationId: string | null | undefin
   return org ?? null;
 }
 
-export type LimitKey = "legal_entities" | "users" | "modules";
+type LimitKey = "legal_entities" | "users" | "modules";
 
-export const LIMIT_LABELS: Record<LimitKey, [string, string]> = {
+const LIMIT_LABELS: Record<LimitKey, [string, string]> = {
   legal_entities: ["razón social", "razones sociales"],
   users: ["usuario", "usuarios"],
   modules: ["módulo", "módulos"],
@@ -28,7 +28,7 @@ export const LIMIT_LABELS: Record<LimitKey, [string, string]> = {
 
 const limitLabel = (key: LimitKey, n: number) => LIMIT_LABELS[key][n === 1 ? 0 : 1];
 
-export interface OrgLimits {
+interface OrgLimits {
   planName: string | null;
   /** null = sin plan asignado: no se aplican límites hasta que el estudio elija uno */
   max: Record<LimitKey, number> | null;

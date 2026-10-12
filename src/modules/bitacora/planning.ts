@@ -1,10 +1,8 @@
 import "server-only";
 import { and, asc, count, desc, eq, gte, inArray, isNull, lte } from "drizzle-orm";
 import { getDb } from "@/db";
-import { accounting_expenses, bitacora_budgets, bitacora_entries, bitacora_goal_moves, bitacora_goals, fx_snapshots, ipc_series } from "@/db/schema";
-import { audit } from "@/lib/audit";
+import { bitacora_budgets, bitacora_entries, bitacora_goal_moves, bitacora_goals, fx_snapshots, ipc_series } from "@/db/schema";
 import { arsRate } from "@/modules/gastos/server/fx";
-import { ownOrganization } from "@/lib/faro/tenants";
 import { monthOf, prevMonth } from "./catalog";
 import { bitacoraPlan } from "./plus";
 import { listCategories, movements } from "./server";
@@ -155,20 +153,4 @@ export async function markProfessional(user: { id: string; studioId: string; ema
   const [e] = await db().select().from(bitacora_entries).where(and(eq(bitacora_entries.id, entryId), eq(bitacora_entries.user_id, user.id), isNull(bitacora_entries.deleted_at)));
   if (!e) throw new PlanningError("No encontramos ese movimiento.");
   await db().update(bitacora_entries).set({ professional: i.professional, deductible: i.professional && i.deductible }).where(eq(bitacora_entries.id, e.id));
-}
-
-/** Pasa un gasto profesional a los gastos de la actividad de Faro Personal (con su origen) */
-export async function sendToPersonal(user: { id: string; studioId: string; email: string; role: string; tenantKind: string }, entryId: string) {
-  if (user.role !== "titular" || user.tenantKind !== "personal") throw new PlanningError("Pasar gastos a la contabilidad es para cuentas de Faro Personal (autónomos).");
-  const [e] = await db().select().from(bitacora_entries).where(and(eq(bitacora_entries.id, entryId), eq(bitacora_entries.user_id, user.id), isNull(bitacora_entries.deleted_at)));
-  if (!e || e.kind !== "gasto") throw new PlanningError("Solo se pasan gastos.");
-  if (e.accounting_expense_id) return e.accounting_expense_id;
-  const own = await ownOrganization(user.studioId);
-  const [row] = await db()
-    .insert(accounting_expenses)
-    .values({ studio_id: user.studioId, organization_id: own?.id ?? null, source: "bitacora", source_id: e.id, description: e.description, amount: e.amount, currency: e.currency, date: e.date, category: "otros", deductible: e.deductible })
-    .returning({ id: accounting_expenses.id });
-  await db().update(bitacora_entries).set({ professional: true, accounting_expense_id: row.id }).where(eq(bitacora_entries.id, e.id));
-  await audit({ studioId: user.studioId, organizationId: own?.id ?? null, actor: user, action: "bitacora.a_faro_personal", entityType: "gasto", entityId: row.id });
-  return row.id;
 }

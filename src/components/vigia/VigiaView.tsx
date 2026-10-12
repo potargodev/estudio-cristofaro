@@ -21,7 +21,7 @@ import { StudioAssistant } from "./StudioAssistant";
 // Todo sale de la sesión; el espacio pedido se valida antes de llegar acá.
 
 
-export type VigiaTab = "conversacion" | "asistente" | "propuestas" | "automatizaciones";
+type VigiaTab = "conversacion" | "asistente" | "propuestas" | "automatizaciones";
 
 export async function VigiaView({ user, space, sp, base }: { user: StaffUser; space: Space; sp: Record<string, string | undefined>; base: "/vigia" | "/admin/vigia" | "/vigia-panel" }) {
   const embedded = base === "/vigia-panel";

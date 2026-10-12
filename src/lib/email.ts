@@ -121,8 +121,3 @@ export async function sendMail({
     return false;
   }
 }
-
-/** ¿Hay SMTP configurado? (para avisar en la interfaz que hay que pasar el enlace a mano) */
-export function mailEnabled() {
-  return getTransport() !== null;
-}

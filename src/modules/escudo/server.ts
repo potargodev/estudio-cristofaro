@@ -16,7 +16,7 @@ import { CHANGA_CONTEXT, DERIVATION_RULES, matchProfessionalTask, PROFESSIONAL_T
 const db = () => getDb();
 const DAY = 86400000;
 type Actor = { id: string; email?: string | null };
-export type Suggestion = typeof derivation_suggestions.$inferSelect;
+type Suggestion = typeof derivation_suggestions.$inferSelect;
 
 export class EscudoError extends Error {}
 

@@ -4,7 +4,7 @@
 // catálogo de eventos, las plantillas listas y el armado de un borrador a
 // partir de una frase.
 
-export type NodeKind = "disparador" | "condicion" | "accion" | "aprobacion" | "espera";
+type NodeKind = "disparador" | "condicion" | "accion" | "aprobacion" | "espera";
 
 export type Trigger =
   | { tipo: "evento"; evento: string }
@@ -66,7 +66,7 @@ export const EVENTS: Record<string, { label: string; campos: string[] }> = {
 
 // ───────────── Validación ─────────────
 
-export interface GraphIssue {
+interface GraphIssue {
   node?: string;
   message: string;
 }
@@ -134,7 +134,7 @@ export function nextNodes(g: Graph, nodeId: string, branch?: "si" | "no") {
 // ───────────── Datos del contexto ─────────────
 
 /** Valor en el contexto por ruta: "evento.total", "pasos.n3.resultado.link" */
-export function get(ctx: unknown, path: string): unknown {
+function get(ctx: unknown, path: string): unknown {
   return path.split(".").reduce<unknown>((o, k) => (o && typeof o === "object" ? (o as Record<string, unknown>)[k] : undefined), ctx);
 }
 
@@ -193,7 +193,7 @@ export function nextScheduled(t: Extract<Trigger, { tipo: "horario" }>, from = n
 }
 
 /** Espera antes de reintentar un paso fallido: 1, 5 y 30 minutos (3 reintentos) */
-export const RETRY_MINUTES = [1, 5, 30];
+const RETRY_MINUTES = [1, 5, 30];
 export const retryAt = (attempt: number, now = new Date()) => (attempt <= RETRY_MINUTES.length ? new Date(now.getTime() + RETRY_MINUTES[attempt - 1] * 60_000) : null);
 
 // ───────────── Plantillas ─────────────
@@ -210,7 +210,7 @@ const chain = (nodes: FlowNode[], branches: [number, number, "si" | "no"][] = []
   return { nodes, edges };
 };
 
-export interface Template {
+interface Template {
   key: string;
   name: string;
   description: string;

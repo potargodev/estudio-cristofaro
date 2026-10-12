@@ -101,7 +101,7 @@ export async function contextOptions(actor: GastosActor): Promise<{ organization
   return { organizations: [], tenant: actor.role === "titular" };
 }
 
-export interface NewGroup {
+interface NewGroup {
   name: string;
   type: string;
   baseCurrency: string;
@@ -408,7 +408,7 @@ function splitMembers(spec: SplitSpec): string[] {
 }
 
 /** Valida y calcula un gasto sin guardarlo (lo usan el formulario, la IA y createExpense) */
-export async function prepareExpense(group: GroupRow, members: MemberRow[], input: NewExpense) {
+async function prepareExpense(group: GroupRow, members: MemberRow[], input: NewExpense) {
   const description = input.description.trim().slice(0, 140);
   if (description.length < 2) throw new GastosError("Escribí en qué se gastó.");
   if (!Number.isSafeInteger(input.amount) || input.amount <= 0) throw new GastosError("El importe tiene que ser mayor a cero.");
@@ -782,7 +782,7 @@ export async function listGroups(actor: GastosActor): Promise<GroupSummary[]> {
     .sort((a, b) => (b.lastActivity?.getTime() ?? 0) - (a.lastActivity?.getTime() ?? 0));
 }
 
-export interface MemberView {
+interface MemberView {
   id: string;
   name: string;
   email: string | null;

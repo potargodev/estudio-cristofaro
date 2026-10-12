@@ -20,7 +20,7 @@ const record = (v: unknown): Record<string, number> => {
   return out;
 };
 
-export function parseSplit(v: unknown): SplitSpec {
+function parseSplit(v: unknown): SplitSpec {
   const s = (v ?? {}) as Record<string, unknown>;
   switch (s.method) {
     case "iguales":

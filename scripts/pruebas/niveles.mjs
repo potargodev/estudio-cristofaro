@@ -9,7 +9,6 @@ const go = async (cookie, path) => {
   const r = await fetch(BASE + path, { headers: cookie ? { Cookie: cookie } : {}, redirect: "manual" });
   return { status: r.status, to: r.headers.get("location") ?? "" };
 };
-const lands = (r, path) => r.status === 200 || (r.status >= 300 && r.status < 400 && r.to.includes(path));
 const blocked = (r, from) => r.status >= 300 && r.status < 400 && !r.to.includes(from);
 
 // Nivel plataforma

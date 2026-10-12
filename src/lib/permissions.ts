@@ -52,7 +52,7 @@ export type Permission = (typeof PERMISSIONS)[number];
 
 const READ_ONLY: Permission[] = PERMISSIONS.filter((p) => p.endsWith(".ver"));
 
-export const ROLE_PERMISSIONS: Record<OrgRole, readonly Permission[]> = {
+const ROLE_PERMISSIONS: Record<OrgRole, readonly Permission[]> = {
   administrador: PERMISSIONS,
   direccion: PERMISSIONS.filter((p) => p !== "equipo.gestionar"),
   administracion: [

@@ -12,7 +12,7 @@ import { addDays, isoWeekday, localDate, zonedTime } from "./time";
 // Se recalcula en el servidor al confirmar: nunca se confía en el horario que
 // manda el navegador.
 
-export const BOOKING_WINDOW_DAYS = 21;
+const BOOKING_WINDOW_DAYS = 21;
 
 export interface Slot {
   start: Date;

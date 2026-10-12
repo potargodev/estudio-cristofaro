@@ -27,7 +27,7 @@ export function verifySignature(header: string | null, requestId: string | null,
 }
 
 /** external_reference: de quién es el cobro (suscripción de Faro, honorario, flota o factura personal) */
-export type ChargeRef = { kind: "sub"; id: string } | { kind: "hon"; id: string } | { kind: "flota"; id: string } | { kind: "fac"; id: string };
+type ChargeRef = { kind: "sub"; id: string } | { kind: "hon"; id: string } | { kind: "flota"; id: string } | { kind: "fac"; id: string };
 const UUID = /^[0-9a-f-]{36}$/i;
 export const refOf = (r: ChargeRef) => `faro:${r.kind}:${r.id}`;
 export function parseRef(s: string | null | undefined): ChargeRef | null {
@@ -41,7 +41,7 @@ export const TRIAL_DAYS = 30;
 export const GRACE_DAYS = 7;
 export type SubStatus = "prueba" | "activa" | "morosa" | "suspendida" | "cancelada";
 
-export interface SubState {
+interface SubState {
   status: SubStatus;
   trialEndsAt: Date | null;
   currentPeriodEnd: Date | null;
@@ -110,12 +110,12 @@ export function feeFor(base: number, adj: Adjustment, start: string, period: str
   return Math.round((base * to) / from);
 }
 
-export function monthsBetween(a: string, b: string) {
+function monthsBetween(a: string, b: string) {
   const [ya, ma] = a.slice(0, 7).split("-").map(Number);
   const [yb, mb] = b.slice(0, 7).split("-").map(Number);
   return (yb - ya) * 12 + (mb - ma);
 }
-export function addMonthsStr(month: string, n: number) {
+function addMonthsStr(month: string, n: number) {
   const [y, m] = month.slice(0, 7).split("-").map(Number);
   const t = y * 12 + (m - 1) + n;
   return `${Math.floor(t / 12)}-${String((t % 12) + 1).padStart(2, "0")}`;
@@ -125,7 +125,7 @@ const prevMonth = (m: string) => addMonthsStr(m, -1);
 // ───────────── Recordatorios escalonados ─────────────
 
 /** Días respecto del vencimiento: 3 antes, el día, 3, 7 y 15 después */
-export const REMINDER_STEPS = [-3, 0, 3, 7, 15] as const;
+const REMINDER_STEPS = [-3, 0, 3, 7, 15] as const;
 
 /** Próximo recordatorio que toca mandar hoy (o null) */
 export function dueReminder(dueDate: string, sent: number[], today: string, steps: readonly number[] = REMINDER_STEPS): number | null {

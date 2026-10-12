@@ -16,7 +16,7 @@ export const CODE_TTL_S = 600;
 
 export const hashToken = (t: string) => createHash("sha256").update(t, "utf8").digest("hex");
 
-export function newToken(kind: "bearer" | "access" | "refresh" | "code") {
+function newToken(kind: "bearer" | "access" | "refresh" | "code") {
   const prefix = { bearer: "faro_mcp_", access: "faro_at_", refresh: "faro_rt_", code: "faro_code_" }[kind];
   const token = `${prefix}${randomBytes(32).toString("base64url")}`;
   return { token, hash: hashToken(token), prefix: token.slice(0, prefix.length + 6) };

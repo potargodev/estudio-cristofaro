@@ -1,7 +1,7 @@
 // Público del brief (sección 2): empresas de servicios de CABA y GBA de 5 a 30
 // personas. Cada uno tiene su landing en /<slug>.
 
-export interface Audience {
+interface Audience {
   slug: string;
   name: string; // nombre largo
   short: string; // para la marquesina y el menú

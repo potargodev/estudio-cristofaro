@@ -9,7 +9,7 @@ import { InviteLinkBanner, TeamForm } from "./TeamForm";
 
 type TeamAction = (prev: TeamResult | null, fd: FormData) => Promise<TeamResult>;
 
-export interface TeamActions {
+interface TeamActions {
   invite: TeamAction;
   resend: TeamAction;
   revokeInvitation: TeamAction;

@@ -38,7 +38,7 @@ export const connectorMessage = z.discriminatedUnion("kind", [
   }),
 ]);
 
-export type ConnectorMessage = z.infer<typeof connectorMessage>;
+type ConnectorMessage = z.infer<typeof connectorMessage>;
 
 /** Implementación "connector" de TangoSource: un mensaje "records" es un lote */
 export const connectorSource: TangoSource<ConnectorMessage> = {

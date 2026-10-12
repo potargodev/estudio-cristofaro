@@ -9,7 +9,7 @@ import { getTicket, type ArcaCredential } from "./wsaa";
 
 const NS = "http://servicios1.afip.gob.ar/wscdc/";
 
-export interface Constatacion {
+interface Constatacion {
   cuitEmisor: string;
   cbteTipo: number;
   ptoVta: number;

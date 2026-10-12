@@ -16,7 +16,7 @@ import { AGREEMENT_VERSION, BELOW_MIN_NOTICE_DAYS, FLEET_MAX, FLEET_MIN, fleetNa
 
 export class FleetError extends Error {}
 
-export interface Me {
+interface Me {
   id: string;
   name: string;
   email: string;
@@ -41,7 +41,7 @@ async function mailMembers(fleetId: string, subject: string, html: string, excep
 }
 
 /** Integrante activo de la Flota (o error). Base de todo el aislamiento */
-export async function membership(fleetId: string, me: Me) {
+async function membership(fleetId: string, me: Me) {
   if (!UUID.test(fleetId)) throw new FleetError("Esa Flota no existe.");
   const [m] = await db()
     .select({ m: fleet_members, f: fleets })
@@ -219,7 +219,7 @@ export async function closeRequest(me: Me, fleetId: string) {
 }
 
 /** Composición anónima de la Flota: cuántos integrantes por perfil (lo que ve un estudio) */
-export async function composition(fleetId: string) {
+async function composition(fleetId: string) {
   const rows = await db()
     .select({ profile: fleet_members.profile, n: count() })
     .from(fleet_members)
@@ -430,7 +430,7 @@ export async function requestEnd(me: Me, id: string) {
 }
 
 /** Si una propuesta queda con menos acuerdos que su mínimo: aviso de 30 días antes de la tarifa normal */
-export async function checkMinimums(fleetId: string | null) {
+async function checkMinimums(fleetId: string | null) {
   if (!fleetId) return;
   const props = await db().select().from(fleet_proposals).where(eq(fleet_proposals.fleet_id, fleetId));
   for (const p of props) {
@@ -482,7 +482,7 @@ export async function registerPayment(studio: { id: string; userId: string }, ag
 }
 
 /** Cierra los acuerdos con baja cuya fecha de fin ya pasó */
-export async function finishDueAgreements() {
+async function finishDueAgreements() {
   await db()
     .update(service_agreements)
     .set({ status: "finalizado" })

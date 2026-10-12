@@ -27,7 +27,7 @@ function Hidden({ r }: { r: ResolvedScope }) {
 }
 
 const exportHref = (r: ResolvedScope, formato: string) => `/api/lectura/exportar?${new URLSearchParams({ ambito: r.scope.scope === "organizacion" ? "estudio" : r.scope.scope, ...(r.scope.organizationId && r.scope.scope === "organizacion" ? { org: r.scope.organizationId } : {}), formato })}`;
-export const fileHref = (r: ResolvedScope, id: string) => `/api/lectura/${id}/archivo?${new URLSearchParams({ ambito: r.scope.scope === "organizacion" ? "estudio" : r.scope.scope, ...(r.scope.scope === "organizacion" && r.scope.organizationId ? { org: r.scope.organizationId } : {}) })}`;
+const fileHref = (r: ResolvedScope, id: string) => `/api/lectura/${id}/archivo?${new URLSearchParams({ ambito: r.scope.scope === "organizacion" ? "estudio" : r.scope.scope, ...(r.scope.scope === "organizacion" && r.scope.organizationId ? { org: r.scope.organizationId } : {}) })}`;
 
 function title(d: SmartDoc) {
   const e = d.extracted as unknown as Extraction | null;

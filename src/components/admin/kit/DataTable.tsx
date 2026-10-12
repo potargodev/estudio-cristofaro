@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
-export interface DTColumn {
+interface DTColumn {
   key: string;
   header: string;
   sortable?: boolean;
@@ -31,13 +31,13 @@ export interface DTRow {
   card?: React.ReactNode;
 }
 
-export interface DTFilter {
+interface DTFilter {
   key: string;
   label: string;
   options: { value: string; label: string }[];
 }
 
-export interface DTBulkAction {
+interface DTBulkAction {
   label: string;
   /** Server action que recibe `ids` (uno por fila elegida) y `extra` si hay */
   action: (fd: FormData) => void | Promise<void>;

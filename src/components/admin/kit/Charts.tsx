@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 // tabulares y tooltip legible al pasar el mouse o con el foco del teclado.
 // Cada gráfico lleva además una tabla oculta con los datos para lectores.
 
-export const CHART_COLORS = ["#1c2235", "#a57c6d", "#6b7a99", "#3f7f57", "#7d5848"] as const;
+const CHART_COLORS = ["#1c2235", "#a57c6d", "#6b7a99", "#3f7f57", "#7d5848"] as const;
 const fmt = new Intl.NumberFormat("es-AR");
 
-export interface Series {
+interface Series {
   key: string;
   label: string;
   color?: string;
@@ -165,63 +165,6 @@ export function BarChart({
           <Legend series={series} />
         </div>
       )}
-      <DataTable caption={caption} rows={data} series={series} />
-    </figure>
-  );
-}
-
-/** Líneas (una o más series) */
-export function LineChart({ data, series, caption, height = 200 }: { data: Row[]; series: Series[]; caption: string; height?: number }) {
-  const [hover, setHover] = useState<number | null>(null);
-  const max = Math.max(1, ...data.flatMap((r) => series.map((s) => Number(r[s.key]) || 0)));
-  const W = 100;
-  const H = 100;
-  const x = (i: number) => (data.length === 1 ? W / 2 : (i / (data.length - 1)) * W);
-  const y = (v: number) => H - (v / max) * H;
-  return (
-    <figure className="relative">
-      <figcaption className="sr-only">{caption}</figcaption>
-      <div className="relative ml-10 pb-6" style={{ height }}>
-        <div className="tabular absolute -left-10 bottom-6 top-0 flex w-8 flex-col justify-between text-right text-caption text-muted" aria-hidden>
-          <span className="-translate-y-1/2">{max}</span>
-          <span className="translate-y-1/2">0</span>
-        </div>
-        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-x-0 bottom-6 top-0 h-[calc(100%-1.5rem)] w-full overflow-visible" aria-hidden>
-          {[0, 0.5, 1].map((f) => (
-            <line key={f} x1={0} x2={W} y1={H * f} y2={H * f} stroke="var(--color-line)" strokeDasharray="2 2" vectorEffect="non-scaling-stroke" />
-          ))}
-          {series.map((s, k) => (
-            <polyline
-              key={s.key}
-              fill="none"
-              stroke={s.color ?? CHART_COLORS[k]}
-              strokeWidth={2}
-              vectorEffect="non-scaling-stroke"
-              points={data.map((r, i) => `${x(i)},${y(Number(r[s.key]) || 0)}`).join(" ")}
-            />
-          ))}
-          {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={0} y2={H} stroke="var(--color-muted)" strokeWidth={1} vectorEffect="non-scaling-stroke" />}
-        </svg>
-        <div className="absolute inset-0 flex">
-          {data.map((r, i) => (
-            <div
-              key={r.label}
-              tabIndex={0}
-              role="img"
-              aria-label={`${r.label}: ${series.map((s) => `${s.label} ${Number(r[s.key]) || 0}`).join(", ")}`}
-              onMouseEnter={() => setHover(i)}
-              onMouseLeave={() => setHover(null)}
-              onFocus={() => setHover(i)}
-              onBlur={() => setHover(null)}
-              className="relative flex-1 outline-none"
-            >
-              <span className="tabular absolute inset-x-0 bottom-0 truncate text-center text-caption text-muted">{r.label}</span>
-            </div>
-          ))}
-        </div>
-        {hover !== null && <Tooltip row={data[hover]} series={series} x={((hover + 0.5) / data.length) * 100} y={8} />}
-      </div>
-      {series.length > 1 && <Legend series={series} />}
       <DataTable caption={caption} rows={data} series={series} />
     </figure>
   );

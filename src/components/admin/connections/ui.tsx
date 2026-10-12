@@ -4,7 +4,7 @@ import type { connection_logs } from "@/db/schema";
 import type { ConnectorDefinition } from "@/modules/connectors/catalog";
 import { cn } from "@/lib/utils";
 
-export const fmtDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
+const fmtDate = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "America/Argentina/Buenos_Aires" });
 export const when = (d: Date | null | undefined) => (d ? fmtDate.format(d) : "Nunca");
 
 /** Monograma del conector (sin logos de terceros embebidos) */

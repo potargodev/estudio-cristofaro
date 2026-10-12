@@ -26,7 +26,7 @@ const db = () => getDb();
 const UUID = /^[0-9a-f-]{36}$/i;
 const PROCESS = TANGO_PROCESS.comprobantesVenta;
 type Actor = { id: string; email?: string | null; studioId: string };
-export type TangoDoc = typeof tango_documents.$inferSelect;
+type TangoDoc = typeof tango_documents.$inferSelect;
 
 // ── Enlace ───────────────────────────────────────────────────────────
 
@@ -88,7 +88,7 @@ export async function registerWebhook(actor: Actor, callbackUrl: string) {
 
 // ── Normalización: reglas con revisión humana ────────────────────────
 
-export async function approvedRules(studioId: string, field: "cliente" | "cuenta" | "categoria") {
+async function approvedRules(studioId: string, field: "cliente" | "cuenta" | "categoria") {
   return db().select({ raw_key: tango_norm_rules.raw_key, standard: tango_norm_rules.standard }).from(tango_norm_rules).where(and(eq(tango_norm_rules.studio_id, studioId), eq(tango_norm_rules.field, field), eq(tango_norm_rules.status, "aprobada")));
 }
 
@@ -214,7 +214,7 @@ const fieldsOf = (raw: Record<string, unknown>) => ({
  * y con el original. Ya conocido: si cambió algo que importa respecto de lo
  * que Faro tiene, queda en conflicto (no se pisa).
  */
-export async function ingestFromTango(studioId: string, raw: Record<string, unknown>) {
+async function ingestFromTango(studioId: string, raw: Record<string, unknown>) {
   const ext = String(raw.ID_GVA12 ?? "");
   if (!ext) return "sin_id";
   const f = fieldsOf(raw);

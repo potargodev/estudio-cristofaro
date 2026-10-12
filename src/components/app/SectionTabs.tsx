@@ -24,7 +24,7 @@ const pathOf = (href: string) => href.split(/[?#]/)[0];
 const tabOf = (href: string) => new URLSearchParams(href.split("?")[1]?.split("#")[0] ?? "").get("tab");
 const under = (pathname: string, p: string) => pathname === p || pathname.startsWith(`${p}/`);
 
-export function activeTab(tabs: TabItem[], pathname: string, tab: string | null) {
+function activeTab(tabs: TabItem[], pathname: string, tab: string | null) {
   if (tabs.some((t) => t.active !== undefined)) return tabs.findIndex((t) => t.active);
   let best = -1;
   let score = -1;

@@ -15,7 +15,7 @@ import { xubio, XubioError, type XubioCredentials } from "./client";
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 const num = (v: unknown) => (typeof v === "number" ? v : typeof v === "string" && v.trim() ? Number(v) : null);
 
-export function credsOf(conn: Connection): XubioCredentials | null {
+function credsOf(conn: Connection): XubioCredentials | null {
   const c = readCredentials<{ client_id: string; client_secret: string }>(conn);
   return c.client_id && c.client_secret ? { client_id: c.client_id, client_secret: c.client_secret } : null;
 }

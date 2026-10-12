@@ -61,7 +61,7 @@ export function merchantKey(description: string) {
 
 const SUBSCRIPTION = /netflix|spotify|disney|hbo|max\b|prime|youtube|apple|icloud|google one|paramount|star\+|crunchyroll|chatgpt|openai|adobe|canva|microsoft|office|dropbox|notion|figma|gym|gimnasio|megatlon/;
 
-export interface Recurring {
+interface Recurring {
   key: string;
   label: string;
   categoryId: string | null;
@@ -127,7 +127,7 @@ export function detectRecurring(movs: Mov[], today = new Date()): Recurring[] {
 
 // ───────────── Fugas ─────────────
 
-export interface Leak {
+interface Leak {
   kind: "delivery_noche" | "finde_cobro" | "suscripcion_olvidada";
   title: string;
   body: string;
@@ -309,7 +309,7 @@ export function mapRows(rows: string[][], map: Mapping): ImportRow[] {
 }
 
 /** Huella de una fila para detectar duplicados */
-export function rowId(date: string, description: string, amount: number) {
+function rowId(date: string, description: string, amount: number) {
   const s = `${date}|${merchantKey(description) || description.toLowerCase()}|${amount}`;
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
@@ -342,7 +342,7 @@ export function mercadoPagoMapping(header: string[]): Mapping | null {
 
 // ───────────── Mails (Gmail) ─────────────
 
-export interface MailProposal {
+interface MailProposal {
   detected: "servicio" | "suscripcion" | "resumen_tarjeta" | "factura";
   description: string;
   amount: number | null;

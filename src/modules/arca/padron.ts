@@ -23,7 +23,7 @@ export interface TaxpayerData {
 type Raw = Record<string, unknown>;
 const s = (v: unknown) => (v == null ? "" : String(v));
 
-export function normalizePersona(cuit: string, persona: Raw): TaxpayerData {
+function normalizePersona(cuit: string, persona: Raw): TaxpayerData {
   const general = (persona.datosGenerales ?? {}) as Raw;
   const mono = persona.datosMonotributo as Raw | undefined;
   const rg = persona.datosRegimenGeneral as Raw | undefined;

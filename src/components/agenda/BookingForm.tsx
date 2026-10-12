@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { bookCall, type BookingState } from "@/app/actions/agenda";
 import { Field, Honeypot, inputClass } from "@/components/site/form-fields";
@@ -51,9 +52,9 @@ export function BookingForm({ days, initial, red }: { days: PickerDay[]; initial
         </Button>
         <p className="mt-3 text-ui text-muted">
           Al confirmar aceptás que usemos tus datos para coordinar la llamada (ver{" "}
-          <a href="/privacidad" className="underline">
+          <Link href="/privacidad" className="underline">
             privacidad
-          </a>
+          </Link>
           ).
         </p>
       </div>

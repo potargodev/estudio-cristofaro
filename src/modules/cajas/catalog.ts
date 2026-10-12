@@ -4,9 +4,9 @@
 // sueldo del dueño o un aporte). Archivo sin "server-only".
 
 export type BoxKind = "personal" | "negocio" | "compartida";
-export type SharedPurpose = "pareja" | "familia" | "amigos" | "negocio" | "padres";
+type SharedPurpose = "pareja" | "familia" | "amigos" | "negocio" | "padres";
 
-export interface Category {
+interface Category {
   key: string;
   name: string;
   kind: "gasto" | "ingreso" | "ahorro";
@@ -31,7 +31,7 @@ export const BUSINESS_CATEGORIES: Category[] = [
 /** Movimientos entre cajas (no son gastos ni ingresos de la actividad) */
 export const TRANSFER_KINDS = { retiro: "Sueldo del dueño", aporte: "Aporte" } as const;
 
-export interface SharedTemplate {
+interface SharedTemplate {
   purpose: SharedPurpose;
   name: string;
   /** Para qué es (se muestra al elegir) */

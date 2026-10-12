@@ -29,18 +29,6 @@ export interface Faq {
   published: boolean;
 }
 
-export interface Plan {
-  id: string;
-  name: string;
-  segment: string | null;
-  price_label: string | null;
-  description: string | null;
-  features: string[];
-  highlighted: boolean;
-  position: number;
-  published: boolean;
-}
-
 export const ROLES: Record<UserRole, string> = {
   dueno: "Dueño",
   contador: "Contador",

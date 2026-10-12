@@ -1,7 +1,7 @@
 import { WandSparkles } from "lucide-react";
 import Link from "next/link";
 
-export interface Origin {
+interface Origin {
   id: string;
   kind: string;
   text: string | null;

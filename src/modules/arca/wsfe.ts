@@ -41,13 +41,7 @@ export async function salesPoints(cred: ArcaCredential, cuit: string) {
   return arr<Record<string, string>>((result.ResultGet as { PtoVenta?: unknown } | undefined)?.PtoVenta as never).map((p) => ({ number: Number(p.Nro), kind: String(p.EmisionTipo ?? ""), blocked: p.Bloqueado === "S" || !!(p.FchBaja && p.FchBaja !== "NULL") }));
 }
 
-export async function paramList(cred: ArcaCredential, cuit: string, op: "FEParamGetTiposCbte" | "FEParamGetTiposIva" | "FEParamGetTiposDoc" | "FEParamGetTiposMonedas", item: string) {
-  const { result, errors, raw } = await call(cred, cuit, op);
-  failIf(errors, raw);
-  return arr<Record<string, string>>((result.ResultGet as Record<string, unknown> | undefined)?.[item] as never).map((x) => ({ id: String(x.Id), desc: String(x.Desc) }));
-}
-
-export interface CaeRequest {
+interface CaeRequest {
   ptoVta: number;
   cbteTipo: number;
   concepto: number;

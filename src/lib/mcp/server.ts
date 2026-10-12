@@ -11,7 +11,7 @@ import type { McpAccess } from "./tokens";
 // del acceso (módulos, lectura/escritura y organizaciones) y el rol de quien
 // lo creó. Cada llamada queda en mcp_calls y en la auditoría (executeTool).
 
-export function mcpToolContext(access: McpAccess, user: typeof users.$inferSelect, planCanWrite = true): ToolContext {
+function mcpToolContext(access: McpAccess, user: typeof users.$inferSelect, planCanWrite = true): ToolContext {
   return {
     studioId: access.studio_id,
     actor: { id: user.id, email: user.email, name: user.name, role: user.role as StaffRole },

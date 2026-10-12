@@ -20,7 +20,7 @@ const MAINLAND: [number, number][] = [
 ];
 const FUEGO: [number, number][] = [[-68.6, -52.6], [-65.3, -54.8], [-66.4, -55.0], [-68.6, -54.9]];
 
-export type MapStudio = { studioId: string; slug: string; name: string; province: string | null };
+type MapStudio = { studioId: string; slug: string; name: string; province: string | null };
 
 export function StudiosMap({ items }: { items: MapStudio[] }) {
   const byProvince = new Map<string, MapStudio[]>();

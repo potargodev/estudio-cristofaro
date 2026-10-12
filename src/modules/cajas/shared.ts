@@ -8,7 +8,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { SplitError, splitExpense } from "@/modules/gastos/core/split";
 import { todayAR } from "@/modules/gastos/constants";
 import { notify } from "@/modules/notifications/server";
-import { categoriesFor, SHARED_TEMPLATES, templateOf, type SharedPurpose } from "./catalog";
+import { categoriesFor, templateOf } from "./catalog";
 import { breakdown, type LedgerEntry } from "./ledger";
 import { boxFor, CajaError } from "./server";
 
@@ -113,7 +113,7 @@ export async function leaveBox(me: Me, boxId: string) {
 
 // ── Cargar: una carga, uno o más destinos, dos finales ──────────────
 
-export interface SharedEntryInput {
+interface SharedEntryInput {
   kind: "gasto" | "ahorro" | "ingreso";
   amount: number;
   date?: string;
@@ -308,4 +308,3 @@ export async function pairBoxFromHogar(me: Me, shareId: string) {
   return box;
 }
 
-export { SHARED_TEMPLATES, type SharedPurpose };

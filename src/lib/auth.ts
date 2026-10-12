@@ -30,7 +30,7 @@ export interface StaffUser {
   tenantKind: "studio" | "personal" | "persona";
 }
 
-export type TenantKind = StaffUser["tenantKind"];
+type TenantKind = StaffUser["tenantKind"];
 
 export const ASSISTED_COOKIE = "faro_asistido";
 
@@ -217,14 +217,7 @@ export const requireMember = cache(async (permission?: Permission): Promise<Port
   };
 });
 
-/**
- * Usuario del estudio para rutas de API (sin redirects): sesión vigente, rol
- * admin o contador, contraseña definitiva y segundo factor activo. Si no, null.
- */
-/** Guarda de nivel organización (portal): miembro activo, con el permiso pedido según su rol */
-export const requireOrganization = (permission?: Permission) => requireMember(permission);
-
-export interface EmployeeUser extends PortalUser {
+interface EmployeeUser extends PortalUser {
   employee: { id: string; firstName: string; lastName: string; position: string | null };
 }
 

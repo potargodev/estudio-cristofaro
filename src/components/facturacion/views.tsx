@@ -65,7 +65,7 @@ const STATUS: Record<string, { label: string; tone: string }> = {
 };
 
 /** Campos ocultos del alcance (en el estudio, la organización y la CUIT) */
-export function ScopeFields({ scope, volver }: { scope: IssuerScope; volver?: string }) {
+function ScopeFields({ scope, volver }: { scope: IssuerScope; volver?: string }) {
   return (
     <>
       {scope.kind === "studio" && <input type="hidden" name="org" value={scope.organizationId} />}
@@ -91,7 +91,7 @@ export function Feedback({ sp }: { sp: SP }) {
   return null;
 }
 
-export function StatusPill({ status }: { status: string }) {
+function StatusPill({ status }: { status: string }) {
   const s = STATUS[status] ?? STATUS.borrador;
   return <span className={cn("inline-flex h-6 items-center rounded-full border px-2 text-caption font-medium", s.tone)}>{s.label}</span>;
 }

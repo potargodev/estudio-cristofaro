@@ -4,7 +4,7 @@
 export const AI_PROVIDER_KINDS = ["anthropic", "openai", "google", "openrouter", "azure", "openai_compatible"] as const;
 export type AiProviderKind = (typeof AI_PROVIDER_KINDS)[number];
 
-export interface ProviderMeta {
+interface ProviderMeta {
   label: string;
   /** Texto de ayuda: dónde se saca la clave */
   help: string;

@@ -109,6 +109,7 @@ export default async function TangoSyncPage({ searchParams }: { searchParams: Pr
                 <RefreshCw className="size-4" aria-hidden /> Sincronizar ahora
               </SubmitButton>
             </form>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- ruta /api (descarga u OAuth): necesita navegación completa */}
             <a href="/api/integrations/tango/exportar" className="inline-flex items-center gap-2 rounded-md border border-line px-3 py-2 text-ui font-medium hover:bg-canvas">
               <Download className="size-4" aria-hidden /> Exportar CSV para Tango
             </a>

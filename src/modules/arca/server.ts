@@ -1,7 +1,7 @@
 import "server-only";
 import { emitEvent } from "@/modules/flows/events";
 import { randomBytes } from "node:crypto";
-import { and, asc, count, desc, eq, gte, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import {
   arca_taxpayers,
@@ -117,7 +117,7 @@ export async function issuerFromForm(user: StaffUser, fd: FormData) {
   return org ? orgIssuer(user, org, String(fd.get("cuit") ?? "") || null) : personalIssuer(user);
 }
 
-export async function requireArca(scope: IssuerScope) {
+async function requireArca(scope: IssuerScope) {
   if (!(await hasModule(scope.studioId, "arca"))) throw new ArcaError("La integración con ARCA no está incluida en tu plan.");
 }
 
@@ -154,7 +154,7 @@ export async function getSettings(scope: IssuerScope) {
   } as unknown as typeof invoice_settings.$inferSelect & { id: string | null };
 }
 
-export interface SettingsInput {
+interface SettingsInput {
   businessName: string;
   ivaCondition: string;
   address?: string | null;
@@ -463,13 +463,6 @@ export async function deleteDraft(scope: IssuerScope, id: string, actor: ArcaAct
   if (r) await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.borrar_borrador", entityType: "factura", entityId: id });
 }
 
-/** Comprobantes autorizados del tenant en el mes (límite del plan) */
-export async function invoicesThisMonth(studioId: string) {
-  const first = today().slice(0, 8) + "01";
-  const [r] = await db().select({ n: count() }).from(invoices).where(and(eq(invoices.studio_id, studioId), eq(invoices.status, "autorizada"), gte(invoices.authorized_at, new Date(`${first}T03:00:00Z`))));
-  return r?.n ?? 0;
-}
-
 /**
  * Emite: pide el próximo número a ARCA y el CAE. Idempotente: el comprobante
  * se marca "autorizando" antes de llamar (dos clics no emiten dos veces) y, si
@@ -596,7 +589,7 @@ export async function currentScale() {
 }
 
 /** Facturación por mes (autorizada en Faro, notas de crédito restando, más lo cargado a mano) */
-export async function incomeByMonth(scope: IssuerScope, from: string) {
+async function incomeByMonth(scope: IssuerScope, from: string) {
   const rows = await db()
     .select({ month: sql<string>`to_char(${invoices.issue_date}, 'YYYY-MM')`, type: invoices.cbte_type, total: sql<string>`sum(${invoices.total} * ${invoices.exchange_rate})` })
     .from(invoices)
@@ -646,7 +639,7 @@ export async function saveProfile(scope: IssuerScope, p: { regime: string; categ
 }
 
 /** (Re)genera los vencimientos personales de los próximos 6 meses; respeta los ya marcados */
-export async function regenerateCalendar(scope: IssuerScope) {
+async function regenerateCalendar(scope: IssuerScope) {
   const p = await profileFor(scope);
   if (!p || !/^\d{11}$/.test(scope.cuit)) return 0;
   const list = deadlines({ cuit: scope.cuit, regime: p.regime as TaxProfileInput["regime"], iibb: p.iibb as TaxProfileInput["iibb"], autonomos: p.autonomos });

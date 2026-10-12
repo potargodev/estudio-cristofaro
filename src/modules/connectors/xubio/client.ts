@@ -13,7 +13,7 @@ import { createHash } from "node:crypto";
 //   y se reintenta una vez.
 // XUBIO_API_URL apunta a otro servidor (el mock de mocks/xubio para pruebas).
 
-export const xubioBase = () => (process.env.XUBIO_API_URL?.trim() || "https://xubio.com/API/1.1").replace(/\/$/, "");
+const xubioBase = () => (process.env.XUBIO_API_URL?.trim() || "https://xubio.com/API/1.1").replace(/\/$/, "");
 
 // Token en memoria por credencial (client_id + secret) y un solo pedido de
 // token a la vez: si varios pedidos en paralelo encuentran el token muerto,
@@ -70,7 +70,7 @@ async function token(c: XubioCredentials, dead?: string) {
   return p;
 }
 
-export async function xubioGet<T = unknown>(c: XubioCredentials, path: string, params: Record<string, string | undefined> = {}): Promise<T> {
+async function xubioGet<T = unknown>(c: XubioCredentials, path: string, params: Record<string, string | undefined> = {}): Promise<T> {
   const url = new URL(`${xubioBase()}${path}`);
   for (const [k, v] of Object.entries(params)) if (v) url.searchParams.set(k, v);
   let dead: string | undefined;
@@ -100,7 +100,7 @@ export async function xubioGet<T = unknown>(c: XubioCredentials, path: string, p
 
 const list = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : v && typeof v === "object" ? [v as T] : []);
 
-export interface XubioCliente {
+interface XubioCliente {
   cliente_id?: number | string;
   nombre?: string;
   razonSocial?: string;
@@ -109,7 +109,7 @@ export interface XubioCliente {
   email?: string;
   [k: string]: unknown;
 }
-export interface XubioProveedor {
+interface XubioProveedor {
   proveedorid?: number | string;
   nombre?: string;
   razonSocial?: string;
@@ -118,7 +118,7 @@ export interface XubioProveedor {
   [k: string]: unknown;
 }
 type Ref = { ID?: number | string; id?: number | string; nombre?: string };
-export interface XubioComprobante {
+interface XubioComprobante {
   transaccionid?: number | string;
   tipo?: number;
   fecha?: string;
@@ -128,7 +128,7 @@ export interface XubioComprobante {
   proveedor?: Ref;
   [k: string]: unknown;
 }
-export interface XubioAsiento {
+interface XubioAsiento {
   transaccionid?: number | string;
   fecha?: string;
   numeroDocumento?: string;
@@ -146,6 +146,3 @@ export const xubio = {
   compras: async (c: XubioCredentials, desde: string, hasta: string) => list<XubioComprobante>(await xubioGet(c, "/comprobanteCompraBean", { fechaDesde: desde, fechaHasta: hasta })),
   asientos: async (c: XubioCredentials) => list<XubioAsiento>(await xubioGet(c, "/asientoContableManualBean")),
 };
-
-/** Solo pruebas: olvidar los tokens en memoria */
-export const resetXubioTokens = () => tokens.clear();

@@ -17,8 +17,8 @@ import { cn } from "@/lib/utils";
 // Paleta única de estados para todo el backoffice. Siempre ícono + texto (nunca
 // solo color). Colores sobre blanco con contraste AA (texto ≥ 4,5:1).
 
-export type Tone = "neutral" | "info" | "progress" | "ok" | "done" | "danger" | "gold";
-export const TONES: Record<Tone, string> = {
+type Tone = "neutral" | "info" | "progress" | "ok" | "done" | "danger" | "gold";
+const TONES: Record<Tone, string> = {
   neutral: "border-[#cfd3dc] bg-[#f3f4f7] text-[#3d4456]",
   info: "border-[#bcc8e6] bg-[#eef2fb] text-[#2b4486]",
   progress: "border-[#e3cf9f] bg-[#fbf5e6] text-[#7a5410]",
@@ -28,7 +28,7 @@ export const TONES: Record<Tone, string> = {
   gold: "border-[#e2cdc4] bg-[#f6efeb] text-[#6d4a3c]",
 };
 
-export type StatusKey =
+type StatusKey =
   | "pendiente"
   | "en_curso"
   | "en_proceso"

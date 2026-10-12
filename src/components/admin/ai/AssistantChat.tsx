@@ -31,7 +31,7 @@ import { decideInlineAction, deleteConversation, searchContextAction } from "@/a
 import { CONTEXT_LABEL, type ContextItem, type ContextKind } from "@/lib/ai/context";
 import { cn } from "@/lib/utils";
 
-export interface ConversationSummary {
+interface ConversationSummary {
   id: string;
   title: string;
   updatedAt: string;

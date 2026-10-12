@@ -24,7 +24,7 @@ export interface ShellSpace {
 const ICON: Record<ShellSpace["icon"], LucideIcon> = { studio: Building2, org: Store, personal: UserRound, faro: Compass };
 
 /** Abre el selector desde otro lugar (menú de la cuenta) */
-export const OPEN_SPACES = "faro:espacios";
+const OPEN_SPACES = "faro:espacios";
 
 /** Lista de espacios (selector y menú de la cuenta) */
 export function SpaceList({ spaces, switchOrg, onPick, tone = "dark" }: { spaces: ShellSpace[]; switchOrg?: (fd: FormData) => void | Promise<void>; onPick?: () => void; tone?: "dark" | "light" }) {

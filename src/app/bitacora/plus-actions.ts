@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { setPrefs } from "@/lib/prefs";
 import { ConnectionError, authUrl, decideProposal, disconnect, syncGmail, syncMercadoPago, type Provider } from "@/modules/bitacora/connections";
 import { confirmImport, createPreview, discardImport, ImportError, undoImport } from "@/modules/bitacora/imports";
-import { addToGoal, applySuggested, archiveGoal, createGoal, markProfessional, PlanningError, saveBudget, sendToPersonal } from "@/modules/bitacora/planning";
+import { addToGoal, applySuggested, archiveGoal, createGoal, PlanningError, saveBudget } from "@/modules/bitacora/planning";
 import { addManualRecurring, dismissInsight, setRecurringStatus } from "@/modules/bitacora/recurring";
 import { acceptShare, createShare, revokeShare, ShareError } from "@/modules/bitacora/shares";
 import { createEntry } from "@/modules/bitacora/server";
@@ -192,21 +192,6 @@ export async function sharedEntryAction(fd: FormData) {
   await createEntry(share.ownerId, { kind: s(fd, "kind") === "ingreso" ? "ingreso" : "gasto", amount, currency: "ARS", date: s(fd, "date") || new Date().toISOString().slice(0, 10), categoryId: null, description: s(fd, "description"), paymentMethod: null, note: `Cargado por ${u.name}` });
   revalidatePath(`/bitacora/compartida/${share.id}`);
   go(`/bitacora/compartida/${share.id}`, { ok: "Cargado." });
-}
-
-// Personal / profesional
-export async function professionalAction(fd: FormData) {
-  const u = await me();
-  const id = s(fd, "id");
-  const back = `/bitacora/${id}`;
-  if (s(fd, "op") === "pasar") {
-    await guard(back, () => sendToPersonal(u, id));
-    revalidatePath("/personal");
-    go(back, { ok: "Pasado a los gastos de tu actividad en Faro Personal." });
-  }
-  await guard(back, () => markProfessional(u, id, { professional: fd.get("professional") === "on", deductible: fd.get("deductible") === "on" }));
-  revalidatePath("/bitacora", "layout");
-  go(back, { ok: "Guardado." });
 }
 
 /** Resumen semanal del domingo: prendido o apagado */

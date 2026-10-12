@@ -1,7 +1,7 @@
 import { CalendarDays, ClipboardCheck, HelpCircle, Mail, MessageCircle, PenLine, type LucideIcon } from "lucide-react";
 
 /** Ícono de cada origen de consulta */
-export const LEAD_SOURCE_ICONS: Record<string, LucideIcon> = {
+const LEAD_SOURCE_ICONS: Record<string, LucideIcon> = {
   diagnostico: ClipboardCheck,
   contacto: Mail,
   whatsapp: MessageCircle,

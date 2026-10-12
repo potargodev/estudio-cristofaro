@@ -219,11 +219,6 @@ export async function getDoc(s: DocScope, id: string) {
   return d ?? null;
 }
 
-export async function counts(s: DocScope) {
-  const rows = await db().select({ status: smart_documents.status, n: sql<number>`count(*)::int` }).from(smart_documents).where(where(s)).groupBy(smart_documents.status);
-  return Object.fromEntries(rows.map((r) => [r.status, r.n])) as Record<string, number>;
-}
-
 /** Uso y costo de IA de la lectura en el mes (de todo el estudio) */
 export async function monthCost(studioId: string) {
   const ar = new Date(Date.now() - 3 * 3600_000);

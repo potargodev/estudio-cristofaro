@@ -11,6 +11,7 @@ export function AccountData({ status }: { status?: string }) {
       <p className="mt-1 text-ui text-muted">Podés descargar una copia de tus datos cuando quieras y pedir la baja de la cuenta.</p>
       {status === "1" && <p role="status" className="mt-3 rounded-md bg-navy-soft px-3 py-2 text-ui">Recibimos tu pedido de baja. Te escribimos para confirmarlo; antes podés descargar tus datos.</p>}
       {status === "error" && <p role="alert" className="mt-3 text-ui text-danger">Confirmá que querés dar de baja la cuenta.</p>}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- ruta /api (descarga u OAuth): necesita navegación completa */}
       <a href="/api/cuenta/exportar" className="mt-4 inline-flex h-10 items-center gap-2 rounded-md border border-line px-4 text-ui font-medium hover:border-muted">
         <Download className="size-4" aria-hidden /> Descargar mis datos
       </a>

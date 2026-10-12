@@ -13,7 +13,6 @@ import { BASE, check, data, failures } from "./lib.mjs";
 const { chromium } = await import(process.env.PW ?? "playwright");
 const d = data();
 const sql = postgres(process.env.DATABASE_URL);
-const A = d.studios.A;
 const NORTE = d.orgs.norte;
 const SUR = d.orgs.sur;
 

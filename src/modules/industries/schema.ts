@@ -15,10 +15,10 @@ const texto = z.string().min(1).max(600);
 const opcional = z.string().max(600).optional();
 const validar = z.string().max(400).optional().describe("Qué tiene que validar un contador (a validar)");
 
-export const FRECUENCIAS = ["mensual", "bimestral", "trimestral", "cuatrimestral", "semestral", "anual", "eventual"] as const;
+const FRECUENCIAS = ["mensual", "bimestral", "trimestral", "cuatrimestral", "semestral", "anual", "eventual"] as const;
 const frecuencia = z.enum(FRECUENCIAS);
 
-export const ESTADOS_PLANTILLA = ["borrador", "validada"] as const;
+const ESTADOS_PLANTILLA = ["borrador", "validada"] as const;
 
 export const industryTemplateSchema = z.object({
   clave,

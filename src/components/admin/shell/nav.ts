@@ -97,7 +97,7 @@ export const CONFIG_TABS: NavItem[] = [
   { href: "/admin/configuracion/avanzado", label: "Avanzado", icon: "avanzado", adminOnly: true },
 ];
 
-export const NAV_GROUPS: NavGroup[] = [
+const NAV_GROUPS: NavGroup[] = [
   {
     title: "Operación",
     items: [
@@ -149,15 +149,6 @@ export function visibleGroups(a: NavAccess) {
     }),
   })).filter((g) => g.items.length);
 }
-
-export const BADGE_LABEL: Record<BadgeKey, string> = {
-  requests: "solicitudes abiertas",
-  leads: "consultas nuevas",
-  obligations: "vencimientos esta semana",
-  approvals: "propuestas para aprobar",
-  candidates: "candidatos nuevos en la Red Contable",
-  comercial: "novedades en Comercial (consultas y candidatos)",
-};
 
 /**
  * Contexto de la pantalla actual para el Vigía del estudio: la ficha de una

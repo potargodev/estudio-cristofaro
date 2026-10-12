@@ -1,7 +1,7 @@
 // Respuestas JSON de los endpoints OAuth/MCP con CORS abierto (los clientes MCP
 // del navegador consultan la metadata y el token desde otro origen).
 
-export const CORS = {
+const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, MCP-Protocol-Version",

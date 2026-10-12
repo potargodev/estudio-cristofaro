@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Building2, CalendarClock, Check, FileText, House, LayoutDashboard, MessageSquare, MessagesSquare, Sparkles, Upload, UserRound, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SplitHeading } from "@/components/web/SplitHeading";
@@ -426,9 +427,9 @@ export function PlatformDemo() {
               ))}
             </dl>
             <p className="mt-8 text-meta text-paper/60 lg:mt-auto">
-              <a href="/faro" className="mb-3 block text-paper/75 underline-offset-4 hover:text-paper hover:underline">
+              <Link href="/faro" className="mb-3 block text-paper/75 underline-offset-4 hover:text-paper hover:underline">
                 Con tecnología de Faro →
-              </a>
+              </Link>
               Incluida en todos los planes.{" "}
               <a href="#planes" className="u-draw pb-0.5 text-paper">
                 Ver planes

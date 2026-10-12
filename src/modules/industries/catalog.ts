@@ -37,7 +37,7 @@ export const FILE_TEMPLATES: IndustryTemplate[] = RAW.map((r) => {
   return t.data;
 });
 
-export const INDUSTRY_KEYS = FILE_TEMPLATES.map((t) => t.clave);
+const INDUSTRY_KEYS = FILE_TEMPLATES.map((t) => t.clave);
 export const isIndustryKey = (k: unknown): k is string => typeof k === "string" && INDUSTRY_KEYS.includes(k);
 
 /** Nombre de cada rubro (para selectores) */

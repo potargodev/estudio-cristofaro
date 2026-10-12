@@ -13,6 +13,7 @@ export default function OfflinePage() {
         <p className="mt-3 text-body leading-relaxed text-paper/70">
           Cuando vuelva internet vas a ver tus vencimientos, documentos y consultas al día. Probá de nuevo en un rato.
         </p>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- recarga completa a propósito: sin conexión no hay navegación del cliente */}
         <a href="/app" className="mt-8 inline-flex h-11 items-center bg-rose-light px-5 text-body font-medium text-night">
           Reintentar
         </a>

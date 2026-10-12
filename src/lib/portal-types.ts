@@ -1,11 +1,9 @@
-import type { documents, obligationStatus, request_messages, requests, requestStatus, requestType } from "@/db/schema";
+import type { documents, obligationStatus, requestStatus, requestType } from "@/db/schema";
 
 export type ObligationStatus = (typeof obligationStatus.enumValues)[number];
 export type RequestType = (typeof requestType.enumValues)[number];
 export type RequestStatus = (typeof requestStatus.enumValues)[number];
 export type DocumentRow = typeof documents.$inferSelect;
-export type RequestRow = typeof requests.$inferSelect;
-export type RequestMessageRow = typeof request_messages.$inferSelect;
 
 export const OBLIGATION_STATUS: Record<ObligationStatus, string> = {
   pendiente: "Pendiente",
@@ -14,9 +12,6 @@ export const OBLIGATION_STATUS: Record<ObligationStatus, string> = {
   pagado: "Pagado",
   vencido: "Vencido",
 };
-
-/** Estados que ya no requieren nada del cliente */
-export const OBLIGATION_DONE: ObligationStatus[] = ["presentado", "pagado"];
 
 export const REQUEST_TYPES: Record<RequestType, string> = {
   consulta: "Consulta",
@@ -60,7 +55,7 @@ export function dateLabel(d: string | null) {
   return d ? d.split("-").reverse().join("/") : "";
 }
 
-export const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 2 });
+const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 2 });
 
 export function moneyLabel(n: string | number | null) {
   return n == null || n === "" ? "—" : money.format(Number(n));

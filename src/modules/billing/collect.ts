@@ -109,7 +109,7 @@ async function applyInvoicePayment(studioId: string, invoiceId: string, paymentI
 
 // ───────────── Webhooks ─────────────
 
-export interface WebhookInput {
+interface WebhookInput {
   account: string; // faro | <studio_id>
   topic: string | null;
   dataId: string | null;

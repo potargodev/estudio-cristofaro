@@ -144,14 +144,14 @@ async function blockedBetween(a: string, b: string) {
   return (r?.n ?? 0) > 0;
 }
 
-export async function myBlocks(userId: string) {
+async function myBlocks(userId: string) {
   return (await db().select({ id: user_blocks.blocked_id }).from(user_blocks).where(eq(user_blocks.blocker_id, userId))).map((r) => r.id);
 }
 
 // ── Conversaciones automáticas (grupos de gastos y Flotas) ─────────────
 
 /** Crea o pone al día las conversaciones de los grupos y Flotas del usuario */
-export async function syncAuto(me: ChatUser) {
+async function syncAuto(me: ChatUser) {
   const [gp, fp] = await Promise.all([groupPeers(me.id), fleetPeers(me.id)]);
   const spaces = [
     ...[...new Set(gp.map((p) => p.groupId))].map((id) => ({ kind: "gastos" as const, id, title: gp.find((p) => p.groupId === id)!.groupName, users: gp.filter((p) => p.groupId === id).map((p) => p.userId!) })),
@@ -229,7 +229,7 @@ async function membership(me: ChatUser, conversationId: string) {
 
 // ── Lista y lectura ───────────────────────────────────────────────────
 
-export interface ConversationSummary {
+interface ConversationSummary {
   id: string;
   kind: string;
   title: string;

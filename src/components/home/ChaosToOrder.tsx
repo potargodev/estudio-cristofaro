@@ -120,8 +120,9 @@ export function ChaosToOrder() {
   }, [touchHold]);
 
   const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowRight") (e.preventDefault(), goTo(index + 1));
-    if (e.key === "ArrowLeft") (e.preventDefault(), goTo(index - 1));
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    e.preventDefault();
+    goTo(index + (e.key === "ArrowRight" ? 1 : -1));
   };
 
   return (

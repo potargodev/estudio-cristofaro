@@ -10,7 +10,7 @@ export interface TaxProfileInput {
   autonomos: boolean;
 }
 
-export interface Deadline {
+interface Deadline {
   tax: string;
   period: string;
   dueDate: string;

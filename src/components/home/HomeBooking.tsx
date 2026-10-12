@@ -154,9 +154,9 @@ export function HomeBooking({ days }: { days: PickerDay[] }) {
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-hair px-5 py-4">
         <p className="text-caption text-paper/60">
           Al confirmar aceptás que usemos tus datos para coordinar la llamada (
-          <a href="/privacidad" className="underline">
+          <Link href="/privacidad" className="underline">
             privacidad
-          </a>
+          </Link>
           ).
         </p>
         <button type="submit" disabled={pending || !start} className="inline-flex h-12 items-center bg-rose-light px-6 text-body font-medium text-night transition-colors hover:bg-paper disabled:opacity-50">

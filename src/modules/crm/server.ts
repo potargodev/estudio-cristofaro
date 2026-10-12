@@ -16,7 +16,6 @@ const db = () => getDb();
 const UUID = /^[0-9a-f-]{36}$/i;
 export class TaskError extends Error {}
 type Actor = { id: string; email: string; name?: string };
-export type Task = typeof tasks.$inferSelect;
 export const TASK_STATUS = { pendiente: "Pendiente", en_curso: "En curso", hecha: "Hecha" } as const;
 export type TaskStatus = keyof typeof TASK_STATUS;
 
@@ -24,7 +23,7 @@ export async function crmEnabled(studioId: string) {
   return hasModule(studioId, "crm");
 }
 
-export interface TaskFilters {
+interface TaskFilters {
   status?: string | null;
   assignee?: string | null;
   org?: string | null;
@@ -139,14 +138,5 @@ export async function syncObligationTasks(studioId?: string) {
       and source_ref in (select id::text from obligations where status in ('presentado', 'pagado'))
     returning id`);
   return { created, closed: (closed as unknown as unknown[]).length };
-}
-
-export async function taskCounts(studioId: string, userId: string) {
-  const today = new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 10);
-  const [r] = await db()
-    .select({ mine: sql<number>`count(*) filter (where ${tasks.assignee_id} = ${userId} and ${tasks.status} <> 'hecha')::int`, overdue: sql<number>`count(*) filter (where ${tasks.status} <> 'hecha' and ${tasks.due_date} < ${today})::int` })
-    .from(tasks)
-    .where(eq(tasks.studio_id, studioId));
-  return r;
 }
 

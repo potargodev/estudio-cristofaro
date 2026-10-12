@@ -20,7 +20,7 @@ import { getSiteUrl } from "./runtime-config";
 // - los límites de usuarios del plan se respetan al invitar y al reactivar;
 // - siempre queda al menos un administrador activo.
 
-export const INVITATION_DAYS = 7;
+const INVITATION_DAYS = 7;
 
 /** Quién actúa: alguien del estudio, o un miembro de la organización con su rol */
 export type TeamActor = { kind: "estudio"; user: StaffUser } | { kind: "miembro"; user: StaffUser; role: OrgRole };
@@ -30,12 +30,12 @@ export type TeamResult = { ok: true; message: string; link?: string; mailed?: bo
 const fail = (message: string): TeamResult => ({ ok: false, message });
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
+const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
 const newToken = () => {
   const token = randomBytes(32).toString("base64url");
   return { token, hash: hashToken(token), expires: new Date(Date.now() + INVITATION_DAYS * 86400000) };
 };
-export const invitationLink = (token: string) => `${getSiteUrl()}/invitacion/${token}`;
+const invitationLink = (token: string) => `${getSiteUrl()}/invitacion/${token}`;
 
 function actorCanGrant(actor: TeamActor, role: OrgRole) {
   return actor.kind === "estudio" || (actor.role === "administrador" && canGrant(actor.role, role));
@@ -71,7 +71,7 @@ async function mailInvitation(email: string, orgName: string, role: OrgRole, inv
 }
 
 /** Marca como vencidas las invitaciones pendientes que pasaron su fecha */
-export async function expireInvitations(organizationId?: string) {
+async function expireInvitations(organizationId?: string) {
   await getDb()
     .update(invitations)
     .set({ status: "vencida" })
@@ -399,7 +399,7 @@ export async function hasAccessByEmail(email: string) {
  * Nivel empleado: quien entra con rol "empleado" tiene su ficha en employees
  * (si RRHH ya la cargó con su email, se vincula; si no, se crea con lo básico).
  */
-export async function ensureEmployee(user: { id: string; email: string; name?: string | null }, studioId: string, organizationId: string) {
+async function ensureEmployee(user: { id: string; email: string; name?: string | null }, studioId: string, organizationId: string) {
   const db = getDb();
   const email = user.email.toLowerCase();
   const linked = await db

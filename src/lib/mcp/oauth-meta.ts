@@ -17,7 +17,7 @@ export const mcpUrls = () => {
   };
 };
 
-export const MCP_SCOPES = ["faro"];
+const MCP_SCOPES = ["faro"];
 
 export function protectedResourceMetadata() {
   const u = mcpUrls();

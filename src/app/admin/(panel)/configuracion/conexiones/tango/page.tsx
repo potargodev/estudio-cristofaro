@@ -119,6 +119,7 @@ export default async function IntegracionesPage({ searchParams }: { searchParams
           <TangoKeyPanel hasKey={Boolean(tango?.connector_key_hash)} platformUrl={getSiteUrl()} />
           {tango && (
             <>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- ruta /api (descarga u OAuth): necesita navegación completa */}
               <a href="/api/integrations/tango/config" className={adminButton.secondary}>
                 Descargar config.json (sin clave)
               </a>

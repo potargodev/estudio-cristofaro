@@ -18,7 +18,7 @@ export interface LedgerSettlement {
   amount: number;
 }
 
-export type Balances = Record<string, Record<string, number>>; // moneda → persona → centavos
+type Balances = Record<string, Record<string, number>>; // moneda → persona → centavos
 
 export function computeBalances(expenses: LedgerExpense[], settlements: LedgerSettlement[]): Balances {
   const b: Balances = {};

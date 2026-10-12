@@ -39,7 +39,7 @@ export function scrubNote(note: string) {
     .slice(0, 280);
 }
 
-export interface SeekerInput {
+interface SeekerInput {
   kind: string;
   industry?: string | null;
   size?: string | null;
@@ -207,7 +207,7 @@ export async function acceptedContacts(staff: Staff) {
 type Profile = Awaited<ReturnType<typeof getProfile>>;
 
 /** ¿Coincide con lo que ofrece el estudio? (algún servicio, el rubro o la provincia) */
-export function matchesProfile(r: { needs: string[]; industry: string | null; province: string | null }, p: Profile) {
+function matchesProfile(r: { needs: string[]; industry: string | null; province: string | null }, p: Profile) {
   if (!p) return false;
   return r.needs.some((n) => p.services.includes(n)) || (!!r.industry && p.industries.includes(r.industry)) || (!!r.province && !!p.province && r.province === p.province && p.modality !== "remoto");
 }

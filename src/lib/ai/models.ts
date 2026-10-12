@@ -14,7 +14,7 @@ import { estimateCost } from "./pricing";
 // Proveedores del estudio → modelos del AI SDK. Las claves se descifran solo
 // acá, en el servidor, al momento de usarlas.
 
-export type AiProvider = typeof ai_providers.$inferSelect;
+type AiProvider = typeof ai_providers.$inferSelect;
 
 export function languageModel(p: AiProvider, model: string): LanguageModel {
   const apiKey = p.api_key_enc ? decrypt(p.api_key_enc) : undefined;

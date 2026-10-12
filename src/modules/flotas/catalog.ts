@@ -8,15 +8,13 @@ export const MAX_NOTICE_DAYS = 30;
 export const BELOW_MIN_NOTICE_DAYS = 30;
 export const AGREEMENT_VERSION = "2026-10-borrador";
 
-export const FLEET_LABEL = "Flota · grupo informal";
-
 export const PROFILES = [
   { key: "monotributista", label: "Monotributista" },
   { key: "responsable_inscripto", label: "Responsable inscripto" },
   { key: "relacion_dependencia", label: "En relación de dependencia" },
   { key: "sin_actividad", label: "Sin actividad" },
 ] as const;
-export type FleetProfile = (typeof PROFILES)[number]["key"];
+type FleetProfile = (typeof PROFILES)[number]["key"];
 export const isProfile = (v: unknown): v is FleetProfile => PROFILES.some((p) => p.key === v);
 export const profileLabel = (k: string | null | undefined) => PROFILES.find((p) => p.key === k)?.label ?? "Sin declarar";
 

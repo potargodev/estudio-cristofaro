@@ -2,7 +2,7 @@
 // service oficial. Faro no inventa el dato: explica qué mirar, dónde, y guarda
 // lo que la persona ve, con un recordatorio periódico.
 
-export interface GuidedCheck {
+interface GuidedCheck {
   key: string;
   title: string;
   why: string;

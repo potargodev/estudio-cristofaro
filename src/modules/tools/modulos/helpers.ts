@@ -21,5 +21,3 @@ export function orgFilter(ctx: HandlerContext, column: AnyPgColumn): SQL | undef
   if (!ctx.allowedOrganizations) return undefined;
   return inArray(column, ctx.allowedOrganizations.length ? ctx.allowedOrganizations : ["00000000-0000-0000-0000-000000000000"]);
 }
-
-export const isoDate = (d: Date | string | null) => (d ? (typeof d === "string" ? d : d.toISOString()) : null);

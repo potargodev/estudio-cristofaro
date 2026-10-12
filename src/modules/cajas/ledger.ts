@@ -22,7 +22,7 @@ export interface LedgerEntry {
   shares: LedgerShare[];
 }
 
-export interface MemberLine {
+interface MemberLine {
   userId: string;
   /** Lo que puso, confirmado (lo que le devolvieron por lo dividido ya está descontado) */
   put: number;
@@ -36,7 +36,7 @@ export interface MemberLine {
   diff: number;
 }
 
-export interface Breakdown {
+interface Breakdown {
   total: number;
   members: MemberLine[];
   /** Quién le debe a quién, con el mínimo de transferencias */
@@ -45,7 +45,7 @@ export interface Breakdown {
 }
 
 /** Tolerancia para decir «están parejos»: el 1 % del total o $ 100, lo que sea mayor */
-export const evenTolerance = (total: number) => Math.max(10_000, Math.round(total * 0.01));
+const evenTolerance = (total: number) => Math.max(10_000, Math.round(total * 0.01));
 
 export function breakdown(entries: LedgerEntry[], memberIds: string[]): Breakdown {
   const lines = new Map<string, MemberLine>(memberIds.map((id) => [id, { userId: id, put: 0, pendingConfirm: 0, owes: 0, owed: 0, diff: 0 }]));

@@ -5,7 +5,7 @@ import type { PortalUser } from "@/lib/auth";
 import { empresaTabs } from "@/lib/portal-nav";
 
 /** Pestañas de Empresa (gastos de la empresa, rendiciones y módulos activos); el empleado no las ve */
-export function EmpresaTabs({ me, className = "mb-6" }: { me: PortalUser; className?: string }) {
+function EmpresaTabs({ me, className = "mb-6" }: { me: PortalUser; className?: string }) {
   if (me.orgRole === "empleado") return null;
   const tabs = empresaTabs(me.orgRole, me.modules);
   const icon = { gastos: <Wallet strokeWidth={1.5} aria-hidden />, rendiciones: <ReceiptText strokeWidth={1.5} aria-hidden />, red: <Network strokeWidth={1.5} aria-hidden /> } as Record<string, React.ReactNode>;

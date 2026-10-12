@@ -1,7 +1,7 @@
 // config.json del conector local. Lo usan la descarga desde /admin/configuracion/conexiones/tango
 // (con la clave recién generada) y la ruta /api/integrations/tango/config (sin clave).
 
-export const KEY_PLACEHOLDER = "PEGAR_ACA_LA_CLAVE_DEL_CONECTOR";
+const KEY_PLACEHOLDER = "PEGAR_ACA_LA_CLAVE_DEL_CONECTOR";
 
 export function buildConnectorConfig(platformUrl: string, connectorKey?: string) {
   return {

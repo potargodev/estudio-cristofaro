@@ -56,7 +56,7 @@ export async function audit(e: AuditEvent): Promise<void> {
 }
 
 /** Nombres legibles de las acciones para la línea de tiempo */
-export const AUDIT_LABELS: Record<string, string> = {
+const AUDIT_LABELS: Record<string, string> = {
   "faro.asistido_iniciar": "Faro empezó un acceso asistido",
   "faro.asistido_terminar": "Faro terminó un acceso asistido",
   "demo.cargada": "Cargó la demo",

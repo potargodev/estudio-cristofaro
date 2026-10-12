@@ -3,7 +3,7 @@ import { and, asc, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { industry_template_versions, organization_industries, organization_setup_items, organizations, studio_template_validations } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { FILE_TEMPLATES, ITEM_KINDS, isIndustryKey, templateItems, type ItemKind, type TemplateItem } from "./catalog";
+import { FILE_TEMPLATES, isIndustryKey, templateItems, type ItemKind, type TemplateItem } from "./catalog";
 import { industryTemplateSchema, templateIssue, type IndustryTemplate } from "./schema";
 
 // Plantillas de rubro: versión vigente (archivo del repo o la última editada
@@ -13,7 +13,7 @@ import { industryTemplateSchema, templateIssue, type IndustryTemplate } from "./
 
 export class IndustryError extends Error {}
 
-export interface Actor {
+interface Actor {
   id: string;
   email: string;
 }
@@ -90,7 +90,7 @@ async function orgOf(studioId: string, organizationId: string) {
   return o;
 }
 
-export interface Preview {
+interface Preview {
   template: IndustryTemplate;
   organization: { id: string; name: string };
   items: (TemplateItem & { exists: boolean })[];
@@ -137,7 +137,7 @@ export async function applyTemplate(studioId: string, actor: Actor, organization
   return { created: fresh.length, version: p.template.version };
 }
 
-export type DiffEntry = { kind: ItemKind; key: string; label: string; detail?: string; change: "nuevo" | "cambiado" | "quitado"; customized: boolean };
+type DiffEntry = { kind: ItemKind; key: string; label: string; detail?: string; change: "nuevo" | "cambiado" | "quitado"; customized: boolean };
 
 /** Diferencias entre la versión aplicada y la vigente, por organización */
 export async function diffForOrganization(studioId: string, organizationId: string, key: string) {
@@ -250,13 +250,11 @@ export async function updateSetupItem(studioId: string, actor: Actor, organizati
   await audit({ studioId, organizationId: org.id, actor, action: "rubro.item_editar", entityType: "rubro_item", entityId: it.id, metadata: { tipo: it.kind, clave: it.key, cambios: Object.keys(set) } });
 }
 
-export const kindLabel = (k: string) => ITEM_KINDS[k as ItemKind] ?? k;
-
 // ── Validación por estudio ("Plantilla en revisión por el estudio") ──
 
-export const STUDIO_REVIEW_LABEL = "Plantilla en revisión por el estudio";
+const STUDIO_REVIEW_LABEL = "Plantilla en revisión por el estudio";
 
-export type StudioTemplateStatus = { state: "validada_faro" | "validada_estudio" | "en_revision"; label: string; by?: string; at?: Date };
+type StudioTemplateStatus = { state: "validada_faro" | "validada_estudio" | "en_revision"; label: string; by?: string; at?: Date };
 
 /** Estado de cada plantilla para un estudio: validada por Faro, por el propio estudio (versión vigente) o en revisión */
 export async function studioTemplateStatuses(studioId: string): Promise<Record<string, StudioTemplateStatus>> {

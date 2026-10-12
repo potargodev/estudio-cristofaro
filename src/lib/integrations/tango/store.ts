@@ -9,7 +9,7 @@ import type { TangoBatch } from "./source";
 
 // Guardado de lo que llega de Tango, sea cual sea el origen (TangoSource).
 
-export type Integration = typeof integrations.$inferSelect;
+type Integration = typeof integrations.$inferSelect;
 
 export async function findIntegrationByKey(key: string): Promise<Integration | null> {
   const [row] = await getDb()

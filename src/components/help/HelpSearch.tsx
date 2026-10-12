@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-export interface HelpSearchItem {
+interface HelpSearchItem {
   url: string;
   titulo: string;
   resumen: string;

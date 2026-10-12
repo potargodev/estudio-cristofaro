@@ -191,6 +191,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                     Conectalo para no ofrecer horarios en los que ya tenés algo y para crear cada llamada con Google Meet. Es independiente del login.
                   </p>
                   {calendarAvailable() ? (
+                    // eslint-disable-next-line @next/next/no-html-link-for-pages -- ruta /api (descarga u OAuth): necesita navegación completa
                     <a href="/api/agenda/google/connect" className={cn(adminButton.primary, "mt-3")}>
                       Conectar Google Calendar
                     </a>

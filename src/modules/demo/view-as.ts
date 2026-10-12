@@ -18,7 +18,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 // Faro ni pertenece a un espacio real. La sesión original queda guardada para
 // volver en un clic; inicio y fin quedan en la auditoría.
 
-export const VIEW_AS_COOKIE = "faro_ver_como";
+const VIEW_AS_COOKIE = "faro_ver_como";
 const HOURS = 2;
 
 export class ViewAsError extends Error {}

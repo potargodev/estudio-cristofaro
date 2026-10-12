@@ -5,7 +5,7 @@ import RAW from "./legal.generated.json";
 
 export type LegalKey = "terminos" | "privacidad" | "flotas" | "red-de-estudios";
 
-export interface LegalDoc {
+interface LegalDoc {
   key: LegalKey;
   titulo: string;
   version: string;

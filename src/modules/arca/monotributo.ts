@@ -46,9 +46,9 @@ export const SEED_SCALE: { validFrom: string; source: string; categories: ScaleC
   })),
 };
 
-export type Light = "verde" | "amarillo" | "rojo" | "excluido";
+type Light = "verde" | "amarillo" | "rojo" | "excluido";
 
-export interface Semaforo {
+interface Semaforo {
   income12m: number;
   category: string | null;
   cap: number | null;
@@ -64,7 +64,7 @@ export interface Semaforo {
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
-export const monthKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+const monthKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
 
 /** Los 12 meses que cuentan (el actual incluido) */
 export function last12Months(today = new Date()) {

@@ -14,7 +14,7 @@ import { isStudioRole } from "./roles";
 export const SPACE_HOME: Record<Space, string> = { studio: "/admin", personal: "/personal", portal: "/portal", faro: "/faro-manager" };
 
 /** Espacio "natural" de la sesión (si no hay uno guardado) */
-export function homeSpace(user: StaffUser): Space {
+function homeSpace(user: StaffUser): Space {
   if (user.role === "cliente") return "portal";
   if (user.role === "titular" || user.tenantKind !== "studio") return "personal";
   return "studio";

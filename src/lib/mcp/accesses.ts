@@ -7,9 +7,8 @@ import { TOOL_MODULES, type ToolModule } from "@/modules/tools/types";
 // Alcances de un acceso MCP a partir de un formulario (lo usan /admin/mcp y el
 // consentimiento de OAuth). Las organizaciones se validan contra el estudio.
 
-export { EXPIRY_LABELS as EXPIRY_OPTIONS } from "@/components/admin/mcp/labels";
 
-export interface AccessScope {
+interface AccessScope {
   modules: ToolModule[];
   can_write: boolean;
   organization_ids: string[] | null;

@@ -7,9 +7,9 @@ import { readSheet } from "read-excel-file/node";
 // texto embebido. Las imágenes y los PDF escaneados quedan para la lectura
 // inteligente.
 
-export const MAX_TEXT_CHARS = 40_000;
+const MAX_TEXT_CHARS = 40_000;
 
-export type Extracted = { ok: true; text: string; truncated: boolean } | { ok: false; reason: string };
+type Extracted = { ok: true; text: string; truncated: boolean } | { ok: false; reason: string };
 
 function done(text: string): Extracted {
   const clean = text.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
@@ -26,7 +26,7 @@ function pdfString(s: string) {
 }
 
 /** Texto de los operadores Tj / TJ de cada stream de contenido (con o sin FlateDecode) */
-export function pdfText(buf: Buffer): string {
+function pdfText(buf: Buffer): string {
   const src = buf.toString("latin1");
   const out: string[] = [];
   const re = /stream\r?\n/g;

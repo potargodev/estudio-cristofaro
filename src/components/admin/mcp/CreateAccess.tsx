@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScopeFields } from "./ScopeFields";
 
-export function CopyButton({ text, label = "Copiar" }: { text: string; label?: string }) {
+function CopyButton({ text, label = "Copiar" }: { text: string; label?: string }) {
   const [done, setDone] = useState(false);
   return (
     <button

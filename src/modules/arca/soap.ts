@@ -16,7 +16,7 @@ export class ArcaError extends Error {
   }
 }
 
-export const xmlEscape = (s: string | number) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const xmlEscape = (s: string | number) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /** Convierte un objeto plano en XML (para los cuerpos de WSFE) */
 export function toXml(obj: unknown, ns = "ar"): string {

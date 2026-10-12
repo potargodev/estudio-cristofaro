@@ -6,14 +6,14 @@ import { randomBytes } from "node:crypto";
 // acreedor y la API de preferencias) llega en la F7. Con MERCADOPAGO_MOCK_URL
 // se puede apuntar a un mock local.
 
-export interface PaymentLinkRequest {
+interface PaymentLinkRequest {
   amount: number; // centavos
   currency: string;
   description: string;
   payee: { name: string; alias: string | null };
 }
 
-export interface PaymentLinkProvider {
+interface PaymentLinkProvider {
   readonly name: string;
   readonly real: boolean;
   createLink(req: PaymentLinkRequest): Promise<{ url: string; externalId: string }>;

@@ -24,7 +24,6 @@ import { BillingError, createPreference, loadAccount, type MpPayment } from "./m
 const db = () => getDb();
 const UUID = /^[0-9a-f-]{36}$/i;
 type Actor = { id: string; email: string; name?: string };
-export type Charge = typeof fee_charges.$inferSelect;
 
 export async function requireBilling(studioId: string) {
   if (!(await hasModule(studioId, "billing"))) throw new BillingError("La cobranza de honorarios viene con el plan Profesional.");

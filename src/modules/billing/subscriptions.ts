@@ -21,7 +21,7 @@ import { BillingError, createPreapproval, createPreference, loadAccount, updateP
 
 const db = () => getDb();
 type Actor = { id: string; email: string; name?: string };
-export type Subscription = typeof faro_subscriptions.$inferSelect;
+type Subscription = typeof faro_subscriptions.$inferSelect;
 const DAY = 86400000;
 
 async function tenant(studioId: string) {
@@ -48,7 +48,7 @@ export async function ensureSubscription(studioId: string): Promise<Subscription
   return again;
 }
 
-export async function priceFor(plan: FaroPlan, interval: "mensual" | "anual") {
+async function priceFor(plan: FaroPlan, interval: "mensual" | "anual") {
   return plan.free ? 0 : periodPrice(plan.priceUsd, await getUsdArs(), interval, ANNUAL_FREE_MONTHS);
 }
 

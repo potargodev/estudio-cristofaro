@@ -18,7 +18,7 @@ import { GastosError } from "./service";
 // organización (que ve el estudio). Todo filtra por la organización activa
 // del miembro (requireMember), nunca por un id del navegador.
 
-export type ReimbursementRow = typeof reimbursements.$inferSelect & { employee: string };
+type ReimbursementRow = typeof reimbursements.$inferSelect & { employee: string };
 
 export const canApprove = (me: PortalUser) => can(me.orgRole, "finanzas.gestionar");
 

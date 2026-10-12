@@ -46,7 +46,7 @@ async function uniqueSlug(name: string) {
   return `${base}-${Date.now().toString(36)}`;
 }
 
-export interface NewTenant {
+interface NewTenant {
   kind: TenantKind;
   name: string;
   planKey?: string;
@@ -59,7 +59,7 @@ export interface NewTenant {
   via: "manual" | "registro";
 }
 
-export type NewTenantResult = { ok: true; studioId: string; userId: string } | { ok: false; message: string };
+type NewTenantResult = { ok: true; studioId: string; userId: string } | { ok: false; message: string };
 
 export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
   const email = t.owner.email.trim().toLowerCase();

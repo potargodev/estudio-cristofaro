@@ -16,7 +16,6 @@ import { seedNetwork } from "./network";
 import { seedPeople } from "./people";
 import { seedStudios } from "./studios";
 
-export { DEMO_DOMAIN, isDemoEmail } from "./base";
 
 export const DEMO_PROFILES = [
   { key: "persona", label: "Persona", email: `persona@${DEMO_DOMAIN}`, home: "/personal", what: "Martina Gómez: Bitácora de 6 meses, cajas compartidas, Grupos y su contador conectado." },
@@ -27,7 +26,7 @@ export const DEMO_PROFILES = [
   { key: "empleado", label: "Empleada", email: `empleada@${DEMO_DOMAIN}`, home: "/portal", what: "Ema Rodríguez: recibos para firmar y comunicados." },
 ] as const;
 
-export interface DemoState {
+interface DemoState {
   loaded: boolean;
   studios: number;
   users: number;

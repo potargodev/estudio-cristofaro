@@ -17,7 +17,7 @@ import { endLog, readCredentials, sealCredentials, startLog, upsertExternal, typ
 // <SITE_URL>/api/conexiones/google-drive/callback. GOOGLE_API_MOCK_URL apunta
 // todo a un simulador (mocks/google) para pruebas.
 
-export const DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive", "openid", "email"];
+const DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive", "openid", "email"];
 const FOLDER = "application/vnd.google-apps.folder";
 const MAX_BYTES = 10 * 1024 * 1024;
 

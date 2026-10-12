@@ -17,7 +17,7 @@ export interface RemoteTool {
   permission: ToolPermission;
 }
 
-export interface McpExternoSettings {
+interface McpExternoSettings {
   prefix?: string;
   tools?: RemoteTool[];
   server?: { name?: string; version?: string };
@@ -40,7 +40,7 @@ export function assistantToolName(prefix: string, tool: string) {
   return `${prefix}__${tool.replace(/[^a-zA-Z0-9_-]/g, "_")}`.slice(0, 64);
 }
 
-export async function withRemote<T>(conn: Connection, fn: (client: Client) => Promise<T>): Promise<T> {
+async function withRemote<T>(conn: Connection, fn: (client: Client) => Promise<T>): Promise<T> {
   const creds = readCredentials<{ url: string; auth_header?: string; auth_value?: string }>(conn);
   if (!creds.url) throw new Error("La conexión no tiene URL.");
   const headers: Record<string, string> = {};

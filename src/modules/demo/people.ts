@@ -54,7 +54,7 @@ interface PersonSpec {
   industry?: string;
 }
 
-export const PEOPLE: PersonSpec[] = [
+const PEOPLE: PersonSpec[] = [
   { name: "Martina Gómez", email: "persona", kind: "persona", income: 1_650_000, full: true, usd: true },
   { name: "Julián Ríos", email: "autonomo", kind: "autonomo", income: 2_300_000, mono: { category: "H", light: "amarillo" }, full: true, industry: "agencias_marketing" },
   { name: "Tomás Castro", email: "tomas.castro", kind: "persona", income: 1_420_000, full: true },

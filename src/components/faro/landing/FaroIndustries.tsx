@@ -6,7 +6,7 @@ import { SplitHeading } from "@/components/web/SplitHeading";
 import { Container, SectionIndex } from "@/components/web/ui";
 import { cn } from "@/lib/utils";
 
-export interface IndustryPreview {
+interface IndustryPreview {
   key: string;
   name: string;
   description: string;

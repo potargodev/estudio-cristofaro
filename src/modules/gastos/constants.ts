@@ -27,7 +27,6 @@ export type Category = keyof typeof CATEGORIES;
 export const categoryName = (c: string) => CATEGORIES[c as Category] ?? "Otros";
 
 export const CURRENCIES = ["ARS", "USD", "EUR", "BRL", "UYU", "CLP"] as const;
-export type Currency = (typeof CURRENCIES)[number];
 
 export const SPLIT_METHODS = {
   iguales: "Partes iguales",
@@ -44,7 +43,6 @@ export const SETTLEMENT_METHODS = { efectivo: "Efectivo", transferencia: "Transf
 export type SettlementMethodKey = keyof typeof SETTLEMENT_METHODS;
 
 export const RECURRENCES = { semanal: "Cada semana", mensual: "Cada mes", anual: "Cada año" } as const;
-export type Recurrence = keyof typeof RECURRENCES;
 
 export const REMINDER_FREQUENCIES = { off: "Sin recordatorios", semanal: "Cada semana", quincenal: "Cada 15 días", mensual: "Cada mes" } as const;
 

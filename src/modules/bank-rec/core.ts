@@ -7,7 +7,7 @@ import { merchantKey } from "@/modules/bitacora/smart";
 
 export type MovementClass = "cobro" | "pago" | "comision" | "impuesto" | "transferencia";
 
-export interface BankMov {
+interface BankMov {
   id: string;
   date: string; // AAAA-MM-DD
   description: string;
@@ -61,7 +61,7 @@ export function matchRule(m: Pick<BankMov, "description" | "amount">, rules: Rul
 const days = (a: string, b: string) => Math.abs(new Date(`${a}T12:00:00`).getTime() - new Date(`${b}T12:00:00`).getTime()) / 86400000;
 const digits = (s: string | null) => (s ?? "").replace(/\D/g, "");
 
-export interface Suggestion {
+interface Suggestion {
   candidateId: string;
   score: number;
   reasons: string[];
@@ -132,7 +132,7 @@ export function suggest(movs: BankMov[], candidates: Candidate[], min = 0.6): Ma
 
 export type MovStatus = "sin_conciliar" | "sugerido" | "conciliado" | "sin_factura" | "ignorado";
 
-export interface Summary {
+interface Summary {
   pagadas: number;
   pendientes: number;
   pagosSinFactura: number;

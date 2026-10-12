@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AI_PROVIDER_KINDS, PROVIDERS, type AiProviderKind } from "@/lib/ai/catalog";
 
-export interface ProviderFormValues {
+interface ProviderFormValues {
   id: string;
   kind: AiProviderKind;
   name: string;

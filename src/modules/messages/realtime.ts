@@ -7,7 +7,7 @@ import { getDb } from "@/db";
 // todas las instancias) y una única conexión LISTEN por proceso lo reparte a
 // los streams SSE abiertos. Si algo falla, el cliente cae al sondeo.
 
-export const CHANNEL = "faro_mensajes";
+const CHANNEL = "faro_mensajes";
 
 export type ChatEvent =
   | { type: "message" | "edit" | "delete"; conversationId: string; messageId: string; userId: string }

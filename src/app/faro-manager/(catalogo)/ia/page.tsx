@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AlertTriangle, KeyRound } from "lucide-react";
 import type { Metadata } from "next";
 import { Notice } from "@/components/admin/AdminField";
@@ -41,7 +42,7 @@ export default async function IaPage({ searchParams }: { searchParams: Promise<{
         <div role="status" className="mb-5 flex gap-3 rounded-md border border-line bg-surface p-4 text-ui">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-rose-deep" aria-hidden />
           <p>
-            Última alerta de la IA: {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(p.cap_alerted_at)}. El detalle está en la <a href="/faro-manager/auditoria" className="underline underline-offset-2">auditoría</a>.
+            Última alerta de la IA: {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" }).format(p.cap_alerted_at)}. El detalle está en la <Link href="/faro-manager/auditoria" className="underline underline-offset-2">auditoría</Link>.
           </p>
         </div>
       )}

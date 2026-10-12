@@ -14,10 +14,9 @@ import { decrypt, encrypt } from "@/lib/crypto";
 
 export type PlatformAi = typeof platform_ai.$inferSelect;
 export const PLATFORM_PROVIDERS = { google: "Google Gemini", openai: "OpenAI", openai_compatible: "Compatible con OpenAI" } as const;
-export type PlatformProvider = keyof typeof PLATFORM_PROVIDERS;
 
 /** Límites por plan por defecto (mensajes y audios por mes; null = sin tope) */
-export const DEFAULT_LIMITS: Record<string, { messages: number | null; audios: number | null }> = {
+const DEFAULT_LIMITS: Record<string, { messages: number | null; audios: number | null }> = {
   persona_gratis: { messages: 100, audios: 30 },
   persona_plus: { messages: 1500, audios: null },
   autonomo_gratis: { messages: 100, audios: 30 },
@@ -61,7 +60,7 @@ export function limitsFor(p: PlatformAi, planKey: string) {
   return { messages: own?.messages !== undefined ? own.messages : base.messages, audios: own?.audios !== undefined ? own.audios : base.audios };
 }
 
-export interface PlatformInput {
+interface PlatformInput {
   provider: string;
   apiKey?: string;
   baseUrl?: string;

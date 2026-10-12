@@ -83,7 +83,7 @@ export async function runRecurring(today = todayAR()) {
 
 const PERIOD_DAYS: Record<string, number> = { semanal: 7, quincenal: 15, mensual: 30 };
 
-export async function sendGroupReminders(now = new Date()) {
+async function sendGroupReminders(now = new Date()) {
   const db = getDb();
   const groups = await db.select().from(expense_groups).where(and(ne(expense_groups.reminder_frequency, "off"), isNull(expense_groups.archived_at)));
   let sent = 0;

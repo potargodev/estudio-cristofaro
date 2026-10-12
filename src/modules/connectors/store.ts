@@ -60,7 +60,7 @@ export const digitsCuit = (v: unknown) => {
 };
 
 /** Razones sociales del estudio por CUIT (para cruzar) */
-export async function entitiesByCuit(studioId: string, cuits: (string | null)[]) {
+async function entitiesByCuit(studioId: string, cuits: (string | null)[]) {
   const list = [...new Set(cuits.filter((c): c is string => !!c))];
   if (!list.length) return new Map<string, { id: string; organizationId: string }>();
   const rows = await getDb()

@@ -1,6 +1,6 @@
 import { HeaderAction } from "@/components/admin/kit/HeaderAction";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
-import { BellOff, Hash, MessagesSquare, Plus, Ship, User, Users, Wallet } from "lucide-react";
+import { BellOff, Hash, MessagesSquare, Ship, User, Users, Wallet } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PushToggle } from "@/components/mensajes/PushToggle";

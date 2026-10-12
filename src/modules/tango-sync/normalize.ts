@@ -19,7 +19,7 @@ export function normKey(raw: string) {
 }
 
 /** Forma societaria canónica, si la hay ("S.A.", "S.R.L.", "S.A.S.") */
-export function legalSuffix(raw: string): string | null {
+function legalSuffix(raw: string): string | null {
   const t = raw.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
   if (/\bs\.?\s?a\.?\s?s\.?$/.test(t)) return "S.A.S.";
   if (/\bs\.?\s?r\.?\s?l\.?$|sociedad de responsabilidad limitada$/.test(t)) return "S.R.L.";
@@ -35,7 +35,7 @@ const title = (s: string) =>
     .join(" ");
 
 /** Nombre estándar para un grupo de variantes: Título + forma societaria (si alguna variante la trae) */
-export function standardName(variants: string[]) {
+function standardName(variants: string[]) {
   // La variante con tildes (la más cuidada) es la base; si no hay, la más frecuente
   const base = [...variants].sort((a, b) => Number(/[áéíóúñ]/i.test(b)) - Number(/[áéíóúñ]/i.test(a)))[0] ?? "";
   let t = base.toLowerCase().replace(/[“”"'`´]/g, "").replace(/\s+/g, " ").trim();

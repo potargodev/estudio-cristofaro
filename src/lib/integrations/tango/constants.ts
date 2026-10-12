@@ -8,15 +8,6 @@ export const TANGO_PROCESS = {
   comprobantesVenta: 20412,
 } as const;
 
-export const PROCESS_LABELS: Record<number, string> = {
-  2117: "Clientes",
-  1575: "Cuentas contables",
-  1664: "Asientos",
-  1622: "Tipos de asiento",
-  1660: "Monedas",
-  20412: "Comprobantes de venta",
-};
-
 // Seguridad del ingest
 export const KEY_HEADER = "x-connector-key";
 export const TIMESTAMP_HEADER = "x-timestamp";

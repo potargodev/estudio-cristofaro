@@ -56,7 +56,10 @@ export default async function BitacoraPage({ searchParams }: { searchParams: Pro
   const maxCat = Math.max(1, ...s.byCategory.map((c) => c.amount));
   const q = (extra: Record<string, string | null>) => {
     const p = new URLSearchParams({ mes: month, ...(cat ? { categoria: cat } : {}), ...(sp.ver ? { ver: sp.ver } : {}) });
-    for (const [k, v] of Object.entries(extra)) (v === null ? p.delete(k) : p.set(k, v));
+    for (const [k, v] of Object.entries(extra)) {
+      if (v === null) p.delete(k);
+      else p.set(k, v);
+    }
     return `/bitacora?${p.toString()}`;
   };
   return (

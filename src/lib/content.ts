@@ -4,7 +4,7 @@ import type { Faq, Post } from "./types";
 // se administran desde el backoffice; estos valores son el respaldo
 // cuando la base no está configurada o no responde.
 
-export interface Service {
+interface Service {
   slug: string;
   name: string;
   summary: string;
@@ -63,7 +63,7 @@ export const services: Service[] = [
   },
 ];
 
-// TODO contenido real: nombres, matrícula, especialidad y foto del equipo.
+// Contenido a cargar por el estudio (docs/pendientes-configuracion.md): nombres, matrícula, especialidad y foto.
 // `photo`: ruta en /public/equipo (ver el README de esa carpeta). Sin foto se
 // muestra un monograma con las iniciales.
 export interface TeamMember {

@@ -47,7 +47,7 @@ export interface InboundMessage {
   filename: string | null;
   raw: unknown;
 }
-export interface StatusUpdate {
+interface StatusUpdate {
   id: string;
   status: "enviado" | "entregado" | "leido" | "fallido";
   error: string | null;

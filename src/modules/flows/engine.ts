@@ -23,7 +23,7 @@ const db = () => getDb();
 const UUID = /^[0-9a-f-]{36}$/i;
 export class FlowError extends Error {}
 type Actor = { id: string; email: string; name?: string };
-export type Flow = typeof flows.$inferSelect;
+type Flow = typeof flows.$inferSelect;
 type Run = typeof flow_runs.$inferSelect;
 
 const triggerOf = (g: Graph): Trigger | null => (g.nodes.find((n) => n.type === "disparador")?.data as Trigger | undefined) ?? null;

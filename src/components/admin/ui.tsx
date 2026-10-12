@@ -81,7 +81,7 @@ export function SubmitButton({
 // un input oculto con el `name`, así el formulario lo envía como siempre.
 const EMPTY = "__vacio__";
 
-export interface Option {
+interface Option {
   value: string;
   label: string;
 }

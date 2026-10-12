@@ -5,7 +5,7 @@ import type { InvoiceItem } from "@/db/schema";
 
 const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
 
-export interface InvoiceTotals {
+interface InvoiceTotals {
   net: number;
   iva: number;
   exempt: number;

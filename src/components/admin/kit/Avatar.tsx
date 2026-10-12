@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export const initials = (name: string) =>
+const initials = (name: string) =>
   name
     .split(/\s+/)
     .filter((w) => /\p{L}/u.test(w[0] ?? ""))

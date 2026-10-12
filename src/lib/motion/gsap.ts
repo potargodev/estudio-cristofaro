@@ -10,7 +10,7 @@ import type { gsap as GsapType } from "gsap";
 import type { ScrollTrigger as ScrollTriggerType } from "gsap/ScrollTrigger";
 import type { SplitText as SplitTextType } from "gsap/SplitText";
 
-export interface Gsap {
+interface Gsap {
   gsap: typeof GsapType;
   SplitText: typeof SplitTextType;
 }

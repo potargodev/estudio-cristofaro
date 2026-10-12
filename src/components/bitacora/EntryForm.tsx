@@ -5,7 +5,7 @@ import { fieldClass } from "@/components/ds/primitives";
 const field = `mt-1 ${fieldClass}`;
 const label = "text-meta text-muted";
 
-export interface EntryDefaults {
+interface EntryDefaults {
   id?: string;
   kind?: "gasto" | "ingreso";
   amount?: string;

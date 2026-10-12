@@ -4,14 +4,14 @@ import { Check, Download, Monitor, Share, Smartphone, SquarePlus } from "lucide-
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-export type Platform = "android" | "ios" | "windows" | "mac";
+type Platform = "android" | "ios" | "windows" | "mac";
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-export const PLATFORMS: { key: Platform; label: string; icon: typeof Smartphone }[] = [
+const PLATFORMS: { key: Platform; label: string; icon: typeof Smartphone }[] = [
   { key: "android", label: "Android", icon: Smartphone },
   { key: "ios", label: "iPhone y iPad", icon: Smartphone },
   { key: "windows", label: "Windows", icon: Monitor },
@@ -27,7 +27,7 @@ function detect(): { platform: Platform | null; safari: boolean; firefox: boolea
 }
 
 /** Escucha el aviso de instalación del navegador (Chrome y Edge en Android, Windows y Mac) */
-export function useInstall() {
+function useInstall() {
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [env, setEnv] = useState<ReturnType<typeof detect>>({ platform: null, safari: false, firefox: false });

@@ -30,7 +30,7 @@ export function PageTitle({ title, intro, children, level }: { title: string; in
   return <PageHeader title={title} description={intro} actions={children} level={level} />;
 }
 
-export type EmptyArt = "calendario" | "carpeta" | "charla" | "general";
+type EmptyArt = "calendario" | "carpeta" | "charla" | "general";
 
 /** Ilustración de línea para estados vacíos (trazo 1,5 con acento rosé) */
 function EmptyIllustration({ art }: { art: EmptyArt }) {

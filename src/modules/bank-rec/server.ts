@@ -33,7 +33,7 @@ export async function listStatements(s: RecScope) {
   return db().select({ id: bank_statements.id, bank: bank_statements.bank, account: bank_statements.account_label, fileName: bank_statements.file_name, from: bank_statements.period_from, to: bank_statements.period_to, total: bank_statements.total, duplicates: bank_statements.duplicates, createdAt: bank_statements.created_at }).from(bank_statements).where(and(eq(bank_statements.studio_id, s.studioId), eq(bank_statements.organization_id, s.organizationId))).orderBy(desc(bank_statements.created_at)).limit(50);
 }
 
-export async function getStatement(s: RecScope, id: string) {
+async function getStatement(s: RecScope, id: string) {
   if (!UUID.test(id)) return null;
   const [st] = await db().select().from(bank_statements).where(and(eq(bank_statements.id, id), eq(bank_statements.studio_id, s.studioId), eq(bank_statements.organization_id, s.organizationId)));
   return st ?? null;
@@ -44,7 +44,7 @@ export async function listRules(s: RecScope) {
 }
 
 /** Comprobantes de la organización que pueden cruzar con el extracto */
-export async function candidates(s: RecScope): Promise<Candidate[]> {
+async function candidates(s: RecScope): Promise<Candidate[]> {
   const [issued, received] = await Promise.all([
     db().select().from(invoices).where(and(eq(invoices.studio_id, s.studioId), eq(invoices.organization_id, s.organizationId), eq(invoices.status, "autorizada"))),
     db().select().from(smart_documents).where(and(eq(smart_documents.studio_id, s.studioId), eq(smart_documents.organization_id, s.organizationId), eq(smart_documents.scope, "organizacion"), eq(smart_documents.status, "confirmado"))),
@@ -61,7 +61,7 @@ export async function candidates(s: RecScope): Promise<Candidate[]> {
 }
 
 /** Recalcula clase, reglas y sugerencias de los movimientos no confirmados de la organización */
-export async function refresh(s: RecScope) {
+async function refresh(s: RecScope) {
   const [movs, rules, cands] = await Promise.all([
     db().select().from(bank_movements).where(and(eq(bank_movements.studio_id, s.studioId), eq(bank_movements.organization_id, s.organizationId))),
     listRules(s),

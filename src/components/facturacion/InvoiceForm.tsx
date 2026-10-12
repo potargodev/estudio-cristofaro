@@ -8,7 +8,7 @@ import { allowedTypes, CBTE_TYPES, DOC_TYPES, IVA_CONDITIONS } from "@/modules/a
 import { cn } from "@/lib/utils";
 import { fieldClass } from "@/components/ds/primitives";
 
-export interface FormCustomer {
+interface FormCustomer {
   id: string;
   name: string;
   docType: number;
@@ -16,7 +16,7 @@ export interface FormCustomer {
   ivaCondition: string;
   email: string | null;
 }
-export interface FormProduct {
+interface FormProduct {
   id: string;
   description: string;
   unitPrice: number;

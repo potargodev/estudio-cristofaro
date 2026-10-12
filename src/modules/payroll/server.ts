@@ -68,7 +68,7 @@ async function event(s: PayrollScope, employeeId: string, kind: string, detail: 
   await db().insert(employee_events).values({ studio_id: s.studioId, organization_id: s.organizationId, employee_id: employeeId, kind, date, detail: detail.slice(0, 500), request_id: requestId, actor_id: actor?.id ?? null });
 }
 
-export interface EmployeeInput {
+interface EmployeeInput {
   firstName: string;
   lastName: string;
   email: string | null;
@@ -320,21 +320,6 @@ export async function signPayslip(me: { id: string; name: string; email: string;
   }
 }
 
-/** Acceso a un recibo (ruta de descarga): el empleado dueño (publicado), el estudio o quien ve sueldos en la organización */
-export async function payslipForUser(u: { id: string; studioId: string; role: string; tenantKind: string }, id: string, ctx: { employeeId?: string | null; organizationId?: string | null; orgRole?: OrgRole | null }) {
-  if (!UUID.test(id)) return null;
-  const [p] = await db().select().from(payslips).where(and(eq(payslips.id, id), eq(payslips.studio_id, u.studioId)));
-  if (!p) return null;
-  if (u.tenantKind === "studio" && ["dueno", "contador", "colaborador"].includes(u.role)) return { p, who: "estudio" as const };
-  if (ctx.organizationId !== p.organization_id) return null;
-  if (ctx.employeeId && p.employee_id === ctx.employeeId && ["publicado", "conforme", "no_conforme"].includes(p.status)) {
-    if (!p.viewed_at) await db().update(payslips).set({ viewed_at: new Date() }).where(eq(payslips.id, p.id));
-    return { p, who: "empleado" as const };
-  }
-  if (ctx.orgRole && can(ctx.orgRole, "sueldos.ver")) return { p, who: "organizacion" as const };
-  return null;
-}
-
 // ───────────── Comunicados ─────────────
 
 export async function createAnnouncement(s: PayrollScope, actor: Actor, i: { title: string; body: string; area: string | null; requireAck: boolean; files: File[] }) {
@@ -403,7 +388,7 @@ export async function ackAnnouncement(me: { id: string; email: string; studioId:
 export const NOVEDADES = { alta: "Alta de empleado", baja: "Baja de empleado", licencia: "Licencia", horas_extra: "Horas extra" } as const;
 export type Novedad = keyof typeof NOVEDADES;
 
-export interface NovedadInput {
+interface NovedadInput {
   tipo: Novedad;
   employeeId: string | null;
   nombre: string | null;

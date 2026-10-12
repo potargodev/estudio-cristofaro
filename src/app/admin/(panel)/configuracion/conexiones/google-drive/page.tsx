@@ -52,6 +52,7 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
             <li>Compartí cada carpeta con su cliente y sincronizá cuando quieras traer lo nuevo.</li>
           </ol>
           {driveAvailable() ? (
+            // eslint-disable-next-line @next/next/no-html-link-for-pages -- ruta /api (descarga u OAuth): necesita navegación completa
             <a href="/api/conexiones/google-drive/connect" className={`${adminButton.primary} mt-4 inline-flex`}>
               Conectar con Google
             </a>

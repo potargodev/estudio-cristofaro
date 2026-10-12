@@ -72,8 +72,3 @@ export function TextLink({ href, children, className }: { href: string; children
     </Link>
   );
 }
-
-/** Lista con divisores hairline */
-export function HairList({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <ul className={cn("divide-y divide-hair border-y border-hair", className)}>{children}</ul>;
-}

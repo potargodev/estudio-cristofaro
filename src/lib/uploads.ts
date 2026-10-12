@@ -8,7 +8,7 @@ import { ALLOWED_LABEL } from "./uploads-shared";
 // solo se descarga por /api/archivos/[id], que verifica permisos.
 // En Easypanel UPLOADS_DIR es un volumen montado en /data/uploads.
 
-export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
 
 const ALLOWED: Record<string, { mime: string; magic: (b: Buffer) => boolean }> = {
   ".pdf": {
@@ -46,7 +46,7 @@ function resolveStored(storagePath: string) {
   return full;
 }
 
-export type UploadCheck = { ok: true } | { ok: false; error: string };
+type UploadCheck = { ok: true } | { ok: false; error: string };
 
 /** Valida un archivo de un formulario: tipo permitido (extensión y contenido) y tamaño. */
 export async function checkUpload(file: File): Promise<UploadCheck> {
@@ -74,7 +74,7 @@ export function fileFromForm(fd: FormData, key: string): File | null {
   return v instanceof File && v.size > 0 && v.name ? v : null;
 }
 
-export interface StoredFile {
+interface StoredFile {
   name: string;
   storagePath: string;
   mimeType: string;
@@ -112,4 +112,3 @@ export async function deleteStored(storagePath: string) {
   await rm(resolveStored(storagePath), { force: true });
 }
 
-export { ACCEPT_ATTR, ALLOWED_LABEL, formatBytes } from "./uploads-shared";

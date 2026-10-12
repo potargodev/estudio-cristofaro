@@ -2,10 +2,8 @@
 
 import { AnimatePresence, LayoutGroup, LazyMotion, domMax, m, useReducedMotion } from "motion/react";
 import { NoticesBell, type Notice } from "./NoticesBell";
-export type { ShellSpace } from "./SpaceSwitcher";
 import {
   Boxes,
-  ArrowLeftRight,
   Briefcase,
   Calculator,
   Handshake,
@@ -33,14 +31,12 @@ import {
   KeyRound,
   LayoutDashboard,
   Lock,
-  LogOut,
   MessageSquareText,
   MessagesSquare,
   MoreHorizontal,
   Network,
   NotebookPen,
   Plug,
-  Plus,
   ReceiptText,
   ScrollText,
   Search,
@@ -64,7 +60,6 @@ import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } f
 import { setSidebarPref } from "@/app/actions/prefs";
 import { CommandPalette } from "@/components/admin/shell/CommandPalette";
 import type { NavAccess } from "@/components/admin/shell/nav";
-import { Avatar } from "@/components/admin/kit/Avatar";
 import { FaroLogo } from "@/components/admin/kit/FaroLogo";
 import { Sello } from "@/components/admin/kit/Sello";
 import { HelpMenu } from "@/components/app/HelpMenu";
@@ -131,7 +126,7 @@ const ICONS: Record<ShellIcon, LucideIcon> = {
   facturacion: ReceiptText,
 };
 
-export interface ShellProps {
+interface ShellProps {
   space: Space;
   groups: ShellGroup[];
   bottom: ShellItem[];
@@ -491,7 +486,7 @@ export function AppShell(p: ShellProps) {
               <kbd className="rounded border border-line px-1 text-micro">⌘K</kbd>
             </button>
           )}
-          <a
+          <Link
             href="/vigia"
             onClick={(e) => {
               if (openVigia()) e.preventDefault();
@@ -503,7 +498,7 @@ export function AppShell(p: ShellProps) {
             <WandSparkles className="size-4 text-gold" strokeWidth={1.6} aria-hidden />
             <span className="hidden sm:inline">Vigía</span>
             {vigiaCount > 0 && <span aria-hidden className="num absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-micro leading-[18px] text-night ring-2 ring-canvas">{vigiaCount}</span>}
-          </a>
+          </Link>
           <Link href="/mensajes" aria-label={`Mensajes${p.badges.unread ? ` · ${p.badges.unread} sin leer` : ""}`} title="Mensajes" className={cn("relative grid size-9 place-items-center rounded-md text-ink hover:bg-surface", pathname.startsWith("/mensajes") && "bg-surface")}>
             <MessagesSquare className="size-[18px]" strokeWidth={1.6} aria-hidden />
             {(p.badges.unread ?? 0) > 0 && <span aria-hidden className="num absolute -right-0.5 -top-0.5 min-w-[17px] rounded-full bg-rose-light px-1 text-center text-micro leading-[17px] text-night ring-2 ring-canvas">{p.badges.unread}</span>}
@@ -561,7 +556,7 @@ export function AppShell(p: ShellProps) {
             if (!i)
               return (
                 <li key="vigia" className="flex justify-center">
-                  <a
+                  <Link
                     href="/vigia"
                     onClick={(e) => {
                       if (openVigia()) e.preventDefault();
@@ -574,7 +569,7 @@ export function AppShell(p: ShellProps) {
                     </span>
                     {vigiaCount > 0 && <span aria-hidden className="num absolute right-0 top-0 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-micro font-semibold leading-[18px] text-night ring-2 ring-night">{vigiaCount}</span>}
                     Vigía
-                  </a>
+                  </Link>
                 </li>
               );
             const Icon = ICONS[i.icon];

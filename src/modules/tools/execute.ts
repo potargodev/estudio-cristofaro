@@ -23,7 +23,7 @@ import { ToolError, type HandlerContext, type ToolActor, type ToolContext, type 
 
 const NOT_FOUND = "No existe o no está dentro de lo que este pedido puede ver.";
 
-export function handlerContext(ctx: ToolContext): HandlerContext {
+function handlerContext(ctx: ToolContext): HandlerContext {
   const cache = new Map<string, { id: string; name: string }>();
   return {
     ...ctx,
@@ -166,9 +166,9 @@ export async function executeTool(name: string, rawInput: unknown, ctx: ToolCont
   return run(t, input, ctx, hctx, organizationId);
 }
 
-export type Decision = { approve: true; input?: Record<string, unknown> } | { approve: false; reason: string };
+type Decision = { approve: true; input?: Record<string, unknown> } | { approve: false; reason: string };
 
-export type DecisionResult = { ok: true; status: "ejecutada" | "rechazada"; result?: unknown } | { ok: false; message: string };
+type DecisionResult = { ok: true; status: "ejecutada" | "rechazada"; result?: unknown } | { ok: false; message: string };
 
 /**
  * Aprobar (ejecuta y audita), editar y aprobar o rechazar una propuesta. Las de

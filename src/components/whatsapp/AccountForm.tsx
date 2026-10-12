@@ -1,4 +1,3 @@
-import { SubmitButton } from "@/components/admin/ui";
 import { fieldClass } from "@/components/ds/primitives";
 
 const field = `mt-1 ${fieldClass}`;
@@ -29,8 +28,4 @@ export function WaCredentialFields({ a }: { a: { phone_number_id: string | null;
       </label>
     </div>
   );
-}
-
-export function WaSubmit({ label = "Guardar" }: { label?: string }) {
-  return <SubmitButton pendingText="Guardando…">{label}</SubmitButton>;
 }

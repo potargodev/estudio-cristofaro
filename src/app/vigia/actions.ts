@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/auth";
 import { setPrefs } from "@/lib/prefs";
 import { parseAmount } from "@/modules/bitacora/catalog";
-import { confirmProposal, CopilotError, editGroupProposal, editMovementProposal, markSeen, processMessage, ownMessage, redoProposal, undoProposal } from "@/modules/copilot/server";
+import { confirmProposal, CopilotError, editGroupProposal, editMovementProposal, processMessage, ownMessage, redoProposal, undoProposal } from "@/modules/copilot/server";
 
 // Acciones de las tarjetas del Vigía. El usuario sale de la sesión y cada
 // función valida que la tarjeta sea suya.
@@ -88,7 +88,3 @@ export async function setAutoAction(fd: FormData) {
   revalidatePath("/vigia");
 }
 
-export async function markSeenAction() {
-  const u = await me();
-  await markSeen(u.id);
-}

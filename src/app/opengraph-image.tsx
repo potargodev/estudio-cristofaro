@@ -29,7 +29,6 @@ export default async function OgImage() {
           padding: 72,
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logo} alt="" width={452} height={100} />
         <div style={{ fontSize: 64, fontWeight: 400, lineHeight: 1.1, maxWidth: 950 }}>
           Tu contador, siempre al día. Sin papeles, sin sorpresas.

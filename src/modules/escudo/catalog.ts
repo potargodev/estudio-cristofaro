@@ -89,7 +89,7 @@ export const PROFESSIONAL_TASKS: ProfessionalTask[] = [
  * "¿me van a multar?"): el Vigía responde con datos, nunca con una
  * validación, recuerda el escudo y deriva (regla vigia_criterio).
  */
-export const CRITERIA_PHRASES = [
+const CRITERIA_PHRASES = [
   "estoy bien",
   "estoy en regla",
   "estoy al dia",
@@ -238,7 +238,7 @@ export const CHANGA_CONTEXT =
   "Dato de contexto, a confirmar por un contador: en Argentina se puede estar en relación de dependencia y ser monotributista al mismo tiempo por una actividad independiente. En ese caso no se paga el componente previsional del monotributo, porque ya se aporta por el empleo, y se paga el impositivo. Si tu changa es de verdad independiente (y no un empleo encubierto) lo evalúa un contador, no Faro.";
 
 /** Minúsculas, sin tildes ni signos: para comparar frases */
-export function normalizeText(t: string) {
+function normalizeText(t: string) {
   return ` ${t
     .toLowerCase()
     .normalize("NFD")

@@ -18,9 +18,9 @@ import { MODALITIES, RED_SERVICES, TEAM_SIZES } from "./catalog";
 
 export class RedError extends Error {}
 
-export const MIN_REVIEW_DAYS = 30;
+const MIN_REVIEW_DAYS = 30;
 
-export type Profile = typeof directory_profiles.$inferSelect;
+type Profile = typeof directory_profiles.$inferSelect;
 
 export async function getProfile(studioId: string) {
   const [p] = await getDb().select().from(directory_profiles).where(eq(directory_profiles.studio_id, studioId));
@@ -37,7 +37,7 @@ export async function visibilityIssue(studioId: string, p: Profile | null): Prom
 
 const clean = (v: string[] | undefined, allowed: readonly string[], max = 20) => [...new Set((v ?? []).filter((x) => allowed.includes(x)))].slice(0, max);
 
-export interface ProfileInput {
+interface ProfileInput {
   headline: string;
   description: string;
   province: string;
@@ -142,7 +142,7 @@ export function neutralScore(x: { rating: { n: number; avg: number } | undefined
   return Math.round(rating + speed + (x.accepting ? 10 : 0) + (x.matchIndustry ? 8 : 0) + (x.matchZone ? 7 : 0));
 }
 
-export interface DirectoryFilters {
+interface DirectoryFilters {
   zona?: string;
   rubro?: string;
   servicio?: string;
@@ -204,7 +204,7 @@ export async function publicProfile(slug: string) {
   return { ...r, rating: rate.get(r.studioId), responseHours: hours.get(r.studioId) ?? null, reviews };
 }
 
-export function publishedReviews(studioId: string) {
+function publishedReviews(studioId: string) {
   return getDb()
     .select()
     .from(directory_reviews)

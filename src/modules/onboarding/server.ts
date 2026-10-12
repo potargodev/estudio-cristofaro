@@ -10,7 +10,6 @@ import {
   expense_groups,
   expenses,
   fleet_members,
-  fleet_proposals,
   fleet_votes,
   fleets,
   group_members,
@@ -36,7 +35,7 @@ import { CHECKLISTS, PROFILE_LABEL, type GuideView, type OnboardingProfile, type
 // markStep desde la página. El espacio y el perfil salen SIEMPRE de la
 // sesión: nada de lo que llega del navegador elige a quién se le escribe.
 
-export interface OnboardingContext {
+interface OnboardingContext {
   user: StaffUser;
   profile: OnboardingProfile;
   spaceType: SpaceType;
@@ -49,7 +48,7 @@ export interface OnboardingContext {
  * asistido). Con la ruta de una Flota de la que es integrante activo, el
  * espacio es esa Flota (Capitán o Tripulante).
  */
-export async function onboardingContext(path?: string | null): Promise<OnboardingContext | null> {
+async function onboardingContext(path?: string | null): Promise<OnboardingContext | null> {
   const user = await getCurrentUser();
   // El equipo de Faro en acceso asistido no deja progreso en el tenant ajeno
   if (!user || user.assisted) return null;
@@ -159,7 +158,7 @@ const NEW_ACCOUNT_DAYS = 14;
  * ¿La guía está prendida para este usuario? Lo que eligió (en sus preferencias,
  * para todos sus espacios) manda; si nunca eligió, solo para cuentas nuevas.
  */
-export async function guideEnabled(userId: string) {
+async function guideEnabled(userId: string) {
   const prefs = await getPrefs(userId);
   if (typeof prefs.guide === "boolean") return prefs.guide;
   const [u] = await getDb().select({ createdAt: users.createdAt }).from(users).where(eq(users.id, userId));

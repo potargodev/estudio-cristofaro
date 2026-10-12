@@ -1,7 +1,7 @@
 import { Mail } from "lucide-react";
 import { Card } from "./ui";
 
-export interface StudioContact {
+interface StudioContact {
   name: string;
   email: string;
   image: string | null;

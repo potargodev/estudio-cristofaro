@@ -15,7 +15,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
 export class BillingError extends Error {}
 const api = () => (process.env.MERCADOPAGO_API_URL?.trim() || "https://api.mercadopago.com").replace(/\/$/, "");
 
-export interface MpAccount {
+interface MpAccount {
   key: string; // "faro" o el id del tenant
   token: string;
   secret: string | null;
@@ -23,7 +23,7 @@ export interface MpAccount {
 }
 
 /** Clave de la cuenta para la URL del webhook */
-export const accountKey = (studioId: string | null) => studioId ?? "faro";
+const accountKey = (studioId: string | null) => studioId ?? "faro";
 export const notificationUrl = (studioId: string | null) => `${getSiteUrl()}/api/mercadopago/webhook?cuenta=${accountKey(studioId)}`;
 
 async function row(studioId: string | null) {
@@ -90,7 +90,7 @@ export async function deleteAccount(studioId: string | null, actor: { id: string
   await audit({ studioId, actor, action: studioId ? "cobros.cuenta_mp_borrada" : "faro.cuenta_mp_borrada", entityType: "cuenta_mp" });
 }
 
-export interface Preference {
+interface Preference {
   id: string;
   init_point: string;
 }
@@ -112,7 +112,7 @@ export async function createPreference(acc: MpAccount, i: { title: string; amoun
   });
 }
 
-export interface Preapproval {
+interface Preapproval {
   id: string;
   status: string;
   init_point: string;

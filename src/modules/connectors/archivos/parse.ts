@@ -64,7 +64,7 @@ function date(v: unknown) {
   return null;
 }
 
-export interface ParsedFile {
+interface ParsedFile {
   rows: ExternalRow[];
   columns: Partial<Record<MappingField, string>>;
   errors: string[];

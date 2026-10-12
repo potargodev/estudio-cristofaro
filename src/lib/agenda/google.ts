@@ -12,7 +12,7 @@ import { getSiteUrl } from "../runtime-config";
 // con la Calendar API habilitada y su propia URI de redirección.
 // GOOGLE_API_MOCK_URL (solo pruebas) apunta todo a un simulador local.
 
-export const CALENDAR_SCOPES = [
+const CALENDAR_SCOPES = [
   "https://www.googleapis.com/auth/calendar.events",
   "https://www.googleapis.com/auth/calendar.freebusy",
   "openid",
@@ -39,7 +39,7 @@ export function calendarAvailable() {
   return Boolean(((c.id && c.secret) || mock()) && encryptionEnabled());
 }
 
-export const calendarRedirectUri = () => `${getSiteUrl()}/api/agenda/google/callback`;
+const calendarRedirectUri = () => `${getSiteUrl()}/api/agenda/google/callback`;
 
 export function calendarAuthUrl(state: string) {
   const u = new URL(urls().auth);
@@ -148,7 +148,7 @@ export async function busyIntervals(userId: string, from: Date, to: Date): Promi
   }
 }
 
-export interface EventInput {
+interface EventInput {
   summary: string;
   description: string;
   start: Date;

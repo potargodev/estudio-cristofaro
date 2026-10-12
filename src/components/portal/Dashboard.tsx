@@ -80,7 +80,7 @@ const fmt = new Intl.DateTimeFormat("es-AR", {
   timeZone: "America/Argentina/Buenos_Aires",
 });
 
-export function Timeline({ items }: { items: TimelineItem[] }) {
+function Timeline({ items }: { items: TimelineItem[] }) {
   return (
     <Card>
       <h2 className="text-title font-semibold">Actividad reciente</h2>

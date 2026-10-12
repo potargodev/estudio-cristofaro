@@ -11,7 +11,6 @@ import { SERVICE_PLANS } from "@/lib/service-plans";
 import { createUserWithPassword } from "@/lib/users";
 
 export const DEMO_DOMAIN = "demo.faro.local";
-export const isDemoEmail = (email: string) => email.trim().toLowerCase().endsWith(`@${DEMO_DOMAIN}`);
 
 /** Carpeta de archivos de la demo (dentro de UPLOADS_DIR, se borra entera con el reset) */
 export const DEMO_DIR = "demo";

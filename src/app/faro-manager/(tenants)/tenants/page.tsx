@@ -1,5 +1,4 @@
 import { and, desc, eq, gte, ilike, sql } from "drizzle-orm";
-import { Building2, Compass, Sparkles, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
@@ -17,17 +16,6 @@ export const metadata: Metadata = { title: "Tenants" };
 const day = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
 const usd = (n: number) => `US$ ${n.toLocaleString("es-AR", { maximumFractionDigits: 2 })}`;
 
-function Metric({ label, value, hint, icon: Icon }: { label: string; value: string | number; hint?: string; icon: typeof Building2 }) {
-  return (
-    <div className="border border-line bg-surface px-5 py-4">
-      <p className="flex items-center gap-2 text-meta text-muted">
-        <Icon className="size-4 text-rose-deep" strokeWidth={1.5} aria-hidden /> {label}
-      </p>
-      <p className="mt-1 num text-[34px] leading-none text-ink">{value}</p>
-      {hint && <p className="mt-1.5 text-caption text-muted">{hint}</p>}
-    </div>
-  );
-}
 
 /**
  * Faro Manager: métricas de uso por tipo de tenant y la lista de tenants. No
@@ -74,7 +62,6 @@ export default async function FaroManagerPage({ searchParams }: { searchParams: 
       .where(gte(studios.created_at, new Date(0)))
       .groupBy(studios.kind, studios.plan_key),
   ]);
-  const sum = (k: TenantKind | null, f: (r: (typeof byKind)[number]) => number) => byKind.filter((r) => !k || r.kind === k).reduce((s, r) => s + f(r), 0);
   const filters: [string, string | null, [string | null, string][]][] = [
     ["tipo", kind, [[null, "Todos"], ["studio", "Estudios"], ["personal", "Autónomos"], ["persona", "Personas"]]],
     ["estado", status, [[null, "Todos"], ["activo", "Activos"], ["prueba", "En prueba"], ["suspendido", "Suspendidos"]]],

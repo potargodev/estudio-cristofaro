@@ -16,8 +16,3 @@ export async function setHideFirstStepsPref(hide: boolean) {
   await setPrefs(me.id, { hideFirstSteps: hide === true });
 }
 
-export async function setCopilotAutoPref(on: boolean) {
-  const me = await getCurrentUser();
-  if (!me) return;
-  await setPrefs(me.id, { copilotAuto: on === true });
-}

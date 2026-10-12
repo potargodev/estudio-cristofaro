@@ -8,7 +8,7 @@ import { AdminField } from "@/components/admin/AdminField";
 import { StatusBadge } from "@/components/admin/kit/StatusBadge";
 import { adminButton } from "@/components/admin/styles";
 import { FormSelect, SubmitButton } from "@/components/admin/ui";
-import { Badge, obligationTone, requestTone } from "@/components/portal/ui";
+import { Badge, obligationTone } from "@/components/portal/ui";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getDb } from "@/db";
@@ -138,7 +138,7 @@ export function TabNav({ orgId, active, counts }: { orgId: string; active: OrgTa
 
 const STATUS_OPTIONS = Object.entries(OBLIGATION_STATUS).map(([value, label]) => ({ value, label }));
 
-export interface EntityOption {
+interface EntityOption {
   value: string;
   label: string;
 }

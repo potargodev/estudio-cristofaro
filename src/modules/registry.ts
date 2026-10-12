@@ -34,12 +34,9 @@ export type FaroModuleKey =
   | "bitacora";
 
 export type ModuleStatus = "disponible" | "beta" | "proximamente";
-export type StudioRoleKey = "dueno" | "contador" | "colaborador" | "titular";
+type StudioRoleKey = "dueno" | "contador" | "colaborador" | "titular";
 
-/** usar: lo opera; configurar: además lo configura (claves, conexiones, reglas) */
-export type ModulePermission = "usar" | "configurar";
-
-export interface FaroModule {
+interface FaroModule {
   key: FaroModuleKey;
   name: string;
   /** Nombre de ícono de lucide-react */

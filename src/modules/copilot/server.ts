@@ -20,7 +20,7 @@ import { archiveGroup, createExpense, createGroup, deleteExpense, GastosError, g
 import { parseBasic } from "./basic";
 import { readCopilotFile } from "./files";
 import { checkQuota, recordAlert, type Quota } from "./limits";
-import { costUsd, getPlatformAi, isConfigured, platformModel, transcribeAudio, type PlatformAi } from "./platform";
+import { costUsd, getPlatformAi, isConfigured, platformModel, transcribeAudio } from "./platform";
 import { consultarBitacora, consultarSaldos, isProposalTool, PROPOSAL_TOOLS, type ProposalTool } from "./tools";
 
 // Vigía (docs/faro-producto.md §2.m). Todo opera como el usuario de la
@@ -30,7 +30,7 @@ import { consultarBitacora, consultarSaldos, isProposalTool, PROPOSAL_TOOLS, typ
 
 export class CopilotError extends Error {}
 
-export interface CopilotUser {
+interface CopilotUser {
   id: string;
   name: string;
   email: string;
@@ -479,7 +479,7 @@ async function withRetry<T>(fn: (attempt: number) => Promise<T>, waits = [1000, 
   throw last;
 }
 
-export interface ProcessResult {
+interface ProcessResult {
   status: "ok" | "pendiente" | "error" | "limite" | "sin_ia";
   replyId?: string;
 }

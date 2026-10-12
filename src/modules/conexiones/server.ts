@@ -25,12 +25,12 @@ export class ConexionError extends Error {}
 const UUID = /^[0-9a-f-]{36}$/i;
 const DAY = 86400000;
 const db = () => getDb();
-export type Connection = typeof account_connections.$inferSelect;
+type Connection = typeof account_connections.$inferSelect;
 type Person = { id: string; name: string; email: string; studioId: string; role: string; tenantKind: string; assisted?: unknown };
 type Staff = { id: string; name: string; email: string; studioId: string; role: string; tenantKind: string };
 
 /** Estados en los que la conexión todavía está viva (una por persona a la vez) */
-export const OPEN_STATES = ["invitada", "admision", "acuerdo", "activa", "en_cierre", "en_disputa"] as const;
+const OPEN_STATES = ["invitada", "admision", "acuerdo", "activa", "en_cierre", "en_disputa"] as const;
 const FINAL_STATES = ["cerrada", "rechazada", "cancelada"];
 export const STATUS_LABEL: Record<string, string> = {
   invitada: "Invitación del estudio",
@@ -45,7 +45,7 @@ export const STATUS_LABEL: Record<string, string> = {
 };
 export const AUTONOMY_LABEL = { delegar: "Delegar y mirar", proponer: "Proponer y aprobar" } as const;
 export const READONLY_DAYS = 30;
-export const AGREEMENT_VERSION = "conexion-2026-10";
+const AGREEMENT_VERSION = "conexion-2026-10";
 
 const isTitular = (u: Person) => u.role === "titular" && u.tenantKind !== "studio" && !u.assisted;
 const isStaff = (u: Staff) => u.tenantKind === "studio" && ["dueno", "contador", "colaborador"].includes(u.role);
@@ -228,7 +228,7 @@ export async function studioConnections(staff: Staff) {
     .orderBy(desc(account_connections.updated_at));
 }
 
-export type AccessLevel = "admision" | "total" | "lectura";
+type AccessLevel = "admision" | "total" | "lectura";
 
 /**
  * ¿Qué puede ver y hacer el estudio sobre esta cuenta? Solo su propio estudio:
@@ -347,9 +347,6 @@ export async function liveView(staff: Staff, id: string, month: string) {
     : null;
   return { conn: c, level: acc.level, person: { name: u?.name ?? "", email: u?.email ?? "" }, tenantKind: tenant?.kind ?? null, box, summary, entries, fiscal, personal };
 }
-
-/** Resumen para la admisión: solo lo autorizado (caja de negocio y fiscal, y lo personal si lo activó) */
-export const admissionSummary = liveView;
 
 // ── Acciones del contador (delegar y mirar / proponer y aprobar) ─────
 
@@ -590,6 +587,3 @@ export async function sendWeeklySummaries(now = new Date()) {
   }
   return n;
 }
-
-/** Cierres que vencieron: pasados los 30 días de solo lectura, el estudio ya no ve nada (la conexión sigue esperando la constancia) */
-export const isReadonlyExpired = (c: Pick<Connection, "status" | "readonly_until">) => (c.status === "en_cierre" || c.status === "en_disputa") && !!c.readonly_until && c.readonly_until <= new Date();

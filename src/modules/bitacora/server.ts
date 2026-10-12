@@ -159,7 +159,7 @@ export async function archiveCategory(userId: string, id: string, archived: bool
 
 // ── Lectura: movimientos propios + mi parte de los grupos ────────────
 
-export interface Movement {
+interface Movement {
   id: string;
   kind: "gasto" | "ingreso";
   amount: number;

@@ -22,14 +22,14 @@ export interface ArcaCredential {
 const iso = (d: Date) => d.toISOString().replace(/\.\d{3}Z$/, "-00:00").replace("Z", "-00:00");
 
 /** Ticket de requerimiento de acceso (TRA) */
-export function buildTra(service: string, now = new Date()) {
+function buildTra(service: string, now = new Date()) {
   const gen = new Date(now.getTime() - 10 * 60_000);
   const exp = new Date(now.getTime() + 10 * 60_000);
   return `<?xml version="1.0" encoding="UTF-8"?><loginTicketRequest version="1.0"><header><uniqueId>${Math.floor(now.getTime() / 1000)}</uniqueId><generationTime>${iso(gen)}</generationTime><expirationTime>${iso(exp)}</expirationTime></header><service>${service}</service></loginTicketRequest>`;
 }
 
 /** Firma CMS del TRA (base64, sin cabeceras) */
-export function signTra(tra: string, certPem: string, keyPem: string) {
+function signTra(tra: string, certPem: string, keyPem: string) {
   let cert: forge.pki.Certificate;
   let key: forge.pki.PrivateKey;
   try {

@@ -16,7 +16,7 @@ import { brandVars, checkColors, normalizeDomain, reservedHost, txtName } from "
 
 export class BrandingError extends Error {}
 type Actor = { id: string; email: string; studioId: string };
-export type Branding = typeof studio_branding.$inferSelect;
+type Branding = typeof studio_branding.$inferSelect;
 
 /** Lo que ve el portal: null si el estudio no la tiene activa o no está en su plan */
 export interface PortalBrand {
@@ -67,7 +67,7 @@ export async function brandByHost(host: string | null): Promise<PortalBrand | nu
 }
 
 /** Hosts de Faro y de la app: nunca pueden ser el dominio de un estudio */
-export function reservedHosts() {
+function reservedHosts() {
   const fromEnv = [process.env.FARO_HOSTS, process.env.APP_HOSTS].join(",").split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
   const site = normalizeDomain(getSiteUrl());
   return [...fromEnv, ...(site ? [site.split(".").slice(-2).join(".")] : []), "estudiocristofaro.com", "faro.com.ar"];
@@ -136,7 +136,7 @@ export async function setDomain(actor: Actor, input: string) {
   return { domain, token };
 }
 
-export type TxtResolver = (name: string) => Promise<string[][]>;
+type TxtResolver = (name: string) => Promise<string[][]>;
 
 /** Verifica el registro TXT del dominio (el resolver se puede inyectar en las pruebas) */
 export async function verifyDomain(actor: Actor, resolver: TxtResolver = resolveTxt) {

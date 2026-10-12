@@ -8,7 +8,7 @@ import { readStored, uploadsDir } from "@/lib/uploads";
 // nombre aleatorio, y se sirven solo por /api/copiloto/archivo/<mensaje>,
 // que verifica que el mensaje sea del usuario de la sesión.
 
-export const COPILOT_MAX_BYTES = 12 * 1024 * 1024;
+const COPILOT_MAX_BYTES = 12 * 1024 * 1024;
 
 type Kind = "audio" | "imagen" | "pdf";
 const RULES: { mime: RegExp; ext: string; kind: Kind; magic: (b: Buffer) => boolean }[] = [
@@ -24,7 +24,7 @@ const RULES: { mime: RegExp; ext: string; kind: Kind; magic: (b: Buffer) => bool
   { mime: /^audio\/(wav|x-wav|wave)/, ext: ".wav", kind: "audio", magic: (b) => b.subarray(0, 4).toString() === "RIFF" },
 ];
 
-export type CopilotFile = { kind: Kind; path: string; name: string; mime: string; data: Buffer };
+type CopilotFile = { kind: Kind; path: string; name: string; mime: string; data: Buffer };
 
 /** Valida tipo (por el contenido, no solo la extensión) y tamaño, y lo guarda */
 export async function storeCopilotFile(userId: string, file: File): Promise<CopilotFile | { error: string }> {
