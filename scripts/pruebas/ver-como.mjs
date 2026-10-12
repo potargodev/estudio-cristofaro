@@ -7,7 +7,7 @@ import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import postgres from "postgres";
 import { BASE, check, failures } from "./lib.mjs";
 
-const pw = await import(process.env.PW ?? "/opt/node22/lib/node_modules/playwright/index.js");
+const pw = await import(process.env.PW ?? "/opt/node22/lib/node_modules/playwright/index.mjs");
 const { chromium } = pw.chromium ? pw : pw.default;
 const sql = postgres(process.env.DATABASE_URL, { onnotice: () => {} });
 const browser = await chromium.launch({ executablePath: process.env.CHROME ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });

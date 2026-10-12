@@ -14,10 +14,14 @@ const blocked = (r, from) => r.status >= 300 && r.status < 400 && !r.to.includes
 // Nivel plataforma
 check("un contador no entra a Faro Manager", blocked(await go(d.cookies.contadorA, "/faro-manager"), "/faro-manager"));
 check("el dueño de otro estudio no entra a Faro Manager", blocked(await go(d.cookies.adminB, "/faro-manager"), "/faro-manager"));
+// El dueño del estudio A hace de owner de Faro (con 2FA) para esta prueba
+await sql`update users set faro_role = 'faro_owner', two_factor_enabled = true where id = ${d.users.adminA}`;
 check("faro_owner entra a Faro Manager", (await go(d.cookies.adminA, "/faro-manager")).status === 200);
+await sql`update users set faro_role = null where id = ${d.users.adminA}`;
 
 // Tenant estudio y tenant personal
-check("el titular entra al Asistente", (await go(d.cookies.titular, "/admin/asistente")).status === 200);
+// Un solo Vigía (§2.o): el Asistente es una pestaña del Vigía
+check("el titular entra al Asistente", (await go(d.cookies.titular, "/admin/vigia?tab=asistente")).status === 200);
 check("el titular configura su IA", (await go(d.cookies.titular, "/admin/configuracion/ia")).status === 200);
 check("el titular crea accesos MCP", (await go(d.cookies.titular, "/admin/mcp")).status === 200);
 const t1 = await go(d.cookies.titular, "/admin/organizaciones");
@@ -26,7 +30,8 @@ const t2 = await go(d.cookies.titular, "/admin");
 check("el titular no ve el resumen del estudio", t2.status >= 300 && t2.to.includes("/personal"), t2.to);
 const c1 = await go(d.cookies.colaboradorA, "/admin/configuracion/ia");
 check("un colaborador no configura la IA del estudio", c1.status >= 300 && c1.to.includes("sin-permiso"), c1.to);
-check("un estudio no entra al panel personal", blocked(await go(d.cookies.contadorA, "/personal"), "/personal"));
+// §2.o: cada persona tiene su espacio Personal (Bitácora y Grupos), también el equipo del estudio
+check("alguien del estudio entra a su espacio personal", (await go(d.cookies.contadorA, "/personal")).status === 200);
 
 // Organización y empleado
 check("un cliente no entra al backoffice", blocked(await go(d.cookies.duenaNorte, "/admin"), "/admin"));

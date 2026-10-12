@@ -7,10 +7,12 @@ import { audit } from "@/lib/audit";
 import { esc, sendMail } from "@/lib/email";
 import { mailLayout, memberEmails, notifyOrganization } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
-import { createFromPhrase, FlowError, triggerManual } from "@/modules/flows/engine";
 import { defineTool, ToolError } from "../types";
 import { uuid } from "./helpers";
 import { formatDate, formatMoney, formatPeriod } from "@/lib/format";
+
+// El motor de flujos usa el registro de herramientas: se carga al usarlo (si no, la importación es circular)
+const engine = () => import("@/modules/flows/engine");
 
 // Flujos para el Vigía y acciones que usan las plantillas. Mandar algo a un
 // cliente (recordatorio, pedido de documentación, resumen) es una
@@ -146,6 +148,7 @@ export const flujosTools = [
       const [f] = await getDb().select().from(flows).where(and(eq(flows.id, input.flujo_id), eq(flows.studio_id, ctx.studioId)));
       if (!f) throw new ToolError("No encontramos ese flujo.", "no_encontrado");
       if (f.trigger_type !== "vigia") throw new ToolError("Ese flujo no se dispara desde el Vigía.", "entrada_invalida");
+      const { FlowError, triggerManual } = await engine();
       try {
         const r = await triggerManual(ctx.studioId, ctx.actor, f.id, input.datos ?? {}, "vigia");
         return { corrida: r.id, enlace: `/admin/vigia/flujos/${f.id}` };
@@ -165,6 +168,7 @@ export const flujosTools = [
     input: z.object({ frase: z.string().min(8).max(300) }),
     describe: (i) => `Armar un borrador: «${i.frase}»`,
     async handler(input, ctx) {
+      const { createFromPhrase, FlowError } = await engine();
       try {
         const r = await createFromPhrase(ctx.studioId, ctx.actor, input.frase);
         return { borrador: r.flow.id, nombre: r.flow.name, explicacion: r.explicacion, enlace: `/admin/vigia/flujos/${r.flow.id}` };

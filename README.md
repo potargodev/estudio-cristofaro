@@ -45,20 +45,12 @@ Next.js 15 (App Router) · Tailwind 4 · Postgres + Drizzle · Better Auth · No
 - **Conexiones** (`/admin/conexiones`): Tango (conector local), Xubio (API oficial con OAuth2), Google Drive (carpeta por organización), MCP externo (sus herramientas en el Asistente, en solo lectura por defecto) y Archivos (Holistor, Bejerman y otros con plantillas de mapeo). Alegra, Colppy, Contabilium, Finnegans, Odoo, Mercado Pago y ARCA figuran como próximamente.
 - `/estudio/*` redirige al panel (`/admin/*`).
 
-### Pruebas de la F2 (solo desarrollo)
+### Pruebas (solo desarrollo)
 
-Mocks en `mocks/` (proveedor de IA compatible con OpenAI, Xubio y Google) y pruebas en `scripts/pruebas/`:
-
-```bash
-node mocks/openai/server.mjs & node mocks/xubio/server.mjs & node mocks/google/server.mjs & (cd connector && node mock/server.mjs) &
-# .env.local con XUBIO_API_URL=http://localhost:4020/API/1.1 y GOOGLE_API_MOCK_URL=http://localhost:4030
-npm run build && npx next start -p 3000 &
-node --env-file=.env.local scripts/pruebas/datos.mjs        # dos estudios, usuarios con sesión y datos
-node --env-file=.env.local scripts/pruebas/proveedor.mjs    # proveedor de IA de prueba
-node --env-file=.env.local scripts/pruebas/asistente.mjs
-node --env-file=.env.local scripts/pruebas/mcp.mjs
-npx tsx --conditions=react-server --env-file=.env.local scripts/pruebas/conexiones.mts
-```
+- Rápidas: `npm run typecheck`, `npm run lint`, `npm run knip` y `npm test` (unitarias).
+- Completas: `npm run build && bash scripts/pruebas/regresion.sh [filtro]`. Crea una base nueva (`faro_regresion`), levanta los simuladores de `mocks/` (IA, Xubio, Google, cotizaciones, ARCA, Mercado Pago, WhatsApp y Tango Delta), arranca el servidor de producción apuntando a ellos y corre todas las pruebas de `scripts/pruebas/` (servidor y navegador), primero sin la demo y después con la demo cargada (incluye «Ver como…», la auditoría de seguridad y el recorrido de pantallas a 390 y 1.440 px en claro y oscuro). Deja el resumen y los logs en `/tmp/faro-regresion`.
+- Cada prueba dice en su encabezado cómo correrla sola. Los navegadores usan Playwright con Chromium (`PW` y `CHROME` cambian las rutas).
+- `scripts/verificar-enlaces.mts` y `scripts/verificar-redirecciones.mts`: enlaces de la app y de la ayuda sin 404 ni rutas viejas, contra un servidor corriendo.
 
 ## Desarrollo local
 
