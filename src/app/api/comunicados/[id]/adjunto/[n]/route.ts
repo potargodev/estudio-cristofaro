@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { announcement_reads, announcements } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { readStored } from "@/lib/uploads";
 import { canSeePayroll, viewerFor } from "@/modules/payroll/access";
@@ -12,7 +12,7 @@ const nf = () => new Response("No encontrado", { status: 404 });
 /** Adjunto de un comunicado: sus destinatarios, el estudio o quien ve sueldos en la organización */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string; n: string }> }) {
   const { id, n } = await params;
-  const me = await getCurrentUser();
+  const me = await getSessionUser();
   if (!me) return new Response("No autorizado", { status: 401 });
   if (!isUuid(id)) return nf();
   const [a] = await getDb().select().from(announcements).where(and(eq(announcements.id, id), eq(announcements.studio_id, me.studioId)));

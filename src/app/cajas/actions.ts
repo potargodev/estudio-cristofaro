@@ -6,7 +6,8 @@ import { isMonth, parseAmount } from "@/modules/bitacora/catalog";
 import { requireUser } from "@/modules/bitacora/session";
 import { addBusinessEntry, CajaError, contribute, deleteBoxEntry, dismissBusinessHint, moveToBusiness, openBusinessBox, paySalary, setSalary } from "@/modules/cajas/server";
 import { addSharedEntry, pairBoxFromHogar, boxInviteLink, confirmEntry, confirmSharePaid, createGoal, createSharedBox, deleteSharedEntry, joinBox, leaveBox } from "@/modules/cajas/shared";
-import { todayAR } from "@/modules/gastos/constants";
+import { todayAR } from "@/lib/format";
+import { internalPath } from "@/lib/paths";
 
 // Mis cajas: el usuario sale siempre de la sesión y cada función del servidor
 // valida que sea integrante de la caja (nunca se confía en el ID del navegador).
@@ -73,7 +74,7 @@ export async function deleteBoxEntryAction(fd: FormData) {
 
 export async function moveToBusinessAction(fd: FormData) {
   const me = await requireUser();
-  const back = s(fd, "volver").startsWith("/") && !s(fd, "volver").startsWith("//") ? s(fd, "volver") : "/cajas";
+  const back = internalPath(s(fd, "volver"), "/cajas");
   const row = await guard(back, () => moveToBusiness(me, s(fd, "id")));
   revalidatePath("/bitacora");
   revalidatePath("/cajas", "layout");

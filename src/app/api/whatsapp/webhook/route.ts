@@ -1,3 +1,4 @@
+import { readBodyLimited, tooLarge, tooMany, webhookAllowed } from "@/lib/http";
 import { handleWebhook, webhookChallenge } from "@/modules/whatsapp/server";
 
 // Webhook de WhatsApp Business Cloud API. Una sola URL para el número de Faro
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 /** Meta verifica la suscripción con el token de verificación de alguna cuenta */
 export async function GET(req: Request) {
+  if (!webhookAllowed(req, "whatsapp-verificar", 30)) return tooMany();
   const u = new URL(req.url);
   if (u.searchParams.get("hub.mode") === "subscribe" && (await webhookChallenge(u.searchParams.get("hub.verify_token")))) {
     return new Response(u.searchParams.get("hub.challenge") ?? "", { status: 200, headers: { "Content-Type": "text/plain" } });
@@ -16,8 +18,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const raw = await req.text();
-  if (raw.length > 1_000_000) return new Response("Muy grande", { status: 413 });
+  if (!webhookAllowed(req, "whatsapp", 600)) return tooMany();
+  const raw = await readBodyLimited(req, 1_000_000);
+  if (raw === null) return tooLarge();
   const r = await handleWebhook(raw, req.headers.get("x-hub-signature-256"));
   return new Response(r.status === 200 ? "ok" : "rechazado", { status: r.status });
 }

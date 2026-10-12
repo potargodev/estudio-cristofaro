@@ -190,6 +190,8 @@ export async function decideApproval(approvalId: string, approver: ToolActor & {
   if (!t && !external) return { ok: false, message: "La herramienta ya no existe." };
 
   if (!decision.approve) {
+    // Rechaza quien podría aprobarla (o quien la pidió, para cancelarla)
+    if (a.requested_by !== approver.id && t && !t.roles.includes(approver.role)) return { ok: false, message: "Tu rol no puede decidir esta acción." };
     const [done] = await db
       .update(approvals)
       .set({ status: a.level === "escritura" ? "cancelada" : "rechazada", decided_by: approver.id, decided_at: new Date(), reason: decision.reason.slice(0, 1000) })

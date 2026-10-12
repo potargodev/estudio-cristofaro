@@ -80,8 +80,10 @@ export async function saveObligation(fd: FormData) {
       .update(obligations)
       .set(payload)
       .where(and(eq(obligations.id, id), eq(obligations.organization_id, org.id), eq(obligations.studio_id, staff.studioId)));
+    await audit({ studioId: staff.studioId, organizationId: org.id, actor: staff, action: "vencimientos.editar", entityType: "vencimiento", entityId: id, metadata: { impuesto: payload.tax, periodo: payload.period, estado: payload.status } });
   } else {
-    await db.insert(obligations).values({ ...payload, studio_id: staff.studioId, organization_id: org.id });
+    const [row] = await db.insert(obligations).values({ ...payload, studio_id: staff.studioId, organization_id: org.id }).returning({ id: obligations.id });
+    await audit({ studioId: staff.studioId, organizationId: org.id, actor: staff, action: "vencimientos.crear", entityType: "vencimiento", entityId: row.id, metadata: { impuesto: payload.tax, periodo: payload.period } });
     await notifyOrganization(staff.studioId, org.id, {
       kind: "vencimientos",
       items: [{ tax: payload.tax, period: payload.period, dueDate: payload.due_date }],
@@ -97,9 +99,11 @@ export async function deleteObligation(fd: FormData) {
   if (!org) redirect("/admin/organizaciones");
   const id = s(fd, "id");
   if (id && isUuid(id)) {
-    await getDb()
+    const gone = await getDb()
       .delete(obligations)
-      .where(and(eq(obligations.id, id), eq(obligations.organization_id, org.id), eq(obligations.studio_id, staff.studioId)));
+      .where(and(eq(obligations.id, id), eq(obligations.organization_id, org.id), eq(obligations.studio_id, staff.studioId)))
+      .returning({ tax: obligations.tax, period: obligations.period });
+    if (gone.length) await audit({ studioId: staff.studioId, organizationId: org.id, actor: staff, action: "vencimientos.borrar", entityType: "vencimiento", entityId: id, metadata: { impuesto: gone[0].tax, periodo: gone[0].period } });
   }
   revalidateOrg(org.id);
   redirect(fichaUrl(org.id, "vencimientos"));
@@ -229,6 +233,7 @@ export async function replyRequest(fd: FormData) {
   // Responder pasa la solicitud a "en curso" salvo que se elija otro estado
   const nextStatus = status && status in REQUEST_STATUS ? status : body && req.status === "abierta" ? "en_curso" : req.status;
   await db.update(requests).set({ status: nextStatus }).where(eq(requests.id, req.id));
+  await audit({ studioId: staff.studioId, organizationId: req.organization_id, actor: staff, action: "solicitud.responder", entityType: "solicitud", entityId: req.id, metadata: { mensaje: Boolean(body), archivo: Boolean(documentId), estado: nextStatus } });
   if (body || documentId) await notifyOrganization(staff.studioId, req.organization_id, { kind: "respuesta", subject: req.subject });
 
   revalidateOrg(req.organization_id);

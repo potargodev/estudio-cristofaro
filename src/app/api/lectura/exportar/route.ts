@@ -4,6 +4,7 @@ import { audit } from "@/lib/audit";
 import { EXPORT_HEADERS, toCsv, toTangoCsv, type ExportRow } from "@/modules/smart-docs/core";
 import { resolveScope, type Ambito } from "@/modules/smart-docs/scope";
 import { exportData, markExported } from "@/modules/smart-docs/server";
+import { forbidden, sameOrigin } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ export const dynamic = "force-dynamic";
  * archivo para Tango (Compras) o planilla para importar en Xubio.
  */
 export async function GET(req: NextRequest) {
+  if (!sameOrigin(req)) return forbidden();
   const q = req.nextUrl.searchParams;
   const a = q.get("ambito");
   const ambito: Ambito = a === "estudio" || a === "personal" ? a : "bitacora";

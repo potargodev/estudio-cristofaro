@@ -1,3 +1,4 @@
+import { readBodyLimited, tooLarge, tooMany, webhookAllowed } from "@/lib/http";
 import { handleWebhook } from "@/modules/tango-sync/server";
 
 export const dynamic = "force-dynamic";
@@ -8,8 +9,9 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(request: Request, { params }: { params: Promise<{ link: string }> }) {
   const { link } = await params;
-  const body = await request.text();
-  if (Buffer.byteLength(body) > 1_000_000) return Response.json({ ok: false }, { status: 413 });
+  if (!webhookAllowed(request, "tango", 120)) return tooMany();
+  const body = await readBodyLimited(request, 1_000_000);
+  if (body === null) return tooLarge();
   const r = await handleWebhook(link, body, request.headers.get("x-tango-signature"));
   return Response.json({ ok: r.status < 300, result: "result" in r ? r.result : undefined }, { status: r.status, headers: { "Cache-Control": "no-store" } });
 }

@@ -9,10 +9,13 @@ import { and, eq, gte, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { ai_providers, ai_settings, ai_usage, type AiTask, type ModelRef } from "@/db/schema";
 import { decrypt } from "@/lib/crypto";
+import { safeFetch } from "@/lib/safe-fetch";
 import { estimateCost } from "./pricing";
+import { formatUsd } from "@/lib/format";
 
 // Proveedores del estudio → modelos del AI SDK. Las claves se descifran solo
-// acá, en el servidor, al momento de usarlas.
+// acá, en el servidor, al momento de usarlas. La URL la elige el tenant: todo
+// pedido sale por safeFetch (nunca hacia la red interna).
 
 type AiProvider = typeof ai_providers.$inferSelect;
 
@@ -21,23 +24,24 @@ export function languageModel(p: AiProvider, model: string): LanguageModel {
   const baseURL = p.base_url?.trim() || undefined;
   switch (p.kind) {
     case "anthropic":
-      return createAnthropic({ apiKey, baseURL })(model);
+      return createAnthropic({ apiKey, baseURL, fetch: safeFetch })(model);
     case "openai":
-      return createOpenAI({ apiKey, baseURL })(model);
+      return createOpenAI({ apiKey, baseURL, fetch: safeFetch })(model);
     case "google":
-      return createGoogleGenerativeAI({ apiKey, baseURL })(model);
+      return createGoogleGenerativeAI({ apiKey, baseURL, fetch: safeFetch })(model);
     case "openrouter":
-      return createOpenAICompatible({ name: "openrouter", apiKey, baseURL: baseURL ?? "https://openrouter.ai/api/v1", includeUsage: true }).chatModel(model);
+      return createOpenAICompatible({ name: "openrouter", apiKey, baseURL: baseURL ?? "https://openrouter.ai/api/v1", includeUsage: true, fetch: safeFetch }).chatModel(model);
     case "azure":
       return createAzure({
         apiKey,
         baseURL,
         resourceName: baseURL ? undefined : p.settings.resourceName,
         apiVersion: p.settings.apiVersion || undefined,
+        fetch: safeFetch,
       }).chat(model);
     case "openai_compatible":
       if (!baseURL) throw new Error("Falta la URL base del proveedor compatible con OpenAI.");
-      return createOpenAICompatible({ name: "compatible", apiKey, baseURL, includeUsage: true }).chatModel(model);
+      return createOpenAICompatible({ name: "compatible", apiKey, baseURL, includeUsage: true, fetch: safeFetch }).chatModel(model);
   }
 }
 
@@ -95,7 +99,7 @@ export async function budgetBlock(studioId: string) {
   const limit = Number(s.monthly_budget_usd);
   const spent = await monthSpend(studioId);
   if (spent.usd < limit) return null;
-  return `Se alcanzó el límite de gasto de IA del mes (US$ ${limit.toFixed(2)}). Un administrador puede subirlo en IA → Configuración.`;
+  return `Se alcanzó el límite de gasto de IA del mes (${formatUsd(limit)}). Un administrador puede subirlo en IA → Configuración.`;
 }
 
 export async function recordUsage(e: {

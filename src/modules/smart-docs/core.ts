@@ -5,6 +5,8 @@
 
 import { z } from "zod";
 import { CBTE_TYPES, validCuit } from "@/modules/arca/config";
+import { toCsv as toCsv_ } from "@/lib/csv";
+import { formatAmount } from "@/lib/format";
 
 /** Lo que devuelve el modelo (montos en pesos con decimales; confianza 0 a 1 por campo) */
 export const EXTRACTION_SCHEMA = z.object({
@@ -98,7 +100,7 @@ export function validate(e: Extraction, today = new Date().toISOString().slice(0
     if (parts) {
       const sum = cents(e.neto_gravado) + cents(e.no_gravado) + cents(e.exento) + e.iva.reduce((s, x) => s + cents(x.importe), 0) + e.percepciones.reduce((s, x) => s + cents(x.importe), 0);
       v.totales = Math.abs(sum - cents(e.total)) <= 2 ? "ok" : "error";
-      if (v.totales === "error") v.mensajes.push(`Los importes suman ${(sum / 100).toFixed(2)} y el total dice ${e.total.toFixed(2)}.`);
+      if (v.totales === "error") v.mensajes.push(`Los importes suman ${formatAmount(sum / 100)} y el total dice ${formatAmount(e.total)}.`);
     }
   }
   if (e.fecha && e.fecha > today) v.mensajes.push("La fecha es posterior a hoy.");
@@ -218,15 +220,9 @@ export const EXPORT_HEADERS: [keyof ExportRow, string][] = [
   ["moneda", "Moneda"],
 ];
 
-const cell = (x: unknown) => {
-  const s = x === null || x === undefined ? "" : typeof x === "number" ? String(x).replace(".", ",") : String(x);
-  const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
-  return /[";\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
-};
-
 /** CSV para planilla (punto y coma, coma decimal, BOM para Excel) */
 export function toCsv(rows: ExportRow[]) {
-  return "﻿" + [EXPORT_HEADERS.map(([, h]) => h).join(";"), ...rows.map((r) => EXPORT_HEADERS.map(([k]) => cell(r[k])).join(";"))].join("\r\n");
+  return toCsv_([EXPORT_HEADERS.map(([, h]) => h), ...rows.map((r) => EXPORT_HEADERS.map(([k]) => r[k]))], { decimalComma: true, bom: true });
 }
 
 /**
@@ -241,6 +237,6 @@ export function toTangoCsv(rows: ExportRow[]) {
   const cuit = (c: string) => (c.length === 11 ? `${c.slice(0, 2)}-${c.slice(2, 10)}-${c.slice(10)}` : c);
   const n = (x: number) => x.toFixed(2);
   const head = ["FECHA", "TIPO_COMP", "NRO_COMP", "CUIT", "RAZON_SOCIAL", "CUENTA", "NETO_GRAVADO", "NO_GRAVADO", "EXENTO", "IVA_21", "IVA_105", "IVA_27", "PERCEPCIONES", "TOTAL", "CAE"];
-  const lines = rows.map((r) => [f(r.fecha), r.tipo, `${String(r.punto_venta ?? 0).padStart(5, "0")}-${String(r.numero ?? 0).padStart(8, "0")}`, cuit(r.cuit), r.razon_social, r.cuenta, n(r.neto_gravado), n(r.no_gravado), n(r.exento), n(r.iva_21), n(r.iva_10_5), n(r.iva_27), n(r.percepciones), n(r.total), r.cae].map(cell).join(";"));
-  return [head.join(";"), ...lines].join("\r\n");
+  const lines = rows.map((r) => [f(r.fecha), r.tipo, `${String(r.punto_venta ?? 0).padStart(5, "0")}-${String(r.numero ?? 0).padStart(8, "0")}`, cuit(r.cuit), r.razon_social, r.cuenta, n(r.neto_gravado), n(r.no_gravado), n(r.exento), n(r.iva_21), n(r.iva_10_5), n(r.iva_27), n(r.percepciones), n(r.total), r.cae]);
+  return toCsv_([head, ...lines]);
 }

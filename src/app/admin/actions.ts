@@ -344,13 +344,14 @@ export async function createStaffUser(fd: FormData) {
 
   let result = "creado=1";
   try {
-    await createUserWithPassword(getDb(), {
+    const created = await createUserWithPassword(getDb(), {
       studioId: admin.studioId,
       name,
       email,
       password,
       role: role && STAFF_ROLES.includes(role) ? role : "contador",
     });
+    await audit({ studioId: admin.studioId, actor: admin, action: "equipo.usuario_crear", entityType: "usuario", entityId: created?.id ?? null, metadata: { email, rol: role && STAFF_ROLES.includes(role) ? role : "contador" } });
   } catch (error) {
     const code = pgCode(error);
     if (code !== "23505") console.error("[admin] createStaffUser", error);
@@ -367,10 +368,13 @@ export async function updateUserRole(fd: FormData) {
   if (!userId || !role || !STAFF_ROLES.includes(role)) redirect("/admin/configuracion/equipo?error=guardar");
   // Un admin no puede quitarse el rol a sí mismo (el estudio podría quedar sin admin)
   if (userId === admin.id) redirect("/admin/configuracion/equipo?error=propio");
-  await getDb()
+  // Solo entre roles del equipo: una cuenta de cliente no pasa a ser del estudio por acá
+  const changed = await getDb()
     .update(users)
     .set({ role })
-    .where(and(eq(users.id, userId), eq(users.studioId, admin.studioId)));
+    .where(and(eq(users.id, userId!), eq(users.studioId, admin.studioId), inArray(users.role, STAFF_ROLES)))
+    .returning({ id: users.id });
+  if (changed.length) await audit({ studioId: admin.studioId, actor: admin, action: "equipo.usuario_rol", entityType: "usuario", entityId: userId, metadata: { rol: role } });
   revalidatePath("/admin/configuracion/equipo");
   redirect("/admin/configuracion/equipo?guardado=1");
 }
@@ -389,6 +393,7 @@ export async function setUserActive(fd: FormData) {
     .returning({ id: users.id });
   // Al desactivar se cierran todas sus sesiones abiertas
   if (!active && rows.length > 0) await db.delete(sessions).where(eq(sessions.userId, userId));
+  if (rows.length) await audit({ studioId: admin.studioId, actor: admin, action: active ? "equipo.usuario_activar" : "equipo.usuario_desactivar", entityType: "usuario", entityId: userId });
   revalidatePath("/admin/configuracion/equipo");
   redirect(`/admin/configuracion/equipo?${active ? "activado=1" : "desactivado=1"}`);
 }

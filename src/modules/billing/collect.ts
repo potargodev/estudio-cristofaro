@@ -10,6 +10,7 @@ import { parseRef, refOf, verifySignature } from "./core";
 import { applyFeePayment } from "./fees";
 import { BillingError, createPreapproval, createPreference, getPayment, getPreapproval, loadAccount, updatePreapproval } from "./mp";
 import { applyPreapprovalStatus, applySubscriptionPayment } from "./subscriptions";
+import { formatAmount } from "@/lib/format";
 
 // Débito de flotas, links de pago de facturas personales y el procesamiento
 // de los webhooks de Mercado Pago (firma, idempotencia y despacho).
@@ -78,7 +79,7 @@ async function applyFleetPayment(studioId: string, agreementId: string, amountPe
   const n = Math.max(1, Math.floor(amountPesos / Math.max(1, a.monthly_price)));
   for (const period of periods.slice(0, n)) await db().insert(agreement_payments).values({ agreement_id: a.id, period, amount: a.monthly_price, method: "mercadopago" }).onConflictDoNothing();
   await audit({ studioId, organizationId: a.organization_id, actorLabel: "Mercado Pago", action: "flota.pago", entityType: "acuerdo", entityId: a.id, metadata: { periodos: periods.slice(0, n), pago: paymentId } });
-  await notify([a.user_id], { kind: "pago", title: "Recibimos tu pago del servicio", body: `$ ${amountPesos.toLocaleString("es-AR")}`, href: "/flotas/servicios" });
+  await notify([a.user_id], { kind: "pago", title: "Recibimos tu pago del servicio", body: formatAmount(amountPesos, "ARS", { decimals: "auto" }), href: "/flotas/servicios" });
   return "aplicado";
 }
 
@@ -103,7 +104,7 @@ async function applyInvoicePayment(studioId: string, invoiceId: string, paymentI
   await db().update(invoices).set({ paid_at: new Date() }).where(eq(invoices.id, inv.id));
   await audit({ studioId, organizationId: inv.organization_id, actorLabel: "Mercado Pago", action: "factura.pagada", entityType: "factura", entityId: inv.id, metadata: { pago: paymentId } });
   const owners = await db().select({ id: users.id }).from(users).where(and(eq(users.studioId, studioId), eq(users.active, true)));
-  await notify(owners.map((o) => o.id), { kind: "pago", title: `${inv.customer_name} pagó la factura`, body: `$ ${Number(inv.total).toLocaleString("es-AR")}`, href: "/facturacion" });
+  await notify(owners.map((o) => o.id), { kind: "pago", title: `${inv.customer_name} pagó la factura`, body: formatAmount(Number(inv.total), "ARS", { decimals: "auto" }), href: "/facturacion" });
   return "aplicado";
 }
 
@@ -122,10 +123,11 @@ interface WebhookInput {
  * Procesa un webhook de Mercado Pago: verifica la firma con el secreto de la
  * cuenta, consulta el pago (nunca confía en el cuerpo), lo guarda una sola vez
  * y lo aplica a lo que corresponde según external_reference, validando que
- * pertenezca a la cuenta que lo cobró. Devuelve el código HTTP.
+ * pertenezca a la cuenta que lo cobró. Devuelve el código HTTP. De los
+ * rechazados no se guarda el cuerpo (cualquiera puede mandarlos).
  */
 export async function handleWebhook(w: WebhookInput): Promise<{ status: number; result: string }> {
-  const log = (result: string, ok: boolean, error?: string) => db().insert(webhook_events).values({ provider: "mercadopago", account: w.account, topic: w.topic, data_id: w.dataId, request_id: w.requestId, signature_ok: ok, result, error: error?.slice(0, 300) ?? null, raw: w.body as Record<string, unknown> });
+  const log = (result: string, ok: boolean, error?: string) => db().insert(webhook_events).values({ provider: "mercadopago", account: w.account, topic: w.topic, data_id: w.dataId, request_id: w.requestId, signature_ok: ok, result, error: error?.slice(0, 300) ?? null, raw: ok ? (w.body as Record<string, unknown>) : {} });
   if (w.account !== "faro" && !UUID.test(w.account)) {
     await log("rechazado", false, "cuenta inválida");
     return { status: 400, result: "cuenta inválida" };

@@ -2,6 +2,7 @@ import "server-only";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { readCredentials, type Connection } from "../store";
+import { assertPublicUrl, safeFetch } from "@/lib/safe-fetch";
 
 // Faro como cliente MCP de un servidor remoto (Streamable HTTP). La URL y la
 // autenticación se guardan cifradas en la conexión.
@@ -46,7 +47,7 @@ async function withRemote<T>(conn: Connection, fn: (client: Client) => Promise<T
   const headers: Record<string, string> = {};
   if (creds.auth_value) headers[creds.auth_header?.trim() || "Authorization"] = creds.auth_value;
   const client = new Client({ name: "faro", version: "1.0.0" });
-  const transport = new StreamableHTTPClientTransport(new URL(creds.url), { requestInit: { headers, signal: AbortSignal.timeout(30000) } });
+  const transport = new StreamableHTTPClientTransport(assertPublicUrl(creds.url), { fetch: safeFetch, requestInit: { headers, signal: AbortSignal.timeout(30000) } });
   await client.connect(transport);
   try {
     return await fn(client);

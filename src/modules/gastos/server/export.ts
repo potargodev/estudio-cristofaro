@@ -1,8 +1,10 @@
 import "server-only";
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import writeXlsxFile from "write-excel-file/node";
-import { GROUP_TYPES, SETTLEMENT_METHODS, SPLIT_METHODS, categoryName, formatMoney, type GroupType } from "../constants";
+import { GROUP_TYPES, SETTLEMENT_METHODS, SPLIT_METHODS, categoryName, type GroupType } from "../constants";
 import type { GroupView } from "./service";
+import { formatDate, formatMoney } from "@/lib/format";
+import { toCsv as toCsv_ } from "@/lib/csv";
 
 // Exportaciones de un grupo: CSV (gastos), XLSX (gastos, pagos y saldos) y un
 // resumen en PDF. Solo se generan desde la ruta autenticada que valida que
@@ -36,14 +38,7 @@ function expenseRows(v: GroupView) {
 const HEADERS = ["Fecha", "Descripción", "Categoría", "Moneda", "Importe", "Cotización", "Fuente", "Pagó", "Reparto", "Partes", "Empresa", "Deducible"];
 
 export function toCsv(v: GroupView) {
-  const cell = (x: unknown) => {
-    const s = x === null || x === undefined ? "" : typeof x === "number" ? String(x).replace(".", ",") : String(x);
-    // Evita que Excel interprete fórmulas
-    const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
-    return /[";\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
-  };
-  const lines = [HEADERS.join(";"), ...expenseRows(v).map((r) => Object.values(r).map(cell).join(";"))];
-  return "﻿" + lines.join("\r\n");
+  return toCsv_([HEADERS, ...expenseRows(v).map((r) => Object.values(r))], { decimalComma: true, bom: true });
 }
 
 export async function toXlsx(v: GroupView): Promise<Buffer> {
@@ -96,7 +91,7 @@ export async function toPdf(v: GroupView): Promise<Uint8Array> {
   page.drawRectangle({ x: 0, y: 812, width: 595, height: 30, color: night });
   page.drawText("FARO · Grupos de gastos", { x: 50, y: 823, size: 10, font: bold, color: rgb(0.78, 0.64, 0.4) });
   line(v.group.name, { size: 22, f: bold, gap: 26 });
-  line(`${GROUP_TYPES[v.group.type as GroupType]} · ${v.members.length} personas · moneda base ${v.group.base_currency} · ${new Date().toLocaleDateString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })}`, { color: muted, gap: 24 });
+  line(`${GROUP_TYPES[v.group.type as GroupType]} · ${v.members.length} personas · moneda base ${v.group.base_currency} · ${formatDate(new Date(), "numeric")}`, { color: muted, gap: 24 });
 
   line("Saldos", { size: 13, f: bold, color: rose });
   for (const [cur, per] of Object.entries(v.balances)) {

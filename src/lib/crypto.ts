@@ -2,7 +2,7 @@ import "server-only";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 
 // Cifrado simétrico AES-256-GCM para secretos guardados en la base (tokens de
-// Google Calendar). La clave sale de ENCRYPTION_KEY (generarla con
+// Google, claves de IA, credenciales de conexiones, ARCA y Mercado Pago). La clave sale de ENCRYPTION_KEY (generarla con
 // `openssl rand -base64 32`). Formato: v1:<iv>:<tag>:<datos>, todo en base64url.
 
 function key() {
@@ -21,9 +21,13 @@ export function encrypt(plain: string): string {
 }
 
 export function decrypt(value: string): string {
-  const [v, iv, tag, data] = value.split(":");
-  if (v !== "v1" || !iv || !tag || !data) throw new Error("Valor cifrado inválido");
-  const decipher = createDecipheriv("aes-256-gcm", key(), Buffer.from(iv, "base64url"));
-  decipher.setAuthTag(Buffer.from(tag, "base64url"));
+  const [v, iv, tag, data, extra] = value.split(":");
+  if (v !== "v1" || !iv || !tag || data === undefined || extra !== undefined) throw new Error("Valor cifrado inválido");
+  const ivBuf = Buffer.from(iv, "base64url");
+  const tagBuf = Buffer.from(tag, "base64url");
+  // IV de 96 bits y etiqueta completa de 128 bits: Node acepta etiquetas truncadas si no se fija el largo
+  if (ivBuf.length !== 12 || tagBuf.length !== 16) throw new Error("Valor cifrado inválido");
+  const decipher = createDecipheriv("aes-256-gcm", key(), ivBuf, { authTagLength: 16 });
+  decipher.setAuthTag(tagBuf);
   return Buffer.concat([decipher.update(Buffer.from(data, "base64url")), decipher.final()]).toString("utf8");
 }

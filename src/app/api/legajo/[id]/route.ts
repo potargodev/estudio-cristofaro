@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { employee_documents } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { readStored } from "@/lib/uploads";
 import { canSeePayroll, viewerFor } from "@/modules/payroll/access";
@@ -13,7 +13,7 @@ const nf = () => new Response("No encontrado", { status: 404 });
 /** Documento del legajo: el estudio o quien ve sueldos en la organización */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const me = await getCurrentUser();
+  const me = await getSessionUser();
   if (!me) return new Response("No autorizado", { status: 401 });
   if (!isUuid(id)) return nf();
   const [doc] = await getDb().select().from(employee_documents).where(and(eq(employee_documents.id, id), eq(employee_documents.studio_id, me.studioId)));

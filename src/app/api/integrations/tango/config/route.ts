@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { buildConnectorConfig } from "@/lib/integrations/tango/config-template";
 import { getSiteUrl } from "@/lib/runtime-config";
 
@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 /** config.json prellenado para el conector (sin la clave: esa se muestra una sola vez). Solo admin. */
 export async function GET() {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user || user.role !== "dueno") return new Response("No autorizado", { status: 401 });
   return new Response(JSON.stringify(buildConnectorConfig(getSiteUrl()), null, 2), {
     headers: {

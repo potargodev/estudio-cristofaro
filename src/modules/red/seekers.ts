@@ -88,7 +88,8 @@ export async function setFleetSeeker(me: Person, fleetId: string, active: boolea
   const v = clean(i, true);
   const [existing] = await db().select().from(seeker_profiles).where(eq(seeker_profiles.fleet_id, fleetId));
   const values = { ...v, active, activated_at: active ? (existing?.active ? existing.activated_at : new Date()) : null };
-  if (existing) await db().update(seeker_profiles).set(values).where(eq(seeker_profiles.id, existing.id));
+  // El perfil de la Flota queda a nombre del Capitán actual (responde los contactos)
+  if (existing) await db().update(seeker_profiles).set({ ...values, user_id: me.id }).where(eq(seeker_profiles.id, existing.id));
   else await db().insert(seeker_profiles).values({ user_id: me.id, fleet_id: fleetId, ...values });
   await audit({ studioId: me.studioId, actor: me, action: active ? "red.flota_disponible" : "red.flota_no_disponible", entityType: "flota", entityId: fleetId });
 }
@@ -175,6 +176,11 @@ export async function answerContact(me: Person, contactId: string, accept: boole
   const [r] = await db().select({ c: seeker_contacts, s: seeker_profiles }).from(seeker_contacts).innerJoin(seeker_profiles, eq(seeker_profiles.id, seeker_contacts.seeker_id)).where(and(eq(seeker_contacts.id, contactId), eq(seeker_profiles.user_id, me.id)));
   if (!r) throw new SeekerError("No encontramos ese contacto.");
   if (r.c.status !== "pendiente") throw new SeekerError("Ya respondiste.");
+  if (r.s.fleet_id) {
+    // Una Flota la responde solo su Capitán activo (si el rol pasó a otro, ya no quien la publicó)
+    const [m] = await db().select({ role: fleet_members.role }).from(fleet_members).where(and(eq(fleet_members.fleet_id, r.s.fleet_id), eq(fleet_members.user_id, me.id), eq(fleet_members.status, "activo")));
+    if (m?.role !== "capitan") throw new SeekerError("Solo el Capitán de la Flota responde los contactos.");
+  }
   let connectionId: string | null = null;
   if (accept && !r.s.fleet_id) {
     const { currentConnection } = await import("@/modules/conexiones/server");

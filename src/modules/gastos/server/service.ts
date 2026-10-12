@@ -26,13 +26,14 @@ import { can } from "@/lib/permissions";
 import { isStudioRole } from "@/lib/roles";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { checkUpload, storeUpload } from "@/lib/uploads";
-import { CATEGORIES, CURRENCIES, GROUP_COLORS, GROUP_TYPES, REMINDER_FREQUENCIES, formatMoney, todayAR, type GroupType } from "../constants";
+import { CATEGORIES, CURRENCIES, GROUP_COLORS, GROUP_TYPES, REMINDER_FREQUENCIES, type GroupType } from "../constants";
 import { balancesInBase, computeBalances, directDebts, simplifyDebts, type LedgerExpense, type LedgerSettlement, type Transfer } from "../core/balances";
 import { SplitError, checkPayers, splitExpense, type SplitSpec } from "../core/split";
 import { notify } from "@/modules/notifications/server";
 import { auditActor, hashGuestToken, memberOf, newGuestToken, type GastosActor, type GroupRow, type MemberRow } from "./actor";
 import { fxRate } from "./fx";
 import { paymentLinks } from "./mercadopago";
+import { formatMoney, todayAR } from "@/lib/format";
 
 /** Error para mostrar tal cual a la persona */
 export class GastosError extends Error {}
@@ -212,12 +213,14 @@ export async function inviteMember(actor: GastosActor, groupId: string, input: {
   return { member, link: token ? link : null, mailed };
 }
 
-/** Genera un link nuevo para un invitado (el anterior deja de valer) */
+/** Genera un link nuevo para un invitado (el anterior deja de valer). Solo el admin del grupo o quien lo invitó */
 export async function renewGuestLink(actor: GastosActor, groupId: string, memberId: string) {
   const { group, me } = await need(actor, groupId);
   if (actor.kind !== "user") throw new GastosError("Las personas invitadas no pueden hacer esto.");
   const [m] = await getDb().select().from(group_members).where(and(eq(group_members.id, memberId), eq(group_members.group_id, group.id), eq(group_members.active, true)));
   if (!m || m.user_id) throw new GastosError("Esa persona no es una invitada del grupo.");
+  // El link da acceso como esa persona: solo lo renueva quien administra el grupo o quien la invitó
+  if (me.role !== "admin" && m.invited_by !== me.id) throw new GastosError("Solo quien administra el grupo o quien invitó a esa persona puede renovar su enlace.");
   const token = newGuestToken();
   await getDb().update(group_members).set({ guest_token_hash: token.hash }).where(eq(group_members.id, m.id));
   await groupAudit(actor, group, "gastos.integrante_link", "integrante_gastos", m.id, { por: me.id });

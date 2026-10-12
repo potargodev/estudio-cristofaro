@@ -1,14 +1,16 @@
 import "server-only";
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { and, asc, desc, eq, inArray, isNull, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { invoices, organizations, tango_conflicts, tango_documents, tango_links, tango_norm_rules, tango_records } from "@/db/schema";
+import { invoices, organizations, tango_conflicts, tango_documents, tango_links, tango_norm_rules, tango_records, webhook_events } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { decrypt, encrypt } from "@/lib/crypto";
 import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
 import { getMapping, pick } from "@/lib/integrations/tango/mapping";
 import { CBTE_TYPES } from "@/modules/arca/config";
 import { applyRules, normKey, suggest } from "./normalize";
+import { assertPublicUrl, safeFetch } from "@/lib/safe-fetch";
+import { toCsv } from "@/lib/csv";
 
 // Tango en los dos sentidos (principios §14), contra la API de Tango (hoy el
 // simulador de mocks/tango). Una sola verdad:
@@ -37,7 +39,11 @@ export async function getLink(studioId: string) {
 
 export async function saveLink(actor: Actor, input: { apiUrl: string; token?: string; companyId?: string; webhookSecret?: string; writeEnabled: boolean }) {
   const url = input.apiUrl.trim().replace(/\/+$/, "");
-  if (!/^https?:\/\/[^\s]+$/.test(url)) throw new TangoSyncError("Revisá la URL de la API de Tango.");
+  try {
+    assertPublicUrl(url);
+  } catch {
+    throw new TangoSyncError("Revisá la URL de la API de Tango: tiene que ser una dirección pública que empiece con https://.");
+  }
   const current = await getLink(actor.studioId);
   if (!current && !input.token?.trim()) throw new TangoSyncError("Cargá el token de la API.");
   const values = {
@@ -55,7 +61,7 @@ export async function saveLink(actor: Actor, input: { apiUrl: string; token?: st
 }
 
 async function call(link: typeof tango_links.$inferSelect, method: string, path: string, body?: unknown) {
-  const r = await fetch(`${link.api_url}${path}`, {
+  const r = await safeFetch(`${link.api_url}${path}`, {
     method,
     headers: { "Content-Type": "application/json", ApiAuthorization: decrypt(link.token_enc), Company: link.company_id },
     body: body === undefined ? undefined : JSON.stringify(body),
@@ -266,7 +272,12 @@ export async function handleWebhook(linkId: string, body: string, signature: str
     return { status: 400 as const };
   }
   if (!payload.data || !/^comprobante\./.test(payload.event ?? "")) return { status: 202 as const, result: "ignorado" };
+  // Un aviso firmado se procesa una sola vez: reenviar uno viejo no pisa datos ni inventa conflictos
+  const digest = createHash("sha256").update(body).digest("hex");
+  const [seen] = await db().select({ id: webhook_events.id }).from(webhook_events).where(and(eq(webhook_events.provider, "tango"), eq(webhook_events.data_id, digest), eq(webhook_events.account, link.studio_id))).limit(1);
+  if (seen) return { status: 200 as const, result: "repetido" };
   const result = await ingestFromTango(link.studio_id, payload.data);
+  await db().insert(webhook_events).values({ provider: "tango", account: link.studio_id, topic: payload.event ?? null, data_id: digest, signature_ok: true, result: "procesado", raw: {} });
   return { status: 200 as const, result };
 }
 
@@ -339,15 +350,10 @@ export async function syncCounts(studioId: string) {
 
 // ── Archivos: exportación con nombres estándar (sin API) ─────────────
 
-const csvCell = (v: unknown) => {
-  const s = v == null ? "" : String(v);
-  return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
-
 /** CSV para importar en Tango a mano (mismo orden de columnas que la escritura por API) */
 export async function exportCsv(studioId: string) {
   const rows = await db().select().from(tango_documents).where(eq(tango_documents.studio_id, studioId)).orderBy(asc(tango_documents.date));
   const head = ["TIPO_COMP", "N_COMP", "FECHA_EMIS", "RAZON_SOCI", "CUIT", "CATEGORIA", "IMPORTE_TOTAL", "MONEDA", "ORIGEN", "ID_TANGO", "SINCRONIZADO"];
-  const lines = rows.map((d) => [d.doc_type, d.number, d.date, d.customer_std, d.customer_cuit, d.category_std, Number(d.total).toFixed(2), d.currency, d.origin, d.external_id, d.synced_at?.toISOString() ?? ""].map(csvCell).join(";"));
-  return `${head.join(";")}\n${lines.join("\n")}\n`;
+  const lines = rows.map((d) => [d.doc_type, d.number, d.date, d.customer_std, d.customer_cuit, d.category_std, Number(d.total).toFixed(2), d.currency, d.origin, d.external_id, d.synced_at?.toISOString() ?? ""]);
+  return toCsv([head, ...lines], { eol: "\n", trailingNewline: true });
 }

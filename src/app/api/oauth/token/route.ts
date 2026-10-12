@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, isNotNull, isNull } from "drizzle-orm";
 import { getDb } from "@/db";
 import { mcp_accesses, mcp_tokens } from "@/db/schema";
 import { audit } from "@/lib/audit";
@@ -55,7 +55,16 @@ export async function POST(request: Request) {
   if (b.grant_type === "refresh_token") {
     if (!b.refresh_token) return error("invalid_request", "Falta refresh_token.");
     const found = await consume(b.refresh_token, "refresh");
-    if (!found) return error("invalid_grant", "El refresh token no es válido, venció, ya se usó o el acceso fue revocado.");
+    if (!found) {
+      // Un refresh token ya usado que vuelve a aparecer: alguien lo copió. Se revoca el acceso entero (OAuth 2.1)
+      const db = getDb();
+      const [reused] = await db.select({ accessId: mcp_tokens.access_id }).from(mcp_tokens).where(and(eq(mcp_tokens.token_hash, hashToken(b.refresh_token)), eq(mcp_tokens.kind, "refresh"), isNotNull(mcp_tokens.used_at)));
+      if (reused) {
+        const [acc] = await db.update(mcp_accesses).set({ revoked_at: new Date() }).where(and(eq(mcp_accesses.id, reused.accessId), isNull(mcp_accesses.revoked_at))).returning({ id: mcp_accesses.id, studioId: mcp_accesses.studio_id });
+        if (acc) await audit({ studioId: acc.studioId, actorLabel: `OAuth ${clientId}`, action: "mcp.oauth_reuso", entityType: "acceso_mcp", entityId: acc.id, result: "denegado", metadata: { motivo: "refresh token reutilizado: acceso revocado" } });
+      }
+      return error("invalid_grant", "El refresh token no es válido, venció, ya se usó o el acceso fue revocado.");
+    }
     if ((found.row.data as { client_id?: string }).client_id !== clientId) return error("invalid_grant", "El refresh token es de otro cliente.");
     return issue(found.access, clientId);
   }

@@ -15,6 +15,8 @@ import { ensureFolders, getDriveConnection, syncDrive } from "@/modules/connecto
 import { cleanPrefix, listRemoteTools, settingsOf, type ToolPermission } from "@/modules/connectors/mcp-externo/client";
 import { connectionOfStudio, endLog, readCredentials, sealCredentials, startLog, upsertExternal } from "@/modules/connectors/store";
 import { syncXubio, testXubio } from "@/modules/connectors/xubio/sync";
+import { assertPublicUrl } from "@/lib/safe-fetch";
+import { internalPath } from "@/lib/paths";
 
 // Hub de Conexiones: solo administradores, siempre dentro de su estudio. Las
 // credenciales se cifran antes de guardarse y nunca vuelven al navegador.
@@ -86,7 +88,7 @@ export async function syncXubioAction(fd: FormData) {
 export async function deleteConnection(fd: FormData) {
   const admin = await requireAdmin();
   const conn = await connectionOfStudio(s(fd, "id"), admin.studioId);
-  const back = s(fd, "back") ?? "/admin/configuracion/conexiones";
+  const back = internalPath(s(fd, "back"), "/admin/configuracion/conexiones");
   if (!conn) msg(back, false, "Esa conexión no existe.");
   await getDb().delete(connections).where(and(eq(connections.id, conn!.id), eq(connections.studio_id, admin.studioId)));
   await audit({ studioId: admin.studioId, organizationId: conn!.organization_id, actor: admin, action: "conexion.eliminar", entityType: "conexion", entityId: conn!.id, metadata: { conector: conn!.connector, nombre: conn!.name } });
@@ -97,7 +99,7 @@ export async function deleteConnection(fd: FormData) {
 /** Vincula a mano un registro externo con una razón social del estudio (queda validado) */
 export async function linkExternalRecord(fd: FormData) {
   const admin = await requireAdmin();
-  const back = s(fd, "back") ?? "/admin/configuracion/conexiones";
+  const back = internalPath(s(fd, "back"), "/admin/configuracion/conexiones");
   const recordId = s(fd, "record_id");
   const leId = s(fd, "legal_entity_id");
   if (!recordId || !leId || !/^[0-9a-f-]{36}$/i.test(recordId) || !/^[0-9a-f-]{36}$/i.test(leId)) msg(back, false, "Elegí la razón social.");
@@ -152,7 +154,11 @@ export async function saveMcpExterno(fd: FormData) {
   if (id && !current) msg(MCPX, false, "Esa conexión no existe.");
   const prev = current ? readCredentials<{ url: string; auth_header?: string; auth_value?: string }>(current) : {};
   const url = s(fd, "url") ?? prev.url;
-  if (!url || !/^https?:\/\/\S+$/i.test(url)) msg(MCPX, false, "Revisá la URL del servidor MCP (https://…).");
+  try {
+    assertPublicUrl(url ?? "");
+  } catch {
+    msg(MCPX, false, "Revisá la URL del servidor MCP: tiene que ser una dirección pública que empiece con https://.");
+  }
   const name = (s(fd, "name") ?? "Servidor MCP").slice(0, 60);
   const prefix = cleanPrefix(s(fd, "prefix") ?? name);
   const creds = { url: url!, auth_header: s(fd, "auth_header") ?? prev.auth_header ?? "Authorization", auth_value: s(fd, "auth_value") ?? prev.auth_value ?? "" };
@@ -180,7 +186,9 @@ async function refresh(connId: string, studioId: string, actorId: string) {
     ok = true;
     text = `Conectado${r.server.name ? ` a ${r.server.name}` : ""}: ${r.tools.length} herramientas (${r.tools.filter((t) => t.permission === "lectura").length} de lectura habilitadas).`;
   } catch (error) {
-    text = `No se pudo conectar con el servidor MCP: ${(error as Error).message?.slice(0, 200)}`;
+    // El detalle queda en el log del servidor; al navegador no vuelve la respuesta del destino
+    console.error("[mcp-externo] conexión", (error as Error).message);
+    text = "No se pudo conectar con el servidor MCP. Revisá la URL y la autenticación.";
   }
   await endLog(log, conn!.id, ok, text);
   revalidatePath("/admin/configuracion/conexiones", "layout");

@@ -21,7 +21,7 @@ import {
   users,
 } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 
 // Exportación de los datos propios (Ley 25.326, derecho de acceso). Solo la
 // sesión decide qué se exporta: la cuenta personal, o el estudio entero si
@@ -30,7 +30,7 @@ import { getCurrentUser } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const me = await getCurrentUser();
+  const me = await getSessionUser();
   if (!me || me.assisted) return new Response("No autorizado", { status: 401 });
   const db = getDb();
   const [user] = await db.select({ id: users.id, name: users.name, email: users.email, role: users.role, createdAt: users.createdAt }).from(users).where(eq(users.id, me.id));

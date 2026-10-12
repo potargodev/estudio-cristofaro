@@ -11,6 +11,7 @@ import { getProvider, languageModel, recordUsage } from "@/lib/ai/models";
 import { audit } from "@/lib/audit";
 import { requireTenantOwner } from "@/lib/auth";
 import { encrypt, encryptionEnabled } from "@/lib/crypto";
+import { assertPublicUrl } from "@/lib/safe-fetch";
 
 // Configuración de IA del estudio: solo administradores, siempre dentro de su estudio.
 
@@ -36,7 +37,13 @@ export async function saveProvider(fd: FormData) {
   const meta = PROVIDERS[kind!];
   const apiKey = s(fd, "api_key");
   const baseUrl = s(fd, "base_url");
-  if (baseUrl && !/^https?:\/\/[^\s]+$/i.test(baseUrl)) back("error=url");
+  if (baseUrl) {
+    try {
+      assertPublicUrl(baseUrl);
+    } catch {
+      back("error=url");
+    }
+  }
   if (meta.baseUrl === "requerida" && !baseUrl) back("error=url");
   if (meta.keyRequired && !apiKey && !current?.api_key_enc) back("error=clave");
   const models = (s(fd, "models") ?? "")
@@ -128,7 +135,7 @@ export async function testProvider(fd: FormData) {
           ? "El proveedor rechazó la clave (401/403). Revisala."
           : e.statusCode === 404
             ? `El proveedor no encontró el modelo "${model}" (404).`
-            : `No se pudo conectar: ${(e.message ?? "error desconocido").slice(0, 200)}`;
+            : "No se pudo conectar con el proveedor. Revisá la URL, el modelo y la clave.";
     }
   }
   await getDb().update(ai_providers).set({ last_test_at: new Date(), last_test_ok: ok, last_test_message: message }).where(eq(ai_providers.id, p!.id));

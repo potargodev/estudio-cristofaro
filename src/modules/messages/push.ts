@@ -29,8 +29,20 @@ export async function vapidKeys() {
   return (cached = { publicKey: a.publicKey, privateKey: decrypt(a.privateKeyEnc) });
 }
 
+// Servicios de push de los navegadores: el servidor solo les manda a ellos (nunca a una URL cualquiera)
+const PUSH_HOSTS = [/^fcm\.googleapis\.com$/, /^android\.googleapis\.com$/, /(^|\.)push\.apple\.com$/, /(^|\.)push\.services\.mozilla\.com$/, /(^|\.)notify\.windows\.com$/];
+
+function pushEndpointOk(endpoint: string) {
+  try {
+    const u = new URL(endpoint);
+    return u.protocol === "https:" && PUSH_HOSTS.some((h) => h.test(u.hostname));
+  } catch {
+    return false;
+  }
+}
+
 export async function saveSubscription(userId: string, sub: { endpoint: string; keys: { p256dh: string; auth: string } }) {
-  if (!/^https:\/\//.test(sub.endpoint) || sub.endpoint.length > 1000 || !sub.keys?.p256dh || !sub.keys?.auth) throw new Error("Suscripción inválida");
+  if (typeof sub?.endpoint !== "string" || sub.endpoint.length > 1000 || !pushEndpointOk(sub.endpoint) || !sub.keys?.p256dh || !sub.keys?.auth) throw new Error("Suscripción inválida");
   await getDb()
     .insert(push_subscriptions)
     .values({ user_id: userId, endpoint: sub.endpoint, p256dh: sub.keys.p256dh.slice(0, 200), auth: sub.keys.auth.slice(0, 100) })

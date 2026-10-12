@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { invoicePdf } from "@/modules/arca/pdf";
 import { ArcaError, getInvoice, orgIssuer, personalIssuer, settingsForInvoice } from "@/modules/arca/server";
 import { fullNumber } from "@/modules/arca/calc";
@@ -7,7 +7,7 @@ import { CBTE_TYPES } from "@/modules/arca/config";
 // PDF de un comprobante (también el borrador, marcado): solo para quien emite.
 // ?org= es una organización del estudio de la sesión (se valida).
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user) return new Response("Sin sesión", { status: 401 });
   const org = new URL(req.url).searchParams.get("org");
   try {

@@ -393,7 +393,12 @@ export async function studioAct(staff: Staff, id: string, o: BusinessOp) {
   if (!canDecide(staff)) throw new ConexionError("Solo el dueño o un contador del estudio.");
   const c = acc.conn;
   let before: { description: string } | null = null;
-  if (o.op === "editar_movimiento" && UUID.test(o.entryId)) [before] = await db().select({ description: box_entries.description }).from(box_entries).where(eq(box_entries.id, o.entryId));
+  if (o.op === "editar_movimiento") {
+    // Solo movimientos de la caja de negocio de esta cuenta (como en applyOp)
+    const box = UUID.test(o.entryId) ? await businessBoxOf(c.user_id) : null;
+    if (box) [before] = await db().select({ description: box_entries.description }).from(box_entries).where(and(eq(box_entries.id, o.entryId), eq(box_entries.box_id, box.id), isNull(box_entries.deleted_at)));
+    if (!before) throw new ConexionError("Ese movimiento no es de la caja de negocio de esta cuenta.");
+  }
   const summary = describeOp(o, before);
   if (c.autonomy === "proponer") {
     const [row] = await db().insert(connection_actions).values({ connection_id: c.id, actor_id: staff.id, actor_name: staff.name, action: o.op, summary, entity_type: "movimiento_negocio", entity_id: o.op === "editar_movimiento" ? o.entryId : null, payload: o, status: "propuesta" }).returning();

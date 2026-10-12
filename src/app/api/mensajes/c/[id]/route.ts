@@ -1,6 +1,7 @@
 import { rateLimit } from "@/lib/rate-limit";
 import { getConversation, MessagesError, sendMessage } from "@/modules/messages/server";
 import { chatUser } from "@/modules/messages/session";
+import { forbidden, sameOrigin } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 /** Mensaje nuevo (texto y/o archivo, y la respuesta a otro mensaje) */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  if (!sameOrigin(req)) return forbidden();
   const me = await chatUser();
   if (!me) return Response.json({ error: "No autorizado" }, { status: 401 });
   if (!rateLimit(`mensajes:${me.id}`, 40, 60_000)) return Response.json({ error: "Mandaste muchos mensajes seguidos. Esperá un momento." }, { status: 429 });

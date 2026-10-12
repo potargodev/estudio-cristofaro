@@ -3,6 +3,7 @@ import { and, asc, desc, eq, gte, isNull, lte } from "drizzle-orm";
 import { getDb } from "@/db";
 import { bitacora_categories, bitacora_entries, expense_groups, expense_shares, expenses, group_members } from "@/db/schema";
 import { BITACORA_CURRENCIES, DEFAULT_CATEGORIES, GROUP_CATEGORY_MAP, isPaymentMethod, monthRange, prevMonth, type PaymentMethodKey } from "./catalog";
+import { toCsv } from "@/lib/csv";
 
 // Bitácora (docs/faro-producto.md §2.g): finanzas personales, siempre
 // privadas. Toda función recibe el id del usuario de la sesión y filtra por
@@ -272,11 +273,6 @@ export async function monthSummary(userId: string, month: string, categoryId?: s
   };
 }
 
-const csvCell = (v: unknown) => {
-  const s = v == null ? "" : String(v);
-  return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
-
 /** CSV del mes (o de los meses pedidos): fecha, tipo, monto, moneda, categoría, descripción, medio, nota, origen */
 export async function exportCsv(userId: string, month: string, categoryId?: string | null) {
   const list = await movements(userId, month, categoryId);
@@ -284,7 +280,7 @@ export async function exportCsv(userId: string, month: string, categoryId?: stri
     ["fecha", "tipo", "monto", "moneda", "categoria", "descripcion", "medio_de_pago", "nota", "origen", "grupo"],
     ...list.map((m) => [m.date, m.kind, (m.amount / 100).toFixed(2), m.currency, m.categoryName, m.description, m.paymentMethod ?? "", m.note ?? "", m.source, m.group?.name ?? ""]),
   ];
-  return `﻿${rows.map((r) => r.map(csvCell).join(",")).join("\n")}\n`;
+  return toCsv(rows, { sep: ",", bom: true, eol: "\n", trailingNewline: true });
 }
 
 /** Totales rápidos (los usa el Vigía: "¿cuánto gasté en delivery este mes?") */

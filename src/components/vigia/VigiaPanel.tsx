@@ -8,6 +8,7 @@ import { askFaroContext } from "@/components/admin/shell/nav";
 import { cn } from "@/lib/utils";
 import { OPEN_VIGIA } from "./events";
 import { SPACE_PARAM, type SpaceKey } from "./space-param";
+import { isInternalPath } from "@/lib/paths";
 
 /**
  * Panel del Vigía (docs/faro-producto.md §2.o, regla 5): el mismo botón en
@@ -72,7 +73,7 @@ export function VigiaPanel({ space, label }: { space: SpaceKey; label: string })
     const h = (e: MessageEvent) => {
       if (e.origin !== window.location.origin || typeof e.data !== "object" || !e.data) return;
       const d = e.data as { type?: string; href?: string; tab?: string | null };
-      if (d.type === "faro:navigate" && typeof d.href === "string" && d.href.startsWith("/") && !d.href.startsWith("//")) {
+      if (d.type === "faro:navigate" && isInternalPath(d.href)) {
         setOpen(false);
         router.push(d.href);
       } else if (d.type === "faro:tab") setTab(d.tab ?? null);

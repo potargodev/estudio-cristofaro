@@ -1,5 +1,6 @@
 import { deleteSubscription, saveSubscription, vapidKeys } from "@/modules/messages/push";
 import { chatUser } from "@/modules/messages/session";
+import { forbidden, sameOrigin } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!sameOrigin(req)) return forbidden();
   const me = await chatUser();
   if (!me) return Response.json({ error: "No autorizado" }, { status: 401 });
   try {
@@ -22,6 +24,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  if (!sameOrigin(req)) return forbidden();
   const me = await chatUser();
   if (!me) return Response.json({ error: "No autorizado" }, { status: 401 });
   const { endpoint } = (await req.json().catch(() => ({}))) as { endpoint?: string };

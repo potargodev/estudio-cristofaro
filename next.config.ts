@@ -1,7 +1,38 @@
 import type { NextConfig } from "next";
 import { NAV_REDIRECTS } from "./src/lib/nav-redirects";
 
+// Cabeceras de seguridad para todas las respuestas. La CSP deja scripts y
+// estilos inline (los necesita Next sin nonce), pero ningún script, frame,
+// formulario de terceros ni <object>; la app solo se embebe a sí misma (Vigía).
+const dev = process.env.NODE_ENV !== "production";
+const CSP = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  `connect-src 'self'${dev ? " ws:" : ""}`,
+  "media-src 'self' blob: data:",
+  "worker-src 'self' blob:",
+  "frame-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "frame-ancestors 'self'",
+].join("; ");
+const SECURITY_HEADERS = [
+  { key: "Content-Security-Policy", value: CSP },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // El Vigía graba audio y la lectura usa la cámara del celular (input file): solo este sitio
+  { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(), payment=(), usb=()" },
+];
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{ source: "/:path*", headers: SECURITY_HEADERS }];
+  },
   // Servidor autocontenido para la imagen Docker (Easypanel)
   output: "standalone",
   // Metadatos (title, description) siempre en el <head>, también en páginas

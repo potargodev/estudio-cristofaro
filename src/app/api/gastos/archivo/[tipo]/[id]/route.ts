@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { accounting_expenses, expenses, reimbursements, settlements } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { getCurrentUser, getMemberships } from "@/lib/auth";
+import { getSessionUser, getMemberships } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { can } from "@/lib/permissions";
 import { isStudioRole } from "@/lib/roles";
@@ -51,7 +51,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tip
     target = { path: row?.path ?? null, name: row?.name ?? null, mime: tipo === "gasto" ? (row?.mime ?? null) : null, studioId: actor.studioId, organizationId: m?.group.organization_id ?? null };
     allowed = !!m;
   } else if (tipo === "rendicion" || tipo === "contable") {
-    const user = await getCurrentUser();
+    const user = await getSessionUser();
     if (!user) return new Response("No autorizado", { status: 401 });
     actorInfo = { actor: user };
     const row =

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getCurrentUser, type StaffUser } from "@/lib/auth";
+import { requireTenant, type StaffUser } from "@/lib/auth";
 import { checkUpload, fileFromForm, storeUpload } from "@/lib/uploads";
 import { emailInvoice } from "@/modules/arca/mail";
 import { invoicePaymentLink } from "@/modules/billing/collect";
@@ -39,9 +39,9 @@ const n = (fd: FormData, k: string) => {
   return v === "" ? NaN : Number(v);
 };
 
+/** Usuario del tenant con su seguridad completa (2FA en el estudio, contraseña definitiva, tenant activo); nunca en acceso asistido */
 async function session(): Promise<StaffUser> {
-  const u = await getCurrentUser();
-  if (!u) redirect("/ingresar");
+  const u = await requireTenant();
   if (u.assisted) redirect("/admin");
   return u;
 }

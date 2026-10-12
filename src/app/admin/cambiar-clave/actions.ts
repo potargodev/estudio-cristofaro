@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
+import { audit } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth";
 import { getAuth } from "@/lib/auth-server";
 import { homeFor, isStudioRole } from "@/lib/roles";
@@ -34,5 +35,6 @@ export async function changeTemporaryPassword(_prev: ChangeState, fd: FormData):
     return { ok: false, message: "La contraseña temporal no es correcta." };
   }
   await getDb().update(users).set({ mustChangePassword: false }).where(eq(users.id, user.id));
+  await audit({ studioId: user.studioId, actor: user, action: "cuenta.clave_cambiar", entityType: "usuario", entityId: user.id, metadata: { motivo: "temporal" } });
   redirect("/admin");
 }

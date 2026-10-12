@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { audit } from "@/lib/audit";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { setPrefs } from "@/lib/prefs";
 import { ConnectionError, authUrl, decideProposal, disconnect, syncGmail, syncMercadoPago, type Provider } from "@/modules/bitacora/connections";
 import { confirmImport, createPreview, discardImport, ImportError, undoImport } from "@/modules/bitacora/imports";
@@ -14,6 +14,7 @@ import { createEntry } from "@/modules/bitacora/server";
 import { sharedAccess } from "@/modules/bitacora/shares";
 import type { Mapping } from "@/modules/bitacora/smart";
 import { parseAmount } from "@/modules/bitacora/smart";
+import { internalPath } from "@/lib/paths";
 
 // Acciones de Bitácora (F8). Todo sale del user_id de la sesión; lo
 // compartido se valida contra una invitación aceptada y vigente.
@@ -22,7 +23,7 @@ const s = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
 const cents = (fd: FormData, k: string) => parseAmount(s(fd, k));
 
 async function me() {
-  const u = await getCurrentUser();
+  const u = await getSessionUser();
   if (!u) redirect("/ingresar");
   if (u.assisted) redirect("/admin");
   return u;
@@ -74,7 +75,7 @@ export async function dismissInsightAction(fd: FormData) {
   await dismissInsight(u.id, s(fd, "id"));
   revalidatePath("/bitacora", "layout");
   revalidatePath("/personal");
-  go(s(fd, "volver") || "/bitacora", {});
+  go(internalPath(s(fd, "volver"), "/bitacora"), {});
 }
 
 // Metas

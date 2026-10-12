@@ -64,6 +64,7 @@ export async function generateTangoKey(_prev: KeyState, _fd: FormData): Promise<
       key_created_at: new Date(),
     });
   }
+  await audit({ studioId: admin.studioId, actor: admin, action: "tango.clave_generar", entityType: "integracion", metadata: { prefijo: prefix } });
   revalidatePath(BASE);
   return { ok: true, key };
 }
@@ -76,6 +77,7 @@ export async function setTangoStatus(fd: FormData) {
       .update(integrations)
       .set({ status: s(fd, "status") === "pausada" ? "pausada" : "activa" })
       .where(eq(integrations.id, current.id));
+    await audit({ studioId: admin.studioId, actor: admin, action: "tango.estado", entityType: "integracion", entityId: current.id, metadata: { estado: s(fd, "status") === "pausada" ? "pausada" : "activa" } });
   }
   revalidatePath(BASE);
   redirect(`${BASE}?guardado=1`);
@@ -98,6 +100,7 @@ export async function saveTangoMapping(fd: FormData) {
     .update(integrations)
     .set({ settings: { ...current.settings, mapping } })
     .where(eq(integrations.id, current.id));
+  await audit({ studioId: admin.studioId, actor: admin, action: "tango.mapeo", entityType: "integracion", entityId: current!.id });
   revalidatePath(BASE);
   revalidatePath(CLIENTS);
   redirect(`${BASE}?guardado=1#mapeo`);

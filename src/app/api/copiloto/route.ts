@@ -1,9 +1,10 @@
 import { getDb } from "@/db";
 import { copilot_messages } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 import { storeCopilotFile } from "@/modules/copilot/files";
 import { processMessage } from "@/modules/copilot/server";
+import { forbidden, sameOrigin } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -14,7 +15,8 @@ export const maxDuration = 60;
  * queda pendiente en la cola.
  */
 export async function POST(req: Request) {
-  const me = await getCurrentUser();
+  if (!sameOrigin(req)) return forbidden();
+  const me = await getSessionUser();
   if (!me || me.assisted) return Response.json({ error: "No autorizado" }, { status: 401 });
   if (!rateLimit(`copiloto:${me.id}`, 20, 60_000)) return Response.json({ error: "Mandaste muchos mensajes seguidos. Esperá un momento." }, { status: 429 });
   const fd = await req.formData().catch(() => null);

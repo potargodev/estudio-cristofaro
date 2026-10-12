@@ -1,4 +1,5 @@
 import { type NextRequest } from "next/server";
+import { readBodyLimited, tooLarge, tooMany, webhookAllowed } from "@/lib/http";
 import { handleWebhook } from "@/modules/billing/collect";
 
 export const dynamic = "force-dynamic";
@@ -9,8 +10,16 @@ export const dynamic = "force-dynamic";
  * cuenta y el pago se consulta a Mercado Pago antes de aplicarlo.
  */
 export async function POST(req: NextRequest) {
+  if (!webhookAllowed(req, "mercadopago", 120)) return tooMany();
   const q = req.nextUrl.searchParams;
-  const body = await req.json().catch(() => ({}) as Record<string, unknown>);
+  const text = await readBodyLimited(req, 64 * 1024);
+  if (text === null) return tooLarge();
+  let body: Record<string, unknown> = {};
+  try {
+    body = JSON.parse(text || "{}");
+  } catch {
+    body = {};
+  }
   const b = body as { type?: string; topic?: string; data?: { id?: string | number } };
   const r = await handleWebhook({
     account: q.get("cuenta") ?? "",

@@ -8,6 +8,7 @@ import {
 } from "@/lib/integrations/tango/constants";
 import { safeEqualHex, signBody } from "@/lib/integrations/tango/keys";
 import { endSync, findIntegrationByKey, recordPing, saveBatches, startSync } from "@/lib/integrations/tango/store";
+import { readBodyLimited, webhookAllowed } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 
@@ -31,9 +32,9 @@ export async function POST(request: Request) {
     return fail(401, "El timestamp tiene más de 5 minutos de diferencia. Revisá la hora de la PC del conector.");
   }
 
-  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) return fail(413, "El lote es demasiado grande.");
-  const body = await request.text();
-  if (Buffer.byteLength(body) > MAX_BODY_BYTES) return fail(413, "El lote es demasiado grande.");
+  if (!webhookAllowed(request, "tango-ingest", 120)) return fail(429, "Demasiados lotes por minuto.");
+  const body = await readBodyLimited(request, MAX_BODY_BYTES);
+  if (body === null) return fail(413, "El lote es demasiado grande.");
 
   const integration = await findIntegrationByKey(key);
   if (!integration) return fail(401, "La clave del conector no es válida. Generá una nueva en /admin/configuracion/conexiones/tango.");

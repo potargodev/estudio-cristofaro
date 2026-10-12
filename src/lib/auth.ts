@@ -77,6 +77,19 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
   return base;
 });
 
+/**
+ * La sesión del pedido solo si completó su seguridad: contraseña definitiva y,
+ * para el estudio y el equipo de Faro, segundo factor. Es la que usan las
+ * rutas, acciones y pantallas con datos; getCurrentUser queda para el flujo de
+ * ingreso (login, cambiar la clave, activar el 2FA).
+ */
+export const getSessionUser = cache(async (): Promise<StaffUser | null> => {
+  const user = await getCurrentUser();
+  if (!user || user.mustChangePassword) return null;
+  if ((isStudioRole(user.role) || user.faroRole) && !user.twoFactorEnabled) return null;
+  return user;
+});
+
 const TENANT_HOME = { studio: "/admin", personal: "/personal", persona: "/personal" } as const;
 
 /**

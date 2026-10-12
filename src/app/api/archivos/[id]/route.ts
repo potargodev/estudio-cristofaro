@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { documents, request_messages, requests } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { getCurrentUser, getMemberships } from "@/lib/auth";
+import { getSessionUser, getMemberships } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { isUuid } from "@/lib/ids";
 import { readStored } from "@/lib/uploads";
@@ -22,7 +22,7 @@ const notFound = () => new Response("No encontrado", { status: 404 });
  */
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user) return new Response("No autorizado", { status: 401 });
   if (!isUuid(id)) return notFound();
 

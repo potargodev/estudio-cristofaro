@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { audit } from "@/lib/audit";
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { isStudioRole } from "@/lib/roles";
 import { connectCalendar } from "@/lib/agenda/google";
 import { getSiteUrl } from "@/lib/runtime-config";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 /** Vuelta de Google: valida el state, guarda los tokens cifrados y vuelve a la agenda */
 export async function GET(request: NextRequest) {
   const back = (q: string) => NextResponse.redirect(new URL(`/admin/comercial/agenda?tab=disponibilidad&${q}`, getSiteUrl()));
-  const user = await getCurrentUser();
+  const user = await getSessionUser();
   if (!user || !isStudioRole(user.role) || !user.twoFactorEnabled) return NextResponse.redirect(new URL("/admin/login", getSiteUrl()));
   const sp = request.nextUrl.searchParams;
   const state = request.cookies.get("agenda_oauth_state")?.value;

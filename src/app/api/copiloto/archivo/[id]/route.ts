@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { readCopilotFile } from "@/modules/copilot/files";
 import { ownMessage } from "@/modules/copilot/server";
 
@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 /** Archivo de un mensaje del Vigía: solo para su dueño */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const me = await getCurrentUser();
+  const me = await getSessionUser();
   if (!me) return new Response("No autorizado", { status: 401 });
   const m = await ownMessage(me.id, (await params).id);
   if (!m?.attachment_path) return new Response("No encontrado", { status: 404 });

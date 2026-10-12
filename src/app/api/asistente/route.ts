@@ -8,6 +8,8 @@ import { parseContextRefs, type ContextRef } from "@/lib/ai/context";
 import { budgetBlock, languageModel, recordUsage, resolveModel } from "@/lib/ai/models";
 import { tenantForApi } from "@/lib/auth";
 import { aiCanAct } from "@/lib/faro/entitlements";
+import { forbidden, sameOrigin } from "@/lib/http";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -36,8 +38,10 @@ function sanitize(raw: unknown): UIMessage | null {
 }
 
 export async function POST(request: Request) {
+  if (!sameOrigin(request)) return forbidden();
   const user = await tenantForApi();
   if (!user) return fail(401, "Tu sesión venció. Volvé a entrar.");
+  if (!rateLimit(`asistente:${user.id}`, 20, 60_000)) return fail(429, "Mandaste muchos mensajes seguidos. Esperá un momento.");
   let body: { id?: unknown; message?: unknown; model?: unknown };
   try {
     body = await request.json();

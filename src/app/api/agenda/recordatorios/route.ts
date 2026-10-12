@@ -1,4 +1,4 @@
-import { timingSafeEqual } from "node:crypto";
+import { cronAuthorized, unauthorized } from "@/lib/http";
 import { sendReminders } from "@/lib/agenda/bookings";
 
 export const dynamic = "force-dynamic";
@@ -9,10 +9,6 @@ export const dynamic = "force-dynamic";
  * con el header Authorization: Bearer <CRON_SECRET>.
  */
 export async function POST(request: Request) {
-  const secret = process.env.CRON_SECRET?.trim();
-  const given = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
-  if (!secret || given.length !== secret.length || !timingSafeEqual(Buffer.from(given), Buffer.from(secret))) {
-    return new Response("No autorizado", { status: 401 });
-  }
+  if (!cronAuthorized(request)) return unauthorized();
   return Response.json(await sendReminders());
 }

@@ -366,12 +366,12 @@ export async function handleWebhook(raw: string, signature: string | null) {
   const [a] = pnid ? await db().select().from(whatsapp_accounts).where(eq(whatsapp_accounts.phone_number_id, pnid)) : [];
   const accountLabel = a ? (a.studio_id ?? "faro") : "?";
   if (!a || !a.app_secret_enc) {
-    await logEvent(accountLabel, "mensajes", pnid, false, "ignorado", "Número desconocido", body);
+    await logEvent(accountLabel, "mensajes", pnid, false, "ignorado", "Número desconocido", null);
     return { status: 200 };
   }
   const ok = verifySignature(decrypt(a.app_secret_enc), raw, signature);
   if (!ok) {
-    await logEvent(accountLabel, "mensajes", pnid, false, "rechazado", "Firma inválida", body);
+    await logEvent(accountLabel, "mensajes", pnid, false, "rechazado", "Firma inválida", null);
     return { status: 401 };
   }
   for (const s of statuses) {

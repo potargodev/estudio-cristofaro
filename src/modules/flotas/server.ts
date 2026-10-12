@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { account_connections, agreement_payments, fleet_events, fleet_members, fleet_proposals, fleet_votes, fleets, organizations, service_agreements, studios, users } from "@/db/schema";
+import { account_connections, agreement_payments, fleet_events, fleet_members, fleet_proposals, fleet_votes, fleets, organizations, seeker_profiles, service_agreements, studios, users } from "@/db/schema";
 import { esc, sendMail } from "@/lib/email";
 import { hasModule } from "@/lib/faro/entitlements";
 import { mailLayout } from "@/lib/notify";
@@ -166,6 +166,7 @@ export async function transferCaptain(me: Me, fleetId: string, memberId: string)
   if (!to || to.id === mine.id) throw new FleetError("Elegí a otro integrante activo.");
   await db().update(fleet_members).set({ role: "tripulante" }).where(eq(fleet_members.id, mine.id));
   await db().update(fleet_members).set({ role: "capitan" }).where(eq(fleet_members.id, to.id));
+  if (to.user_id) await db().update(seeker_profiles).set({ user_id: to.user_id }).where(eq(seeker_profiles.fleet_id, fleetId));
   await event(fleetId, `${me.name} le pasó el rol de Capitán a ${to.name}.`, me);
 }
 
@@ -183,6 +184,8 @@ export async function leaveFleet(me: Me, fleetId: string) {
       .limit(1);
     if (next) {
       await db().update(fleet_members).set({ role: "capitan" }).where(eq(fleet_members.id, next.id));
+      // El «Disponible» de la Flota pasa al nuevo Capitán
+      if (next.user_id) await db().update(seeker_profiles).set({ user_id: next.user_id }).where(eq(seeker_profiles.fleet_id, fleetId));
       await event(fleetId, `${next.name} ahora es Capitán (era el integrante más antiguo).`);
     } else await db().update(fleets).set({ status: "cerrada" }).where(eq(fleets.id, fleetId));
   }
