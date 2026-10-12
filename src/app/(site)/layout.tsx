@@ -8,6 +8,7 @@ import { SiteTabBar } from "@/components/web/SiteTabBar";
 import { Splash } from "@/components/web/Splash";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { site } from "@/lib/site";
+import { JsonLd } from "@/components/web/JsonLd";
 
 function getJsonLd() {
   return {
@@ -37,7 +38,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <div className="site pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0">
       <Splash />
       <MotionBoot />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getJsonLd()) }} />
+      <JsonLd data={getJsonLd()} />
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-paper focus:px-3 focus:py-2 focus:text-night">
         Saltar al contenido
       </a>

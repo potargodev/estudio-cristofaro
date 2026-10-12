@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { plan_requests, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { requireTenantOwner } from "@/lib/auth";
+import { requireTenantOwner, requireOwnAccount } from "@/lib/auth";
 import { esc, sendMail } from "@/lib/email";
 import { getEntitlements, getPlans } from "@/lib/faro/entitlements";
 import { isFaroModuleKey } from "@/modules/registry";
@@ -17,7 +17,7 @@ import { getSiteUrl } from "@/lib/runtime-config";
  * llega en la F7). Solo el dueño del tenant, a un plan de su mismo tipo.
  */
 export async function requestPlanUpgrade(fd: FormData) {
-  const me = await requireTenantOwner();
+  const me = await requireOwnAccount(requireTenantOwner());
   const back = String(fd.get("back") ?? "/admin/configuracion/plan");
   const safeBack = back === "/personal/plan" || /^\/admin\/[a-z0-9/-]+$/.test(back) ? back : "/admin/configuracion/plan";
   const e = (await getEntitlements(me.studioId))!;

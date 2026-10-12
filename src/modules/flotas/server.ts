@@ -8,6 +8,7 @@ import { mailLayout } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { getProfile, visibilityIssue } from "@/modules/red/server";
 import { AGREEMENT_VERSION, BELOW_MIN_NOTICE_DAYS, FLEET_MAX, FLEET_MIN, fleetNameIssue, isProfile, MAX_NOTICE_DAYS, PROFILES, profileLabel } from "./catalog";
+import { crossesWorld, WORLD_MESSAGE } from "@/lib/demo-world";
 
 // Flotas (docs/faro-producto.md §2.j). Toda operación recibe al usuario de la
 // sesión y valida acá que pertenezca a la Flota (y su rol): ningún id del
@@ -88,6 +89,7 @@ export async function inviteMember(me: Me, fleetId: string, email: string, name:
   const { f } = await captain(fleetId, me);
   const e = email.trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) throw new FleetError("Revisá el email.");
+  if (crossesWorld(f.is_demo, e)) throw new FleetError(WORLD_MESSAGE);
   if ((await activeCount(fleetId)) >= FLEET_MAX) throw new FleetError(`Una Flota puede tener hasta ${FLEET_MAX} integrantes.`);
   const [prev] = await db().select().from(fleet_members).where(and(eq(fleet_members.fleet_id, fleetId), eq(fleet_members.email, e)));
   if (prev && (prev.status === "activo" || prev.status === "invitado")) throw new FleetError("Esa persona ya está en la Flota o invitada.");

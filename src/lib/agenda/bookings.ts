@@ -2,12 +2,12 @@ import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import { and, eq, gt, isNull, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { availability, bookings, leads, users } from "@/db/schema";
+import { availability, bookings, leads, studios, users } from "@/db/schema";
+import { SITE_STUDIO_SLUG } from "../faro/tenants";
 import { audit } from "../audit";
 import { esc, sendMail } from "../email";
 import { mailLayout } from "../notify";
 import { getSiteUrl } from "../runtime-config";
-import { site } from "../site";
 import { cancelEvent, createMeetEvent, moveEvent } from "./google";
 import { buildIcs } from "./ics";
 import { formatDate } from "@/lib/format";
@@ -27,20 +27,22 @@ const manageUrl = (token: string) => `${getSiteUrl()}/agenda/gestionar/${token}`
 
 async function host(userId: string) {
   const [h] = await getDb()
-    .select({ id: users.id, name: users.name, email: users.email, manualUrl: availability.manual_meeting_url })
+    .select({ id: users.id, name: users.name, email: users.email, manualUrl: availability.manual_meeting_url, studio: studios.name, slug: studios.slug })
     .from(users)
+    .innerJoin(studios, eq(studios.id, users.studioId))
     .leftJoin(availability, eq(availability.user_id, users.id))
     .where(eq(users.id, userId));
-  return h!;
+  // Agenda del estudio: la del sitio (/agendar) o su ficha en la Red Contable
+  return { ...h!, agendaUrl: h!.slug === SITE_STUDIO_SLUG() ? `${getSiteUrl()}/agendar` : `${getSiteUrl()}/red-contable/${h!.slug}/agendar` };
 }
 
-function ics(b: Booking, h: { name: string; email: string }, token: string | null, cancelled = false) {
+function ics(b: Booking, h: { name: string; email: string; studio: string }, token: string | null, cancelled = false) {
   return buildIcs({
     uid: b.id,
     sequence: b.sequence,
     start: b.starts_at,
     end: b.ends_at,
-    summary: `Llamada con ${h.name} · Estudio Cristofaro`,
+    summary: `Llamada con ${h.name} · ${h.studio}`,
     description: [
       b.reason && `Motivo: ${b.reason}`,
       b.meet_url && `Link de la llamada: ${b.meet_url}`,
@@ -49,7 +51,7 @@ function ics(b: Booking, h: { name: string; email: string }, token: string | nul
       .filter(Boolean)
       .join("\n"),
     location: b.meet_url,
-    organizer: { name: site.name, email: h.email },
+    organizer: { name: h.studio, email: h.email },
     attendee: { name: b.name, email: b.email },
     cancelled,
   });
@@ -69,11 +71,11 @@ async function mailClient(kind: "confirmada" | "reprogramada" | "cancelada" | "2
   const h = await host(b.host_user_id);
   const manage = token ? `<p style="color:#5a6176;font-size:13px">¿No podés? <a href="${manageUrl(token)}">Reprogramá o cancelá acá</a>.</p>` : "";
   const subjects = {
-    confirmada: "Confirmamos tu llamada con el Estudio Cristofaro",
-    reprogramada: "Reprogramamos tu llamada con el Estudio Cristofaro",
-    cancelada: "Cancelamos tu llamada con el Estudio Cristofaro",
-    "24h": "Mañana tenés una llamada con el Estudio Cristofaro",
-    "1h": "En una hora: tu llamada con el Estudio Cristofaro",
+    confirmada: `Confirmamos tu llamada con ${h.studio}`,
+    reprogramada: `Reprogramamos tu llamada con ${h.studio}`,
+    cancelada: `Cancelamos tu llamada con ${h.studio}`,
+    "24h": `Mañana tenés una llamada con ${h.studio}`,
+    "1h": `En una hora: tu llamada con ${h.studio}`,
   };
   const titles = {
     confirmada: "Llamada confirmada",
@@ -88,7 +90,7 @@ async function mailClient(kind: "confirmada" | "reprogramada" | "cancelada" | "2
       : `${details(b, h)}${meetBlock(b)}${manage}`;
   const cta =
     kind === "cancelada"
-      ? { href: `${getSiteUrl()}/agendar`, label: "Agendar otra llamada" }
+      ? { href: h.agendaUrl, label: "Agendar otra llamada" }
       : b.meet_url
         ? { href: b.meet_url, label: "Entrar a la llamada" }
         : undefined;
@@ -199,8 +201,9 @@ export async function createBooking(input: NewBooking) {
   let booking = b;
   // Google Calendar: evento con Meet e invitación al cliente (si la persona lo conectó)
   try {
+    const studioName = (await host(input.hostId)).studio;
     const ev = await createMeetEvent(input.hostId, {
-      summary: `Llamada Estudio Cristofaro · ${input.name}`,
+      summary: `Llamada ${studioName} · ${input.name}`,
       description: [
         input.reason && `Motivo: ${input.reason}`,
         input.company && `Empresa: ${input.company}`,

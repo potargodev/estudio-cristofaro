@@ -10,6 +10,7 @@ import { monthRange } from "@/modules/bitacora/catalog";
 import { BUSINESS_CATEGORIES } from "@/modules/cajas/catalog";
 import { businessBoxOf, businessSummary, openBusinessBox } from "@/modules/cajas/server";
 import { notify } from "@/modules/notifications/server";
+import { studioIsDemo, userIsDemo } from "@/lib/demo-world";
 
 // Conexión con un contador (principios §2 y §4 a §9). Conexión, no copia: el
 // estudio accede con un permiso sobre la cuenta del usuario y trabaja sobre
@@ -109,8 +110,9 @@ async function ownConnection(userId: string, id: string) {
 /** Solicitud desde la Red: la persona elige el estudio, los alcances y la autonomía */
 export async function requestConnection(me: Person, studioSlug: string, input: { message?: string; scopePersonal?: boolean; autonomy?: string }) {
   if (!isTitular(me)) throw new ConexionError("Conectar un contador es para cuentas de personas y autónomos.");
-  const [st] = await db().select({ id: studios.id, kind: studios.kind, name: studios.name }).from(studios).where(eq(studios.slug, studioSlug));
-  if (!st || st.kind !== "studio") throw new ConexionError("Ese estudio no está disponible.");
+  const [st] = await db().select({ id: studios.id, kind: studios.kind, name: studios.name, demo: studios.is_demo }).from(studios).where(eq(studios.slug, studioSlug));
+  // Demo con demo y real con real
+  if (!st || st.kind !== "studio" || st.demo !== (await userIsDemo(me.id))) throw new ConexionError("Ese estudio no está disponible.");
   if (await currentConnection(me.id)) throw new ConexionError("Ya tenés una conexión en curso con un estudio. Cerrala antes de pedir otra.");
   const [c] = await db()
     .insert(account_connections)
@@ -206,8 +208,9 @@ export async function setWeekly(me: Person, id: string, on: boolean) {
 export async function inviteClient(staff: Staff, email: string, message?: string) {
   if (!canDecide(staff)) throw new ConexionError("Solo el dueño o un contador del estudio invita.");
   const e = email.trim().toLowerCase();
-  const [u] = await db().select({ id: users.id, name: users.name, role: users.role, studioId: users.studioId, kind: studios.kind }).from(users).leftJoin(studios, eq(studios.id, users.studioId)).where(eq(users.email, e));
-  if (!u || u.role !== "titular" || !u.kind || u.kind === "studio") throw new ConexionError("Esa persona todavía no tiene una cuenta personal en Faro. Pedile que la cree gratis en Faro y volvé a invitarla.");
+  const [u] = await db().select({ id: users.id, name: users.name, role: users.role, studioId: users.studioId, kind: studios.kind, demo: users.isDemo }).from(users).leftJoin(studios, eq(studios.id, users.studioId)).where(eq(users.email, e));
+  // Un estudio de la demo solo invita a cuentas de la demo (y uno real, a reales): mismo mensaje, sin revelar cuentas
+  if (!u || u.role !== "titular" || !u.kind || u.kind === "studio" || u.demo !== (await studioIsDemo(staff.studioId))) throw new ConexionError("Esa persona todavía no tiene una cuenta personal en Faro. Pedile que la cree gratis en Faro y volvé a invitarla.");
   if (await currentConnection(u.id)) throw new ConexionError("Esa persona ya tiene una conexión en curso con un estudio.");
   const [c] = await db()
     .insert(account_connections)

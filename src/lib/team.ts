@@ -10,6 +10,7 @@ import { mailLayout, notifyStudio } from "./notify";
 import { checkLimit, getOrgLimits, usableInvitation } from "./organizations";
 import { ORG_ROLE_LABELS, SENSITIVE_ROLES, canGrant, isOrgRole, type OrgRole } from "./permissions";
 import { getSiteUrl } from "./runtime-config";
+import { crossesWorld, studioIsDemo, WORLD_MESSAGE } from "@/lib/demo-world";
 
 // Lógica de miembros e invitaciones, compartida por el backoffice (el estudio)
 // y por "Mi equipo" del portal (el administrador de la organización). Las
@@ -58,7 +59,7 @@ async function mailInvitation(email: string, orgName: string, role: OrgRole, inv
   const link = invitationLink(token);
   const mailed = await sendMail({
     to: email,
-    subject: `Te invitaron a ${orgName} en la plataforma del Estudio Cristofaro`,
+    subject: `Te invitaron a ${orgName} en Faro`,
     html: mailLayout(
       `Te invitaron a ${orgName}`,
       `<p>${esc(inviter)} te invitó a sumarte a <strong>${esc(orgName)}</strong> con el rol <strong>${esc(ORG_ROLE_LABELS[role])}</strong>.</p>
@@ -103,6 +104,7 @@ export async function inviteMember(
   if (!org) return fail("Organización inexistente.");
   const email = input.email?.trim().toLowerCase() ?? "";
   if (!EMAIL_RE.test(email)) return fail("Revisá el email.");
+  if (crossesWorld(await studioIsDemo(studioId), email)) return fail(WORLD_MESSAGE);
   if (!isOrgRole(input.role)) return fail("Elegí un rol.");
   const role = input.role;
   if (!actorCanGrant(actor, role)) {

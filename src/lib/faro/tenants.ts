@@ -5,6 +5,7 @@ import { legal_entities, organizations, service_plans, signup_requests, studios,
 import { SERVICE_PLANS } from "@/lib/service-plans";
 import { createUserWithPassword } from "@/lib/users";
 import { DEFAULT_PLAN, getPlan, type TenantKind } from "./plans";
+import { isDemoEmail } from "@/lib/demo-world";
 
 // Alta de tenants (estudios y autónomos). La usan el Faro Manager (alta
 // manual) y el autoregistro de la landing: misma validación para los dos.
@@ -64,6 +65,8 @@ type NewTenantResult = { ok: true; studioId: string; userId: string } | { ok: fa
 export async function createTenant(t: NewTenant): Promise<NewTenantResult> {
   const email = t.owner.email.trim().toLowerCase();
   if (!EMAIL_RE.test(email)) return { ok: false, message: "Revisá el email." };
+  // El dominio de la demo es solo de la demo (sus cuentas se crean con el cargador de la demo)
+  if (isDemoEmail(email)) return { ok: false, message: "Revisá el email." };
   if (t.owner.password.length < 8) return { ok: false, message: "La contraseña tiene que tener al menos 8 caracteres." };
   const name = t.name.trim().slice(0, 120);
   if (name.length < 2) return { ok: false, message: "Completá el nombre." };

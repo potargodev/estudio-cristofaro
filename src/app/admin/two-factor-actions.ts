@@ -72,7 +72,7 @@ export async function startTwoFactorSetup(_prev: SetupState, fd: FormData): Prom
   const password = v(fd, "password");
   if (!password) return { ok: false, message: "Ingresá tu contraseña." };
   try {
-    const res = await getAuth().api.enableTwoFactor({ body: { password, issuer: "Estudio Cristofaro" }, headers: await headers() });
+    const res = await getAuth().api.enableTwoFactor({ body: { password, issuer: "Faro" }, headers: await headers() });
     const { totpURI, backupCodes } = res as { totpURI: string; backupCodes: string[] };
     const qr = await QRCode.toDataURL(totpURI, { margin: 1, width: 220, color: { dark: "#1c2235", light: "#ffffff" } });
     const secret = new URL(totpURI).searchParams.get("secret") ?? "";

@@ -34,6 +34,7 @@ import { auditActor, hashGuestToken, memberOf, newGuestToken, type GastosActor, 
 import { fxRate } from "./fx";
 import { paymentLinks } from "./mercadopago";
 import { formatMoney, todayAR } from "@/lib/format";
+import { crossesWorld, studioIsDemo, userIsDemo, WORLD_MESSAGE } from "@/lib/demo-world";
 
 /** Error para mostrar tal cual a la persona */
 export class GastosError extends Error {}
@@ -184,6 +185,7 @@ export async function inviteMember(actor: GastosActor, groupId: string, input: {
   const email = input.email?.trim().toLowerCase() || null;
   if (name.length < 2) throw new GastosError("Escribí el nombre de la persona.");
   if (email && !EMAIL_RE.test(email)) throw new GastosError("El email no es válido.");
+  if (email && crossesWorld(await studioIsDemo(group.studio_id), email)) throw new GastosError(WORLD_MESSAGE);
   const db = getDb();
   const members = await activeMembers(group.id);
   if (members.length >= 50) throw new GastosError("El grupo llegó al máximo de 50 integrantes.");
@@ -282,6 +284,8 @@ export async function joinWithInvite(actor: GastosActor, token: string) {
   const members = await activeMembers(inv.id);
   if (members.length >= 50) throw new GastosError("El grupo llegó al máximo de 50 integrantes.");
   const [group] = await db.select().from(expense_groups).where(eq(expense_groups.id, inv.id));
+  // Demo con demo y real con real: el enlace de un grupo de la otra parte no sirve
+  if ((await studioIsDemo(group.studio_id)) !== (await userIsDemo(u.userId))) throw new GastosError("Ese enlace ya no sirve. Pedile uno nuevo a quien te invitó.");
   let memberId: string;
   if (already) {
     await db.update(group_members).set({ active: true, name: u.name }).where(eq(group_members.id, already.id));

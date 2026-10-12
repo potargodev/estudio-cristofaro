@@ -7,7 +7,7 @@ import { getDb } from "@/db";
 import { integrations, legal_entities, tango_companies, tango_records } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { hasModule, organizationLimitError } from "@/lib/faro/entitlements";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, requireOwnAccount } from "@/lib/auth";
 import { isUuid } from "@/lib/ids";
 import { studioOrganization } from "@/lib/organizations";
 import { insertOrganization } from "@/lib/organizations-write";
@@ -43,7 +43,7 @@ export interface KeyState {
 
 /** Activa Tango (si hace falta) y genera una clave nueva. La clave anterior deja de funcionar. */
 export async function generateTangoKey(_prev: KeyState, _fd: FormData): Promise<KeyState> {
-  const admin = await requireAdmin();
+  const admin = await requireOwnAccount(requireAdmin());
   // El conector local de Tango es de Profesional en adelante (en Inicial, Tango por archivos)
   if (!(await hasModule(admin.studioId, "tango"))) return { ok: false, message: "El conector local de Tango está incluido desde el plan Profesional. En Inicial podés importar las exportaciones de Tango desde Conexiones → Archivos." };
   const { key, hash, prefix } = generateConnectorKey();

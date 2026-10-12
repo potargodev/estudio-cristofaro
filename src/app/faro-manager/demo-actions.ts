@@ -34,7 +34,12 @@ export async function seedDemoAction(_: DemoActionState): Promise<DemoActionStat
 export async function resetDemoAction(_: DemoActionState): Promise<DemoActionState> {
   const me = await requireFaro(true);
   const db = getDb();
-  const before = await resetDemo(db);
+  let before;
+  try {
+    before = await resetDemo(db);
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
   await auditDemo(db, "demo.borrada", { id: me.id, label: me.email }, { espacios: before.studios, usuarios: before.users });
   revalidatePath("/faro-manager", "layout");
   return { ok: before.loaded ? `Demo borrada: ${before.studios} espacios y ${before.users} usuarios.` : "No había demo cargada." };

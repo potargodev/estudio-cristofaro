@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { mcp_accesses, oauth_clients } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { requireTenant, TENANT_OWNERS } from "@/lib/auth";
+import { requireTenant, TENANT_OWNERS, requireOwnAccount } from "@/lib/auth";
 import { accessOfStudio, scopeFromForm } from "@/lib/mcp/accesses";
 import { CODE_TTL_S, storeToken } from "@/lib/mcp/tokens";
 
@@ -22,7 +22,7 @@ export interface CreateAccessState {
 }
 
 export async function createMcpAccess(_prev: CreateAccessState, fd: FormData): Promise<CreateAccessState> {
-  const user = await requireTenant();
+  const user = await requireOwnAccount(requireTenant());
   const name = String(fd.get("name") ?? "").trim().slice(0, 80);
   if (name.length < 2) return { ok: false, message: "Poné un nombre para reconocer el acceso (ej.: Claude de Marina)." };
   const scope = await scopeFromForm(fd, user.studioId);
@@ -71,7 +71,7 @@ function withParams(uri: string, params: Record<string, string>) {
 
 /** Aprobar o rechazar el pedido de un cliente OAuth: crea el acceso con los alcances elegidos y el código */
 export async function authorizeOAuthClient(fd: FormData) {
-  const user = await requireTenant();
+  const user = await requireOwnAccount(requireTenant());
   const clientId = s(fd, "client_id");
   const redirectUri = s(fd, "redirect_uri");
   const state = s(fd, "state");

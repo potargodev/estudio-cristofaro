@@ -31,7 +31,7 @@ export default async function BuscarClientesPage({ searchParams }: { searchParam
   const estudios = sp.vista === "estudios";
   const f = { tipo: sp.tipo && sp.tipo in SEEKER_KINDS ? sp.tipo : undefined, rubro: sp.rubro || undefined, provincia: sp.provincia || undefined, necesidad: sp.necesidad || undefined };
   const prefs = await getPrefs(me.id);
-  const [{ issue, list }, accepted, fresh, directory] = await Promise.all([searchSeekers(me, f), acceptedContacts(me), newCandidates(me, prefs.redSeenAt).catch(() => 0), estudios ? publicDirectory({}) : Promise.resolve([])]);
+  const [{ issue, list }, accepted, fresh, directory] = await Promise.all([searchSeekers(me, f), acceptedContacts(me), newCandidates(me, prefs.redSeenAt).catch(() => 0), estudios ? publicDirectory({}, me.isDemo) : Promise.resolve([])]);
   // Mirar las postulaciones apaga el badge de candidatos nuevos
   if (!estudios && !issue) await setPrefs(me.id, { redSeenAt: new Date().toISOString() }).catch(() => undefined);
   const operator = me.role === "dueno" || me.role === "contador";

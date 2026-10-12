@@ -8,6 +8,7 @@ import { esc, sendMail } from "@/lib/email";
 import { mailLayout } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { notify } from "@/modules/notifications/server";
+import { crossesWorld, userIsDemo, WORLD_MESSAGE } from "@/lib/demo-world";
 
 // Bitácora compartida (hogar o pareja): quien comparte elige con quién y con
 // qué permiso (ver o también cargar). Es explícito y revocable por cualquiera
@@ -22,6 +23,7 @@ export async function createShare(owner: Who, email: string, permission: "ver" |
   const to = email.trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) throw new ShareError("Revisá el mail.");
   if (to === owner.email.toLowerCase()) throw new ShareError("No te podés invitar a vos.");
+  if (crossesWorld(await userIsDemo(owner.id), to)) throw new ShareError(WORLD_MESSAGE);
   const active = await db().select({ id: bitacora_shares.id }).from(bitacora_shares).where(and(eq(bitacora_shares.owner_id, owner.id), eq(bitacora_shares.invited_email, to), inArray(bitacora_shares.status, ["invitada", "activa"])));
   if (active.length) throw new ShareError("Ya compartiste tu Bitácora con esa persona.");
   const token = randomBytes(24).toString("base64url");

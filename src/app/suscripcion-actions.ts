@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getSessionUser, requireTenantOwner } from "@/lib/auth";
+import { getSessionUser, requireTenantOwner, requireOwnAccount } from "@/lib/auth";
 import { BillingError } from "@/modules/billing/mp";
 import { cancelSubscription, choosePlan, payNowLink } from "@/modules/billing/subscriptions";
 
@@ -16,7 +16,7 @@ function go(path: string, q: Record<string, string>): never {
 }
 
 export async function choosePlanAction(fd: FormData) {
-  const me = await requireTenantOwner();
+  const me = await requireOwnAccount(requireTenantOwner());
   const back = home(me.tenantKind);
   let r: Awaited<ReturnType<typeof choosePlan>>;
   try {
@@ -31,7 +31,7 @@ export async function choosePlanAction(fd: FormData) {
 }
 
 export async function cancelSubscriptionAction() {
-  const me = await requireTenantOwner();
+  const me = await requireOwnAccount(requireTenantOwner());
   const msg = await cancelSubscription(me.studioId, me);
   revalidatePath(home(me.tenantKind));
   go(home(me.tenantKind), { ok: msg });
@@ -40,7 +40,7 @@ export async function cancelSubscriptionAction() {
 /** Pagar ahora (morosa o suspendida): también desde la pantalla de cuenta suspendida */
 export async function payNowAction() {
   const me = await getSessionUser();
-  if (!me || !["dueno", "titular"].includes(me.role)) redirect("/ingresar");
+  if (!me || me.assisted || !["dueno", "titular"].includes(me.role)) redirect("/ingresar");
   let url: string;
   try {
     url = await payNowLink(me.studioId);

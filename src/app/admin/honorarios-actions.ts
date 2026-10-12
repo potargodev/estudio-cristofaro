@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireOperator } from "@/lib/auth";
+import { requireOperator, requireOwnAccount } from "@/lib/auth";
 import { ArcaError } from "@/modules/arca/soap";
 import { addCharge, chargeLink, generateCharges, markPaid, prepareInvoice, requireBilling, saveBillingSettings, savePlan, sendCharge, voidCharge } from "@/modules/billing/fees";
 import { BillingError, deleteAccount, saveAccount } from "@/modules/billing/mp";
@@ -98,14 +98,14 @@ export async function saveSettingsAction(fd: FormData) {
 
 export async function saveStudioMpAction(fd: FormData) {
   const back = `${H}/configuracion`;
-  const me = await requireOperator();
+  const me = await requireOwnAccount(requireOperator());
   if (me.role !== "dueno") go(back, { error: "Solo el dueño del estudio conecta la cuenta de Mercado Pago." });
   await guard(back, () => saveAccount(me.studioId, me, { accessToken: s(fd, "access_token"), publicKey: s(fd, "public_key"), webhookSecret: s(fd, "webhook_secret") }));
   go(back, { ok: "Cuenta de Mercado Pago guardada y probada." });
 }
 
 export async function deleteStudioMpAction() {
-  const me = await requireOperator();
+  const me = await requireOwnAccount(requireOperator());
   if (me.role !== "dueno") go(`${H}/configuracion`, { error: "Solo el dueño del estudio." });
   await deleteAccount(me.studioId, me);
   go(`${H}/configuracion`, { ok: "Cuenta desconectada." });

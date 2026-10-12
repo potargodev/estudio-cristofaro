@@ -9,6 +9,7 @@ import { mailLayout } from "@/lib/notify";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { MODALITIES, RED_SERVICES, TEAM_SIZES } from "./catalog";
+import { studioIsDemo, userIsDemo } from "@/lib/demo-world";
 
 // Red Contable (docs/faro-producto.md §2.i). Directorio neutral: solo
 // estudios que se sumaron (opt-in), con la matrícula verificada por Faro y el
@@ -157,14 +158,14 @@ const norm = (s: string | null | undefined) =>
     .toLowerCase()
     .trim();
 
-/** Estudios visibles en la Red con su puntaje neutral, filtrados y ordenados */
-export async function publicDirectory(f: DirectoryFilters = {}) {
+/** Estudios visibles en la Red con su puntaje neutral, filtrados y ordenados. `demo`: el mundo de quien mira (los anónimos, siempre lo real) */
+export async function publicDirectory(f: DirectoryFilters = {}, demo = false) {
   const db = getDb();
   const rows = await db
     .select({ p: directory_profiles, name: studios.name, slug: studios.slug, status: studios.status })
     .from(directory_profiles)
     .innerJoin(studios, eq(studios.id, directory_profiles.studio_id))
-    .where(and(eq(directory_profiles.published, true), eq(directory_profiles.license_status, "verificada"), eq(studios.kind, "studio"), ne(studios.status, "suspendido")));
+    .where(and(eq(directory_profiles.published, true), eq(directory_profiles.license_status, "verificada"), eq(studios.kind, "studio"), ne(studios.status, "suspendido"), eq(studios.is_demo, demo)));
   const visible = [];
   for (const r of rows) if (await hasModule(r.p.studio_id, "red_estudios")) visible.push(r);
   const ids = visible.map((r) => r.p.studio_id);
@@ -193,12 +194,13 @@ export async function publicDirectory(f: DirectoryFilters = {}) {
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name, "es"));
 }
 
-export async function publicProfile(slug: string) {
+/** Ficha pública de un estudio de la Red, solo si es del mismo mundo que quien mira (demo o real) */
+export async function publicProfile(slug: string, demo = false) {
   const [r] = await getDb()
     .select({ p: directory_profiles, name: studios.name, slug: studios.slug, studioId: studios.id, status: studios.status, kind: studios.kind })
     .from(directory_profiles)
     .innerJoin(studios, eq(studios.id, directory_profiles.studio_id))
-    .where(eq(studios.slug, slug));
+    .where(and(eq(studios.slug, slug), eq(studios.is_demo, demo)));
   if (!r || r.kind !== "studio" || r.status === "suspendido" || (await visibilityIssue(r.studioId, r.p))) return null;
   const [rate, hours, reviews] = await Promise.all([ratings([r.studioId]), responseHours([r.studioId]), publishedReviews(r.studioId)]);
   return { ...r, rating: rate.get(r.studioId), responseHours: hours.get(r.studioId) ?? null, reviews };
@@ -269,6 +271,8 @@ export async function requestProposal(input: { studioId: string; name: string; e
   const p = await getProfile(input.studioId);
   if (await visibilityIssue(input.studioId, p)) throw new RedError("Ese estudio no está disponible en la Red.");
   if (!p!.accepting_clients) throw new RedError("Ese estudio no está tomando clientes nuevos por ahora.");
+  // Demo con demo y real con real (un pedido anónimo siempre es real)
+  if ((input.userId ? await userIsDemo(input.userId) : false) !== (await studioIsDemo(input.studioId))) throw new RedError("Ese estudio no está disponible en la Red.");
   const [lead] = await db
     .insert(leads)
     .values({

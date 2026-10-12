@@ -105,20 +105,22 @@ async function userByEmail(email: string) {
 
 async function sendMagicLinkMail(email: string, url: string) {
   const existing = await userByEmail(email);
-  // El estudio entra con contraseña + 2FA; clientes, titulares (persona o autónomo) y altas nuevas, con enlace
-  if (existing && existing.role !== "cliente" && existing.role !== "titular") throw deny("ESTUDIO_CON_CLAVE");
-  if (existing && !existing.active) throw deny("USUARIO_DESACTIVADO");
-  const signup = existing ? null : await pendingSignup(email);
-  if (existing?.role !== "titular" && !signup && !(await hasAccessByEmail(email))) {
-    await audit({
-      studioId: null,
-      actorLabel: email,
-      action: "sesion.rechazada",
-      result: "denegado",
-      metadata: { metodo: "enlace", motivo: "sin invitación ni membresía" },
+  // Quien pide el enlace ve siempre la misma respuesta (no se revela qué mails tienen cuenta):
+  // los rechazos quedan en la auditoría y solo el dueño de la casilla se entera
+  const reject = (motivo: string) => audit({ studioId: null, actorLabel: email, action: "sesion.rechazada", result: "denegado", metadata: { metodo: "enlace", motivo } });
+  // El estudio entra con contraseña + 2FA: se le avisa a su casilla dónde entrar
+  if (existing && existing.role !== "cliente" && existing.role !== "titular") {
+    await reject("cuenta del estudio");
+    await sendMail({
+      to: email,
+      subject: "Tu cuenta de Faro entra con contraseña",
+      html: mailLayout("Entrá con tu contraseña", `<p>Pediste un enlace para entrar como <strong>${esc(email)}</strong>, pero es una cuenta del estudio: entra con contraseña y segundo factor.</p><p style="color:#5a6176;font-size:13px">Si no lo pediste, ignorá este mail.</p>`, { href: `${getSiteUrl()}/admin/login`, label: "Ir al ingreso del estudio" }, "Faro"),
     });
-    throw deny("SIN_ACCESO");
+    return;
   }
+  if (existing && !existing.active) return void (await reject("usuario desactivado"));
+  const signup = existing ? null : await pendingSignup(email);
+  if (existing?.role !== "titular" && !signup && !(await hasAccessByEmail(email))) return void (await reject("sin invitación ni membresía"));
   const sent = await sendMail({
     to: email,
     subject: signup ? "Activá tu cuenta de Faro" : "Tu enlace para entrar a Faro",
@@ -269,7 +271,7 @@ function createAuth() {
       },
     },
     plugins: [
-      twoFactor({ issuer: "Estudio Cristofaro", backupCodeOptions: { amount: 10 } }),
+      twoFactor({ issuer: "Faro", backupCodeOptions: { amount: 10 } }),
       magicLink({ expiresIn: 15 * 60, sendMagicLink: async ({ email, url }) => sendMagicLinkMail(email, url) }),
       // Solo pruebas: simulador de Google (scratchpad/mock-google). Nunca en staging ni producción.
       ...(google.mock

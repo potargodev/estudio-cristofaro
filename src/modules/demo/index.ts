@@ -8,7 +8,7 @@
 
 import { rmSync } from "node:fs";
 import path from "node:path";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, notInArray, sql } from "drizzle-orm";
 import type { Db } from "@/db";
 import { audit_log, conversation_members, conversations, fleets, monotributo_scales, studios, users } from "@/db/schema";
 import { DEMO_DIR, DEMO_DOMAIN, password, uploadsRoot } from "./base";
@@ -37,13 +37,33 @@ export async function demoState(db: Db): Promise<DemoState> {
   return { loaded: s.n > 0, studios: s.n, users: u.n };
 }
 
+/**
+ * Usuarios reales metidos en espacios de la demo (no debería pasar: las
+ * invitaciones y uniones no cruzan de mundo). Si hay, borrar la demo se los
+ * llevaría en cascada, así que el reset se frena.
+ */
+export async function mixedWithReal(db: Db) {
+  const q = async (text: ReturnType<typeof sql>) => Number(((await db.execute(text)) as unknown as { n: number }[])[0]?.n ?? 0);
+  const [cuentas, cajas, grupos, flotas] = await Promise.all([
+    q(sql`select count(*)::int n from users u join studios s on s.id = u.studio_id where s.is_demo and not u.is_demo`),
+    q(sql`select count(*)::int n from box_members m join boxes b on b.id = m.box_id join users o on o.id = b.owner_id join users u on u.id = m.user_id where o.is_demo and not u.is_demo`),
+    q(sql`select count(*)::int n from group_members m join expense_groups g on g.id = m.group_id join studios s on s.id = g.studio_id join users u on u.id = m.user_id where s.is_demo and not u.is_demo`),
+    q(sql`select count(*)::int n from fleet_members m join fleets f on f.id = m.fleet_id join users u on u.id = m.user_id where f.is_demo and not u.is_demo`),
+  ]);
+  return { cuentas, cajas, grupos, flotas, total: cuentas + cajas + grupos + flotas };
+}
+
 /** Borra todo lo marcado como demo (y solo eso). Devuelve cuántos tenants y usuarios borró */
 export async function resetDemo(db: Db) {
   const before = await demoState(db);
+  const mixed = await mixedWithReal(db);
+  if (mixed.total > 0) throw new Error(`La demo tiene usuarios reales adentro (cuentas ${mixed.cuentas}, cajas ${mixed.cajas}, grupos ${mixed.grupos}, Flotas ${mixed.flotas}). No se borra nada: revisalo a mano.`);
   const demoUsers = db.select({ id: users.id }).from(users).where(eq(users.isDemo, true));
-  // Conversaciones directas entre usuarios de demo (las de grupos, Flotas y estudios caen en cascada)
-  const direct = db.select({ id: conversation_members.conversation_id }).from(conversation_members).where(inArray(conversation_members.user_id, demoUsers));
-  await db.delete(conversations).where(and(eq(conversations.kind, "directo"), inArray(conversations.id, direct)));
+  const realUsers = db.select({ id: users.id }).from(users).where(eq(users.isDemo, false));
+  // Conversaciones directas solo entre usuarios de la demo (las de grupos, Flotas y estudios caen en cascada)
+  const withDemo = db.select({ id: conversation_members.conversation_id }).from(conversation_members).where(inArray(conversation_members.user_id, demoUsers));
+  const withReal = db.select({ id: conversation_members.conversation_id }).from(conversation_members).where(inArray(conversation_members.user_id, realUsers));
+  await db.delete(conversations).where(and(eq(conversations.kind, "directo"), inArray(conversations.id, withDemo), notInArray(conversations.id, withReal)));
   await db.delete(fleets).where(eq(fleets.is_demo, true));
   // Los tenants arrastran en cascada a sus usuarios, organizaciones y todo lo demás
   await db.delete(studios).where(eq(studios.is_demo, true));

@@ -35,7 +35,8 @@ export default async function RedPage({ searchParams }: { searchParams: Promise<
     if (v === "mapa") q.set("vista", "mapa");
     return `/red-contable${q.size ? `?${q}` : ""}`;
   };
-  const [list, user] = await Promise.all([publicDirectory(filters), getSessionUser().catch(() => null), markStep("red").catch(() => undefined)]);
+  const user = await getSessionUser().catch(() => null);
+  const [list] = await Promise.all([publicDirectory(filters, user?.isDemo ?? false), markStep("red").catch(() => undefined)]);
   const titular = user?.role === "titular" && user.tenantKind !== "studio";
   const seeker = titular ? await mySeeker(user!.id) : null;
   // Derivación (§1.c): la persona llega con el contexto armado (solo el propio, validado en el servidor)

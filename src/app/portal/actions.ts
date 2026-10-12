@@ -65,7 +65,7 @@ export async function requestMagicLink(_prev: PortalLoginState, fd: FormData): P
     if (status !== "FORBIDDEN") console.error("[portal] magic link", error);
     return { ok: false, message: authMessage(error, "No pudimos mandarte el enlace. Probá de nuevo.") };
   }
-  return { ok: true, message: `Te mandamos un enlace a ${email}. Abrilo desde este dispositivo: vence en 15 minutos.` };
+  return { ok: true, message: `Si ${email} tiene acceso, te llega un enlace en un minuto. Abrilo desde este dispositivo: vence en 15 minutos.` };
 }
 
 /** "Continuar con Google": arma la URL de Google y redirige */

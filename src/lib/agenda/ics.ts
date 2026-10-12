@@ -25,7 +25,7 @@ export function buildIcs(e: {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Estudio Cristofaro//Agenda//ES",
+    "PRODID:-//Faro//Agenda//ES",
     "CALSCALE:GREGORIAN",
     `METHOD:${e.cancelled ? "CANCEL" : "REQUEST"}`,
     "BEGIN:VEVENT",
@@ -44,7 +44,7 @@ export function buildIcs(e: {
     "BEGIN:VALARM",
     "TRIGGER:-PT30M",
     "ACTION:DISPLAY",
-    "DESCRIPTION:Llamada con el Estudio Cristofaro",
+    `DESCRIPTION:${escapeText(e.summary)}`,
     "END:VALARM",
     "END:VEVENT",
     "END:VCALENDAR",

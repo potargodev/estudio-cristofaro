@@ -7,6 +7,7 @@ import { INDUSTRY_NAMES } from "@/modules/industries/catalog";
 import { notify } from "@/modules/notifications/server";
 import { PROVINCES, RED_SERVICES } from "./catalog";
 import { getProfile, visibilityIssue } from "./server";
+import { studioIsDemo } from "@/lib/demo-world";
 
 // Red Contable de doble mano (principios §15). Las personas, los autónomos,
 // las empresas y las Flotas se muestran solo si activan «Disponible, busco
@@ -100,6 +101,12 @@ export async function fleetSeeker(fleetId: string) {
   return s ?? null;
 }
 
+/** Postulantes del mismo mundo que el estudio (demo con demo, real con real) */
+async function sameWorld(studioId: string) {
+  const demo = await studioIsDemo(studioId);
+  return inArray(seeker_profiles.user_id, db().select({ id: users.id }).from(users).where(eq(users.isDemo, demo)));
+}
+
 async function studioCanSearch(staff: Staff) {
   if (staff.tenantKind !== "studio" || !["dueno", "contador", "colaborador"].includes(staff.role)) return "Solo para estudios.";
   return visibilityIssue(staff.studioId, await getProfile(staff.studioId));
@@ -109,7 +116,7 @@ async function studioCanSearch(staff: Staff) {
 export async function searchSeekers(staff: Staff, f: { tipo?: string; rubro?: string; provincia?: string; necesidad?: string }) {
   const issue = await studioCanSearch(staff);
   if (issue) return { issue, list: [] };
-  const rows = await db().select().from(seeker_profiles).where(eq(seeker_profiles.active, true)).orderBy(desc(seeker_profiles.activated_at)).limit(300);
+  const rows = await db().select().from(seeker_profiles).where(and(eq(seeker_profiles.active, true), await sameWorld(staff.studioId))).orderBy(desc(seeker_profiles.activated_at)).limit(300);
   const contacted = rows.length ? await db().select().from(seeker_contacts).where(and(eq(seeker_contacts.studio_id, staff.studioId), inArray(seeker_contacts.seeker_id, rows.map((r) => r.id)))) : [];
   const fleetIds = rows.map((r) => r.fleet_id).filter((x): x is string => !!x);
   const members = fleetIds.length ? await db().select({ fleet: fleet_members.fleet_id }).from(fleet_members).where(and(inArray(fleet_members.fleet_id, fleetIds), eq(fleet_members.status, "activo"))) : [];
@@ -141,7 +148,7 @@ export async function contactSeeker(staff: Staff, seekerId: string, message: str
   if (issue) throw new SeekerError(issue);
   if (!["dueno", "contador"].includes(staff.role)) throw new SeekerError("Contactan el dueño o un contador del estudio.");
   if (!UUID.test(seekerId)) throw new SeekerError("No encontramos a esa persona en el listado.");
-  const [s] = await db().select().from(seeker_profiles).where(and(eq(seeker_profiles.id, seekerId), eq(seeker_profiles.active, true)));
+  const [s] = await db().select().from(seeker_profiles).where(and(eq(seeker_profiles.id, seekerId), eq(seeker_profiles.active, true), await sameWorld(staff.studioId)));
   if (!s) throw new SeekerError("Ya no está disponible en el listado.");
   const [row] = await db()
     .insert(seeker_contacts)
@@ -228,7 +235,7 @@ export async function newCandidates(staff: Staff, seenAt?: string | null) {
   const profile = await getProfile(staff.studioId);
   if (await visibilityIssue(staff.studioId, profile)) return 0;
   const since = seenAt && !Number.isNaN(Date.parse(seenAt)) ? new Date(seenAt) : new Date(Date.now() - 14 * 86400_000);
-  const rows = await db().select().from(seeker_profiles).where(and(eq(seeker_profiles.active, true), gt(seeker_profiles.activated_at, since))).limit(300);
+  const rows = await db().select().from(seeker_profiles).where(and(eq(seeker_profiles.active, true), gt(seeker_profiles.activated_at, since), await sameWorld(staff.studioId))).limit(300);
   if (!rows.length) return 0;
   const contacted = await db().select({ id: seeker_contacts.seeker_id }).from(seeker_contacts).where(and(eq(seeker_contacts.studio_id, staff.studioId), inArray(seeker_contacts.seeker_id, rows.map((r) => r.id))));
   return rows.filter((r) => r.user_id !== staff.id && !contacted.some((c) => c.id === r.id) && matchesProfile(r, profile)).length;

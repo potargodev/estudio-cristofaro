@@ -28,6 +28,8 @@ export interface StaffUser {
   tenantSuspended: boolean;
   /** Tipo de tenant: estudio, cuenta personal (autónomo) o persona (Bitácora) */
   tenantKind: "studio" | "personal" | "persona";
+  /** Usuario de la demo: solo se cruza con usuarios y espacios de la demo */
+  isDemo: boolean;
 }
 
 type TenantKind = StaffUser["tenantKind"];
@@ -61,10 +63,11 @@ export const getCurrentUser = cache(async (): Promise<StaffUser | null> => {
     assisted: null,
     tenantSuspended: row?.status === "suspendido",
     tenantKind: row?.kind ?? "studio",
+    isDemo: Boolean(row?.isDemo),
   };
   // Acceso asistido: solo el equipo de Faro, con 2FA, con un permiso vigente y propio
   const grantId = (await cookies()).get(ASSISTED_COOKIE)?.value;
-  if (faroRole && base.twoFactorEnabled && grantId && /^[0-9a-f-]{36}$/i.test(grantId)) {
+  if (base.faroRole && !row?.isDemo && base.twoFactorEnabled && grantId && /^[0-9a-f-]{36}$/i.test(grantId)) {
     const [g] = await db
       .select({ id: assisted_access.id, studioId: assisted_access.studio_id, expiresAt: assisted_access.expires_at, ended: assisted_access.ended_at, name: studios.name, status: studios.status, kind: studios.kind })
       .from(assisted_access)
@@ -148,6 +151,19 @@ export async function requireFaro(owner = false): Promise<StaffUser> {
 
 /** Solo el dueño del estudio. */
 export const requireAdmin = () => requireTenant("studio", ["dueno"]);
+
+/**
+ * La propia cuenta, nunca un acceso asistido: el soporte de Faro entra como
+ * dueño para ayudar, pero no cambia credenciales, cobros, planes ni el equipo.
+ */
+export async function requireOwnAccount<T extends StaffUser>(guard: Promise<T>): Promise<T> {
+  const user = await guard;
+  if (user.assisted) {
+    await audit({ studioId: user.studioId, actor: user, action: "permiso.denegado", result: "denegado", metadata: { motivo: "acción no disponible en acceso asistido" } });
+    redirect(user.tenantKind === "studio" ? "/admin/sin-permiso" : "/personal");
+  }
+  return user;
+}
 
 export interface MembershipSummary {
   organizationId: string;

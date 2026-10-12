@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { faqs, leads, posts, service_plans, sessions, users } from "@/db/schema";
-import { requireAdmin, requireOperator } from "@/lib/auth";
+import { requireAdmin, requireOperator, requireOwnAccount } from "@/lib/auth";
 import { takeAfterLogin } from "@/lib/after-login";
 import { homeFor } from "@/lib/roles";
 import { audit, requestIp } from "@/lib/audit";
@@ -331,7 +331,7 @@ export async function savePlanPrice(fd: FormData) {
 // ───────────── usuarios (solo admin) ─────────────
 
 export async function createStaffUser(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireOwnAccount(requireAdmin());
   const name = s(fd, "name");
   const email = s(fd, "email")?.toLowerCase() ?? null;
   const password = s(fd, "password");
@@ -362,7 +362,7 @@ export async function createStaffUser(fd: FormData) {
 }
 
 export async function updateUserRole(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireOwnAccount(requireAdmin());
   const userId = id(fd);
   const role = s(fd, "role") as UserRole | null;
   if (!userId || !role || !STAFF_ROLES.includes(role)) redirect("/admin/configuracion/equipo?error=guardar");
@@ -380,7 +380,7 @@ export async function updateUserRole(fd: FormData) {
 }
 
 export async function setUserActive(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireOwnAccount(requireAdmin());
   const userId = id(fd);
   const active = s(fd, "active") === "1";
   if (!userId) redirect("/admin/configuracion/equipo?error=guardar");

@@ -16,15 +16,16 @@ type Params = Promise<{ slug: string }>;
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const p = await publicProfile((await params).slug);
+  const viewer = await getSessionUser().catch(() => null);
+  const p = await publicProfile((await params).slug, viewer?.isDemo ?? false);
   return p ? { title: `${p.name} · Red Contable`, description: p.p.headline ?? undefined } : { title: "Estudio no encontrado" };
 }
 
 
 export default async function EstudioRedPage({ params, searchParams }: { params: Params; searchParams: Promise<Record<string, string | undefined>> }) {
-  const x = await publicProfile((await params).slug);
-  if (!x) notFound();
   const user = await getSessionUser().catch(() => null);
+  const x = await publicProfile((await params).slug, user?.isDemo ?? false);
+  if (!x) notFound();
   const derivacion = user ? await ownSuggestion(user.id, (await searchParams).derivacion) : null;
   // Conectar la cuenta (§7): personas y autónomos titulares, una conexión a la vez
   const canConnect = !!user && user.role === "titular" && user.tenantKind !== "studio" && !user.assisted;

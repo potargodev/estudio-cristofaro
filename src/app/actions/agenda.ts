@@ -8,6 +8,7 @@ import { getStudioId } from "@/lib/data";
 import { publicProfile } from "@/modules/red/server";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { formatDate } from "@/lib/format";
+import { getSessionUser } from "@/lib/auth";
 
 // Agenda pública (/agendar y el link para reprogramar o cancelar). El horario
 // se vuelve a validar en el servidor contra la disponibilidad real.
@@ -42,7 +43,7 @@ export async function bookCall(_prev: BookingState, fd: FormData): Promise<Booki
   }
   // Desde la Red: el estudio sale del perfil público (verificado y visible), nunca de un ID del navegador
   const red = s(fd, "red");
-  const studioId = red ? ((await publicProfile(red))?.studioId ?? null) : await getStudioId();
+  const studioId = red ? ((await publicProfile(red, (await getSessionUser().catch(() => null))?.isDemo ?? false))?.studioId ?? null) : await getStudioId();
   if (!studioId) return { ok: false, message: "La agenda no está disponible en este momento." };
   const slot = await findSlot(await getHosts(studioId, { publicOnly: true }), start);
   if (!slot)

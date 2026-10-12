@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { Container } from "@/components/web/ui";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getFaqs } from "@/lib/data";
+import { JsonLd } from "@/components/web/JsonLd";
 
 export const metadata: Metadata = {
   title: "Preguntas frecuentes",
@@ -24,7 +25,7 @@ export default async function FaqPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
       <PageHeader eyebrow="Recursos" title="Preguntas frecuentes" intro="Cómo trabajamos, cómo es el abono, qué necesitás para empezar y cómo es el cambio de contador." />
       <section aria-label="Preguntas">
         <Container className="py-16 lg:py-24">

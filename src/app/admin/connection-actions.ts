@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { connections, external_records, legal_entities } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, requireOwnAccount } from "@/lib/auth";
 import { encryptionEnabled } from "@/lib/crypto";
 import { studioOrganization } from "@/lib/organizations";
 import { parseExport } from "@/modules/connectors/archivos/parse";
@@ -35,7 +35,7 @@ const msg = (path: string, ok: boolean, text: string) => go(path, `${ok ? "ok" :
 const XUBIO = "/admin/configuracion/conexiones/xubio";
 
 export async function saveXubio(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireOwnAccount(requireAdmin());
   if (!encryptionEnabled()) msg(XUBIO, false, "Falta ENCRYPTION_KEY en el servidor.");
   const id = s(fd, "id");
   const current = id ? await connectionOfStudio(id, admin.studioId, "xubio") : null;
@@ -86,7 +86,7 @@ export async function syncXubioAction(fd: FormData) {
 }
 
 export async function deleteConnection(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireOwnAccount(requireAdmin());
   const conn = await connectionOfStudio(s(fd, "id"), admin.studioId);
   const back = internalPath(s(fd, "back"), "/admin/configuracion/conexiones");
   if (!conn) msg(back, false, "Esa conexión no existe.");
@@ -147,7 +147,7 @@ export async function driveSyncAction() {
 const MCPX = "/admin/configuracion/conexiones/mcp-externo";
 
 export async function saveMcpExterno(fd: FormData) {
-  const admin = await requireAdmin();
+  const admin = await requireOwnAccount(requireAdmin());
   if (!encryptionEnabled()) msg(MCPX, false, "Falta ENCRYPTION_KEY en el servidor.");
   const id = s(fd, "id");
   const current = id ? await connectionOfStudio(id, admin.studioId, "mcp_externo") : null;

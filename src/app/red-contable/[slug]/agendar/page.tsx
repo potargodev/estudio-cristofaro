@@ -9,6 +9,7 @@ import { bookingByToken } from "@/lib/agenda/bookings";
 import { availableSlots, getHosts } from "@/lib/agenda/slots";
 import { publicProfile } from "@/modules/red/server";
 import { formatDate } from "@/lib/format";
+import { getSessionUser } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
 export const dynamic = "force-dynamic";
@@ -17,7 +18,8 @@ export const metadata: Metadata = { title: "Agendar llamada · Red Contable", ro
 /** "Agendar llamada" desde la ficha de la Red: la agenda pública del estudio elegido */
 export default async function AgendarRedPage({ params, searchParams }: { params: Params; searchParams: Promise<{ t?: string }> }) {
   const [{ slug }, { t }] = await Promise.all([params, searchParams]);
-  const x = await publicProfile(slug);
+  const viewer = await getSessionUser().catch(() => null);
+  const x = await publicProfile(slug, viewer?.isDemo ?? false);
   if (!x) notFound();
   const back = (
     <Link href={`/red-contable/${x.slug}`} className="text-meta text-muted hover:text-ink">

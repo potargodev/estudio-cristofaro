@@ -11,6 +11,7 @@ import { categoriesFor, templateOf } from "./catalog";
 import { breakdown, type LedgerEntry } from "./ledger";
 import { boxFor, CajaError } from "./server";
 import { todayAR } from "@/lib/format";
+import { userIsDemo } from "@/lib/demo-world";
 
 // Cajas compartidas: el registro compartido (principios §16 y §18). No es un
 // grupo de gastos: llevar la cuenta juntos. Cada integrante carga lo que gasta
@@ -91,6 +92,8 @@ export async function joinBox(me: Me, token: string) {
   const inv = await boxByInvite(token);
   if (!inv) throw new CajaError("Ese enlace ya no sirve. Pedí uno nuevo.");
   if (inv.members >= MAX_MEMBERS) throw new CajaError("La caja ya tiene el máximo de integrantes.");
+  // Demo con demo y real con real
+  if ((await userIsDemo(inv.box.owner_id)) !== (await userIsDemo(me.id))) throw new CajaError("Ese enlace ya no sirve. Pedí uno nuevo.");
   await db()
     .insert(box_members)
     .values({ box_id: inv.box.id, user_id: me.id, role: "integrante" })
