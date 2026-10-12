@@ -130,7 +130,7 @@ export default async function ConsultaPage({
                 <dd>
                   <ul className="mt-1 flex flex-wrap gap-1.5">
                     {lead.needs.map((n) => (
-                      <li key={n} className="rounded-md bg-navy-soft px-2.5 py-0.5 text-ui text-navy-deep">
+                      <li key={n} className="rounded-md bg-navy-soft px-2.5 py-0.5 text-ui text-ink">
                         {n}
                       </li>
                     ))}

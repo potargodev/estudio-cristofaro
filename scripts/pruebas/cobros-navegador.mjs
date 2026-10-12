@@ -213,6 +213,8 @@ check("auditoría de cobros", ["faro.cuenta_mp", "suscripcion.debito_creado", "s
 
 check("sin errores de la página", errors.length === 0, errors.join(" | "));
 await sql`update studios set plan_key = 'inicial', status = 'activo', suspended_reason = null where id = ${SB}`;
+// El acuerdo de prueba se insertó directo (sin la conexión que crea la app): se cierra para no dejarlo vigente
+await sql`update service_agreements set status = 'finalizado' where id = ${ag.id}`;
 await browser.close();
 await sql.end();
 console.log(failures ? `\n${failures} fallaron` : "\nTodo bien");

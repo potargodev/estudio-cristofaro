@@ -80,7 +80,15 @@ for (const [perfil, cfg] of Object.entries(PERFILES)) {
         const serif = [...main.querySelectorAll("h2, h3, h4")].filter((e) => vis(e) && /Gilda/.test(getComputedStyle(e).fontFamily)).map((e) => e.textContent.trim().slice(0, 30));
         const links = [...document.querySelectorAll("a[href^='/']")].map((a) => a.getAttribute("href"));
         // Contraste del texto contra el fondo real (el primer ancestro con fondo opaco)
-        const rgb = (c) => (c.match(/[\d.]+/g) ?? []).map(Number);
+        // Cualquier color CSS (rgb, oklab, color-mix…) a sRGB: se pinta un píxel y se lee
+        const cv = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+        const rgb = (c) => {
+          cv.clearRect(0, 0, 1, 1);
+          cv.fillStyle = c;
+          cv.fillRect(0, 0, 1, 1);
+          const [r, g, b, a] = cv.getImageData(0, 0, 1, 1).data;
+          return [r, g, b, a / 255];
+        };
         const lum = ([r, g, b]) => [r, g, b].map((v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
         // Fondo efectivo: el primer ancestro con color opaco. Con una imagen, un degradé o un
         // fondo semitransparente en el camino no se puede saber: no se mide (sin falsos positivos)
@@ -90,8 +98,8 @@ for (const [perfil, cfg] of Object.entries(PERFILES)) {
             if (st.backgroundImage !== "none") return null;
             const c = rgb(st.backgroundColor);
             const a = c[3] ?? 1;
-            if (c.length >= 3 && a > 0.9) return c;
-            if (c.length >= 3 && a > 0.05) return null;
+            if (a > 0.9) return c;
+            if (a > 0.05) return null;
           }
           return null;
         };

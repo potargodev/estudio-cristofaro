@@ -131,17 +131,15 @@ check("propuesta descartada", await seen("Descartado."));
 const gm = await sql`select count(*)::int n from bitacora_entries where user_id = ${T} and source = 'gmail'`;
 check("solo lo aceptado entra a la Bitácora", gm[0].n === 1);
 
-// Gasto profesional → Faro Personal
+// Gasto de la actividad → caja de negocio (principios §10: el flujo que reemplazó «Pasar a Faro Personal»)
 const [farm] = await sql`select id from bitacora_entries where user_id = ${T} and description = 'Farmacia Central'`;
 await page.goto(`${BASE}/bitacora/${farm.id}`);
-await page.getByLabel(/Es un gasto de mi actividad/).check();
-await page.getByLabel(/Se puede deducir/).check();
-await page.getByRole("button", { name: "Guardar", exact: true }).last().click();
-check("marcado como profesional", await seen("Guardado."));
-await page.getByRole("button", { name: "Pasar a Faro Personal" }).click();
-check("pasado a Faro Personal", await seen("Pasado a los gastos de tu actividad"));
-const [acc] = await sql`select * from accounting_expenses where source = 'bitacora' and source_id = ${farm.id}`;
-check("gasto de la actividad con su origen y deducible", !!acc && acc.deductible === true);
+await page.getByRole("button", { name: "Mover a la caja de negocio" }).click();
+await page.waitForLoadState("networkidle").catch(() => undefined);
+const [moved] = await sql`select moved_to_box_entry_id, deleted_at from bitacora_entries where id = ${farm.id}`;
+check("movido a la caja de negocio sin duplicarse", !!moved?.moved_to_box_entry_id && !!moved.deleted_at);
+const [inBox] = await sql`select e.id from box_entries e join boxes b on b.id = e.box_id where e.id = ${moved?.moved_to_box_entry_id ?? null} and b.owner_id = ${T}`;
+check("quedó en la caja de negocio del titular", !!inBox);
 
 // Hogar compartido
 await page.goto(`${BASE}/bitacora/compartida`);

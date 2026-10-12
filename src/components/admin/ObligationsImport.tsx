@@ -37,7 +37,7 @@ export function ObligationsImport() {
       </form>
 
       {result.message && (
-        <p role="status" className={cn("px-4 py-3", result.ok ? "bg-navy-soft text-navy-deep" : "bg-danger/10 text-danger")}>
+        <p role="status" className={cn("px-4 py-3", result.ok ? "bg-navy-soft text-ink" : "bg-danger/10 text-danger")}>
           {result.message}
         </p>
       )}

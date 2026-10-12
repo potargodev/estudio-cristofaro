@@ -11,6 +11,8 @@ import { BASE, check, data, failures } from "./lib.mjs";
 const { chromium } = await import(process.env.PW ?? "playwright");
 const d = data();
 const sql = postgres(process.env.DATABASE_URL, { onnotice: () => {} });
+// La guía de recorrido se abre sola según el tiempo y tapa los botones: apagada para estas pruebas (como en capturas.mjs)
+await sql`insert into user_preferences (user_id, data) select id, ${sql.json({ guide: false })} from users on conflict (user_id) do update set data = user_preferences.data || ${sql.json({ guide: false })}`;
 const only = process.argv[2];
 const stage = (n) => !only || only === n;
 const browser = await chromium.launch({ executablePath: process.env.CHROME ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
