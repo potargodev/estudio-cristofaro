@@ -73,7 +73,7 @@ typography:
     lineHeight: 1.4
   micro:
     fontFamily: "Archivo, system-ui, sans-serif"
-    fontSize: "11px"
+    fontSize: "12px"
     fontWeight: 600
     lineHeight: 1.35
   metric:
@@ -189,7 +189,7 @@ Utilidades de Tailwind (`text-<rol>`); nunca `text-[Npx]`.
 - **ui** (14 px): el texto de trabajo: tablas, listas, botones, campos en escritorio.
 - **meta** (13 px): el dato secundario de una fila o una tarjeta.
 - **caption** (12 px): fechas, ayudas de campo, cabeceras de tabla, pastillas.
-- **micro** (11 px, semibold): contadores y marcas mínimas. Es el piso: nada más chico.
+- **micro** (12 px, semibold): contadores y marcas mínimas. Es el piso: nada de menos de 12 px.
 - **metric** (32 px, `num`): el número de una tarjeta de indicador.
 
 **The One Serif Rule.** Gilda Display aparece una vez por pantalla, en el título. Los títulos de tarjetas, los estados vacíos y los números van en Archivo.
@@ -282,4 +282,4 @@ Todo sale de `@/components/ds`.
 - **Don't** usar Gilda Display en títulos de tarjetas, estados vacíos ni números.
 - **Don't** poner etiquetas en mayúsculas espaciadas arriba de los títulos.
 - **Don't** anidar tarjetas ni poner bordes laterales gruesos de acento.
-- **Don't** usar texto de menos de 11 px ni placeholders de menos de 4,5:1.
+- **Don't** usar texto de menos de 12 px, texto con contraste por debajo de AA (4,5:1; 3:1 desde 24 px) ni placeholders de menos de 4,5:1.

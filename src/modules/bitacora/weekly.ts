@@ -9,13 +9,14 @@ import { getSiteUrl } from "@/lib/runtime-config";
 import { notify } from "@/modules/notifications/server";
 import { listGoals } from "./planning";
 import { listCategories } from "./server";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, isoWeek } from "@/lib/format";
 
 // Resumen semanal de un minuto (domingo): cuánto entró y salió en la semana,
 // en qué se fue, cómo van las metas. En la app (aviso) y por mail.
 
-const pad = (n: number) => String(n).padStart(2, "0");
-const iso = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+/** Fecha de Buenos Aires (AAAA-MM-DD) de un instante, sin depender del huso del servidor */
+const iso = (d: Date) => new Date(d.getTime() - 3 * 3600_000).toISOString().slice(0, 10);
+
 
 export async function weeklySummary(userId: string, end = new Date()) {
   const to = iso(end);
@@ -34,7 +35,11 @@ export async function weeklySummary(userId: string, end = new Date()) {
   return { from, to, out, inn, top, lines, count: rows.length };
 }
 
-/** Manda el resumen a quien tuvo movimientos en las últimas semanas (una vez por semana) */
+/**
+ * Manda el resumen a quien tuvo movimientos en las últimas semanas. Una vez
+ * por persona y semana aunque la tarea corra en dos instancias o se reinicie:
+ * la clave es la semana ISO y el índice único (usuario, tipo, período, ref).
+ */
 export async function sendWeeklySummaries(userIds: string[]) {
   let sent = 0;
   for (const id of userIds) {
@@ -44,7 +49,7 @@ export async function sendWeeklySummaries(userIds: string[]) {
     if (!s.count) continue;
     const [row] = await getDb()
       .insert(bitacora_insights)
-      .values({ user_id: id, kind: "resumen_semanal", period: s.to, title: "Tu semana en un minuto", body: s.lines.join(" "), data: { desde: s.from, hasta: s.to, salio: s.out, entro: s.inn } })
+      .values({ user_id: id, kind: "resumen_semanal", period: isoWeek(s.to), title: "Tu semana en un minuto", body: s.lines.join(" "), data: { desde: s.from, hasta: s.to, salio: s.out, entro: s.inn } })
       .onConflictDoNothing()
       .returning({ id: bitacora_insights.id });
     if (!row) continue;

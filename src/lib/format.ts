@@ -117,3 +117,14 @@ export function formatPeriod(period: string): string {
   const m = /^(\d{4})-(\d{2})$/.exec(period);
   return m ? `${formatDate(`${period}-01`, "monthName")} ${m[1]}` : period;
 }
+
+/** Semana ISO (AAAA-Www) de una fecha AAAA-MM-DD: la misma que to_char(fecha, 'IYYY-"W"IW') de Postgres */
+export function isoWeek(day: string) {
+  const d = new Date(`${day}T12:00:00Z`);
+  const thursday = new Date(d.getTime() + (3 - ((d.getUTCDay() + 6) % 7)) * 86400000);
+  const firstThursday = new Date(Date.UTC(thursday.getUTCFullYear(), 0, 4));
+  firstThursday.setUTCDate(firstThursday.getUTCDate() + 3 - ((firstThursday.getUTCDay() + 6) % 7));
+  const week = 1 + Math.round((thursday.getTime() - firstThursday.getTime()) / (7 * 86400000));
+  return `${thursday.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+

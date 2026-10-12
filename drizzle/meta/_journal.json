@@ -379,6 +379,13 @@
       "when": 1791827807350,
       "tag": "0053_stock",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1791833239335,
+      "tag": "0054_resumen_semanal_unico",
+      "breakpoints": true
     }
   ]
 }

@@ -85,7 +85,7 @@
 
   /* ── Sistema único (DESIGN.md) ──────────────────────────────────────
      Escala tipográfica: un tamaño por papel. Nada de text-[Npx] sueltos. */
-  --text-micro: 11px; /* contadores, marcas mínimas (piso legible) */
+  --text-micro: 12px; /* contadores, marcas mínimas (piso legible: nada de menos de 12 px) */
   --text-micro--line-height: 1.35;
   --text-caption: 12px; /* fechas, ayudas de campo, pies */
   --text-caption--line-height: 1.4;
@@ -413,9 +413,16 @@ body {
   font-feature-settings: normal;
 }
 
-:focus-visible {
-  outline: 2px solid var(--color-navy);
-  outline-offset: 3px;
+/* Foco con teclado: en la capa base, para que un componente pueda dar su propio indicador (un solo borde) */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-navy);
+    outline-offset: 3px;
+  }
+  .keep-dark :focus-visible,
+  .bg-night :focus-visible {
+    outline-color: var(--color-rose-light);
+  }
 }
 
 ::selection {

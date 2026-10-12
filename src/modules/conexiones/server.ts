@@ -587,8 +587,14 @@ export async function sendWeeklySummaries(now = new Date()) {
   for (const c of due) {
     if (c.weekly_sent_at && now.getTime() - c.weekly_sent_at.getTime() < 6.5 * DAY) continue;
     const since = c.weekly_sent_at ?? new Date(now.getTime() - 7 * DAY);
+    // Se reserva el envío antes de avisar: dos instancias no mandan el mismo resumen
+    const [claimed] = await db()
+      .update(account_connections)
+      .set({ weekly_sent_at: now })
+      .where(and(eq(account_connections.id, c.id), c.weekly_sent_at ? eq(account_connections.weekly_sent_at, c.weekly_sent_at) : isNull(account_connections.weekly_sent_at)))
+      .returning({ id: account_connections.id });
+    if (!claimed) continue;
     const list = await db().select().from(connection_actions).where(and(eq(connection_actions.connection_id, c.id), gte(connection_actions.created_at, since)));
-    await db().update(account_connections).set({ weekly_sent_at: now }).where(eq(account_connections.id, c.id));
     if (!list.length) continue;
     await tellUser(c.user_id, `Tu contador hizo ${list.length} ${list.length === 1 ? "cosa" : "cosas"} esta semana`, list.slice(0, 8).map((a) => a.summary).join(" · "), c.id);
     n++;

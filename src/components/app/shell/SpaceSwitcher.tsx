@@ -30,7 +30,8 @@ const OPEN_SPACES = "faro:espacios";
 export function SpaceList({ spaces, switchOrg, onPick, tone = "dark" }: { spaces: ShellSpace[]; switchOrg?: (fd: FormData) => void | Promise<void>; onPick?: () => void; tone?: "dark" | "light" }) {
   const row = (on: boolean) =>
     cn(
-      "flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-left",
+      "flex w-full min-w-0 items-center gap-3 rounded-md px-2.5 py-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-inset",
+      tone === "dark" ? "focus-visible:ring-rose-light" : "focus-visible:ring-ring",
       tone === "dark" ? (on ? "bg-paper/[0.08] text-paper" : "text-paper/80 hover:bg-paper/[0.06] hover:text-paper") : on ? "bg-canvas text-ink" : "text-ink hover:bg-canvas",
     );
   const body = (s: ShellSpace) => {
@@ -41,19 +42,23 @@ export function SpaceList({ spaces, switchOrg, onPick, tone = "dark" }: { spaces
           <Icon className="size-4" strokeWidth={1.5} aria-hidden />
         </span>
         <span className="min-w-0 flex-1 leading-tight">
-          <span className="block truncate text-ui">{s.label}</span>
-          <span className={cn("block truncate text-caption", tone === "dark" ? "text-paper/50" : "text-muted")}>{s.kind}</span>
+          <span className="block truncate text-ui" title={s.label}>
+            {s.label}
+          </span>
+          <span className={cn("block truncate text-caption", tone === "dark" ? "text-paper/50" : "text-muted")} title={s.kind}>
+            {s.kind}
+          </span>
         </span>
         {s.current && <Check className={cn("size-4 shrink-0", tone === "dark" ? "text-rose-light" : "text-rose-deep")} aria-label="Espacio actual" />}
       </>
     );
   };
   return (
-    <ul className="grid gap-0.5">
+    <ul className="grid min-w-0 gap-0.5">
       {spaces.map((s) => (
-        <li key={s.key}>
+        <li key={s.key} className="min-w-0">
           {s.orgId && switchOrg && !s.current ? (
-            <form action={switchOrg} onSubmit={onPick}>
+            <form action={switchOrg} onSubmit={onPick} className="min-w-0">
               <input type="hidden" name="organization_id" value={s.orgId} />
               <button type="submit" role="menuitemradio" aria-checked={s.current} className={row(s.current)}>
                 {body(s)}
@@ -101,16 +106,20 @@ export function SpaceSwitcher({ spaces, switchOrg, compact = false, className }:
         <Icon className="size-4" strokeWidth={1.5} aria-hidden />
       </span>
       <span className={cn("min-w-0 flex-1 text-left leading-tight", compact && "hidden xl:block")}>
-        <span className="block truncate text-ui font-medium text-paper">{current.label}</span>
-        <span className="block truncate text-caption text-paper/55">{current.kind}</span>
+        <span className="block truncate text-ui font-medium text-paper" title={current.label}>
+          {current.label}
+        </span>
+        <span className="block truncate text-caption text-paper/55" title={current.kind}>
+          {current.kind}
+        </span>
       </span>
       {!single && <ChevronsUpDown className={cn("size-4 shrink-0 text-paper/50", compact && "hidden xl:block")} aria-hidden />}
     </>
   );
   return (
-    <div ref={box} className={cn("relative", className)} data-tour="espacio">
+    <div ref={box} className={cn("relative min-w-0", className)} data-tour="espacio">
       {single ? (
-        <div className="flex items-center gap-3 rounded-md border border-paper/10 px-2 py-1.5">{face}</div>
+        <div className="flex min-w-0 items-center gap-3 rounded-md border border-paper/10 px-2 py-1.5">{face}</div>
       ) : (
         <button
           type="button"
@@ -118,14 +127,14 @@ export function SpaceSwitcher({ spaces, switchOrg, compact = false, className }:
           aria-expanded={open}
           aria-label={`Espacio: ${current.label} (${current.kind}). Cambiar de espacio`}
           onClick={() => setOpen((o) => !o)}
-          className="flex w-full items-center gap-3 rounded-md border border-paper/10 px-2 py-1.5 transition-colors hover:border-paper/25 hover:bg-paper/[0.04]"
+          className={cn("flex w-full min-w-0 items-center gap-3 rounded-md border px-2 py-1.5 outline-none transition-colors hover:border-paper/25 hover:bg-paper/[0.04] focus-visible:border-rose-light", open ? "border-paper/25 bg-paper/[0.04]" : "border-paper/10")}
         >
           {face}
         </button>
       )}
       {open && (
-        <div role="menu" aria-label="Cambiar de espacio" className={cn("absolute z-50 mt-1.5 rounded-md border border-paper/15 bg-night p-1.5 shadow-overlay", compact ? "left-0 w-72" : "inset-x-0")}>
-          <p className="px-2.5 pb-1 pt-1.5 text-micro uppercase tracking-[0.12em] text-paper/45">Tus espacios</p>
+        <div role="menu" aria-label="Cambiar de espacio" className={cn("absolute top-full z-50 mt-1 max-h-[min(24rem,70dvh)] overflow-y-auto overflow-x-hidden rounded-md border border-paper/15 bg-night p-1 shadow-overlay", compact ? "left-0 w-full min-w-64" : "inset-x-0")}>
+          <p className="px-2.5 pb-1 pt-1.5 text-caption text-paper/60">Tus espacios</p>
           <SpaceList spaces={spaces} switchOrg={switchOrg} onPick={() => setOpen(false)} />
         </div>
       )}
