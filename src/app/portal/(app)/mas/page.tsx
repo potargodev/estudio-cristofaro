@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { GuidePreference } from "@/components/app/GuidePreference";
+import { ThemePreference } from "@/components/app/ThemePreference";
 import { InstallPanel } from "@/components/app/InstallApp";
 import { requireMember } from "@/lib/auth";
 import { can, ORG_ROLE_LABELS } from "@/lib/permissions";
@@ -45,6 +46,7 @@ export default async function MasPage() {
         <InstallPanel tone="light" className="mt-5" />
       </section>
       <div className="mt-10">
+        <ThemePreference />
         <GuidePreference />
       </div>
     </>

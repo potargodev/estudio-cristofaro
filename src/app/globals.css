@@ -855,6 +855,8 @@ body {
 .app-ui .keep-dark,
 .app-ui .bg-night {
   color: var(--color-paper);
+  /* La línea del bloque del logo y de la barra colapsada es oscura también en el modo claro */
+  --shell-line: #283044;
 }
 :root[data-theme="dark"]:has(.app-ui) {
   background: #0d111b;

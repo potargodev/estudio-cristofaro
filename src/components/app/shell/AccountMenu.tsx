@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Avatar } from "@/components/admin/kit/Avatar";
-import { ThemeToggle } from "@/components/app/ThemeToggle";
+import { ThemeSelect } from "@/components/app/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { SpaceList, type ShellSpace } from "./SpaceSwitcher";
 
@@ -21,8 +21,8 @@ export interface AccountLinks {
 
 /**
  * Menú de la cuenta (avatar de la barra superior, docs/faro-producto.md §2.o):
- * Mi cuenta, Plan y facturación, Accesos MCP, tema claro/oscuro, cambiar de
- * espacio y Salir. En el portal suma "Mi equipo" para quien lo gestiona.
+ * Mi cuenta, Plan y facturación, Accesos MCP, tema (claro, oscuro o el del
+ * sistema), cambiar de espacio y Salir. En el portal suma "Mi equipo" para quien lo gestiona.
  */
 export function AccountMenu({
   user,
@@ -31,6 +31,7 @@ export function AccountMenu({
   spaces,
   switchOrg,
   signOut,
+  className,
 }: {
   user: { name: string; email: string; roleLabel: string };
   spaceName: string;
@@ -38,6 +39,8 @@ export function AccountMenu({
   spaces: ShellSpace[];
   switchOrg?: (fd: FormData) => void | Promise<void>;
   signOut: () => void | Promise<void>;
+  /** Anillo del avatar según el fondo de la barra */
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [spacesOpen, setSpacesOpen] = useState(false);
@@ -62,7 +65,7 @@ export function AccountMenu({
   const row = "flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-ink hover:bg-canvas";
   return (
     <div ref={ref} className="relative">
-      <button type="button" aria-expanded={open} aria-haspopup="menu" aria-label={`Tu cuenta: ${user.name || user.email}`} onClick={() => setOpen((o) => !o)} className="grid size-9 place-items-center rounded-full ring-offset-2 ring-offset-canvas hover:ring-2 hover:ring-line">
+      <button type="button" aria-expanded={open} aria-haspopup="menu" aria-label={`Tu cuenta: ${user.name || user.email}`} onClick={() => setOpen((o) => !o)} className={cn("grid size-9 place-items-center rounded-full ring-offset-2 ring-offset-canvas hover:ring-2 hover:ring-line", className)}>
         <Avatar name={user.name || user.email} size="sm" className="size-8" />
       </button>
       {open && (
@@ -93,9 +96,9 @@ export function AccountMenu({
               <Waypoints className="size-4 text-muted" strokeWidth={1.5} aria-hidden /> Accesos MCP
             </Link>
           )}
-          <div className="flex items-center justify-between gap-2 px-3 py-1.5 text-ink">
-            Tema
-            <ThemeToggle withLabel className="h-(--control-h-sm) rounded-md border border-line px-2 text-meta text-ink hover:border-muted" />
+          <div className="px-3 pb-2 pt-1.5">
+            <p className="mb-1.5 text-caption text-muted">Tema</p>
+            <ThemeSelect />
           </div>
           {spaces.length > 1 && (
             <>

@@ -39,13 +39,14 @@ Las pantallas que son de todos los espacios (Mensajes, la Ayuda) se abren en el 
 
 ## La barra de arriba
 
-Es igual en todos los espacios y te sigue a donde vayas:
+Es igual en todos los espacios y te sigue a donde vayas. Si contraés la barra lateral (el botón «‹‹» o la tecla **[**), el menú pasa arriba como una fila de íconos y todo queda en una sola barra.
 
+- **La lupa:** abre el buscador en el centro de la pantalla (también con **Ctrl + K** o **⌘ K**). Te lleva a cualquier sección de tu espacio y, en el estudio, también busca organizaciones, CUIT, consultas y solicitudes.
 - **Vigía:** tu asistente. El número son las propuestas para aprobar (en el estudio) o las respuestas nuevas.
 - **Mensajes:** con el número de mensajes sin leer.
 - **La campanita:** tus avisos.
 - **?:** el tour de esta pantalla, Primeros pasos, el Centro de ayuda y el interruptor de la Guía.
-- **Tu cuenta** (tus iniciales): Mi cuenta, Plan y facturación, Accesos MCP, el tema claro u oscuro, Cambiar de espacio y Salir. En el portal, quien administra el equipo de la organización también ve **Mi equipo**.
+- **Tu cuenta** (tus iniciales): Mi cuenta, Plan y facturación, Accesos MCP, el **Tema** (Claro, Oscuro o Sistema, que sigue el modo de tu celular o tu computadora; también está en Mi cuenta y queda guardado en ese dispositivo), Cambiar de espacio y Salir. En el portal, quien administra el equipo de la organización también ve **Mi equipo**.
 
 La acción principal de cada pantalla (por ejemplo, **Nueva organización**) está a la derecha del título.
 

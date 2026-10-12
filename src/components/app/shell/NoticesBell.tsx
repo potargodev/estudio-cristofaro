@@ -60,7 +60,7 @@ export function NoticesBell({ items, unread, className }: { items: Notice[]; unr
         {count > 0 && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-gold px-1 text-micro font-semibold text-night">{count > 9 ? "9+" : count}</span>}
       </button>
       {open && (
-        <div role="dialog" aria-label="Avisos" className="absolute right-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-md border border-line bg-surface shadow-overlay">
+        <div role="dialog" aria-label="Avisos" className="app-ui absolute right-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-md border border-line bg-surface shadow-overlay">
           <p className="border-b border-line px-4 py-2.5 text-meta font-semibold">Avisos</p>
           {items.length === 0 ? (
             <p className="px-4 py-6 text-center text-ui text-muted">No tenés avisos.</p>

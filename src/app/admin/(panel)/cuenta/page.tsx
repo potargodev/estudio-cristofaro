@@ -7,6 +7,7 @@ import { Panel } from "@/components/admin/kit/Panel";
 import { StatusBadge } from "@/components/admin/kit/StatusBadge";
 import { AccountData } from "@/components/app/AccountData";
 import { GuidePreference } from "@/components/app/GuidePreference";
+import { ThemePreference } from "@/components/app/ThemePreference";
 import { requireStaff } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
@@ -60,6 +61,7 @@ export default async function CuentaPage({ searchParams }: { searchParams: Promi
           <p className="mb-5 text-ui text-muted">Instalala para entrar directo, con su ícono, desde el celular o la computadora.</p>
           <InstallPanel tone="light" />
         </Panel>
+        <ThemePreference />
         <GuidePreference />
         {user.role === "dueno" && <AccountData status={sp.baja} />}
       </div>

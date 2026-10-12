@@ -75,8 +75,9 @@ import { formatDate } from "@/lib/format";
 // Estructura única de la app para todos los espacios (estudio, cuenta
 // personal, portal de una organización y Faro Manager): barra lateral oscura
 // (en escritorio, al colapsarla pasa a una barra horizontal de íconos),
-// drawer y barra inferior en el celular, barra superior con ubicación, Guía,
-// Ayuda y tema. La preferencia de la barra se guarda por usuario en la base.
+// drawer y barra inferior en el celular, barra superior con ubicación,
+// buscador, Vigía, mensajes, avisos, ayuda y cuenta (con la barra colapsada,
+// todo en una sola fila). La preferencia de la barra se guarda por usuario.
 
 const ICONS: Record<ShellIcon, LucideIcon> = {
   cajas: Boxes,
@@ -146,7 +147,7 @@ interface ShellProps {
   studioLogo?: string | null;
   brandVars?: Record<string, string> | null;
   collapsedInitial: boolean;
-  /** Estudio: buscador (Cmd/Ctrl+K), "Preguntar a Faro" y acción principal */
+  /** Estudio: el buscador (lupa o Cmd/Ctrl+K) suma organizaciones, CUIT, consultas y solicitudes */
   studioAccess?: NavAccess | null;
   assisted?: { studioName: string; expiresAt: string } | null;
   /** «Ver como…» vigente (owner de Faro sobre un usuario de la demo) */
@@ -319,7 +320,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right, reduce = f
           </ul>
         </nav>
       </div>
-      <div className="w-56 shrink-0">{right}</div>
+      <div className="flex shrink-0 items-center gap-1">{right}</div>
     </m.div>
   );
 }
@@ -342,7 +343,7 @@ export function AppShell(p: ShellProps) {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
       const typing = t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName);
-      if (p.studioAccess && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setSearch((s) => !s);
       } else if (e.key === "[" && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) {
@@ -352,7 +353,7 @@ export function AppShell(p: ShellProps) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggle, p.studioAccess]);
+  }, [toggle]);
   useEffect(() => setDrawer(false), [pathname]);
 
   const vigiaCount = p.badges[p.vigiaBadge] ?? 0;
@@ -384,12 +385,46 @@ export function AppShell(p: ShellProps) {
       )}
     </Link>
   );
+  // Acciones de la barra: en la superior clara (canvas) o, con la barra lateral colapsada, en la fila oscura de íconos
+  const actions = (dark: boolean) => {
+    const plain = dark ? "text-paper/70 hover:bg-paper/[0.06] hover:text-paper" : "text-ink hover:bg-surface";
+    const ring = dark ? "ring-night" : "ring-canvas";
+    return (
+      <>
+        <button type="button" onClick={() => setSearch(true)} aria-label="Buscar (Ctrl o Cmd + K)" title="Buscar (Ctrl o Cmd + K)" className={cn("grid size-9 place-items-center rounded-md", plain)}>
+          <Search className="size-[18px]" strokeWidth={1.6} aria-hidden />
+        </button>
+        <Link
+          href="/vigia"
+          onClick={(e) => {
+            if (openVigia()) e.preventDefault();
+          }}
+          data-tour="vigia"
+          aria-label={`Vigía${vigiaCount ? ` · ${vigiaCount} ${BADGE_TEXT[p.vigiaBadge]}` : ""}`}
+          className={cn("relative inline-flex h-(--control-h) items-center gap-1.5 rounded-md px-2.5 text-meta font-medium text-paper sm:px-3", dark ? "bg-paper/[0.1] hover:bg-paper/[0.16]" : "bg-navy hover:bg-navy-deep")}
+        >
+          <WandSparkles className="size-4 text-gold" strokeWidth={1.6} aria-hidden />
+          <span className="hidden sm:inline">Vigía</span>
+          {vigiaCount > 0 && <span aria-hidden className={cn("num absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-micro leading-[18px] text-night ring-2", ring)}>{vigiaCount}</span>}
+        </Link>
+        <Link href="/mensajes" aria-label={`Mensajes${p.badges.unread ? ` · ${p.badges.unread} sin leer` : ""}`} title="Mensajes" className={cn("relative grid size-9 place-items-center rounded-md", plain, pathname.startsWith("/mensajes") && (dark ? "bg-paper/[0.1] text-paper" : "bg-surface"))}>
+          <MessagesSquare className="size-[18px]" strokeWidth={1.6} aria-hidden />
+          {(p.badges.unread ?? 0) > 0 && <span aria-hidden className={cn("num absolute -right-0.5 -top-0.5 min-w-[17px] rounded-full bg-rose-light px-1 text-center text-micro leading-[17px] text-night ring-2", ring)}>{p.badges.unread}</span>}
+        </Link>
+        {p.notices && <NoticesBell items={p.notices.items} unread={p.notices.unread} className={cn("rounded-md", plain)} />}
+        <HelpMenu className={cn("rounded-md", plain)} />
+        <AccountMenu user={p.user} spaceName={p.spaceName} links={p.links} spaces={p.spaces} switchOrg={p.switchOrg} signOut={p.signOut} className={dark ? "ring-offset-night hover:ring-paper/30" : undefined} />
+      </>
+    );
+  };
+  // Buscador fuera del estudio: las secciones del menú del espacio
+  const searchItems = p.groups.flatMap((g) => g.items.map((i) => ({ label: i.label, href: i.href, detail: g.title && g.title !== i.label ? g.title : "" })));
   // El contenido acompaña a la barra con la misma curva (sin salto); con reduced motion, directo
   const pad = collapsed ? "lg:ml-0" : "lg:ml-[248px]";
   const navCount = p.groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <div className={cn("admin-shell app-ui min-h-dvh bg-canvas text-ink", collapsed && "lg:[--app-top:calc(var(--header-h)*2)]")} style={p.brandVars ? (p.brandVars as React.CSSProperties) : undefined}>
+    <div className="admin-shell app-ui min-h-dvh bg-canvas text-ink" style={p.brandVars ? (p.brandVars as React.CSSProperties) : undefined}>
       {/* Escritorio expandido: barra lateral (siempre oscura) */}
       <LazyMotion features={domMax}>
       <LayoutGroup id="shell-nav">
@@ -431,7 +466,7 @@ export function AppShell(p: ShellProps) {
               <SpaceSwitcher spaces={p.spaces} switchOrg={p.switchOrg} compact className="w-auto xl:w-56" />
             </span>
           }
-          right={null}
+          right={actions(true)}
           reduce={!!reduce}
         />
       )}
@@ -461,7 +496,7 @@ export function AppShell(p: ShellProps) {
       {/* El contenido se corre con una animación de posición (transform), no con un cambio de padding cuadro a cuadro */}
       <LazyMotion features={domMax}>
       <m.div layout={reduce ? false : "position"} layoutDependency={collapsed} transition={{ type: "spring", stiffness: 320, damping: 36, delay: collapsed ? navCount * STEP * 0.5 : 0 }} className={pad}>
-        <header className={cn("sticky z-30 flex h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8", collapsed ? "top-0 lg:top-[var(--header-h)]" : "top-0")}>
+        <header className={cn("sticky top-0 z-30 flex h-[var(--header-h)] items-center gap-2 border-b border-[var(--shell-line)] bg-canvas/95 px-4 backdrop-blur sm:px-6 lg:px-8", collapsed && "lg:hidden")}>
           <nav aria-label="Ubicación" className="min-w-0 flex-1">
             <ol className="flex min-w-0 items-center gap-1.5 text-meta text-muted">
               {trail.map((c, i) => (
@@ -480,33 +515,7 @@ export function AppShell(p: ShellProps) {
               ))}
             </ol>
           </nav>
-          {p.studioAccess && (
-            <button type="button" onClick={() => setSearch(true)} className="hidden h-(--control-h) items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-meta text-muted hover:border-muted md:flex md:w-48 xl:w-56" aria-label="Buscar (Ctrl o Cmd + K)">
-              <Search className="size-4" aria-hidden />
-              <span className="flex-1 text-left">Buscar…</span>
-              <kbd className="rounded border border-line px-1 text-micro">⌘K</kbd>
-            </button>
-          )}
-          <Link
-            href="/vigia"
-            onClick={(e) => {
-              if (openVigia()) e.preventDefault();
-            }}
-            data-tour="vigia"
-            aria-label={`Vigía${vigiaCount ? ` · ${vigiaCount} ${BADGE_TEXT[p.vigiaBadge]}` : ""}`}
-            className="relative inline-flex h-(--control-h) items-center gap-1.5 rounded-md bg-navy px-2.5 text-meta font-medium text-paper hover:bg-navy-deep sm:px-3"
-          >
-            <WandSparkles className="size-4 text-gold" strokeWidth={1.6} aria-hidden />
-            <span className="hidden sm:inline">Vigía</span>
-            {vigiaCount > 0 && <span aria-hidden className="num absolute -right-1.5 -top-1.5 min-w-[18px] rounded-full bg-rose-light px-1 text-center text-micro leading-[18px] text-night ring-2 ring-canvas">{vigiaCount}</span>}
-          </Link>
-          <Link href="/mensajes" aria-label={`Mensajes${p.badges.unread ? ` · ${p.badges.unread} sin leer` : ""}`} title="Mensajes" className={cn("relative grid size-9 place-items-center rounded-md text-ink hover:bg-surface", pathname.startsWith("/mensajes") && "bg-surface")}>
-            <MessagesSquare className="size-[18px]" strokeWidth={1.6} aria-hidden />
-            {(p.badges.unread ?? 0) > 0 && <span aria-hidden className="num absolute -right-0.5 -top-0.5 min-w-[17px] rounded-full bg-rose-light px-1 text-center text-micro leading-[17px] text-night ring-2 ring-canvas">{p.badges.unread}</span>}
-          </Link>
-          {p.notices && <NoticesBell items={p.notices.items} unread={p.notices.unread} className="rounded-md text-ink hover:bg-surface" />}
-          <HelpMenu className="rounded-md text-ink hover:bg-surface" />
-          <AccountMenu user={p.user} spaceName={p.spaceName} links={p.links} spaces={p.spaces} switchOrg={p.switchOrg} signOut={p.signOut} />
+          {actions(false)}
         </header>
         {p.viewAs ? (
           <div role="status" data-ver-como className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-rose/40 bg-rose-soft px-4 py-2 text-meta text-rose-deep sm:px-6 lg:px-8">
@@ -604,7 +613,7 @@ export function AppShell(p: ShellProps) {
       <Suspense>
         <VigiaPanel space={p.space} label={p.spaceName} />
       </Suspense>
-      {p.studioAccess && <CommandPalette open={search} onClose={() => setSearch(false)} access={p.studioAccess} />}
+      <CommandPalette open={search} onClose={() => setSearch(false)} access={p.studioAccess} items={searchItems} />
     </div>
   );
 }

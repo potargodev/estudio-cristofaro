@@ -10,11 +10,12 @@ import { COMERCIAL_TABS, CONFIG_TABS, visibleGroups, visibleTabs, type NavAccess
 const GROUP_ICON = { Organizaciones: Building2, "Razones sociales": FileText, Consultas: UserRound, Solicitudes: MessageSquare } as const;
 
 /**
- * Buscador global (Cmd/Ctrl+K): organizaciones, CUIT, consultas y solicitudes.
- * Sin texto, muestra accesos directos a las secciones. Flechas para moverse,
+ * Buscador global (lupa de la barra o Cmd/Ctrl+K), centrado en la pantalla.
+ * En todos los espacios lleva a las secciones del menú; en el estudio busca
+ * además organizaciones, CUIT, consultas y solicitudes. Flechas para moverse,
  * Enter para abrir y Escape para cerrar.
  */
-export function CommandPalette({ open, onClose, access }: { open: boolean; onClose: () => void; access: NavAccess }) {
+export function CommandPalette({ open, onClose, access, items }: { open: boolean; onClose: () => void; access?: NavAccess | null; items: { label: string; href: string; detail: string }[] }) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
@@ -36,24 +37,29 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
   useEffect(() => {
     if (!open) return;
     const term = q.trim();
-    if (term.length < 2) {
+    if (term.length < 2 || !access) {
       setHits([]);
       return;
     }
     const t = window.setTimeout(() => start(async () => setHits(await adminSearch(term))), 180);
     return () => window.clearTimeout(t);
-  }, [q, open]);
+  }, [q, open, access]);
 
-  const sections = useMemo(
-    () =>
-      [
-        ...visibleGroups(access).flatMap((g) => g.items.map((i) => ({ ...i, detail: "" }))),
-        ...visibleTabs(COMERCIAL_TABS, access).map((i) => ({ ...i, detail: "Comercial" })),
-        ...visibleTabs(CONFIG_TABS, access).map((i) => ({ ...i, detail: "Configuración" })),
-      ].map((i) => ({ group: "Ir a", id: i.href, title: i.label, detail: i.detail, href: i.href })),
-    [access],
-  );
-  const list = q.trim().length >= 2 ? hits : sections;
+  const sections = useMemo(() => {
+    const all = access
+      ? [
+          ...visibleGroups(access).flatMap((g) => g.items.map((i) => ({ ...i, detail: "" }))),
+          ...visibleTabs(COMERCIAL_TABS, access).map((i) => ({ ...i, detail: "Comercial" })),
+          ...visibleTabs(CONFIG_TABS, access).map((i) => ({ ...i, detail: "Configuración" })),
+        ]
+      : items;
+    const seen = new Set<string>();
+    return all.filter((i) => !seen.has(i.href) && seen.add(i.href)).map((i) => ({ group: "Ir a", id: i.href, title: i.label, detail: i.detail, href: i.href }));
+  }, [access, items]);
+  const term = q.trim().toLocaleLowerCase("es");
+  const plain = (t: string) => t.toLocaleLowerCase("es").normalize("NFD").replace(/\p{M}/gu, "");
+  const matching = term ? sections.filter((i) => plain(`${i.title} ${i.detail}`).includes(plain(term))) : sections;
+  const list = term.length >= 2 && access ? [...hits, ...matching] : matching;
 
   const go = (href: string) => {
     onClose();
@@ -78,8 +84,8 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
   if (!open) return null;
   let lastGroup = "";
   return (
-    <div className="fixed inset-0 z-[70] flex items-start justify-center bg-night/50 px-4 pt-[12vh] backdrop-blur-[2px]" onMouseDown={onClose}>
-      <div role="dialog" aria-modal="true" aria-label="Buscar en el backoffice" className="w-full max-w-xl border border-line bg-surface shadow-[0_24px_60px_-20px_rgba(15,19,32,0.5)]" onMouseDown={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-night/50 p-4 backdrop-blur-[2px]" onMouseDown={onClose}>
+      <div role="dialog" aria-modal="true" aria-label="Buscar" className="w-full max-w-xl overflow-hidden rounded-md border border-line bg-surface shadow-overlay" onMouseDown={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-line px-4">
           {pending ? <Loader2 className="size-4 animate-spin text-muted" aria-hidden /> : <Search className="size-4 text-muted" aria-hidden />}
           <input
@@ -90,20 +96,24 @@ export function CommandPalette({ open, onClose, access }: { open: boolean; onClo
               setActive(0);
             }}
             onKeyDown={onKey}
+            data-free
+            // El cuadro entero ya marca el foco: sin el contorno global
+            style={{ outline: "none" }}
             role="combobox"
             aria-expanded="true"
             aria-controls="cmdk-list"
             aria-activedescendant={list[active] ? `cmdk-${active}` : undefined}
-            placeholder="Buscar organización, CUIT, consulta o solicitud…"
+            placeholder={access ? "Buscar organización, CUIT, consulta o solicitud…" : "Buscar una sección…"}
             className="h-(--control-h) flex-1 bg-transparent text-body text-ink placeholder:text-muted focus:outline-none"
           />
-          <kbd className="border border-line px-1.5 py-0.5 text-micro text-muted">Esc</kbd>
+          <kbd className="rounded border border-line px-1.5 py-0.5 text-micro text-muted">Esc</kbd>
         </div>
-        <ul id="cmdk-list" role="listbox" className="max-h-[50vh] overflow-y-auto py-2">
+        {/* Alto fijo: el cuadro queda quieto en el centro mientras cambian los resultados */}
+        <ul id="cmdk-list" role="listbox" className="h-[min(26rem,55dvh)] overflow-y-auto py-2">
           {list.length === 0 && (
             <li className="flex flex-col items-center gap-2 px-4 py-8 text-center text-ui text-muted">
               <Inbox className="size-5" aria-hidden />
-              {pending ? "Buscando…" : "No encontramos resultados. Probá con otro nombre o con el CUIT sin guiones."}
+              {pending ? "Buscando…" : access ? "No encontramos resultados. Probá con otro nombre o con el CUIT sin guiones." : "No hay ninguna sección con ese nombre."}
             </li>
           )}
           {list.map((h, i) => {

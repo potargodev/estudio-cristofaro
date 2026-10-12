@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AccountData } from "@/components/app/AccountData";
 import { GuidePreference } from "@/components/app/GuidePreference";
+import { ThemePreference } from "@/components/app/ThemePreference";
 import { getDb } from "@/db";
 import { studios } from "@/db/schema";
 import { requirePersonal } from "@/lib/auth";
@@ -50,6 +51,7 @@ export default async function PersonalCuentaPage({ searchParams }: { searchParam
           </li>
         ))}
       </ul>
+      <ThemePreference />
       <GuidePreference />
       <AccountData status={sp.baja} />
     </div>

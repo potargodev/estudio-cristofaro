@@ -198,7 +198,8 @@ Utilidades de Tailwind (`text-<rol>`); nunca `text-[Npx]`.
 
 ## Layout
 
-- **Esqueleto (§2.o):** sidebar de 248 px (72 px colapsado), barra superior de 64 px y, en el celular, la barra inferior con el Vigía al centro.
+- **Esqueleto (§2.o):** sidebar de 248 px, barra superior de 64 px y, en el celular, la barra inferior con el Vigía al centro. Con el sidebar colapsado, el menú pasa a una fila oscura de íconos que suma la lupa, el Vigía, Mensajes, avisos, ayuda y cuenta: siempre una sola barra. La línea del bloque del logo y de esa fila es oscura (`--shell-line` dentro de `keep-dark`) también en modo claro.
+- **Tema:** Claro, Oscuro o Sistema (`ThemeSelect`, en el menú de la cuenta y en Mi cuenta). Sistema no guarda nada y sigue a `prefers-color-scheme`, también si cambia con la app abierta.
 - **Dos anchos de contenido:** `--content-max` (1.280 px) para tableros, listas y tablas, en todos los espacios; `--content-narrow` (768 px, clase `page-narrow`) para formularios y lectura. Siempre alineados a la izquierda, con el encabezado. Las conversaciones (Vigía y Mensajes) van en una columna centrada.
 - **Márgenes de página:** 16 px en el celular, 24 px desde 640 px y 32 px desde 1.024 px.
 - **Ritmo:** 24 px entre bloques de una pantalla (`gap-6`), 12 px dentro de un bloque (`gap-3`), 8 px entre elementos en línea (`gap-2`). El padding de una tarjeta es de 16 px en el celular y 20 px desde 640 px (`p-4 sm:p-5`).

@@ -376,6 +376,70 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 | **Empleado** (portal) | Inicio · Mis recibos · Rendiciones · Grupos | Todo lo demás, oculto. |
 | **Faro Manager** | Resumen · Tenants · Catálogo · Red · Plataforma | Tenants = lista + pedidos de plan + suscripciones + alta manual. Catálogo = planes y precios, módulos, plantillas, IA de la plataforma, monotributo, índices y escudo. Plataforma = auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA, ARCA, Mercado Pago, WhatsApp y Demo (cargar y borrar la demo y «Ver como…»). |
 
+## 2.q Agente contable, IA contable, sueldos y stock
+
+**Objetivo:** que un estudio con Faro trabaje mejor que con los sistemas contables líderes de Argentina en lo que más tiempo le lleva: cerrar meses, conciliar, controlar el IVA antes de presentar, liquidar sueldos y, para sus clientes pymes, llevar un stock simple. Foco: el mundo contable y sus clientes pymes. Todo respeta el principio madre (principios §1): **Faro muestra hechos y arma borradores; el contador decide.**
+
+**Regla fiscal.** Lo que presenta, emite, paga o comunica algo sensible queda en **Propuestas para aprobar**, salvo que el titular o su contador hayan activado esa automatización. Cada automatización es un interruptor auditado (quién, cuándo, alcance) y con pausa.
+
+### Agente contable (distinto del Vigía)
+- El **Vigía** sigue siendo la carga rápida (texto, audio, foto). El **Agente contable** es un trabajador: recibe una **tarea** y la resuelve en varios pasos, en segundo plano.
+  - Ejemplos: «cerrá octubre de Agencia Norte», «revisá el crédito fiscal de todos mis clientes antes del vencimiento», «conciliá el extracto de septiembre», «¿qué clientes están cerca del tope del monotributo?», «prepará el resumen mensual para todos los clientes», «liquidá sueldos de octubre de X», «armame el inventario al 31/12 de X».
+- **Cómo trabaja:** arma un **plan visible** (pasos); ejecuta con las herramientas registradas de todos los módulos (el mismo registro del Vigía y del MCP), sobre la cola de Postgres del motor de flujos; muestra el avance en vivo; se puede pausar o cancelar.
+- **Resultados concretos:** un informe con hallazgos y su importancia (alta, media, baja), borradores (facturas, asientos, mensajes, presentaciones, liquidaciones), comprobantes marcados para revisar y tareas creadas. Todo lo sensible va a Aprobaciones.
+- **Rutinas:** tareas programadas, por ejemplo el cierre mensual de cada cliente el día 5, la revisión de IVA 3 días antes del vencimiento, el control semanal de la conciliación o las alertas de stock bajo, con un resumen por mail, WhatsApp y la app.
+- **Alcance y permisos:** trabaja sobre una organización, sobre toda la cartera del estudio o sobre la cuenta personal (autónomo), siempre con los permisos de quien lo usa.
+- **Memoria por organización:** recuerda los criterios del contador (cuenta por proveedor, tratamientos especiales) y los propone la próxima vez. La memoria se ve y se edita.
+- **Pantalla «Agente»:** pestaña junto al Vigía en el estudio (§2.o, regla 5), con nueva tarea (y plantillas de tareas frecuentes), tareas en curso, historial (informe y acciones de cada una), rutinas y memoria.
+- **Modelos:** uno potente para planificar y analizar, configurable por estudio (clave propia) y, para personas y autónomos, desde el Faro Manager. El costo se mide por tarea y tiene tope por plan.
+- El nombre «Agente contable» es provisorio y vive en un solo lugar del código.
+
+### Lectura de comprobantes de compra (nivel superior)
+- Extrae cada **ítem** (descripción, código del proveedor, cantidad, precio unitario y alícuota) y cada **percepción y retención** por tipo y jurisdicción: IVA, IIBB de cada provincia (incluida CABA), Ganancias, impuestos internos y otros tributos. Valida que la suma cierre con el total.
+- **Aprendizaje por proveedor:** lo que el usuario corrige (cuenta, centro de costo, tratamiento de percepciones, alícuotas, conceptos y producto propio vinculado) queda como regla del proveedor y se propone la próxima vez, con la marca «aprendido de tus correcciones» y la opción de deshacer.
+- **Precisión medida:** cuántos campos se corrigen por proveedor y cómo mejora.
+- **Carga masiva** de cientos de comprobantes (PDF, fotos, ZIP, mail y WhatsApp) con cola y progreso.
+
+### Conciliación bancaria con tolerancias y ajustes
+- Tolerancias de fecha (días) y de monto (fijo o porcentaje) por cuenta bancaria. Las sugerencias dentro del margen muestran puntaje y motivo.
+- Una diferencia de importe genera el **asiento de ajuste** en una cuenta configurable (redondeo, comisiones, gastos bancarios), como borrador o automático según el interruptor.
+- Conciliación de uno con muchos y de muchos con uno (un pago que cubre varias facturas).
+
+### Análisis del Libro IVA antes de presentar
+- Con un clic sobre el período: crédito fiscal por proveedor, por condición frente al IVA y por alícuota, con gráficos y comparación con períodos anteriores. Lo mismo para el Libro IVA ventas.
+- **Anomalías explicadas:** concentración en un proveedor, alta proporción de monotributistas, CUIT inactivas o con problemas en el padrón, CAE inválidos (WSCDC), duplicados, comprobantes fuera de período, importes atípicos para el proveedor, alícuotas incoherentes con el rubro y crédito fiscal tomado de comprobantes B o C.
+- Se marcan comprobantes «a revisar» con nota, se filtran y se resuelven; un checklist dice qué falta para «listo para presentar» (un dato para el contador, nunca una validación).
+- Lo puede pedir el Agente («revisá el IVA de toda la cartera») y queda como rutina.
+
+### Leyendas y requisitos de normativa
+- Un motor de **leyendas obligatorias** en los comprobantes, por jurisdicción y régimen (por ejemplo, la condición y la alícuota de ingresos brutos en facturas a consumidor final y los regímenes de transparencia fiscal vigentes). Se configura una vez en el perfil fiscal y se imprime solo.
+- Cada regla cita su fuente oficial (ARCA y organismos provinciales, en especial AGIP para CABA). Lo que no se pudo verificar queda **«a validar»** en Faro Manager → Catálogo → Escudo y en los pendientes.
+- El Faro Manager mantiene el catálogo y avisa a los usuarios afectados cuando cambia una norma.
+
+### Liquidación de sueldos (módulo de sueldos completo)
+- **Convenios colectivos** predeterminados (al menos 25 de los más usados: Comercio, UOCRA, Gastronómicos, Sanidad, Camioneros, Seguridad, Bancarios y otros) con categorías, básicos, adicionales y conceptos. Escalas versionadas por vigencia y mantenidas desde el Faro Manager; lo no verificado queda «a validar». Convenio propio o fuera de convenio, editable.
+- **Legajos y novedades** con importación masiva (Excel o CSV y desde el legajo de F5): horas, horas extra, ausencias, licencias, vacaciones, adelantos y embargos.
+- **Liquidación** mensual, SAC, vacaciones y final, con aportes y contribuciones. Duplicar un período y reliquidar con registro de cambios.
+- **Recibos en PDF** (reemplazan la carga manual de F5, que sigue disponible) y publicación con firma conforme o no conforme, como en F5.
+- **Exportaciones:** Libro de Sueldos Digital (formato de ARCA), archivo para el F.931 y acreditaciones bancarias. Los diseños de registro no verificados quedan «a validar».
+- **Reportes:** costo laboral por empleado y por área, acreditaciones, listado de empleados y variaciones entre períodos.
+- El Agente puede «liquidar octubre de X»: arma la liquidación, marca lo raro y la deja para aprobar.
+
+### Stock simple (módulo opcional «Stock», beneficio para las organizaciones)
+- Lo **activa el estudio para sus organizaciones** (comercios, distribuidoras, tiendas online, gastronomía, talleres) desde la ficha → Plan y módulos; no es una herramienta del estudio. En el portal aparece en **Empresa → Stock** (§2.o). Planes Profesional y Avanzado. Para autónomos que venden productos: **Facturación → Stock**.
+- **Alcance simple, sin producción, lotes ni logística:**
+  - Productos: código, código de barras opcional, descripción, unidad, alícuota de IVA, costo y precio. Importación por Excel o CSV, alta desde comprobantes de compra e importación del catálogo de las tiendas conectadas.
+  - Existencias por depósito (hasta 3). Ajustes manuales con motivo (rotura, faltante, conteo), auditados. Conteo físico desde el celular, con escaneo del código de barras.
+  - Alertas de stock mínimo por la app, mail y WhatsApp.
+  - Valuación al último costo y a costo promedio ponderado. Inventario valuado **a una fecha** (también pasada), exportable, para el cierre; el estudio lo ve desde la ficha de la organización. Costo de mercadería vendida estimado por período.
+- **Movimientos automáticos:** suman las compras confirmadas en la lectura de comprobantes; restan las ventas facturadas en Faro y las de las tiendas conectadas (Mercado Libre, Tiendanube, Empretienda, Shopify, WooCommerce, VTEX, Mercado Pago y tienda física), que llegan por webhook o sondeo y son **idempotentes** (una venta nunca descuenta dos veces). Las devoluciones y cancelaciones reponen.
+- **Mapeo** de productos de proveedores y de tiendas al producto propio por código o SKU, con sugerencias de la IA y aprendizaje de lo corregido. Una venta de un producto sin vincular queda en «Ventas sin vincular» y no descuenta a ciegas.
+- **Sincronización hacia las tiendas (opcional y segura):** apagada por defecto; se activa a mano por tienda y solo para productos vinculados; Faro es la única fuente de verdad y publica la existencia disponible (con margen de seguridad) cuando cambia; si la tienda informa un stock distinto al esperado no se pisa nada y queda un **conflicto** para resolver; registro de cada publicación, reintentos y pausa por tienda.
+- El Vigía y el Agente responden «¿cuánto me queda de X?», «¿qué está por debajo del mínimo?», «¿qué se vendió más este mes?» y «armame el inventario al 31/12 de X».
+- Las integraciones con tiendas son del pedido de **facturación avanzada**; Stock trae la base (cuentas de tienda, órdenes idempotentes, catálogo y publicación) y la facturación avanzada la reutiliza.
+
+**Módulos nuevos** (§2): `agent` (Agente contable, Avanzado; consultas en Profesional), `payroll_calc` (Liquidación de sueldos, Profesional y Avanzado) y `stock` (Stock, Profesional y Avanzado, se activa por organización). La lectura por ítem, la conciliación con tolerancias, el análisis del Libro IVA y las leyendas amplían `smart_docs`, `bank_rec` y `arca`.
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |
