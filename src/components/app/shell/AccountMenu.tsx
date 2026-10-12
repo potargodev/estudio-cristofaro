@@ -3,7 +3,8 @@
 import { ArrowLeftRight, ChevronDown, KeyRound, LogOut, Tags, Users, Waypoints } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { Avatar } from "@/components/admin/kit/Avatar";
 import { ThemeSelect } from "@/components/app/ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -44,32 +45,20 @@ export function AccountMenu({
 }) {
   const [open, setOpen] = useState(false);
   const [spacesOpen, setSpacesOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !ref.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [open]);
+  const close = useCallback(() => setOpen(false), []);
   useEffect(() => {
     setOpen(false);
     setSpacesOpen(false);
   }, [pathname]);
   const row = "flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-ink hover:bg-canvas";
   return (
-    <div ref={ref} className="relative">
-      <button type="button" aria-expanded={open} aria-haspopup="menu" aria-label={`Tu cuenta: ${user.name || user.email}`} onClick={() => setOpen((o) => !o)} className={cn("grid size-9 place-items-center rounded-full ring-offset-2 ring-offset-canvas hover:ring-2 hover:ring-line", className)}>
+    <div className="relative">
+      <button ref={btn} type="button" aria-expanded={open} aria-haspopup="menu" aria-label={`Tu cuenta: ${user.name || user.email}`} onClick={() => setOpen((o) => !o)} className={cn("grid size-9 place-items-center rounded-full ring-offset-2 ring-offset-canvas hover:ring-2 hover:ring-line", className)}>
         <Avatar name={user.name || user.email} size="sm" className="size-8" />
       </button>
-      {open && (
-        <div role="menu" aria-label="Tu cuenta" className="app-ui absolute right-0 top-full z-50 mt-2 max-h-[calc(100dvh-5rem)] w-[min(18rem,calc(100vw-2rem))] overflow-y-auto rounded-md border border-line bg-surface p-1.5 text-ui shadow-overlay">
+      <Popover open={open} onClose={close} anchor={btn} label="Tu cuenta" className="w-[min(18rem,calc(100vw-1rem))] border border-line bg-surface p-1.5 text-ui">
           <div className="px-3 pb-2 pt-1.5">
             <p className="truncate font-medium text-ink">{user.name || user.email}</p>
             <p className="truncate text-caption text-muted">{user.email}</p>
@@ -120,8 +109,7 @@ export function AccountMenu({
               <LogOut className="size-4 text-muted" strokeWidth={1.5} aria-hidden /> Salir
             </button>
           </form>
-        </div>
-      )}
+      </Popover>
     </div>
   );
 }

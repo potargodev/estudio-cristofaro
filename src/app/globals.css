@@ -766,7 +766,7 @@ body {
 }
 .app-ui :is(input, select, textarea):not([data-free], [type="checkbox"], [type="radio"], [type="range"]):focus-visible {
   outline: 2px solid var(--color-ring);
-  outline-offset: 1px;
+  outline-offset: 0;
 }
 .app-ui input[type="file"]:not([data-free]) {
   font-size: var(--text-ui);

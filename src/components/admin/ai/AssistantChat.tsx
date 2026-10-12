@@ -24,7 +24,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { decideInlineAction, deleteConversation, searchContextAction } from "@/app/admin/assistant-actions";
 import { CONTEXT_LABEL, type ContextItem, type ContextKind } from "@/lib/ai/context";
 import { cn } from "@/lib/utils";
@@ -201,7 +202,7 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
     return () => clearTimeout(t);
   }, [kind, q]);
   return (
-    <div role="dialog" aria-label="Adjuntar contexto" className="absolute bottom-full left-0 z-20 mb-2 w-[min(420px,calc(100vw-2rem))] border border-line bg-surface shadow-overlay">
+    <div>
       <div className="flex items-center gap-1 border-b border-line p-1.5">
         {(Object.keys(CONTEXT_LABEL) as ContextKind[]).map((k) => {
           const Icon = KIND_ICON[k];
@@ -211,7 +212,7 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
               type="button"
               onClick={() => setKind(k)}
               aria-pressed={kind === k}
-              className={cn("inline-flex h-8 items-center gap-1.5 px-2.5 text-meta", kind === k ? "bg-navy-soft text-ink" : "text-muted hover:text-ink")}
+              className={cn("inline-flex h-(--control-h-sm) items-center gap-1.5 rounded-md px-2.5 text-meta", kind === k ? "bg-navy-soft text-ink" : "text-muted hover:text-ink")}
             >
               <Icon className="size-4" strokeWidth={1.5} aria-hidden />
               {CONTEXT_LABEL[k]}
@@ -222,7 +223,7 @@ function ContextPicker({ onPick, onFile, onClose }: { onPick: (c: ContextItem) =
           <Paperclip className="size-4" strokeWidth={1.5} aria-hidden />
           Archivo
         </button>
-        <button type="button" onClick={onClose} aria-label="Cerrar" className="ml-auto grid size-8 place-items-center text-muted hover:text-ink">
+        <button type="button" onClick={onClose} aria-label="Cerrar" className="ml-auto grid size-8 place-items-center rounded-md text-muted hover:text-ink">
           <X className="size-4" aria-hidden />
         </button>
       </div>
@@ -291,6 +292,9 @@ export function AssistantChat({
   const [picker, setPicker] = useState(false);
   const [history, setHistory] = useState(false);
   const [mention, setMention] = useState<{ q: string; start: number } | null>(null);
+  const composer = useRef<HTMLDivElement>(null);
+  const closePicker = useCallback(() => setPicker(false), []);
+  const closeMention = useCallback(() => setMention(null), []);
   const [approvals, setApprovals] = useState<ApprovalStates>(initialApprovals);
   const [fileError, setFileError] = useState<string | null>(null);
   const [deciding, setDeciding] = useState(false);
@@ -552,8 +556,8 @@ export function AssistantChat({
           }}
           className="border-t border-line p-3 sm:px-6 sm:pb-5"
         >
-          <div className="relative mx-auto max-w-3xl">
-            {picker && (
+          <div ref={composer} className="relative mx-auto max-w-3xl">
+            <Popover open={picker} onClose={closePicker} anchor={composer} align="start" role="dialog" label="Adjuntar contexto" className="w-[min(420px,calc(100vw-1rem))] border border-line bg-surface">
               <ContextPicker
                 onPick={(c) => {
                   addChip(c);
@@ -563,11 +567,11 @@ export function AssistantChat({
                   setPicker(false);
                   fileInput.current?.click();
                 }}
-                onClose={() => setPicker(false)}
+                onClose={closePicker}
               />
-            )}
-            {mention && mentionMatches.length > 0 && (
-              <ul role="listbox" aria-label="Organizaciones" className="absolute bottom-full left-0 z-20 mb-2 w-72 border border-line bg-surface shadow-overlay">
+            </Popover>
+            <Popover open={!!mention && mentionMatches.length > 0} onClose={closeMention} anchor={composer} align="start" role="listbox" label="Organizaciones" className="w-72 border border-line bg-surface">
+              <ul>
                 {mentionMatches.map((o) => (
                   <li key={o.id}>
                     <button
@@ -586,7 +590,7 @@ export function AssistantChat({
                   </li>
                 ))}
               </ul>
-            )}
+            </Popover>
             <div className="border border-line bg-canvas focus-within:border-muted">
               {(chips.length > 0 || files.length > 0) && (
                 <div className="flex flex-wrap gap-1.5 px-2 pt-2">

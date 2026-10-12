@@ -4,7 +4,7 @@ import { m, useReducedMotion } from "motion/react";
 
 // Campos de la web (tema oscuro): rectos, borde hairline y foco en rosé
 export const inputClass =
-  "mt-2 block w-full rounded-[2px] border border-hair-strong bg-night px-3.5 py-3 text-lead text-paper placeholder:text-paper/55 transition-colors focus:border-rose-light focus:outline-none aria-[invalid=true]:border-danger";
+  "mt-2 block w-full rounded-[2px] border border-hair-strong bg-night px-3.5 py-3 [&:is(input,select)]:h-12 [&:is(input,select)]:py-0 text-lead text-paper placeholder:text-paper/55 transition-colors focus:border-rose-light focus:outline-none aria-[invalid=true]:border-danger";
 
 export function Field({
   label,

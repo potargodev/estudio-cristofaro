@@ -2,7 +2,8 @@
 
 import { Building2, Check, ChevronsUpDown, Compass, Store, UserRound, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { cn } from "@/lib/utils";
 
 // Selector de espacio (docs/faro-producto.md §2.o): arriba de la barra lateral,
@@ -78,25 +79,14 @@ export function SpaceList({ spaces, switchOrg, onPick, tone = "dark" }: { spaces
 /** Botón del espacio activo con su lista desplegable */
 export function SpaceSwitcher({ spaces, switchOrg, compact = false, className }: { spaces: ShellSpace[]; switchOrg?: (fd: FormData) => void | Promise<void>; compact?: boolean; className?: string }) {
   const [open, setOpen] = useState(false);
-  const box = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   const current = spaces.find((s) => s.current) ?? spaces[0];
+  const close = useCallback(() => setOpen(false), []);
   useEffect(() => {
     const show = () => setOpen(true);
     window.addEventListener(OPEN_SPACES, show);
     return () => window.removeEventListener(OPEN_SPACES, show);
   }, []);
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [open]);
   if (!current) return null;
   const Icon = ICON[current.icon];
   const single = spaces.length < 2;
@@ -117,14 +107,16 @@ export function SpaceSwitcher({ spaces, switchOrg, compact = false, className }:
     </>
   );
   return (
-    <div ref={box} className={cn("relative min-w-0", className)} data-tour="espacio">
+    <div className={cn("relative min-w-0", className)} data-tour="espacio">
       {single ? (
         <div className="flex min-w-0 items-center gap-3 rounded-md border border-paper/10 px-2 py-1.5">{face}</div>
       ) : (
         <button
+          ref={btn}
           type="button"
           aria-haspopup="menu"
           aria-expanded={open}
+          data-free
           aria-label={`Espacio: ${current.label} (${current.kind}). Cambiar de espacio`}
           onClick={() => setOpen((o) => !o)}
           className={cn("flex w-full min-w-0 items-center gap-3 rounded-md border px-2 py-1.5 outline-none transition-colors hover:border-paper/25 hover:bg-paper/[0.04] focus-visible:border-rose-light", open ? "border-paper/25 bg-paper/[0.04]" : "border-paper/10")}
@@ -132,12 +124,10 @@ export function SpaceSwitcher({ spaces, switchOrg, compact = false, className }:
           {face}
         </button>
       )}
-      {open && (
-        <div role="menu" aria-label="Cambiar de espacio" className={cn("absolute top-full z-50 mt-1 max-h-[min(24rem,70dvh)] overflow-y-auto overflow-x-hidden rounded-md border border-paper/15 bg-night p-1 shadow-overlay", compact ? "left-0 w-full min-w-64" : "inset-x-0")}>
-          <p className="px-2.5 pb-1 pt-1.5 text-caption text-paper/60">Tus espacios</p>
-          <SpaceList spaces={spaces} switchOrg={switchOrg} onPick={() => setOpen(false)} />
-        </div>
-      )}
+      <Popover open={open} onClose={close} anchor={btn} align={compact ? "start" : "match"} minWidth={compact ? 256 : 0} offset={4} label="Cambiar de espacio" className="keep-dark w-64 border border-paper/15 bg-night p-1 text-paper">
+        <p className="px-2.5 pb-1 pt-1.5 text-caption text-paper/60">Tus espacios</p>
+        <SpaceList spaces={spaces} switchOrg={switchOrg} onPick={close} />
+      </Popover>
     </div>
   );
 }

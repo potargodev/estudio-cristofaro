@@ -3,7 +3,8 @@
 import { Bell } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { markNoticesReadAction } from "@/app/actions/notices";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
@@ -30,21 +31,10 @@ const ago = (iso: string) => {
 export function NoticesBell({ items, unread, className }: { items: Notice[]; unread: number; className?: string }) {
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(unread);
-  const box = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+  const close = useCallback(() => setOpen(false), []);
   useEffect(() => setCount(unread), [unread]);
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [open]);
   const toggle = () => {
     const next = !open;
     setOpen(next);
@@ -54,18 +44,17 @@ export function NoticesBell({ items, unread, className }: { items: Notice[]; unr
     }
   };
   return (
-    <div ref={box} className="relative">
-      <button type="button" onClick={toggle} aria-expanded={open} aria-label={count ? `Avisos: ${count} sin leer` : "Avisos"} className={cn("relative grid size-9 place-items-center", className)}>
+    <div className="relative">
+      <button ref={btn} type="button" onClick={toggle} aria-expanded={open} aria-label={count ? `Avisos: ${count} sin leer` : "Avisos"} className={cn("relative grid size-9 place-items-center", className)}>
         <Bell className="size-4" aria-hidden />
         {count > 0 && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-gold px-1 text-micro font-semibold text-night">{count > 9 ? "9+" : count}</span>}
       </button>
-      {open && (
-        <div role="dialog" aria-label="Avisos" className="app-ui absolute right-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-md border border-line bg-surface shadow-overlay">
+      <Popover open={open} onClose={close} anchor={btn} role="dialog" label="Avisos" className="w-[min(22rem,calc(100vw-1rem))] border border-line bg-surface">
           <p className="border-b border-line px-4 py-2.5 text-meta font-semibold">Avisos</p>
           {items.length === 0 ? (
             <p className="px-4 py-6 text-center text-ui text-muted">No tenés avisos.</p>
           ) : (
-            <ul className="max-h-[60vh] divide-y divide-line overflow-y-auto">
+            <ul className="divide-y divide-line">
               {items.map((n) => {
                 const body = (
                   <>
@@ -88,8 +77,7 @@ export function NoticesBell({ items, unread, className }: { items: Notice[]; unr
               })}
             </ul>
           )}
-        </div>
-      )}
+      </Popover>
     </div>
   );
 }

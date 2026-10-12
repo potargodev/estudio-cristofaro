@@ -40,19 +40,19 @@ export function Responsible() {
             <dl className="mt-12 grid grid-cols-3 border-t border-hair">
               <div className="flex flex-col-reverse gap-3 border-r border-hair py-6 pr-4">
                 <dt className="text-meta text-paper/55">años de trayectoria</dt>
-                <dd className="tabular whitespace-nowrap font-display text-[clamp(2.1rem,5vw,4.5rem)] leading-none">
+                <dd className="tabular whitespace-nowrap font-display text-[clamp(2rem,4.4vw,4rem)] leading-none">
                   <Counter value={STUDIO_FACTS.years} />
                 </dd>
               </div>
               <div className="flex flex-col-reverse gap-3 border-r border-hair px-4 py-6">
                 <dt className="text-meta text-paper/55">empresas acompañadas</dt>
-                <dd className="tabular whitespace-nowrap font-display text-[clamp(2.1rem,5vw,4.5rem)] leading-none">
+                <dd className="tabular whitespace-nowrap font-display text-[clamp(2rem,4.4vw,4rem)] leading-none">
                   <Counter value={STUDIO_FACTS.companies} />
                 </dd>
               </div>
               <div className="flex flex-col-reverse gap-3 py-6 pl-4">
                 <dt className="text-meta text-paper/55">primera respuesta</dt>
-                <dd className="tabular whitespace-nowrap font-display text-[clamp(2.1rem,5vw,4.5rem)] leading-none">
+                <dd className="tabular whitespace-nowrap font-display text-[clamp(2rem,4.4vw,4rem)] leading-none">
                   &lt;<Counter value={24} /> h
                 </dd>
               </div>

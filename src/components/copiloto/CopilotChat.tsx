@@ -4,6 +4,7 @@ import { Camera, Check, Clock, FileText, Loader2, Mic, Paperclip, Pencil, Rotate
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { ChatMarkdown } from "@/components/chat/LazyMarkdown";
 import { confirmCardAction, editGroupCardAction, editMovementCardAction, redoCardAction, retryMessageAction, setAutoAction, undoCardAction, type CardState } from "@/app/vigia/actions";
 import { cn } from "@/lib/utils";
@@ -309,6 +310,8 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
   const [rec, setRec] = useState<{ start: number } | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [settings, setSettings] = useState(false);
+  const settingsBtn = useRef<HTMLButtonElement>(null);
+  const closeSettings = useCallback(() => setSettings(false), []);
   const recorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
   const cancelRec = useRef(false);
@@ -421,11 +424,11 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
           </div>
         </div>
         <div className="relative">
-          <button type="button" onClick={() => setSettings((s) => !s)} aria-expanded={settings} aria-label="Ajustes del Vigía" data-tour="copiloto-ajustes" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
+          <button ref={settingsBtn} type="button" onClick={() => setSettings((s) => !s)} aria-expanded={settings} aria-haspopup="dialog" aria-label="Ajustes del Vigía" data-tour="copiloto-ajustes" className="grid size-9 place-items-center rounded-md border border-line bg-surface hover:border-muted">
             <Settings2 className="size-4" aria-hidden />
           </button>
-          {settings && (
-            <form action={setAutoAction} className="absolute right-0 top-full z-20 mt-1 w-72 rounded-md border border-line bg-surface p-3 text-ui shadow-overlay">
+          <Popover open={settings} onClose={closeSettings} anchor={settingsBtn} role="dialog" label="Ajustes del Vigía" className="w-72 border border-line bg-surface p-3 text-ui">
+            <form action={setAutoAction}>
               <label className="flex items-start gap-2">
                 <input type="checkbox" name="auto" defaultChecked={auto} className="mt-1 size-4 accent-navy" onChange={(e) => e.currentTarget.form?.requestSubmit()} />
                 <span>
@@ -434,7 +437,7 @@ export function CopilotChat({ messages, categories, aiReady, auto, embedded = fa
                 </span>
               </label>
             </form>
-          )}
+          </Popover>
         </div>
       </div>
       {!aiReady && (

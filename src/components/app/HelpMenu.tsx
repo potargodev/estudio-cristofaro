@@ -3,7 +3,8 @@
 import { BookOpen, CircleHelp, Compass, FileQuestion, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { helpFor } from "@/lib/help-map";
 import { cn } from "@/lib/utils";
 import { startTour, toggleGuide, useGuideState } from "./Guide";
@@ -17,25 +18,15 @@ export function HelpMenu({ className }: { className?: string }) {
   const g = useGuideState();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const box = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [open]);
+  const btn = useRef<HTMLButtonElement>(null);
+  const close = useCallback(() => setOpen(false), []);
   useEffect(() => setOpen(false), [pathname]);
   const article = helpFor(pathname);
   const item = "flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left hover:bg-canvas";
   return (
-    <div ref={box} className="relative">
+    <div className="relative">
       <button
+        ref={btn}
         type="button"
         data-tour="ayuda"
         onClick={() => setOpen((o) => !o)}
@@ -47,8 +38,7 @@ export function HelpMenu({ className }: { className?: string }) {
       >
         <CircleHelp className="size-[18px]" strokeWidth={1.6} aria-hidden />
       </button>
-      {open && (
-        <div role="menu" aria-label="Ayuda" className="app-ui absolute right-0 top-full z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-md border border-line bg-surface p-1.5 text-ui text-ink shadow-overlay">
+      <Popover open={open} onClose={close} anchor={btn} label="Ayuda" className="w-[min(18rem,calc(100vw-1rem))] border border-line bg-surface p-1.5 text-ui text-ink">
           <button
             type="button"
             role="menuitem"
@@ -86,8 +76,7 @@ export function HelpMenu({ className }: { className?: string }) {
               </button>
             </>
           )}
-        </div>
-      )}
+      </Popover>
     </div>
   );
 }

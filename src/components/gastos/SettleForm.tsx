@@ -66,12 +66,12 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
         </label>
       </div>
       <div className="flex items-center gap-2 border border-line bg-surface p-3">
-        <select name="currency" defaultValue={initial.currency} aria-label="Moneda" className="h-14 border border-line bg-canvas px-2">
+        <select name="currency" defaultValue={initial.currency} aria-label="Moneda" data-free className="h-14 rounded-md border border-line bg-canvas px-2">
           {CURRENCIES.map((c) => (
             <option key={c}>{c}</option>
           ))}
         </select>
-        <input name="amount" inputMode="decimal" required defaultValue={initial.amount} aria-label="Importe" placeholder="0" className="h-14 min-w-0 flex-1 bg-transparent num text-metric focus:outline-none" />
+        <input name="amount" inputMode="decimal" required defaultValue={initial.amount} aria-label="Importe" placeholder="0" data-free className="h-14 min-w-0 flex-1 bg-transparent num text-metric focus:outline-none" />
       </div>
       <fieldset>
         <legend className="mb-2 text-ui font-medium">¿Cómo?</legend>
@@ -118,7 +118,7 @@ export function SettleForm({ groupId, members, meId, initial }: { groupId: strin
           {state.message}
         </p>
       )}
-      <button disabled={pending} className="h-14 bg-navy text-title text-paper hover:bg-navy-deep disabled:opacity-60 sm:w-auto sm:justify-self-start sm:px-10">
+      <button disabled={pending} className="h-(--control-h) rounded-md bg-navy px-5 text-ui font-medium text-paper hover:bg-navy-deep disabled:opacity-60 sm:w-auto sm:justify-self-start sm:px-8">
         {pending ? "Registrando…" : method === "mercado_pago" ? "Generar link de pago" : "Registrar pago"}
       </button>
     </form>

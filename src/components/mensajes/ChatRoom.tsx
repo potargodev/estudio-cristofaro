@@ -4,6 +4,7 @@ import { ArrowLeft, Ban, Bell, BellOff, CornerUpLeft, Flag, LogOut, MoreVertical
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { toast } from "sonner";
 import { blockAction, deleteMessageAction, editMessageAction, leaveAction, markReadAction, muteAction, reportAction, typingAction } from "@/app/mensajes/actions";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,8 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
   const [sending, setSending] = useState(false);
   const [emoji, setEmoji] = useState(false);
   const [menu, setMenu] = useState(false);
+  const menuBtn = useRef<HTMLButtonElement>(null);
+  const closeMenu = useCallback(() => setMenu(false), []);
   const [typingNames, setTypingNames] = useState<Record<string, number>>({});
   const [report, setReport] = useState<MessageView | null>(null);
   const end = useRef<HTMLDivElement>(null);
@@ -162,11 +165,10 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
           </p>
         </div>
         <div className="relative">
-          <button type="button" onClick={() => setMenu((x) => !x)} aria-expanded={menu} aria-label="Opciones de la conversación" className="grid size-9 place-items-center rounded-md hover:bg-surface">
+          <button ref={menuBtn} type="button" onClick={() => setMenu((x) => !x)} aria-expanded={menu} aria-haspopup="menu" aria-label="Opciones de la conversación" className="grid size-9 place-items-center rounded-md hover:bg-surface">
             <MoreVertical className="size-4" aria-hidden />
           </button>
-          {menu && (
-            <div role="menu" className="absolute right-0 top-full z-30 mt-1 w-64 rounded-md border border-line bg-surface p-1 text-ui shadow-overlay">
+          <Popover open={menu} onClose={closeMenu} anchor={menuBtn} label="Opciones de la conversación" className="w-64 border border-line bg-surface p-1 text-ui">
               <button
                 type="button"
                 role="menuitem"
@@ -209,8 +211,7 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                   <LogOut className="size-4" aria-hidden /> Salir de la conversación
                 </button>
               )}
-            </div>
-          )}
+          </Popover>
         </div>
       </header>
 

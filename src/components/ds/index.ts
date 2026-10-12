@@ -27,3 +27,4 @@ export { Textarea } from "@/components/ui/textarea";
 export { SubmitButton, FormSelect, FormCheckbox } from "@/components/admin/ui";
 export { Dialog, DialogTrigger, DialogClose, DialogContent } from "@/components/ui/dialog";
 export { Card, SectionTitle, List, ListRow, Table, ErrorState, ViewSwitch, fieldClass, fieldInlineClass, labelClass } from "./primitives";
+export { Popover } from "./Popover";

@@ -20,7 +20,7 @@ interface Member {
 }
 
 const input = fieldClass;
-const chip = (on: boolean) => cn("border px-3.5 py-2 text-ui transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-navy/50");
+const chip = (on: boolean) => cn("inline-flex h-(--control-h-sm) items-center rounded-md border px-3 text-ui transition-colors", on ? "border-navy bg-navy text-paper" : "border-line bg-surface hover:border-navy/50");
 const num = (v: string) => {
   const n = Number(v.replace(",", "."));
   return Number.isFinite(n) ? n : 0;
@@ -141,7 +141,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
           Importe
         </label>
         <div className="mt-1 flex items-center gap-2">
-          <select aria-label="Moneda" value={currency} onChange={(e) => setCurrency(e.target.value)} className="h-14 border border-line bg-canvas px-2 text-lead">
+          <select aria-label="Moneda" data-free value={currency} onChange={(e) => setCurrency(e.target.value)} className="h-14 rounded-md border border-line bg-canvas px-2 text-lead">
             {CURRENCIES.map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -155,6 +155,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
             placeholder="0"
             value={amountText}
             onChange={(e) => setAmountText(e.target.value.replace(/[^\d.,]/g, ""))}
+            data-free
             className="h-14 min-w-0 flex-1 bg-transparent num text-metric focus:outline-none"
           />
         </div>
@@ -382,7 +383,7 @@ export function ExpenseForm({ groupId, members, meId, baseCurrency, hasContext, 
         </p>
       )}
       <div className="sticky bottom-[var(--app-bottom,0px)] -mx-4 border-t border-line bg-canvas/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
-        <button type="submit" disabled={pending || !amount || !!preview.error || !!payerError} className="h-14 w-full bg-navy text-title text-paper hover:bg-navy-deep disabled:opacity-50 sm:w-auto sm:px-10">
+        <button type="submit" disabled={pending || !amount || !!preview.error || !!payerError} className="h-(--control-h) w-full rounded-md bg-navy px-5 text-ui font-medium text-paper hover:bg-navy-deep disabled:opacity-50 sm:w-auto sm:px-8">
           {pending ? "Guardando…" : amount ? `Guardar ${formatMoney(amount, currency)}` : "Guardar gasto"}
         </button>
       </div>

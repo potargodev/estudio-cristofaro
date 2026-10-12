@@ -226,7 +226,7 @@ Todo sale de `@/components/ds`.
 - **Secondary** (`variant="outline"`): borde azul noche al 30 % y texto azul noche.
 - **Ghost:** solo texto, para acciones terciarias en tablas y menús.
 - **Danger** (`variant="danger"`): borde y texto rojos; las destructivas piden confirmación (`confirm`).
-- **Focus:** anillo de 3 px en el color del foco (rosé en oscuro).
+- **Focus:** anillo de 2 px en el color del foco (rosé en oscuro), solo con teclado (`:focus-visible`). Un control con borde propio puede cambiar el color de su borde en lugar del anillo: nunca dos bordes separados.
 
 ### Inputs / Fields
 - **Style:** superficie, borde de 1 px, radio de 6 px y alto `--control-h`. El texto es de 16 px en el celular (iOS no agranda la pantalla) y de 14 px en escritorio. Placeholder AA.
@@ -256,6 +256,9 @@ Todo sale de `@/components/ds`.
 - **Skeletons:** con la misma forma que el componente real (`StatRowSkeleton`, `PanelSkeleton`, `TableSkeleton`, `ListSkeleton`), dentro de `<Suspense>` (nunca `loading.tsx` en layouts con formularios).
 - **ErrorState:** qué pasó y cómo seguir. `Notice` muestra el resultado de una acción (los éxitos como toast).
 
+### Popover (menús y desplegables)
+**The One Popover Rule.** Todo menú, desplegable, selector o panel flotante (cuenta, avisos, ayuda, selector de espacios, «Más», opciones de una fila, autocompletar) se monta con `Popover` de `@/components/ds`. Nunca un `absolute right-0 top-full` a mano: el popover flota sobre la página sin empujar el contenido, se alinea con su disparador (`align="end"`, `"start"` o `"match"` para tomar su ancho), se corre para no salirse por los costados, se da vuelta hacia arriba si abajo no entra, limita su alto al espacio disponible, cierra con Escape o un clic afuera y devuelve el foco. Superficie, borde de 1 px, radio de 6 px y `shadow-overlay`; en el sidebar oscuro, `keep-dark` con fondo azul noche. Los textos largos se truncan con puntos suspensivos y el nombre completo va en `title`.
+
 ### Dialog and sheet
 `Dialog` + `DialogContent` (centrado, para decidir algo corto) o con `side="right"` (hoja que entra de costado en escritorio y desde abajo en el celular). `AlertDialog` para confirmar una acción destructiva.
 
@@ -275,6 +278,8 @@ Todo sale de `@/components/ds`.
 - **Do** dejar que las tablas scrolleen dentro de `Table` en el celular.
 - **Do** escribir los estados vacíos para explicar qué es la sección y cuál es el primer paso.
 - **Do** respetar `prefers-reduced-motion`: el cambio pasa sin animación.
+
+- **Do** correr `npm run qa:visual` antes de subir un cambio de interfaz: detecta desbordes, recortes, superposiciones, alturas y radios fuera del sistema, bordes dobles, repetidos, texto chico y contraste bajo, y compara las capturas de referencia.
 
 ### Don't:
 - **Don't** escribir tamaños, alturas ni radios a mano (`text-[15px]`, `h-10`, `rounded-[4px]`).

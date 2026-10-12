@@ -57,6 +57,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Popover } from "@/components/ds/Popover";
 import { setSidebarPref } from "@/app/actions/prefs";
 import { CommandPalette } from "@/components/admin/shell/CommandPalette";
 import type { NavAccess } from "@/components/admin/shell/nav";
@@ -255,18 +256,8 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right, reduce = f
     ro.observe(el);
     return () => ro.disconnect();
   }, [items.length]);
-  useEffect(() => {
-    if (!more) return;
-    const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !(e.target as HTMLElement).closest("[data-more]")) setMore(false);
-    };
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [more]);
+  const moreBtn = useRef<HTMLButtonElement>(null);
+  const closeMore = useCallback(() => setMore(false), []);
   const shown = items.slice(0, fit);
   const rest = items.slice(fit);
   const icon = (i: (typeof items)[number], inMenu = false, k = 0) => {
@@ -288,7 +279,7 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right, reduce = f
           </m.span>
           {n > 0 && <span aria-hidden className="absolute right-1.5 top-1.5 size-2 rounded-full bg-rose-light" />}
         </Link>
-        <span role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-50 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded border border-paper/15 bg-night px-2 py-1 text-caption text-paper opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+        <span role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-50 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-md border border-paper/15 bg-night px-2 py-1 text-caption text-paper opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
           {i.label}
           {n > 0 && <span className="ml-1.5 text-rose-light">{n}</span>}
         </span>
@@ -307,14 +298,12 @@ function TopIconBar({ groups, badges, active, onExpand, brand, right, reduce = f
             {shown.map((i, k) => icon(i, false, k))}
             {rest.length > 0 && (
               <li className="relative" data-more>
-                <button type="button" aria-haspopup="menu" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-10 items-center gap-1 rounded-md px-2.5 text-meta text-paper/70 hover:bg-paper/[0.06] hover:text-paper">
+                <button ref={moreBtn} type="button" aria-haspopup="menu" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-10 items-center gap-1 rounded-md px-2.5 text-meta text-paper/70 hover:bg-paper/[0.06] hover:text-paper">
                   <MoreHorizontal className="size-[18px]" aria-hidden /> Más
                 </button>
-                {more && (
-                  <div role="menu" className="absolute right-0 top-full z-50 mt-1.5 max-h-[70vh] w-60 overflow-y-auto rounded-md border border-paper/15 bg-night py-1 shadow-overlay">
-                    {rest.map((i) => icon(i, true))}
-                  </div>
-                )}
+                <Popover open={more} onClose={closeMore} anchor={moreBtn} label="Más secciones" className="keep-dark w-60 border border-paper/15 bg-night py-1 text-paper">
+                  {rest.map((i) => icon(i, true))}
+                </Popover>
               </li>
             )}
           </ul>
