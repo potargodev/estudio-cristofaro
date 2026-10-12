@@ -97,10 +97,9 @@ async function settle(p) {
   await p.waitForTimeout(150);
 }
 
-for (const [perfil, cfg] of Object.entries(PERFILES)) {
-  if (args.perfil && args.perfil !== perfil) continue;
+async function recorrer(perfil, cfg) {
   const cookie = cfg.email ? await cookieFor(cfg.email) : "";
-  if (cookie === null) continue;
+  if (cookie === null) return;
   const ctxs = {};
   for (const [w, scheme] of VARIANTS) {
     ctxs[`${w}-${scheme}`] = await browser.newContext({ viewport: { width: w, height: 900 }, locale: "es-AR", timezoneId: "America/Argentina/Buenos_Aires", reducedMotion: "reduce", colorScheme: scheme });
@@ -185,7 +184,19 @@ for (const [perfil, cfg] of Object.entries(PERFILES)) {
           }
         }
       }
-      if (errs.length) issues.push({ ...ctx, tipo: "error JS", detalle: errs[0].slice(0, 160) });
+      if (errs.length) {
+        // Un error de hidratación (#418) aparece a veces solo con el servidor muy cargado y React se
+        // recupera solo con el mismo resultado: se vuelve a cargar una vez y cuenta si se repite.
+        const again = [];
+        if (errs.every((m) => m.includes("#418"))) {
+          const q = await ctxs[`${w}-${scheme}`].newPage();
+          q.on("pageerror", (e) => again.push(e.message));
+          await q.goto(`${BASE}${path}`, { waitUntil: "load", timeout: 30000 }).catch(() => undefined);
+          await settle(q);
+          await q.close();
+        }
+        if (!errs.every((m) => m.includes("#418")) || again.length) issues.push({ ...ctx, tipo: "error JS", detalle: (again[0] ?? errs[0]).slice(0, 160) });
+      }
       if (w === 1440 && scheme === "light") {
         const links = await p.$$eval("a[href^='/']", (as) => as.map((a) => a.getAttribute("href")));
         const root = path.split("/")[1];
@@ -197,6 +208,14 @@ for (const [perfil, cfg] of Object.entries(PERFILES)) {
   for (const c of Object.values(ctxs)) await c.close();
   console.log(`${perfil}: ${seen.size} pantallas`);
 }
+
+// Los perfiles se recorren de a varios a la vez (--paralelo=N, 3 por defecto): cada uno con sus contextos
+const pendientes = Object.entries(PERFILES).filter(([perfil]) => !args.perfil || args.perfil === perfil);
+await Promise.all(
+  Array.from({ length: Math.max(1, Number(args.paralelo ?? 3)) }, async () => {
+    while (pendientes.length) await recorrer(...pendientes.shift());
+  }),
+);
 await browser.close();
 
 const byType = {};

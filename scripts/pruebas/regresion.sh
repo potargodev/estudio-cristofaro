@@ -124,6 +124,8 @@ correr enlaces npx tsx scripts/verificar-enlaces.mts
 echo "── Con la demo cargada ──" | tee -a "$RESUMEN"
 correr demo-navegador node scripts/pruebas/demo-navegador.mjs
 npx tsx scripts/demo.ts seed > "$SALIDA/demo-seed.log" 2>&1
+# Regresión por captura sobre la demo recién cargada (QA_ACTUALIZAR=1 rehace las referencias)
+correr qa-capturas env SALIDA="$SALIDA/qa-capturas" node scripts/pruebas/qa-capturas.mjs ${QA_ACTUALIZAR:+--actualizar}
 correr ver-como node scripts/pruebas/ver-como.mjs
 correr auditoria-seguridad "${S[@]}" scripts/pruebas/auditoria-seguridad.mts
 # §2.q · Agente contable (incluye la cartera de 20 organizaciones de la demo)
@@ -134,7 +136,6 @@ correr recorrido env SALIDA="$SALIDA/recorrido.json" node scripts/pruebas/recorr
 # QA visual al píxel (npm run qa:visual): detector en pantallas y estados, datos extremos y capturas de referencia
 correr qa-visual env SALIDA="$SALIDA/qa-visual.json" node scripts/pruebas/qa-visual.mjs --estados --max=25 --capturas="$SALIDA/qa-visual"
 correr qa-estados env SALIDA="$SALIDA/qa-estados.json" node scripts/pruebas/qa-estados.mjs --capturas="$SALIDA/qa-estados"
-correr qa-capturas env SALIDA="$SALIDA/qa-capturas" node scripts/pruebas/qa-capturas.mjs
 correr enlaces-con-demo npx tsx scripts/verificar-enlaces.mts
 
 echo; echo "Resumen en $RESUMEN"

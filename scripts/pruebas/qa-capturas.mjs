@@ -1,6 +1,7 @@
 // Regresión visual por captura: las pantallas y los menús principales, a
 // 1.440 px en claro y a 390 px en oscuro, comparados píxel a píxel contra las
-// referencias de docs/qa-visual/referencia. Los números, las fechas y los
+// referencias de docs/qa-visual/referencia, tomadas sobre la demo recién cargada
+// (en la regresión corre justo después de cargarla). Los números, las fechas y los
 // datos que cambian solos se tapan (máscara) para que la comparación mida el
 // diseño y no el día. Falla si una captura cambia más del umbral; la imagen
 // con la diferencia queda en $SALIDA. Con --actualizar reemplaza las
@@ -106,7 +107,7 @@ for (const [name, perfil, path, action, only] of SHOTS) {
       await p.waitForTimeout(350);
     }
     const file = `${name}-${w}-${scheme}.png`;
-    const mask = [p.locator(".num, time, [data-qa-mask], [aria-live]"), p.locator("text=/\\d{1,2}\\/\\d{1,2}|hace \\d+|\\d{1,2}:\\d{2}/")];
+    const mask = [p.locator(".num, time, [data-qa-mask], [aria-live]"), p.locator("text=/\\d{1,2}\\/\\d{1,2}|hace \\d+|\\d{1,2}:\\d{2}|\\d{1,2} (ene|feb|mar|abr|may|jun|jul|ago|sept?|oct|nov|dic)|\\d{4}-\\d{2}|(lun|mar|mié|jue|vie|sáb|dom),/i")];
     const buf = await p.screenshot({ mask, maskColor: "#888888", animations: "disabled" });
     await ctx.close();
     if (UPDATE || !existsSync(`${REF}${file}`)) {
