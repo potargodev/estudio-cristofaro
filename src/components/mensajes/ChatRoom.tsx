@@ -35,6 +35,8 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
   const [editing, setEditing] = useState<MessageView | null>(null);
   const [sending, setSending] = useState(false);
   const [emoji, setEmoji] = useState(false);
+  const emojiBtn = useRef<HTMLButtonElement>(null);
+  const closeEmoji = useCallback(() => setEmoji(false), []);
   const [menu, setMenu] = useState(false);
   const menuBtn = useRef<HTMLButtonElement>(null);
   const closeMenu = useCallback(() => setMenu(false), []);
@@ -318,15 +320,6 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
                 </button>
               </div>
             )}
-            {emoji && (
-              <div className="mb-2 grid grid-cols-8 gap-1 rounded-md border border-line bg-surface p-2" role="listbox" aria-label="Emojis">
-                {EMOJIS.map((e) => (
-                  <button key={e} type="button" role="option" aria-selected={false} onClick={() => (setText((t) => t + e), area.current?.focus())} className="h-(--control-h) rounded-md text-section hover:bg-canvas">
-                    {e}
-                  </button>
-                ))}
-              </div>
-            )}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -338,9 +331,16 @@ export function ChatRoom({ initial, meId }: { initial: ConversationView; meId: s
               <button type="button" onClick={() => fileInput.current?.click()} aria-label="Adjuntar un archivo" className="grid size-10 shrink-0 place-items-center rounded-md text-muted hover:bg-surface hover:text-ink">
                 <Paperclip className="size-5" aria-hidden />
               </button>
-              <button type="button" onClick={() => setEmoji((x) => !x)} aria-expanded={emoji} aria-label="Emojis" className="grid size-10 shrink-0 place-items-center rounded-md text-muted hover:bg-surface hover:text-ink">
+              <button ref={emojiBtn} type="button" onClick={() => setEmoji((x) => !x)} aria-expanded={emoji} aria-haspopup="listbox" aria-label="Emojis" className="grid size-10 shrink-0 place-items-center rounded-md text-muted hover:bg-surface hover:text-ink">
                 <Smile className="size-5" aria-hidden />
               </button>
+              <Popover open={emoji} onClose={closeEmoji} anchor={emojiBtn} align="start" role="listbox" label="Emojis" className="grid w-[min(20rem,calc(100vw-1rem))] grid-cols-8 gap-1 border border-line bg-surface p-2">
+                {EMOJIS.map((e) => (
+                  <button key={e} type="button" role="option" aria-selected={false} onClick={() => (setText((t) => t + e), area.current?.focus())} className="h-(--control-h) rounded-md text-section hover:bg-canvas">
+                    {e}
+                  </button>
+                ))}
+              </Popover>
               <label className="min-w-0 flex-1">
                 <span className="sr-only">Mensaje</span>
                 <textarea

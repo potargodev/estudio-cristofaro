@@ -177,6 +177,10 @@ html:has(.site) {
   outline: 1px solid var(--color-rose-light);
   outline-offset: 3px;
 }
+/* Los campos: el anillo va pegado al borde (uno solo, nunca dos líneas separadas) */
+.site :is(input, select, textarea):focus-visible {
+  outline-offset: 0;
+}
 
 /* Titulares enormes */
 .display {
@@ -422,6 +426,9 @@ body {
   .keep-dark :focus-visible,
   .bg-night :focus-visible {
     outline-color: var(--color-rose-light);
+  }
+  :is(input, select, textarea):focus-visible {
+    outline-offset: 0;
   }
 }
 
