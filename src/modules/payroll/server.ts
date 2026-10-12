@@ -14,6 +14,7 @@ import { checkUpload, readStored, storeUpload } from "@/lib/uploads";
 import { notify } from "@/modules/notifications/server";
 import { cuilFromName, cuilsIn, deviceOf, groupPages, periodIn, seal, sha256, signReminderDue, validCuil, type SignatureRecord } from "./core";
 import { formatDate } from "@/lib/format";
+import { pdfPages } from "@/lib/text/extract";
 
 // Empleados (módulos employees, payroll y comms): legajo, recibos de sueldo
 // con firma conforme / no conforme y constancia, comunicados internos con
@@ -155,10 +156,7 @@ export async function addEmployeeDocument(s: PayrollScope, actor: Actor, id: str
 
 async function pageTexts(data: Uint8Array) {
   try {
-    const { extractText, getDocumentProxy } = await import("unpdf");
-    const pdf = await getDocumentProxy(new Uint8Array(data));
-    const { text } = await extractText(pdf, { mergePages: false });
-    return Array.isArray(text) ? text : [text];
+    return await pdfPages(data);
   } catch {
     return [];
   }

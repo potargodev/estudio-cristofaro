@@ -5,6 +5,7 @@ import { bitacora_entries, bitacora_imports } from "@/db/schema";
 import { listCategories } from "./server";
 import { bitacoraPlan } from "./plus";
 import { mapRows, mercadoPagoMapping, merchantKey, parseAmount, parseCsv, parseDate, rowsFromPdfText, type ImportRow, type Mapping } from "./smart";
+import { pdfPages } from "@/lib/text/extract";
 
 // Importación de resúmenes bancarios y de tarjeta (CSV y PDF con texto) y del
 // CSV de movimientos de Mercado Pago: vista previa con el mapeo de columnas,
@@ -47,10 +48,7 @@ export async function createPreview(user: { id: string; studioId: string }, file
   const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
   let rows: string[][];
   if (isPdf) {
-    const { extractText, getDocumentProxy } = await import("unpdf");
-    const pdf = await getDocumentProxy(new Uint8Array(await file.arrayBuffer()));
-    const { text } = await extractText(pdf, { mergePages: true });
-    rows = rowsFromPdfText(Array.isArray(text) ? text.join("\n") : text);
+    rows = rowsFromPdfText((await pdfPages(new Uint8Array(await file.arrayBuffer()))).join("\n"));
     if (!rows.length) throw new ImportError("No encontramos movimientos en el PDF (tiene que tener texto, no una imagen escaneada). Probá con el CSV o el Excel del banco.");
     rows.unshift(["Fecha", "Descripción", "Importe"]);
   } else {

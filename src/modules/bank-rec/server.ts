@@ -10,6 +10,7 @@ import { guessMapping } from "@/modules/bitacora/imports";
 import { mapRows, parseCsv, rowsFromPdfText, type Mapping } from "@/modules/bitacora/smart";
 import type { Extraction } from "@/modules/smart-docs/core";
 import { classify, matchRule, suggest, summarize, type Candidate, type MovStatus, type MovementClass, type Rule } from "./core";
+import { pdfPages } from "@/lib/text/extract";
 
 // Conciliación bancaria (bank_rec): extractos importados por organización,
 // clasificación, sugerencias de cruce con comprobantes (emitidos por ARCA y
@@ -101,10 +102,7 @@ export async function importStatement(s: RecScope, actor: Actor, file: File, ban
   const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
   let rows: string[][];
   if (isPdf) {
-    const { extractText, getDocumentProxy } = await import("unpdf");
-    const pdf = await getDocumentProxy(new Uint8Array(await file.arrayBuffer()));
-    const { text } = await extractText(pdf, { mergePages: true });
-    rows = [["Fecha", "Descripción", "Importe"], ...rowsFromPdfText(Array.isArray(text) ? text.join("\n") : text)];
+    rows = [["Fecha", "Descripción", "Importe"], ...rowsFromPdfText((await pdfPages(new Uint8Array(await file.arrayBuffer()))).join("\n"))];
   } else rows = parseCsv(await file.text());
   if (rows.length < 2) throw new BankRecError("No encontramos movimientos en el archivo.");
   const mapping = override ?? (isPdf ? { date: 0, description: 1, amount: 2, skipHeader: true } : guessMapping(rows));

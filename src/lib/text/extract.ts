@@ -1,5 +1,4 @@
 import "server-only";
-import { inflateSync } from "node:zlib";
 import { readSheet } from "read-excel-file/node";
 
 // Texto de un archivo para la IA (herramienta leer_documento y adjuntos del
@@ -17,46 +16,15 @@ function done(text: string): Extracted {
   return { ok: true, text: clean.slice(0, MAX_TEXT_CHARS), truncated: clean.length > MAX_TEXT_CHARS };
 }
 
-/** Decodifica un string literal de PDF: (texto con \( \) \\ y octales) */
-function pdfString(s: string) {
-  return s.replace(/\\([nrtbf()\\]|[0-7]{1,3})/g, (_, c: string) => {
-    if (/^[0-7]+$/.test(c)) return String.fromCharCode(parseInt(c, 8));
-    return ({ n: "\n", r: "", t: "\t", b: "", f: "" } as Record<string, string>)[c] ?? c;
-  });
-}
-
-/** Texto de los operadores Tj / TJ de cada stream de contenido (con o sin FlateDecode) */
-function pdfText(buf: Buffer): string {
-  const src = buf.toString("latin1");
-  const out: string[] = [];
-  const re = /stream\r?\n/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(src))) {
-    const start = m.index + m[0].length;
-    const end = src.indexOf("endstream", start);
-    if (end < 0) break;
-    const raw = buf.subarray(start, end);
-    let content: string;
-    try {
-      content = inflateSync(raw).toString("latin1");
-    } catch {
-      content = raw.toString("latin1");
-    }
-    if (!/\bBT\b/.test(content)) continue;
-    for (const block of content.split(/\bET\b/)) {
-      const parts: string[] = [];
-      for (const t of block.matchAll(/\((?:\\.|[^\\)])*\)\s*Tj|\[(?:[^\]]*)\]\s*TJ|T\*|\bTd\b|\bTD\b/g)) {
-        const tok = t[0];
-        if (tok.endsWith("Tj")) parts.push(pdfString(tok.slice(1, tok.lastIndexOf(")"))));
-        else if (tok.endsWith("TJ")) {
-          for (const s of tok.matchAll(/\((?:\\.|[^\\)])*\)/g)) parts.push(pdfString(s[0].slice(1, -1)));
-        } else parts.push("\n");
-      }
-      if (parts.length) out.push(parts.join("").replace(/\n+/g, "\n"));
-    }
-    re.lastIndex = end;
-  }
-  return out.join("\n");
+/**
+ * Texto de un PDF con texto embebido, página por página (unpdf / pdf.js).
+ * Un PDF escaneado devuelve páginas vacías: eso queda para la lectura inteligente.
+ */
+export async function pdfPages(data: Uint8Array | Buffer): Promise<string[]> {
+  const { extractText: pdfExtract, getDocumentProxy } = await import("unpdf");
+  const pdf = await getDocumentProxy(new Uint8Array(data));
+  const { text } = await pdfExtract(pdf, { mergePages: false });
+  return Array.isArray(text) ? text : [text];
 }
 
 export async function extractText(buf: Buffer, name: string, mime?: string | null): Promise<Extracted> {
@@ -67,7 +35,7 @@ export async function extractText(buf: Buffer, name: string, mime?: string | nul
       const rows = (await readSheet(buf)) as unknown[][];
       return done(rows.map((r) => r.map((c) => (c == null ? "" : c instanceof Date ? c.toISOString().slice(0, 10) : String(c))).join(" | ")).join("\n"));
     }
-    if (ext === "pdf") return done(pdfText(buf));
+    if (ext === "pdf") return done((await pdfPages(buf)).join("\n"));
     if (["jpg", "jpeg", "png"].includes(ext)) return { ok: false, reason: "Es una imagen: la lectura de imágenes llega con la lectura inteligente." };
     return { ok: false, reason: "Formato sin lectura de texto." };
   } catch (error) {
