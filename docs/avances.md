@@ -485,3 +485,36 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Las APIs reales de cada tienda (pendientes, ítem 28).
+
+## A0 · Núcleo propio y capa de adaptadores (13 de octubre)
+
+**Qué quedó**
+- Interfaz única de adaptadores (`src/modules/adapters`): catálogo con entidades y capacidades (leer, crear, modificar, anular, avisos), registro por organización con estado, sincronizar, publicar, conciliar totales y desconectar. Tango, Xubio, archivos (Tango, Holistor, Bejerman), Google Drive, Mercado Pago y las tiendas pasan por ahí sin perder lo que ya hacían.
+- **Contabilium** nuevo: cliente, sincronización y escritura (clientes y comprobantes) contra el simulador `mocks/contabilium` (4110). Guía en `docs/adaptadores.md`.
+- **Fuente de verdad** por organización y área (contabilidad, facturación, compras, sueldos, stock), nunca dos (índice único).
+- Ficha → Conexiones → **Sistemas conectados**: quién manda en cada área, tarjetas por sistema (sincronizar, publicar, pausar, desconectar, reconectar), conflictos unificados (espejo, Tango, tiendas), clientes espejados editables y el asistente **«Pasate a Faro»** (traer → controlar totales → revisar → cambiar).
+- Espejo normalizado e idempotente; cambios de Faro con escritura de vuelta según capacidades o «solo en Faro»; conflictos sin pisar; desconectar no borra nada. Migración `0056`.
+- Vigía y Agente: `sistemas_conectados` y `sincronizar_sistema`. Ayuda: `conexiones/sistemas-conectados`.
+
+**Qué se probó**
+- `scripts/pruebas/nucleo.mts` (38 verificaciones): Contabilium (traer, idempotencia, origen, escritura, pausa, conflicto en los dos sentidos, publicar sin duplicar), Xubio y Tango por la misma interfaz, migración con totales (y una diferencia que frena), desconexión sin pérdida, Vigía y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Credenciales reales y validación de la API de Contabilium (pendientes, ítem 29).
+
+## A1 · Contabilidad general nativa (13 de octubre)
+
+**Qué quedó**
+- Ficha → **Contabilidad**: Asientos · Plan · Libros · Estados · Cuentas corrientes · Bienes de uso · Moneda extranjera · Cierre.
+- Plan de cuentas con plantillas por rubro (general, comercio, industria, gastronomía, agro), cuentas propias y mapeo de cada cuenta a Tango, Xubio o Contabilium.
+- Asientos automáticos con origen (facturas y notas de crédito, compras con IVA y percepciones por jurisdicción, sueldos, cobros, pagos conciliados, impuesto a los débitos y créditos y SIRCREB), manuales, modelos, borrador → registrado con numeración correlativa, anulación.
+- Libro diario, mayor, sumas y saldos, estados contables (situación patrimonial y resultados, con control de cuadre), cuentas corrientes con antigüedad, bienes de uso con amortización, diferencias de cambio, cierre con refundición/cierre/apertura y bloqueo, reapertura con motivo. Exportación a Excel y PDF (`/api/contabilidad/<org>`), auditada.
+- Si la contabilidad la lleva otro sistema, se muestran sus asientos espejados con el mapeo. Interruptor del Agente «contabilidad.asientos». Migración `0057`.
+- Vigía y Agente: `estados_contables`, `sumas_y_saldos`, `cuentas_corrientes` y `generar_asientos`. Ayuda: categoría nueva **Contabilidad** (`contabilidad/contabilidad-general`).
+
+**Qué se probó**
+- `src/modules/contabilidad/contabilidad.test.ts` (7 pruebas: balance, mayor, estados, antigüedad, amortización, diferencia de cambio, cierre).
+- `scripts/pruebas/contabilidad.mts` (50 verificaciones): plan y plantilla, manuales y modelos, automáticos sin duplicar, numeración sin huecos, balance y estados que cierran, mayor, cuentas corrientes, amortización, diferencia de cambio, bloqueo, cierre y reapertura auditada, exportaciones, fuente externa con mapeo, Vigía y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Validar con la contadora las plantillas de plan de cuentas y los criterios de imputación (lista «a validar» del cierre de la noche).

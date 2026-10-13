@@ -20,6 +20,7 @@ export const AUTOMATABLE = {
   recordar_firma_recibos: { label: "Recordar la firma de recibos", group: "Comunicaciones" },
   "conciliacion.ajuste": { label: "Asentar las diferencias de conciliación dentro de la tolerancia", group: "Conciliación" },
   "stock.publicar": { label: "Publicar la existencia en las tiendas conectadas", group: "Stock" },
+  "contabilidad.asientos": { label: "Registrar solos los asientos automáticos (facturas, compras, sueldos, cobros, pagos y bancos)", group: "Contabilidad" },
 } as const;
 type AutomatableAction = keyof typeof AUTOMATABLE;
 const isAutomatable = (a: string): a is AutomatableAction => a in AUTOMATABLE;

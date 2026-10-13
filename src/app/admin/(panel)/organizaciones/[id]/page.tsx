@@ -18,7 +18,9 @@ import {
 import { ActivityTimeline } from "@/components/admin/ActivityTimeline";
 import { ArcaOrgTab } from "@/components/facturacion/ArcaOrgTab";
 import { BankRecTab } from "@/components/conciliacion/views";
+import { ContabilidadTab } from "@/components/contabilidad/ContabilidadTab";
 import { IvaTab } from "@/components/iva/IvaTab";
+import { SystemsTab } from "@/components/nucleo/SystemsTab";
 import { StockScreen } from "@/components/stock/StockScreen";
 import { resolveStock } from "@/modules/stock/scope";
 import { SueldosTab } from "@/components/sueldos/SueldosTab";
@@ -236,6 +238,8 @@ export default async function OrganizacionPage({
         {tab === "vencimientos" && <ObligationsTab orgId={org.id} studioId={studioId} entities={entityOptions} />}
         {tab === "documentos" && <DocumentsTab orgId={org.id} studioId={studioId} error={sp.error} entities={entityOptions} />}
         {tab === "solicitudes" && <RequestsTab orgId={org.id} studioId={studioId} />}
+        {tab === "sistemas" && <SystemsTab orgId={org.id} studioId={studioId} sp={sp} />}
+        {tab === "contabilidad" && <ContabilidadTab orgId={org.id} studioId={studioId} sp={sp} />}
         {tab === "integraciones" && <IntegrationsTab orgId={org.id} studioId={studioId} />}
         {tab === "gastos" && <OrgExpensesTab orgId={org.id} studioId={studioId} />}
         {tab === "rubro" && (

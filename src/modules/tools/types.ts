@@ -35,6 +35,7 @@ export const TOOL_MODULES = {
   indicadores: "Indicadores",
   agente: "Agente contable",
   stock: "Stock",
+  contabilidad: "Contabilidad",
 } as const;
 export type ToolModule = keyof typeof TOOL_MODULES;
 

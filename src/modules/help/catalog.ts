@@ -42,6 +42,7 @@ export const CATEGORIES: { key: string; name: string; icon: string; text: string
   { key: "mensajes", name: "Mensajes", icon: "MessagesSquare", text: "Chatear con tu estudio, tus grupos y tus Flotas." },
   { key: "grupos-de-gastos", name: "Grupos de gastos", icon: "Wallet", text: "Dividir, saldar y rendir." },
   { key: "facturacion", name: "Facturación y ARCA", icon: "Receipt", text: "Facturas, monotributo, calendario y delegación." },
+  { key: "contabilidad", name: "Contabilidad", icon: "BookOpenCheck", text: "Plan de cuentas, asientos, libros, estados y cierre." },
   { key: "empleados", name: "Empleados y sueldos", icon: "IdCard", text: "Legajo, liquidación, recibos con firma y comunicados." },
   { key: "stock", name: "Stock", icon: "Boxes", text: "Productos, tiendas online, conteo e inventario." },
   { key: "cobros", name: "Cobros y honorarios", icon: "HandCoins", text: "Abonos, links de pago y estado de cuenta." },

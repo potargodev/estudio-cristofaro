@@ -4,6 +4,7 @@ import { agendaTools } from "./modulos/agenda";
 import { agenteTools } from "./modulos/agente";
 import { ayudaTools } from "./modulos/ayuda";
 import { conexionesTools } from "./modulos/conexiones";
+import { contabilidadTools } from "./modulos/contabilidad";
 import { cuentasTools } from "./modulos/cuentas";
 import { consultasTools } from "./modulos/consultas";
 import { documentosTools } from "./modulos/documentos";
@@ -37,6 +38,7 @@ export const TOOLS: ToolDefinition[] = [
   ...consultasTools,
   ...estudioTools,
   ...conexionesTools,
+  ...contabilidadTools,
   ...cuentasTools,
   ...gastosTools,
   ...industriasTools,

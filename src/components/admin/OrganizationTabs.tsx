@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { BadgeCheck, Boxes, ChartLine, ClipboardCheck, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
+import { BadgeCheck, BookOpenCheck, Boxes, ChartLine, ClipboardCheck, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
 import Link from "next/link";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
@@ -55,9 +55,11 @@ export const ORG_TABS = [
   { key: "vencimientos", label: "Vencimientos", icon: CalendarClock },
   { key: "documentos", label: "Documentos", icon: FileText },
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare },
+  { key: "sistemas", label: "Sistemas conectados", icon: PlugZap },
   { key: "integraciones", label: "Integraciones", icon: PlugZap },
   { key: "arca", label: "ARCA", icon: Landmark },
   { key: "iva", label: "Libro IVA", icon: ClipboardCheck },
+  { key: "contabilidad", label: "Contabilidad", icon: BookOpenCheck },
   { key: "conciliacion", label: "Conciliación", icon: Scale },
   { key: "sueldos", label: "Sueldos", icon: BadgeCheck },
   { key: "stock", label: "Stock", icon: Boxes },
@@ -83,10 +85,11 @@ const MAIN_TABS: { key: string; label: string; icon: (typeof ORG_TABS)[number]["
   { key: "documentos", label: "Documentos", icon: FileText, href: "documentos", keys: ["documentos"] },
   { key: "solicitudes", label: "Solicitudes", icon: MessagesSquare, href: "solicitudes", keys: ["solicitudes"] },
   { key: "arca", label: "ARCA", icon: Landmark, href: "arca", keys: ["arca", "iva"] },
+  { key: "contabilidad", label: "Contabilidad", icon: BookOpenCheck, href: "contabilidad", keys: ["contabilidad"] },
   { key: "conciliacion", label: "Conciliación", icon: Scale, href: "conciliacion", keys: ["conciliacion"] },
   { key: "sueldos", label: "Sueldos", icon: BadgeCheck, href: "sueldos", keys: ["sueldos"] },
   { key: "stock", label: "Stock", icon: Boxes, href: "stock", keys: ["stock"] },
-  { key: "conexiones", label: "Conexiones", icon: PlugZap, href: "integraciones", keys: ["integraciones"] },
+  { key: "conexiones", label: "Conexiones", icon: PlugZap, href: "sistemas", keys: ["sistemas", "integraciones"] },
 ];
 
 const SUB_LABEL: Partial<Record<OrgTabKey, string>> = { general: "Datos y razones sociales", miembros: "Miembros del portal", arca: "ARCA y facturación" };

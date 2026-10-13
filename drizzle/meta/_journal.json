@@ -393,6 +393,20 @@
       "when": 1791837559059,
       "tag": "0055_porcentajes_bitacora",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1791861716312,
+      "tag": "0056_nucleo_adaptadores",
+      "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1791863374472,
+      "tag": "0057_contabilidad",
+      "breakpoints": true
     }
   ]
 }

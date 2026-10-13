@@ -1151,6 +1151,10 @@ export const external_records = pgTable(
     organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
     legal_entity_id: uuid("legal_entity_id").references(() => legal_entities.id, { onDelete: "set null" }),
     synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
+    /** Cambios hechos en Faro que todavía no volvieron al sistema externo (campo → valor) */
+    faro_edits: jsonb("faro_edits").$type<Record<string, unknown>>(),
+    /** El adaptador no puede escribir este cambio: queda «solo en Faro» (§22.a, regla 4) */
+    local_only: boolean("local_only").notNull().default(false),
   },
   (t) => [
     unique("external_records_key").on(t.connection_id, t.resource, t.external_id),
@@ -4629,9 +4633,16 @@ export const bank_matches = pgTable(
 
 /** Línea de un asiento (importes en centavos) */
 export interface JournalLine {
+  /** Nombre de la cuenta (los asientos viejos de la conciliación solo traen el nombre) */
   account: string;
+  /** Código del plan de cuentas (A1) */
+  code?: string;
+  /** Centavos */
   debit: number;
   credit: number;
+  /** Línea en moneda extranjera: importe original y tipo de cambio usado */
+  foreign?: { currency: string; amount: number; rate: number };
+  detail?: string;
 }
 
 /**
@@ -4654,15 +4665,22 @@ export const journal_entries = pgTable(
     lines: jsonb("lines").$type<JournalLine[]>().notNull(),
     /** borrador | registrado | anulado */
     status: text("status").notNull().default("borrador"),
-    /** conciliacion | manual */
+    /** conciliacion | manual | modelo | factura | compra | sueldos | cobro | pago | amortizacion | diferencia_cambio | ajuste_inflacion | refundicion | cierre | apertura */
     source: text("source").notNull(),
+    /** Número correlativo por organización, al registrar */
+    number: integer("number"),
     source_id: uuid("source_id"),
     created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
     registered_by: uuid("registered_by").references(() => users.id, { onDelete: "set null" }),
     registered_at: timestamp("registered_at", { withTimezone: true }),
     created_at: createdAt(),
   },
-  (t) => [index("journal_entries_org_idx").on(t.organization_id, t.date), index("journal_entries_source_idx").on(t.source, t.source_id)],
+  (t) => [
+    index("journal_entries_org_idx").on(t.organization_id, t.date),
+    index("journal_entries_source_idx").on(t.source, t.source_id),
+    // Un asiento automático por origen (idempotencia al generar); los anulados no cuentan
+    uniqueIndex("journal_entries_auto_idx").on(t.organization_id, t.source, t.source_id).where(sql`source_id is not null and status <> 'anulado'`),
+  ],
 );
 
 // ───────────── §2.q · Análisis del Libro IVA ─────────────
@@ -4981,3 +4999,217 @@ export const stock_publications = pgTable(
   (t) => [index("stock_publications_store_idx").on(t.store_id, t.created_at)],
 );
 
+
+// ───────────── A0 · Núcleo propio y adaptadores (principios §22 y §22.a) ─────────────
+
+/** Fuente de verdad por organización y área: «faro» o la clave de un adaptador. Nunca los dos (§22.a, regla 1) */
+export const org_sources = pgTable(
+  "org_sources",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    /** contabilidad | facturacion | compras | sueldos | stock */
+    area: text("area").notNull(),
+    /** faro | tango | xubio | contabilium | archivos | … */
+    source: text("source").notNull().default("faro"),
+    set_by: uuid("set_by").references(() => users.id, { onDelete: "set null" }),
+    set_at: timestamp("set_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("org_sources_area_idx").on(t.organization_id, t.area)],
+);
+
+/** Estado de un adaptador en una organización (pausa, desconexión y última sincronización) */
+export const org_adapters = pgTable(
+  "org_adapters",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    adapter: text("adapter").notNull(),
+    /** activo | pausado | desconectado */
+    status: text("status").notNull().default("activo"),
+    last_sync_at: timestamp("last_sync_at", { withTimezone: true }),
+    last_result: text("last_result"),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("org_adapters_idx").on(t.organization_id, t.adapter)],
+);
+
+/** Conflictos del espejo: los dos lados modificaron lo mismo; una persona decide (§22.a, regla 3) */
+export const adapter_conflicts = pgTable(
+  "adapter_conflicts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    adapter: text("adapter").notNull(),
+    record_id: uuid("record_id")
+      .notNull()
+      .references(() => external_records.id, { onDelete: "cascade" }),
+    fields: jsonb("fields").$type<{ field: string; faro: unknown; externo: unknown }[]>().notNull(),
+    incoming: jsonb("incoming").notNull(),
+    /** abierto | resuelto */
+    status: text("status").notNull().default("abierto"),
+    /** faro | externo */
+    resolution: text("resolution"),
+    resolved_by: uuid("resolved_by").references(() => users.id, { onDelete: "set null" }),
+    resolved_at: timestamp("resolved_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("adapter_conflicts_org_idx").on(t.organization_id, t.status), uniqueIndex("adapter_conflicts_open_idx").on(t.record_id).where(sql`status = 'abierto'`)],
+);
+
+/** Asistente «Pasate a Faro»: traer la historia, controlar totales, revisar, cambiar la fuente y desconectar */
+export const source_migrations = pgTable(
+  "source_migrations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    adapter: text("adapter").notNull(),
+    /** traer | controlar | revisar | cambiar | hecha | cancelada */
+    step: text("step").notNull().default("traer"),
+    /** Control de totales por entidad: externo, en Faro y diferencia */
+    totals: jsonb("totals").$type<MigrationTotals>(),
+    areas: jsonb("areas").$type<string[]>().notNull().default([]),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("source_migrations_org_idx").on(t.organization_id, t.created_at)],
+);
+
+export type MigrationTotals = { entity: string; external: { count: number; amount: number }; faro: { count: number; amount: number }; ok: boolean }[];
+
+// ───────────── A1 · Contabilidad general nativa ─────────────
+
+/** Plan de cuentas por organización */
+export const ledger_accounts = pgTable(
+  "ledger_accounts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    code: text("code").notNull(),
+    name: text("name").notNull(),
+    /** activo | pasivo | patrimonio | ingreso | egreso */
+    kind: text("kind").notNull(),
+    /** Recibe imputaciones (las cuentas de título no) */
+    imputable: boolean("imputable").notNull().default(true),
+    /** Monetaria o no monetaria para el ajuste por inflación (sugerida y editable) */
+    monetary: boolean("monetary").notNull().default(true),
+    currency: text("currency").notNull().default("ARS"),
+    /** Rol para los asientos automáticos (deudores, ventas, iva_debito, …) */
+    role: text("role"),
+    /** Código de la cuenta en cada sistema conectado (tango, xubio, contabilium, …) */
+    external_codes: jsonb("external_codes").$type<Record<string, string>>().notNull().default({}),
+    active: boolean("active").notNull().default(true),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("ledger_accounts_code_idx").on(t.organization_id, t.code), index("ledger_accounts_role_idx").on(t.organization_id, t.role)],
+);
+
+/** Configuración contable de la organización: plantilla, cierre del ejercicio y bloqueo de períodos */
+export const accounting_settings = pgTable("accounting_settings", {
+  organization_id: uuid("organization_id")
+    .primaryKey()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  template: text("template").notNull().default("general"),
+  /** Mes y día de cierre del ejercicio (MM-DD) */
+  year_end: text("year_end").notNull().default("12-31"),
+  /** Nada con fecha hasta acá se puede crear, registrar ni anular */
+  locked_until: date("locked_until"),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});
+
+/** Ejercicios con su cierre y reapertura */
+export const fiscal_years = pgTable(
+  "fiscal_years",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    start: date("start").notNull(),
+    end: date("end").notNull(),
+    /** abierto | cerrado */
+    status: text("status").notNull().default("abierto"),
+    closing_entries: jsonb("closing_entries").$type<string[]>().notNull().default([]),
+    opening_entry: uuid("opening_entry"),
+    closed_by: uuid("closed_by").references(() => users.id, { onDelete: "set null" }),
+    closed_at: timestamp("closed_at", { withTimezone: true }),
+    reopened_at: timestamp("reopened_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("fiscal_years_start_idx").on(t.organization_id, t.start)],
+);
+
+/** Modelos de asiento (asientos frecuentes con importes opcionales) */
+export const journal_templates = pgTable("journal_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studio_id: uuid("studio_id")
+    .notNull()
+    .references(() => studios.id, { onDelete: "cascade" }),
+  organization_id: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  concept: text("concept").notNull(),
+  lines: jsonb("lines").$type<{ code: string; side: "debe" | "haber"; amount: number | null }[]>().notNull(),
+  created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  created_at: createdAt(),
+});
+
+/** Bienes de uso con su amortización lineal */
+export const fixed_assets = pgTable(
+  "fixed_assets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    /** Cuenta del bien (Rodados, Muebles y útiles, …) */
+    account_code: text("account_code").notNull(),
+    acquired_on: date("acquired_on").notNull(),
+    /** Centavos */
+    cost: bigint("cost", { mode: "number" }).notNull(),
+    residual: bigint("residual", { mode: "number" }).notNull().default(0),
+    life_months: integer("life_months").notNull(),
+    disposed_on: date("disposed_on"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("fixed_assets_org_idx").on(t.organization_id)],
+);

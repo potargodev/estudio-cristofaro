@@ -441,6 +441,47 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 
 **Módulos nuevos** (§2): `agent` (Agente contable, Avanzado; consultas en Profesional), `payroll_calc` (Liquidación de sueldos, Profesional y Avanzado) y `stock` (Stock, Profesional y Avanzado, se activa por organización). La lectura por ítem, la conciliación con tolerancias, el análisis del Libro IVA y las leyendas amplían `smart_docs`, `bank_rec` y `arca`.
 
+### Ampliación de §2.q · núcleo, contabilidad y lo que faltaba (octubre 2026)
+
+§2.q ya está construida. Esta ampliación la apoya sobre el **núcleo propio con adaptadores** (principios §22 y §22.a) y suma la contabilidad general, el ajuste por inflación, los reportes de cierre, el envío por WhatsApp y la recategorización de la cartera.
+
+#### Núcleo propio y capa de adaptadores (A0)
+- **Núcleo como fuente única:** organizaciones y CUIT, clientes y proveedores, plan de cuentas y asientos, comprobantes emitidos y recibidos (ítems, alícuotas, percepciones y retenciones), cobros y pagos, bancos y movimientos, empleados y liquidaciones, productos y stock. Pantallas, Vigía, Agente, flujos y reportes trabajan siempre sobre el núcleo.
+- **Interfaz única de adaptador** (`src/modules/adapters`): cada sistema declara, por entidad, si **lee, crea, modifica, anula o recibe avisos**, y qué operaciones admite: **sincronizar, publicar, reconciliar y desconectar**. Un registro de adaptadores da el estado por organización.
+- **Adaptadores sobre la interfaz:** Tango (API y conector local), Xubio, archivos de Tango, Holistor y Bejerman, Google Drive, Mercado Pago, las tiendas de §2.q y **Contabilium** (nuevo, contra un simulador; la API real queda en pendientes y los archivos son el respaldo). Cómo escribir uno nuevo: `docs/adaptadores.md`.
+- **Fuente de verdad por organización y por área** (contabilidad, facturación, compras, sueldos y stock): Faro o un sistema conectado, **nunca los dos**. Las tiendas y Mercado Pago alimentan una parte sin ser dueños.
+- **Pantalla «Sistemas conectados»** en la ficha (Conexiones): fuente de verdad por área; por sistema, su estado, qué espeja, qué escribe, la última sincronización y los conflictos; botones Conectar, Sincronizar, Publicar, Pausar y Desconectar.
+- **Espejo normalizado** con origen, ID externo, fecha, estado de validación y registro original, idempotente por ID externo. La escritura de vuelta sigue las capacidades del adaptador; lo demás queda «solo en Faro». Los **conflictos** (los dos lados cambiaron lo mismo) no se pisan: decide una persona.
+- **Desconectar no pierde nada.** Asistente **«Pasate a Faro»**: conectar → traer la historia → controlar los totales contra el sistema de origen → revisar → cambiar la fuente de verdad → desconectar.
+
+#### Contabilidad general nativa (A1)
+- Plan de cuentas por organización con **plantillas por rubro** y **mapeo** a las cuentas de cada sistema conectado.
+- **Asientos automáticos** desde facturas emitidas, compras (con percepciones), sueldos, cobros y pagos, y conciliación (unificados con los asientos de ajuste de la conciliación). Asientos manuales y **modelos**. Cada asiento automático guarda su origen.
+- **Libro diario, mayor, balance de sumas y saldos y estados contables** (situación patrimonial y resultados), exportables a Excel y PDF.
+- **Bienes de uso y amortizaciones**; **cuentas corrientes** de clientes y proveedores con antigüedad de saldos; **moneda extranjera** con diferencias de cambio.
+- **Cierre y reapertura** de ejercicio con **bloqueo de períodos** (reabrir queda auditado).
+- Si la fuente de verdad contable es un sistema externo, se espeja y se publica por su adaptador.
+
+#### Ajuste por inflación contable (A2)
+- Moneda homogénea según las normas contables vigentes (FACPCE); método e índices verificados con fuentes o «a validar».
+- **Índices** automáticos desde una fuente configurable en Faro Manager, con carga manual de respaldo.
+- Partidas **monetarias y no monetarias** con sugerencia editable, **reexpresión**, **RECPAM** y asiento de ajuste como borrador.
+- Reporte **nominal y homogéneo** uno al lado del otro, en un clic, y **papel de trabajo** exportable (partida, índice, coeficiente, valor reexpresado y asiento).
+- El Agente puede «ajustá por inflación el ejercicio de X».
+
+#### Reportes de cierre de sueldos y bancos (A3)
+- Reportes de la liquidación en Excel y PDF (también pedibles al Agente): listado de empleados; conceptos totalizados por período, área y convenio; control de liquidación (bruto, descuentos, aportes, contribuciones y neto, con las diferencias contra el período anterior marcadas); acreditación con banco, CBU y monto; costo laboral.
+- **Asiento de sueldos** automático.
+- Conciliación: identifica los **impuestos bancarios** (débitos y créditos) y las **retenciones SIRCREB** para su cómputo.
+
+#### Enviar cualquier comprobante por WhatsApp (A4)
+- Botón **«Enviar por WhatsApp»** en facturas, notas, presupuestos, remitos, recibos de cobranza, órdenes de pago, estados de cuenta, recibos de sueldo y listas de precios, con el teléfono detectado y un **link de descarga público, revocable y con vencimiento**.
+- Hoy con wa.me; con el número de Meta, el mismo botón manda por la API con plantilla y acuses (elección automática). Envío en lote y registro.
+
+#### Recategorización del monotributo de toda la cartera (A5)
+- Vista del estudio con todos los monotributistas: facturación de 12 meses, parámetros (con carga rápida de los faltantes), categoría actual y sugerida, si **sube, baja, se mantiene o queda excluido**, y la nueva cuota.
+- Revisión en lote, marca **«recategorizado»** con comprobante y aviso por la app, mail y WhatsApp. Recordatorio y tareas automáticas, y como tarea y rutina del Agente. Escala de Faro Manager («a validar» si no está validada). **Decide el contador.**
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |

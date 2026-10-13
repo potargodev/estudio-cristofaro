@@ -6,7 +6,7 @@ import { Card, EmptyState, MetricCard, SubmitButton, Table, ToneBadge, ViewSwitc
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate, formatMoney, todayAR } from "@/lib/format";
 import { getSiteUrl } from "@/lib/runtime-config";
-import { PLATFORMS } from "@/modules/stock/adapters";
+import { PLATFORMS } from "@/modules/stock/platforms";
 import { MOVE_LABEL } from "@/modules/stock/core";
 import type { ResolvedStock } from "@/modules/stock/scope";
 import { cmvOf, deposits, inventory, listMovements, listProducts, listStores, listUnlinked, stockEnabled, storeView, unlinkedPurchases } from "@/modules/stock/server";

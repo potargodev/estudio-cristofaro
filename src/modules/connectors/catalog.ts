@@ -74,6 +74,22 @@ export const CONNECTORS: ConnectorDefinition[] = [
     docs: "https://xubio.com/API/documentation/index.html",
   },
   {
+    key: "contabilium",
+    name: "Contabilium",
+    description: "API REST con token: clientes, comprobantes de venta y compras. Escribe clientes y comprobantes de vuelta.",
+    via: "api",
+    availability: "beta",
+    logo: { text: "C", bg: "#2b6cb0", fg: "#ffffff" },
+    credentials: [
+      { key: "client_id", label: "Client ID", type: "text", required: true, help: "En Contabilium: Configuración → API." },
+      { key: "client_secret", label: "Client Secret", type: "password", required: true },
+    ],
+    reads: ["Clientes", "Comprobantes de venta", "Compras"],
+    writes: ["Clientes", "Comprobantes de venta"],
+    perOrganization: true,
+    href: "/admin/configuracion/conexiones/contabilium",
+  },
+  {
     key: "google_drive",
     name: "Google Drive",
     description: "Una carpeta por organización para recibir comprobantes. Lo que el cliente suba entra a sus documentos en Faro.",
@@ -120,7 +136,6 @@ export const CONNECTORS: ConnectorDefinition[] = [
     [
       ["alegra", "Alegra", "API REST de Alegra: facturación y contabilidad.", "api", "A", "#00b19d"],
       ["colppy", "Colppy", "API de Colppy: clientes, comprobantes y contabilidad.", "api", "C", "#ff6b00"],
-      ["contabilium", "Contabilium", "API de Contabilium: facturación y gestión.", "api", "C", "#2b6cb0"],
       ["finnegans", "Finnegans", "API de Finnegans GO: ERP y contabilidad.", "api", "F", "#5a2d82"],
       ["odoo", "Odoo", "JSON-RPC de Odoo: contactos, facturas y asientos.", "api", "O", "#714b67"],
       ["mercado_pago", "Mercado Pago", "Cobros y links de pago (con aprobación humana).", "api", "MP", "#00b1ea"],

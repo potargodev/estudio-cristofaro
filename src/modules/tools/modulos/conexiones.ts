@@ -4,7 +4,7 @@ import { z } from "zod/v4";
 import { getDb } from "@/db";
 import { external_records, organizations, tango_records } from "@/db/schema";
 import { TANGO_PROCESS } from "@/lib/integrations/tango/constants";
-import { defineTool } from "../types";
+import { defineTool, ToolError } from "../types";
 import { limite, orgFilter, uuid } from "./helpers";
 
 const RECURSOS = ["clientes", "comprobantes_venta", "comprobantes_compra", "asientos", "archivos"] as const;
@@ -171,6 +171,55 @@ export const conexionesTools = [
         nombres_para_revisar: rules.filter((r) => r.status === "sugerida").slice(0, 20).map((r) => ({ como_viene: r.examples, sugerido: r.standard })),
         enlace: "/admin/configuracion/conexiones/tango/sincronizacion",
       };
+    },
+  }),
+  defineTool<{ organizacion_id: string }, unknown>({
+    name: "sistemas_conectados",
+    title: "Sistemas conectados de una organización",
+    description: "Qué sistemas externos tiene conectados una organización (Tango, Xubio, Contabilium, archivos, tiendas, Mercado Pago), quién manda en cada área (contabilidad, facturación, compras, sueldos y stock), qué espeja y qué escribe cada uno, su última sincronización y los conflictos abiertos.",
+    module: "conexiones",
+    level: "lectura",
+    roles: ["dueno", "contador", "colaborador"],
+    input: z.object({ organizacion_id: uuid("ID de la organización") }),
+    organizationOf: async (input) => input.organizacion_id,
+    async handler(input, ctx) {
+      const o = await ctx.organization(input.organizacion_id);
+      const { orgAdapters, sourcesOf, conflictsOf } = await import("@/modules/adapters/server");
+      const { mirrorsAndWrites, ENTITIES, STATUS_LABEL } = await import("@/modules/adapters/types");
+      const scope = { studioId: ctx.studioId, organizationId: o.id };
+      const [adapters, sources, conflicts] = await Promise.all([orgAdapters(scope), sourcesOf(scope), conflictsOf(scope)]);
+      const name = (k: string) => (k === "faro" ? "Faro" : (adapters.find((a) => a.def.key === k)?.def.name ?? k));
+      return {
+        organizacion: o.name,
+        fuente_de_verdad: Object.fromEntries(Object.entries(sources).map(([area, k]) => [area, name(k)])),
+        sistemas: adapters.map((a) => {
+          const mw = mirrorsAndWrites(a.def);
+          return { sistema: a.def.name, clave: a.def.key, estado: STATUS_LABEL[a.state.status], espeja: mw.mirrors.map((e) => ENTITIES[e]), escribe: mw.writes.map((e) => ENTITIES[e]), registros: a.state.records, ultima_sincronizacion: a.state.lastSync?.toISOString() ?? null, conflictos: a.state.conflicts };
+        }),
+        conflictos_abiertos: conflicts.map((c) => ({ sistema: name(c.adapter), que: c.title, campos: c.fields })),
+        enlace: `/admin/organizaciones/${o.id}?tab=sistemas`,
+      };
+    },
+  }),
+  defineTool<{ organizacion_id: string; sistema: string }, unknown>({
+    name: "sincronizar_sistema",
+    title: "Sincronizar un sistema conectado",
+    description: "Trae lo nuevo de un sistema conectado (Xubio, Contabilium, Tango, Google Drive o una tienda) al núcleo de Faro, sin pisar nada: si Faro y el sistema cambiaron lo mismo, queda un conflicto para que decida una persona.",
+    module: "conexiones",
+    level: "escritura",
+    roles: ["dueno", "contador"],
+    input: z.object({ organizacion_id: uuid("ID de la organización"), sistema: z.string().min(2).max(40).describe("tango, xubio, contabilium, google_drive o tienda_<plataforma>") }),
+    organizationOf: async (input) => input.organizacion_id,
+    async handler(input, ctx) {
+      const o = await ctx.organization(input.organizacion_id);
+      const { runOp, AdapterError } = await import("@/modules/adapters/server");
+      try {
+        const r = await runOp({ studioId: ctx.studioId, organizationId: o.id }, ctx.actor, input.sistema, "sincronizar");
+        return { organizacion: o.name, ok: r.ok, resultado: r.message };
+      } catch (e) {
+        if (e instanceof AdapterError) throw new ToolError(e.message, "entrada_invalida");
+        throw e;
+      }
     },
   }),
 ];

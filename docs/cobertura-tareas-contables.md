@@ -70,19 +70,19 @@
 
 | Tarea | Estado | Dónde / nota |
 |---|---|---|
-| Plan de cuentas | **Planificado (NU-1)** | Por organización, con plantillas por rubro. |
-| Libro diario y asientos (automáticos y manuales) | **Planificado (NU-1)** | |
-| Mayor y balance de sumas y saldos | **Planificado (NU-1)** | |
+| Plan de cuentas | **Cubierto** | Ficha → Contabilidad → Plan: plantilla por rubro (general, comercio, industria, gastronomía, agro), cuentas propias y mapeo a Tango/Xubio/Contabilium (A1). |
+| Libro diario y asientos (automáticos y manuales) | **Cubierto** | Automáticos de facturas, compras con percepciones, sueldos, cobros, pagos e impuestos bancarios, con su origen; manuales y modelos; numeración sin huecos; Excel y PDF (A1). |
+| Mayor y balance de sumas y saldos | **Cubierto** | Con Excel y PDF (A1). |
 | Inventario y balances (libro) | **Planificado (NU-1, NU-9)** | El inventario de mercadería sale de Stock. |
-| Estados contables (situación patrimonial, resultados, evolución del PN, flujo de efectivo, notas y anexos) | **Planificado (NU-1)** (parcial) | El pedido incluye situación patrimonial y resultados. Faltan evolución del PN, flujo de efectivo, notas y anexos: **no contemplado**. |
-| Cierre y reapertura de ejercicio | **Planificado (NU-1)** | |
+| Estados contables (situación patrimonial, resultados, evolución del PN, flujo de efectivo, notas y anexos) | **Cubierto** (parcial) | Situación patrimonial y resultados, con control de cuadre, en Excel y PDF (A1). Faltan evolución del PN, flujo de efectivo, notas y anexos: **no contemplado**. |
+| Cierre y reapertura de ejercicio | **Cubierto** | Refundición, cierre, apertura y bloqueo del período; reapertura con motivo, auditada (A1). |
 | Ajuste por inflación contable (RT 6) | **Planificado (NU-2)** | Método e índices "a validar". |
 | Conciliaciones bancarias | **Cubierto / Planificado (NU-5)** | Existe; se suman tolerancias y asientos de ajuste. |
-| Conciliación de cuentas de clientes y proveedores (cuentas corrientes) | **No contemplado** | Saldos y antigüedad de deudores y acreedores. |
-| Bienes de uso y amortizaciones | **No contemplado** | Habitual en el cierre. |
-| Valuación de moneda extranjera y diferencias de cambio | **No contemplado** | |
+| Conciliación de cuentas de clientes y proveedores (cuentas corrientes) | **Cubierto** | Saldos y antigüedad de deudores y acreedores, en Excel y PDF (A1). |
+| Bienes de uso y amortizaciones | **Cubierto** | Amortización lineal y asiento del período, sin repetir (A1). |
+| Valuación de moneda extranjera y diferencias de cambio | **Cubierto** | Cuentas en dólares y asiento de diferencia de cambio en borrador (A1). |
 | Previsiones (incobrables, contingencias) | **No contemplado** | |
-| Sincronización con Tango, Xubio y Contabilium | **Cubierto (Tango, Xubio) / Planificado (NU-0)** | Núcleo con adaptadores. |
+| Sincronización con Tango, Xubio y Contabilium | **Cubierto** | Núcleo con adaptadores (A0): una fuente de verdad por área, espejo idempotente, escritura según capacidades, conflictos sin pisar y «Pasate a Faro» con control de totales. Contabilium contra simulador hasta tener credenciales. |
 | Firma del balance y dictamen del auditor | **Fuera de alcance** | Matriculado (§1.b). Faro prepara la información. |
 
 ## 4. Sueldos y laboral
@@ -187,7 +187,7 @@ Ordenados por cuánto aparecen en la práctica de un estudio de pymes (estimaci�
 5. **Planes de pago y moratorias**.
 6. **Retenciones y percepciones practicadas** (SICORE/SIRE) para clientes que son agentes.
 7. **Personal de casas particulares**.
-8. **Contabilidad completa del cierre**: bienes de uso y amortizaciones, cuentas corrientes, moneda extranjera, previsiones, estados contables completos con notas y anexos.
+8. **Contabilidad completa del cierre**: previsiones y estados contables completos con notas y anexos (bienes de uso, cuentas corrientes y moneda extranjera ya están, A1).
 9. **Certificado MiPyME**.
 10. **Societario**: libros, actas, IGJ, beneficiarios finales.
 11. **Tasas municipales e impuesto de sellos**.

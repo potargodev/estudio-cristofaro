@@ -2,7 +2,8 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { connections, legal_entities } from "@/db/schema";
-import { digitsCuit, endLog, readCredentials, startLog, upsertExternal, type Connection, type ExternalRow } from "../store";
+import { upsertMirror } from "@/modules/adapters/mirror";
+import { digitsCuit, endLog, readCredentials, startLog, type Connection, type ExternalRow } from "../store";
 import { xubio, XubioError, type XubioCredentials } from "./client";
 
 // Sincronización de Xubio → registros externos.
@@ -122,9 +123,9 @@ export async function syncXubio(conn: Connection, actorId: string, days = 90) {
         }),
       ),
     ].filter((r) => r.externalId && r.externalId !== "undefined");
-    const saved = await upsertExternal(conn, "xubio", rows);
+    const { saved, conflicts } = await upsertMirror(conn, "xubio", rows);
     const n = (k: number, one: string, many: string) => `${k} ${k === 1 ? one : many}`;
-    const message = `Sincronizado: ${n(clientes.length, "cliente", "clientes")}, ${n(ventas.length, "comprobante de venta", "comprobantes de venta")}, ${n(compras.length, "de compra", "de compra")} y ${n(asientos.length, "asiento", "asientos")} (últimos ${days} días).${orgId && validation === "con_error" ? " Atención: la CUIT de la empresa en Xubio no coincide con ninguna razón social de la organización." : ""}`;
+    const message = `Sincronizado: ${n(clientes.length, "cliente", "clientes")}, ${n(ventas.length, "comprobante de venta", "comprobantes de venta")}, ${n(compras.length, "de compra", "de compra")} y ${n(asientos.length, "asiento", "asientos")} (últimos ${days} días).${orgId && validation === "con_error" ? " Atención: la CUIT de la empresa en Xubio no coincide con ninguna razón social de la organización." : ""}${conflicts ? ` ${conflicts} ${conflicts === 1 ? "conflicto" : "conflictos"} para revisar en Sistemas conectados.` : ""}`;
     await endLog(log, conn.id, true, message, saved);
     return { ok: true, message, records: saved };
   } catch (error) {

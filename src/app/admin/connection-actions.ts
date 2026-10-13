@@ -13,7 +13,9 @@ import { parseExport } from "@/modules/connectors/archivos/parse";
 import { FIELD_LABEL, getTemplate, type MappingField } from "@/modules/connectors/archivos/templates";
 import { ensureFolders, getDriveConnection, syncDrive } from "@/modules/connectors/google-drive/drive";
 import { cleanPrefix, listRemoteTools, settingsOf, type ToolPermission } from "@/modules/connectors/mcp-externo/client";
-import { connectionOfStudio, endLog, readCredentials, sealCredentials, startLog, upsertExternal } from "@/modules/connectors/store";
+import { upsertMirror } from "@/modules/adapters/mirror";
+import { connectionOfStudio, endLog, readCredentials, sealCredentials, startLog } from "@/modules/connectors/store";
+import { syncContabilium, testContabilium } from "@/modules/connectors/contabilium/sync";
 import { syncXubio, testXubio } from "@/modules/connectors/xubio/sync";
 import { assertPublicUrl } from "@/lib/safe-fetch";
 import { internalPath } from "@/lib/paths";
@@ -83,6 +85,60 @@ export async function syncXubioAction(fd: FormData) {
   await audit({ studioId: admin.studioId, organizationId: conn!.organization_id, actor: admin, action: "conexion.sincronizar", entityType: "conexion", entityId: conn!.id, result: r.ok ? "ok" : "error", metadata: { conector: "xubio", registros: r.records, dias: days } });
   revalidatePath("/admin/configuracion/conexiones", "layout");
   msg(`${XUBIO}#c-${conn!.id}`, r.ok, r.message);
+}
+
+// ───────────── Contabilium (A0) ─────────────
+
+const CONTABILIUM = "/admin/configuracion/conexiones/contabilium";
+
+export async function saveContabilium(fd: FormData) {
+  const admin = await requireOwnAccount(requireAdmin());
+  if (!encryptionEnabled()) msg(CONTABILIUM, false, "Falta ENCRYPTION_KEY en el servidor.");
+  const id = s(fd, "id");
+  const current = id ? await connectionOfStudio(id, admin.studioId, "contabilium") : null;
+  if (id && !current) msg(CONTABILIUM, false, "Esa conexión no existe.");
+  const orgId = s(fd, "organization_id");
+  const org = orgId ? await studioOrganization(orgId, admin.studioId) : null;
+  if (orgId && !org) msg(CONTABILIUM, false, "Esa organización no es del estudio.");
+  const prev = current ? readCredentials<{ client_id: string; client_secret: string }>(current) : {};
+  const clientId = s(fd, "client_id") ?? prev.client_id;
+  const secret = s(fd, "client_secret") ?? prev.client_secret;
+  if (!clientId || !secret) msg(CONTABILIUM, false, "Completá el Client ID y el Client Secret de la API.");
+  const values = {
+    name: (s(fd, "name") ?? (org ? `Contabilium · ${org.name}` : "Contabilium del estudio")).slice(0, 80),
+    organization_id: org?.id ?? null,
+    credentials_enc: sealCredentials({ client_id: clientId!, client_secret: secret! }),
+  };
+  const db = getDb();
+  let connId = current?.id;
+  if (current) await db.update(connections).set(values).where(eq(connections.id, current.id));
+  else connId = (await db.insert(connections).values({ ...values, studio_id: admin.studioId, connector: "contabilium", created_by: admin.id }).returning({ id: connections.id }))[0].id;
+  await audit({ studioId: admin.studioId, organizationId: org?.id ?? null, actor: admin, action: current ? "conexion.editar" : "conexion.crear", entityType: "conexion", entityId: connId!, metadata: { conector: "contabilium" } });
+  const conn = await connectionOfStudio(connId!, admin.studioId, "contabilium");
+  const r = await testContabilium(conn!, admin.id);
+  revalidatePath("/admin/configuracion/conexiones", "layout");
+  msg(`${CONTABILIUM}#c-${connId}`, r.ok, r.message);
+}
+
+export async function testContabiliumAction(fd: FormData) {
+  const admin = await requireAdmin();
+  const conn = await connectionOfStudio(s(fd, "id"), admin.studioId, "contabilium");
+  if (!conn) msg(CONTABILIUM, false, "Esa conexión no existe.");
+  const r = await testContabilium(conn!, admin.id);
+  await audit({ studioId: admin.studioId, organizationId: conn!.organization_id, actor: admin, action: "conexion.probar", entityType: "conexion", entityId: conn!.id, result: r.ok ? "ok" : "error", metadata: { conector: "contabilium" } });
+  revalidatePath("/admin/configuracion/conexiones", "layout");
+  msg(`${CONTABILIUM}#c-${conn!.id}`, r.ok, r.message);
+}
+
+export async function syncContabiliumAction(fd: FormData) {
+  const admin = await requireAdmin();
+  const conn = await connectionOfStudio(s(fd, "id"), admin.studioId, "contabilium");
+  if (!conn) msg(CONTABILIUM, false, "Esa conexión no existe.");
+  const days = Math.min(3650, Math.max(7, Number(s(fd, "days") ?? 90) || 90));
+  const r = await syncContabilium(conn!, admin.id, days);
+  await audit({ studioId: admin.studioId, organizationId: conn!.organization_id, actor: admin, action: "conexion.sincronizar", entityType: "conexion", entityId: conn!.id, result: r.ok ? "ok" : "error", metadata: { conector: "contabilium", registros: r.records, conflictos: r.conflicts, dias: days } });
+  revalidatePath("/admin/configuracion/conexiones", "layout");
+  msg(`${CONTABILIUM}#c-${conn!.id}`, r.ok, r.message);
 }
 
 export async function deleteConnection(fd: FormData) {
@@ -266,7 +322,7 @@ export async function importExportFile(_prev: ImportState, fd: FormData): Promis
     (await db.insert(connections).values({ studio_id: admin.studioId, connector: "archivos", name, organization_id: org?.id ?? null, status: "activa", settings: { system: template.system }, created_by: admin.id }).returning())[0];
   const log = await startLog(conn.id, "import", admin.id);
   const rows = org && template.resource !== "clientes" ? parsed.rows.map((r) => ({ ...r, organizationId: org.id })) : parsed.rows;
-  const imported = await upsertExternal(conn, template.system, rows);
+  const { saved: imported } = await upsertMirror(conn, template.system, rows);
   const [{ n: matched }] = await db
     .select({ n: sql<number>`count(*)::int` })
     .from(external_records)

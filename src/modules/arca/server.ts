@@ -544,6 +544,8 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
       await import("@/modules/stock/server").then((m) => m.onInvoiceAuthorized(r)).catch((e) => console.error("[stock] factura", (e as Error).message));
       // Una sola verdad con Tango: lo facturado en Faro se escribe allá (si el estudio lo habilitó)
       void syncToTango(scope.studioId, inv.id);
+      // Núcleo (A0): si la facturación la manda otro sistema que acepta altas, el comprobante vuelve allá
+      void import("@/modules/adapters/server").then((m) => m.afterInvoice({ studioId: scope.studioId, organizationId: scope.organizationId })).catch((e) => console.error("[nucleo] factura", (e as Error).message));
       return r;
     }
     const detail = [...res.errors, ...res.observations].map((o) => `${o.code}: ${o.msg}`).join(" · ") || "ARCA rechazó el comprobante.";
