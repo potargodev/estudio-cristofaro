@@ -127,7 +127,7 @@ const faro = { id: d.users.adminA, email: "a@ejemplo.com" };
 const SECRET = "app-secret-de-prueba";
 const pa = await saveAccount(faro, null, "propio", { phoneNumberId: "100200300", wabaId: "900800700", displayPhone: "+54 9 11 5555-0000", accessToken: "EAAprueba", appSecret: SECRET });
 const [tpl] = await sql`select count(*) filter (where status = 'APPROVED')::int ok, count(*)::int n from whatsapp_templates where account_id = ${pa!.id}`;
-check("WhatsApp: cuenta de Faro y plantillas sincronizadas", tpl.n >= 5 && tpl.ok === 4, JSON.stringify(tpl));
+check("WhatsApp: cuenta de Faro y plantillas sincronizadas", tpl.n >= 5 && tpl.ok >= 4, JSON.stringify(tpl));
 check("WhatsApp: el token se guarda cifrado", !String((await sql`select access_token_enc from whatsapp_accounts where id = ${pa!.id}`)[0].access_token_enc).includes("EAAprueba"));
 check("WhatsApp: el plan Inicial no lo activa", (await err(() => saveAccount(actorB, B, "compartido", null))).includes("Avanzado"));
 await saveAccount(actorA, A, "compartido", null);

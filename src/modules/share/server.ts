@@ -158,12 +158,12 @@ const messageFor = (intro: string, title: string, url: string, expires: Date) =>
  * (con acuses de entrega y lectura); si no, o si la API falla, deja el
  * enlace wa.me listo para abrir. Cada envío queda registrado (con el lote).
  */
-export async function sendByWhatsApp(user: StaffUser, i: { type: ShareType; ids: string[]; phone: string; intro?: string; days?: number }): Promise<SendResult> {
+export async function sendByWhatsApp(user: StaffUser, i: { type: ShareType; ids: string[]; phone: string; intro?: string; days?: number; batchId?: string }): Promise<SendResult> {
   const phone = normalizePhone(i.phone);
   if (!phone) throw new ShareError("Revisá el número: con código de área, por ejemplo 11 2345 6789.");
   const ids = [...new Set(i.ids)].slice(0, 200);
   if (!ids.length) throw new ShareError("Elegí al menos un documento.");
-  const batchId = randomUUID();
+  const batchId = i.batchId ?? randomUUID();
   const { sendDocument } = await import("@/modules/whatsapp/server");
   const items: SendResult["items"] = [];
   let api = false;

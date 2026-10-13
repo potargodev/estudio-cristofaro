@@ -129,17 +129,17 @@
 | Factura M | **Planificado (FA)** | |
 | Factura de Crédito Electrónica MiPyME (FCE) | **Planificado (FA)** | |
 | Recibos, presupuestos y remitos | **Planificado (FA)** | |
-| Facturación recurrente y masiva por lote | **Planificado (FA)** | |
-| Panel de facturación con muchas CUIT | **Planificado (FA)** | |
+| Facturación recurrente y masiva por lote | **Cubierto** (lote) / **Planificado (FA)** (recurrente) | Lotes desde Excel, CSV o pegado, validación por fila, cola con progreso, reintentos e idempotencia, informe, ZIP y envío (B2). |
+| Panel de facturación con muchas CUIT | **Cubierto** | Operación → Facturación (B1). |
 | Puntos de venta y numeración desde ARCA | **Cubierto** | F3. |
 | CAE y QR | **Cubierto** | F3. |
-| Contingencia de ARCA caída (cola de emisión) | **Planificado (FA)** | |
+| Contingencia de ARCA caída (cola de emisión) | **Cubierto** | Cola con número previsto, emisión en orden al volver, aviso, estado de ARCA con historial (B5). |
 | Comprobantes recibidos (lectura, validación y buzón de la empresa) | **Cubierto / Planificado (FA, NU-4)** | Lectura existe; buzón e ítems por percepción, planificados. |
 | Constatación de CAE de terceros (WSCDC) | **Cubierto** | F6. |
 | Consulta de padrón al facturar | **Cubierto / Planificado (FA)** | |
 | Facturación de ventas de tiendas online | **Planificado (FA, NU-9)** | |
 | Envío de comprobantes por mail y WhatsApp | **Cubierto** | Mail; WhatsApp con link público que vence y se desactiva, en lote, por wa.me o por la API con acuses (A4). |
-| Leyendas obligatorias | **Planificado (NU-7)** | |
+| Leyendas obligatorias | **Cubierto** | §2.q etapa 5. |
 
 ## 7. Vínculo con el cliente
 

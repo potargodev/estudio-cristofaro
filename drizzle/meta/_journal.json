@@ -428,6 +428,13 @@
       "when": 1791869420512,
       "tag": "0060_recategorizacion",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1791871162642,
+      "tag": "0061_facturacion_cola_lotes",
+      "breakpoints": true
     }
   ]
 }

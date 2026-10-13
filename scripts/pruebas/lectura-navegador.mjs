@@ -195,7 +195,7 @@ check("regla guardada", await seen("Regla guardada"));
 check("la regla clasificó el seguro", (await sql`select status from bank_movements where organization_id = ${NORTE} and description like 'SEGURO%'`)[0].status === "sin_factura");
 await page.getByRole("listitem", { name: "PAGO PROVEEDOR XX" }).getByRole("button", { name: "Sin factura" }).click();
 check("pago marcado sin factura", await seen("Marcado como pago sin factura"));
-const cards = await page.locator("dl").innerText();
+const cards = await page.locator("dl").first().innerText();
 check("resumen: 2 pagadas, 2 sin factura, comisiones e impuestos", /cobradas o pagadas\s*2/.test(cards) && /Pagos sin factura\s*2/.test(cards) && cards.includes("$ 5.000,00") && cards.includes("$ 744,00"), cards.replace(/\n/g, " "));
 await importar();
 check("reimportar no duplica", await seen("Importamos 0 movimientos (6 ya estaban)"));

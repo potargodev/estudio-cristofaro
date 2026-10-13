@@ -14,6 +14,7 @@
 // delegación (DELEGADAS; vacío = todas), numeración correlativa, totales que
 // cierran, comprobantes C sin IVA y A/B con IVA, punto de venta habilitado.
 // GET /__stats · POST /__reset · POST /__delegar?cuit=… · POST /__caida (simula un corte en el próximo FECAESolicitar)
+// POST /__fuera?on=1|0 (ARCA fuera de servicio: FEDummy con AppServer ERROR y el resto sin respuesta)
 
 import { createServer } from "node:http";
 import { randomBytes } from "node:crypto";
@@ -25,6 +26,8 @@ const last = new Map(); // cuit|pto|tipo -> nro
 const comps = new Map(); // cuit|pto|tipo|nro -> comprobante
 const delegated = new Set((process.env.ARCA_MOCK_DELEGADAS ?? "").split(",").filter(Boolean));
 let dropNext = false;
+/** ARCA «fuera de servicio» (B5): FEDummy informa la caída y el resto corta la conexión */
+let outage = false;
 const stats = { tickets: 0, caes: 0, rechazos: 0, padron: 0 };
 
 const PUNTOS = [
@@ -104,7 +107,8 @@ function authErr(body, service) {
 const wrap = (op, inner) => env(`<${op}Response xmlns="http://ar.gov.afip.dif.FEV1/"><${op}Result>${xml(inner)}</${op}Result></${op}Response>`);
 
 function wsfe(op, body) {
-  if (op === "FEDummy") return wrap(op, { AppServer: "OK", DbServer: "OK", AuthServer: "OK" });
+  if (op === "FEDummy") return wrap(op, outage ? { AppServer: "ERROR", DbServer: "OK", AuthServer: "OK" } : { AppServer: "OK", DbServer: "OK", AuthServer: "OK" });
+  if (outage) return null;
   const err = authErr(body, "wsfe");
   if (err) return wrap(op, { Errors: err });
   const cuit = tag(body, "Cuit");
@@ -213,6 +217,10 @@ createServer(async (req, res) => {
   if (url.pathname === "/__delegar") {
     delegated.add(url.searchParams.get("cuit"));
     return send(200, "{}", "application/json");
+  }
+  if (url.pathname === "/__fuera") {
+    outage = url.searchParams.get("on") !== "0";
+    return send(200, JSON.stringify({ outage }), "application/json");
   }
   if (url.pathname === "/__caida") {
     dropNext = true;

@@ -94,6 +94,12 @@ export const FARO_MODULES: FaroModule[] = [
       "resumen_estudio",
       // Cuentas conectadas con el estudio (principios §4 a §8): núcleo, en todos los planes
       "listar_cuentas_conectadas",
+      // Contabilidad general y ajuste por inflación (A1, A2): núcleo del estudio
+      "estados_contables",
+      "sumas_y_saldos",
+      "cuentas_corrientes",
+      "generar_asientos",
+      "ajustar_por_inflacion",
     ],
   },
   {
@@ -107,7 +113,7 @@ export const FARO_MODULES: FaroModule[] = [
     roles: ["dueno", "contador", "colaborador", "titular"],
     nav: [{ href: "/admin/configuracion/conexiones", label: "Conexiones" }],
     events: ["conexion.sincronizada"],
-    tools: ["listar_registros_externos", "resumen_comprobantes"],
+    tools: ["listar_registros_externos", "resumen_comprobantes", "sistemas_conectados", "sincronizar_sistema"],
   },
   {
     key: "industries",
@@ -177,7 +183,7 @@ export const FARO_MODULES: FaroModule[] = [
     // §2.o: pestaña Sueldos de la ficha; portal: Empresa → Sueldos y empleados; empleado: Mis recibos
     nav: [{ href: "/admin/organizaciones", label: "Organización → Sueldos → Recibos" }, { href: "/portal/recibos", label: "Mis recibos (empleado)" }],
     events: ["recibo.publicado", "recibo.firmado", "recibo.no_conforme", "recibo.sin_firmar"],
-    tools: ["estado_recibos", "recordar_firma_recibos", "liquidar_sueldos", "resumen_liquidaciones"],
+    tools: ["estado_recibos", "recordar_firma_recibos", "liquidar_sueldos", "resumen_liquidaciones", "reporte_sueldos"],
   },
   {
     key: "employees",
@@ -270,7 +276,7 @@ export const FARO_MODULES: FaroModule[] = [
       { href: "/facturacion", label: "Facturación" },
     ],
     events: ["factura.emitida", "factura.rechazada", "arca.padron_consultado", "monotributo.cerca_del_tope"],
-    tools: ["preparar_factura", "listar_comprobantes", "situacion_monotributo", "situacion_arca", "analizar_libro_iva"],
+    tools: ["preparar_factura", "listar_comprobantes", "situacion_monotributo", "situacion_arca", "analizar_libro_iva", "recategorizacion_cartera", "tareas_recategorizacion"],
     limit: "invoicesPerMonth",
   },
   {

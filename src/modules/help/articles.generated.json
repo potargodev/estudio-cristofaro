@@ -445,6 +445,25 @@
   "text": "Cargar y publicar estudio u organización Si liquidás en Faro, los recibos salen solos: en Sueldos → Liquidación , aprobá la liquidación y tocá Publicar recibos para la firma ver Liquidación de sueldos /ayuda/empleados/liquidacion de sueldos . Si liquidás en otro sistema, cargalos así: 1. En Sueldos → Recibos , elegí el período y subí los PDF: un PDF por empleado , con el CUIL en el nombre del archivo por ejemplo 20304050609 2026 09.pdf o adentro del recibo; o un PDF único con todos los recibos: Faro lo divide por CUIL si un recibo ocupa dos hojas, quedan juntas . 2. Cada recibo se asigna solo al empleado del legajo con ese CUIL. Los que no coinciden quedan Sin asignar : elegí el empleado a mano. 3. Revisá y tocá Publicar y avisar . Cada empleado recibe un mail y un aviso en la campanita. 4. En el lote ves el estado de cada persona: Falta firmar , Firmado conforme o Firmado no conforme con el motivo , con la fecha y hora, la IP, el dispositivo, la huella hash del PDF y el sello de la firma. 5. Recordar a los que no firmaron manda un recordatorio. Además, Faro lo recuerda solo a los 3, 7 y 14 días de publicado. Mis recibos empleado En el portal, Mis recibos : 1. Abrí el recibo con Ver el recibo PDF . 2. Marcá Revisé el recibo y tocá Firmar conforme . 3. Si algo no está bien, escribí el motivo y tocá Firmar no conforme : tu empleador se entera en el momento. Al firmar se guarda la fecha y hora, tu IP, el dispositivo y la huella del documento: si alguien cambiara el PDF después, la firma no coincidiría."
  },
  {
+  "id": "facturacion/arca-caido",
+  "categoria": "facturacion",
+  "slug": "arca-caido",
+  "titulo": "Cuando ARCA no responde",
+  "resumen": "Si ARCA está caído, el comprobante queda en cola con su número previsto y se emite solo, en orden, cuando vuelve. Faro consulta el estado de ARCA cada 5 minutos y guarda el historial.",
+  "perfiles": [
+   "estudio",
+   "autonomo"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-13",
+  "relacionados": [
+   "facturacion/emitir-facturas",
+   "facturacion/panel-y-lotes"
+  ],
+  "body": "## Qué pasa si ARCA no responde\nCuando emitís y ARCA no contesta (o figura caído), el comprobante **no se pierde ni se emite dos veces**: queda **en cola** con un **número previsto** (el siguiente de esa CUIT, punto de venta y tipo, contando los que ya esperan).\n\n- La cola se procesa **sola y en orden** cuando ARCA vuelve. El número definitivo lo da ARCA: si alguien emitió por fuera, puede cambiar, y te lo decimos.\n- Si la red se corta en plena emisión, Faro le pregunta a ARCA si ese número ya quedó autorizado antes de pedir otro: **nunca dos comprobantes con el mismo número**.\n- Te avisamos en la campanita cuando sale cada uno (o si ARCA lo rechaza).\n- Mientras hay cola para una numeración, lo nuevo de esa numeración espera detrás, para respetar el orden.\n\n## Estado de ARCA\nEn **Facturación → Estado de ARCA** ves si los servidores de ARCA responden, la demora, la disponibilidad de las últimas 24 horas y el historial de chequeos (Faro consulta cada 5 minutos).",
+  "text": "Qué pasa si ARCA no responde Cuando emitís y ARCA no contesta o figura caído , el comprobante no se pierde ni se emite dos veces : queda en cola con un número previsto el siguiente de esa CUIT, punto de venta y tipo, contando los que ya esperan . La cola se procesa sola y en orden cuando ARCA vuelve. El número definitivo lo da ARCA: si alguien emitió por fuera, puede cambiar, y te lo decimos. Si la red se corta en plena emisión, Faro le pregunta a ARCA si ese número ya quedó autorizado antes de pedir otro: nunca dos comprobantes con el mismo número . Te avisamos en la campanita cuando sale cada uno o si ARCA lo rechaza . Mientras hay cola para una numeración, lo nuevo de esa numeración espera detrás, para respetar el orden. Estado de ARCA En Facturación → Estado de ARCA ves si los servidores de ARCA responden, la demora, la disponibilidad de las últimas 24 horas y el historial de chequeos Faro consulta cada 5 minutos ."
+ },
+ {
   "id": "facturacion/calendario-y-chequeos",
   "categoria": "facturacion",
   "slug": "calendario-y-chequeos",
@@ -596,6 +615,26 @@
   ],
   "body": "En **Facturación → Mi situación** tocá **Consultar ahora**. Faro pide a ARCA la constancia de inscripción de tu CUIT (servicio oficial `ws_sr_constancia_inscripcion`) y te muestra:\n\n- Nombre, estado de la CUIT y domicilio fiscal.\n- Régimen (monotributo o responsable inscripto) y la **categoría**.\n- **Actividades** e **impuestos** en los que estás inscripto.\n\nCada consulta queda guardada con su **fecha** y el **registro original** de ARCA (lo ves al final, en «Registro original»). La categoría actualiza el semáforo y tu calendario.\n\nEn el estudio, está en la ficha de la organización → **ARCA → Situación con ARCA**, para cada razón social.",
   "text": "En Facturación → Mi situación tocá Consultar ahora . Faro pide a ARCA la constancia de inscripción de tu CUIT servicio oficial ws sr constancia inscripcion y te muestra: Nombre, estado de la CUIT y domicilio fiscal. Régimen monotributo o responsable inscripto y la categoría . Actividades e impuestos en los que estás inscripto. Cada consulta queda guardada con su fecha y el registro original de ARCA lo ves al final, en «Registro original» . La categoría actualiza el semáforo y tu calendario. En el estudio, está en la ficha de la organización → ARCA → Situación con ARCA , para cada razón social."
+ },
+ {
+  "id": "facturacion/panel-y-lotes",
+  "categoria": "facturacion",
+  "slug": "panel-y-lotes",
+  "titulo": "Panel de facturación y facturación en lote",
+  "resumen": "Todas las CUIT de la cartera en una pantalla y lotes de cientos o miles de comprobantes desde un Excel, un CSV o pegando filas, con validación antes de emitir, progreso en vivo, reintentos, informe, ZIP de PDF y envío por mail o WhatsApp.",
+  "perfiles": [
+   "estudio",
+   "autonomo"
+  ],
+  "modulo": "arca",
+  "actualizado": "2026-10-13",
+  "relacionados": [
+   "facturacion/emitir-facturas",
+   "facturacion/arca-caido",
+   "facturacion/enviar-por-whatsapp"
+  ],
+  "body": "**Dónde está:** en el estudio, **Operación → Facturación** (Panel, Lotes y Estado de ARCA). En tu cuenta personal, **Facturación → Lotes**.\n\n## Panel del estudio\nCada CUIT de la cartera con lo emitido en el mes, los borradores, los rechazados, los que esperan en la cola de ARCA y el semáforo del monotributo. Filtrás por nombre, CUIT, mes o «con pendientes», y desde cada fila vas a **Emitir** (con esa CUIT ya elegida) o al **Libro IVA**.\n\n## Facturar en lote\n1. Subí un Excel (.xlsx) o un CSV, o pegá las filas con la fila de encabezados. Columnas: `cuit_emisor` (en el estudio), `punto_venta`, `tipo`, `fecha`, `cliente`, `documento`, `condicion_iva`, `email`, `telefono`, `descripcion`, `cantidad`, `precio`, `alicuota` y `grupo`. Solo son obligatorias la CUIT emisora, la descripción y el precio; sin documento es consumidor final.\n2. Faro **valida cada fila** y te dice qué corregir antes de emitir nada. Las filas con el mismo `grupo` son un comprobante con varios ítems.\n3. Elegí: dejarlos en **borrador** o **emitirlos** (emiten el dueño y los contadores). Confirmás el lote y la cola trabaja con **progreso en vivo**.\n\n## Sin duplicados\nCada fila tiene su clave: aunque el lote se reanude, se corte o se reintente, **una fila nunca crea dos comprobantes**. Los números salen correlativos por CUIT, punto de venta y tipo.\n\n## Después\n- **Pausar**, **cancelar** (lo emitido queda) y **reintentar los que fallaron** (ARCA dice el motivo de cada uno).\n- **Informe** en Excel o PDF con el estado de cada fila, **ZIP con los PDF**, envío **por mail** a cada cliente y **por WhatsApp** a los teléfonos de la planilla.\n- Al terminar te avisamos en la campanita.",
+  "text": "Dónde está: en el estudio, Operación → Facturación Panel, Lotes y Estado de ARCA . En tu cuenta personal, Facturación → Lotes . Panel del estudio Cada CUIT de la cartera con lo emitido en el mes, los borradores, los rechazados, los que esperan en la cola de ARCA y el semáforo del monotributo. Filtrás por nombre, CUIT, mes o «con pendientes», y desde cada fila vas a Emitir con esa CUIT ya elegida o al Libro IVA . Facturar en lote 1. Subí un Excel .xlsx o un CSV, o pegá las filas con la fila de encabezados. Columnas: cuit emisor en el estudio , punto venta , tipo , fecha , cliente , documento , condicion iva , email , telefono , descripcion , cantidad , precio , alicuota y grupo . Solo son obligatorias la CUIT emisora, la descripción y el precio; sin documento es consumidor final. 2. Faro valida cada fila y te dice qué corregir antes de emitir nada. Las filas con el mismo grupo son un comprobante con varios ítems. 3. Elegí: dejarlos en borrador o emitirlos emiten el dueño y los contadores . Confirmás el lote y la cola trabaja con progreso en vivo . Sin duplicados Cada fila tiene su clave: aunque el lote se reanude, se corte o se reintente, una fila nunca crea dos comprobantes . Los números salen correlativos por CUIT, punto de venta y tipo. Después Pausar , cancelar lo emitido queda y reintentar los que fallaron ARCA dice el motivo de cada uno . Informe en Excel o PDF con el estado de cada fila, ZIP con los PDF , envío por mail a cada cliente y por WhatsApp a los teléfonos de la planilla. Al terminar te avisamos en la campanita."
  },
  {
   "id": "facturacion/recategorizacion-cartera",

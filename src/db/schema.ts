@@ -2607,7 +2607,17 @@ export const invoices = pgTable(
     notes: text("notes"),
     /** §2.q etapa 5: leyendas obligatorias calculadas al preparar y fijadas al autorizar */
     legends: jsonb("legends").$type<{ key: string; lines: string[]; status: string }[]>(),
-    origin: text("origin").notNull().default("manual"), // manual | vigia | aprobacion | flujo
+    origin: text("origin").notNull().default("manual"), // manual | vigia | aprobacion | flujo | lote | recurrente | tienda | api | whatsapp | presupuesto
+    // §2.p (B5): cola cuando ARCA no responde, con el número previsto
+    queued_at: timestamp("queued_at", { withTimezone: true }),
+    queued_by: uuid("queued_by"),
+    queue_reason: text("queue_reason"),
+    reserved_number: integer("reserved_number"),
+    attempts: integer("attempts").notNull().default(0),
+    next_attempt_at: timestamp("next_attempt_at", { withTimezone: true }),
+    // §2.p (B2/B9): idempotencia de lotes y de la API, y el lote de origen
+    idempotency_key: text("idempotency_key"),
+    batch_id: uuid("batch_id"),
     // F7: preferencia de Mercado Pago del link de pago (en la cuenta del emisor) y cobro
     mp_preference_id: text("mp_preference_id"),
     paid_at: timestamp("paid_at", { withTimezone: true }),
@@ -2621,6 +2631,8 @@ export const invoices = pgTable(
     index("invoices_org_idx").on(t.organization_id, t.issue_date),
     uniqueIndex("invoices_number_idx").on(t.cuit, t.environment, t.point_of_sale, t.cbte_type, t.number),
     uniqueIndex("invoices_token_idx").on(t.public_token),
+    uniqueIndex("invoices_idem_idx").on(t.studio_id, t.idempotency_key).where(sql`${t.idempotency_key} is not null`),
+    index("invoices_queue_idx").on(t.status, t.queued_at),
   ],
 );
 
@@ -5330,4 +5342,70 @@ export const recategorizations = pgTable(
     updated_at: updatedAt(),
   },
   (t) => [uniqueIndex("recategorizations_entity_idx").on(t.legal_entity_id, t.period), index("recategorizations_studio_idx").on(t.studio_id, t.period)],
+);
+
+// ───────────── §2.p · Facturación avanzada ─────────────
+
+/** Estado de ARCA (FEDummy) por ambiente, para la pantalla de estado y el historial */
+export const arca_status_checks = pgTable(
+  "arca_status_checks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    environment: text("environment").notNull(),
+    ok: boolean("ok").notNull(),
+    app: text("app"),
+    db: text("db"),
+    auth: text("auth"),
+    latency_ms: integer("latency_ms"),
+    error: text("error"),
+    checked_at: timestamp("checked_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("arca_status_env_idx").on(t.environment, t.checked_at)],
+);
+
+/** Lote de facturación (Excel, CSV, pegado o desde la app) */
+export const invoice_batches = pgTable(
+  "invoice_batches",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    source: text("source").notNull(), // excel | csv | pegado | app
+    /** borradores: quedan para revisar · emitir: los emite la cola */
+    mode: text("mode").notNull().default("borradores"),
+    /** validado | en_curso | pausado | terminado | cancelado */
+    status: text("status").notNull().default("validado"),
+    rows_total: integer("rows_total").notNull().default(0),
+    rows_valid: integer("rows_valid").notNull().default(0),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    started_at: timestamp("started_at", { withTimezone: true }),
+    finished_at: timestamp("finished_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [index("invoice_batches_studio_idx").on(t.studio_id, t.created_at)],
+);
+
+/** Fila de un lote: datos leídos, errores de validación y su comprobante */
+export const invoice_batch_rows = pgTable(
+  "invoice_batch_rows",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    batch_id: uuid("batch_id")
+      .notNull()
+      .references(() => invoice_batches.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id").notNull(),
+    organization_id: uuid("organization_id"),
+    row_number: integer("row_number").notNull(),
+    data: jsonb("data").$type<Record<string, unknown>>().notNull(),
+    errors: jsonb("errors").$type<string[]>().notNull().default([]),
+    /** invalida | pendiente | procesando | borrador | emitida | en_cola | fallida | omitida */
+    status: text("status").notNull(),
+    invoice_id: uuid("invoice_id").references(() => invoices.id, { onDelete: "set null" }),
+    attempts: integer("attempts").notNull().default(0),
+    last_error: text("last_error"),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("invoice_batch_rows_idx").on(t.batch_id, t.row_number), index("invoice_batch_rows_status_idx").on(t.status)],
 );

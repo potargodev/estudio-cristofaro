@@ -377,6 +377,24 @@ Un chat entre personas, distinto del Vigía (que es con el agente). Es un módul
 | **Empleado** (portal) | Inicio · Mis recibos · Rendiciones · Grupos | Todo lo demás, oculto. |
 | **Faro Manager** | Resumen · Tenants · Catálogo · Red · Plataforma | Tenants = lista + pedidos de plan + suscripciones + alta manual. Catálogo = planes y precios, módulos, plantillas, IA de la plataforma, monotributo, índices y escudo. Plataforma = auditoría, opiniones de la ayuda, mensajes reportados, uso y costos de IA, ARCA, Mercado Pago, WhatsApp y Demo (cargar y borrar la demo y «Ver como…»). |
 
+## 2.p Facturación avanzada y canales
+
+Facturar desde Faro tiene que ser lo más rápido del mercado para un estudio con muchas CUIT y para un autónomo desde el celular, por cualquier canal. Toda integración es un **adaptador del núcleo** (§2.q, A0). **Faro no pide ni guarda la clave fiscal**: emite con el certificado de la CUIT operadora y la delegación en ARCA.
+
+**Regla de automatización.** Lo que llega de un canal (lote, tienda, API, WhatsApp, recurrente) queda en **borrador** salvo que el titular o su contador activen el interruptor **«Facturar automáticamente»** de esa fuente: auditado, con **pausa** y con un **resumen diario** de lo emitido. Nada fiscal sale sin una persona o sin ese interruptor (§1).
+
+- **B1 · Panel de facturación del estudio:** todas las CUIT de la cartera en una pantalla (lo emitido en el mes, borradores, rechazos, cola, semáforo de monotributo y Libro IVA), con filtros y acceso directo a emitir por cualquier CUIT.
+- **B2 · Facturación en lote:** Excel, CSV, pegar desde una planilla o desde la app; validación fila por fila antes de emitir; **cola** con progreso en vivo, reintentos e **idempotencia** (una fila nunca se emite dos veces); miles de comprobantes; informe del lote, ZIP de PDF, envío por mail o WhatsApp y reintento de los fallidos.
+- **B3 · Todos los comprobantes:** A, B, C, E y M; notas de crédito y débito; **Factura de Crédito Electrónica MiPyME**; exportación; recibos; **presupuestos → factura**; remitos; **recurrentes** con ajuste por IPC; PDF con CAE y QR; link de Mercado Pago; link público (A4); **autocompletar desde el padrón**.
+- **B4 · Libro IVA ventas y compras** por CUIT en Excel y en el formato de **Libro IVA Digital** («a validar»), reportes y semáforo.
+- **B5 · ARCA caído:** si el web service no responde, el comprobante entra a una **cola** con un número reservado seguro (nunca dos comprobantes con el mismo número), se emite solo cuando ARCA vuelve y avisa. Estado de ARCA en vivo (FEDummy) con historial, también en el Faro Manager.
+- **B6 · WhatsApp (Cloud API) con el Vigía:** facturar por texto o audio, fotos de comprobantes al buzón o a la Bitácora, gastos, consultas y avisos; plantillas de Meta, **opt-out**; simulador en `mocks/whatsapp`. Verificación de Meta: prioridad alta en pendientes.
+- **B7 · Integraciones de ventas** (Mercado Libre, Tiendanube, Empretienda, Shopify, WooCommerce, VTEX, Mercado Pago y tienda física): «**ventas para facturar**», mapeo de productos con IA, regla por venta o resumen diario, el interruptor y **notas de crédito automáticas** por devoluciones.
+- **B8 · Buzón de comprobantes recibidos:** llegan por la app, WhatsApp, reenvío de mail y Mis Comprobantes de ARCA; lectura, validación de la **CUIT receptora**, CAE con WSCDC, duplicados y procedencia. En el estudio, pestaña **Buzón** con contador: computa, no computa o parcial, y aprobación en lote hacia el Libro IVA, la contabilidad y los sistemas conectados. «**Mis comprobantes enviados**» para el cliente y el cruce buzón ↔ rendición de gastos.
+- **B9 · API pública** `/api/v1`: tokens por tenant con permisos (scopes), límite de pedidos, `Idempotency-Key`, **webhooks** salientes y documentación OpenAPI en `/api/v1/docs`. **Prueba gratis sin tarjeta.** Página pública **/estado**.
+- **B10 · Velocidad:** emitir en menos de 15 segundos desde el celular (formulario de un paso, autocompletar, atajos de teclado, medido). Alta en 3 pasos: CUIT → delegación → factura de prueba en homologación.
+- **B11 · Planes:** límites generosos en `plans.ts` y acá (§3); mensajes de /faro y /faro/precios sin nombrar competidores, con «**Faro no te pide tu clave fiscal**».
+
 ## 2.q Agente contable, IA contable, sueldos y stock
 
 **Objetivo:** que un estudio con Faro trabaje mejor que con los sistemas contables líderes de Argentina en lo que más tiempo le lleva: cerrar meses, conciliar, controlar el IVA antes de presentar, liquidar sueldos y, para sus clientes pymes, llevar un stock simple. Foco: el mundo contable y sus clientes pymes. Todo respeta el principio madre (principios §1): **Faro muestra hechos y arma borradores; el contador decide.**

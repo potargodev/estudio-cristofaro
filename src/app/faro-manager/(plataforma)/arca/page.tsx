@@ -8,6 +8,7 @@ import { activeEnv, credentialSummary } from "@/modules/arca/credentials";
 import { deleteArcaCredentialAction, saveArcaCredentialAction, setArcaEnvAction, testArcaAction } from "../../arca-actions";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate } from "@/lib/format";
+import { ArcaStatus } from "@/components/lotes/ArcaStatus";
 
 export const metadata: Metadata = { title: "ARCA" };
 
@@ -114,6 +115,11 @@ export default async function ArcaPage({ searchParams }: { searchParams: Promise
             </section>
           );
         })}
+      </div>
+      {/* §2.p (B5): estado de los servidores de ARCA con su historial */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ArcaStatus env="homologacion" full />
+        <ArcaStatus env="produccion" full />
       </div>
     </div>
   );

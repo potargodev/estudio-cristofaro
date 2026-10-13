@@ -111,7 +111,14 @@ export async function emitAction(fd: FormData) {
   if (fd.get("confirmo") !== "on") back(`${scope.base}/${id}`, { error: "Para emitir tenés que confirmar que los datos están bien." });
   const inv = await guard(`${scope.base}/${id}`, () => emitInvoice(scope, id, actorOf(u), "manual"));
   done(scope);
-  back(`${scope.base}/${id}`, inv.status === "autorizada" ? { ok: `Listo: ARCA lo autorizó con el CAE ${inv.cae}.` } : { error: inv.error ?? "ARCA rechazó el comprobante." });
+  back(
+    `${scope.base}/${id}`,
+    inv.status === "autorizada"
+      ? { ok: `Listo: ARCA lo autorizó con el CAE ${inv.cae}.` }
+      : inv.status === "en_cola"
+        ? { ok: `ARCA no responde: quedó en cola con el número previsto ${inv.reserved_number}. Se emite solo cuando ARCA vuelva y te avisamos.` }
+        : { error: inv.error ?? "ARCA rechazó el comprobante." },
+  );
 }
 
 export async function deleteDraftAction(fd: FormData) {

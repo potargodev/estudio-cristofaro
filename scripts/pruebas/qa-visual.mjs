@@ -33,6 +33,9 @@ const store = lola ? (await sql`select id from stock_stores where organization_i
 const nuevas = [
   "/admin/vigia?tab=agente",
   "/admin/recategorizacion",
+  "/admin/facturacion",
+  "/admin/facturacion/lotes",
+  "/admin/facturacion/estado",
   task && `/admin/vigia/agente/${task}`,
   payrollOrg && `/admin/organizaciones/${payrollOrg}?tab=sueldos`,
   payrollOrg && `/admin/organizaciones/${payrollOrg}/sueldos/liquidacion`,
@@ -59,7 +62,7 @@ const nuevas = [
 
 const PERFILES = {
   persona: { email: "persona@demo.faro.local", start: ["/personal", "/cajas", "/bitacora", "/grupos", "/contador", "/mensajes", "/vigia"] },
-  autonomo: { email: "autonomo@demo.faro.local", start: ["/personal", "/facturacion", "/facturacion/stock", "/facturacion/ajustes", "/cajas", "/flotas", "/contador"] },
+  autonomo: { email: "autonomo@demo.faro.local", start: ["/personal", "/facturacion", "/facturacion/lotes", "/facturacion/stock", "/facturacion/ajustes", "/cajas", "/flotas", "/contador"] },
   estudio: { email: "duena.estudio@demo.faro.local", start: ["/admin", ...nuevas, "/admin/organizaciones", "/admin/vencimientos", "/admin/solicitudes", "/admin/tareas", "/admin/comercial", "/admin/honorarios", "/admin/configuracion"] },
   organizacion: { email: "duena.organizacion@demo.faro.local", start: ["/portal", "/portal/vencimientos", "/portal/documentos", "/portal/solicitudes", "/portal/empresa"] },
   empleado: { email: "empleada@demo.faro.local", start: ["/portal/empleado", "/portal/recibos", "/portal/rendiciones"] },

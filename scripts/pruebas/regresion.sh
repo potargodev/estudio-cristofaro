@@ -120,6 +120,8 @@ correr cierre-sueldos "${S[@]}" scripts/pruebas/cierre-sueldos.mts
 correr compartir "${S[@]}" scripts/pruebas/compartir.mts
 # A5 · Recategorización del monotributo de la cartera (30 clientes)
 correr recategorizacion "${S[@]}" scripts/pruebas/recategorizacion.mts
+# §2.p · B2 lotes y B5 ARCA caído (simulador de ARCA con /__fuera)
+LIMITE=1800 correr lotes "${S[@]}" scripts/pruebas/lotes.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

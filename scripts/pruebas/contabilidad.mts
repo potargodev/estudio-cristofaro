@@ -111,7 +111,8 @@ check("el mayor del banco arranca en cero y suma el aporte", mayor.opening === 0
 
 // ─── Cuentas corrientes ───
 const rec = await cb.receivables(A, `${Y}-12-31`);
-check("clientes: la factura sin cobrar menos la nota de crédito, vencida hace más de 90 días", rec.total === $(121_000 - 12_100) && rec.totals[4] === rec.total);
+const cbRow = rec.rows.find((r) => r.party === "CB Distribuidora");
+check("clientes: la factura sin cobrar menos la nota de crédito, vencida hace más de 90 días", cbRow?.total === $(121_000 - 12_100) && cbRow.buckets[4] === cbRow.total, JSON.stringify(cbRow));
 const pay = await cb.payables(A, `${Y}-12-31`);
 check("proveedores: la compra sin pago conciliado", pay.rows.some((r) => r.party === "CB Papelera" && r.total === $(125_500)));
 

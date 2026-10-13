@@ -74,7 +74,7 @@ export const facturacionTools = [
       const inv = await wrap(() => emitInvoice({ ...scope, canEmit: true }, draft.id, ctx.actor, "aprobacion"));
       return inv.status === "autorizada"
         ? { estado: "autorizada", comprobante: `${CBTE_TYPES[inv.cbte_type].label} ${fullNumber(inv.point_of_sale, inv.number)}`, cae: inv.cae, total: Number(inv.total), link: `${scope.base}/${inv.id}` }
-        : { estado: inv.status, error: inv.error, link: `${scope.base}/${inv.id}` };
+        : { estado: inv.status, error: inv.error, ...(inv.status === "en_cola" ? { numero_previsto: inv.reserved_number, aviso: "ARCA no responde: se emite solo cuando vuelva." } : {}), link: `${scope.base}/${inv.id}` };
     },
   }),
   defineTool({

@@ -18,6 +18,7 @@
 // | agente     | AGENT_JOBS       | 30 s    | Cola del Agente contable (tareas en pasos) y sus rutinas          |
 // | stock      | STOCK_JOBS       | 5 min   | Pedidos de tiendas por consulta, publicación de stock y mínimos   |
 // | lectura    | READ_JOBS        | 30 s    | Cola de la carga masiva de comprobantes (lectura inteligente)     |
+// | facturacion| BILLING_JOBS     | 30 s    | Cola de ARCA, lotes, recurrentes, estado de ARCA y resumen diario |
 
 interface Job {
   name: string;
@@ -30,6 +31,16 @@ interface Job {
 const MIN = 60_000;
 
 const JOBS: Job[] = [
+  {
+    name: "facturacion",
+    env: "BILLING_JOBS",
+    every: 30_000,
+    firstDelay: 25_000,
+    run: async () => {
+      const r = await (await import("./modules/lotes/jobs")).runBillingJobs();
+      return r.cola.emitidos || r.lotes || r.recurrentes || r.resumenes ? `${r.cola.emitidos} de la cola de ARCA, ${r.lotes} filas de lotes, ${r.recurrentes} recurrentes, ${r.resumenes} resúmenes` : null;
+    },
+  },
   {
     name: "agenda",
     env: "AGENDA_REMINDERS",

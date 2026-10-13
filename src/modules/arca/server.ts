@@ -344,14 +344,23 @@ export interface DraftInput {
   exchangeRate?: number;
   associatedInvoiceId?: string | null;
   notes?: string | null;
+  /** §2.p: una misma clave nunca crea dos comprobantes (lotes, API, tiendas) */
+  idempotencyKey?: string | null;
+  batchId?: string | null;
 }
 
 const isDate = (d?: string | null) => !!d && /^\d{4}-\d{2}-\d{2}$/.test(d);
 const today = () => new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 10);
 
 /** Valida y arma un borrador (no llama a ARCA) */
-export async function createDraft(scope: IssuerScope, i: DraftInput, actor: ArcaActor, origin: "manual" | "vigia" | "aprobacion" | "flujo" = "manual", existingId?: string | null) {
+type DraftOrigin = "manual" | "vigia" | "aprobacion" | "flujo" | "lote" | "recurrente" | "tienda" | "api" | "whatsapp" | "presupuesto";
+
+export async function createDraft(scope: IssuerScope, i: DraftInput, actor: ArcaActor, origin: DraftOrigin = "manual", existingId?: string | null) {
   await requireArca(scope);
+  if (i.idempotencyKey && !existingId) {
+    const [prev] = await db().select().from(invoices).where(and(eq(invoices.studio_id, scope.studioId), eq(invoices.idempotency_key, i.idempotencyKey)));
+    if (prev) return prev;
+  }
   if (!/^\d{11}$/.test(scope.cuit)) throw new ArcaError("Falta la CUIT del emisor: cargala en los datos de facturación.");
   const settings = await getSettings(scope);
   // Los datos del emisor quedan guardados desde el primer borrador (los usa el PDF)
@@ -422,6 +431,8 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
     origin,
     status: "borrador",
     error: null,
+    ...(i.idempotencyKey ? { idempotency_key: i.idempotencyKey.slice(0, 200) } : {}),
+    ...(i.batchId ? { batch_id: i.batchId } : {}),
   };
   if (existingId) {
     if (!UUID.test(existingId)) throw new ArcaError(NOT_FOUND);
@@ -433,7 +444,13 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
     if (!r) throw new ArcaError("Ese comprobante ya no se puede editar.");
     return r;
   }
-  const [r] = await db().insert(invoices).values({ ...values, created_by: actor.id }).returning();
+  const [r] = await db().insert(invoices).values({ ...values, created_by: actor.id }).onConflictDoNothing().returning();
+  if (!r) {
+    // Otra llamada con la misma clave ganó la carrera: se devuelve ese comprobante
+    const [prev] = await db().select().from(invoices).where(and(eq(invoices.studio_id, scope.studioId), eq(invoices.idempotency_key, i.idempotencyKey ?? "")));
+    if (prev) return prev;
+    throw new ArcaError("No se pudo guardar el comprobante.");
+  }
   await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.borrador", entityType: "factura", entityId: r.id, metadata: { tipo: CBTE_TYPES[cbteType].label, total: totals.total, origen: origin } });
   return r;
 }
@@ -473,19 +490,28 @@ export async function deleteDraft(scope: IssuerScope, id: string, actor: ArcaAct
  * vez de emitir de nuevo. Requiere confirmación explícita (la pantalla la
  * pide; desde el Vigía o un flujo, pasa por Aprobaciones).
  */
-export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaActor, origin: "manual" | "aprobacion" | "flujo" = "manual") {
+export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaActor, origin: "manual" | "aprobacion" | "flujo" | "cola" | "lote" | "recurrente" | "tienda" | "api" | "whatsapp" = "manual") {
   if (!scope.canEmit) throw new ArcaError("Tu rol puede preparar borradores, pero no emitir.");
   await requireArca(scope);
   const inv = await getInvoice(scope, id);
   if (!inv) throw new ArcaError(NOT_FOUND);
   if (inv.status === "autorizada") return inv;
-  if (!["borrador", "error", "rechazada"].includes(inv.status)) throw new ArcaError("Ese comprobante se está emitiendo. Esperá unos segundos.");
+  const fromQueue = origin === "cola";
+  // §2.p (B5): lo que está en cola sale solo, en orden, cuando ARCA responde
+  if (inv.status === "en_cola" && !fromQueue) return inv;
+  const claimable = fromQueue ? ["en_cola"] : ["borrador", "error", "rechazada"];
+  if (!claimable.includes(inv.status)) throw new ArcaError("Ese comprobante se está emitiendo. Esperá unos segundos.");
   const limitMsg = await checkLimit(scope.studioId, "invoicesPerMonth");
   if (limitMsg) throw new ArcaError(limitMsg);
+  const { enqueue, shouldQueue } = await import("./queue");
+  if (!fromQueue) {
+    const reason = await shouldQueue(inv);
+    if (reason) return enqueue(inv, actor.id, reason);
+  }
   const [claimed] = await db()
     .update(invoices)
     .set({ status: "autorizando", error: null })
-    .where(and(eq(invoices.id, inv.id), inArray(invoices.status, ["borrador", "error", "rechazada"])))
+    .where(and(eq(invoices.id, inv.id), inArray(invoices.status, claimable)))
     .returning();
   if (!claimed) throw new ArcaError("Ese comprobante se está emitiendo. Esperá unos segundos.");
   const cred = await loadCredential(inv.environment as "homologacion" | "produccion");
@@ -554,8 +580,12 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
     return r;
   } catch (e) {
     const msg = e instanceof ArcaError ? e.message : "Error inesperado al emitir.";
-    // Si se cortó la red se conserva el número reservado para recuperar el CAE en el próximo intento
-    await finish({ status: "error", error: msg, ...(e instanceof ArcaError && e.code === "red" ? {} : { number: null }) });
+    // ARCA no respondió: a la cola, con el número que ya tenía (para recuperar el CAE si llegó) o uno previsto
+    if (e instanceof ArcaError && e.code === "red") {
+      const [cur] = await db().select().from(invoices).where(eq(invoices.id, inv.id));
+      return enqueue(cur, actor.id, msg);
+    }
+    await finish({ status: "error", error: msg, number: null });
     await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.emitida", entityType: "factura", entityId: inv.id, result: "error", metadata: { error: msg } });
     throw e instanceof ArcaError ? e : new ArcaError(msg);
   }

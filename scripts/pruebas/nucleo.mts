@@ -121,6 +121,7 @@ await core.runOp(A, actorA, "contabilium", "publicar");
 check("publicar dos veces no duplica comprobantes en Contabilium", (await cb("/__estado")).ventas.length === before, p1.message);
 
 // ─── Xubio y Tango sobre la misma interfaz ───
+await sql`delete from connections where organization_id = ${A.organizationId} and connector = 'xubio'`;
 await sql`insert into connections (studio_id, connector, name, organization_id, status, credentials_enc) values (${A.studioId}, 'xubio', 'Xubio de prueba', ${A.organizationId}, 'activa', ${sealCredentials({ client_id: "mock-org", client_secret: "mock-org-secret" })})`;
 const x1 = await core.runOp(A, actorA, "xubio", "sincronizar");
 const xs = await reg.stateOf(A, "xubio");

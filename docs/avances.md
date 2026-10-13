@@ -578,3 +578,18 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Cargar y validar la escala vigente con sus cuotas en el Faro Manager (Catálogo → Monotributo).
+
+## §2.p · B1, B2 y B5: panel, lotes y ARCA caído (13 de octubre)
+
+**Qué quedó**
+- **B1 · Panel de facturación** (Operación → Facturación): cada CUIT de la cartera con lo emitido en el mes, borradores, rechazos, cola de ARCA, semáforo del monotributo, filtros y acceso directo a emitir con esa CUIT o al Libro IVA.
+- **B2 · Lotes** (estudio y cuenta personal): Excel, CSV o pegado; validación fila por fila con qué corregir; filas agrupadas en un comprobante; modo borradores o emitir; cola con progreso en vivo, pausa, cancelación, reintento de fallidos e idempotencia; informe en Excel o PDF, ZIP de PDF, mail a cada cliente y WhatsApp a los teléfonos de la planilla; aviso al terminar.
+- **B5 · ARCA caído**: cola con número previsto, emisión sola y en orden al volver, recuperación de un corte en plena emisión sin duplicar, aviso de cada uno; estado de ARCA (FEDummy) con historial en Facturación y en el Faro Manager. Simulador: `POST /__fuera?on=1|0`.
+- Tarea interna `facturacion` (`BILLING_JOBS`) y `/api/facturacion/cron`. Interruptores «Facturar automáticamente» por fuente y resumen diario. Migración `0061`.
+- Ayuda: `facturacion/panel-y-lotes` y `facturacion/arca-caido`.
+
+**Qué se probó**
+- `scripts/pruebas/lotes.mts` (27 verificaciones): **lote de 500** de dos CUIT sin duplicados (250 correlativos por CUIT, ~40 s contra el simulador), reproceso idempotente, validación por fila, agrupado, borradores, reintento, **ARCA caído** (cola con números previstos, lote en cola, la cola espera) y **ARCA de vuelta** (emisión en orden con los números previstos, filas emitidas, avisos), corte de red sin duplicar, historial y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Nada nuevo: usa el certificado y la delegación de ARCA ya pendientes.

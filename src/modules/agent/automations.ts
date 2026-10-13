@@ -10,8 +10,9 @@ import { AgentError } from "./errors";
 // queda para aprobar, salvo que el titular o su contador hayan activado esa
 // automatización. Cada interruptor es por acción y por organización (o para
 // todas), queda en la auditoría y se puede pausar sin perder la configuración.
-// La emisión de comprobantes y las presentaciones no están en el catálogo:
-// siempre pasan por Aprobaciones (docs/decisiones.md).
+// Las presentaciones no están en el catálogo. La emisión de comprobantes solo
+// por fuente (§2.p, «Facturar automáticamente»): recurrentes, tiendas, API y
+// WhatsApp; con el interruptor apagado, lo que llega queda en borrador.
 
 export const AUTOMATABLE = {
   enviar_resumen_mensual: { label: "Enviar el resumen mensual al cliente", group: "Comunicaciones" },
@@ -21,6 +22,10 @@ export const AUTOMATABLE = {
   "conciliacion.ajuste": { label: "Asentar las diferencias de conciliación dentro de la tolerancia", group: "Conciliación" },
   "stock.publicar": { label: "Publicar la existencia en las tiendas conectadas", group: "Stock" },
   "contabilidad.asientos": { label: "Registrar solos los asientos automáticos (facturas, compras, sueldos, cobros, pagos y bancos)", group: "Contabilidad" },
+  "facturacion.recurrentes": { label: "Facturar automáticamente los comprobantes recurrentes", group: "Facturación" },
+  "facturacion.tiendas": { label: "Facturar automáticamente las ventas de las tiendas", group: "Facturación" },
+  "facturacion.api": { label: "Facturar automáticamente lo que llega por la API", group: "Facturación" },
+  "facturacion.whatsapp": { label: "Facturar automáticamente lo pedido por WhatsApp", group: "Facturación" },
 } as const;
 type AutomatableAction = keyof typeof AUTOMATABLE;
 const isAutomatable = (a: string): a is AutomatableAction => a in AUTOMATABLE;

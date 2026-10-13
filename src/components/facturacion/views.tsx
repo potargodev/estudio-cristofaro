@@ -67,6 +67,7 @@ const STATUS: Record<string, { label: string; tone: string }> = {
   autorizada: { label: "Autorizada", tone: "bg-[#ecf6ef] text-[#1f5f36] border-[#a9d1b5]" },
   rechazada: { label: "Rechazada", tone: "bg-danger/10 text-danger border-danger/30" },
   error: { label: "Con error", tone: "bg-danger/10 text-danger border-danger/30" },
+  en_cola: { label: "En cola", tone: "bg-[#fbf5e6] text-[#7a5410] border-[#e3cf9f]" },
 };
 
 /** Campos ocultos del alcance (en el estudio, la organización y la CUIT) */
@@ -120,6 +121,7 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
             <option value="autorizada">Autorizados</option>
             <option value="rechazada">Rechazados</option>
             <option value="error">Con error</option>
+            <option value="en_cola">En cola (ARCA no responde)</option>
           </select>
           <button type="submit" className="h-(--control-h) rounded-md border border-line px-3 text-ui">
             Filtrar
@@ -254,6 +256,11 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
           </p>
         )}
         {inv.error && <p className="mt-3 text-ui text-danger">{inv.error}</p>}
+        {inv.status === "en_cola" && (
+          <p className="mt-3 text-ui text-warn">
+            ARCA no responde: está en cola con el número previsto {inv.reserved_number ?? "—"} (lo confirma ARCA al emitir). Se emite solo, en orden, cuando ARCA vuelva, y te avisamos. {inv.queue_reason}
+          </p>
+        )}
         {!!inv.legends?.length && (
           <div className="mt-3 border-t border-line pt-3">
             <p className="text-meta font-medium text-muted">Leyendas obligatorias que lleva el PDF</p>
