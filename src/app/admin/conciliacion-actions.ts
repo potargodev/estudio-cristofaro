@@ -98,3 +98,21 @@ export async function deleteRuleAction(fd: FormData) {
   await deleteRule(c.scope, c.me, s(fd, "id"));
   go(c.tab, { ok: "Regla borrada." });
 }
+
+/** Impuestos, retenciones y gastos del banco del extracto a la contabilidad (asientos en borrador, sin duplicar) */
+export async function bankTaxEntriesAction(fd: FormData) {
+  const c = await ctx(fd);
+  const back = `/admin/organizaciones/${c.scope.organizationId}/conciliacion/${s(fd, "statement")}`;
+  const { AccountingError, generateEntries } = await import("@/modules/contabilidad/server");
+  let n = 0;
+  try {
+    const r = await generateEntries(c.scope, c.me, s(fd, "from"), s(fd, "to"), ["bancos"]);
+    n = r.bancos;
+    if (r.errores.length) go(back, { error: `No se pudieron armar: ${r.errores.slice(0, 3).join(" · ")}` });
+  } catch (e) {
+    if (e instanceof AccountingError) go(back, { error: e.message });
+    throw e;
+  }
+  revalidatePath(back);
+  go(back, { ok: n ? `${n} ${n === 1 ? "asiento" : "asientos"} de impuestos y gastos bancarios en Contabilidad (borrador).` : "Esos impuestos ya estaban en la contabilidad." });
+}

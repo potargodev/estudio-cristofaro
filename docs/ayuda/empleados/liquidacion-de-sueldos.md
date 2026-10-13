@@ -3,7 +3,7 @@ titulo: Liquidación de sueldos
 resumen: Liquidá el mes, el aguinaldo, las vacaciones o una liquidación final con el convenio de cada empleado y las novedades del período; revisás, aprobás, publicás los recibos para la firma y descargás el Libro de Sueldos Digital, el F.931 y la acreditación bancaria.
 perfiles: [estudio, organizacion]
 modulo: payroll
-actualizado: 2026-10-12
+actualizado: 2026-10-13
 relacionados: [empleados/recibos-de-sueldo, empleados/legajo-y-novedades, vigia/agente-contable]
 ---
 
@@ -33,8 +33,19 @@ En **Archivos** descargás el **Libro de Sueldos Digital** (ARCA), la **importac
 ## Informes
 En **Informes**: costo laboral por empleado y por área, cargas sociales, acreditaciones, nómina y variaciones contra el mes anterior.
 
+## Reportes de cierre (Excel y PDF)
+En **Informes → Reportes de cierre** descargás, de la liquidación que estás mirando:
+- **Nómina de empleados** (legajo, CUIL, convenio, categoría, área, ingreso y CBU).
+- **Control contra el período anterior**: por empleado (remunerativo, neto y costo, con la variación y «Revisar» si se mueve más del 10 %), por concepto (con la diferencia) y quiénes estaban el mes pasado y ya no.
+- **Acreditación de haberes** (con los que no tienen CBU aparte), **costo laboral** por empleado y por área, y el **asiento de sueldos**.
+- **Conceptos liquidados** entre dos períodos, agrupados por **período, área o convenio**.
+
+Desde el estudio, **Armar el asiento de sueldos** lo deja en Contabilidad en borrador (si ya estaba, no se duplica).
+
 ## Con el Agente
 Pedile al Agente contable «Liquidá octubre de …» (o programalo como rutina): arma el borrador, marca lo raro y lo deja para que lo apruebe una persona. El Agente nunca aprueba ni publica.
+
+También le podés pedir los reportes: «el control de sueldos de septiembre de …» o «el costo laboral de …»; te responde con lo que hay que revisar y los enlaces a Excel y PDF.
 
 ## Escalas a validar
 Las escalas de los convenios las mantiene Faro en el Faro Manager, con su vigencia y su fuente; las que todavía no se cotejaron con el acta están **a validar** y la liquidación lo avisa. Los topes y alícuotas de seguridad social también son de referencia hasta validarlos. Esto no reemplaza el criterio de un contador.

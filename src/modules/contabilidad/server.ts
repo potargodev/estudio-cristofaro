@@ -21,6 +21,7 @@ import {
 import { audit } from "@/lib/audit";
 import { todayAR } from "@/lib/format";
 import { CBTE_TYPES } from "@/modules/arca/config";
+import { taxKind } from "@/modules/bank-rec/core";
 import { asExtraction } from "@/modules/smart-docs/core";
 import { aging, closingEntries, depreciation, depreciationBetween, fiscalYearOf, fxDifference, ledger, statements, trialBalance, validateLines, EntryError, type Account, type Entry, type Line, type OpenItem } from "./core";
 import { compareCodes, planFor, templateForIndustry, type AccountKind } from "./plan";
@@ -363,6 +364,26 @@ function payrollLines(roles: Roles, t: { rem: number; norem: number; desc: numbe
   ]);
 }
 
+/** Líneas del asiento de una liquidación de sueldos (para el reporte) */
+export async function payrollEntryLines(s: Scope, totals: { rem: number; norem: number; desc: number; net: number; contrib: number }) {
+  return payrollLines(await rolesOf(s), totals);
+}
+
+/** Asiento de una liquidación aprobada, en borrador (el mismo que arma «Generar asientos»: no se duplica) */
+export async function payrollEntry(s: Scope, actor: Actor, runId: string) {
+  const [r] = await db()
+    .select()
+    .from(payroll_runs)
+    .where(and(eq(payroll_runs.id, runId), eq(payroll_runs.studio_id, s.studioId), eq(payroll_runs.organization_id, s.organizationId)));
+  if (!r) throw new AccountingError("Esa liquidación no es de esta organización.");
+  if (!["aprobada", "publicada"].includes(r.status)) throw new AccountingError("El asiento se arma con la liquidación aprobada.");
+  const { sourceOf } = await import("@/modules/adapters/server");
+  if ((await sourceOf(s, "contabilidad")) !== "faro") throw new AccountingError("La contabilidad de esta organización la lleva otro sistema.");
+  const row = await createEntry(s, actor, { date: r.pay_date, concept: `Sueldos ${r.kind} ${r.period}`, lines: payrollLines(await rolesOf(s), r.totals), source: "sueldos", sourceId: r.id, register: await autoRegister(s) });
+  await audit({ studioId: s.studioId, organizationId: s.organizationId, actor, action: "contabilidad.asiento_sueldos", entityType: "liquidacion", entityId: r.id, metadata: { periodo: r.period, nuevo: !!row } });
+  return row;
+}
+
 interface GenerateResult {
   facturas: number;
   compras: number;
@@ -380,7 +401,7 @@ interface GenerateResult {
  * «contabilidad.asientos». Si la contabilidad la maneja otro sistema
  * conectado, no se generan: se espejan sus asientos.
  */
-export async function generateEntries(s: Scope, actor: Actor | null, from: string, to: string): Promise<GenerateResult> {
+export async function generateEntries(s: Scope, actor: Actor | null, from: string, to: string, only?: (keyof Omit<GenerateResult, "errores">)[]): Promise<GenerateResult> {
   const { sourceOf } = await import("@/modules/adapters/server");
   const owner = await sourceOf(s, "contabilidad");
   if (owner !== "faro") throw new AccountingError("La contabilidad de esta organización la maneja un sistema conectado: sus asientos se espejan desde allá (Sistemas conectados).");
@@ -389,6 +410,7 @@ export async function generateEntries(s: Scope, actor: Actor | null, from: strin
   const accounts = await accountsOf(s);
   const out: GenerateResult = { facturas: 0, compras: 0, sueldos: 0, cobros: 0, pagos: 0, bancos: 0, errores: [] };
   const add = async (key: keyof Omit<GenerateResult, "errores">, i: EntryInput) => {
+    if (only && !only.includes(key)) return;
     try {
       const row = await createEntry(s, actor, { ...i, register });
       if (row) out[key]++;
@@ -456,17 +478,40 @@ export async function generateEntries(s: Scope, actor: Actor | null, from: strin
 }
 
 /**
- * Débitos del banco que son impuestos o retenciones (A3): impuesto a los
- * débitos y créditos (la parte computable como pago a cuenta la define el
- * contador: se registra entera como pago a cuenta y él la reclasifica),
- * retenciones SIRCREB de ingresos brutos y comisiones.
+ * Débitos del banco que son impuestos, retenciones o gastos (A3), con la
+ * misma clasificación que la conciliación. El impuesto a los débitos y
+ * créditos se registra entero como pago a cuenta: la parte no computable la
+ * reclasifica el contador.
  */
-function bankTaxRole(description: string, cls: string): { role: string; label: string } | null {
-  const d = description.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
-  if (/sircreb|ret(\.|encion)? ?(ii\.?bb|iibb|ingresos brutos)|rg ?(arba|agip)/.test(d)) return { role: "sircreb", label: "Retención SIRCREB" };
-  if (/(imp(\.|uesto)?|ley) ?(25\.?413|deb(\.|ito)?s? ?(y|\/) ?cred|s\/deb|s\/cred)|impuesto a los debitos|impuesto a los creditos|ley 25413|idcb/.test(d)) return { role: "impuesto_debcred", label: "Impuesto a los débitos y créditos" };
-  if (cls === "comision") return { role: "gastos_bancarios", label: "Comisión bancaria" };
-  return null;
+const TAX_ROLE: Record<string, { role: string; label: string } | null> = {
+  debitos_25413: { role: "impuesto_debcred", label: "Impuesto a los débitos y créditos" },
+  creditos_25413: { role: "impuesto_debcred", label: "Impuesto a los débitos y créditos" },
+  sircreb: { role: "sircreb", label: "Retención SIRCREB" },
+  percepcion_iva: { role: "percepciones_iva", label: "Percepción de IVA bancaria" },
+  percepcion_iibb: { role: "percepciones_iibb", label: "Percepción de IIBB bancaria" },
+  iva_gastos: { role: "iva_credito", label: "IVA sobre gastos bancarios" },
+  comision: { role: "gastos_bancarios", label: "Comisión bancaria" },
+  otro_impuesto: null,
+};
+function bankTaxRole(description: string, cls: string) {
+  const k = taxKind(description, cls);
+  return k ? TAX_ROLE[k] : null;
+}
+
+/** Impuestos, retenciones y gastos del banco de un período (para el reporte y el Agente) */
+export async function bankTaxes(s: Scope, from: string, to: string) {
+  await accountsOf(s); // valida que la organización sea del estudio
+  const movs = await db()
+    .select()
+    .from(bank_movements)
+    .where(and(eq(bank_movements.studio_id, s.studioId), eq(bank_movements.organization_id, s.organizationId), gte(bank_movements.date, from), lte(bank_movements.date, to)))
+    .orderBy(asc(bank_movements.date));
+  const { taxBreakdown } = await import("@/modules/bank-rec/core");
+  const rows = movs.flatMap((m) => {
+    const k = m.amount < 0 && m.status !== "ignorado" ? taxKind(m.description, m.cls) : null;
+    return k ? [{ date: m.date, description: m.description, kind: k, amount: -m.amount }] : [];
+  });
+  return { rows, ...taxBreakdown(movs) };
 }
 
 // ───────────── Libros y estados ─────────────

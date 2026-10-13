@@ -533,3 +533,19 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Cargar la serie oficial de la FACPCE (o su fuente) en el Faro Manager y validar el método con la contadora.
+
+## A3 · Reportes de cierre de sueldos y bancos (13 de octubre)
+
+**Qué quedó**
+- Liquidación → Informes → **Reportes de cierre** en Excel y PDF: nómina, control contra el período anterior (por empleado y por concepto, y quiénes ya no están), acreditación, costo laboral (por empleado y área), asiento de sueldos y **conceptos** entre dos períodos por período, área o convenio (`/api/sueldos/reportes/<org>`, auditado).
+- **Armar el asiento de sueldos** desde la liquidación (Contabilidad, borrador, sin duplicar con «Generar asientos»).
+- Conciliación: panel **Impuestos, retenciones y gastos del banco** (Ley 25.413 débitos y créditos, SIRCREB, percepciones, IVA de gastos, comisiones), 33 % computable estimado, **Llevar a la contabilidad** y reporte «Impuestos y retenciones bancarias».
+- Agente y Vigía: `reporte_sueldos` (control, costo, acreditación, nómina, asiento) y `estado_conciliacion` con los impuestos del banco.
+- Ayuda: `empleados/liquidacion-de-sueldos` y `documentos/conciliacion-bancaria`.
+
+**Qué se probó**
+- `bank-rec/core.test.ts`: clasificación de impuestos y resumen.
+- `scripts/pruebas/cierre-sueldos.mts` (37 verificaciones): control con horas extra, alta y baja; los seis reportes y su exportación; asiento de sueldos sin duplicar; Agente; impuestos del banco, asientos por cuenta sin duplicar, reporte y Vigía; aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Validar con la contadora el porcentaje computable de la Ley 25.413 por régimen y los formatos de acreditación de cada banco.

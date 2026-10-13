@@ -1,8 +1,8 @@
 import { ArrowDownLeft, ArrowUpRight, BookOpenCheck, Landmark, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
-import { accountAction, deleteRuleAction, entryAction, groupAction, importStatementAction, movementAction, ruleAction } from "@/app/admin/conciliacion-actions";
+import { accountAction, bankTaxEntriesAction, deleteRuleAction, entryAction, groupAction, importStatementAction, movementAction, ruleAction } from "@/app/admin/conciliacion-actions";
 import { Table, ToneBadge } from "@/components/ds";
-import type { GroupSuggestion } from "@/modules/bank-rec/core";
+import { TAX_LABEL, taxBreakdown, type GroupSuggestion, type TaxKind } from "@/modules/bank-rec/core";
 import { SubmitButton } from "@/components/admin/ui";
 import { Feedback } from "@/components/app/Feedback";
 import type { StaffUser } from "@/lib/auth";
@@ -160,6 +160,10 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
     return c ? `${c.type === "emitido" ? "Factura emitida" : "Comprobante recibido"} ${c.number ?? ""} · ${c.counterparty ?? ""} · ${formatMoney(c.total)} · ${formatDate(c.date, "numeric")}` : "—";
   };
   const options = (amount: number) => [...v.byId.values()].filter((c) => (amount > 0) === (c.type === "emitido") && !v.matched.has(c.id));
+  const taxes = taxBreakdown(v.movs);
+  const dates = v.movs.map((m) => m.date).sort();
+  const pFrom = v.st.period_from ?? dates[0] ?? "";
+  const pTo = v.st.period_to ?? dates[dates.length - 1] ?? "";
   const cards: [string, string | number, string][] = [
     ["Facturas cobradas o pagadas", v.summary.pagadas, ""],
     ["Pendientes", v.summary.pendientes, ""],
@@ -185,6 +189,36 @@ export async function StatementView({ me, orgId, id, sp }: { me: StaffUser; orgI
           </div>
         ))}
       </dl>
+      {taxes.count > 0 && (
+        <section aria-label="Impuestos y retenciones del banco" className="grid gap-3 rounded-md border border-line bg-surface p-4">
+          <h2 className="flex items-center gap-2 text-ui font-medium">
+            <Landmark className="size-4 text-muted" aria-hidden /> Impuestos, retenciones y gastos del banco
+          </h2>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-1 text-ui sm:grid-cols-2">
+            {(Object.entries(taxes.totals) as [TaxKind, number][])
+              .filter(([, v2]) => v2 > 0)
+              .map(([k, v2]) => (
+                <div key={k} className="flex justify-between gap-3 border-b border-line py-1">
+                  <dt className="text-muted">{TAX_LABEL[k]}</dt>
+                  <dd className="num">{formatMoney(v2)}</dd>
+                </div>
+              ))}
+          </dl>
+          {taxes.ley25413 > 0 && <p className="text-meta text-muted">Del impuesto a los débitos y créditos ({formatMoney(taxes.ley25413)}), el 33 % ({formatMoney(taxes.computable)}) sería computable como pago a cuenta de Ganancias según la alícuota general: lo confirma el contador. Las retenciones SIRCREB son pago a cuenta de Ingresos Brutos.</p>}
+          <form action={bankTaxEntriesAction} className="flex flex-wrap items-center gap-3">
+            <Org id={orgId} />
+            <input type="hidden" name="statement" value={v.st.id} />
+            <input type="hidden" name="from" value={pFrom} />
+            <input type="hidden" name="to" value={pTo} />
+            <SubmitButton variant="secondary" pendingText="…">
+              Llevar a la contabilidad
+            </SubmitButton>
+            <a href={`/api/contabilidad/${orgId}?reporte=impuestos_bancarios&desde=${pFrom}&hasta=${pTo}&formato=xlsx`} className="text-meta text-muted underline underline-offset-4 hover:text-ink">
+              Detalle en Excel
+            </a>
+          </form>
+        </section>
+      )}
       {v.account && (
         <details className="rounded-md border border-line bg-surface p-4">
           <summary className="flex cursor-pointer items-center gap-2 text-ui font-medium">

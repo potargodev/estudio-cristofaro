@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { adjustmentLines, allowedDiff, classify, matchRule, score, suggest, suggestGroups, summarize, type Candidate, type Rule } from "./core";
+import { adjustmentLines, allowedDiff, classify, matchRule, score, suggest, suggestGroups, summarize, type Candidate, type Rule, taxBreakdown, taxKind } from "./core";
 
 test("clasifica conceptos bancarios", () => {
   assert.equal(classify({ description: "IMP. LEY 25413 S/DEB", amount: -1200 }), "impuesto");
@@ -106,4 +106,28 @@ test("asiento de ajuste: redondeo o gastos, contra deudores o proveedores", () =
   const lines = adjustmentLines(-2500, false, a, "Descuentos obtenidos");
   assert.equal(lines.reduce((s, l) => s + l.debit - l.credit, 0), 0, "debe = haber");
   assert.equal(lines[1].account, "Descuentos obtenidos");
+});
+
+test("impuestos del banco: débitos y créditos, SIRCREB, percepciones, IVA de gastos y comisiones", () => {
+  assert.equal(taxKind("IMP. LEY 25413 S/DEB", "impuesto"), "debitos_25413");
+  assert.equal(taxKind("IMPUESTO LEY 25.413 S/CRED", "impuesto"), "creditos_25413");
+  assert.equal(taxKind("RET SIRCREB IIBB", "impuesto"), "sircreb");
+  assert.equal(taxKind("PERCEPCION IVA RG 2408", "impuesto"), "percepcion_iva");
+  assert.equal(taxKind("PERCEPCION IIBB CABA", "impuesto"), "percepcion_iibb");
+  assert.equal(taxKind("IVA S/COMISIONES", "impuesto"), "iva_gastos");
+  assert.equal(taxKind("Comisión mantenimiento de cuenta", "comision"), "comision");
+  assert.equal(taxKind("Transferencia recibida", "cobro"), null);
+  const b = taxBreakdown([
+    { description: "IMP. LEY 25413 S/DEB", amount: -1200, cls: "impuesto" },
+    { description: "IMP. LEY 25413 S/CRED", amount: -1800, cls: "impuesto" },
+    { description: "RET SIRCREB IIBB", amount: -900, cls: "impuesto" },
+    { description: "RET SIRCREB IIBB", amount: -100, cls: "impuesto", status: "ignorado" },
+    { description: "Comisión", amount: -5000, cls: "comision" },
+    { description: "Cobro", amount: 100000, cls: "cobro" },
+  ]);
+  assert.equal(b.ley25413, 3000);
+  assert.equal(b.computable, 990);
+  assert.equal(b.totals.sircreb, 900);
+  assert.equal(b.count, 4);
+  assert.equal(b.total, 8900);
 });

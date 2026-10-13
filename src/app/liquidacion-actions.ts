@@ -123,6 +123,19 @@ export async function runAction(fd: FormData) {
     revalidatePath(r.base, "layout");
     go(back, { ok: `Publicamos ${res.published} recibos para la firma.` });
   }
+  if (op === "asiento") {
+    // El asiento de sueldos es del estudio (contabilidad de la organización)
+    if (!r.scope.fromStudio) go(back, { error: "El asiento lo arma el estudio." });
+    const { AccountingError, payrollEntry } = await import("@/modules/contabilidad/server");
+    let row: Awaited<ReturnType<typeof payrollEntry>> = null;
+    try {
+      row = await payrollEntry({ studioId: r.scope.studioId, organizationId: r.scope.organizationId }, r.actor, id);
+    } catch (e) {
+      if (e instanceof AccountingError) go(back, { error: e.message });
+      throw e;
+    }
+    go(`${back}?ver=informes`, { ok: row ? "Asiento de sueldos armado: está en Contabilidad → Asientos." : "El asiento de esta liquidación ya estaba en Contabilidad." });
+  }
   if (op === "anular") {
     await guard(back, () => annul(r.scope, r.actor, id));
     go(`${r.base}/liquidacion`, { ok: "Liquidación anulada." });

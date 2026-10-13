@@ -131,4 +131,41 @@ export const empleadosTools = [
       return { organizacion: org.name, liquidaciones: runs.slice(0, 12).map((r) => ({ id: r.id, periodo: r.period, tipo: r.kind, estado: r.status, version: r.version, empleados: r.totals.employees, neto: r.totals.net / 100, costo_laboral: r.totals.cost / 100, enlace: `/admin/organizaciones/${org.id}/sueldos/liquidacion/${r.id}` })) };
     },
   }),
+  defineTool<{ organizacion_id: string; periodo: string; tipo?: "control" | "costo" | "acreditacion" | "empleados" | "asiento" }, unknown>({
+    name: "reporte_sueldos",
+    title: "Reporte de cierre de sueldos",
+    description: "Reporte de la liquidación aprobada de un período (AAAA-MM): control contra el período anterior (variaciones por empleado y por concepto), costo laboral, acreditación, nómina de empleados o asiento de sueldos. Devuelve el resumen y el enlace para descargarlo en Excel o PDF.",
+    module: "empleados",
+    level: "lectura",
+    roles: ["dueno", "contador", "colaborador"],
+    input: z.object({ organizacion_id: uuid("ID de la organización"), periodo: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).describe("AAAA-MM"), tipo: z.enum(["control", "costo", "acreditacion", "empleados", "asiento"]).optional() }),
+    async organizationOf(input) {
+      return input.organizacion_id;
+    },
+    async handler(input, ctx) {
+      const org = await ctx.organization(input.organizacion_id);
+      const scope = scopeOf(ctx.studioId, org.id);
+      const { listRuns } = await import("@/modules/liquidacion/server");
+      const run = (await listRuns(scope)).filter((r) => r.period === input.periodo && ["aprobada", "publicada"].includes(r.status)).sort((a, b) => (a.kind === "mensual" ? -1 : 1) - (b.kind === "mensual" ? -1 : 1))[0];
+      if (!run) throw new ToolError(`No hay una liquidación aprobada de ${input.periodo}.`, "entrada_invalida");
+      const tipo = input.tipo ?? "control";
+      const { payrollControl, payrollReport } = await import("@/modules/liquidacion/reportes");
+      const descarga = (f: string) => `/api/sueldos/reportes/${org.id}?reporte=${tipo}&liquidacion=${run.id}&formato=${f}`;
+      if (tipo === "control") {
+        const c = await payrollControl(scope, run.id);
+        return {
+          organizacion: org.name,
+          liquidacion: `${run.period} ${run.kind}`,
+          contra: c.prev ? `${c.prev.period} ${c.prev.kind}` : null,
+          a_revisar: c.employees.filter((e) => e.flag !== "ok").map((e) => ({ empleado: e.name, neto: e.net / 100, neto_anterior: e.prevNet === null ? null : e.prevNet / 100, variacion: e.delta === null ? "nuevo" : `${Math.round(e.delta * 1000) / 10} %` })),
+          ya_no_estan: c.gone,
+          conceptos_con_mas_diferencia: c.concepts.slice(0, 8).map((x) => ({ concepto: x.name, anterior: x.before / 100, actual: x.now / 100, diferencia: x.diff / 100 })),
+          excel: descarga("xlsx"),
+          pdf: descarga("pdf"),
+        };
+      }
+      const rep = await payrollReport(scope, org.name, tipo, { runId: run.id });
+      return { organizacion: org.name, reporte: rep.title, detalle: rep.subtitle, filas: rep.sections.map((x) => ({ seccion: x.title, columnas: x.header, filas: x.rows.slice(0, 20), totales: x.totals ?? null })), excel: descarga("xlsx"), pdf: descarga("pdf") };
+    },
+  }),
 ];

@@ -3,8 +3,8 @@ titulo: Conciliación bancaria
 resumen: Importá el extracto del banco y Faro lo cruza con las facturas emitidas y los comprobantes confirmados, con tolerancias por cuenta, cruces de uno con muchos y asientos de ajuste por las diferencias.
 perfiles: [estudio]
 modulo: bank_rec
-actualizado: 2026-10-12
-relacionados: [documentos/lectura-inteligente, facturacion/emitir-facturas]
+actualizado: 2026-10-13
+relacionados: [documentos/lectura-inteligente, facturacion/emitir-facturas, contabilidad/contabilidad-general]
 ---
 
 La conciliación está en la ficha de la organización → pestaña **Conciliación** (plan Avanzado; la usan dueños y contadores).
@@ -48,6 +48,11 @@ En cada movimiento:
 - **Sin factura** marca un pago que no tiene comprobante.
 - **Ignorar** lo saca de la cuenta.
 - **Deshacer** lo vuelve a sin conciliar (en un grupo, el grupo entero).
+
+## Impuestos, retenciones y gastos del banco
+En cada extracto, Faro separa lo que el banco debitó por impuestos y gastos: **impuesto a los débitos** y **a los créditos** (Ley 25.413), **retenciones SIRCREB** de Ingresos Brutos, **percepciones** de IVA e IIBB, **IVA sobre comisiones** y **comisiones**. Te muestra una estimación de lo computable del impuesto a los débitos y créditos como pago a cuenta (33 %, la confirma el contador).
+
+**Llevar a la contabilidad** arma un asiento por débito en borrador, cada uno a su cuenta (pago a cuenta, SIRCREB, percepciones, IVA crédito fiscal o gastos bancarios), sin duplicar. El detalle se descarga en Excel.
 
 ## Reglas
 

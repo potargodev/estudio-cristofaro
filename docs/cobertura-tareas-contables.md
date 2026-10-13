@@ -42,7 +42,7 @@
 | Monotributo: pago de la cuota y exclusiones | **Cubierto** (aviso) | Calendario y alerta de exclusión. El pago lo hace el contribuyente. |
 | Monotributo: relación de dependencia más actividad independiente | **Cubierto** (aviso) | §13 de principios, "a validar". |
 | Retenciones y percepciones practicadas (SICORE/SIRE): cálculo e informe | **No contemplado** | Para clientes que son agentes de retención. Ver también SIRADIG y Ganancias 4.ª categoría en §4. |
-| Impuesto a los débitos y créditos bancarios: cómputo como pago a cuenta | **No contemplado** | Sale de la conciliación (NU-5), falta el cálculo. |
+| Impuesto a los débitos y créditos bancarios: cómputo como pago a cuenta | **Cubierto** (parcial) | Débitos y créditos separados en la conciliación, asiento a pago a cuenta y estimación del 33 % computable "a validar" (A3). El cómputo en la DDJJ lo hace el contador. |
 | Facturación electrónica (todos los tipos) | **Cubierto / Planificado (FA)** | Ver §6. |
 | Domicilio Fiscal Electrónico y Ventanilla Electrónica: control de notificaciones | **No contemplado** | Muy habitual. Sin servicio oficial para leerlo: hoy solo se podría hacer con chequeos guiados y recordatorios. |
 | Constancia de inscripción y padrón | **Cubierto** | Mi situación con ARCA. |
@@ -60,7 +60,7 @@
 | Convenio Multilateral: CM03 mensual, CM05 anual, coeficientes unificados | **No contemplado** | Muy común en clientes que venden en varias provincias. Prioridad alta para la contadora. |
 | Regímenes simplificados provinciales (monotributo unificado) | **No contemplado** | A validar por jurisdicción. |
 | Percepciones y retenciones de IIBB sufridas | **Planificado (NU-4)** | Lectura por jurisdicción. |
-| SIRCREB (retenciones bancarias de IIBB) | **No contemplado** | Sale de los extractos (NU-5), falta clasificarlas y computarlas. |
+| SIRCREB (retenciones bancarias de IIBB) | **Cubierto** (parcial) | Clasificadas en la conciliación, con asiento a su cuenta y reporte (A3). El cómputo en la DDJJ de IIBB lo hace el contador. |
 | Agente de retención o percepción provincial: DDJJ | **No contemplado** | |
 | Leyendas de IIBB en comprobantes (consumidor final) | **Planificado (NU-7)** | |
 | Tasas municipales (seguridad e higiene y otras) | **No contemplado** | Varía por municipio. |
@@ -90,25 +90,25 @@
 | Tarea | Estado | Dónde / nota |
 |---|---|---|
 | Legajo de empleados | **Cubierto** | F5. |
-| Liquidación de haberes (mensual, quincenal, jornal) | **Planificado (NU-8)** | Hoy solo se suben recibos ya hechos. |
-| Convenios colectivos (escalas, categorías, adicionales) | **Planificado (NU-8)** | Escalas "a validar". |
-| SAC, vacaciones, licencias, horas extra | **Planificado (NU-8)** | |
-| Liquidación final (renuncia, despido, indemnizaciones) | **Planificado (NU-8)** | Criterio del contador en despidos. |
-| Embargos y cuotas alimentarias sobre sueldos | **Planificado (NU-8)** | |
+| Liquidación de haberes (mensual, quincenal, jornal) | **Cubierto** | Liquidación de sueldos (§2.q etapa 6): mensual por convenio, con novedades, re-liquidación y aprobación. |
+| Convenios colectivos (escalas, categorías, adicionales) | **Cubierto** | Escalas versionadas en el Faro Manager, "a validar". |
+| SAC, vacaciones, licencias, horas extra | **Cubierto** | §2.q etapa 6. |
+| Liquidación final (renuncia, despido, indemnizaciones) | **Cubierto** | Criterio del contador en despidos. |
+| Embargos y cuotas alimentarias sobre sueldos | **Cubierto** | Con el tope legal. |
 | Recibos de sueldo con firma conforme o no conforme | **Cubierto** | F5. |
-| Cargas sociales y F.931 | **Planificado (NU-8)** | Archivo para el F.931, "a validar". |
-| Libro de Sueldos Digital | **Planificado (NU-8)** | "A validar". |
+| Cargas sociales y F.931 | **Cubierto** | Archivo de importación para el F.931 (SICOSS), "a validar". |
+| Libro de Sueldos Digital | **Cubierto** | Archivo LSD, "a validar". |
 | Altas y bajas de empleados (Simplificación Registral / Mi Simplificación) | **No contemplado** | Habitual. El trámite es en ARCA; Faro puede guiar, recordar y guardar la constancia. |
 | ART: alta, nómina y pago | **No contemplado** | |
 | Seguro de vida obligatorio | **No contemplado** | |
-| Aportes y contribuciones sindicales | **Planificado (NU-8)** (parcial) | Dentro de los conceptos del convenio. |
+| Aportes y contribuciones sindicales | **Cubierto** (parcial) | Dentro de los conceptos del convenio. |
 | Ganancias 4.ª categoría: retenciones a empleados | **No contemplado** | Cálculo mensual y liquidación anual. |
 | SIRADIG / F.572 (deducciones de los empleados) | **No contemplado** | Ligado al punto anterior. |
 | Personal de casas particulares (servicio doméstico) | **No contemplado** | Régimen propio, muy común en personas humanas. |
 | Novedades de personal hacia el estudio | **Cubierto** | Solicitudes tipificadas (F5). |
 | Comunicación interna con empleados | **Cubierto** | F5. |
-| Archivo para acreditaciones bancarias | **Planificado (NU-8)** | |
-| Reportes de cierre de sueldos | **Planificado (NU-8)** | |
+| Archivo para acreditaciones bancarias | **Cubierto** | Formato genérico (cada banco tiene el suyo, "a validar") y reporte de acreditación (A3). |
+| Reportes de cierre de sueldos | **Cubierto** | Nómina, conceptos por período/área/convenio, control contra el período anterior, acreditación, costo laboral y asiento de sueldos en Excel y PDF y por el Agente (A3). |
 
 ## 5. Societario
 

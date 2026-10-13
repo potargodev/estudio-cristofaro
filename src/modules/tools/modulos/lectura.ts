@@ -1,4 +1,5 @@
 import "server-only";
+import { TAX_LABEL, taxBreakdown, type TaxKind } from "@/modules/bank-rec/core";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod/v4";
 import { getDb } from "@/db";
@@ -74,7 +75,7 @@ export const lecturaTools = [
   defineTool<{ organizacion_id: string }, unknown>({
     name: "estado_conciliacion",
     title: "Estado de la conciliación bancaria",
-    description: "Cómo viene la conciliación bancaria de una organización: movimientos sin conciliar, sugeridos y conciliados, y el resumen del último extracto (facturas pagadas, pendientes, en tránsito, pagos sin factura, comisiones e impuestos).",
+    description: "Cómo viene la conciliación bancaria de una organización: movimientos sin conciliar, sugeridos y conciliados, y el resumen del último extracto (facturas pagadas, pendientes, en tránsito, pagos sin factura, comisiones e impuestos) con el detalle de impuestos del banco: débitos y créditos (Ley 25.413), SIRCREB, percepciones e IVA de gastos.",
     module: "conciliacion",
     level: "lectura",
     roles: ["dueno", "contador"],
@@ -93,6 +94,12 @@ export const lecturaTools = [
         organizacion: org.name,
         movimientos: status,
         ultimo_extracto: view ? { banco: view.st.bank, desde: view.st.period_from, hasta: view.st.period_to, ...view.summary, comisiones: pesos(view.summary.comisiones), impuestos: pesos(view.summary.impuestos), enlace: `/admin/organizaciones/${org.id}/conciliacion/${view.st.id}` } : null,
+        impuestos_bancarios: view
+          ? (() => {
+              const t = taxBreakdown(view.movs);
+              return { ...Object.fromEntries(Object.entries(t.totals).filter(([, v]) => v).map(([k, v]) => [TAX_LABEL[k as TaxKind], pesos(v)])), computable_ley_25413_a_validar: pesos(t.computable) };
+            })()
+          : null,
       };
     },
   }),

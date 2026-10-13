@@ -3,7 +3,7 @@ import Link from "next/link";
 import { importNoveltiesAction, liquidateAction, noveltyAction, payrollDataAction, payrollSettingsAction, pullPortalAction, runAction } from "@/app/liquidacion-actions";
 import { BarList } from "@/components/charts/BarList";
 import { Feedback } from "@/components/app/Feedback";
-import { Card, EmptyState, MetricCard, SubmitButton, Table, ToneBadge, ViewSwitch } from "@/components/ds";
+import { Card, EmptyState, MetricCard, SubmitButton, Table, ToneBadge, ViewSwitch, chipClass } from "@/components/ds";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatDate, formatMoney, todayAR } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ import { periodLabel } from "@/modules/agent/intent";
 import { CCTS, OWN_CCT, cctOf, scaleAt } from "@/modules/liquidacion/convenios";
 import { END_REASON, NOVELTY_LABEL } from "@/modules/liquidacion/core";
 import { FORMATS } from "@/modules/liquidacion/exportaciones";
+import { GROUPS, PAYROLL_REPORTS } from "@/modules/liquidacion/reportes";
 import { listNovelties, listRuns, reports, RUN_KIND, RUN_STATUS, runView, scaleVersions, settingsOf } from "@/modules/liquidacion/server";
 import { listEmployees } from "@/modules/payroll/server";
 import type { ResolvedPayroll } from "@/modules/payroll/scope";
@@ -424,6 +425,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
   const toValidate = scales.filter(([, x]) => x.status === "a_validar").map(([k]) => cctOf(k)?.name ?? k);
   const exportable = ["aprobada", "publicada"].includes(run.status);
   const file = (f: string) => `/api/sueldos/liquidacion/${run.id}?formato=${f}`;
+  const reportBase = `/api/sueldos/reportes/${r.scope.organizationId}?`;
   // Los avisos de escalas o parámetros «a validar» van en la nota de arriba, no en cada recibo
   const receiptWarnings = items.reduce((n, it) => n + (it.warnings as string[]).filter((w) => !/a validar|de referencia/.test(w)).length, 0);
   return (
@@ -593,6 +595,67 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
       )}
       {tab === "informes" && (
         <div className="grid gap-4 lg:grid-cols-2">
+          <Card className="grid gap-3 lg:col-span-2">
+            <p className="text-title font-semibold text-ink">Reportes de cierre</p>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {(Object.entries(PAYROLL_REPORTS) as [string, string][])
+                .filter(([k]) => k !== "conceptos")
+                .map(([k, label]) => (
+                  <li key={k} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line px-3 py-2">
+                    <span className="text-ui">{label}</span>
+                    <span className="flex gap-2">
+                      <a href={`${reportBase}reporte=${k}&liquidacion=${run.id}&formato=xlsx`} className={chipClass(false)}>
+                        <FileDown className="size-3.5" aria-hidden /> Excel
+                      </a>
+                      <a href={`${reportBase}reporte=${k}&liquidacion=${run.id}&formato=pdf`} className={chipClass(false)}>
+                        PDF
+                      </a>
+                    </span>
+                  </li>
+                ))}
+            </ul>
+            <form method="get" action={`/api/sueldos/reportes/${r.scope.organizationId}`} className="flex flex-wrap items-end gap-3 border-t border-line pt-3">
+              <input type="hidden" name="reporte" value="conceptos" />
+              <p className="w-full text-meta text-muted">Conceptos liquidados entre dos períodos (todas las liquidaciones aprobadas)</p>
+              <label className={lbl}>
+                Desde
+                <input name="desde" type="month" defaultValue={`${run.period.slice(0, 4)}-01`} className={cn(fieldClass, "w-40")} />
+              </label>
+              <label className={lbl}>
+                Hasta
+                <input name="hasta" type="month" defaultValue={run.period} className={cn(fieldClass, "w-40")} />
+              </label>
+              <label className={lbl}>
+                Agrupar por
+                <select name="agrupar" defaultValue="periodo" className={cn(fieldClass, "w-40")}>
+                  {Object.entries(GROUPS).map(([k, l]) => (
+                    <option key={k} value={k}>
+                      {l}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className={lbl}>
+                Formato
+                <select name="formato" defaultValue="xlsx" className={cn(fieldClass, "w-32")}>
+                  <option value="xlsx">Excel</option>
+                  <option value="pdf">PDF</option>
+                </select>
+              </label>
+              <button className={chipClass(false)}>Descargar</button>
+            </form>
+            {r.scope.fromStudio && exportable && (
+              <form action={runAction} className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
+                <Hidden r={r} />
+                <input type="hidden" name="id" value={run.id} />
+                <input type="hidden" name="op" value="asiento" />
+                <p className="min-w-0 flex-1 text-meta text-muted">El asiento de sueldos (bruto y contribuciones contra neto, cargas y retenciones) va a Contabilidad en borrador; si ya estaba, no se duplica.</p>
+                <SubmitButton variant="secondary" pendingText="…">
+                  Armar el asiento de sueldos
+                </SubmitButton>
+              </form>
+            )}
+          </Card>
           <Card>
             <BarList title="Costo laboral por empleado" bars={rep.byEmployee.slice(0, 15).map((x) => ({ label: x.name, value: x.cost, display: formatMoney(x.cost), hint: `Neto ${formatMoney(x.net)} · contribuciones ${formatMoney(x.contrib)}` }))} />
           </Card>

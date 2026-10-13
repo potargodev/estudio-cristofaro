@@ -52,6 +52,52 @@ export function classify(m: Pick<BankMov, "description" | "amount">): MovementCl
   return m.amount >= 0 ? "cobro" : "pago";
 }
 
+// ───────────── Impuestos y retenciones del banco (A3) ─────────────
+
+export type TaxKind = "debitos_25413" | "creditos_25413" | "sircreb" | "percepcion_iva" | "percepcion_iibb" | "iva_gastos" | "comision" | "otro_impuesto";
+export const TAX_LABEL: Record<TaxKind, string> = {
+  debitos_25413: "Impuesto a los débitos (Ley 25.413)",
+  creditos_25413: "Impuesto a los créditos (Ley 25.413)",
+  sircreb: "Retenciones SIRCREB (IIBB)",
+  percepcion_iva: "Percepciones de IVA",
+  percepcion_iibb: "Percepciones de IIBB",
+  iva_gastos: "IVA sobre comisiones y gastos",
+  comision: "Comisiones y gastos bancarios",
+  otro_impuesto: "Otros impuestos",
+};
+
+/** Qué impuesto o gasto es un débito del banco (por su descripción); null si no es ninguno */
+export function taxKind(description: string, cls: string): TaxKind | null {
+  const d = norm(description);
+  if (/SIRCREB|RET(\.|ENCION)?\s*(DE\s*)?(II\.?\s?BB|INGRESOS BRUTOS)|RG\s*(ARBA|AGIP)/.test(d)) return "sircreb";
+  if (/25\.?413|IMP(\.|UESTO)?\s*(LEY|S\/|SOBRE|A\s*LOS)?\s*(DEB|CRED)|IDCB/.test(d)) return /CRED/.test(d) && !/DEB/.test(d) ? "creditos_25413" : "debitos_25413";
+  if (/PERCEP.*(IIBB|II\.BB|INGRESOS)/.test(d)) return "percepcion_iibb";
+  if (/PERCEP.*I\.?V\.?A|RG\s*2408/.test(d)) return "percepcion_iva";
+  if (/^I\.?V\.?A\.?\b|\bIVA\s*(S\/|SOBRE)?\s*(COM|GAST|SERV)/.test(d)) return "iva_gastos";
+  if (cls === "comision") return "comision";
+  if (cls === "impuesto") return "otro_impuesto";
+  return null;
+}
+
+/**
+ * Resumen de impuestos y retenciones del banco de un período: total por tipo
+ * (débitos, en centavos positivos) y una estimación de lo computable del
+ * impuesto a los débitos y créditos como pago a cuenta (33 %, a validar).
+ */
+export function taxBreakdown(movs: { description: string; amount: number; cls: string; status?: string }[]) {
+  const totals = Object.fromEntries(Object.keys(TAX_LABEL).map((k) => [k, 0])) as Record<TaxKind, number>;
+  let count = 0;
+  for (const m of movs) {
+    if (m.amount >= 0 || m.status === "ignorado") continue;
+    const k = taxKind(m.description, m.cls);
+    if (!k) continue;
+    totals[k] += -m.amount;
+    count++;
+  }
+  const ley25413 = totals.debitos_25413 + totals.creditos_25413;
+  return { totals, count, ley25413, computable: Math.round(ley25413 * 0.33), total: Object.values(totals).reduce((a, b) => a + b, 0) };
+}
+
 /** Primera regla guardada que aplica al movimiento */
 export function matchRule(m: Pick<BankMov, "description" | "amount">, rules: Rule[]): Rule | null {
   const d = norm(m.description);

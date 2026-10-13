@@ -8,7 +8,7 @@ import writeXlsxFile from "write-excel-file/node";
 // alineados a la derecha en el PDF. Opcional: la marca «Sin validez fiscal»
 // para lo generado en modo demostración (C6).
 
-type Cell = string | number | null;
+export type Cell = string | number | null;
 
 export interface Section {
   title: string;
