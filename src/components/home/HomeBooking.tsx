@@ -113,7 +113,7 @@ export function HomeBooking({ days }: { days: PickerDay[] }) {
               role="radio"
               aria-checked={start === sl.iso}
               onClick={() => setStart(sl.iso)}
-              className={cn("tabular border py-3 text-center text-body transition-colors duration-300 motion-reduce:transition-none", start === sl.iso ? "border-rose-light bg-rose-light text-night" : "border-hair text-paper/85 hover:border-rose-light hover:text-paper")}
+              className={cn("tabular h-12 border text-center text-body transition-colors duration-300 motion-reduce:transition-none", start === sl.iso ? "border-rose-light bg-rose-light text-night" : "border-hair text-paper/85 hover:border-rose-light hover:text-paper")}
             >
               {sl.label}
             </button>
@@ -126,7 +126,7 @@ export function HomeBooking({ days }: { days: PickerDay[] }) {
         )}
       </div>
       {/* 3. Datos */}
-      <div className={cn("grid gap-4 px-5 pb-5 pt-6 sm:grid-cols-2", !start && "opacity-60")}>
+      <div className="grid gap-4 px-5 pb-5 pt-6 sm:grid-cols-2">
         <label className="block text-meta text-paper/70">
           Nombre y apellido
           <input name="name" required autoComplete="name" className={field} />

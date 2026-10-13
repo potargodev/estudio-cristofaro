@@ -33,7 +33,8 @@ Revisión al píxel de toda la app y las landings, con las pantallas nuevas de �
 | Primera, sin estados (antes de corregir) | 1.400 cargas | 718 |
 | Con estados, después del popover y la primera tanda | 6.800 | 98 (+ estados extremos: 244) |
 | Después de la segunda tanda | 7.000 | 64, todos el mismo caso (actividad repetida en el Inicio) |
-| Final (`npm run qa:visual`) | ver «Que no vuelva a pasar» | 0 |
+| `npm run qa:visual` final (demo de desarrollo) | 6.996 estados (904 cargas) + 80 extremos | 0 |
+| Regresión completa (`regresion.sh`, base nueva) | 5.527 estados | 1.020, todos de la reserva de la home con la agenda configurada (ver abajo); corregidos y verificados en 0 sobre esos mismos datos |
 
 Todos los hallazgos reales quedaron corregidos. Los falsos positivos se resolvieron afinando el detector, sin ocultar casos. Están listados al final.
 
@@ -121,6 +122,15 @@ Regla nueva en `DESIGN.md`: **todo menú y desplegable usa el popover del sistem
 | Web `/` · Beneficios en grilla | Segunda fila desfasada 10 px | Paneles arriba, sin `justify-between` |
 | Agente · detalle | Barra de avance de 240 px en un panel ancho | A todo el ancho en el detalle |
 
+### Web pública · reserva en la home (solo con la agenda configurada)
+
+La demo sola no tiene la agenda configurada; los datos que dejan las pruebas de la regresión, sí. Así apareció este caso.
+
+| Pantalla | Estado | Problema | Corrección |
+|---|---|---|---|
+| Web `/` · «Agendá una llamada» | Horarios del día | Botones de horario de 49 px (la escala web es 44 y 48) | Alto fijo de 48 px |
+| Web `/` · «Agendá una llamada» | Antes de elegir horario | Los datos se atenuaban con `opacity-60`: etiquetas a 3,87:1, debajo de AA | Etiquetas y campos con su contraste normal (el botón de enviar sigue deshabilitado hasta elegir horario) |
+
 ### Contenido repetido o raro
 
 | Pantalla | Problema | Corrección |
@@ -151,6 +161,17 @@ Regla nueva en `DESIGN.md`: **todo menú y desplegable usa el popover del sistem
   - No se reproduce en 250 cargas sin esa carga.
   - El detector vuelve a cargar la página una vez ante ese error y lo cuenta si se repite.
   - Queda para seguir con el modo dev cuando haya un entorno que lo levante.
+
+## Regresión completa
+
+`scripts/pruebas/regresion.sh` sobre una base nueva, con los simuladores, sin la demo y con la demo cargada:
+
+- 55 pruebas y 1.725 verificaciones;
+- 54 en verde, incluida la regresión por captura (26 de 26);
+- la única falla fue `qa-visual`, por la reserva de la home descripta arriba;
+- después de corregirla, el recorrido de la web pública dio 0 sobre esos mismos datos.
+
+`npm run build`, `typecheck`, `lint`, `knip` y `npm test` (132 unitarias) sin errores ni advertencias.
 
 ## Que no vuelva a pasar
 
