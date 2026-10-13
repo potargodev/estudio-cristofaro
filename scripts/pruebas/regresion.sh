@@ -132,8 +132,6 @@ correr ventas-tiendas "${S[@]}" scripts/pruebas/ventas-tiendas.mts
 correr buzon "${S[@]}" scripts/pruebas/buzon.mts
 # §2.p · B9 API /api/v1, webhooks, /estado, OpenAPI y prueba sin tarjeta
 correr api-v1 "${S[@]}" scripts/pruebas/api-v1.mts
-# §2.p · B10 factura rápida en el celular (medida) y empezar a facturar en 3 pasos
-correr emision-rapida node scripts/pruebas/emision-rapida.mjs
 # Parte C · modos de servicio y simuladores (ARCA, tiendas, sistemas, Mercado Pago, banco, mails y teléfono de prueba)
 correr simuladores "${S[@]}" scripts/pruebas/simuladores.mts
 # F4 · Flujos
@@ -158,6 +156,8 @@ correr ver-como node scripts/pruebas/ver-como.mjs
 correr auditoria-seguridad "${S[@]}" scripts/pruebas/auditoria-seguridad.mts
 # §2.q · Agente contable (incluye la cartera de 20 organizaciones de la demo)
 correr agente "${S[@]}" scripts/pruebas/agente.mts
+# §2.p · B10 factura rápida en el celular (medida) y empezar en 3 pasos, con el autónomo de la demo (ARCA simulado de la Parte C)
+correr emision-rapida node scripts/pruebas/emision-rapida.mjs
 correr red-con-demo "${T[@]}" scripts/pruebas/red.mts
 correr principios-con-demo "${S[@]}" scripts/pruebas/principios-servidor.mts
 correr recorrido env SALIDA="$SALIDA/recorrido.json" node scripts/pruebas/recorrido.mjs 200
