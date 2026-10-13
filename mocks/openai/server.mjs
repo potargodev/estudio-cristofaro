@@ -90,7 +90,8 @@ function copilot(body, last, q) {
 // archivo que viene en el pedido ("archivo: edenor.pdf", "ticket", "dudoso", "roto")
 function extraction(q) {
   const file = (q.match(/archivo:\s*(\S+)/) ?? [])[1] ?? "";
-  const base = { tipo_documento: "factura", cuit_receptor: null, moneda: "ARS", no_gravado: null, exento: null, percepciones: [], cae: null, vencimiento_cae: null };
+  // §2.p B8: «receptor-<CUIT>» en el nombre del archivo = factura a nombre de esa CUIT
+  const base = { tipo_documento: "factura", cuit_receptor: (file.match(/receptor-(\d{11})/) ?? [])[1] ?? null, moneda: "ARS", no_gravado: null, exento: null, percepciones: [], cae: null, vencimiento_cae: null };
   const today = new Date().toISOString().slice(0, 10);
   if (file.includes("roto")) return "No pude leer el documento.";
   if (file.includes("ticket"))

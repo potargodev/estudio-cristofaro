@@ -81,6 +81,16 @@ interface StoredFile {
   sizeBytes: number;
 }
 
+/** Guarda el original de una importación (por ahora, el CSV de Mis Comprobantes): no es una subida libre, no pasa por ALLOWED */
+export async function storeImportCsv(text: string, studioId: string, organizationId: string): Promise<{ storagePath: string; sizeBytes: number }> {
+  const storagePath = path.join(studioId, organizationId, `${randomUUID()}.csv`);
+  const full = resolveStored(storagePath);
+  await mkdir(path.dirname(full), { recursive: true });
+  const data = Buffer.from(text, "utf8");
+  await writeFile(full, data, { flag: "wx" });
+  return { storagePath, sizeBytes: data.length };
+}
+
 /**
  * Guarda el archivo con un nombre aleatorio en <UPLOADS_DIR>/<estudio>/<organización>/.
  * El nombre original se guarda solo en la base. Llamar antes a checkUpload().

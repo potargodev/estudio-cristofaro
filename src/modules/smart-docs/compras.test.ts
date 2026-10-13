@@ -86,3 +86,11 @@ test("aprendizaje: lo corregido queda como regla y el siguiente comprobante vien
   assert.deepEqual(again.corrected, []);
   assert.equal(again.rule, null);
 });
+
+test("buzón: la CUIT receptora tiene que ser propia", async () => {
+  const { receiverCheck } = await import("./core");
+  assert.equal(receiverCheck("30-71234567-1", ["30712345671"]), "ok");
+  assert.equal(receiverCheck("20111111112", ["30712345671"]), "otra");
+  assert.equal(receiverCheck(null, ["30712345671"]), "sin_dato");
+  assert.equal(receiverCheck("20111111112", []), "sin_dato");
+});

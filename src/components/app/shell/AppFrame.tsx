@@ -62,7 +62,8 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
     ]);
     // Red Contable: candidatos nuevos que coinciden con el perfil del estudio
     const candidates = await newCandidates(user, (await getPrefs(user.id)).redSeenAt).catch(() => 0);
-    Object.assign(badges, { requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0, approvals: appr?.n ?? 0, candidates, comercial: (lead?.n ?? 0) + candidates });
+    const inbox = await import("@/modules/buzon/server").then((m) => m.inboxCount(user.studioId)).catch(() => 0);
+    Object.assign(badges, { inbox, requests: req?.n ?? 0, leads: lead?.n ?? 0, obligations: due?.n ?? 0, approvals: appr?.n ?? 0, candidates, comercial: (lead?.n ?? 0) + candidates });
     input.studio = {
       isAdmin: TENANT_OWNERS.includes(user.role),
       isOperator: user.role !== "colaborador",

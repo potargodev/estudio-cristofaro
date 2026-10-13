@@ -69,6 +69,7 @@ async function purchaseRows(s: IvaScope): Promise<BookRow[]> {
         loadedAt: (d.confirmed_at ?? d.created_at).toISOString().slice(0, 10),
         supplierHint: e.razon_social_emisor,
         ownCuit: e.cuit_receptor,
+        creditShare: d.computable === "no_computa" ? 0 : d.computable === "parcial" ? Math.min(100, Math.max(0, d.computable_pct ?? 100)) / 100 : 1,
       },
     ];
   });

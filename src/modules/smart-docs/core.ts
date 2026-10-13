@@ -121,7 +121,16 @@ export interface Validation {
   items?: Check;
   /** Resultado de la consulta a ARCA, si se pudo hacer */
   arca?: { cuit?: "activo" | "inexistente" | "error"; cae?: "autorizado" | "no_encontrado" | "error"; consultado_at?: string };
+  /** §2.p B8: que el comprobante esté a nombre de una CUIT de la organización */
+  receptor?: "ok" | "otra" | "sin_dato";
   mensajes: string[];
+}
+
+/** ¿El receptor del comprobante es una CUIT propia? (sin CUIT del receptor, o sin CUIT propias cargadas: sin dato) */
+export function receiverCheck(receptor: string | null | undefined, own: string[]): NonNullable<Validation["receptor"]> {
+  const r = (receptor ?? "").replace(/\D/g, "");
+  if (r.length !== 11 || !own.length) return "sin_dato";
+  return own.includes(r) ? "ok" : "otra";
 }
 
 /** Validaciones locales: dígito verificador del CUIT, formato y vigencia del CAE y que cierren los totales */

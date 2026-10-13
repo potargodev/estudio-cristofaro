@@ -30,6 +30,8 @@ const MAP: [string, string][] = [
   ["/admin/recategorizacion", "facturacion/recategorizacion-cartera"],
   ["/admin/facturacion/estado", "facturacion/arca-caido"],
   ["/admin/facturacion/ventas", "facturacion/ventas-de-tiendas"],
+  ["/admin/buzon", "documentos/buzon"],
+  ["/portal/comprobantes", "documentos/buzon"],
   ["/admin/facturacion", "facturacion/panel-y-lotes"],
   ["/admin/configuracion/avanzado", "configuracion/marca-blanca"],
   ["/portal/whatsapp", "conexiones/whatsapp"],

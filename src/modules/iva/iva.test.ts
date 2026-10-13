@@ -7,6 +7,8 @@ const row = (id: string, o: Partial<BookRow>): BookRow => ({ id, kind: "compra",
 test("crédito fiscal: solo A y M, con percepciones de IVA", () => {
   assert.equal(creditOf(row("1", { percepcionesIva: 3000 })), 24000);
   assert.equal(creditOf(row("2", { letra: "B" })), 0);
+  assert.equal(creditOf(row("p", { creditShare: 0.5 })), 10500);
+  assert.equal(creditOf(row("n", { creditShare: 0 })), 0);
   assert.equal(creditOf(row("3", { letra: "C", iva: [] })), 0);
   const s = summarize([row("1", {}), row("2", { cuit: "20111111112", nombre: "Mono", letra: "C", iva: [], total: 50000 })], "compras");
   assert.equal(s.fiscal, 21000);

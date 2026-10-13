@@ -6,6 +6,7 @@
 export type NavIcon =
   | "resumen"
   | "recategorizacion"
+  | "buzon"
   | "facturacion"
   | "organizaciones"
   | "vencimientos"
@@ -31,7 +32,7 @@ export type NavIcon =
   | "honorarios"
   | "tareas"
   | "avanzado";
-export type BadgeKey = "requests" | "leads" | "obligations" | "approvals" | "candidates" | "comercial";
+export type BadgeKey = "requests" | "leads" | "obligations" | "approvals" | "candidates" | "comercial" | "inbox";
 
 export interface NavItem {
   href: string;
@@ -107,6 +108,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/organizaciones", label: "Organizaciones", icon: "organizaciones", module: "core" },
       { href: "/admin/vencimientos", label: "Vencimientos", icon: "vencimientos", badge: "obligations" },
       { href: "/admin/facturacion", label: "Facturación", icon: "facturacion", module: "arca", hideWhenLocked: true },
+      { href: "/admin/buzon", label: "Buzón", icon: "buzon", badge: "inbox", module: "smart_docs", hideWhenLocked: true },
       { href: "/admin/recategorizacion", label: "Recategorización", icon: "recategorizacion", hideWhenLocked: true },
       { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
       { href: "/admin/tareas", label: "Tareas", icon: "tareas", module: "crm", hideWhenLocked: true },

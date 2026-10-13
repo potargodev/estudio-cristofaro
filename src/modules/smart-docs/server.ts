@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { generateText } from "ai";
 import { and, desc, eq, gte, inArray, isNotNull, isNull, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { accounting_expenses, documents, smart_batches, smart_documents, supplier_rules } from "@/db/schema";
+import { accounting_expenses, documents, invoice_settings, legal_entities, smart_batches, smart_documents, supplier_rules } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { budgetBlock, languageModel, recordUsage, resolveModel } from "@/lib/ai/models";
 import { estimateCost } from "@/lib/ai/pricing";
@@ -16,7 +16,7 @@ import { getPersona } from "@/modules/arca/padron";
 import { constatar } from "@/modules/arca/wscdc";
 import { categoryByHint, createEntry } from "@/modules/bitacora/server";
 import { costUsd, getPlatformAi, isConfigured, platformModel } from "@/modules/copilot/platform";
-import { asExtraction, EXTRACTION_SCHEMA, exportRow, fingerprint, lowFields, normalize, overallConfidence, suggestAccount, validate, type Extraction, type ExportRow, type Validation } from "./core";
+import { asExtraction, EXTRACTION_SCHEMA, exportRow, fingerprint, lowFields, normalize, overallConfidence, receiverCheck, suggestAccount, validate, type Extraction, type ExportRow, type Validation } from "./core";
 import { applyRule, baseDecisions, learnFrom, type Decisions, type SupplierRule } from "./learning";
 import { TRATAMIENTOS, tributoKey, type Tratamiento } from "./tributos";
 import { UUID } from "@/lib/ids";
@@ -114,6 +114,14 @@ async function arcaCheck(e: Extraction): Promise<Validation["arca"]> {
   return out;
 }
 
+/** CUIT propias de la organización (razones sociales y datos de facturación) */
+export async function ownCuits(studioId: string, organizationId: string | null) {
+  if (!organizationId) return [];
+  const a = await db().select({ c: legal_entities.cuit }).from(legal_entities).where(and(eq(legal_entities.organization_id, organizationId), eq(legal_entities.studio_id, studioId), isNotNull(legal_entities.cuit)));
+  const b = await db().select({ c: invoice_settings.cuit }).from(invoice_settings).where(and(eq(invoice_settings.organization_id, organizationId), eq(invoice_settings.studio_id, studioId)));
+  return [...new Set([...a, ...b].map((x) => x.c!).filter(Boolean))];
+}
+
 /** Cuenta que se usó antes para el mismo CUIT en este alcance */
 async function accountHistory(s: DocScope) {
   const rows = await db().select({ e: smart_documents.extracted, a: smart_documents.account }).from(smart_documents).where(and(where(s), eq(smart_documents.status, "confirmado"), isNotNull(smart_documents.account))).orderBy(desc(smart_documents.confirmed_at)).limit(300);
@@ -169,6 +177,11 @@ async function process(s: DocScope, row: SmartDoc, actor: Actor, data: Uint8Arra
   v.arca = await arcaCheck(parsed);
   if (v.arca?.cuit === "inexistente") v.mensajes.push("ARCA no tiene registrado el CUIT del emisor.");
   if (v.arca?.cae === "no_encontrado") v.mensajes.push("ARCA no encontró un comprobante con ese CAE y esos datos.");
+  // §2.p B8: el comprobante tiene que estar a nombre de una CUIT propia
+  if (s.scope !== "bitacora") {
+    v.receptor = receiverCheck(parsed.cuit_receptor, await ownCuits(s.studioId, s.organizationId));
+    if (v.receptor === "otra") v.mensajes.push(`El comprobante está a nombre de otra CUIT (${parsed.cuit_receptor}): no es de esta organización o se cargó en la equivocada.`);
+  }
   const fp = fingerprint(parsed);
   const [dup] = fp ? await db().select({ id: smart_documents.id }).from(smart_documents).where(and(where(s), eq(smart_documents.fingerprint, fp), ne(smart_documents.id, row.id), inArray(smart_documents.status, ["para_confirmar", "confirmado"]))).limit(1) : [];
   const history = await accountHistory(s);
@@ -209,14 +222,14 @@ async function guardRead(s: DocScope) {
 }
 
 /** Sube un archivo y lo lee (o reusa la lectura si es exactamente el mismo archivo) */
-export async function readUpload(s: DocScope, actor: Actor, file: File, source: "subida" | "portal" | "vigia" | "whatsapp" = "subida") {
+export async function readUpload(s: DocScope, actor: Actor, file: File, source: "subida" | "portal" | "vigia" | "whatsapp" | "mail" | "rendicion" = "subida", opts: { targetId?: string | null; fileName?: string } = {}) {
   const check = await checkUpload(file);
   if (!check.ok) throw new SmartDocError(check.error);
   const data = new Uint8Array(await file.arrayBuffer());
   const sha256 = createHash("sha256").update(data).digest("hex");
   const [same] = await db().select().from(smart_documents).where(and(where(s), eq(smart_documents.sha256, sha256), inArray(smart_documents.status, ["para_confirmar", "confirmado"]))).limit(1);
   const stored = await storeUpload(file, s.studioId, s.organizationId ?? `bitacora-${s.ownerUserId}`);
-  const base = { studio_id: s.studioId, organization_id: s.organizationId, owner_user_id: s.ownerUserId, scope: s.scope, storage_path: stored.storagePath, file_name: stored.name, mime_type: stored.mimeType, size_bytes: stored.sizeBytes, sha256, source, created_by: actor.id };
+  const base = { studio_id: s.studioId, organization_id: s.organizationId, owner_user_id: s.ownerUserId, scope: s.scope, storage_path: stored.storagePath, file_name: (opts.fileName ?? stored.name).slice(0, 200), mime_type: stored.mimeType, size_bytes: stored.sizeBytes, sha256, source, created_by: actor.id, target_id: opts.targetId ?? null };
   if (same) {
     // Mismo archivo: no se manda otra vez al modelo
     const [row] = await db().insert(smart_documents).values({ ...base, status: "para_confirmar", kind: same.kind, extracted: same.extracted, confidence: same.confidence, low_fields: same.low_fields, validation: same.validation, fingerprint: same.fingerprint, duplicate_of: same.id, account: same.account, raw: same.raw, decisions: same.decisions, original: same.original, learned: same.learned, supplier_cuit: same.supplier_cuit, synced_at: new Date() }).returning();
@@ -335,6 +348,7 @@ export async function confirmDoc(s: DocScope, actor: Actor, id: string, edited: 
   if (edited.total == null || !(edited.total > 0) || !edited.fecha) throw new SmartDocError("Faltan la fecha o el total.");
   const v = validate(edited);
   v.arca = (d.validation as Validation | null)?.arca;
+  v.receptor = (d.validation as Validation | null)?.receptor;
   const label = [edited.razon_social_emisor ?? "Comprobante", edited.codigo_comprobante && CBTE_TYPES[edited.codigo_comprobante] ? `${CBTE_TYPES[edited.codigo_comprobante].short} ${String(edited.punto_venta ?? 0).padStart(5, "0")}-${String(edited.numero ?? 0).padStart(8, "0")}` : null].filter(Boolean).join(" · ");
   const amount = Math.round(edited.total * 100);
   const sign = edited.tipo_documento === "nota_credito" ? -1 : 1;
@@ -343,6 +357,9 @@ export async function confirmDoc(s: DocScope, actor: Actor, id: string, edited: 
     const cat = await categoryByHint(s.ownerUserId!, account, "gasto");
     const e = await createEntry(s.ownerUserId!, { kind: "gasto", amount, currency: edited.moneda, date: edited.fecha, categoryId: cat?.id ?? null, description: (edited.razon_social_emisor ?? "Ticket").slice(0, 140), paymentMethod: null, note: "Leído con lectura inteligente" });
     targetId = (e as { id: string }).id;
+  } else if (d.source === "rendicion" && d.target_id) {
+    // §2.p B8: el gasto ya lo cargó la rendición aprobada; el buzón suma el comprobante al Libro IVA
+    targetId = d.target_id;
   } else {
     const [x] = await db()
       .insert(accounting_expenses)

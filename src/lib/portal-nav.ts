@@ -24,6 +24,8 @@ export function empresaTabs(role: OrgRole, activeModules: string[]): PortalNavIt
   if (can(role, "finanzas.ver")) tabs.push({ href: "/portal/gastos-empresa", label: "Gastos de la empresa", icon: "gastos" });
   if (can(role, "finanzas.ver")) tabs.push({ href: "/portal/estado-de-cuenta", label: "Estado de cuenta", icon: "gastos" });
   if (can(role, "gastos.rendir") || can(role, "finanzas.gestionar")) tabs.push({ href: "/portal/rendiciones", label: "Rendiciones", icon: "rendiciones" });
+  // §2.p B8: las facturas de proveedores que la persona manda al buzón del estudio
+  if (can(role, "documentos.subir") && role !== "empleado") tabs.push({ href: "/portal/comprobantes", label: "Comprobantes enviados", icon: "documentos" });
   // Red Contable (principios §15): la empresa puede activar «Disponible, busco contador»
   if (role === "administrador" || role === "direccion") tabs.push({ href: "/portal/red-contable", label: "Red Contable", icon: "red" });
   for (const m of MODULES) {

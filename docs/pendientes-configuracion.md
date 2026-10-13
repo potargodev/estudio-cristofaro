@@ -8,7 +8,7 @@ Actualizado el 13 de octubre de 2026.
 |---|---|
 | **Crítico para la reunión con Cristofaro** | 1 SMTP · 2 IA de la plataforma · 3 Staging revisado y demo cargada |
 | **Alto** | 13 WhatsApp de Faro: verificación de Meta (arrancar ya) · 4 Tango real · 5 ARCA · 6 Mercado Pago de Faro · 7 Mercado Pago del estudio · 8 Validaciones del contador · 9 Revisión legal · 10 Backup en el VPS · 11 IP real detrás del proxy · 12 Contenido real de la web |
-| **Medio** | 14 Verificación de Google · 15 Mercado Pago para la Bitácora · 16 Serie del IPC · 17 IA de cada estudio · 18 Empleados · 19 Archivos de Tango y Xubio · 20 Factura de Faro por la suscripción · 21 Agenda pública en la Red · 28 Tiendas online reales (Stock) |
+| **Medio** | 14 Verificación de Google · 15 Mercado Pago para la Bitácora · 16 Serie del IPC · 17 IA de cada estudio · 18 Empleados · 19 Archivos de Tango y Xubio · 20 Factura de Faro por la suscripción · 21 Agenda pública en la Red · 28 Tiendas online reales (Stock) · 30 Correo entrante del buzón |
 | **Bajo** | 22 Dominio e isotipo de Faro · 23 Dominio propio de un estudio · 24 WhatsApp propio de un estudio · 25 Tareas internas y cron externo · 26 Débitos viejos de Inicial · 27 Ramas remotas viejas |
 
 ---
@@ -218,3 +218,9 @@ Actualizado el 13 de octubre de 2026.
 - **Quién:** Faro, con la cuenta de Contabilium de un estudio o de una organización.
 - **Dónde:** Conexiones → Contabilium (credenciales) y ficha → Conexiones → Sistemas conectados.
 - **Cómo se verifica:** «Probar» devuelve los clientes reales, «Sincronizar» trae los comprobantes con su ID externo sin duplicar al repetir, un cliente editado en Faro aparece cambiado en Contabilium y «Pasate a Faro» muestra los totales iguales a los de Contabilium.
+
+### 30. Correo entrante del buzón (§2.p B8)
+- **Qué falta:** un proveedor de correo entrante (por ejemplo Mailgun, SendGrid Inbound Parse, Postmark o un pipe del cPanel) para el dominio de `INBOX_MAIL_DOMAIN` (comodín `comprobantes+*@…`), que mande cada mensaje a `https://app.estudiocristofaro.com/api/buzon/mail` como JSON (`to`, `from`, `subject`, `attachments` con `filename`, `contentType` y `content` en base64) con el encabezado `X-Faro-Inbox-Secret: <INBOX_MAIL_SECRET>`. Si el proveedor manda otro formato, se adapta en `src/app/api/buzon/mail/route.ts`.
+- **Quién:** Faro (dominio y proveedor).
+- **Cómo se verifica:** reenviar un mail con una factura en PDF a la dirección de una organización (Buzón → Reenvío por mail) y verla en el Buzón con la fuente «Mail».
+

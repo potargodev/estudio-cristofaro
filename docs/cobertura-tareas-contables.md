@@ -134,7 +134,7 @@
 | Puntos de venta y numeración desde ARCA | **Cubierto** | F3. |
 | CAE y QR | **Cubierto** | F3. |
 | Contingencia de ARCA caída (cola de emisión) | **Cubierto** | Cola con número previsto, emisión en orden al volver, aviso, estado de ARCA con historial (B5). |
-| Comprobantes recibidos (lectura, validación y buzón de la empresa) | **Cubierto / Planificado (FA, NU-4)** | Lectura existe; buzón e ítems por percepción, planificados. |
+| Comprobantes recibidos (lectura, validación y buzón de la empresa) | **Cubierto** | Operación → Buzón (B8): app, portal, WhatsApp, reenvío por mail, CSV de Mis Comprobantes de ARCA y rendiciones; CUIT receptora, CAE (WSCDC) y repetidos; computa / no computa / parcial y aprobación en lote; «Comprobantes enviados» para el cliente. |
 | Constatación de CAE de terceros (WSCDC) | **Cubierto** | F6. |
 | Consulta de padrón al facturar | **Cubierto** | «Completar con ARCA» en el formulario (B3). |
 | Facturación de ventas de tiendas online | **Cubierto** | Facturación → Ventas de tiendas (B7): Mercado Libre, Tiendanube, Empretienda, Shopify, WooCommerce, VTEX, Mercado Pago y el local; por venta o resumen diario, borrador o emisión con el interruptor y nota de crédito en devoluciones. APIs reales «a validar» (simulador). |

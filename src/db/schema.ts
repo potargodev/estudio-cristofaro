@@ -3024,6 +3024,9 @@ export const smart_documents = pgTable(
     corrected_fields: jsonb("corrected_fields").$type<string[] | null>(),
     supplier_cuit: text("supplier_cuit"),
     batch_id: uuid("batch_id"),
+    /** §2.p B8 · Buzón: computa | no_computa | parcial (crédito fiscal), con el porcentaje si es parcial */
+    computable: text("computable"),
+    computable_pct: integer("computable_pct"),
     created_at: createdAt(),
   },
   (t) => [
@@ -5496,4 +5499,22 @@ export const recurring_invoices = pgTable(
     updated_at: updatedAt(),
   },
   (t) => [index("recurring_invoices_next_idx").on(t.active, t.next_date), index("recurring_invoices_org_idx").on(t.organization_id)],
+);
+
+/** §2.p B8 · Dirección de reenvío de comprobantes de una organización (comprobantes+<token>@…) */
+export const inbox_addresses = pgTable(
+  "inbox_addresses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    token: text("token").notNull(),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("inbox_addresses_token_idx").on(t.token), uniqueIndex("inbox_addresses_org_idx").on(t.organization_id)],
 );

@@ -138,6 +138,8 @@ export async function decideReimbursement(me: PortalUser, id: string, approve: b
         .onConflictDoNothing();
   });
   await audit({ studioId: me.studioId, organizationId: me.organizationId, actor: me, action: approve ? "rendicion.aprobar" : "rendicion.rechazar", entityType: "rendicion", entityId: r.id, metadata: { motivo: why } });
+  // §2.p B8: el comprobante de la rendición aprobada va al buzón del estudio (suma al Libro IVA cuando lo aprueban)
+  if (approve) await import("@/modules/buzon/server").then((m) => m.fromReimbursement(r.id)).catch((e) => console.error("[buzon] rendición", (e as Error).message));
   await tellEmployee(
     r,
     approve ? `Aprobaron tu rendición: ${r.description}` : `Rechazaron tu rendición: ${r.description}`,

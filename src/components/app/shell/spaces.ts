@@ -14,6 +14,7 @@ export type Space = "studio" | "personal" | "portal" | "faro";
 
 export type ShellIcon =
   | "recategorizacion"
+  | "buzon"
   | "cajas"
   | "resumen"
   | "organizaciones"
@@ -61,7 +62,7 @@ export type ShellIcon =
   | "honorarios"
   | "tareas";
 
-export type ShellBadge = "requests" | "leads" | "candidates" | "comercial" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
+export type ShellBadge = "inbox" | "requests" | "leads" | "candidates" | "comercial" | "obligations" | "approvals" | "unread" | "copilot" | "reports" | "planRequests" | "verifications" | "portalRequests";
 
 export interface ShellItem {
   href: string;
@@ -84,6 +85,7 @@ export interface ShellGroup {
 }
 
 export const BADGE_TEXT: Record<ShellBadge, string> = {
+  inbox: "comprobantes recibidos para revisar",
   requests: "solicitudes abiertas",
   leads: "consultas nuevas",
   candidates: "candidatos nuevos en la Red Contable",

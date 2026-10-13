@@ -40,6 +40,8 @@ export interface BookRow {
   supplierHint?: string | null;
   /** CUIT propia (emisora en ventas, receptora en compras) para los libros por CUIT */
   ownCuit?: string | null;
+  /** §2.p B8: parte del crédito fiscal que computa (1 = todo, 0 = nada); por defecto todo */
+  creditShare?: number;
 }
 
 export interface Anomaly {
@@ -76,7 +78,7 @@ const inPeriod = (date: string | null, period: string) => !!date && date.slice(0
 /** ¿Da crédito fiscal? Solo facturas A y M (y sus notas) a un responsable inscripto */
 const givesCredit = (r: BookRow) => r.letra === "A" || r.letra === "M";
 /** Crédito fiscal computable de una compra (IVA discriminado + percepciones de IVA) */
-export const creditOf = (r: BookRow) => (givesCredit(r) ? ivaOf(r) + r.percepcionesIva : 0);
+export const creditOf = (r: BookRow) => (givesCredit(r) ? Math.round((ivaOf(r) + r.percepcionesIva) * (r.creditShare ?? 1)) : 0);
 
 /** Condición frente al IVA de la contraparte, por la letra del comprobante */
 export function conditionOf(r: BookRow) {

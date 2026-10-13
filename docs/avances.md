@@ -652,3 +652,19 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Las APIs reales de cada plataforma (pendientes, ítem 28) y validar con la contadora el tope de identificación del consumidor final y las alícuotas por producto.
+
+## §2.p · B8: buzón de comprobantes recibidos (13 de octubre)
+
+**Qué quedó**
+- **Operación → Buzón** con insignia: todo lo recibido por las organizaciones (app, portal, WhatsApp, **reenvío por mail**, **CSV de Mis Comprobantes de ARCA** y **rendiciones aprobadas**), con fuente y quién lo mandó; marcas de **otra CUIT**, repetido, CAE no encontrado (WSCDC) y CUIT del emisor; filtros; **computa / no computa / parcial**; **aprobar en lote** (al Libro IVA, la contabilidad y los sistemas conectados) y descartar.
+- La lectura inteligente valida la **CUIT receptora** contra las CUIT de la organización.
+- Portal: **Empresa → Comprobantes enviados** (mandar facturas de proveedores y ver en qué quedaron).
+- Ruta `/api/buzon/mail` (secreto `INBOX_MAIL_SECRET`, dominio `INBOX_MAIL_DOMAIN`). Migración `0065`. Herramienta `buzon_comprobantes`.
+- Ayuda: `documentos/buzon` y `documentos/lectura-inteligente`.
+
+**Qué se probó**
+- `src/modules/buzon/core.test.ts`, `compras.test.ts` (receptor) e `iva.test.ts` (crédito parcial).
+- `scripts/pruebas/buzon.mts` (37 verificaciones): **buzón con otra CUIT**, repetidos, lote con computa/parcial que llega al Libro IVA y a la contabilidad, mail con secreto y dirección, CSV de ARCA sin duplicar, rendición → buzón sin duplicar el gasto, comprobantes enviados, Vigía y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- El correo entrante (pendientes, ítem 30) y validar el formato vigente del CSV de Mis Comprobantes.

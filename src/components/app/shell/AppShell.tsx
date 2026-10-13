@@ -72,6 +72,7 @@ const ICONS: Record<ShellIcon, LucideIcon> = {
   honorarios: HandCoins,
   tareas: ListTodo,
   recategorizacion: ArrowUpDown,
+  buzon: Inbox,
   configuracion: Settings,
   empresa: Briefcase,
   catalogo: LibraryBig,

@@ -220,7 +220,7 @@ export const FARO_MODULES: FaroModule[] = [
     // §2.o: dentro de Documentos (ficha de la organización), Facturación → Recibidos (autónomo) y Bitácora → Importar → Tickets
     nav: [{ href: "/admin/organizaciones", label: "Organización → Documentos → Lectura inteligente" }, { href: "/facturacion/recibidos", label: "Facturación → Recibidos" }, { href: "/bitacora/tickets", label: "Bitácora → Tickets" }],
     events: ["documento.leido", "documento.confirmado", "documento.duplicado"],
-    tools: ["leer_comprobante", "comprobantes_para_confirmar"],
+    tools: ["leer_comprobante", "comprobantes_para_confirmar", "buzon_comprobantes"],
     limit: "smartDocsPerMonth",
   },
   {
