@@ -7,7 +7,7 @@ import { getDb } from "@/db";
 import { signup_requests, studios, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import { AUTH_ERRORS, getAuth, googleEnabled, googleSignInUrl, type AuthErrorCode } from "@/lib/auth-server";
-import { DEFAULT_PLAN, getPlan, type TenantKind } from "@/lib/faro/plans";
+import { getPlan, signupPlan, type TenantKind } from "@/lib/faro/plans";
 import { createTenant, normalizeCuit } from "@/lib/faro/tenants";
 import { EMAIL_RE } from "@/lib/ids";
 import { LEGAL_VERSION } from "@/lib/faro/legal-version";
@@ -51,7 +51,7 @@ async function register(fd: FormData): Promise<RegisterState> {
   const password = v(fd, "password");
   if (password !== v(fd, "password2")) return { ok: false, field: "password2", message: "Las contraseñas no coinciden." };
   const name = kind === "studio" ? v(fd, "studio_name") : v(fd, "name");
-  const plan = DEFAULT_PLAN[kind];
+  const plan = signupPlan(kind, v(fd, "interes")).key;
   const r = await createTenant({ kind, name, planKey: plan, cuit: v(fd, "cuit") || null, owner: { name: v(fd, "name"), email, password }, via: "registro" });
   if (!r.ok) return { ok: false, message: r.message };
   await recordAcceptance({ id: r.userId, email, studioId: r.studioId }, BASE_DOCS, clientIp(h));

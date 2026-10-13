@@ -98,6 +98,8 @@ export const CONFIG_TABS: NavItem[] = [
   { href: "/admin/configuracion/seguridad", label: "Seguridad", icon: "seguridad", personal: true },
   // F9: marca blanca y WhatsApp del estudio (plan Avanzado)
   { href: "/admin/configuracion/avanzado", label: "Avanzado", icon: "avanzado", adminOnly: true },
+  // §2.p B9: API pública y webhooks
+  { href: "/admin/configuracion/api", label: "API y webhooks", icon: "integraciones", adminOnly: true },
 ];
 
 const NAV_GROUPS: NavGroup[] = [

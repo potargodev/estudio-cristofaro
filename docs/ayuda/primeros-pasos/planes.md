@@ -3,7 +3,7 @@ titulo: Planes y precios de Faro
 resumen: Qué planes hay para personas, autónomos y estudios, cuánto cuestan, cómo funciona la prueba gratis y cómo pagar, cambiar o cancelar el plan con Mercado Pago.
 perfiles: [persona, autonomo, estudio]
 modulo: core
-actualizado: 2026-10-12
+actualizado: 2026-10-13
 relacionados: [primeros-pasos/registro, primeros-pasos/primeros-pasos-estudio, red-contable/perfil-del-estudio]
 ---
 
@@ -39,7 +39,7 @@ Los precios son **de referencia en dólares**; en la app los ves **en pesos**, c
 
 ## Prueba gratis y pago anual
 
-- Los planes pagos (Plus, Pro, Profesional y Avanzado) tienen **30 días de prueba gratis** cuando creás la cuenta con ese plan. Los estudios arrancan en **Inicial, que es gratis** y no tiene prueba ni aviso de fin de prueba.
+- Los planes pagos (Plus, Pro, Profesional y Avanzado) tienen **30 días de prueba gratis, sin tarjeta**: creá la cuenta desde el botón de ese plan en Precios (o con «Probar gratis») y arrancás directo en él. Si al terminar no lo elegís, seguís en el plan gratis con todos tus datos. Si creás la cuenta sin elegir plan, los estudios arrancan en **Inicial, que es gratis** y no tiene prueba ni aviso de fin de prueba.
 - Si estás en Inicial y pasás a Profesional o Avanzado desde **Plan y facturación**, el débito arranca cuando lo autorizás en Mercado Pago.
 - **Pagando el año, tenés 2 meses de regalo**: pagás 10 de 12. Por ejemplo, Profesional anual queda en USD 1.190.
 - Ejemplo: con 1 USD = $ 1.400, Profesional queda en $ 166.600 por mes.

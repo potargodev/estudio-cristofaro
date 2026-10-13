@@ -668,3 +668,20 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - El correo entrante (pendientes, ítem 30) y validar el formato vigente del CSV de Mis Comprobantes.
+
+## §2.p · B9: API pública, webhooks, /estado y prueba sin tarjeta (13 de octubre)
+
+**Qué quedó**
+- **API `/api/v1`**: `organizaciones`, `comprobantes` (listar, ver y crear con **Idempotency-Key**), `buzon` y `estado`; tokens por tenant (o por organización) con permisos, 120 pedidos por minuto, errores claros (401/403/404/422/429). Crear deja borrador; emite solo con el interruptor «Facturar automáticamente lo que llega por la API».
+- **Webhooks salientes** firmados (HMAC) con reintentos, enganchados a los eventos de los flujos; probar y ver los envíos.
+- **OpenAPI 3.1** en `/api/v1/openapi.json` y documentación en `/api/v1/docs`.
+- **Configuración → API y webhooks** (solo el dueño, nunca en el acceso asistido).
+- **`/estado`** público (Faro, ARCA producción y homologación, cola) con enlaces desde el pie de /faro.
+- **Prueba gratis sin tarjeta** desde el plan elegido al registrarse.
+- Migración `0066`. Ayuda: `conexiones/api` y `primeros-pasos/planes`.
+
+**Qué se probó**
+- `src/modules/api/core.test.ts` y `scripts/pruebas/api-v1.mts` (35 verificaciones): tokens con hash, 401/403/429, idempotencia (repetido y otra carga), borrador sin interruptor y CAE con él, webhook firmado sin repetir y con reintento, red interna rechazada, lectura por organización, revocación, aislamiento forzando IDs, /estado, OpenAPI, docs y plan de la prueba.
+
+**Qué falta configurar**
+- Nada obligatorio. Si hay varias réplicas, el límite por minuto pasa a contarse por réplica (como MCP).

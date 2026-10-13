@@ -130,6 +130,8 @@ correr whatsapp-vigia "${S[@]}" scripts/pruebas/whatsapp-vigia.mts
 correr ventas-tiendas "${S[@]}" scripts/pruebas/ventas-tiendas.mts
 # §2.p · B8 buzón de comprobantes recibidos (CUIT receptora, computa, lote, mail, ARCA, rendiciones)
 correr buzon "${S[@]}" scripts/pruebas/buzon.mts
+# §2.p · B9 API /api/v1, webhooks, /estado, OpenAPI y prueba sin tarjeta
+correr api-v1 "${S[@]}" scripts/pruebas/api-v1.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

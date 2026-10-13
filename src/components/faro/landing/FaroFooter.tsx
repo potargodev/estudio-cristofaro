@@ -64,6 +64,8 @@ export function FaroFooter() {
               ["/legal/flotas", "Flotas"],
               ["/legal/red-de-estudios", "Red Contable"],
               ["/ayuda", "Ayuda"],
+              ["/estado", "Estado"],
+              ["/api/v1/docs", "API"],
             ].map(([href, label]) => (
               <Link key={href} href={href} className="u-draw hover:text-paper">
                 {label}

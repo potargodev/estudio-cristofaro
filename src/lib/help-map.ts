@@ -33,6 +33,7 @@ const MAP: [string, string][] = [
   ["/admin/buzon", "documentos/buzon"],
   ["/portal/comprobantes", "documentos/buzon"],
   ["/admin/facturacion", "facturacion/panel-y-lotes"],
+  ["/admin/configuracion/api", "conexiones/api"],
   ["/admin/configuracion/avanzado", "configuracion/marca-blanca"],
   ["/portal/whatsapp", "conexiones/whatsapp"],
   ["/faro-manager/whatsapp", "conexiones/whatsapp"],

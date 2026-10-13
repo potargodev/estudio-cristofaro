@@ -192,6 +192,16 @@ export const getPlan = (key: string | null | undefined) => PLANS.find((p) => p.k
 export const plansFor = (kind: TenantKind) => PLANS.filter((p) => p.kind === kind);
 export const DEFAULT_PLAN: Record<TenantKind, string> = { studio: "inicial", personal: "autonomo_gratis", persona: "persona_gratis" };
 
+/**
+ * §2.p B9 · Prueba gratis sin tarjeta: quien se registra desde un plan pago
+ * (?interes=<plan>) arranca con su prueba; al terminar sin elegirlo vuelve al
+ * plan gratis con todos sus datos. Si no, el plan gratis de siempre.
+ */
+export function signupPlan(kind: TenantKind, interest: string | null | undefined) {
+  const p = getPlan(interest);
+  return p && p.kind === kind && !p.free && p.trialDays > 0 ? p : getPlan(DEFAULT_PLAN[kind])!;
+}
+
 export const KIND_LABEL: Record<TenantKind, string> = { studio: "Estudio", personal: "Autónomo", persona: "Persona" };
 /** Para quién es cada familia de planes */
 export const KIND_PLANS_LABEL: Record<TenantKind, string> = { studio: "Estudios y contadores", personal: "Autónomos", persona: "Personas" };

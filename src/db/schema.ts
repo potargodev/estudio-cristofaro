@@ -5518,3 +5518,89 @@ export const inbox_addresses = pgTable(
   },
   (t) => [uniqueIndex("inbox_addresses_token_idx").on(t.token), uniqueIndex("inbox_addresses_org_idx").on(t.organization_id)],
 );
+
+// ───────────── §2.p B9 · API pública /api/v1 y webhooks ─────────────
+
+/** Token de la API de un tenant (se muestra una sola vez; se guarda el hash) */
+export const api_tokens = pgTable(
+  "api_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    /** null = todas las organizaciones del tenant */
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    token_prefix: text("token_prefix").notNull(),
+    token_hash: text("token_hash").notNull(),
+    /** organizaciones:leer | comprobantes:leer | comprobantes:emitir | buzon:leer | webhooks */
+    scopes: text("scopes").array().notNull(),
+    rate_per_minute: integer("rate_per_minute").notNull().default(120),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    last_used_at: timestamp("last_used_at", { withTimezone: true }),
+    revoked_at: timestamp("revoked_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("api_tokens_hash_idx").on(t.token_hash), index("api_tokens_studio_idx").on(t.studio_id)],
+);
+
+/** Idempotency-Key: el mismo pedido repetido devuelve la misma respuesta */
+export const api_idempotency = pgTable(
+  "api_idempotency",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    token_id: uuid("token_id")
+      .notNull()
+      .references(() => api_tokens.id, { onDelete: "cascade" }),
+    key: text("key").notNull(),
+    request_hash: text("request_hash").notNull(),
+    status_code: integer("status_code"),
+    response: jsonb("response"),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("api_idempotency_key_idx").on(t.token_id, t.key)],
+);
+
+/** Webhooks salientes de un tenant (el secreto firma cada envío) */
+export const webhook_endpoints = pgTable(
+  "webhook_endpoints",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    secret_enc: text("secret_enc").notNull(),
+    events: text("events").array().notNull(),
+    active: boolean("active").notNull().default(true),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [index("webhook_endpoints_studio_idx").on(t.studio_id)],
+);
+
+export const webhook_deliveries = pgTable(
+  "webhook_deliveries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    endpoint_id: uuid("endpoint_id")
+      .notNull()
+      .references(() => webhook_endpoints.id, { onDelete: "cascade" }),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    event: text("event").notNull(),
+    dedupe_key: text("dedupe_key").notNull(),
+    payload: jsonb("payload").notNull(),
+    /** pendiente | entregado | fallido */
+    status: text("status").notNull().default("pendiente"),
+    attempts: integer("attempts").notNull().default(0),
+    next_attempt_at: timestamp("next_attempt_at", { withTimezone: true }).notNull().defaultNow(),
+    last_status: integer("last_status"),
+    last_error: text("last_error"),
+    delivered_at: timestamp("delivered_at", { withTimezone: true }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("webhook_deliveries_dedupe_idx").on(t.endpoint_id, t.dedupe_key), index("webhook_deliveries_queue_idx").on(t.status, t.next_attempt_at)],
+);

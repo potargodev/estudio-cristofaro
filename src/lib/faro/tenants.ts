@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { legal_entities, organizations, service_plans, signup_requests, studios, users } from "@/db/schema";
 import { SERVICE_PLANS } from "@/lib/service-plans";
 import { createUserWithPassword } from "@/lib/users";
-import { DEFAULT_PLAN, getPlan, type TenantKind } from "./plans";
+import { DEFAULT_PLAN, getPlan, signupPlan, type TenantKind } from "./plans";
 import { isDemoEmail } from "@/lib/demo-world";
 import { EMAIL_RE } from "@/lib/ids";
 
@@ -181,10 +181,12 @@ export async function pendingSignup(email: string) {
 /** Crea el tenant de un pedido de alta (el usuario lo crea Better Auth con este studioId) */
 export async function tenantFromSignup(r: typeof signup_requests.$inferSelect) {
   const db = getDb();
-  const plan = getPlan(DEFAULT_PLAN[r.kind])!;
+  // §2.p B9: desde un plan pago arranca su prueba gratis, sin tarjeta
+  const plan = signupPlan(r.kind, (r.data.interes as string | null) ?? null);
+  const trial = !plan.free && plan.trialDays > 0;
   const [studio] = await db
     .insert(studios)
-    .values({ slug: await uniqueSlug(r.name), name: r.name, kind: r.kind, plan_key: plan.key, cuit: r.cuit, created_via: "registro", legal_name: r.name, tax_regime: (r.data.taxRegime as string) ?? null })
+    .values({ slug: await uniqueSlug(r.name), name: r.name, kind: r.kind, plan_key: plan.key, cuit: r.cuit, created_via: "registro", legal_name: r.name, tax_regime: (r.data.taxRegime as string) ?? null, status: trial ? "prueba" : "activo", trial_ends_at: trial ? new Date(Date.now() + plan.trialDays * 86400000) : null })
     .returning({ id: studios.id });
   await db.update(signup_requests).set({ used_at: new Date(), studio_id: studio.id }).where(eq(signup_requests.id, r.id));
   return studio.id;

@@ -31,7 +31,14 @@ export default async function RegistroPage({ searchParams }: { searchParams: Pro
                 </li>
               ))}
             </ul>
-            {interest && <p className="mt-6 text-ui text-paper/60">Empezás en el plan gratis y te contactamos para pasar a {getPlan(interest)?.name}.</p>}
+            {interest && (
+              <p className="mt-6 text-ui text-paper/60">
+                {(() => {
+                  const p = getPlan(interest)!;
+                  return !p.free && p.trialDays > 0 ? `Arrancás con ${p.trialDays} días gratis de ${p.name}, sin tarjeta. Si al terminar no lo elegís, seguís en el plan gratis con todos tus datos.` : `Empezás en ${p.name}.`;
+                })()}
+              </p>
+            )}
           </div>
           <div className="border border-hair-strong bg-navy-deep/70 p-6 sm:p-8 lg:col-span-6 lg:col-start-7">
             <RegisterForm google={googleEnabled()} initial={sp.tipo === "personal" || sp.tipo === "studio" || sp.tipo === "persona" ? sp.tipo : undefined} interest={interest} />
