@@ -27,6 +27,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     db.select({ n: count() }).from(whatsapp_accounts).where(and(eq(whatsapp_accounts.mode, "compartido"), isNotNull(whatsapp_accounts.studio_id))),
     db.select().from(webhook_events).where(eq(webhook_events.provider, "whatsapp")).orderBy(desc(webhook_events.created_at)).limit(20),
   ]);
+  // Los avisos iguales del mismo segundo (una ráfaga de mensajes) van en una línea con «×N»
+  const line = (e: (typeof events)[number]) => `${formatDate(e.created_at, "timestamp")}|${e.account}|${e.topic}|${e.result}|${e.error ?? ""}`;
+  const grouped: { e: (typeof events)[number]; n: number }[] = [];
+  for (const e of events) {
+    const last = grouped.at(-1);
+    if (last && line(last.e) === line(e)) last.n++;
+    else grouped.push({ e, n: 1 });
+  }
   return (
     <div className="grid gap-5">
       <PageHeader level={2} title="WhatsApp" description={`El número de WhatsApp Business de Faro. Lo usan compartido ${shared?.n ?? 0} estudios; los que tienen número propio lo cargan en Configuración → Avanzado.`} className="mb-0" />
@@ -85,10 +93,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           <p className="text-ui text-muted">Todavía no llegó ninguno.</p>
         ) : (
           <ul className="divide-y divide-line rounded-md border border-line bg-surface text-meta">
-            {events.map((e) => (
+            {grouped.map(({ e, n }) => (
               <li key={e.id} className="flex flex-wrap justify-between gap-2 px-4 py-2">
                 <span>
                   {formatDate(e.created_at, "timestamp")} · {e.account === "faro" ? "Faro" : "estudio"} · {e.topic ?? "—"}
+                  {n > 1 && <span className="num"> · ×{n}</span>}
                 </span>
                 <span className={e.result === "rechazado" || e.result === "error" ? "text-danger" : "text-muted"}>
                   {e.result}
