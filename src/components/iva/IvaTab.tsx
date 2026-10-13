@@ -1,14 +1,18 @@
-import { AlertTriangle, CheckCircle2, CircleDashed, ClipboardCheck, FileSearch, Receipt } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CircleDashed, ClipboardCheck, Download, FileSearch, Receipt } from "lucide-react";
+import { and, eq } from "drizzle-orm";
+import { getDb } from "@/db";
+import { invoice_settings } from "@/db/schema";
 import Link from "next/link";
 import { ivaMarkAction } from "@/app/admin/iva-actions";
 import { BarList } from "@/components/charts/BarList";
 import { Feedback } from "@/components/app/Feedback";
-import { Card, EmptyState, MetricCard, Panel, SubmitButton, Table, ToneBadge, ViewSwitch } from "@/components/ds";
+import { Card, EmptyState, MetricCard, Panel, SubmitButton, Table, ToneBadge, ViewSwitch, chipClass } from "@/components/ds";
 import { fieldClass } from "@/components/ds/primitives";
 import type { StaffUser } from "@/lib/auth";
 import { formatDate, formatMoney, formatPercent, todayAR } from "@/lib/format";
 import { ANOMALY_LABEL, conditionOf, creditOf } from "@/modules/iva/core";
-import { analyze, isPeriod, readyToFile, type Book } from "@/modules/iva/server";
+import { analyze, isPeriod, ivaPosition, readyToFile, type Book } from "@/modules/iva/server";
+import { formatCuit } from "@/lib/types";
 import { periodLabel } from "@/modules/agent/intent";
 
 // Libro IVA (sub-pestaña de ARCA en la ficha de la organización, §2.o y §2.q):
@@ -17,6 +21,7 @@ import { periodLabel } from "@/modules/agent/intent";
 
 const SEV_TONE = { alta: "danger", media: "progress", baja: "neutral" } as const;
 const SEV_LABEL = { alta: "Alta", media: "Media", baja: "Baja" } as const;
+const LIGHT = { verde: { tone: "ok", label: "IVA habitual" }, amarillo: { tone: "progress", label: "IVA más alto" }, rojo: { tone: "danger", label: "IVA mucho más alto" } } as const;
 
 export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; sp: Record<string, string | undefined> }) {
   const [y, m] = todayAR().split("-").map(Number);
@@ -24,7 +29,10 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
   const period = sp.periodo && isPeriod(sp.periodo) ? sp.periodo : fallback;
   const book: Book = sp.libro === "ventas" ? "ventas" : "compras";
   const onlyMarked = sp.filtro === "marcados";
-  const a = await analyze({ studioId: me.studioId, organizationId: orgId }, period, book);
+  const cuits = await getDb().select({ cuit: invoice_settings.cuit, name: invoice_settings.business_name }).from(invoice_settings).where(and(eq(invoice_settings.organization_id, orgId), eq(invoice_settings.studio_id, me.studioId)));
+  const cuit = cuits.find((c) => c.cuit === sp.cuit)?.cuit ?? null;
+  const [a, pos] = await Promise.all([analyze({ studioId: me.studioId, organizationId: orgId }, period, book), ivaPosition({ studioId: me.studioId, organizationId: orgId }, period, cuit)]);
+  const file = (formato: string) => `/api/iva/${orgId}?${new URLSearchParams({ periodo: period, libro: book, formato, ...(cuit ? { cuit } : {}) })}`;
   const base = (q: Record<string, string>) => `/admin/organizaciones/${orgId}?${new URLSearchParams({ tab: "iva", periodo: period, libro: book, ...q })}`;
   const marks = new Map(a.marks.map((x) => [x.row_id, x]));
   const rows = onlyMarked ? a.rows.filter((r) => marks.has(r.id)) : a.rows;
@@ -51,8 +59,8 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
       <ViewSwitch
         label="Libro"
         views={[
-          { href: `/admin/organizaciones/${orgId}?${new URLSearchParams({ tab: "iva", periodo: period, libro: "compras" })}`, label: "Libro IVA compras", active: book === "compras" },
-          { href: `/admin/organizaciones/${orgId}?${new URLSearchParams({ tab: "iva", periodo: period, libro: "ventas" })}`, label: "Libro IVA ventas", active: book === "ventas" },
+          { href: `/admin/organizaciones/${orgId}?${new URLSearchParams({ tab: "iva", periodo: period, libro: "compras", ...(cuit ? { cuit } : {}) })}`, label: "Libro IVA compras", active: book === "compras" },
+          { href: `/admin/organizaciones/${orgId}?${new URLSearchParams({ tab: "iva", periodo: period, libro: "ventas", ...(cuit ? { cuit } : {}) })}`, label: "Libro IVA ventas", active: book === "ventas" },
         ]}
       />
       <div className="grid gap-3 sm:grid-cols-3">
@@ -60,6 +68,64 @@ export async function IvaTab({ me, orgId, sp }: { me: StaffUser; orgId: string; 
         <MetricCard icon={FileSearch} label="Comprobantes" value={a.summary.count} hint={`Total ${formatMoney(a.summary.total)}`} />
         <MetricCard icon={AlertTriangle} label="Anomalías" value={a.anomalies.length} hint={`${a.anomalies.filter((x) => x.severity === "alta").length} de importancia alta`} />
       </div>
+
+      <Panel title="Posición y exportación" icon={Download} action={<ToneBadge tone={LIGHT[pos.light].tone}>{LIGHT[pos.light].label}</ToneBadge>}>
+        <div className="grid gap-4">
+          {cuits.length > 1 && (
+            <form method="get" className="flex flex-wrap items-end gap-2">
+              <input type="hidden" name="tab" value="iva" />
+              <input type="hidden" name="periodo" value={period} />
+              <input type="hidden" name="libro" value={book} />
+              <label className="text-meta text-muted">
+                CUIT
+                <select name="cuit" defaultValue={cuit ?? ""} className={`mt-1 ${fieldClass}`}>
+                  <option value="">Todas las CUIT</option>
+                  {cuits.map((c) => (
+                    <option key={c.cuit} value={c.cuit}>
+                      {c.name} · {formatCuit(c.cuit)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <SubmitButton variant="secondary" pendingText="…">
+                Ver
+              </SubmitButton>
+            </form>
+          )}
+          <Table label="Posición de IVA" minWidth={520}>
+            <thead>
+              <tr>
+                <th scope="col">Período</th>
+                <th scope="col" className="text-right">Débito fiscal</th>
+                <th scope="col" className="text-right">Crédito fiscal</th>
+                <th scope="col" className="text-right">Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pos.items.map((p) => (
+                <tr key={p.period}>
+                  <td>{periodLabel(p.period)}</td>
+                  <td className="num text-right">{formatMoney(p.debit)}</td>
+                  <td className="num text-right">{formatMoney(p.credit)}</td>
+                  <td className="num text-right">{p.balance >= 0 ? formatMoney(p.balance) : `${formatMoney(-p.balance)} a favor`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <div className="flex flex-wrap gap-2">
+            <a href={file("xlsx")} className={chipClass(false)}>
+              Excel
+            </a>
+            <a href={file("pdf")} className={chipClass(false)}>
+              PDF
+            </a>
+            <a href={file("digital")} className={chipClass(false)}>
+              Libro IVA Digital (ZIP)
+            </a>
+          </div>
+          <p className="text-meta text-muted">El semáforo compara el saldo del mes con el promedio de los 3 anteriores (con lo cargado en Faro). Los archivos del Libro IVA Digital siguen los diseños de la RG 4597 y quedan para validar con el aplicativo de ARCA antes de presentar: Faro no presenta ni te pide la clave fiscal.</p>
+        </div>
+      </Panel>
 
       <Panel title="Antes de presentar" icon={ClipboardCheck} action={<ToneBadge tone={ready ? "ok" : "progress"}>{ready ? "Sin pendientes" : "Con pendientes"}</ToneBadge>}>
         <ul className="grid gap-2">

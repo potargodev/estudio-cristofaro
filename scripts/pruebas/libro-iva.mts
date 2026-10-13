@@ -102,6 +102,45 @@ const [rep] = await sql`select status, report from agent_tasks where id = ${tid}
 check("el Agente revisa el IVA y lo deja en su informe", rep.status === "completada" && rep.report.findings.some((f: { title: string }) => f.title.startsWith("IVA compras")), rep.report?.findings?.length);
 await sql`delete from tenant_modules where studio_id = ${A.studioId} and module_key = 'agent'`;
 
+// ─── §2.p B4: libro por CUIT, exportaciones, Libro IVA Digital y semáforo ───
+const { ivaReport, ivaDigitalZip } = await import("../../src/modules/iva/export.ts");
+const { unzipSync, strFromU8 } = await import("fflate");
+const C1 = "30711112227";
+const C2 = "20299998880";
+await sql`delete from invoices where organization_id = ${A.organizationId} and customer_name like 'Libro B4%'`;
+async function sale(cuit: string, n: number, net: number, date = `${P}-12`) {
+  await sql`insert into invoices (studio_id, organization_id, cuit, environment, point_of_sale, cbte_type, number, issue_date, customer_doc_type, customer_doc_number, customer_name, customer_iva_condition, items, net, iva, total, iva_breakdown, status, cae)
+    values (${A.studioId}, ${A.organizationId}, ${cuit}, 'homologacion', 9, 1, ${n}, ${date}, 80, '30500010912', ${`Libro B4 ${n}`}, 'responsable_inscripto', ${sql.json([])}, ${net}, ${net * 0.21}, ${net * 1.21}, ${sql.json([{ rate: 21, base: net, amount: net * 0.21 }])}, 'autorizada', '75000000000001')`;
+}
+await sale(C1, 9001, 100000);
+await sale(C1, 9002, 50000);
+await sale(C2, 9003, 30000);
+for (const n of [1, 2, 3]) await sale(C1, 9003 + n, 10000, `${prev(n)}-12`);
+await sql`update smart_documents set extracted = extracted || ${sql.json({ cuit_receptor: C2 })} where id = ${ids.atipico1}`;
+const all = await iva.bookFor(A, P, "ventas");
+const c1 = await iva.bookFor(A, P, "ventas", C1);
+check("libro de ventas por CUIT: solo lo emitido por esa CUIT", c1.length === 2 && c1.every((r) => r.ownCuit === C1) && all.length >= 3, `${c1.length}/${all.length}`);
+const comprasC1 = await iva.bookFor(A, P, "compras", C1);
+check("libro de compras por CUIT: deja afuera lo recibido por la otra CUIT", !comprasC1.some((r) => r.id === ids.atipico1) && (await iva.bookFor(A, P, "compras", C2)).some((r) => r.id === ids.atipico1));
+const report = ivaReport(c1, "ventas", { org: "Sur", period: P, cuit: C1 });
+check("reporte Excel/PDF con el detalle y el resumen por alícuota", report.sections.length === 2 && report.sections[0].rows.length === 2 && report.sections[1].rows[0][2] === 31500, JSON.stringify(report.sections[1].rows));
+const z = unzipSync(ivaDigitalZip(c1, "ventas", { period: P, cuit: C1 }));
+const names = Object.keys(z);
+const cb = strFromU8(z[names.find((n) => n.endsWith("_CBTE.txt"))!]).split("\r\n");
+const al = strFromU8(z[names.find((n) => n.endsWith("_ALICUOTAS.txt"))!]).split("\r\n");
+check("Libro IVA Digital ventas: ZIP con comprobantes (266) y alícuotas (62) y la nota «a validar»", cb.length === 2 && cb.every((l) => l.length === 266) && al.every((l) => l.length === 62) && /A VALIDAR/.test(strFromU8(z["LEEME.txt"])));
+const zc = unzipSync(ivaDigitalZip(await iva.bookFor(A, P, "compras"), "compras", { period: P }));
+check("Libro IVA Digital compras: 325 y 84 posiciones", strFromU8(zc[Object.keys(zc).find((n) => n.endsWith("_CBTE.txt"))!]).split("\r\n").every((l) => l.length === 325) && strFromU8(zc[Object.keys(zc).find((n) => n.endsWith("_ALICUOTAS.txt"))!]).split("\r\n").every((l) => l.length === 84));
+const pos = await iva.ivaPosition(A, P, C1);
+check("posición de IVA de la CUIT: débito − crédito del mes y los 3 anteriores", pos.items.length === 4 && pos.items[0].debit === 3150000 && pos.items[1].debit === 210000, JSON.stringify(pos.items.map((x) => x.balance)));
+check("semáforo: el mes mucho más alto que lo habitual → rojo", pos.light === "rojo", pos.light);
+check("CUIT inválida en el libro: error claro", (await throws(() => iva.bookFor(A, P, "ventas", "123"))) !== null);
+check("otro estudio no exporta el libro de una organización ajena", (await throws(() => iva.bookFor({ studioId: B.studioId, organizationId: A.organizationId }, P, "ventas"))) !== null && (await throws(() => iva.ivaPosition({ studioId: B.studioId, organizationId: A.organizationId }, P))) !== null);
+const tp = await executeTool("posicion_iva", { organizacion_id: A.organizationId, periodo: P, cuit: C1 }, ctxA);
+const tpr = (tp as { result?: { semaforo?: string; descargas?: Record<string, string> } }).result;
+check("el Vigía da la posición, el semáforo y los enlaces de descarga", tp.status === "ok" && tpr?.semaforo === "rojo" && /formato=digital/.test(tpr?.descargas?.ventas_digital ?? ""));
+await sql`delete from invoices where organization_id = ${A.organizationId} and customer_name like 'Libro B4%'`;
+
 // ─── Aislamiento forzando IDs ───
 check("otro estudio no analiza una organización ajena", (await throws(() => iva.analyze({ studioId: B.studioId, organizationId: A.organizationId }, P, "compras"))) !== null);
 check("otro estudio no marca comprobantes ajenos", (await throws(() => iva.markRow(B, actorB, { period: P, book: "compras", rowId: ids.facb5, note: null, state: "a_revisar" }))) !== null);

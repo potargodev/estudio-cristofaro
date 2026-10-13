@@ -7,6 +7,7 @@ import { hasModule } from "@/lib/faro/entitlements";
 import { isUuid } from "@/lib/ids";
 import { CBTE_TYPES } from "@/modules/arca/config";
 import { asExtraction } from "@/modules/smart-docs/core";
+import { ivaLight } from "./digital";
 import { prevPeriod, purchaseAnomalies, rowsOf, salesAnomalies, summarize, type Anomaly, type BookRow, type ChecklistItem } from "./core";
 
 // Análisis del Libro IVA de una organización (§2.q, etapa 4): libro de
@@ -67,6 +68,7 @@ async function purchaseRows(s: IvaScope): Promise<BookRow[]> {
         fingerprint: d.fingerprint,
         loadedAt: (d.confirmed_at ?? d.created_at).toISOString().slice(0, 10),
         supplierHint: e.razon_social_emisor,
+        ownCuit: e.cuit_receptor,
       },
     ];
   });
@@ -103,8 +105,37 @@ async function salesRows(s: IvaScope): Promise<BookRow[]> {
       fingerprint: null,
       loadedAt: i.issue_date,
       status: i.status,
+      ownCuit: i.cuit,
     };
   });
+}
+
+/** De una CUIT propia: las ventas que emitió y las compras a su nombre (las que no dicen receptor también entran, «a validar») */
+const ofCuit = (cuit?: string | null) => (r: BookRow) => !cuit || r.ownCuit === cuit || (r.kind === "compra" && !r.ownCuit);
+
+/** El libro de un período para exportar (opcionalmente de una sola CUIT): ventas solo autorizadas */
+export async function bookFor(s: IvaScope, period: string, book: Book, cuit?: string | null) {
+  if (!isPeriod(period)) throw new IvaError("Período inválido.");
+  if (cuit && !/^\d{11}$/.test(cuit)) throw new IvaError("CUIT inválida.");
+  if (!(await orgOk(s))) throw new IvaError("Esa organización no es del estudio.");
+  const all = (book === "compras" ? await purchaseRows(s) : await salesRows(s)).filter(ofCuit(cuit));
+  return rowsOf(all, period)
+    .filter((r) => book === "compras" || r.status === "autorizada")
+    .sort((a, b) => a.fecha.localeCompare(b.fecha) || (a.numero ?? 0) - (b.numero ?? 0));
+}
+
+/** Posición de IVA (débito − crédito) del período y los 3 anteriores, con el semáforo (§2.p, B4) */
+export async function ivaPosition(s: IvaScope, period: string, cuit?: string | null) {
+  if (!isPeriod(period)) throw new IvaError("Período inválido.");
+  if (!(await orgOk(s))) throw new IvaError("Esa organización no es del estudio.");
+  const [sales, purchases] = await Promise.all([salesRows(s), purchaseRows(s)]);
+  const months = [0, 1, 2, 3].map((n) => (n ? prevPeriod(period, n) : period));
+  const items = months.map((p) => {
+    const debit = summarize(rowsOf(sales.filter(ofCuit(cuit)), p).filter((r) => r.status === "autorizada"), "ventas").fiscal;
+    const credit = summarize(rowsOf(purchases.filter(ofCuit(cuit)), p), "compras").fiscal;
+    return { period: p, debit, credit, balance: debit - credit };
+  });
+  return { items, light: ivaLight(items[0].balance, items.slice(1).filter((x) => x.debit || x.credit).map((x) => x.balance)) };
 }
 
 interface IvaAnalysis {

@@ -38,6 +38,8 @@ export interface BookRow {
   status?: string;
   /** Rubro aproximado del proveedor por su nombre (para la alícuota esperada) */
   supplierHint?: string | null;
+  /** CUIT propia (emisora en ventas, receptora en compras) para los libros por CUIT */
+  ownCuit?: string | null;
 }
 
 export interface Anomaly {

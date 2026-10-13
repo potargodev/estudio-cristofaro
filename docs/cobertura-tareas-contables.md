@@ -22,9 +22,9 @@
 
 | Tarea | Estado | Dónde / nota |
 |---|---|---|
-| IVA: liquidación mensual (débito, crédito, saldo, saldo a favor) | **Planificado (NU-1, NU-6)** | Sale de los libros y asientos del núcleo; análisis con IA antes de presentar. La presentación la hace el contador. |
-| IVA: libros IVA ventas y compras | **Planificado (FA, NU-6)** | Hoy hay datos de ventas y compras, pero no el libro armado. |
-| IVA: Libro IVA Digital (exportación al formato de ARCA) | **Planificado (FA)** | Diseño de registro "a validar". |
+| IVA: liquidación mensual (débito, crédito, saldo, saldo a favor) | **Cubierto** (parcial) | Posición de IVA del mes y los 3 anteriores por CUIT con semáforo (B4) y análisis antes de presentar. Falta arrastrar el saldo a favor entre períodos. La presentación la hace el contador. |
+| IVA: libros IVA ventas y compras | **Cubierto** | Ficha de la organización → ARCA → Libro IVA (B4): libro de ventas y compras del período, por CUIT, en Excel y PDF con resumen por alícuota; análisis y anomalías antes de presentar. |
+| IVA: Libro IVA Digital (exportación al formato de ARCA) | **Cubierto** (a validar) | Archivos de comprobantes y alícuotas de ventas y compras en un ZIP (B4), con los diseños de registro de la RG 4597 "a validar" contra el aplicativo vigente. La presentación la hace el contador. |
 | IVA: regímenes de percepción sufridos (en compras) | **Planificado (NU-4)** | La lectura de comprobantes trae cada percepción. |
 | IVA: saldos técnicos y de libre disponibilidad | **No contemplado** | Seguimiento de saldos a favor entre períodos. |
 | Ganancias, personas humanas: DDJJ anual | **No contemplado** | Hoy solo hay datos sueltos (Bitácora, Facturación). Faltan la hoja de trabajo y el seguimiento. |

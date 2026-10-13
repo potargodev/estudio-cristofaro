@@ -608,3 +608,18 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Validar con la contadora la vigencia de la Factura M (RG 5762) y el monto mínimo de la FCE; cargar la serie del IPC en el Faro Manager.
+
+## §2.p · B4: Libro IVA por CUIT, Libro IVA Digital y semáforo (13 de octubre)
+
+**Qué quedó**
+- En la ficha de la organización → ARCA → **Libro IVA**, el panel **Posición y exportación**: elegir la CUIT (si hay más de una), posición de IVA del mes y los 3 anteriores (débito, crédito y saldo) con **semáforo**, y descargas en **Excel**, **PDF** y **Libro IVA Digital (ZIP)** con los archivos de comprobantes y alícuotas «a validar». Ruta `/api/iva/<organización>` (solo el equipo del estudio, auditada como `iva.exportar`).
+- Herramienta del Vigía y del Agente `posicion_iva` (posición, semáforo y enlaces).
+- Desde el panel de Facturación, «Libro IVA» lleva a esa pestaña.
+- Ayuda: `facturacion/libro-iva` actualizado.
+
+**Qué se probó**
+- `src/modules/iva/digital.test.ts`: anchos de registro (266/62 y 325/84), notas de crédito sin signo, semáforo.
+- `scripts/pruebas/libro-iva.mts` (+11): libro por CUIT en ventas y compras, reporte con resumen por alícuota, ZIP de ventas y compras, posición y semáforo rojo, CUIT inválida, herramienta del Vigía y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Validar los diseños de registro con el aplicativo vigente del Libro IVA Digital y los umbrales del semáforo con la contadora.
