@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { aging, closingEntries, depreciation, depreciationBetween, fiscalYearOf, fxDifference, ledger, statements, trialBalance, validateLines, type Account, type Entry } from "./core";
 import { compareCodes, planFor, suggestMonetary, templateForIndustry } from "./plan";
+import { adjustmentLines, missingMonths, parseSeries, prevMonth, restate } from "./inflacion";
 
 const plan: Account[] = planFor("comercio").map((a) => ({ ...a }));
 const code = (role: string) => plan.find((a) => a.role === role)!.code;
@@ -88,4 +89,39 @@ test("plan: orden de códigos, plantillas por rubro y monetarias", () => {
   assert.ok(planFor("comercio").some((a) => a.role === "mercaderias"));
   assert.equal(suggestMonetary("activo", "Rodados"), false);
   assert.equal(suggestMonetary("activo", "Deudores por ventas"), true);
+});
+
+test("ajuste por inflación: reexpresión de no monetarias, capital a su ajuste y RECPAM", () => {
+  const series = new Map<string, number>();
+  let v = 100;
+  series.set("2025-12", v);
+  for (let m = 1; m <= 12; m++) series.set(`2026-${String(m).padStart(2, "0")}`, (v *= 1.02));
+  const rodados = plan.find((a) => a.name === "Rodados")!.code;
+  const entries: Entry[] = [
+    { ...e("apertura", "2026-01-01", [["banco", 1_000_000, 0], ["capital", 0, 1_000_000]]), source: "apertura" },
+    { id: "rodado", date: "2026-03-15", number: null, concept: "rodado", status: "registrado", source: "manual", lines: [{ account: "Rodados", code: rodados, debit: 300_000, credit: 0 }, { account: "banco", code: code("banco"), debit: 0, credit: 300_000 }] },
+    e("venta", "2026-06-10", [["deudores", 100_000, 0], ["ventas", 0, 100_000]]),
+  ];
+  assert.deepEqual(missingMonths(series, "2026-01-01", "2026-12-31"), []);
+  assert.deepEqual(missingMonths(new Map([["2026-01", 1]]), "2026-01-01", "2026-02-28"), ["2025-12", "2026-02"]);
+  const rows = restate(entries, plan, series, "2026-01-01", "2026-12-31");
+  const by = (c: string) => rows.find((r) => r.code === c)!;
+  const c = (m: string) => series.get("2026-12")! / series.get(m)!;
+  assert.equal(by(code("capital")).adjustment, Math.round(-1_000_000 * c("2025-12")) + 1_000_000, "el capital de apertura toma el mes anterior al inicio");
+  assert.equal(by(rodados).adjustment, Math.round(300_000 * c("2026-03")) - 300_000);
+  assert.equal(by(code("ventas")).adjustment, Math.round(-100_000 * c("2026-06")) + 100_000);
+  assert.equal(by(code("banco")).adjustment, 0, "las monetarias no se reexpresan");
+  const roles = { capital: code("capital"), ajusteCapital: { code: code("ajuste_capital"), name: "Ajuste de capital" }, recpam: { code: code("recpam"), name: "RECPAM" } };
+  const { lines, recpam } = adjustmentLines(rows, roles);
+  assert.equal(validateLines(lines.map((l) => ({ ...l }))) > 0, true, "el asiento balancea");
+  assert.ok(!lines.some((l) => l.code === code("capital")), "el capital no se toca: va a Ajuste de capital");
+  assert.ok(recpam > 0, "con activos monetarios netos en inflación, el RECPAM es pérdida");
+  assert.equal(recpam, -(by(code("capital")).adjustment + by(rodados).adjustment + by(code("ventas")).adjustment));
+});
+
+test("ajuste por inflación: lectura de la serie pegada", () => {
+  const { rows, errors } = parseSeries("mes;indice\n2026-01;10.234,5\n2026-02\t10512.1\n202603;1,5\n2026-13;5");
+  assert.deepEqual(rows, [{ month: "2026-01", value: 10234.5 }, { month: "2026-02", value: 10512.1 }, { month: "2026-03", value: 1.5 }]);
+  assert.deepEqual(errors, ["2026-13;5"]);
+  assert.equal(prevMonth("2026-01-01"), "2025-12");
 });

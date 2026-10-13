@@ -3,7 +3,7 @@ titulo: Agente contable
 resumen: Un trabajador que recibe una tarea («cerrá octubre de Agencia Norte», «revisá el IVA de la cartera») y la resuelve en varios pasos en segundo plano, con plan visible, informe, borradores para aprobar, rutinas y memoria.
 perfiles: [estudio, autonomo]
 modulo: agent
-actualizado: 2026-10-12
+actualizado: 2026-10-13
 relacionados: [vigia/vigia, vigia/flujos, ia/ia-y-aprobaciones]
 ---
 
@@ -19,6 +19,7 @@ Escribí lo que necesitás o elegí una **tarea frecuente**:
 - **Clientes cerca del tope del monotributo**.
 - **Liquidar sueldos**: «Liquidá octubre de Panadería La Espiga» (con Liquidación de sueldos en el plan): arma el borrador con el convenio y las novedades, marca lo raro y lo deja para que lo apruebe una persona.
 - **Resumen mensual para los clientes**: prepara el resumen de cada uno.
+- **Ajuste por inflación del ejercicio**: «Ajustá por inflación el ejercicio de Consultora Sur al 31/12». Reexpresa con el índice de la FACPCE, calcula el RECPAM y deja el asiento en borrador con el papel de trabajo (ver [Ajuste por inflación contable](/ayuda/contabilidad/ajuste-por-inflacion)).
 - **Otra tarea**: cualquier otro pedido. El Agente arma el plan con un modelo de IA y usa las herramientas de Faro (hace falta un modelo configurado en **Configuración → IA**).
 
 Si nombrás una organización, trabaja sobre esa; si no, sobre **toda la cartera**. El período lo toma del pedido («octubre», «el mes pasado») o lo elegís en el formulario. Trabaja siempre con **tus permisos**: lo que tu rol no puede ver, el Agente tampoco.

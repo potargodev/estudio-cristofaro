@@ -518,3 +518,18 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Validar con la contadora las plantillas de plan de cuentas y los criterios de imputación (lista «a validar» del cierre de la noche).
+
+## A2 · Ajuste por inflación contable (13 de octubre)
+
+**Qué quedó**
+- Ficha → Contabilidad → **Ajuste por inflación**: índices del ejercicio con coeficientes y fuente, carga manual de meses para la organización, clasificación monetaria con la sugerencia de Faro, RECPAM, asiento de ajuste en borrador (rehacer sin duplicar), **nominal y homogéneo** lado a lado y **papel de trabajo** en Excel y PDF.
+- Faro Manager → Catálogo → **Índices**: serie FACPCE pegada o traída de una fuente CSV configurable («Traer ahora»), auditado. El simulador de cotizaciones (`mocks/dolar`) sirve una serie de prueba.
+- Agente: herramienta `ajustar_por_inflacion` y tarea «Ajuste por inflación del ejercicio» («ajustá por inflación el ejercicio de X»). Migración `0058`.
+- Ayuda: `contabilidad/ajuste-por-inflacion` y la tarea nueva en `vigia/agente-contable`.
+
+**Qué se probó**
+- `contabilidad.test.ts`: reexpresión por mes de origen, capital a su ajuste, RECPAM y lectura de series.
+- `scripts/pruebas/inflacion.mts` (33 verificaciones): fuente del Faro Manager, mes faltante y carga manual, clasificación auditada, reexpresión y RECPAM exactos, asiento en borrador sin duplicar, nominal/homogéneo, Agente (y confirmación desde el chat), registro y estados que cierran, papel de trabajo y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Cargar la serie oficial de la FACPCE (o su fuente) en el Faro Manager y validar el método con la contadora.

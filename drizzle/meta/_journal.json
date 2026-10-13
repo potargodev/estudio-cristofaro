@@ -407,6 +407,13 @@
       "when": 1791863374472,
       "tag": "0057_contabilidad",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1791865174833,
+      "tag": "0058_ajuste_inflacion",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,7 @@ import { formatDate } from "@/lib/format";
 import type { Report } from "@/lib/export-table";
 import { AGING } from "./core";
 import { KIND_LABEL } from "./plan";
+import { previewAdjustment } from "./inflacion-server";
 import { accountsOf, AccountingError, journalOf, ledgerOf, listAssets, payables, receivables, statementsOf, trialOf, type Scope } from "./server";
 
 // Reportes de la contabilidad para Excel y PDF (A1): libro diario, mayor,
@@ -18,6 +19,7 @@ export const REPORTS = {
   proveedores: "Cuenta corriente de proveedores",
   bienes: "Bienes de uso",
   plan: "Plan de cuentas",
+  inflacion: "Ajuste por inflación · papel de trabajo",
 } as const;
 type ReportKind = keyof typeof REPORTS;
 export const isReport = (k: string): k is ReportKind => k in REPORTS;
@@ -63,6 +65,23 @@ export async function accountingReport(s: Scope, orgName: string, kind: ReportKi
     case "bienes": {
       const list = await listAssets(s, p.to);
       return { ...base, subtitle: `Al ${d(p.to)}`, sections: [{ title: "Bienes de uso", header: ["Bien", "Cuenta", "Alta", "Vida (meses)", "Costo", "Amortización acumulada", "Valor residual contable"], rows: list.map((a) => [a.name, a.account_code, d(a.acquired_on), a.life_months, $(a.cost), $(a.accumulated), $(a.net)]), totals: [["Totales", null, null, null, $(list.reduce((t, a) => t + a.cost, 0)), $(list.reduce((t, a) => t + a.accumulated, 0)), $(list.reduce((t, a) => t + a.net, 0))]] }] };
+    }
+    case "inflacion": {
+      const pv = await previewAdjustment(s, p.to);
+      if (pv.missing.length) throw new AccountingError(`Faltan los índices de ${pv.missing.join(", ")}.`);
+      const closing = pv.end.slice(0, 7);
+      const idx = (m: string) => pv.used[m]?.value ?? null;
+      return {
+        ...base,
+        title: `Ajuste por inflación · ${orgName}`,
+        subtitle: `Ejercicio del ${d(pv.start)} al ${d(pv.end)} · RT 6 (método a validar por el contador)`,
+        sections: [
+          { title: "Índices", header: ["Mes", "Índice", "Coeficiente al cierre", "Fuente"], rows: pv.months.map((m) => [m, idx(m), idx(m) ? Math.round((idx(closing)! / idx(m)!) * 10000) / 10000 : null, pv.used[m]?.source ?? ""]), widths: [1, 1.2, 1.2, 4] },
+          { title: "Reexpresión por cuenta", header: ["Cuenta", "Mes de origen", "Nominal", "Coeficiente", "Reexpresado", "Ajuste"], rows: pv.rows.filter((r) => !r.monetary).flatMap((r) => [[`${r.code} ${r.name}`, null, $(r.nominal), null, $(r.restated), $(r.adjustment)], ...r.parts.map((x) => [null, x.month, $(x.nominal), Math.round(x.coef * 10000) / 10000, $(x.restated), null])]), widths: [3.5, 1, 1.2, 1, 1.2, 1.2] },
+          { title: "Nominal y homogéneo", header: ["Código", "Cuenta", "Saldo nominal", "Saldo homogéneo", "Diferencia"], rows: pv.compare.map((c) => [c.code, c.name, $(c.nominal), $(c.homogeneous), $(c.homogeneous - c.nominal)]), widths: [1, 4, 1.3, 1.3, 1.3] },
+          { title: "Asiento de ajuste", header: ["Código", "Cuenta", "Debe", "Haber"], rows: pv.lines.map((l) => [l.code, l.account, l.debit ? $(l.debit) : null, l.credit ? $(l.credit) : null]), totals: [[null, pv.recpam > 0 ? "RECPAM (pérdida)" : "RECPAM (ganancia)", null, $(Math.abs(pv.recpam))]], widths: [1, 4, 1.3, 1.3] },
+        ],
+      };
     }
     case "plan": {
       const acc = await accountsOf(s);

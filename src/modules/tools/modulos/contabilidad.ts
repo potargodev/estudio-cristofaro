@@ -109,4 +109,37 @@ export const contabilidadTools = [
       return { organizacion: name, desde: from, hasta: to, ...r, enlace: `/admin/organizaciones/${s.organizationId}?tab=contabilidad&ver=asientos&desde=${from}&hasta=${to}` };
     },
   }),
+  defineTool<{ organizacion_id: string; cierre?: string }, unknown>({
+    name: "ajustar_por_inflacion",
+    title: "Ajuste por inflación del ejercicio",
+    description: "Reexpresa el ejercicio a moneda de cierre (RT 6) con el índice de la FACPCE: partidas no monetarias por su coeficiente, RECPAM y asiento de ajuste en borrador, con el papel de trabajo. Por defecto, el último ejercicio cerrado. Si faltan índices, dice cuáles. El método queda a validar por el contador, que revisa y registra el asiento.",
+    module: "contabilidad",
+    level: "escritura",
+    roles: ["dueno", "contador"],
+    input: z.object({ organizacion_id: uuid("ID de la organización"), cierre: fecha.optional().describe("Fecha de cierre del ejercicio (AAAA-MM-DD)") }),
+    organizationOf: async (i) => i.organizacion_id,
+    async handler(i, ctx) {
+      const o = await ctx.organization(i.organizacion_id);
+      const s = { studioId: ctx.studioId, organizationId: o.id };
+      const { settingsOf, currentYear } = await import("@/modules/contabilidad/server");
+      const { fiscalYearOf } = await import("@/modules/contabilidad/core");
+      const st = await settingsOf(s);
+      const end = i.cierre ? fiscalYearOf(i.cierre, st.year_end).end : fiscalYearOf(new Date(Date.parse((await currentYear(s)).start) - 86400000).toISOString().slice(0, 10), st.year_end).end;
+      const { previewAdjustment, runAdjustment } = await import("@/modules/contabilidad/inflacion-server");
+      const pv = await guard(() => previewAdjustment(s, end));
+      if (pv.missing.length) return { organizacion: o.name, cierre: end, faltan_indices: pv.missing, aviso: "Faltan índices: se cargan en Contabilidad → Ajuste por inflación o en el Faro Manager." };
+      const r = await guard(() => runAdjustment(s, ctx.actor, end));
+      return {
+        organizacion: o.name,
+        desde: r.start,
+        hasta: r.end,
+        recpam: $(r.recpam),
+        resultado_recpam: r.recpam > 0 ? "pérdida" : r.recpam < 0 ? "ganancia" : "sin efecto",
+        cuentas_reexpresadas: r.rows.filter((x) => !x.monetary).map((x) => ({ cuenta: `${x.code} ${x.name}`, nominal: $(x.nominal), homogeneo: $(x.restated), ajuste: $(x.adjustment) })),
+        asiento: "en borrador, para revisar y registrar",
+        papel_de_trabajo: `/api/contabilidad/${o.id}?reporte=inflacion&desde=${r.start}&hasta=${r.end}&formato=xlsx`,
+        enlace: `/admin/organizaciones/${o.id}?tab=contabilidad&ver=inflacion&hasta=${r.end}`,
+      };
+    },
+  }),
 ];

@@ -5213,3 +5213,45 @@ export const fixed_assets = pgTable(
   },
   (t) => [index("fixed_assets_org_idx").on(t.organization_id)],
 );
+
+// ───────────── A2 · Ajuste por inflación contable ─────────────
+
+/** Índices para el ajuste por inflación (serie «facpce»: la que publica la FACPCE, cargada en el Faro Manager) */
+export const inflation_indexes = pgTable(
+  "inflation_indexes",
+  {
+    series: text("series").notNull().default("facpce"),
+    month: text("month").notNull(), // AAAA-MM
+    value: numeric("value", { precision: 18, scale: 6 }).notNull(),
+    source: text("source").notNull(),
+    updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+    updated_at: updatedAt(),
+  },
+  (t) => [primaryKey({ columns: [t.series, t.month] })],
+);
+
+/** Papel de trabajo de un ajuste por inflación (uno por organización y ejercicio) con su asiento */
+export const inflation_adjustments = pgTable(
+  "inflation_adjustments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    year_start: date("year_start").notNull(),
+    year_end: date("year_end").notNull(),
+    /** Índices usados (mes → valor y fuente), incluidos los cargados a mano para esta organización */
+    indexes: jsonb("indexes").$type<Record<string, { value: number; source: string }>>().notNull().default({}),
+    /** Reexpresión por cuenta (centavos) */
+    rows: jsonb("rows").$type<unknown[]>().notNull().default([]),
+    recpam: bigint("recpam", { mode: "number" }).notNull().default(0),
+    entry_id: uuid("entry_id"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("inflation_adjustments_year_idx").on(t.organization_id, t.year_end)],
+);

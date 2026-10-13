@@ -26,6 +26,15 @@ export interface AgentTemplate {
 
 export const AGENT_TEMPLATES: AgentTemplate[] = [
   {
+    key: "ajuste_inflacion",
+    title: "Ajuste por inflación del ejercicio",
+    description: "Reexpresa el ejercicio a moneda de cierre con el índice de la FACPCE (RT 6): RECPAM, asiento de ajuste en borrador y papel de trabajo. Avisa si faltan índices.",
+    example: "Ajustá por inflación el ejercicio de Consultora Sur al 31/12",
+    scopes: ["organizacion", "cartera"],
+    needs: ["fecha"],
+    keywords: /inflaci[oó]n|recpam|reexpres/,
+  },
+  {
     key: "cierre_mensual",
     title: "Cierre del mes",
     description: "Revisa vencimientos, comprobantes para confirmar, conciliación y el Libro IVA del período; deja hallazgos, tareas y el resumen mensual como borrador.",

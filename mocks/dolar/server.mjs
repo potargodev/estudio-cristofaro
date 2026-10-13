@@ -12,7 +12,23 @@ const RATES = {
   "/v1/cotizaciones/brl": { compra: 240, venta: 252, moneda: "BRL" },
 };
 
+// Índice FACPCE de prueba (A2): de dic-2023 a dic-2026, 2 % por mes desde 8.000
+function facpce() {
+  const rows = ["mes;indice"];
+  let v = 8000;
+  for (let y = 2023; y <= 2026; y++)
+    for (let m = y === 2023 ? 12 : 1; m <= 12; m++) {
+      rows.push(`${y}-${String(m).padStart(2, "0")};${v.toFixed(4).replace(".", ",")}`);
+      v *= 1.02;
+    }
+  return rows.join("\n");
+}
+
 createServer((req, res) => {
+  if (req.url === "/indices/facpce.csv") {
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    return res.end(facpce());
+  }
   const r = RATES[req.url ?? ""];
   res.setHeader("Content-Type", "application/json");
   if (!r) {

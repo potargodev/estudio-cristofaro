@@ -148,6 +148,8 @@ async function buildPlan(studioId: string, t: AgentTemplate, scope: AgentScope, 
         }
       } else if (t.key === "liquidar_sueldos") {
         if (staff?.has(o.id) && params.period) add(of("Liquidación de sueldos (borrador para aprobar)"), "liquidar_sueldos", { organizacion_id: o.id, periodo: params.period }, o.id);
+      } else if (t.key === "ajuste_inflacion") {
+        add(of("Ajuste por inflación (asiento en borrador)"), "ajustar_por_inflacion", { organizacion_id: o.id, ...(params.date ? { cierre: params.date } : {}) }, o.id);
       } else if (t.key === "resumen_mensual") {
         add(of("Resumen del mes (borrador)"), "enviar_resumen_mensual", { organizacion_id: o.id }, o.id);
       }

@@ -76,7 +76,7 @@
 | Inventario y balances (libro) | **Planificado (NU-1, NU-9)** | El inventario de mercadería sale de Stock. |
 | Estados contables (situación patrimonial, resultados, evolución del PN, flujo de efectivo, notas y anexos) | **Cubierto** (parcial) | Situación patrimonial y resultados, con control de cuadre, en Excel y PDF (A1). Faltan evolución del PN, flujo de efectivo, notas y anexos: **no contemplado**. |
 | Cierre y reapertura de ejercicio | **Cubierto** | Refundición, cierre, apertura y bloqueo del período; reapertura con motivo, auditada (A1). |
-| Ajuste por inflación contable (RT 6) | **Planificado (NU-2)** | Método e índices "a validar". |
+| Ajuste por inflación contable (RT 6) | **Cubierto** | Índice FACPCE (Faro Manager, fuente configurable o carga manual; meses a mano por organización), clasificación monetaria editable, reexpresión, RECPAM, asiento en borrador, nominal vs homogéneo, papel de trabajo y tarea del Agente (A2). Método e índices "a validar" con la contadora. |
 | Conciliaciones bancarias | **Cubierto / Planificado (NU-5)** | Existe; se suman tolerancias y asientos de ajuste. |
 | Conciliación de cuentas de clientes y proveedores (cuentas corrientes) | **Cubierto** | Saldos y antigüedad de deudores y acreedores, en Excel y PDF (A1). |
 | Bienes de uso y amortizaciones | **Cubierto** | Amortización lineal y asiento del período, sin repetir (A1). |

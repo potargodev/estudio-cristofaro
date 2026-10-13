@@ -112,6 +112,8 @@ correr stock "${S[@]}" scripts/pruebas/stock.mts
 correr nucleo "${S[@]}" scripts/pruebas/nucleo.mts
 # A1 · Contabilidad general nativa
 correr contabilidad "${S[@]}" scripts/pruebas/contabilidad.mts
+# A2 · Ajuste por inflación (índices del simulador de cotizaciones)
+correr inflacion "${S[@]}" scripts/pruebas/inflacion.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

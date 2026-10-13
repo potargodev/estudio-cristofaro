@@ -167,3 +167,26 @@ export async function reopenYearAction(fd: FormData) {
   await guard(c.back, () => reopenYear(c.scope, c.me, s(fd, "id"), s(fd, "reason")));
   done(c, "Ejercicio reabierto: se anularon sus asientos de cierre y se desbloqueó.");
 }
+
+// ───────────── Ajuste por inflación (A2) ─────────────
+
+export async function inflationAction(fd: FormData) {
+  const c = await ctx(fd);
+  const { runAdjustment } = await import("@/modules/contabilidad/inflacion-server");
+  const r = await guard(c.back, () => runAdjustment(c.scope, c.me, s(fd, "end")));
+  done(c, `Asiento de ajuste por inflación en borrador. RECPAM: ${r.recpam > 0 ? "pérdida" : "ganancia"} de $ ${(Math.abs(r.recpam) / 100).toLocaleString("es-AR", { minimumFractionDigits: 2 })}.`);
+}
+
+export async function ownIndexesAction(fd: FormData) {
+  const c = await ctx(fd);
+  const { saveOwnIndexes } = await import("@/modules/contabilidad/inflacion-server");
+  const n = await guard(c.back, () => saveOwnIndexes(c.scope, c.me, s(fd, "end"), s(fd, "series")));
+  done(c, `${n} ${n === 1 ? "índice cargado" : "índices cargados"} para esta organización.`);
+}
+
+export async function classificationAction(fd: FormData) {
+  const c = await ctx(fd);
+  const { setClassification } = await import("@/modules/contabilidad/inflacion-server");
+  const n = await guard(c.back, () => setClassification(c.scope, c.me, new Set(fd.getAll("monetaria").map(String))));
+  done(c, n ? `Clasificación guardada (${n} ${n === 1 ? "cambio" : "cambios"}).` : "No había cambios en la clasificación.");
+}

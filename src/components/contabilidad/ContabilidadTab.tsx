@@ -21,7 +21,8 @@ import { Feedback } from "@/components/app/Feedback";
 import { Card, EmptyState, Panel, SubmitButton, Table, Tag, ToneBadge, ViewSwitch, chipClass, fieldInlineClass } from "@/components/ds";
 import { formatAmount, formatDate, todayAR } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { AGING } from "@/modules/contabilidad/core";
+import { AGING, fiscalYearOf } from "@/modules/contabilidad/core";
+import { InflationView } from "./InflationView";
 import { KIND_LABEL, TEMPLATES, type AccountKind } from "@/modules/contabilidad/plan";
 import { accountsOf, currentYear, foreignBalances, ledgerOf, listAssets, listEntries, listTemplates, payables, receivables, settingsOf, statementsOf, trialOf, yearsOf } from "@/modules/contabilidad/server";
 
@@ -37,6 +38,7 @@ const VIEWS = [
   ["ctacte", "Cuentas corrientes"],
   ["bienes", "Bienes de uso"],
   ["moneda", "Moneda extranjera"],
+  ["inflacion", "Ajuste por inflación"],
   ["cierre", "Cierre"],
 ] as const;
 const SOURCE: Record<string, string> = { manual: "Manual", modelo: "Modelo", factura: "Factura", compra: "Compra", sueldos: "Sueldos", cobro: "Cobro", pago: "Pago", banco: "Banco", conciliacion: "Conciliación", amortizacion: "Amortización", diferencia_cambio: "Diferencia de cambio", ajuste_inflacion: "Ajuste por inflación", refundicion: "Refundición", cierre: "Cierre", apertura: "Apertura" };
@@ -840,6 +842,10 @@ export async function ContabilidadTab({ orgId, studioId, sp }: { orgId: string; 
         </Card>
       </>
     );
+  } else if (ver === "inflacion") {
+    // Por defecto, el último ejercicio terminado; con «hasta», el ejercicio de esa fecha
+    const end = sp.hasta ? fiscalYearOf(to, settings.year_end).end : fiscalYearOf(new Date(Date.parse(fy.start) - 86400000).toISOString().slice(0, 10), settings.year_end).end;
+    body = <InflationView s={s} orgId={orgId} end={end} />;
   } else {
     const years = await yearsOf(s);
     body = (

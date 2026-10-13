@@ -43,7 +43,7 @@ const where = (s: Scope) => and(eq(ledger_accounts.studio_id, s.studioId), eq(le
 const entryWhere = (s: Scope) => and(eq(journal_entries.studio_id, s.studioId), eq(journal_entries.organization_id, s.organizationId));
 
 /** UUID determinístico a partir de un texto (origen de asientos que no tienen una fila propia: amortización de un período, diferencia de cambio de una cuenta) */
-function uuidFrom(text: string) {
+export function uuidFrom(text: string) {
   const h = createHash("md5").update(text).digest("hex");
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-4${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`;
 }
@@ -283,7 +283,7 @@ export async function entryFromTemplate(s: Scope, actor: Actor, id: string, date
 const CREDIT_NOTES = new Set([3, 8, 13, 53, 203, 208, 213]);
 
 type Roles = Map<string, { code: string; name: string }>;
-async function rolesOf(s: Scope): Promise<Roles> {
+export async function rolesOf(s: Scope): Promise<Roles> {
   const accounts = await accountsOf(s);
   return new Map(accounts.filter((a) => a.role).map((a) => [a.role!, { code: a.code, name: a.name }]));
 }
@@ -472,7 +472,7 @@ function bankTaxRole(description: string, cls: string): { role: string; label: s
 // ───────────── Libros y estados ─────────────
 
 /** Asientos para los libros: los registrados de Faro y, si manda un sistema conectado, sus asientos espejados */
-async function bookEntries(s: Scope): Promise<{ entries: Entry[]; accounts: Account[]; mirrored: boolean }> {
+export async function bookEntries(s: Scope): Promise<{ entries: Entry[]; accounts: Account[]; mirrored: boolean }> {
   const accounts = await accountsOf(s);
   const rows = await db()
     .select()

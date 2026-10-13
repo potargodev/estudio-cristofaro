@@ -46,6 +46,9 @@ const nuevas = [
   store && `/admin/organizaciones/${lola}?tab=stock&ver=tiendas&tienda=${store}`,
   lola && `/admin/organizaciones/${lola}?tab=stock&ver=sin-vincular`,
   lola && `/admin/organizaciones/${lola}?tab=stock&ver=inventario`,
+  // Parte A: núcleo, contabilidad y ajuste por inflación
+  payrollOrg && `/admin/organizaciones/${payrollOrg}?tab=sistemas`,
+  ...["asientos", "plan", "libros", "estados", "ctacte", "bienes", "moneda", "inflacion", "cierre"].map((v) => payrollOrg && `/admin/organizaciones/${payrollOrg}?tab=contabilidad&ver=${v}`),
 ].filter(Boolean);
 
 const PERFILES = {
@@ -54,7 +57,7 @@ const PERFILES = {
   estudio: { email: "duena.estudio@demo.faro.local", start: ["/admin", ...nuevas, "/admin/organizaciones", "/admin/vencimientos", "/admin/solicitudes", "/admin/tareas", "/admin/comercial", "/admin/honorarios", "/admin/configuracion"] },
   organizacion: { email: "duena.organizacion@demo.faro.local", start: ["/portal", "/portal/vencimientos", "/portal/documentos", "/portal/solicitudes", "/portal/empresa"] },
   empleado: { email: "empleada@demo.faro.local", start: ["/portal/empleado", "/portal/recibos", "/portal/rendiciones"] },
-  manager: { email: "owner@faro.test", start: ["/faro-manager", "/faro-manager/tenants", "/faro-manager/planes", "/faro-manager/convenios", "/faro-manager/escudo", "/faro-manager/red", "/faro-manager/auditoria", "/faro-manager/demo"] },
+  manager: { email: "owner@faro.test", start: ["/faro-manager", "/faro-manager/tenants", "/faro-manager/planes", "/faro-manager/convenios", "/faro-manager/indices", "/faro-manager/escudo", "/faro-manager/red", "/faro-manager/auditoria", "/faro-manager/demo"] },
   publico: { email: null, start: ["/", "/faro", "/faro/precios", "/ingresar", "/ayuda", "/servicios", "/contacto"] },
 };
 const SKIP = /\/api\/|\/salir|signout|logout|\.csv|\.pdf|download|archivo|exportar|\/login|\/legal|#|mailto:|tel:|wa\.me|\/f\/|\/caja\/|\/invitacion|\/oauth/i;
