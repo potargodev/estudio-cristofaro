@@ -18,6 +18,8 @@ import {
   employees,
   fee_charges,
   fee_plans,
+  invoice_points,
+  invoice_settings,
   flow_runs,
   flow_steps,
   flows,
@@ -34,6 +36,7 @@ import {
   requests,
   service_plans,
   tasks,
+  whatsapp_contacts,
 } from "@/db/schema";
 import { TEMPLATES } from "@/modules/flows/core";
 import { seedAgent } from "./agent";
@@ -330,6 +333,7 @@ export async function seedStudios(db: Db, pass: Record<string, string>) {
     { studio_id: big.studioId, organization_id: bigOrgs[0].id, user_id: empleada.id, role: "empleado" },
   ]);
   await seedEmployees(db, r, big.studioId, bigOrgs[0].id, contador, empleada);
+  await seedSimulators(db, big.studioId, bigOrgs[0].id, [duena.id, empleada.id]);
   await seedBank(db, r, big.studioId, bigOrgs[3].id, contador);
   await seedFlows(db, big.studioId, big.owner);
   await seedAgent(db, big.studioId, big.owner, contador, bigOrgs);
@@ -375,4 +379,19 @@ export async function seedStudios(db: Db, pass: Record<string, string>) {
     indie: { studioId: indie.studioId, name: "Lucía Ibarra · Contadora (demo)", owner: indie.owner, staff: [indie.owner], orgs: indieOrgs } satisfies DemoStudio,
     profiles: { dueno: big.owner, contador, organizacion: duena, empleado: empleada },
   };
+}
+
+/**
+ * Parte C · C8: lo que hace falta para probar con los simuladores desde el
+ * primer minuto. La Agencia factura (Responsable inscripto, punto de venta 3
+ * del ARCA simulado) y Dana y Ema tienen su WhatsApp verificado para el
+ * teléfono de prueba. Todos los servicios de la demo ya están en Simulador.
+ */
+async function seedSimulators(db: Db, studioId: string, orgId: string, people: string[]) {
+  const [le] = await db.select({ cuit: legal_entities.cuit, name: legal_entities.business_name }).from(legal_entities).where(eq(legal_entities.organization_id, orgId));
+  if (le?.cuit) {
+    await db.insert(invoice_settings).values({ studio_id: studioId, organization_id: orgId, cuit: le.cuit, business_name: le.name, iva_condition: "responsable_inscripto", address: "Av. Santa Fe 2450, CABA", activity_start: "2019-03-01", iibb: "901-123456-7", email: "administracion@demo.faro.local" });
+    await db.insert(invoice_points).values({ studio_id: studioId, organization_id: orgId, cuit: le.cuit, number: 3, kind: "RECE" });
+  }
+  await db.insert(whatsapp_contacts).values(people.map((user_id, i) => ({ studio_id: studioId, organization_id: orgId, user_id, phone: `54911555500${String(i + 1).padStart(2, "0")}`, verified_at: new Date() })));
 }

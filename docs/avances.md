@@ -712,3 +712,24 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Nada: los precios y límites se siguen ajustando en el Faro Manager.
+
+## Parte C: modo demostración para la contadora (13 de octubre)
+
+**Qué quedó**
+- **C1 · Modos:** Faro Manager → Plataforma → Integraciones: Real, Prueba o Simulador por servicio (ARCA, Mercado Pago, WhatsApp, mails, tiendas, Tango, Xubio, Contabilium y bancos), por espacio y por organización, auditado. La demo arranca en Simulador y nunca va a Real.
+- **C2 · Simuladores dentro de la app**, persistentes y por espacio: ARCA (WSAA, WSFEv1, padrón y WSCDC con las validaciones de ARCA, caído y respuesta cortada), Mercado Pago (links, suscripciones, checkout y aviso firmado), WhatsApp (mensajes, plantillas y medios), tiendas, Xubio, Contabilium, Tango, banco (extracto CSV) y mails (bandeja de lo que no salió).
+- **C3 · Ambientes de prueba oficiales:** `docs/sandboxes.md` (homologación de ARCA, credenciales de prueba de Mercado Pago y número de prueba de WhatsApp); el modo Prueba lleva ARCA a homologación.
+- **C4 · Teléfono de prueba** (`/simuladores/telefono`): texto, audio de prueba, fotos y PDF al Vigía, con sus respuestas y avisos.
+- **C5 · Panel** (`/simuladores`): ARCA, Mercado Pago, tiendas, sistemas («el otro lado»), banco, mails y bitácora.
+- **C6 · Marca:** «Modo demostración» / «Modo prueba» en la franja de todas las pantallas y «SIN VALIDEZ FISCAL» en los PDF fuera de producción.
+- **C7 · Guía de prueba:** 30 recorridos en Faro Manager → Guía de prueba (estado y comentario guardados) y `docs/guia-prueba-contadora.md`, cerrando con los huecos de la cobertura.
+- **C8 · Demo:** comprobantes en el ARCA simulado, la Agencia factura (punto de venta 3) y Dana y Ema con WhatsApp verificado.
+- Herramienta `modo_de_servicios` para el Vigía, el Agente y MCP. Ayuda: `primeros-pasos/simuladores` y `primeros-pasos/demo`.
+
+**Qué se probó**
+- `scripts/pruebas/simuladores.mts` (47 chequeos): reglas de los modos y auditoría; ARCA simulado (puntos de venta, factura de prueba, CAE, padrón, caído → cola → vuelve con el número previsto, respuesta cortada con un solo CAE); tiendas (venta y devolución); Xubio, Contabilium y Tango («el otro lado» llega al sincronizar); Mercado Pago (link y pago); extracto; mails; teléfono de prueba (consulta, audio → factura → SÍ → CAE); guía; aislamiento forzando IDs de otro espacio en cada control.
+- Capturas a 390 y 1440 px de las cuatro pantallas nuevas y `qa:visual` de estudio, autónomo y Faro Manager.
+
+**Qué falta configurar**
+- `ALLOW_SIMULATORS=true` en staging si se quiere usar el Simulador en espacios reales (la demo no lo necesita).
+- Para el modo Prueba: certificado de homologación de ARCA, cuenta de prueba de Mercado Pago y app de Meta con número de prueba (`docs/sandboxes.md`).

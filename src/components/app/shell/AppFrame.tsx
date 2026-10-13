@@ -151,6 +151,7 @@ export async function AppFrame({ space: forced, employeeGroups, children }: { sp
         assisted={user.assisted ? { studioName: user.assisted.studioName, expiresAt: user.assisted.expiresAt.toISOString() } : null}
         endAssisted={endAssistedAccess}
         demo={!!studio?.isDemo}
+        serviceMark={await import("@/modules/simuladores/server").then((m) => m.markOf(user.studioId, space === "portal" ? (membership?.current?.organizationId ?? null) : null)).catch(() => null)}
         viewAs={viewAs ? { name: viewAs.name, role: roleLabel, studio: viewAs.studio } : null}
         endViewAs={endViewAsAction}
         signOut={user.role === "cliente" ? portalSignOut : signOut}

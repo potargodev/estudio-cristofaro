@@ -33,6 +33,12 @@ Actualizado el 13 de octubre de 2026.
 - **Dónde:** Faro Manager → Plataforma → **Demo** → Cargar la demo (o `node dist/demo.mjs seed` en la consola de `web`). Guardar las contraseñas: se muestran una sola vez. Desde ahí, **Ver como…** entra como cualquier usuario de la demo sin contraseña (solo `faro_owner` con 2FA).
 - **Cómo se verifica:** `GET /api/health` responde bien; la franja «Demostración» aparece en los seis perfiles; «Ver como…» muestra la franja «Viendo como…» y «Volver a mi usuario» devuelve a la cuenta propia; las dos cosas quedan en Faro Manager → Plataforma → Auditoría. Ver `docs/demo.md`.
 
+### 4. Guía de prueba para la contadora (simuladores)
+- **Qué falta:** recargar la demo en staging después de este deploy (trae lo de la Parte C: comprobantes en el ARCA simulado, la Agencia que factura y Dana y Ema con WhatsApp verificado) y recorrer la guía con la contadora.
+- **Quién:** Faro, con la contadora de Cristofaro.
+- **Dónde:** Faro Manager → Plataforma → **Demo** (borrar y cargar), **Integraciones** (todo en Simulador para la demo) y **Guía de prueba** (30 recorridos con estado y comentario). Impresa: `docs/guia-prueba-contadora.md`. Si se quiere probar con un espacio real en Simulador: `ALLOW_SIMULATORS=true` en el servicio `web` de staging (nunca en producción). Para el modo **Prueba** con los ambientes oficiales: `docs/sandboxes.md`.
+- **Cómo se verifica:** la franja dice «Modo demostración» con el link a Simuladores; el recorrido 1 al 4 de la guía sale bien (factura rápida con CAE del simulador y «SIN VALIDEZ FISCAL» en el PDF).
+
 ## Alto
 
 ### 4. Tango real del estudio

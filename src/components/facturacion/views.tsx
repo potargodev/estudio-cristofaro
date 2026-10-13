@@ -265,7 +265,7 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
         {inv.status === "autorizada" && (
           <p className="mt-3 flex items-center gap-2 text-ui text-[#1f5f36]">
             <ShieldCheck className="size-4" aria-hidden /> CAE {inv.cae} · vence el {formatDate(inv.cae_due, "numeric")}
-            {inv.environment === "homologacion" && <span className="text-danger"> · homologación (sin validez fiscal)</span>}
+            {inv.environment !== "produccion" && <span className="text-danger"> · {inv.environment === "simulador" ? "simulador" : "homologación"} (sin validez fiscal)</span>}
           </p>
         )}
         {inv.error && <p className="mt-3 text-ui text-danger">{inv.error}</p>}

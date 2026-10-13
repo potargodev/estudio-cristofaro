@@ -20,6 +20,7 @@ import { indicadoresTools } from "./modulos/indicadores";
 import { ivaTools } from "./modulos/iva";
 import { stockTools } from "./modulos/stock";
 import { ventasTools } from "./modulos/ventas";
+import { simuladoresTools } from "./modulos/simuladores";
 import { buzonTools } from "./modulos/buzon";
 import { whatsappTools } from "./modulos/whatsapp";
 import { gastosTools } from "./modulos/gastos";
@@ -58,6 +59,7 @@ export const TOOLS: ToolDefinition[] = [
   ...indicadoresTools,
   ...whatsappTools,
   ...ventasTools,
+  ...simuladoresTools,
   ...buzonTools,
 ];
 

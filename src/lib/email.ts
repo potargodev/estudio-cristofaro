@@ -105,12 +105,21 @@ export async function sendMail({
   const transport = getTransport();
   // Los usuarios de la demo (@demo.faro.local) nunca reciben mails: no existen
   const recipients = (Array.isArray(to) ? to : [to]).filter((r) => r && !/@demo\.faro\.local$/i.test(r.trim()));
+  // Parte C: lo que no sale queda en la bandeja del simulador de mails (Faro Manager → Simuladores)
+  const outbox = (reason: string) =>
+    import("@/modules/simuladores/server")
+      .then((m) => m.simLogMail(Array.isArray(to) ? to : [to], reason, subject, { to, subject, html: html.slice(0, 20_000), attachments: (attachments ?? []).map((a) => a.filename) }))
+      .catch(() => null);
   if (!recipients.length && (Array.isArray(to) ? to.length : !!to)) {
     console.info(`[mail] Demo: no se envía "${subject}"`);
+    await outbox("demo");
     return true;
   }
   if (!transport || recipients.length === 0) {
-    if (recipients.length) console.info(`[mail] SMTP sin configurar: no se envió "${subject}" a ${recipients.join(", ")}`);
+    if (recipients.length) {
+      console.info(`[mail] SMTP sin configurar: no se envió "${subject}" a ${recipients.join(", ")}`);
+      await outbox("sin_smtp");
+    }
     return false;
   }
   try {

@@ -500,6 +500,14 @@ Facturar desde Faro tiene que ser lo más rápido del mercado para un estudio co
 - Vista del estudio con todos los monotributistas: facturación de 12 meses, parámetros (con carga rápida de los faltantes), categoría actual y sugerida, si **sube, baja, se mantiene o queda excluido**, y la nueva cuota.
 - Revisión en lote, marca **«recategorizado»** con comprobante y aviso por la app, mail y WhatsApp. Recordatorio y tareas automáticas, y como tarea y rutina del Agente. Escala de Faro Manager («a validar» si no está validada). **Decide el contador.**
 
+## 2.r Modo de servicios y simuladores (probar sin riesgo)
+
+Cada servicio externo (ARCA, Mercado Pago, WhatsApp, mails, tiendas, Tango, Xubio, Contabilium y bancos) funciona en **Real**, **Prueba** (el ambiente de prueba oficial: homologación de ARCA, credenciales de prueba de Mercado Pago, número de prueba de WhatsApp) o **Simulador** (dentro de Faro, sin salir a internet), por espacio y por organización. Lo elige el owner de Faro en Faro Manager → Plataforma → Integraciones, auditado. La demo usa el Simulador y nunca Real; un espacio real solo usa el Simulador en staging.
+
+- **Simuladores** (`/simuladores`, del espacio): «el otro lado» de cada servicio (tirar ARCA, cortar una respuesta, pagar un link, mandar ventas de una tienda, cargar en Xubio, Contabilium o Tango, bajar un extracto, ver los mails que no salieron) y el **teléfono de prueba** para hablar con el Vigía por WhatsApp.
+- **Marca:** «Modo demostración» o «Modo prueba» arriba de todas las pantallas y «SIN VALIDEZ FISCAL» en los PDF fuera de producción. Faro nunca pide ni guarda la clave fiscal, tampoco acá.
+- **Guía de prueba** para la contadora (Faro Manager → Plataforma → Guía de prueba y `docs/guia-prueba-contadora.md`): 30 recorridos con estado y comentario.
+
 ## 3. Planes de Faro (para estudios)
 
 | | **Inicial** | **Profesional** (recomendado) | **Avanzado** |

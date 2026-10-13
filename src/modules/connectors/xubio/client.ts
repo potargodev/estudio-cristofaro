@@ -1,5 +1,6 @@
 import "server-only";
 import { createHash } from "node:crypto";
+import { isSimClient, simXubio } from "@/modules/simuladores/conectores";
 
 // Cliente de la API oficial de Xubio (REST, OAuth2 client credentials).
 // Verificado contra el swagger oficial (https://xubio.com/API/1.1/swagger.json):
@@ -71,6 +72,8 @@ async function token(c: XubioCredentials, dead?: string) {
 }
 
 async function xubioGet<T = unknown>(c: XubioCredentials, path: string, params: Record<string, string | undefined> = {}): Promise<T> {
+  // Parte C: una cuenta «simulador…» la atiende el simulador de Faro
+  if (isSimClient(c.client_id)) return (await simXubio(c.client_id, path, params)) as T;
   const url = new URL(`${xubioBase()}${path}`);
   for (const [k, v] of Object.entries(params)) if (v) url.searchParams.set(k, v);
   let dead: string | undefined;

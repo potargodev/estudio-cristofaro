@@ -196,7 +196,11 @@ export async function invoicePdf(inv: Invoice, s: Settings): Promise<Uint8Array>
     text(page, "Comprobante autorizado por ARCA", M + 80, footY + 46, 9, bold);
     text(page, `CAE: ${inv.cae}`, M + 80, footY + 32, 9);
     text(page, `Vencimiento del CAE: ${date(inv.cae_due)}`, M + 80, footY + 19, 9);
-    if (inv.environment === "homologacion") text(page, "Emitido en homologación (pruebas): sin validez fiscal.", M + 80, footY + 5, 8, bold, rgb(0.6, 0.2, 0.15));
+    // Parte C · C6: lo emitido en homologación o en el simulador lleva la marca en el pie y de fondo
+    if (inv.environment !== "produccion") {
+      text(page, inv.environment === "simulador" ? "Emitido en el simulador de Faro (demostración): sin validez fiscal." : "Emitido en homologación (pruebas): sin validez fiscal.", M + 80, footY + 5, 8, bold, rgb(0.6, 0.2, 0.15));
+      page.drawText("SIN VALIDEZ FISCAL", { x: 70, y: 380, size: 52, font: bold, color: rgb(0.92, 0.88, 0.86), opacity: 0.6 });
+    }
   } else {
     text(page, "BORRADOR · SIN VALIDEZ FISCAL", M, footY + 40, 14, bold, rgb(0.6, 0.2, 0.15));
     page.drawText("BORRADOR", { x: 120, y: 360, size: 90, font: bold, color: rgb(0.92, 0.88, 0.86), opacity: 0.6 });

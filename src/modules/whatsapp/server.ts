@@ -30,7 +30,7 @@ const hash = (s: string) => createHash("sha256").update(s).digest("hex");
 // ───────────── Cuentas ─────────────
 
 export async function platformAccount() {
-  const [a] = await db().select().from(whatsapp_accounts).where(isNull(whatsapp_accounts.studio_id)).limit(1);
+  const [a] = await db().select().from(whatsapp_accounts).where(and(isNull(whatsapp_accounts.studio_id), ne(whatsapp_accounts.mode, "simulador"))).limit(1);
   return a ?? null;
 }
 export async function studioRow(studioId: string) {
@@ -42,11 +42,42 @@ const ready = (a: WaAccount | null): a is WaAccount => !!a && a.status === "acti
 /** Cuenta con la que sale un estudio: la propia o, si eligió compartida, la de Faro */
 export async function accountFor(studioId: string) {
   if (!(await hasModule(studioId, "whatsapp"))) return null;
+  const { modeOf } = await import("@/modules/simuladores/server");
+  if ((await modeOf(studioId, null, "whatsapp")) === "simulador") return simAccount(studioId);
   const own = await studioRow(studioId);
   if (!own || own.status !== "activa") return null;
   if (own.mode === "propio") return ready(own) ? own : null;
   const p = await platformAccount();
   return ready(p) ? p : null;
+}
+
+/**
+ * Parte C: cuenta del simulador del estudio (se crea la primera vez, con las
+ * plantillas aprobadas). Si el estudio ya tiene una cuenta real cargada, el
+ * simulador no la reemplaza: devuelve null.
+ */
+async function simAccount(studioId: string) {
+  const own = await studioRow(studioId);
+  if (own && own.mode !== "simulador") return null;
+  if (own) return own;
+  const [a] = await db()
+    .insert(whatsapp_accounts)
+    .values({ studio_id: studioId, mode: "simulador", phone_number_id: `sim-${studioId}`, waba_id: `sim-waba-${studioId}`, display_phone: "+54 9 11 0000-0000 (simulador)", access_token_enc: encrypt("simulador"), app_secret_enc: encrypt("simulador"), verify_token: randomBytes(12).toString("hex"), status: "activa" })
+    .onConflictDoNothing()
+    .returning();
+  const acc = a ?? (await studioRow(studioId))!;
+  await syncTemplates(acc).catch(() => 0);
+  return acc;
+}
+
+/** Parte C · Teléfono de prueba: un mensaje que «llega» desde un número verificado del estudio (texto, audio, foto o PDF) */
+export async function simulateInbound(studioId: string, phone: string, msg: { type: "texto" | "audio" | "imagen" | "documento"; text?: string; data?: Buffer; mime?: string; filename?: string }) {
+  const a = await simAccount(studioId);
+  if (!a) throw new WhatsAppError("Este espacio tiene WhatsApp real: el teléfono de prueba solo funciona con el simulador.");
+  const { storeSimMedia } = await import("@/modules/simuladores/whatsapp");
+  const mediaId = msg.data ? await storeSimMedia(msg.data, msg.mime ?? "application/octet-stream") : null;
+  const m: InboundMessage = { id: `wamid.SIMIN${randomBytes(8).toString("hex")}`, from: phone, phoneNumberId: a.phone_number_id!, name: null, type: msg.type, text: msg.text ?? null, mediaId, mime: msg.mime ?? null, filename: msg.filename ?? null, raw: { simulador: true, type: msg.type } };
+  return handleInbound(a, m, true);
 }
 
 interface AccountInput {
@@ -93,6 +124,8 @@ export async function pauseAccount(actor: Actor, studioId: string | null) {
 }
 
 async function graph(a: WaAccount, path: string, init?: RequestInit) {
+  // Parte C: la cuenta del simulador responde dentro de Faro
+  if (a.mode === "simulador") return (await import("@/modules/simuladores/whatsapp")).simGraph(a, path, init);
   const r = await fetch(`${API()}/${path}`, { ...init, headers: { Authorization: `Bearer ${decrypt(a.access_token_enc!)}`, "Content-Type": "application/json", ...(init?.headers ?? {}) }, signal: AbortSignal.timeout(15000) });
   const body = (await r.json().catch(() => ({}))) as { error?: { message?: string } } & Record<string, unknown>;
   if (!r.ok) throw new WhatsAppError(body.error?.message ?? `WhatsApp respondió ${r.status}`);
@@ -311,6 +344,7 @@ async function senderOf(a: WaAccount, phone: string) {
 async function downloadMedia(a: WaAccount, mediaId: string) {
   const meta = (await graph(a, mediaId)) as { url?: string; mime_type?: string };
   if (!meta.url) throw new WhatsAppError("WhatsApp no devolvió el archivo.");
+  if (meta.url.startsWith("sim-media:")) return (await import("@/modules/simuladores/whatsapp")).simMedia(meta.url);
   const r = await fetch(meta.url, { headers: { Authorization: `Bearer ${decrypt(a.access_token_enc!)}` }, signal: AbortSignal.timeout(20000) });
   if (!r.ok) throw new WhatsAppError(`No se pudo bajar el archivo (${r.status}).`);
   const data = Buffer.from(await r.arrayBuffer());
@@ -321,6 +355,11 @@ async function downloadMedia(a: WaAccount, mediaId: string) {
 /** Audio → texto con la IA de la plataforma (si está configurada); null si no se pudo */
 async function transcribe(a: WaAccount, mediaId: string) {
   try {
+    // Parte C: el audio de prueba del teléfono simulado trae su transcripción (no gasta IA)
+    if (a.mode === "simulador") {
+      const said = (await downloadMedia(a, mediaId)).data.toString("utf8").match(/^TRANSCRIPCION:([\s\S]{1,1000})$/)?.[1]?.trim();
+      if (said) return said;
+    }
     const { getPlatformAi, isConfigured, transcribeAudio } = await import("@/modules/copilot/platform");
     const p = await getPlatformAi();
     if (!isConfigured(p)) return null;

@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "knip": "knip",
     "ayuda": "node scripts/ayuda.mjs",
+    "guia": "node --import tsx scripts/guia-a-md.mts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",

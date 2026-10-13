@@ -25,7 +25,7 @@
 | IVA: liquidación mensual (débito, crédito, saldo, saldo a favor) | **Cubierto** (parcial) | Posición de IVA del mes y los 3 anteriores por CUIT con semáforo (B4) y análisis antes de presentar. Falta arrastrar el saldo a favor entre períodos. La presentación la hace el contador. |
 | IVA: libros IVA ventas y compras | **Cubierto** | Ficha de la organización → ARCA → Libro IVA (B4): libro de ventas y compras del período, por CUIT, en Excel y PDF con resumen por alícuota; análisis y anomalías antes de presentar. |
 | IVA: Libro IVA Digital (exportación al formato de ARCA) | **Cubierto** (a validar) | Archivos de comprobantes y alícuotas de ventas y compras en un ZIP (B4), con los diseños de registro de la RG 4597 "a validar" contra el aplicativo vigente. La presentación la hace el contador. |
-| IVA: regímenes de percepción sufridos (en compras) | **Planificado (NU-4)** | La lectura de comprobantes trae cada percepción. |
+| IVA: regímenes de percepción sufridos (en compras) | **Cubierto** | La lectura de compras por ítem trae cada percepción y suma al crédito en el Libro IVA (computable o no, B8). |
 | IVA: saldos técnicos y de libre disponibilidad | **No contemplado** | Seguimiento de saldos a favor entre períodos. |
 | Ganancias, personas humanas: DDJJ anual | **No contemplado** | Hoy solo hay datos sueltos (Bitácora, Facturación). Faltan la hoja de trabajo y el seguimiento. |
 | Ganancias, sociedades: DDJJ anual | **No contemplado** | Depende de la contabilidad nativa (NU-1). |
@@ -59,10 +59,10 @@
 | Ingresos Brutos local: DDJJ mensual y anual | **No contemplado** | CABA (AGIP), PBA (ARBA) y el resto. Hay percepciones leídas (NU-4), falta la liquidación. |
 | Convenio Multilateral: CM03 mensual, CM05 anual, coeficientes unificados | **No contemplado** | Muy común en clientes que venden en varias provincias. Prioridad alta para la contadora. |
 | Regímenes simplificados provinciales (monotributo unificado) | **No contemplado** | A validar por jurisdicción. |
-| Percepciones y retenciones de IIBB sufridas | **Planificado (NU-4)** | Lectura por jurisdicción. |
+| Percepciones y retenciones de IIBB sufridas | **Cubierto** (parcial) | La lectura las trae por jurisdicción; el cómputo en la DDJJ de IIBB lo hace el contador. |
 | SIRCREB (retenciones bancarias de IIBB) | **Cubierto** (parcial) | Clasificadas en la conciliación, con asiento a su cuenta y reporte (A3). El cómputo en la DDJJ de IIBB lo hace el contador. |
 | Agente de retención o percepción provincial: DDJJ | **No contemplado** | |
-| Leyendas de IIBB en comprobantes (consumidor final) | **Planificado (NU-7)** | |
+| Leyendas de IIBB en comprobantes (consumidor final) | **Cubierto** | Catálogo de leyendas normativas en el comprobante (Etapa 5 de §2.q), «a validar» por jurisdicción. |
 | Tasas municipales (seguridad e higiene y otras) | **No contemplado** | Varía por municipio. |
 | Impuesto de sellos | **No contemplado** | En contratos de clientes. |
 
@@ -73,11 +73,11 @@
 | Plan de cuentas | **Cubierto** | Ficha → Contabilidad → Plan: plantilla por rubro (general, comercio, industria, gastronomía, agro), cuentas propias y mapeo a Tango/Xubio/Contabilium (A1). |
 | Libro diario y asientos (automáticos y manuales) | **Cubierto** | Automáticos de facturas, compras con percepciones, sueldos, cobros, pagos e impuestos bancarios, con su origen; manuales y modelos; numeración sin huecos; Excel y PDF (A1). |
 | Mayor y balance de sumas y saldos | **Cubierto** | Con Excel y PDF (A1). |
-| Inventario y balances (libro) | **Planificado (NU-1, NU-9)** | El inventario de mercadería sale de Stock. |
+| Inventario y balances (libro) | **Cubierto** | Contabilidad (A1) y el inventario de mercadería de Stock a una fecha. |
 | Estados contables (situación patrimonial, resultados, evolución del PN, flujo de efectivo, notas y anexos) | **Cubierto** (parcial) | Situación patrimonial y resultados, con control de cuadre, en Excel y PDF (A1). Faltan evolución del PN, flujo de efectivo, notas y anexos: **no contemplado**. |
 | Cierre y reapertura de ejercicio | **Cubierto** | Refundición, cierre, apertura y bloqueo del período; reapertura con motivo, auditada (A1). |
 | Ajuste por inflación contable (RT 6) | **Cubierto** | Índice FACPCE (Faro Manager, fuente configurable o carga manual; meses a mano por organización), clasificación monetaria editable, reexpresión, RECPAM, asiento en borrador, nominal vs homogéneo, papel de trabajo y tarea del Agente (A2). Método e índices "a validar" con la contadora. |
-| Conciliaciones bancarias | **Cubierto / Planificado (NU-5)** | Existe; se suman tolerancias y asientos de ajuste. |
+| Conciliaciones bancarias | **Cubierto** | Con tolerancias, asientos de ajuste e impuestos bancarios (§2.q y A3); extracto de prueba en el simulador de banco (Parte C). |
 | Conciliación de cuentas de clientes y proveedores (cuentas corrientes) | **Cubierto** | Saldos y antigüedad de deudores y acreedores, en Excel y PDF (A1). |
 | Bienes de uso y amortizaciones | **Cubierto** | Amortización lineal y asiento del período, sin repetir (A1). |
 | Valuación de moneda extranjera y diferencias de cambio | **Cubierto** | Cuentas en dólares y asiento de diferencia de cambio en borrador (A1). |
@@ -154,7 +154,7 @@
 | Honorarios: abonos, cobro, recordatorios y estado de cuenta | **Cubierto** | F7. |
 | Factura del estudio por los honorarios | **Cubierto** | F7 con ARCA (F3). |
 | Tareas y cartera del estudio | **Cubierto** | F9. |
-| Resumen mensual al cliente | **Cubierto / Planificado (NU-3)** | Plantilla de flujo; el Agente lo amplía. |
+| Resumen mensual al cliente | **Cubierto** | Plantilla de flujo y el Agente contable lo prepara para aprobar. |
 | Consultas laborales y fiscales con borrador de IA | **Cubierto** | F9 (con aprobación del estudio). |
 | Admisión, acuerdo y cierre del vínculo | **Cubierto** | Conexión con contador (§4 a §8 de principios). |
 | Agenda de reuniones con el cliente | **Cubierto** | Agenda con Google Calendar y Meet (pendiente de configuración). |
@@ -173,9 +173,10 @@
 | Registro de operaciones inmobiliarias y alquileres | **No contemplado** | |
 | Liquidación de impuestos de personas humanas de los dueños (Ganancias y Bienes Personales) | **No contemplado** | Ver §1. |
 | Presupuesto y proyecciones financieras | **No contemplado** | Hay indicadores; no hay proyección. |
-| Stock de clientes (inventario para el cierre) | **Planificado (NU-9)** | |
-| Análisis con IA antes de presentar (IVA y anomalías) | **Planificado (NU-6)** | |
-| Agente que resuelve tareas en varios pasos | **Planificado (NU-3)** | |
+| Stock de clientes (inventario para el cierre) | **Cubierto** | Stock simple (§2.q): hasta 3 depósitos, conteo, valuación por último costo y promedio ponderado, inventario a una fecha y CMV estimado, con tiendas. |
+| Análisis con IA antes de presentar (IVA y anomalías) | **Cubierto** | Análisis del Libro IVA antes de presentar (§2.q) y posición de IVA con semáforo (B4). La IA propone; presenta el contador. |
+| Agente que resuelve tareas en varios pasos | **Cubierto** | Agente contable (§2.q): propone y una persona aprueba lo fiscal, de pagos y comunicaciones. |
+| Probar procesos sin riesgo (capacitar al equipo, mostrar a un cliente, validar antes de producción) | **Cubierto** | Parte C: modo Real, Prueba o Simulador por servicio; simuladores de ARCA, Mercado Pago, WhatsApp, tiendas, sistemas, banco y mails; teléfono de prueba y guía de prueba. Nada simulado tiene validez fiscal. |
 
 ---
 

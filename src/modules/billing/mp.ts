@@ -36,6 +36,14 @@ async function row(studioId: string | null) {
 
 /** Cuenta que cobra (la de Faro puede venir de MP_ACCESS_TOKEN y MP_WEBHOOK_SECRET) */
 export async function loadAccount(studioId: string | null): Promise<MpAccount> {
+  // Parte C: en modo simulador cobra el simulador de Mercado Pago de Faro
+  if (studioId) {
+    const { modeOf } = await import("@/modules/simuladores/server");
+    if ((await modeOf(studioId, null, "mercadopago")) === "simulador") {
+      const { SIM_TOKEN, SIM_SECRET } = await import("@/modules/simuladores/mercadopago");
+      return { key: accountKey(studioId), token: SIM_TOKEN, secret: SIM_SECRET, nickname: "Simulador de Mercado Pago" };
+    }
+  }
   const r = await row(studioId);
   if (r) return { key: accountKey(studioId), token: decrypt(r.access_token_enc), secret: r.webhook_secret_enc ? decrypt(r.webhook_secret_enc) : null, nickname: r.nickname };
   if (!studioId && process.env.MP_ACCESS_TOKEN?.trim()) return { key: "faro", token: process.env.MP_ACCESS_TOKEN.trim(), secret: process.env.MP_WEBHOOK_SECRET?.trim() || null, nickname: null };
@@ -49,6 +57,8 @@ export async function accountSummary(studioId: string | null) {
 }
 
 async function call<T>(token: string, path: string, init: { method?: string; body?: unknown; idempotencyKey?: string } = {}): Promise<T> {
+  const { SIM_TOKEN, simMp } = await import("@/modules/simuladores/mercadopago");
+  if (token === SIM_TOKEN) return (await simMp(path, init)) as T;
   const res = await fetch(`${api()}${path}`, {
     method: init.method ?? "GET",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", ...(init.idempotencyKey ? { "X-Idempotency-Key": init.idempotencyKey } : {}) },

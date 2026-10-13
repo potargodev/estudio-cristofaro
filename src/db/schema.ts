@@ -5604,3 +5604,64 @@ export const webhook_deliveries = pgTable(
   },
   (t) => [uniqueIndex("webhook_deliveries_dedupe_idx").on(t.endpoint_id, t.dedupe_key), index("webhook_deliveries_queue_idx").on(t.status, t.next_attempt_at)],
 );
+
+// ───────────── Parte C · Modos de servicio y simuladores ─────────────
+
+/** Modo de cada servicio externo por estudio (o por organización): real | prueba | simulador */
+export const service_modes = pgTable(
+  "service_modes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    /** null = todo el estudio; si no, solo esa organización */
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    service: text("service").notNull(),
+    mode: text("mode").notNull(),
+    set_by: uuid("set_by").references(() => users.id, { onDelete: "set null" }),
+    updated_at: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex("service_modes_studio_idx").on(t.studio_id, t.service).where(sql`${t.organization_id} is null`),
+    uniqueIndex("service_modes_org_idx").on(t.organization_id, t.service).where(sql`${t.organization_id} is not null`),
+  ],
+);
+
+/** Estado persistente de los simuladores (numeración de ARCA, publicaciones de una tienda, datos de Xubio…) */
+export const simulator_state = pgTable(
+  "simulator_state",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    service: text("service").notNull(),
+    key: text("key").notNull(),
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }),
+    data: jsonb("data").notNull(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("simulator_state_key_idx").on(t.service, t.key)],
+);
+
+/** Lo que pasó en cada simulador (pedidos a ARCA, mensajes de WhatsApp, mails que no salieron, pagos…) */
+export const simulator_events = pgTable(
+  "simulator_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }),
+    service: text("service").notNull(),
+    kind: text("kind").notNull(),
+    summary: text("summary").notNull(),
+    data: jsonb("data"),
+    created_at: createdAt(),
+  },
+  (t) => [index("simulator_events_idx").on(t.service, t.created_at), index("simulator_events_studio_idx").on(t.studio_id, t.created_at)],
+);
+
+/** Parte C · C7 · Checklist de la guía de prueba (Faro Manager): estado y comentario de cada recorrido */
+export const guide_checks = pgTable("guide_checks", {
+  item_key: text("item_key").primaryKey(),
+  status: text("status").notNull().default("pendiente"), // pendiente | ok | falla | duda
+  comment: text("comment"),
+  updated_by: uuid("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updated_at: updatedAt(),
+});

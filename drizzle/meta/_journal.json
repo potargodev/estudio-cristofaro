@@ -477,6 +477,20 @@
       "when": 1791886888130,
       "tag": "0067_limites_generosos",
       "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1791887590519,
+      "tag": "0068_modos_simuladores",
+      "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1791889977946,
+      "tag": "0069_guia_prueba",
+      "breakpoints": true
     }
   ]
 }

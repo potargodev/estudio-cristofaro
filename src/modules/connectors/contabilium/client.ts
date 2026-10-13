@@ -1,4 +1,5 @@
 import "server-only";
+import { isSimClient, simContabilium } from "@/modules/simuladores/conectores";
 
 // Cliente de la API de Contabilium (A0, principios §22). La API real no se
 // pudo verificar desde el entorno: rutas y formas siguen la documentación
@@ -65,6 +66,8 @@ async function token(c: ContabiliumCredentials) {
 }
 
 async function call<T>(c: ContabiliumCredentials, path: string, init: { method?: string; body?: unknown; params?: Record<string, string> } = {}): Promise<T> {
+  // Parte C: una cuenta «simulador…» la atiende el simulador de Faro
+  if (isSimClient(c.client_id)) return (await simContabilium(c.client_id, path, init)) as T;
   const url = new URL(`${base()}${path}`);
   for (const [k, v] of Object.entries(init.params ?? {})) url.searchParams.set(k, v);
   const res = await fetch(url.toString(), {

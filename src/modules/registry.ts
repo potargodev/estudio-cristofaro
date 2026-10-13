@@ -78,6 +78,7 @@ export const FARO_MODULES: FaroModule[] = [
     events: ["organizacion.creada", "vencimiento.creado", "documento.subido", "solicitud.creada", "solicitud.respondida", "reserva.creada"],
     tools: [
       "buscar_organizaciones",
+      "modo_de_servicios",
       "ver_organizacion",
       "listar_vencimientos",
       "crear_vencimiento",

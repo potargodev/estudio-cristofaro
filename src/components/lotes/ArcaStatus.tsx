@@ -7,7 +7,7 @@ import { healthHistory } from "@/modules/arca/queue";
 // últimas 24 horas y, con `full`, el historial. Lo usan el panel de
 // facturación, el Faro Manager y la página /estado.
 
-export async function ArcaStatus({ env, full = false, queued = 0 }: { env: "homologacion" | "produccion"; full?: boolean; queued?: number }) {
+export async function ArcaStatus({ env, full = false, queued = 0 }: { env: "homologacion" | "produccion" | "simulador"; full?: boolean; queued?: number }) {
   const h = await healthHistory(env, 24);
   const last = h.last;
   const label = !last ? "Sin datos todavía" : last.ok ? "Funcionando" : "Con problemas";

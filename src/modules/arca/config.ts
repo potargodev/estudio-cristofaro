@@ -4,7 +4,8 @@
 // Nunca scraping: solo WSAA (autenticación con certificado), WSFEv1
 // (factura electrónica) y la constancia de inscripción (padrón).
 
-export type ArcaEnv = "homologacion" | "produccion";
+/** Parte C: «simulador» es el simulador de ARCA dentro de Faro (sin salir a internet) */
+export type ArcaEnv = "homologacion" | "produccion" | "simulador";
 
 export const ARCA_ENVS: Record<ArcaEnv, { label: string; wsaa: string; wsfe: string; padron: string; wscdc: string }> = {
   homologacion: {
@@ -21,6 +22,7 @@ export const ARCA_ENVS: Record<ArcaEnv, { label: string; wsaa: string; wsfe: str
     padron: "https://aws.afip.gov.ar/sr-padron/webservices/personaServiceA5",
     wscdc: "https://servicios1.afip.gov.ar/WSCDC/service.asmx",
   },
+  simulador: { label: "Simulador de Faro", wsaa: "sim://arca/wsaa", wsfe: "sim://arca/wsfe", padron: "sim://arca/padron", wscdc: "sim://arca/wscdc" },
 };
 
 /** Servicios del WSAA que usa Faro */
@@ -29,6 +31,7 @@ export type ArcaService = (typeof ARCA_SERVICES)[keyof typeof ARCA_SERVICES];
 
 export function arcaUrls(env: ArcaEnv) {
   const base = ARCA_ENVS[env];
+  if (env === "simulador") return { wsaa: base.wsaa, wsfe: base.wsfe, padron: base.padron, wscdc: base.wscdc };
   return {
     wsaa: process.env.ARCA_WSAA_URL || base.wsaa,
     wsfe: process.env.ARCA_WSFE_URL || base.wsfe,

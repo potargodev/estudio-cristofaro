@@ -33,7 +33,7 @@ export class StoreError extends Error {
   }
 }
 
-async function call(path: string, init?: RequestInit) {
+async function callApi(path: string, init?: RequestInit) {
   if (!base()) throw new StoreError("Las tiendas todavía no están conectadas a sus APIs reales (falta configurar TIENDAS_API_URL o la integración de la plataforma).");
   let r: Response;
   try {
@@ -62,9 +62,11 @@ export function toOrder(o: Record<string, unknown>): RemoteOrder | null {
   };
 }
 
-export function adapterFor(platform: Platform, shop: string) {
+/** Parte C: con `sim`, la tienda es la del simulador de Faro */
+export function adapterFor(platform: Platform, shop: string, sim = false) {
   const p = `/${platform}/${encodeURIComponent(shop)}`;
   const info = PLATFORMS[platform];
+  const call = sim ? async (path: string, init?: RequestInit) => (await import("@/modules/simuladores/tiendas")).simTiendas(path, init) : callApi;
   return {
     info,
     async listings(): Promise<RemoteListing[]> {

@@ -62,11 +62,11 @@ const nuevas = [
 
 const PERFILES = {
   persona: { email: "persona@demo.faro.local", start: ["/personal", "/cajas", "/bitacora", "/grupos", "/contador", "/mensajes", "/vigia"] },
-  autonomo: { email: "autonomo@demo.faro.local", start: ["/personal", "/facturacion", "/facturacion/lotes", "/facturacion/stock", "/facturacion/ajustes", "/cajas", "/flotas", "/contador"] },
-  estudio: { email: "duena.estudio@demo.faro.local", start: ["/admin", ...nuevas, "/admin/organizaciones", "/admin/vencimientos", "/admin/solicitudes", "/admin/tareas", "/admin/comercial", "/admin/honorarios", "/admin/configuracion"] },
+  autonomo: { email: "autonomo@demo.faro.local", start: ["/personal", "/facturacion", "/facturacion/lotes", "/facturacion/stock", "/facturacion/ajustes", "/cajas", "/flotas", "/contador", "/simuladores"] },
+  estudio: { email: "duena.estudio@demo.faro.local", start: ["/admin", ...nuevas, "/admin/organizaciones", "/admin/vencimientos", "/admin/solicitudes", "/admin/tareas", "/admin/comercial", "/admin/honorarios", "/admin/configuracion", "/simuladores", "/simuladores/telefono"] },
   organizacion: { email: "duena.organizacion@demo.faro.local", start: ["/portal", "/portal/vencimientos", "/portal/documentos", "/portal/solicitudes", "/portal/empresa"] },
   empleado: { email: "empleada@demo.faro.local", start: ["/portal/empleado", "/portal/recibos", "/portal/rendiciones"] },
-  manager: { email: "owner@faro.test", start: ["/faro-manager", "/faro-manager/tenants", "/faro-manager/planes", "/faro-manager/convenios", "/faro-manager/indices", "/faro-manager/escudo", "/faro-manager/red", "/faro-manager/auditoria", "/faro-manager/demo"] },
+  manager: { email: "owner@faro.test", start: ["/faro-manager", "/faro-manager/tenants", "/faro-manager/planes", "/faro-manager/convenios", "/faro-manager/indices", "/faro-manager/escudo", "/faro-manager/red", "/faro-manager/auditoria", "/faro-manager/demo", "/faro-manager/integraciones", "/faro-manager/guia"] },
   publico: { email: null, start: ["/", "/faro", "/faro/precios", "/ingresar", "/ayuda", "/servicios", "/contacto"] },
 };
 const SKIP = /\/api\/|\/salir|signout|logout|\.csv|\.pdf|download|archivo|exportar|\/login|\/legal|#|mailto:|tel:|wa\.me|\/f\/|\/caja\/|\/invitacion|\/oauth/i;

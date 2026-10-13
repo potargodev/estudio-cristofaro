@@ -29,6 +29,13 @@ export function toXml(obj: unknown, ns = "ar"): string {
 
 export async function soapCall(url: string, action: string, envelope: string, timeoutMs = 25_000) {
   let res: Response;
+  // Parte C: el simulador de ARCA corre dentro de Faro (mismas formas SOAP)
+  if (url.startsWith("sim://")) {
+    const { simSoap } = await import("@/modules/simuladores/arca");
+    const text = await simSoap(url, action, envelope);
+    if (text === null) throw new ArcaError("ARCA no respondió (simulador: ARCA fuera de servicio). Probá de nuevo en unos minutos.", "red");
+    res = new Response(text, { status: 200 });
+  } else
   try {
     res = await fetch(url, {
       method: "POST",

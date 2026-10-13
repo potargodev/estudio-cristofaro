@@ -123,6 +123,13 @@ async function requireArca(scope: IssuerScope) {
   if (!(await hasModule(scope.studioId, "arca"))) throw new ArcaError("La integración con ARCA no está incluida en tu plan.");
 }
 
+/** Parte C: ambiente de ARCA según el modo del estudio u organización (simulador, homologación o el activo de la plataforma) */
+export async function envFor(studioId: string, organizationId: string | null) {
+  const { modeOf } = await import("@/modules/simuladores/server");
+  const mode = await modeOf(studioId, organizationId, "arca");
+  return mode === "simulador" ? ("simulador" as const) : mode === "prueba" ? ("homologacion" as const) : await activeEnv();
+}
+
 const actorOf = (u: StaffUser | ArcaActor): ArcaActor => ({ id: u.id, email: u.email, name: u.name, role: u.role });
 
 // ───────────── Datos del emisor ─────────────
@@ -227,7 +234,7 @@ export async function situationHistory(scope: IssuerScope) {
 export async function fetchSituation(scope: IssuerScope, actor: ArcaActor) {
   await requireArca(scope);
   if (!/^\d{11}$/.test(scope.cuit)) throw new ArcaError("Falta la CUIT del emisor.");
-  const cred = await loadCredential();
+  const cred = await loadCredential(await envFor(scope.studioId, scope.organizationId));
   try {
     const r = await getPersona(cred, scope.cuit);
     const [row] = await db()
@@ -263,7 +270,7 @@ export async function listPoints(scope: IssuerScope) {
 /** Trae de ARCA los puntos de venta habilitados para web services (también prueba la delegación) */
 export async function syncPoints(scope: IssuerScope, actor: ArcaActor) {
   await requireArca(scope);
-  const cred = await loadCredential();
+  const cred = await loadCredential(await envFor(scope.studioId, scope.organizationId));
   const list = await salesPoints(cred, scope.cuit);
   for (const p of list)
     await db()
@@ -355,7 +362,7 @@ export interface DraftInput {
   idempotencyKey?: string | null;
   batchId?: string | null;
   /** §2.p B10: la factura de prueba del onboarding va siempre a homologación */
-  environment?: "homologacion" | null;
+  environment?: "homologacion" | "simulador" | null;
 }
 
 const isDate = (d?: string | null) => !!d && /^\d{4}-\d{2}-\d{2}$/.test(d);
@@ -417,7 +424,7 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
     studio_id: scope.studioId,
     organization_id: scope.organizationId,
     cuit: scope.cuit,
-    environment: i.environment ?? (await activeEnv()),
+    environment: i.environment ?? (await envFor(scope.studioId, scope.organizationId)),
     point_of_sale: i.pointOfSale,
     cbte_type: cbteType,
     issue_date: issueDate,
@@ -530,7 +537,7 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
     .where(and(eq(invoices.id, inv.id), inArray(invoices.status, claimable)))
     .returning();
   if (!claimed) throw new ArcaError("Ese comprobante se está emitiendo. Esperá unos segundos.");
-  const cred = await loadCredential(inv.environment as "homologacion" | "produccion");
+  const cred = await loadCredential(inv.environment as "homologacion" | "produccion" | "simulador");
   const finish = async (set: Partial<typeof invoices.$inferInsert>) => {
     const [r] = await db().update(invoices).set(set).where(eq(invoices.id, inv.id)).returning();
     return r;
@@ -638,7 +645,7 @@ export async function settingsForInvoice(inv: typeof invoices.$inferSelect) {
 export async function lookupTaxpayer(studioId: string, cuit: string, actor: ArcaActor) {
   if (!(await hasModule(studioId, "arca"))) throw new ArcaError("La integración con ARCA no está incluida en tu plan.");
   if (!/^\d{11}$/.test(cuit)) throw new ArcaError("La CUIT no es válida.");
-  const cred = await loadCredential();
+  const cred = await loadCredential(await envFor(studioId, null));
   const r = await getPersona(cred, cuit);
   await audit({ studioId, actor, action: "arca.padron_consulta", entityType: "cuit", entityId: cuit, metadata: { razon_social: r.data.name } });
   return r.data;
@@ -662,7 +669,7 @@ async function fceOptions(inv: typeof invoices.$inferSelect) {
  */
 export async function testInvoice(scope: IssuerScope, actor: ArcaActor) {
   const points = await listPoints(scope);
-  const draft = await createDraft(scope, { pointOfSale: points.find((p) => !p.blocked)?.number ?? 1, issueDate: "", concept: 2, customer: { docType: 99, docNumber: "0", name: "Consumidor final (prueba)", ivaCondition: "consumidor_final" }, items: [{ description: "Factura de prueba de Faro (homologación, sin validez fiscal)", quantity: 1, unitPrice: 1, ivaRate: 21 }], environment: "homologacion" }, actor);
+  const draft = await createDraft(scope, { pointOfSale: points.find((p) => !p.blocked)?.number ?? 1, issueDate: "", concept: 2, customer: { docType: 99, docNumber: "0", name: "Consumidor final (prueba)", ivaCondition: "consumidor_final" }, items: [{ description: "Factura de prueba de Faro (homologación, sin validez fiscal)", quantity: 1, unitPrice: 1, ivaRate: 21 }], environment: (await envFor(scope.studioId, scope.organizationId)) === "simulador" ? "simulador" : "homologacion" }, actor);
   let inv = draft;
   try {
     inv = await emitInvoice(scope, draft.id, actor, "prueba");

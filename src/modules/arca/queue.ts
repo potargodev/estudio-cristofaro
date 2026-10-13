@@ -16,7 +16,7 @@ import { feDummy } from "./wsfe";
 // definitivo lo da ARCA al emitir.
 
 const db = () => getDb();
-type Env = "homologacion" | "produccion";
+type Env = "homologacion" | "produccion" | "simulador";
 type Inv = typeof invoices.$inferSelect;
 
 interface ArcaHealth {

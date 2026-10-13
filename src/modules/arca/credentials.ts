@@ -1,4 +1,5 @@
 import "server-only";
+import forge from "node-forge";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { arca_credentials, faro_settings } from "@/db/schema";
@@ -55,6 +56,7 @@ export async function deleteCredential(env: ArcaEnv) {
 /** Credencial del ambiente activo (o del pedido) lista para el WSAA */
 export async function loadCredential(env?: ArcaEnv): Promise<ArcaCredential> {
   const e = env ?? (await activeEnv());
+  if (e === "simulador") return simulatorCredential();
   const [r] = await getDb().select().from(arca_credentials).where(eq(arca_credentials.environment, e));
   if (!r) throw new ArcaError(`ARCA todavía no está configurado en ${e === "produccion" ? "producción" : "homologación"}: falta cargar el certificado de Faro en el Faro Manager.`, "sin_credencial");
   return { env: e, cuit: r.cuit, certPem: decrypt(r.cert_enc), keyPem: decrypt(r.key_enc) };
@@ -62,4 +64,22 @@ export async function loadCredential(env?: ArcaEnv): Promise<ArcaCredential> {
 
 export async function recordTest(env: ArcaEnv, ok: boolean, detail: string) {
   await getDb().update(arca_credentials).set({ last_test_at: new Date(), last_test_ok: ok, last_test_detail: detail.slice(0, 500) }).where(eq(arca_credentials.environment, env));
+}
+
+let simCred: ArcaCredential | null = null;
+/** Parte C: certificado propio del simulador (se arma una vez por proceso; el simulador no lo valida contra ARCA) */
+function simulatorCredential(): ArcaCredential {
+  if (simCred) return simCred;
+  const keys = forge.pki.rsa.generateKeyPair(1024);
+  const cert = forge.pki.createCertificate();
+  cert.publicKey = keys.publicKey;
+  cert.serialNumber = "01";
+  cert.validity.notBefore = new Date(Date.now() - 86400_000);
+  cert.validity.notAfter = new Date(Date.now() + 3650 * 86400_000);
+  const attrs = [{ name: "commonName", value: "faro-simulador" }, { type: "2.5.4.5", value: "CUIT 30000000007" }];
+  cert.setSubject(attrs);
+  cert.setIssuer(attrs);
+  cert.sign(keys.privateKey, forge.md.sha256.create());
+  simCred = { env: "simulador", cuit: "30000000007", certPem: forge.pki.certificateToPem(cert), keyPem: forge.pki.privateKeyToPem(keys.privateKey) };
+  return simCred;
 }

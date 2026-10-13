@@ -505,7 +505,7 @@ export async function connectStore(s: StockScope, actor: Actor, i: { platform: s
 /** Trae las publicaciones de la tienda y las vincula solas si el código coincide o ya se aprendió; si no, sugiere */
 export async function syncListings(s: StockScope, storeId: string) {
   const st = await ownStore(s, storeId);
-  const remote = await adapterFor(st.platform as Platform, st.shop_id).listings();
+  const remote = await (await storeAdapter(st)).listings();
   const products = await db().select({ id: stock_products.id, code: stock_products.code, barcode: stock_products.barcode, description: stock_products.description }).from(stock_products).where(eq(stock_products.organization_id, s.organizationId));
   const aliases = (await db().select({ alias: stock_aliases.alias, productId: stock_aliases.product_id }).from(stock_aliases).where(eq(stock_aliases.organization_id, s.organizationId))).map((a) => ({ alias: a.alias, productId: a.productId }));
   const existing = await db().select().from(stock_listings).where(eq(stock_listings.store_id, st.id));
@@ -636,6 +636,13 @@ async function receiveOrder(store: typeof stock_stores.$inferSelect, o: RemoteOr
   return { moved, unlinked, restored, repeated: !!prev && prev.status === o.status };
 }
 
+/** Parte C: la tienda va contra el simulador de Faro si el servicio «tiendas» está en Simulador; la simulada se identifica por el ID de la tienda en Faro (nunca se cruza con la de otro espacio) */
+async function storeAdapter(st: { id: string; studio_id: string; organization_id: string; platform: string; shop_id: string }) {
+  const { modeOf } = await import("@/modules/simuladores/server");
+  const sim = (await modeOf(st.studio_id, st.organization_id, "tiendas")) === "simulador";
+  return adapterFor(st.platform as Platform, sim ? st.id : st.shop_id, sim);
+}
+
 /** Aviso de una tienda (webhook): la URL lleva el token secreto de la tienda */
 export async function webhook(token: string, body: unknown) {
   if (!/^[A-Za-z0-9_-]{20,64}$/.test(token)) return null;
@@ -695,7 +702,7 @@ export async function publishStore(storeId: string, opts: { force?: boolean } = 
   const v = valuate(await movesOf(s, listings.map((l) => l.product_id!)));
   const open = new Set((await db().select({ l: stock_conflicts.listing_id }).from(stock_conflicts).where(and(eq(stock_conflicts.store_id, st.id), eq(stock_conflicts.status, "abierto")))).map((r) => r.l));
   const lastPub = await db().select().from(stock_publications).where(eq(stock_publications.store_id, st.id)).orderBy(desc(stock_publications.created_at)).limit(500);
-  const adapter = adapterFor(st.platform as Platform, st.shop_id);
+  const adapter = await storeAdapter(st);
   const out = { published: 0, conflicts: 0, errors: 0 };
   for (const l of listings) {
     if (open.has(l.id)) continue;
@@ -775,7 +782,7 @@ export async function runStockJobs() {
     if (info.orders === "consulta") {
       try {
         const since = st.last_poll_at?.toISOString() ?? null;
-        const orders = await adapterFor(st.platform as Platform, st.shop_id).orders(since);
+        const orders = await (await storeAdapter(st)).orders(since);
         for (const o of orders) await receiveOrder(st, o, "consulta");
         await db().update(stock_stores).set({ last_poll_at: new Date(), last_error: null }).where(eq(stock_stores.id, st.id));
       } catch (e) {

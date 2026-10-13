@@ -3,15 +3,16 @@ titulo: Probar Faro con la demo
 resumen: Qué es un espacio de demostración, cómo se reconoce y por qué nunca se mezcla con tus datos.
 perfiles: [persona, autonomo, estudio, organizacion, empleado]
 modulo: core
-actualizado: 2026-10-12
-relacionados: [primeros-pasos/espacios-y-menu, primeros-pasos/primeros-pasos-estudio]
+actualizado: 2026-10-13
+relacionados: [primeros-pasos/simuladores, primeros-pasos/espacios-y-menu, primeros-pasos/primeros-pasos-estudio]
 ---
 
 Para mostrar Faro o probarlo sin tocar datos reales, el equipo de Faro puede cargar una **demo**: un mundo de prueba completo, con estudios, organizaciones, personas, autónomos, cajas, conexiones con contadores, la Red Contable y Flotas.
 
 ## Cómo se reconoce
 
-- Arriba de cada pantalla aparece la franja **«Demostración. Estos datos son ficticios…»**.
+- Arriba de cada pantalla aparece la franja **«Modo demostración. Estos datos son ficticios…»**, que además avisa que ARCA, Mercado Pago, WhatsApp, las tiendas y los bancos son simulados.
+- Los comprobantes de la demo se emiten en el **simulador de ARCA** y su PDF dice **«SIN VALIDEZ FISCAL»**.
 - Los usuarios de la demo tienen mails que terminan en `@demo.faro.local`. Esos mails no existen: Faro nunca les manda nada.
 - Los estudios de la demo llevan «(demo)» en el nombre.
 
@@ -27,6 +28,7 @@ Para mostrar Faro o probarlo sin tocar datos reales, el equipo de Faro puede car
   - Una changa en zona gris.
 - **Conexiones con un contador en todos los estados:** invitación, admisión, acuerdo, conectada (delegar y mirar o proponer y aprobar), en cierre, en disputa y cerrada.
 - **Red Contable de doble mano:** estudios con su ficha y personas, empresas y Flotas «Disponible, busco contador».
+- **Listo para los simuladores:** la Agencia Creativa Norte factura (punto de venta 3), Dana y Ema tienen su WhatsApp verificado para el **teléfono de prueba** y la tienda online de Lola manda ventas simuladas. Ver [Simuladores y modo de prueba](/ayuda/primeros-pasos/simuladores).
 
 ## Tus datos no se tocan
 

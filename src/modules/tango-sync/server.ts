@@ -12,6 +12,8 @@ import { applyRules, normKey, suggest } from "./normalize";
 import { assertPublicUrl, safeFetch } from "@/lib/safe-fetch";
 import { toCsv } from "@/lib/csv";
 import { UUID } from "@/lib/ids";
+import { isSimTango, simTango } from "@/modules/simuladores/conectores";
+import { modeOf } from "@/modules/simuladores/server";
 
 // Tango en los dos sentidos (principios §14), contra la API de Tango (hoy el
 // simulador de mocks/tango). Una sola verdad:
@@ -40,7 +42,10 @@ export async function getLink(studioId: string) {
 export async function saveLink(actor: Actor, input: { apiUrl: string; token?: string; companyId?: string; webhookSecret?: string; writeEnabled: boolean }) {
   const url = input.apiUrl.trim().replace(/\/+$/, "");
   try {
-    assertPublicUrl(url);
+    // El simulador (sim://tango) solo en un espacio con Tango en modo Simulador
+    if (isSimTango(url)) {
+      if ((await modeOf(actor.studioId, null, "tango")) !== "simulador") throw new Error();
+    } else assertPublicUrl(url);
   } catch {
     throw new TangoSyncError("Revisá la URL de la API de Tango: tiene que ser una dirección pública que empiece con https://.");
   }
@@ -61,6 +66,14 @@ export async function saveLink(actor: Actor, input: { apiUrl: string; token?: st
 }
 
 async function call(link: typeof tango_links.$inferSelect, method: string, path: string, body?: unknown) {
+  // Parte C: el enlace sim://tango lo atiende el simulador de Faro
+  if (isSimTango(link.api_url)) {
+    try {
+      return await simTango(link.studio_id, method, path, body);
+    } catch (e) {
+      throw Object.assign(new TangoSyncError((e as Error).message), { status: (e as { status?: number }).status ?? 500 });
+    }
+  }
   const r = await safeFetch(`${link.api_url}${path}`, {
     method,
     headers: { "Content-Type": "application/json", ApiAuthorization: decrypt(link.token_enc), Company: link.company_id },

@@ -134,6 +134,8 @@ correr buzon "${S[@]}" scripts/pruebas/buzon.mts
 correr api-v1 "${S[@]}" scripts/pruebas/api-v1.mts
 # §2.p · B10 factura rápida en el celular (medida) y empezar a facturar en 3 pasos
 correr emision-rapida node scripts/pruebas/emision-rapida.mjs
+# Parte C · modos de servicio y simuladores (ARCA, tiendas, sistemas, Mercado Pago, banco, mails y teléfono de prueba)
+correr simuladores "${S[@]}" scripts/pruebas/simuladores.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

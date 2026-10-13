@@ -87,10 +87,11 @@ async function callModel(studioId: string, userId: string | null, fileName: stri
 }
 
 /** Validación contra ARCA (padrón y constatación del CAE), si Faro tiene el certificado cargado */
-async function arcaCheck(e: Extraction): Promise<Validation["arca"]> {
+async function arcaCheck(e: Extraction, s: DocScope): Promise<Validation["arca"]> {
   let cred;
   try {
-    cred = await loadCredential();
+    const { envFor } = await import("@/modules/arca/server");
+    cred = await loadCredential(await envFor(s.studioId, s.organizationId));
   } catch {
     return undefined;
   }
@@ -174,7 +175,7 @@ async function process(s: DocScope, row: SmartDoc, actor: Actor, data: Uint8Arra
     return u;
   }
   const v = validate(parsed);
-  v.arca = await arcaCheck(parsed);
+  v.arca = await arcaCheck(parsed, s);
   if (v.arca?.cuit === "inexistente") v.mensajes.push("ARCA no tiene registrado el CUIT del emisor.");
   if (v.arca?.cae === "no_encontrado") v.mensajes.push("ARCA no encontró un comprobante con ese CAE y esos datos.");
   // §2.p B8: el comprobante tiene que estar a nombre de una CUIT propia

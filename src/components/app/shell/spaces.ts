@@ -170,7 +170,7 @@ export function groupsFor(x: SpaceInput): ShellGroup[] {
         { href: "/faro-manager/tenants", label: "Tenants", icon: "tenants", badge: "planRequests", match: ["/faro-manager/pedidos", "/faro-manager/nuevo", "/faro-manager/suscripciones", "/faro-manager"] },
         { href: "/faro-manager/planes", label: "Catálogo", icon: "catalogo", match: ["/faro-manager/modulos", "/faro-manager/plantillas", "/faro-manager/ia", "/faro-manager/monotributo", "/faro-manager/indices", "/faro-manager/escudo"] },
         { href: "/faro-manager/red", label: "Red", icon: "red", badge: "verifications" },
-        { href: "/faro-manager/auditoria", label: "Plataforma", icon: "plataforma", badge: "reports", match: ["/faro-manager/ayuda", "/faro-manager/reportes", "/faro-manager/uso-ia", "/faro-manager/arca", "/faro-manager/mercadopago", "/faro-manager/whatsapp"] },
+        { href: "/faro-manager/auditoria", label: "Plataforma", icon: "plataforma", badge: "reports", match: ["/faro-manager/ayuda", "/faro-manager/reportes", "/faro-manager/uso-ia", "/faro-manager/arca", "/faro-manager/mercadopago", "/faro-manager/whatsapp", "/faro-manager/integraciones", "/faro-manager/demo", "/faro-manager/guia"] },
       ],
     },
   ];

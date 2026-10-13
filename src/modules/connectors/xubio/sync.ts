@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { connections, legal_entities } from "@/db/schema";
 import { upsertMirror } from "@/modules/adapters/mirror";
 import { digitsCuit, endLog, readCredentials, startLog, type Connection, type ExternalRow } from "../store";
+import { isSimClient, simClientId } from "@/modules/simuladores/conectores";
 import { xubio, XubioError, type XubioCredentials } from "./client";
 
 // Sincronización de Xubio → registros externos.
@@ -18,6 +19,8 @@ const num = (v: unknown) => (typeof v === "number" ? v : typeof v === "string" &
 
 function credsOf(conn: Connection): XubioCredentials | null {
   const c = readCredentials<{ client_id: string; client_secret: string }>(conn);
+  // La cuenta simulada (Parte C) es la del propio espacio: nunca la de otro
+  if (c.client_id && isSimClient(c.client_id) && c.client_id !== simClientId(conn.studio_id)) return null;
   return c.client_id && c.client_secret ? { client_id: c.client_id, client_secret: c.client_secret } : null;
 }
 

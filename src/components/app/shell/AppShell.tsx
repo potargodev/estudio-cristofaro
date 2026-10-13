@@ -108,6 +108,8 @@ interface ShellProps {
   endAssisted?: () => void | Promise<void>;
   /** Espacio de demostración: franja fija para no confundirlo con datos reales */
   demo?: boolean;
+  /** Parte C · Servicios simulados o en su ambiente de prueba: «Modo demostración» o «Modo prueba» en todas las pantallas */
+  serviceMark?: "simulador" | "prueba" | null;
   signOut: () => void | Promise<void>;
   switchOrg?: (fd: FormData) => void | Promise<void>;
   notices?: { items: Notice[]; unread: number };
@@ -471,9 +473,22 @@ export function AppShell(p: ShellProps) {
             )}
           </div>
         ) : (
-          p.demo && (
-            <div role="note" data-demo className="border-b border-line bg-rose-soft px-4 py-1.5 text-meta text-rose-deep sm:px-6 lg:px-8">
-              <strong className="font-semibold">Demostración.</strong> Estos datos son ficticios y se borran con la demo; nada de acá es real.
+          (p.demo || p.serviceMark) && (
+            <div role="note" data-demo data-modo={p.serviceMark ?? "demo"} className="border-b border-line bg-rose-soft px-4 py-1.5 text-meta text-rose-deep sm:px-6 lg:px-8">
+              {p.serviceMark === "prueba" && !p.demo ? (
+                <>
+                  <strong className="font-semibold">Modo prueba.</strong> Algunos servicios usan su ambiente de prueba (como la homologación de ARCA): lo que se emite no tiene validez fiscal.
+                </>
+              ) : (
+                <>
+                  <strong className="font-semibold">Modo demostración.</strong> {p.demo ? "Estos datos son ficticios y se borran con la demo. " : ""}ARCA, Mercado Pago, WhatsApp, las tiendas y los bancos son simulados: nada sale de Faro ni tiene validez fiscal.{" "}
+                  {p.serviceMark === "simulador" && p.space !== "portal" && (
+                    <Link href="/simuladores" className="font-semibold underline underline-offset-4">
+                      Simuladores
+                    </Link>
+                  )}
+                </>
+              )}
             </div>
           )
         )}

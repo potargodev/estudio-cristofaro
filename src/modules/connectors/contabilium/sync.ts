@@ -1,6 +1,7 @@
 import "server-only";
 import { upsertMirror } from "@/modules/adapters/mirror";
 import { digitsCuit, endLog, readCredentials, startLog, type Connection, type ExternalRow } from "../store";
+import { isSimClient, simClientId } from "@/modules/simuladores/conectores";
 import { contabilium, ContabiliumError, type CbComprobante, type ContabiliumCredentials } from "./client";
 
 // Sincronización de Contabilium → espejo del núcleo (A0). Clientes,
@@ -11,6 +12,8 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 
 export function credsOf(conn: Connection): ContabiliumCredentials | null {
   const c = readCredentials<{ client_id: string; client_secret: string }>(conn);
+  // La cuenta simulada (Parte C) es la del propio espacio: nunca la de otro
+  if (c.client_id && isSimClient(c.client_id) && c.client_id !== simClientId(conn.studio_id)) return null;
   return c.client_id && c.client_secret ? { client_id: c.client_id, client_secret: c.client_secret } : null;
 }
 

@@ -177,7 +177,7 @@ async function businessBox(db: Db, r: R, p: DemoPerson, spec: PersonSpec) {
   return { id: b.id, uninvoiced: 0 };
 }
 
-/** Facturación (homologación simulada) y semáforo de monotributo en verde, amarillo o rojo */
+/** Facturación (en el simulador de ARCA, Parte C) y semáforo de monotributo en verde, amarillo o rojo */
 async function faroPersonal(db: Db, r: R, p: DemoPerson, spec: PersonSpec, scaleMax: Record<string, number>) {
   if (!spec.mono || !p.cuit) return;
   const studioId = p.studioId;
@@ -202,10 +202,10 @@ async function faroPersonal(db: Db, r: R, p: DemoPerson, spec: PersonSpec, scale
     for (let k = 0; k < 2; k++) {
       const c = customers[(i + k) % customers.length];
       const total = Math.round((perMonth / 2) * (0.85 + r.next() * 0.3) * 100) / 100;
-      rows.push({ studio_id: studioId, organization_id: p.orgId, cuit: p.cuit, environment: "homologacion", point_of_sale: 3, cbte_type: 11, number: nro++, issue_date: dateIn(m, 5 + k * 12), concept: 2, service_from: dateIn(m, 1), service_to: dateIn(m, 28), payment_due: dateIn(m, 20), customer_id: c.id, customer_doc_type: c.type, customer_doc_number: c.doc, customer_name: c.name, customer_iva_condition: c.iva, items: [{ description: "Servicios profesionales del mes", quantity: 1, unitPrice: total, ivaRate: null }], net: String(total), total: String(total), status: "autorizada", cae: `7${randomBytes(6).readUIntBE(0, 6)}`.slice(0, 14), cae_due: dateIn(m, 28, false), public_token: randomBytes(18).toString("base64url"), origin: k === 1 && i === 0 ? "vigia" : "manual", authorized_at: ago(i * 30 + 1), paid_at: i > 0 ? ago(i * 30 - 5) : null });
+      rows.push({ studio_id: studioId, organization_id: p.orgId, cuit: p.cuit, environment: "simulador", point_of_sale: 3, cbte_type: 11, number: nro++, issue_date: dateIn(m, 5 + k * 12), concept: 2, service_from: dateIn(m, 1), service_to: dateIn(m, 28), payment_due: dateIn(m, 20), customer_id: c.id, customer_doc_type: c.type, customer_doc_number: c.doc, customer_name: c.name, customer_iva_condition: c.iva, items: [{ description: "Servicios profesionales del mes", quantity: 1, unitPrice: total, ivaRate: null }], net: String(total), total: String(total), status: "autorizada", cae: `7${randomBytes(6).readUIntBE(0, 6)}`.slice(0, 14), cae_due: dateIn(m, 28, false), public_token: randomBytes(18).toString("base64url"), origin: k === 1 && i === 0 ? "vigia" : "manual", authorized_at: ago(i * 30 + 1), paid_at: i > 0 ? ago(i * 30 - 5) : null });
     }
   }
-  rows.push({ studio_id: studioId, organization_id: p.orgId, cuit: p.cuit, environment: "homologacion", point_of_sale: 3, cbte_type: 11, number: null, issue_date: day(), concept: 2, customer_doc_type: 99, customer_doc_number: "0", customer_name: "Consumidor final", customer_iva_condition: "consumidor_final", items: [{ description: "Borrador: clase particular", quantity: 2, unitPrice: 15_000, ivaRate: null }], net: "30000", total: "30000", status: "borrador" });
+  rows.push({ studio_id: studioId, organization_id: p.orgId, cuit: p.cuit, environment: "simulador", point_of_sale: 3, cbte_type: 11, number: null, issue_date: day(), concept: 2, customer_doc_type: 99, customer_doc_number: "0", customer_name: "Consumidor final", customer_iva_condition: "consumidor_final", items: [{ description: "Borrador: clase particular", quantity: 2, unitPrice: 15_000, ivaRate: null }], net: "30000", total: "30000", status: "borrador" });
   await db.insert(invoices).values(rows);
   // Meses anteriores facturados fuera de Faro, para completar los 12 del semáforo
   await db.insert(income_adjustments).values(Array.from({ length: 6 }, (_, j) => ({ studio_id: studioId, organization_id: p.orgId, month: month(-6 - j), amount: String(Math.round(perMonth)), note: "Facturado antes de usar Faro" })));
