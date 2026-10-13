@@ -5,6 +5,7 @@ import { and, asc, desc, eq, gte, inArray, isNull, lt, lte, or, sql } from "driz
 import { getDb } from "@/db";
 import {
   arca_taxpayers,
+  audit_log,
   guided_checks,
   income_adjustments,
   invoice_customers,
@@ -353,6 +354,8 @@ export interface DraftInput {
   /** §2.p: una misma clave nunca crea dos comprobantes (lotes, API, tiendas) */
   idempotencyKey?: string | null;
   batchId?: string | null;
+  /** §2.p B10: la factura de prueba del onboarding va siempre a homologación */
+  environment?: "homologacion" | null;
 }
 
 const isDate = (d?: string | null) => !!d && /^\d{4}-\d{2}-\d{2}$/.test(d);
@@ -414,7 +417,7 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
     studio_id: scope.studioId,
     organization_id: scope.organizationId,
     cuit: scope.cuit,
-    environment: await activeEnv(),
+    environment: i.environment ?? (await activeEnv()),
     point_of_sale: i.pointOfSale,
     cbte_type: cbteType,
     issue_date: issueDate,
@@ -503,7 +506,7 @@ export async function deleteDraft(scope: IssuerScope, id: string, actor: ArcaAct
  * vez de emitir de nuevo. Requiere confirmación explícita (la pantalla la
  * pide; desde el Vigía o un flujo, pasa por Aprobaciones).
  */
-export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaActor, origin: "manual" | "aprobacion" | "flujo" | "cola" | "lote" | "recurrente" | "tienda" | "api" | "whatsapp" = "manual") {
+export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaActor, origin: "manual" | "aprobacion" | "flujo" | "cola" | "lote" | "recurrente" | "tienda" | "api" | "whatsapp" | "prueba" = "manual") {
   if (!scope.canEmit) throw new ArcaError("Tu rol puede preparar borradores, pero no emitir.");
   await requireArca(scope);
   const inv = await getInvoice(scope, id);
@@ -579,6 +582,8 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
     if (res.approved && res.cae) {
       const r = await finish({ status: "autorizada", legends, cae: res.cae, cae_due: fromArcaDate(res.caeDue ?? ""), observations: res.observations, raw_request: { xml: res.request }, raw_response: { xml: res.raw }, authorized_by: actor.id, authorized_at: new Date(), public_token: randomBytes(18).toString("base64url"), error: null });
       await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.emitida", entityType: "factura", entityId: inv.id, metadata: { tipo: CBTE_TYPES[inv.cbte_type].label, numero: number, cae: res.cae, total: Number(inv.total), origen: origin, ambiente: cred.env } });
+      // §2.p B10: la factura de prueba del onboarding no dispara nada (eventos, stock ni sistemas conectados)
+      if (origin === "prueba") return r;
       await emitEvent(scope.studioId, "factura.emitida", { factura_id: inv.id, organizacion_id: scope.organizationId, total: Number(inv.total), cliente: inv.customer_name, tipo: CBTE_TYPES[inv.cbte_type].label }, inv.id);
       // §2.q etapa 7: lo facturado resta del stock (una nota de crédito devuelve)
       await import("@/modules/stock/server").then((m) => m.onInvoiceAuthorized(r)).catch((e) => console.error("[stock] factura", (e as Error).message));
@@ -593,7 +598,10 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
     await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "factura.emitida", entityType: "factura", entityId: inv.id, result: "error", metadata: { rechazo: detail } });
     return r;
   } catch (e) {
-    const msg = e instanceof ArcaError ? e.message : "Error inesperado al emitir.";
+    // La numeración de ARCA quedó detrás de la de Faro (en homologación pasa cuando ARCA borra los datos de prueba)
+    const dupNumber = (e as { cause?: { code?: string; constraint_name?: string } }).cause?.code === "23505" && (e as { cause?: { constraint_name?: string } }).cause?.constraint_name === "invoices_number_idx";
+    const msg = e instanceof ArcaError ? e.message : dupNumber ? "ARCA informa un último número menor al que ya tiene Faro para ese punto de venta y tipo (en homologación pasa cuando ARCA borra los datos de prueba). Usá otro punto de venta o avisanos para ordenar la numeración." : "Error inesperado al emitir.";
+    if (!(e instanceof ArcaError) && !dupNumber) console.error("[arca] emitir", e);
     // ARCA no respondió: a la cola, con el número que ya tenía (para recuperar el CAE si llegó) o uno previsto
     if (e instanceof ArcaError && e.code === "red") {
       const [cur] = await db().select().from(invoices).where(eq(invoices.id, inv.id));
@@ -643,6 +651,42 @@ async function fceOptions(inv: typeof invoices.$inferSelect) {
   if (t.kind !== "factura") return { fce: true, opcionales: [{ id: "22", valor: "N" }] };
   const st = await settingsForInvoice(inv);
   return { fce: true, fchVtoPago: inv.payment_due ? toArcaDate(inv.payment_due) : undefined, opcionales: [{ id: "2101", valor: (st?.cbu ?? "").replace(/\D/g, "") }, { id: "27", valor: st?.fce_transfer ?? "SCA" }] };
+}
+
+// ───────────── Onboarding de facturación (§2.p, B10) ─────────────
+
+/**
+ * Factura de prueba en homologación (sin validez fiscal): prueba de punta a
+ * punta la CUIT, la delegación y el punto de venta. No queda en los libros:
+ * se guarda el resultado en la auditoría y el comprobante de prueba se borra.
+ */
+export async function testInvoice(scope: IssuerScope, actor: ArcaActor) {
+  const points = await listPoints(scope);
+  const draft = await createDraft(scope, { pointOfSale: points.find((p) => !p.blocked)?.number ?? 1, issueDate: "", concept: 2, customer: { docType: 99, docNumber: "0", name: "Consumidor final (prueba)", ivaCondition: "consumidor_final" }, items: [{ description: "Factura de prueba de Faro (homologación, sin validez fiscal)", quantity: 1, unitPrice: 1, ivaRate: 21 }], environment: "homologacion" }, actor);
+  let inv = draft;
+  try {
+    inv = await emitInvoice(scope, draft.id, actor, "prueba");
+  } finally {
+    await db().delete(invoices).where(and(eq(invoices.id, draft.id), eq(invoices.studio_id, scope.studioId)));
+  }
+  const ok = inv.status === "autorizada";
+  await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor, action: "arca.factura_prueba", entityType: "cuit", entityId: scope.cuit, result: ok ? "ok" : "error", metadata: { cae: inv.cae, numero: inv.number, tipo: inv.cbte_type, error: inv.error } });
+  return { ok, cae: inv.cae, number: inv.number, cbteType: inv.cbte_type, pointOfSale: inv.point_of_sale, error: inv.error };
+}
+
+/** Estado del onboarding: CUIT y datos, delegación (puntos de venta traídos de ARCA) y factura de prueba */
+export async function onboardingState(scope: IssuerScope) {
+  const [settings, points, [test]] = await Promise.all([
+    getSettings(scope),
+    listPoints(scope),
+    db()
+      .select({ meta: audit_log.metadata, at: audit_log.created_at })
+      .from(audit_log)
+      .where(and(eq(audit_log.studio_id, scope.studioId), eq(audit_log.action, "arca.factura_prueba"), eq(audit_log.entity_id, scope.cuit), eq(audit_log.result, "ok")))
+      .orderBy(desc(audit_log.created_at))
+      .limit(1),
+  ]);
+  return { settings, cuitOk: /^\d{11}$/.test(scope.cuit) && !!settings.id, delegated: points.some((p) => !p.blocked), points, test: test ? { at: test.at, ...(test.meta as { cae?: string; numero?: number }) } : null };
 }
 
 // ───────────── Semáforo de monotributo ─────────────

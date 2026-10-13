@@ -132,6 +132,8 @@ correr ventas-tiendas "${S[@]}" scripts/pruebas/ventas-tiendas.mts
 correr buzon "${S[@]}" scripts/pruebas/buzon.mts
 # §2.p · B9 API /api/v1, webhooks, /estado, OpenAPI y prueba sin tarjeta
 correr api-v1 "${S[@]}" scripts/pruebas/api-v1.mts
+# §2.p · B10 factura rápida en el celular (medida) y empezar a facturar en 3 pasos
+correr emision-rapida node scripts/pruebas/emision-rapida.mjs
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

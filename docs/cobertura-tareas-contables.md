@@ -131,6 +131,7 @@
 | Recibos, presupuestos y remitos | **Cubierto** | No fiscales, con PDF y link; presupuesto → factura (B3). |
 | Facturación recurrente y masiva por lote | **Cubierto** | Recurrentes con ajuste por IPC e interruptor «Facturar automáticamente» (B3). Lotes desde Excel, CSV o pegado, validación por fila, cola con progreso, reintentos e idempotencia, informe, ZIP y envío (B2). |
 | Panel de facturación con muchas CUIT | **Cubierto** | Operación → Facturación (B1). |
+| Alta de un cliente que empieza a facturar (CUIT, delegación, prueba) | **Cubierto** | Empezar a facturar en 3 pasos con factura de prueba en homologación (B10). |
 | Puntos de venta y numeración desde ARCA | **Cubierto** | F3. |
 | CAE y QR | **Cubierto** | F3. |
 | Contingencia de ARCA caída (cola de emisión) | **Cubierto** | Cola con número previsto, emisión en orden al volver, aviso, estado de ARCA con historial (B5). |

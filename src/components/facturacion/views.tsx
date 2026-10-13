@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, ExternalLink, FileText, Link2, Mail, RefreshCw, ShieldCheck } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ExternalLink, FileText, Link2, Mail, RefreshCw, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
 import {
   deleteCustomerAction,
@@ -105,12 +105,22 @@ function StatusPill({ status }: { status: string }) {
 // ───────────── Comprobantes ─────────────
 
 export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: SP }) {
-  const [list, settings] = await Promise.all([listInvoices(scope, { status: sp.estado ?? null, q: sp.q ?? null }), getSettings(scope)]);
+  const [list, settings, points] = await Promise.all([listInvoices(scope, { status: sp.estado ?? null, q: sp.q ?? null }), getSettings(scope), listPoints(scope)]);
+  const ready = !!settings.id && points.some((p) => !p.blocked);
   const authorizedMonth = list.filter((i) => i.status === "autorizada" && i.issue_date.slice(0, 7) === new Date().toISOString().slice(0, 7));
   const monthTotal = authorizedMonth.reduce((s, i) => s + (CBTE_TYPES[i.cbte_type].kind === "nota_credito" ? -1 : 1) * Number(i.total) * Number(i.exchange_rate), 0);
   return (
     <div className="grid gap-4">
       <Feedback sp={sp} />
+      {!ready && (
+        <Link href={`${scope.base}/empezar`} className="flex items-center justify-between gap-3 rounded-md border border-line bg-surface p-3 text-ui hover:border-muted">
+          <span>
+            <span className="font-medium text-ink">Empezá a facturar en 3 pasos</span>
+            <span className="block text-meta text-muted">Tu CUIT, la delegación en Faro y una factura de prueba en homologación.</span>
+          </span>
+          <span aria-hidden>→</span>
+        </Link>
+      )}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <form method="get" className="flex flex-wrap gap-2" role="search">
           {scope.kind === "studio" && <input type="hidden" name="tab" value="arca" />}
@@ -127,7 +137,10 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
             Filtrar
           </button>
         </form>
-        <HeaderAction href={`${scope.base}/nueva`} label="Nueva factura" />
+        <div className="flex flex-wrap gap-2">
+          <HeaderAction href={`${scope.base}/rapida`} label="Factura rápida" icon={Zap} />
+          <HeaderAction href={`${scope.base}/nueva`} label="Nueva factura" secondary />
+        </div>
       </div>
       <p className="text-ui text-muted">
         {settings.business_name} · CUIT {formatCuit(scope.cuit) || "sin cargar"} · {IVA_CONDITIONS[settings.iva_condition]} · este mes: <span className="num text-ink">{formatAmount(monthTotal)}</span> en {authorizedMonth.length} comprobante{authorizedMonth.length === 1 ? "" : "s"}

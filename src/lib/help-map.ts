@@ -17,6 +17,8 @@ const MAP: [string, string][] = [
   ["/facturacion/arca", "facturacion/mi-situacion-arca"],
   ["/facturacion/ajustes", "facturacion/delegar-en-faro"],
   ["/facturacion/lotes", "facturacion/panel-y-lotes"],
+  ["/facturacion/rapida", "facturacion/emitir-facturas"],
+  ["/facturacion/empezar", "facturacion/emitir-facturas"],
   ["/facturacion/ventas", "facturacion/ventas-de-tiendas"],
   ["/facturacion/otros", "facturacion/todos-los-comprobantes"],
   ["/facturacion/recurrentes", "facturacion/todos-los-comprobantes"],

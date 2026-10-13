@@ -121,6 +121,85 @@ export async function emitAction(fd: FormData) {
   );
 }
 
+/**
+ * §2.p B10 · Factura rápida: cliente, descripción e importe final, y un toque
+ * en «Emitir» (esa es la aprobación de quien factura). Arma y emite en el
+ * mismo paso; guarda cuánto tardó desde que se abrió el formulario.
+ */
+export async function quickEmitAction(fd: FormData) {
+  const u = await session();
+  const scope = await issuerFromForm(u, fd);
+  const path = `${scope.base}/rapida`;
+  const total = n(fd, "amount");
+  if (!(total > 0)) back(path, { error: "Poné el importe." });
+  const customerId = s(fd, "customer_id");
+  const doc = s(fd, "doc").replace(/\D/g, "");
+  const name = s(fd, "customer_name") || "Consumidor final";
+  const customer = customerId
+    ? null
+    : doc.length === 11
+      ? { docType: 80, docNumber: doc, name, ivaCondition: s(fd, "iva_condition") || "consumidor_final" }
+      : doc.length >= 7 && doc.length <= 8
+        ? { docType: 96, docNumber: doc, name, ivaCondition: "consumidor_final" }
+        : { docType: 99, docNumber: "0", name, ivaCondition: "consumidor_final" };
+  const { getSettings, listPoints } = await import("@/modules/arca/server");
+  const [settings, points] = await Promise.all([getSettings(scope), listPoints(scope)]);
+  const discriminates = settings.iva_condition === "responsable_inscripto";
+  const draft = await guard(path, () =>
+    createDraft(
+      scope,
+      {
+        pointOfSale: Number(s(fd, "point_of_sale")) || points.find((p) => !p.blocked)?.number || 1,
+        issueDate: "",
+        concept: Number(s(fd, "concept")) || 2,
+        customerId: customerId || null,
+        customer,
+        saveCustomer: !customerId && customer?.docType !== 99,
+        items: [{ description: s(fd, "description") || "Servicios", quantity: 1, unitPrice: discriminates ? Math.round((total / 1.21) * 100) / 100 : total, ivaRate: 21 }],
+        idempotencyKey: s(fd, "nonce") ? `rapida:${u.id}:${s(fd, "nonce").slice(0, 40)}` : null,
+      },
+      actorOf(u),
+    ),
+  );
+  const inv = draft.status === "borrador" ? await guard(path, () => emitInvoice(scope, draft.id, actorOf(u), "manual")) : draft;
+  const started = Number(s(fd, "started_at"));
+  const seconds = started > 0 ? Math.max(0, Math.round((Date.now() - started) / 100) / 10) : null;
+  const { audit } = await import("@/lib/audit");
+  await audit({ studioId: scope.studioId, organizationId: scope.organizationId, actor: u, action: "factura.rapida", entityType: "factura", entityId: inv.id, metadata: { segundos: seconds, estado: inv.status } });
+  done(scope);
+  const took = seconds != null ? ` en ${String(seconds).replace(".", ",")} s` : "";
+  back(
+    `${scope.base}/${inv.id}`,
+    inv.status === "autorizada"
+      ? { ok: `Listo${took}: ARCA lo autorizó con el CAE ${inv.cae}.` }
+      : inv.status === "en_cola"
+        ? { ok: `ARCA no responde: quedó en cola con el número previsto ${inv.reserved_number} y sale solo cuando vuelva.` }
+        : { error: inv.error ?? "ARCA rechazó el comprobante." },
+  );
+}
+
+/** §2.p B10 · Empezar a facturar en 3 pasos: datos de la CUIT, delegación y factura de prueba en homologación */
+export async function onboardingAction(fd: FormData) {
+  const u = await session();
+  const scope = await issuerFromForm(u, fd);
+  const path = `${scope.base}/empezar`;
+  const op = s(fd, "op");
+  if (op === "datos") {
+    await guard(path, () => saveSettings(scope, { businessName: s(fd, "business_name"), ivaCondition: s(fd, "iva_condition"), address: s(fd, "address") || null }, actorOf(u)));
+    done(scope);
+    back(path, { ok: "Datos guardados. Ahora, la delegación." });
+  }
+  if (op === "delegacion") {
+    const list = await guard(path, () => syncPoints(scope, actorOf(u)));
+    done(scope);
+    back(path, list.some((p) => !p.blocked) ? { ok: `¡Delegación lista! ARCA nos dio ${list.length} punto${list.length === 1 ? "" : "s"} de venta.` } : { error: "ARCA no tiene puntos de venta para web services en esa CUIT. Creá uno («RECE para aplicativo y web services») y volvé a probar." });
+  }
+  const { testInvoice } = await import("@/modules/arca/server");
+  const r = await guard(path, () => testInvoice(scope, actorOf(u)));
+  done(scope);
+  back(path, r.ok ? { ok: `Factura de prueba autorizada en homologación (CAE ${r.cae}). Ya podés facturar.` } : { error: `La factura de prueba no salió: ${r.error ?? "ARCA la rechazó"}.` });
+}
+
 export async function deleteDraftAction(fd: FormData) {
   const u = await session();
   const scope = await issuerFromForm(u, fd);

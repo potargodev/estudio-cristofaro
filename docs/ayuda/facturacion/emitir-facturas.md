@@ -3,7 +3,7 @@ titulo: Emitir facturas electrónicas con ARCA
 resumen: Armá el borrador, revisalo y emitilo: Faro pide el número y el CAE a ARCA, arma el PDF con tu marca y te deja mandarlo por mail o compartir un link.
 perfiles: [autonomo, estudio]
 modulo: arca
-actualizado: 2026-10-12
+actualizado: 2026-10-13
 relacionados: [facturacion/delegar-en-faro, facturacion/semaforo-monotributo, ia/ia-y-aprobaciones]
 ---
 
@@ -13,6 +13,18 @@ Faro emite comprobantes electrónicos por el **web service oficial de ARCA (WSFE
 
 - **Autónomo:** en tu espacio **Personal → Facturación**.
 - **Estudio:** en la ficha de la organización, pestaña **ARCA** → **Comprobantes**. El estudio factura en nombre de su cliente (el cliente delega el servicio a Faro).
+
+## Empezar a facturar en 3 pasos
+
+Si todavía no facturaste con Faro, la lista de comprobantes te muestra **Empezá a facturar en 3 pasos**:
+
+1. **Tu CUIT y tus datos:** razón social, condición frente al IVA y domicilio comercial.
+2. **La delegación:** delegás el servicio de factura electrónica en Faro desde ARCA (con tu clave; Faro nunca la pide ni la guarda) y tocás **Ya delegué: probar**. Faro trae de ARCA tus puntos de venta.
+3. **Una factura de prueba:** Faro emite una factura de $ 1 en **homologación** (el ambiente de prueba de ARCA, sin validez fiscal) para comprobar que todo anda. No queda en tus libros.
+
+## Factura rápida (desde el celular)
+
+**Factura rápida** es un solo paso: escribís el **importe final**, elegís el cliente (consumidor final, uno de los recientes con un toque, o una CUIT que se completa sola con el padrón de ARCA), la descripción (las de siempre con un toque) y tocás **Emitir**. Ese toque es tu confirmación: la factura sale en ARCA y te mostramos el CAE y cuánto tardó. Con el teclado: **Enter** emite y **Esc** limpia. Si sos responsable inscripto, Faro separa el IVA del importe final.
 
 ## Paso a paso
 

@@ -685,3 +685,17 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Nada obligatorio. Si hay varias réplicas, el límite por minuto pasa a contarse por réplica (como MCP).
+
+## §2.p · B10: emitir en menos de 15 segundos y empezar en 3 pasos (13 de octubre)
+
+**Qué quedó**
+- **Factura rápida** (`/facturacion/rapida` y en cada organización `…/arca/rapida`): importe final, cliente (consumidor final, recientes a un toque o CUIT con padrón), descripción con las de siempre, **Emitir** en un toque; Enter emite y Esc limpia. Botón principal en la lista de comprobantes. El tiempo queda medido en la auditoría.
+- **Empezar a facturar en 3 pasos** (`…/empezar`): datos de la CUIT, delegación probada con los puntos de venta y factura de prueba en homologación que no queda en los libros. Aviso en la lista mientras falte.
+- Error claro si ARCA queda con una numeración menor que la de Faro. El simulador de ARCA suma `/__ultimo` para alinear la numeración.
+- Ayuda: `facturacion/emitir-facturas`.
+
+**Qué se probó**
+- `scripts/pruebas/emision-rapida.mjs` (navegador a 390 px): **dos facturas en 0,9 s cada una** desde que se pide la pantalla hasta el CAE (contra el simulador), tiempo en la auditoría, los 3 pasos, delegación con puntos de venta y factura de prueba autorizada que no queda en los libros.
+
+**Qué falta configurar**
+- Medir con ARCA real en homologación (el CAE real suma 1 a 3 segundos según ARCA).

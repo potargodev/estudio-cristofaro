@@ -215,6 +215,12 @@ createServer(async (req, res) => {
     res.end(text);
   };
   if (url.pathname === "/__stats") return send(200, JSON.stringify({ ...stats, delegadas: [...delegated], ultimos: Object.fromEntries(last) }), "application/json");
+  // Pruebas: alinear el último número con lo que ya tiene la base (?cuit=&pto=&tipo=&nro=)
+  if (url.pathname === "/__ultimo") {
+    const q = url.searchParams;
+    last.set(`${q.get("cuit")}|${Number(q.get("pto"))}|${Number(q.get("tipo"))}`, Number(q.get("nro")) || 0);
+    return send(200, "{}", "application/json");
+  }
   if (url.pathname === "/__reset") {
     tickets.clear();
     last.clear();
