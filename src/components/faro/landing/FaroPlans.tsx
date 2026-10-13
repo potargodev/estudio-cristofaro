@@ -47,7 +47,7 @@ export function FaroPlans({ kinds = ["persona", "personal", "studio"], plans: al
       </CtaLink>
     ) : (
       <GhostLink href={`/faro/registro?tipo=${kind}&interes=${key}`} className="h-11 w-full justify-center">
-        Probar {plans.find((p) => p.key === key)?.name} 30 días gratis
+        Probar {plans.find((p) => p.key === key)?.name} 30 días gratis, sin tarjeta
       </GhostLink>
     );
   return (
@@ -55,7 +55,7 @@ export function FaroPlans({ kinds = ["persona", "personal", "studio"], plans: al
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <SectionIndex n="12">Planes</SectionIndex>
+            <SectionIndex n="13">Planes</SectionIndex>
             <SplitHeading id="planes-titulo" className="display-md mt-8 text-paper">
               Empezá gratis. Crecé cuando quieras.
             </SplitHeading>

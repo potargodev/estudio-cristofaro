@@ -1,6 +1,7 @@
 import { FaroAi } from "@/components/faro/landing/FaroAi";
 import { FaroForWhom } from "@/components/faro/landing/FaroForWhom";
 import { FaroHero } from "@/components/faro/landing/FaroHero";
+import { FaroInvoicing } from "@/components/faro/landing/FaroInvoicing";
 import { FaroIndustries } from "@/components/faro/landing/FaroIndustries";
 import { FaroModules } from "@/components/faro/landing/FaroModules";
 import { FaroPersonal } from "@/components/faro/landing/FaroPersonal";
@@ -42,6 +43,7 @@ export default async function FaroPage() {
       <FaroShared />
       <FaroModules />
       <FaroAi />
+      <FaroInvoicing />
       <FaroPlans plans={plans} usdArs={usdArs} />
       <FaroCase />
       <FaroFaq />

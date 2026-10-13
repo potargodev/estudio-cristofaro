@@ -34,7 +34,7 @@ const TYPES: { key: Key; label: string; icon: typeof Building2; benefit: string;
     label: "Contadores independientes",
     icon: Briefcase,
     benefit: "Un estudio entero en una sola herramienta, sin depender de planillas.",
-    features: ["Hasta 5 organizaciones gratis con el plan Inicial", "El calendario de toda tu cartera en una vista", "Tu rubro ya configurado con las plantillas por industria", "Llamadas con Meet desde tu agenda"],
+    features: ["Hasta 10 organizaciones gratis con el plan Inicial", "El calendario de toda tu cartera en una vista", "Tu rubro ya configurado con las plantillas por industria", "Llamadas con Meet desde tu agenda"],
     cta: { href: "/faro/registro?tipo=studio", label: "Empezá gratis" },
   },
   {

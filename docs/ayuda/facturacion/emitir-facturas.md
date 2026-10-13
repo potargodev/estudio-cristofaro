@@ -58,7 +58,7 @@ Podés pedirle «facturale 150.000 a Juan Pérez por diseño». El Vigía prepar
 
 ## Límites
 
-- **Faro Personal Gratis:** 10 comprobantes autorizados por mes.
+- **Faro Personal Gratis:** 30 comprobantes autorizados por mes.
 - **Pro:** sin límite.
 
 ## Cobrar la factura con Mercado Pago (autónomos)

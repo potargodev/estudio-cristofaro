@@ -24,9 +24,9 @@ if (stage("1")) {
   const { createTenant } = await import("../../src/lib/faro/tenants.ts");
   const { checkLimit } = await import("../../src/lib/faro/entitlements.ts");
   const p = getPlan("inicial")!;
-  check("plans.ts: Inicial gratis, sin prueba ni extra, 5 organizaciones y 1 usuario", p.priceUsd === 0 && p.free && p.trialDays === 0 && p.extraOrgUsd === null && p.limits.organizations === 5 && p.limits.staffUsers === 1);
+  check("plans.ts: Inicial gratis, sin prueba ni extra, 10 organizaciones y 2 usuarios (B11)", p.priceUsd === 0 && p.free && p.trialDays === 0 && p.extraOrgUsd === null && p.limits.organizations === 10 && p.limits.staffUsers === 2);
   const [fp] = await sql`select price_usd, free, trial_days, extra_org_usd, limits from faro_plans where key = 'inicial'`;
-  check("faro_plans (migración 0035): Inicial gratis", Number(fp.price_usd) === 0 && fp.free && fp.trial_days === 0 && fp.extra_org_usd === null && fp.limits.organizations === 5);
+  check("faro_plans (migraciones 0035 y 0067): Inicial gratis", Number(fp.price_usd) === 0 && fp.free && fp.trial_days === 0 && fp.extra_org_usd === null && fp.limits.organizations === 10);
 
   // Estado viejo: estudio en Inicial con prueba y débito de Mercado Pago
   await sql`delete from faro_subscriptions where studio_id = ${SB}`;
@@ -67,11 +67,11 @@ if (stage("1")) {
   const r = await createTenant({ kind: "studio", name: "Estudio Gratis", owner: { name: "Gra Tis", email, password: "una-clave-larga" }, via: "registro" });
   const [nt] = r.ok ? await sql`select plan_key, status, trial_ends_at from studios where id = ${r.studioId}` : [null];
   check("alta de estudio: Inicial activo sin prueba", !!nt && nt.plan_key === "inicial" && nt.status === "activo" && nt.trial_ends_at === null, JSON.stringify(nt));
-  // Límite de 5 organizaciones sin organización extra
+  // Límite de 10 organizaciones sin organización extra
   if (r.ok) {
-    for (let i = 0; i < 5; i++) await sql`insert into organizations (studio_id, name, status) values (${r.studioId}, ${`Org ${i}`}, 'activa')`;
+    for (let i = 0; i < 10; i++) await sql`insert into organizations (studio_id, name, status) values (${r.studioId}, ${`Org ${i}`}, 'activa')`;
     const msg = await checkLimit(r.studioId, "organizations");
-    check("Inicial: la sexta organización pide pasar a Profesional", !!msg && /hasta 5/.test(msg) && /Profesional/.test(msg), msg ?? "");
+    check("Inicial: la organización 11 pide pasar a Profesional", !!msg && /hasta 10/.test(msg) && /Profesional/.test(msg), msg ?? "");
     await sql`delete from studios where id = ${r.studioId}`;
     await sql`delete from users where email = ${email}`;
   }

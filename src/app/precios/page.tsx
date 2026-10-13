@@ -14,8 +14,10 @@ export default async function PreciosPage() {
   const extra = plans.find((p) => p.kind === "studio" && p.extraOrgUsd != null)?.extraOrgUsd ?? null;
   const faqs = [
     { q: "¿Por qué los precios están en dólares y en pesos?", a: `Los fijamos en dólares de referencia y los mostramos en pesos con la conversión del día (hoy, 1 USD = ${formatAmount(usdArs, "ARS", { decimals: "none" })}). Pagás en pesos.` },
-    { q: "¿El plan Inicial es gratis de verdad?", a: "Sí: sin prueba, sin tarjeta y sin débito. Incluye hasta 5 organizaciones y 1 usuario. Para sumar más organizaciones o personas del equipo, pasás a Profesional." },
+    { q: "¿El plan Inicial es gratis de verdad?", a: "Sí: sin prueba, sin tarjeta y sin débito. Incluye hasta 10 organizaciones, 2 personas del estudio y 100 documentos leídos por mes. Para sumar más, pasás a Profesional." },
     { q: "¿Cómo funciona la prueba gratis?", a: "Profesional y Avanzado arrancan con 30 días gratis, sin tarjeta. Antes de que termine te avisamos y elegís si seguís; si no seguís, quedás en Inicial con tus datos intactos." },
+    { q: "¿Faro me pide la clave fiscal?", a: "No. Faro no te pide ni guarda tu clave fiscal: delegás la factura electrónica una sola vez en ARCA y Faro emite por el servicio oficial. Lo que necesita tu clave (por ejemplo, bajar Mis Comprobantes) lo hacés vos y lo subís." },
+    { q: "¿Cobran por comprobante emitido?", a: "No. En los planes pagos facturás sin límite: de a una, en lotes de miles, recurrentes, por WhatsApp, desde tus ventas online o por la API. El plan gratis de autónomos incluye 30 comprobantes por mes." },
     { q: "¿Hay descuento por pagar el año?", a: `Sí: pagando el año completo tenés ${ANNUAL_FREE_MONTHS} meses de regalo (pagás 10 de 12).` },
     ...(extra != null ? [{ q: "¿Qué pasa si tengo más organizaciones que las del plan?", a: `Cada organización extra suma ${formatAmount(extra * usdArs, "ARS", { decimals: "none" })} por mes (${formatAmount(extra, "USD", { decimals: "auto" })}). No se corta nada: te avisamos al acercarte al límite.` }] : []),
     { q: "¿Puedo cambiar de plan?", a: "Cuando quieras, desde «Plan y facturación» con «Quiero mejorar mi plan». El cobro en línea llega pronto; mientras tanto el equipo de Faro te contacta para activarlo." },
@@ -28,7 +30,7 @@ export default async function PreciosPage() {
           <p className="text-meta text-gold">Precios</p>
           <h1 className="display-md mt-6 max-w-3xl text-paper">Un plan para cada forma de llevar los números.</h1>
           <p className="mt-6 max-w-2xl text-title text-paper/70">
-            Gratis para personas y autónomos que arrancan, y para el contador que empieza con el plan Inicial. Profesional y Avanzado tienen 30 días de prueba y {ANNUAL_FREE_MONTHS} meses de regalo pagando el año.
+            Gratis para personas y autónomos que arrancan, y para el contador que empieza con el plan Inicial. Profesional y Avanzado tienen 30 días de prueba sin tarjeta y {ANNUAL_FREE_MONTHS} meses de regalo pagando el año. Faro no te pide tu clave fiscal.
           </p>
           <p className="mt-4 text-meta text-paper/50">
             Precios de referencia en pesos al {formatDate(new Date(), "long")} (1 USD = {formatAmount(usdArs, "ARS", { decimals: "none" })}). Pueden cambiar con la cotización.

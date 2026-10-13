@@ -699,3 +699,16 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Medir con ARCA real en homologación (el CAE real suma 1 a 3 segundos según ARCA).
+
+## §2.p · B11: límites generosos y mensaje de /faro y /precios (13 de octubre)
+
+**Qué quedó**
+- `plans.ts` con límites más altos en todos los planes y migración `0067` que los aplica sin pisar lo editado en el Faro Manager. La comparación de planes de la landing toma los números de `plans.ts` (organizaciones, personas, documentos, flujos y comprobantes).
+- /faro: sección **Facturar** (sin clave fiscal, menos de 15 segundos, ARCA caído sin perder la factura, lotes y recurrentes, canales y buzón) y filas nuevas en la comparación. /precios: prueba sin tarjeta, «Faro no te pide tu clave fiscal» y preguntas nuevas (clave fiscal y cobro por comprobante).
+- Docs: `faro-producto.md` §3, `principios-producto.md` §20 y ayuda de planes, registro y emitir facturas.
+
+**Qué se probó**
+- `principios-servidor.mts` (Inicial con 10 organizaciones y 2 personas, la organización 11 pide pasar a Profesional) y `principios-navegador.mjs` (el texto de /faro); los límites en `faro_plans` después de la migración.
+
+**Qué falta configurar**
+- Nada: los precios y límites se siguen ajustando en el Faro Manager.

@@ -470,6 +470,13 @@
       "when": 1791883449363,
       "tag": "0066_api_webhooks",
       "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1791886888130,
+      "tag": "0067_limites_generosos",
+      "breakpoints": true
     }
   ]
 }

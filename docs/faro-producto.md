@@ -118,7 +118,7 @@ Para el monotributista o responsable inscripto que lleva sus números solo, ya s
 
 | | **Gratis** | **Pro** |
 |---|---|---|
-| Facturación | 10 comprobantes/mes | Ilimitada, con logo y link de pago |
+| Facturación | 30 comprobantes/mes | Ilimitada, con logo y link de pago |
 | Situación con ARCA y semáforo de monotributo | ✓ | ✓ |
 | Calendario y alertas | Mail | Mail y WhatsApp |
 | Ingresos y gastos | Básico | Con lectura inteligente de comprobantes |
@@ -506,24 +506,24 @@ Facturar desde Faro tiene que ser lo más rápido del mercado para un estudio co
 |---|---|---|---|
 | Para quién | Contador independiente que arranca | Estudio chico en crecimiento | Estudio mediano que quiere automatizar |
 | Precio de referencia | Gratis | USD 119 / mes | USD 249 / mes |
-| Organizaciones incluidas | Hasta 5 (límite a confirmar con el uso) | Hasta 40 | Hasta 120 |
+| Organizaciones incluidas | Hasta 10 | Hasta 60 | Hasta 250 |
 | Organización extra | — (se pasa a Profesional) | USD 2 / mes | USD 2 / mes |
 | Prueba gratis | No aplica (es gratis) | 30 días | 30 días |
 | Red Contable (aparecer en el directorio y buscar clientes) | — | ✓ | ✓ |
-| Usuarios del estudio | 1 | Hasta 5 | Hasta 25 |
+| Usuarios del estudio | Hasta 2 | Hasta 10 | Hasta 50 |
 | Núcleo | ✓ | ✓ | ✓ |
 | Vigía (IA) | Con clave propia, consultas | Con clave propia, consultas y acciones | Acciones avanzadas y agentes |
-| Flujos | 1 plantilla activa | 10 flujos, plantillas | Ilimitados, editor libre |
-| Agente contable (§2.q) | — | 60 tareas/mes | 600 tareas/mes |
+| Flujos | 3 activos, plantillas | 25 flujos, plantillas | Ilimitados, editor libre |
+| Agente contable (§2.q) | — | 200 tareas/mes | 2.000 tareas/mes |
 | Recibos, legajo y comunicación interna | — | ✓ | ✓ |
-| Lectura inteligente | 30 documentos/mes | 1.000 documentos/mes | 10.000 documentos/mes |
+| Lectura inteligente | 100 documentos/mes | 3.000 documentos/mes | 20.000 documentos/mes |
 | Cartera y tareas, Tango, ARCA | Tango por archivos | ✓ | ✓ |
 | Cobranza de honorarios | — | ✓ | ✓ |
 | Conciliación bancaria, indicadores, WhatsApp | — | — | ✓ |
 | Marca blanca | — | — | ✓ |
 | Soporte | Comunidad y mail | Mail prioritario | Dedicado |
 
-Los precios son de referencia y se editan desde el Faro Manager (USD con conversión a ARS configurable); pago anual con 2 meses de regalo. Los límites y los módulos de cada plan viven en configuración, no en el código de las pantallas. El Faro Manager puede habilitar un módulo fuera del plan a un estudio puntual (override con vencimiento opcional), y queda auditado.
+Límites generosos (§2.p, B11, octubre 2026): no se cobra por comprobante en los planes pagos, la prueba de Profesional y Avanzado no pide tarjeta y Faro no pide la clave fiscal. Los precios son de referencia y se editan desde el Faro Manager (USD con conversión a ARS configurable); pago anual con 2 meses de regalo. Los límites y los módulos de cada plan viven en configuración, no en el código de las pantallas. El Faro Manager puede habilitar un módulo fuera del plan a un estudio puntual (override con vencimiento opcional), y queda auditado.
 
 ## 4. Marca
 - Nombre: **Faro**. Concepto: la luz que te guía hacia una mejor gestión.

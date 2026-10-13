@@ -252,7 +252,7 @@ Las personas sueltas, que llegan por la Bitácora y el registro compartido, se d
 
   | Para | Planes |
   |---|---|
-  | Estudios | Inicial **gratis** (hasta 5 organizaciones y 1 usuario, límites a confirmar) · Profesional USD 119 · Avanzado USD 249 |
+  | Estudios | Inicial **gratis** (hasta 10 organizaciones y 2 usuarios desde octubre 2026, §2.p B11) · Profesional USD 119 · Avanzado USD 249 |
   | Personas | Gratis · Plus USD 4 |
   | Autónomos | Gratis · Pro USD 9 |
 

@@ -100,7 +100,7 @@ export function FaroCase() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionIndex n="13">Caso real</SectionIndex>
+            <SectionIndex n="14">Caso real</SectionIndex>
             <SplitHeading id="caso-titulo" className="display-md mt-8 text-paper">
               Nació adentro de un estudio.
             </SplitHeading>
@@ -131,7 +131,7 @@ export function FaroCase() {
 
 const FAQ = [
   { q: "¿Faro es un estudio contable?", a: "No. Faro es una herramienta. Si necesitás un contador, la Red Contable te muestra estudios verificados para que elijas vos." },
-  { q: "¿Es gratis?", a: "Sí para personas y autónomos que arrancan, y para el contador que empieza: el plan Inicial de estudios es gratis (hasta 5 organizaciones). Profesional y Avanzado tienen 30 días de prueba y, pagando el año, 2 meses de regalo." },
+  { q: "¿Es gratis?", a: "Sí para personas y autónomos que arrancan, y para el contador que empieza: el plan Inicial de estudios es gratis (hasta 10 organizaciones y 2 personas). Profesional y Avanzado tienen 30 días de prueba sin tarjeta y, pagando el año, 2 meses de regalo." },
   { q: "¿La IA hace cosas sola?", a: "La IA propone y una persona aprueba. Nada fiscal, de pagos ni comunicaciones sensibles se ejecuta sin aprobación." },
   { q: "¿Mis datos están seguros?", a: "Cada estudio, organización y persona está aislado y se valida en el servidor. Los estudios entran con segundo factor obligatorio y todo lo sensible queda auditado." },
   { q: "¿Funciona con Tango, Xubio o mis archivos?", a: "Sí: Tango, Xubio, Google Drive, servidores MCP y archivos de Holistor, Bejerman y otros. Todo lo que entra guarda su origen." },
@@ -144,7 +144,7 @@ export function FaroFaq() {
   return (
     <section id="preguntas" aria-labelledby="faq-titulo" className="scroll-mt-16 border-t border-hair bg-night py-16 lg:py-28">
       <Container>
-        <SectionIndex n="14">Preguntas frecuentes</SectionIndex>
+        <SectionIndex n="15">Preguntas frecuentes</SectionIndex>
         <SplitHeading id="faq-titulo" className="display-md mt-8 text-paper">
           Lo que nos preguntan.
         </SplitHeading>

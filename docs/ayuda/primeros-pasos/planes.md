@@ -20,17 +20,17 @@ Los precios son **de referencia en dólares**; en la app los ves **en pesos**, c
 
 | Plan | Precio | Qué suma |
 |---|---|---|
-| **Gratis** | USD 0 | Facturación con ARCA (hasta 10 comprobantes por mes), semáforo de monotributo, Grupos de gastos y el Vigía para consultas. |
-| **Pro** | USD 9 / mes | Facturación sin límite, lectura de tickets (hasta 300 por mes), WhatsApp y el Vigía con acciones. |
+| **Gratis** | USD 0 | Facturación con ARCA (hasta 30 comprobantes por mes), semáforo de monotributo, Grupos de gastos y el Vigía para consultas. |
+| **Pro** | USD 9 / mes | Facturación sin límite, lectura de tickets (hasta 1.000 por mes), WhatsApp y el Vigía con acciones. |
 
 
 ## Estudios y contadores
 
 | Plan | Precio | Organizaciones | Personas del estudio |
 |---|---|---|---|
-| **Inicial** | **Gratis** | Hasta 5 | 1 |
-| **Profesional** (recomendado) | USD 119 / mes | Hasta 40 | Hasta 5 |
-| **Avanzado** | USD 249 / mes | Hasta 120 | Hasta 25 |
+| **Inicial** | **Gratis** | Hasta 10 | 2 |
+| **Profesional** (recomendado) | USD 119 / mes | Hasta 60 | Hasta 10 |
+| **Avanzado** | USD 249 / mes | Hasta 250 | Hasta 50 |
 
 - **Inicial es gratis de verdad:** sin prueba, sin tarjeta y sin débito. No tiene organizaciones extra: para sumar más organizaciones o personas del equipo, pasás a Profesional.
 - **Organización extra (Profesional y Avanzado):** USD 2 por mes cada una, por encima de las incluidas.
@@ -58,3 +58,9 @@ Los precios son **de referencia en dólares**; en la app los ves **en pesos**, c
 - **Si un débito falla:** te avisamos por mail y en la campanita, y tenés **7 días de gracia** para regularizarlo con **Pagar ahora**. Pasado ese plazo la cuenta se suspende; desde la pantalla de cuenta suspendida podés pagar y se reactiva sola.
 
 Solo el dueño de la cuenta (dueño del estudio o titular) paga y cambia el plan. Si Faro todavía no tiene el cobro en línea activo, el botón es **Quiero mejorar mi plan** y el equipo te contacta.
+
+## Lo que no cobramos
+
+- **No cobramos por comprobante:** en los planes pagos facturás sin límite (de a una, en lotes, recurrentes, por WhatsApp, desde tus ventas online o por la API).
+- **Faro no te pide tu clave fiscal:** delegás la factura electrónica una sola vez en ARCA.
+- **La prueba no pide tarjeta.**

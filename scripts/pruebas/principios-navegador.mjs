@@ -60,7 +60,7 @@ if (stage("1")) {
   check("/precios en 390 px sin scroll horizontal", await noHScroll(pub));
   await pub.goto(`${BASE}/faro`);
   await pub.getByRole("tab", { name: /Contadores independientes/ }).first().click().catch(() => pub.getByText("Contadores independientes").first().click());
-  check("/faro: estudios empiezan gratis", await seen(pub, "Hasta 5 organizaciones gratis con el plan Inicial"));
+  check("/faro: estudios empiezan gratis", await seen(pub, "Hasta 10 organizaciones gratis con el plan Inicial"));
   await pub.goto(`${BASE}/faro/registro?tipo=studio`);
   check("registro: Inicial gratis", await seen(pub, "Estudios · Inicial, gratis"));
 

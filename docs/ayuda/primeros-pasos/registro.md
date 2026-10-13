@@ -3,7 +3,7 @@ titulo: Cómo crear tu cuenta en Faro
 resumen: Elegí qué sos, entrá con Google, con un enlace a tu mail o con contraseña y segundo factor si sos un estudio, y seguí la guía de primeros pasos.
 perfiles: [persona, autonomo, estudio]
 modulo: core
-actualizado: 2026-10-12
+actualizado: 2026-10-13
 relacionados: [primeros-pasos/planes, primeros-pasos/primeros-pasos-estudio, grupos-de-gastos/crear-un-grupo]
 ---
 
@@ -15,7 +15,7 @@ Si te invitaron a un grupo de gastos, también podés crear la cuenta desde el e
 
 - **Una persona:** querés llevar tus finanzas, dividir gastos o encontrar un contador. Arrancás en **Personas · Gratis**.
 - **Autónomo:** llevás tus números solo. Te pedimos tu CUIT y tu régimen (monotributo o responsable inscripto). Arrancás en **Autónomos · Gratis**.
-- **Un estudio o un contador:** gestionás clientes. Arrancás en **Estudios · Inicial**, que es **gratis** (hasta 5 organizaciones y 1 usuario), sin prueba ni tarjeta. Para crecer, pasás a Profesional desde **Plan y facturación**.
+- **Un estudio o un contador:** gestionás clientes. Arrancás en **Estudios · Inicial**, que es **gratis** (hasta 10 organizaciones y 2 personas), sin prueba ni tarjeta. Si te registrás desde el botón de Profesional o Avanzado en Precios, arrancás con 30 días de prueba de ese plan, también sin tarjeta. Para crecer, pasás a Profesional desde **Plan y facturación**.
 
 ## 2. Cómo vas a entrar
 
