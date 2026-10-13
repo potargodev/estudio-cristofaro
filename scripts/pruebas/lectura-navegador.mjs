@@ -143,10 +143,10 @@ check("documento de otra organización del mismo estudio → 404", await is404(p
 const own = await page.request.get(`${BASE}/api/lectura/${doc1.id}/archivo?${q}`);
 check("el archivo propio se descarga", own.ok() && (await own.body()).subarray(0, 4).toString() === "%PDF");
 
-// Límite del plan (Inicial: 30 por mes)
-for (let i = 0; i < 30; i++) await sql`insert into smart_documents (studio_id, organization_id, scope, storage_path, file_name, mime_type, size_bytes, sha256, status, model) values (${SB}, ${AJENA}, 'organizacion', 'x', ${`relleno-${i}.pdf`}, 'application/pdf', 1, ${`relleno${i}`}, 'confirmado', 'faro-mock')`;
+// Límite del plan (Inicial: 100 por mes, B11)
+for (let i = 0; i < 100; i++) await sql`insert into smart_documents (studio_id, organization_id, scope, storage_path, file_name, mime_type, size_bytes, sha256, status, model) values (${SB}, ${AJENA}, 'organizacion', 'x', ${`relleno-${i}.pdf`}, 'application/pdf', 1, ${`relleno${i}`}, 'confirmado', 'faro-mock')`;
 await upload(pdf("edenor-90"), other, `${BASE}/admin/organizaciones/${AJENA}/lectura`);
-check("límite de lectura del plan Inicial", await seen("límite", other) || (await seen("30", other)));
+check("límite de lectura del plan Inicial", await seen("límite", other) || (await seen("100", other)));
 await sql`delete from smart_documents where studio_id = ${SB}`;
 
 // ─── Faro Personal y Bitácora ───
