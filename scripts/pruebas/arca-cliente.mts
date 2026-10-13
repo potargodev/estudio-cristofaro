@@ -37,6 +37,12 @@ const cred = { env: "homologacion" as const, cuit: "20111111112", certPem, keyPe
 check("certificado y clave coinciden", keyMatchesCert(certPem, keyPem));
 check("datos del certificado", certInfo(certPem).subject === "faro-pruebas");
 await fetch("http://localhost:4060/__reset", { method: "POST" });
+// El simulador olvidó sus tickets: los guardados en la base (de pruebas anteriores) ya no sirven
+{
+  const { getDb } = await import("../../src/db/index.ts");
+  const { arca_tickets } = await import("../../src/db/schema.ts");
+  await getDb().delete(arca_tickets);
+}
 
 const t1 = await getTicket(cred, "wsfe");
 const t2 = await getTicket(cred, "wsfe");

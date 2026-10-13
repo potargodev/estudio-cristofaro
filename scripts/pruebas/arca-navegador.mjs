@@ -92,11 +92,11 @@ check("dueño del estudio B en la facturación de una organización del A → 40
 const colab = await fetch(`${BASE}/admin/organizaciones/${d.orgs.norte}?tab=arca`, { headers: { Cookie: d.cookies.colaboradorA } });
 check("colaborador ve la pestaña ARCA (prepara, no emite)", colab.status === 200);
 
-// Límite del plan Gratis: 10 por mes
-const rows = Array.from({ length: 9 }, (_, i) => ({ studio_id: tit.id, organization_id: inv.organization_id, cuit: inv.cuit, environment: "homologacion", point_of_sale: 2, cbte_type: 11, number: 100 + i, issue_date: inv.issue_date, customer_doc_type: 99, customer_doc_number: "0", customer_name: "x", customer_iva_condition: "consumidor_final", items: sql.json([]), net: 1, total: 1, status: "autorizada", authorized_at: new Date() }));
+// Límite del plan Gratis: 30 por mes (B11)
+const rows = Array.from({ length: 29 }, (_, i) => ({ studio_id: tit.id, organization_id: inv.organization_id, cuit: inv.cuit, environment: "homologacion", point_of_sale: 2, cbte_type: 11, number: 100 + i, issue_date: inv.issue_date, customer_doc_type: 99, customer_doc_number: "0", customer_name: "x", customer_iva_condition: "consumidor_final", items: sql.json([]), net: 1, total: 1, status: "autorizada", authorized_at: new Date() }));
 for (const r of rows) await sql`insert into invoices ${sql(r)}`;
 await page.goto(`${BASE}/facturacion/nueva`);
-await page.getByLabel("Nombre o razón social").fill("Cliente once");
+await page.getByLabel("Nombre o razón social").fill("Cliente treinta y uno");
 await page.locator('select[name="doc_type"]').selectOption("99");
 await page.getByLabel("Descripción").first().fill("Servicio");
 await page.getByLabel("Precio unit.").first().fill("1000");
@@ -105,7 +105,7 @@ await seen("Borrador guardado");
 await page.getByLabel(/Revisé el cliente/).check();
 await page.getByRole("button", { name: "Emitir comprobante" }).click();
 await page.getByRole("button", { name: "Emitir", exact: true }).click().catch(() => {});
-check("el comprobante 11 del mes en Gratis se frena con el límite", await seen("permite hasta 10"));
+check("el comprobante 31 del mes en Gratis se frena con el límite", await seen("permite hasta 30"));
 await sql`delete from invoices where studio_id = ${tit.id} and point_of_sale = 2`;
 
 check("sin errores de JavaScript", errors.length === 0, errors.join(" | "));
