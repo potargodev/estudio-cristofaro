@@ -56,4 +56,5 @@ Ante cualquier duda de alcance o diseño funcional, esos documentos mandan. Si u
 - Pruebas de punta a punta en `scripts/pruebas/` (README → «Pruebas»); `scripts/verificar-enlaces.mts` y `scripts/verificar-redirecciones.mts` contra un servidor corriendo.
 - Migraciones con drizzle-kit; nunca editar migraciones ya aplicadas.
 - Centro de ayuda: toda funcionalidad nueva o que cambia actualiza su artículo en `docs/ayuda/<categoria>/<slug>.md` (y la fecha `actualizado` del frontmatter) en el mismo commit. `npm run ayuda` valida el formato y compila el índice (corre solo antes de cada build).
+- Lista de tareas al día: cada etapa se marca «en curso» al empezarla y «terminada» apenas se termina (no al final de todo), para que el avance se vea en vivo.
 - Al terminar una tarea: listar qué quedó, qué se probó y qué falta configurar.
