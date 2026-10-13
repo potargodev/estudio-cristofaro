@@ -122,6 +122,8 @@ check("publicar dos veces no duplica comprobantes en Contabilium", (await cb("/_
 
 // ─── Xubio y Tango sobre la misma interfaz ───
 await sql`delete from connections where organization_id = ${A.organizationId} and connector = 'xubio'`;
+// Cuentas del estudio con error que dejaron otras pruebas (credenciales malas a propósito): pausadas, no se sincronizan
+await sql`update connections set status = 'pausada' where studio_id = ${A.studioId} and connector = 'xubio' and organization_id is null and status = 'error'`;
 await sql`insert into connections (studio_id, connector, name, organization_id, status, credentials_enc) values (${A.studioId}, 'xubio', 'Xubio de prueba', ${A.organizationId}, 'activa', ${sealCredentials({ client_id: "mock-org", client_secret: "mock-org-secret" })})`;
 const x1 = await core.runOp(A, actorA, "xubio", "sincronizar");
 const xs = await reg.stateOf(A, "xubio");
