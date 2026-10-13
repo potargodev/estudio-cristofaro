@@ -12,7 +12,7 @@ import { getStudioStaff } from "@/lib/organizations";
 import { cn } from "@/lib/utils";
 import { crmEnabled, listTasks, TASK_STATUS, type TaskStatus } from "@/modules/crm/server";
 import { fieldInlineClass } from "@/components/ds/primitives";
-import { formatDate } from "@/lib/format";
+import { formatDate, lastDayOfMonth } from "@/lib/format";
 
 export const metadata = { title: "Tareas" };
 
@@ -34,7 +34,7 @@ export default async function TareasPage({ searchParams }: { searchParams: Promi
   const vista = ["tabla", "kanban", "calendario"].includes(sp.vista ?? "") ? sp.vista! : "tabla";
   const today = new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 10);
   const month = /^\d{4}-\d{2}$/.test(sp.mes ?? "") ? sp.mes! : today.slice(0, 7);
-  const filters = { status: vista === "kanban" ? null : (sp.estado ?? (vista === "tabla" ? "abiertas" : null)), assignee: sp.responsable === "yo" ? me.id : (sp.responsable ?? null), org: sp.org ?? null, from: vista === "calendario" ? `${month}-01` : null, to: vista === "calendario" ? `${month}-31` : null };
+  const filters = { status: vista === "kanban" ? null : (sp.estado ?? (vista === "tabla" ? "abiertas" : null)), assignee: sp.responsable === "yo" ? me.id : (sp.responsable ?? null), org: sp.org ?? null, from: vista === "calendario" ? `${month}-01` : null, to: vista === "calendario" ? lastDayOfMonth(month) : null };
   const [rows, staff, orgs] = await Promise.all([listTasks(me.studioId, { ...filters, status: filters.status === "abiertas" ? null : filters.status }), getStudioStaff(me.studioId), getDb().select({ id: organizations.id, name: organizations.name }).from(organizations).where(eq(organizations.studio_id, me.studioId)).orderBy(asc(organizations.name))]);
   const list = filters.status === "abiertas" ? rows.filter((r) => r.t.status !== "hecha") : rows;
   const qs = (patch: Record<string, string | null>) => {

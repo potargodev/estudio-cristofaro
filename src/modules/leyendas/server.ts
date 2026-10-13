@@ -49,7 +49,7 @@ export async function getLegendRules(): Promise<(LegendRule & { history: Record<
 /** Datos del comprobante que usa el motor */
 function invoiceFacts(inv: Pick<Invoice, "cbte_type" | "customer_iva_condition" | "issue_date" | "net" | "iva" | "total">, issuerIva: string) {
   const t = CBTE_TYPES[inv.cbte_type];
-  return { letter: t?.letter ?? "C", kind: t?.kind ?? "factura", issuerIva, customerIva: inv.customer_iva_condition, issueDate: inv.issue_date, net: Number(inv.net), iva: Number(inv.iva), total: Number(inv.total) } as const;
+  return { letter: t?.letter ?? "C", fce: !!t?.fce, kind: t?.kind ?? "factura", issuerIva, customerIva: inv.customer_iva_condition, issueDate: inv.issue_date, net: Number(inv.net), iva: Number(inv.iva), total: Number(inv.total) } as const;
 }
 
 /** Las leyendas que lleva un comprobante con el perfil del emisor */

@@ -71,7 +71,7 @@ const STATUS: Record<string, { label: string; tone: string }> = {
 };
 
 /** Campos ocultos del alcance (en el estudio, la organización y la CUIT) */
-function ScopeFields({ scope, volver }: { scope: IssuerScope; volver?: string }) {
+export function ScopeFields({ scope, volver }: { scope: IssuerScope; volver?: string }) {
   return (
     <>
       {scope.kind === "studio" && <input type="hidden" name="org" value={scope.organizationId} />}
@@ -796,6 +796,17 @@ export async function SettingsView({ scope, sp, volver }: { scope: IssuerScope; 
         <label className="sm:col-span-2">
           <span className={lbl}>Leyenda al pie (datos bancarios, agradecimiento)</span>
           <input name="footer" defaultValue={s.footer ?? ""} className={field} />
+        </label>
+        <label>
+          <span className={lbl}>CBU (para la Factura de Crédito Electrónica MiPyME)</span>
+          <input name="cbu" inputMode="numeric" defaultValue={s.cbu ?? ""} placeholder="22 números" className={field} />
+        </label>
+        <label>
+          <span className={lbl}>Transferencia de la FCE</span>
+          <select name="fce_transfer" defaultValue={s.fce_transfer ?? "SCA"} className={field}>
+            <option value="SCA">Sistema de Circulación Abierta (SCA)</option>
+            <option value="ADC">Agente de Depósito Colectivo (ADC)</option>
+          </select>
         </label>
         <div className="sm:col-span-2">
           <SubmitButton pendingText="Guardando…">Guardar</SubmitButton>

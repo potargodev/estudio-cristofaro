@@ -435,6 +435,13 @@
       "when": 1791871162642,
       "tag": "0061_facturacion_cola_lotes",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1791873294634,
+      "tag": "0062_comprobantes_b3",
+      "breakpoints": true
     }
   ]
 }

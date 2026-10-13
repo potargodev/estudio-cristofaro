@@ -122,6 +122,8 @@ correr compartir "${S[@]}" scripts/pruebas/compartir.mts
 correr recategorizacion "${S[@]}" scripts/pruebas/recategorizacion.mts
 # §2.p · B2 lotes y B5 ARCA caído (simulador de ARCA con /__fuera)
 LIMITE=1800 correr lotes "${S[@]}" scripts/pruebas/lotes.mts
+# §2.p · B3 todos los comprobantes (M, FCE, padrón, presupuestos, remitos, recibos y recurrentes)
+correr comprobantes "${S[@]}" scripts/pruebas/comprobantes.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

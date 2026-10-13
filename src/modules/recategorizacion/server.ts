@@ -3,7 +3,7 @@ import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { documents, income_adjustments, invoices, legal_entities, memberships, organizations, recategorizations, tasks, users } from "@/db/schema";
 import { audit } from "@/lib/audit";
-import { formatAmount, todayAR } from "@/lib/format";
+import { formatAmount, lastDayOfMonth, todayAR } from "@/lib/format";
 import { can } from "@/lib/permissions";
 import { CBTE_TYPES } from "@/modules/arca/config";
 import type { ScaleCategory } from "@/modules/arca/monotributo";
@@ -67,7 +67,7 @@ export async function portfolio(studioId: string, periodKey?: string | null) {
   const p = periodOf(periodKey);
   const months = monthsTo(p.cutoff);
   const from = `${months[0]}-01`;
-  const to = `${p.cutoff}-31`;
+  const to = lastDayOfMonth(p.cutoff);
   const sc = await scale();
   const ents = await db()
     .select({ e: legal_entities, orgName: organizations.name })

@@ -63,6 +63,9 @@ interface CaeRequest {
   condicionIvaReceptorId: number;
   iva: { id: number; baseImp: number; importe: number }[];
   asociados?: { tipo: number; ptoVta: number; nro: number; cuit: string; cbteFch: string }[];
+  /** FCE MiPyME: datos opcionales (CBU 2101, transferencia 27, anulación 22) */
+  fce?: boolean;
+  opcionales?: { id: string; valor: string }[];
 }
 
 const n2 = (v: number) => v.toFixed(2);
@@ -84,12 +87,13 @@ export async function solicitarCae(cred: ArcaCredential, cuit: string, r: CaeReq
     ImpIVA: n2(r.impIva),
     FchServDesde: r.concepto === 1 ? undefined : r.fchServDesde,
     FchServHasta: r.concepto === 1 ? undefined : r.fchServHasta,
-    FchVtoPago: r.concepto === 1 ? undefined : r.fchVtoPago,
+    FchVtoPago: r.concepto === 1 && !r.fce ? undefined : r.fchVtoPago,
     MonId: r.monId,
     MonCotiz: r.monCotiz,
     CondicionIVAReceptorId: r.condicionIvaReceptorId,
     CbtesAsoc: r.asociados?.length ? { CbteAsoc: r.asociados.map((a) => ({ Tipo: a.tipo, PtoVta: a.ptoVta, Nro: a.nro, Cuit: a.cuit, CbteFch: a.cbteFch })) } : undefined,
     Iva: r.iva.length ? { AlicIva: r.iva.map((i) => ({ Id: i.id, BaseImp: n2(i.baseImp), Importe: n2(i.importe) })) } : undefined,
+    Opcionales: r.opcionales?.length ? { Opcional: r.opcionales.map((o) => ({ Id: o.id, Valor: o.valor })) } : undefined,
   };
   const inner = `<ar:FeCAEReq>${toXml({ FeCabReq: { CantReg: 1, PtoVta: r.ptoVta, CbteTipo: r.cbteTipo }, FeDetReq: { FECAEDetRequest: det } })}</ar:FeCAEReq>`;
   const { result, errors, raw, envelope } = await call(cred, cuit, "FECAESolicitar", inner);

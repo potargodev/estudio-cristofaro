@@ -215,7 +215,7 @@ export async function saveSettingsAction(fd: FormData) {
   await guard(path, () =>
     saveSettings(
       scope,
-      { businessName: s(fd, "business_name"), ivaCondition: s(fd, "iva_condition"), address: s(fd, "address"), activityStart: s(fd, "activity_start"), iibb: s(fd, "iibb"), color: s(fd, "color"), email: s(fd, "email"), phone: s(fd, "phone"), website: s(fd, "website"), footer: s(fd, "footer"), logoPath },
+      { businessName: s(fd, "business_name"), ivaCondition: s(fd, "iva_condition"), address: s(fd, "address"), activityStart: s(fd, "activity_start"), iibb: s(fd, "iibb"), color: s(fd, "color"), email: s(fd, "email"), phone: s(fd, "phone"), website: s(fd, "website"), footer: s(fd, "footer"), logoPath, ...(fd.has("cbu") ? { cbu: s(fd, "cbu") || null, fceTransfer: s(fd, "fce_transfer") || "SCA" } : {}) },
       actorOf(u),
     ),
   );
@@ -342,4 +342,102 @@ export async function deletePersonalMpAction() {
   if (u.role !== "titular" || u.tenantKind !== "personal") back("/facturacion/ajustes", { error: "Solo el titular." });
   await deleteAccount(u.studioId, u);
   back("/facturacion/ajustes", { ok: "Cuenta desconectada." });
+}
+
+// ───────────── §2.p (B3): padrón, presupuestos, remitos, recibos y recurrentes ─────────────
+
+/** Datos de una CUIT en el padrón de ARCA para autocompletar el cliente (no guarda nada) */
+export async function padronLookupAction(cuit: string): Promise<{ ok: true; name: string; ivaCondition: string; address: string | null } | { ok: false; error: string }> {
+  const u = await session();
+  const c = String(cuit ?? "").replace(/\D/g, "");
+  if (!/^\d{11}$/.test(c)) return { ok: false, error: "La CUIT tiene 11 números." };
+  const { lookupTaxpayer } = await import("@/modules/arca/server");
+  try {
+    const p = await lookupTaxpayer(u.studioId, c, actorOf(u));
+    return { ok: true, name: p.name, ivaCondition: p.regime === "otro" ? "consumidor_final" : p.regime, address: p.address };
+  } catch (e) {
+    return { ok: false, error: e instanceof ArcaError ? e.message : "No pudimos consultar el padrón." };
+  }
+}
+
+/** Ítems del formulario: JSON en «items» o filas desc0…desc4 / cant0 / precio0 / iva0 */
+const docItems = (fd: FormData) => {
+  if (s(fd, "items")) {
+    try {
+      const raw = JSON.parse(s(fd, "items")) as { description: string; quantity: number; unitPrice: number; ivaRate?: number | null }[];
+      return Array.isArray(raw) ? raw : [];
+    } catch {
+      return [];
+    }
+  }
+  const out: { description: string; quantity: number; unitPrice: number; ivaRate: number | null }[] = [];
+  for (let i = 0; i < 5; i++) {
+    if (!s(fd, `desc${i}`)) continue;
+    out.push({ description: s(fd, `desc${i}`), quantity: n(fd, `cant${i}`) || 1, unitPrice: n(fd, `precio${i}`), ivaRate: s(fd, `iva${i}`) ? n(fd, `iva${i}`) : null });
+  }
+  return out;
+};
+
+export async function createDocAction(fd: FormData) {
+  const u = await session();
+  const scope = await issuerFromForm(u, fd);
+  const path = s(fd, "volver") || scope.home;
+  const { createDoc, DocError, isDocKind } = await import("@/modules/facturacion-plus/server");
+  const kind = s(fd, "kind");
+  if (!isDocKind(kind)) back(path, { error: "Tipo inválido." });
+  let id = "";
+  try {
+    const d = await createDoc(scope, actorOf(u), { kind, issueDate: s(fd, "date"), validUntil: s(fd, "valid_until"), customer: { name: s(fd, "customer_name"), docType: Number(s(fd, "doc_type")) || 99, docNumber: s(fd, "doc_number"), ivaCondition: s(fd, "iva_condition") || "consumidor_final", email: s(fd, "customer_email") }, items: docItems(fd), paymentMethod: s(fd, "payment_method"), notes: s(fd, "notes") });
+    id = d.id;
+  } catch (e) {
+    if (e instanceof DocError) back(path, { error: e.message });
+    throw e;
+  }
+  done(scope);
+  back(path, { ok: "Listo: el comprobante quedó guardado con su número.", doc: id });
+}
+
+export async function docAction(fd: FormData) {
+  const u = await session();
+  const scope = await issuerFromForm(u, fd);
+  const path = s(fd, "volver") || scope.home;
+  const { DocError, quoteToInvoice, setDocStatus } = await import("@/modules/facturacion-plus/server");
+  const op = s(fd, "op");
+  try {
+    if (op === "facturar") {
+      const pos = Number(s(fd, "point_of_sale")) || 1;
+      const draft = await quoteToInvoice(scope, actorOf(u), s(fd, "id"), pos);
+      done(scope);
+      back(`${scope.base}/${draft.id}`, { ok: "Armamos la factura con los datos del presupuesto: revisala y emitila." });
+    }
+    await setDocStatus(scope, actorOf(u), s(fd, "id"), op === "anular" ? "anulado" : "aceptado");
+  } catch (e) {
+    if (e instanceof DocError || e instanceof ArcaError) back(path, { error: e.message });
+    throw e;
+  }
+  done(scope);
+  back(path, { ok: op === "anular" ? "Anulado." : "Marcado como aceptado." });
+}
+
+export async function recurringAction(fd: FormData) {
+  const u = await session();
+  const scope = await issuerFromForm(u, fd);
+  const path = s(fd, "volver") || scope.home;
+  const { DocError, saveRecurring, toggleRecurring } = await import("@/modules/facturacion-plus/server");
+  try {
+    if (s(fd, "op") === "pausar" || s(fd, "op") === "reanudar") await toggleRecurring(scope, actorOf(u), s(fd, "id"), s(fd, "op") === "reanudar");
+    else
+      await saveRecurring(scope, actorOf(u), {
+        name: s(fd, "name"),
+        dayOfMonth: Number(s(fd, "day")) || 1,
+        startDate: s(fd, "start"),
+        adjust: s(fd, "adjust") === "ipc" ? "ipc" : "ninguno",
+        template: { pointOfSale: Number(s(fd, "point_of_sale")) || 1, concept: 2, customer: { docType: Number(s(fd, "doc_type")) || 99, docNumber: s(fd, "doc_number") || "0", name: s(fd, "customer_name"), ivaCondition: s(fd, "iva_condition") || "consumidor_final", email: s(fd, "customer_email") || null }, items: docItems(fd).map((x) => ({ description: x.description, quantity: Number(x.quantity), unitPrice: Number(x.unitPrice), ivaRate: x.ivaRate ?? null })) },
+      });
+  } catch (e) {
+    if (e instanceof DocError) back(path, { error: e.message });
+    throw e;
+  }
+  done(scope);
+  back(path, { ok: s(fd, "op") ? "Listo." : "Factura recurrente guardada: la armamos sola el día elegido." });
 }

@@ -41,7 +41,7 @@ export function arcaUrls(env: ArcaEnv) {
 export const usingMock = () => [process.env.ARCA_WSAA_URL, process.env.ARCA_WSFE_URL, process.env.ARCA_PADRON_URL, process.env.ARCA_WSCDC_URL].some((u) => !!u && /localhost|127\.0\.0\.1|mock/.test(u));
 
 /** Tipos de comprobante (FEParamGetTiposCbte) que emite Faro */
-export const CBTE_TYPES: Record<number, { label: string; short: string; letter: "A" | "B" | "C" | "E"; kind: "factura" | "nota_debito" | "nota_credito" }> = {
+export const CBTE_TYPES: Record<number, { label: string; short: string; letter: "A" | "B" | "C" | "E" | "M"; kind: "factura" | "nota_debito" | "nota_credito"; fce?: boolean }> = {
   1: { label: "Factura A", short: "FA", letter: "A", kind: "factura" },
   2: { label: "Nota de débito A", short: "NDA", letter: "A", kind: "nota_debito" },
   3: { label: "Nota de crédito A", short: "NCA", letter: "A", kind: "nota_credito" },
@@ -54,7 +54,30 @@ export const CBTE_TYPES: Record<number, { label: string; short: string; letter: 
   19: { label: "Factura E", short: "FE", letter: "E", kind: "factura" },
   20: { label: "Nota de débito E", short: "NDE", letter: "E", kind: "nota_debito" },
   21: { label: "Nota de crédito E", short: "NCE", letter: "E", kind: "nota_credito" },
+  // §2.p (B3): comprobantes M (responsables inscriptos con el régimen de la RG 1575) y FCE MiPyME (Ley 27.440)
+  51: { label: "Factura M", short: "FM", letter: "M", kind: "factura" },
+  52: { label: "Nota de débito M", short: "NDM", letter: "M", kind: "nota_debito" },
+  53: { label: "Nota de crédito M", short: "NCM", letter: "M", kind: "nota_credito" },
+  201: { label: "Factura de Crédito Electrónica MiPyME A", short: "FCEA", letter: "A", kind: "factura", fce: true },
+  202: { label: "Nota de débito electrónica MiPyME A", short: "NDFCEA", letter: "A", kind: "nota_debito", fce: true },
+  203: { label: "Nota de crédito electrónica MiPyME A", short: "NCFCEA", letter: "A", kind: "nota_credito", fce: true },
+  206: { label: "Factura de Crédito Electrónica MiPyME B", short: "FCEB", letter: "B", kind: "factura", fce: true },
+  207: { label: "Nota de débito electrónica MiPyME B", short: "NDFCEB", letter: "B", kind: "nota_debito", fce: true },
+  208: { label: "Nota de crédito electrónica MiPyME B", short: "NCFCEB", letter: "B", kind: "nota_credito", fce: true },
+  211: { label: "Factura de Crédito Electrónica MiPyME C", short: "FCEC", letter: "C", kind: "factura", fce: true },
+  212: { label: "Nota de débito electrónica MiPyME C", short: "NDFCEC", letter: "C", kind: "nota_debito", fce: true },
+  213: { label: "Nota de crédito electrónica MiPyME C", short: "NCFCEC", letter: "C", kind: "nota_credito", fce: true },
 };
+
+/**
+ * Variantes que se pueden elegir además de las comunes: M en lugar de A (si
+ * ARCA lo indicó al emisor) y FCE MiPyME en lugar de A, B o C (cuando el
+ * receptor es una gran empresa y supera el monto mínimo, «a validar»).
+ */
+const VARIANTS: Record<number, number[]> = { 1: [51, 201], 2: [52, 202], 3: [53, 203], 6: [206], 7: [207], 8: [208], 11: [211], 12: [212], 13: [213] };
+export function withVariants(types: number[]) {
+  return [...types, ...types.flatMap((t) => VARIANTS[t] ?? [])];
+}
 
 /** Tipos de documento del receptor */
 export const DOC_TYPES: Record<number, string> = { 80: "CUIT", 86: "CUIL", 96: "DNI", 99: "Consumidor final" };

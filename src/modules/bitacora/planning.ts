@@ -1,4 +1,5 @@
 import "server-only";
+import { lastDayOfMonth } from "@/lib/format";
 import { and, asc, count, desc, eq, gte, inArray, isNull, lte } from "drizzle-orm";
 import { getDb } from "@/db";
 import { bitacora_budgets, bitacora_entries, bitacora_goal_moves, bitacora_goals, fx_snapshots, ipc_series } from "@/db/schema";
@@ -128,7 +129,7 @@ export async function ipcFactor(month: string) {
 /** Cotización del dólar MEP para un mes: promedio de las guardadas, o la de hoy */
 export async function mepFor(month: string) {
   const from = `${month}-01`;
-  const to = `${month}-31`;
+  const to = lastDayOfMonth(month);
   const rows = await db().select({ rate: fx_snapshots.rate, date: fx_snapshots.date }).from(fx_snapshots).where(and(eq(fx_snapshots.currency, "USD"), eq(fx_snapshots.kind, "mep"), gte(fx_snapshots.date, from), lte(fx_snapshots.date, to)));
   if (rows.length) return { rate: rows.reduce((s, r) => s + Number(r.rate), 0) / rows.length, source: `Dólar MEP promedio de ${rows.length} día${rows.length === 1 ? "" : "s"} del mes` };
   const now = await arsRate("USD", "mep");

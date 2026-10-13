@@ -1,10 +1,10 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
-import { saveDraftAction } from "@/app/facturacion/actions";
+import { useMemo, useState, useTransition } from "react";
+import { padronLookupAction, saveDraftAction } from "@/app/facturacion/actions";
 import { SubmitButton } from "@/components/admin/ui";
-import { allowedTypes, CBTE_TYPES, DOC_TYPES, IVA_CONDITIONS } from "@/modules/arca/config";
+import { allowedTypes, CBTE_TYPES, DOC_TYPES, IVA_CONDITIONS, withVariants } from "@/modules/arca/config";
 import { cn } from "@/lib/utils";
 import { fieldClass } from "@/components/ds/primitives";
 import { formatAmount } from "@/lib/format";
@@ -72,11 +72,22 @@ export function InvoiceForm({
   const receiver = picked?.ivaCondition ?? cust.ivaCondition;
   const types = allowedTypes(issuerCondition, receiver);
   const isNote = !!initial?.associated;
-  const typeOptions = isNote ? [initial!.cbteType] : types.filter((t) => CBTE_TYPES[t].kind === "factura");
+  const typeOptions = isNote ? [initial!.cbteType] : withVariants(types).filter((t) => CBTE_TYPES[t].kind === "factura");
   const [cbteType, setCbteType] = useState<number>(initial?.cbteType ?? typeOptions[0]);
   const effectiveType = typeOptions.includes(cbteType) ? cbteType : typeOptions[0];
   const letter = CBTE_TYPES[effectiveType]?.letter;
-  const discriminate = letter === "A" || letter === "B";
+  const discriminate = letter === "A" || letter === "B" || letter === "M";
+  const fce = !!CBTE_TYPES[effectiveType]?.fce;
+  // §2.p (B3): autocompletar el cliente con el padrón de ARCA
+  const [looking, startLookup] = useTransition();
+  const [lookupMsg, setLookupMsg] = useState<string | null>(null);
+  const lookup = () =>
+    startLookup(async () => {
+      setLookupMsg(null);
+      const r = await padronLookupAction(cust.docNumber);
+      if (r.ok) setCust((c) => ({ ...c, name: r.name, ivaCondition: r.ivaCondition, address: r.address ?? c.address }));
+      setLookupMsg(r.ok ? `Datos de ARCA: ${r.name}` : r.error);
+    });
   const [concept, setConcept] = useState(initial?.concept ?? 2);
   const [lines, setLines] = useState<Line[]>(
     initial?.items.map((i) => ({ description: i.description, quantity: String(i.quantity), unitPrice: String(i.unitPrice), ivaRate: String(i.ivaRate ?? 21) })) ?? [{ description: "", quantity: "1", unitPrice: "", ivaRate: "21" }],
@@ -153,6 +164,18 @@ export function InvoiceForm({
                 <span className={label}>Número</span>
                 <input name="doc_number" inputMode="numeric" disabled={cust.docType === 99} value={cust.docType === 99 ? "" : cust.docNumber} onChange={(e) => setCust({ ...cust, docNumber: e.target.value })} className={field} placeholder={cust.docType === 80 ? "CUIT sin guiones" : ""} />
               </label>
+              {(cust.docType === 80 || cust.docType === 86) && (
+                <div className="col-span-2 flex flex-wrap items-center gap-2">
+                  <button type="button" onClick={lookup} disabled={looking || cust.docNumber.replace(/\D/g, "").length !== 11} className="h-(--control-h-sm) rounded-md border border-line px-3 text-meta disabled:opacity-60">
+                    {looking ? "Buscando…" : "Completar con ARCA"}
+                  </button>
+                  {lookupMsg && (
+                    <span role="status" className="text-meta text-muted">
+                      {lookupMsg}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <label>
               <span className={label}>Mail (para mandarle el comprobante)</span>
@@ -226,6 +249,13 @@ export function InvoiceForm({
               </label>
             </>
           )}
+          {concept === 1 && fce && (
+            <label>
+              <span className={label}>Vencimiento del pago</span>
+              <input name="payment_due" type="date" required defaultValue={initial?.paymentDue ?? today} className={field} />
+            </label>
+          )}
+          {fce && <p className="text-meta text-muted sm:col-span-3">Factura de Crédito Electrónica MiPyME: lleva el CBU de tus datos de facturación (Ajustes) y la fecha de vencimiento del pago. El cliente la acepta o la rechaza en ARCA.</p>}
           <label>
             <span className={label}>Moneda</span>
             <select name="currency" value={currency} onChange={(e) => setCurrency(e.target.value)} className={field}>

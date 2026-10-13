@@ -48,7 +48,9 @@ export function asProfile(raw: unknown): LegendProfile {
 
 /** Lo que el motor sabe de un comprobante */
 export interface LegendInvoice {
-  letter: "A" | "B" | "C" | "E";
+  letter: "A" | "B" | "C" | "E" | "M";
+  /** Factura de Crédito Electrónica MiPyME (§2.p, B3) */
+  fce?: boolean;
   kind: "factura" | "nota_debito" | "nota_credito";
   issuerIva: string;
   customerIva: string;
@@ -92,13 +94,13 @@ export const CONDITIONS: Record<string, { label: string; test: Condition; affect
   },
   sujeta_retencion: {
     label: "CUIT incluida por ARCA en el régimen de comprobantes A con retención",
-    test: (i, p) => p.sujetaRetencion && i.letter === "A",
+    test: (i, p) => (p.sujetaRetencion && i.letter === "A") || i.letter === "M",
     affects: (p) => p.sujetaRetencion,
   },
   fce: {
-    label: "Factura de Crédito Electrónica MiPyME (Faro todavía no la emite)",
-    test: () => false,
-    affects: () => false,
+    label: "Factura de Crédito Electrónica MiPyME",
+    test: (i) => !!i.fce && i.kind === "factura",
+    affects: () => true,
   },
   monotributo: {
     label: "Comprobante C de un monotributista",
@@ -234,7 +236,7 @@ export const LEGEND_RULES: LegendRule[] = [
     validTo: null,
     active: true,
     version: 1,
-    note: "Faro todavía no emite FCE: queda en el catálogo para cuando la emita.",
+    note: "Se agrega sola en las FCE MiPyME (§2.p, B3).",
   },
   {
     key: "monotributo_c",

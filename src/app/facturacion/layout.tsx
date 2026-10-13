@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Boxes, CalendarClock, FileText, Gauge, Layers, ListChecks, ScanText, Settings2, ShieldCheck, Users } from "lucide-react";
+import { Boxes, CalendarClock, FileStack, FileText, Gauge, Layers, ListChecks, Repeat, ScanText, Settings2, ShieldCheck, Users } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { AppFrame } from "@/components/app/shell/AppFrame";
 import { requirePersonal } from "@/lib/auth";
@@ -19,6 +19,8 @@ export default async function FacturacionLayout({ children }: { children: React.
         description="Tus comprobantes con ARCA y los datos de tu situación fiscal según lo que cargaste. Faro ordena; el criterio es de un contador."
         tabs={[
           { href: "/facturacion", label: "Comprobantes", icon: FileText, match: ["/facturacion/nueva"] },
+          { href: "/facturacion/otros", label: "Presupuestos y más", icon: FileStack },
+          { href: "/facturacion/recurrentes", label: "Recurrentes", icon: Repeat },
           { href: "/facturacion/lotes", label: "Lotes", icon: Layers },
           { href: "/facturacion/recibidos", label: "Recibidos", icon: ScanText },
           { href: "/facturacion/clientes", label: "Clientes y productos", icon: Users },

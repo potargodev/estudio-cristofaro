@@ -6,10 +6,13 @@ import { ArcaError, orgIssuer } from "@/modules/arca/server";
 import { getDb } from "@/db";
 import { legal_entities } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
+import { DocsView, RecurringView } from "./MoreViews";
 import { CustomersView, Feedback, InvoiceListView, SemaforoView, SettingsView, SituationView } from "./views";
 
 const VIEWS = [
   { key: "comprobantes", label: "Comprobantes" },
+  { key: "otros", label: "Presupuestos, remitos y recibos" },
+  { key: "recurrentes", label: "Recurrentes" },
   { key: "situacion", label: "Situación con ARCA" },
   { key: "monotributo", label: "Monotributo" },
   { key: "clientes", label: "Clientes y productos" },
@@ -66,6 +69,8 @@ export async function ArcaOrgTab({ me, orgId, sp }: { me: StaffUser; orgId: stri
         )}
       </div>
       {ver === "comprobantes" && <InvoiceListView scope={scope} sp={sp} />}
+      {ver === "otros" && <DocsView scope={scope} sp={sp} volver={volver} />}
+      {ver === "recurrentes" && <RecurringView scope={scope} sp={sp} volver={volver} />}
       {ver === "situacion" && <SituationView scope={scope} sp={sp} volver={volver} />}
       {ver === "monotributo" && <SemaforoView scope={scope} sp={sp} volver={volver} />}
       {ver === "clientes" && <CustomersView scope={scope} sp={sp} volver={volver} />}

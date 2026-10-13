@@ -17,7 +17,7 @@ export const metadata = { title: "Facturación" };
 // con lo del mes, borradores, rechazos, cola, semáforo y emitir directo.
 
 const LIGHT: Record<string, { label: string; tone: "ok" | "progress" | "danger" | "neutral" }> = { verde: { label: "Verde", tone: "ok" }, amarillo: { label: "Amarillo", tone: "progress" }, rojo: { label: "Rojo", tone: "danger" }, excluido: { label: "Excluido", tone: "danger" } };
-const REGIME: Record<string, string> = { monotributo: "Monotributo", responsable_inscripto: "Responsable inscripto", exento: "Exento", otro: "Otro" };
+const REGIME: Record<string, string> = { monotributo: "Monotributo", responsable_inscripto: "Responsable inscripto", exento: "Exento", sociedad: "Sociedad", otro: "Otro" };
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
@@ -104,7 +104,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                   )}
                 </td>
                 <td className="px-3 py-2">
-                  <div className="flex flex-wrap justify-end gap-2">
+                  <div className="flex justify-end gap-2 whitespace-nowrap">
                     <Link href={`/admin/organizaciones/${r.organizationId}/arca/nueva?cuit=${r.cuit}`} className={chipClass(false)}>
                       Emitir
                     </Link>

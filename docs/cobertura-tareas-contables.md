@@ -126,17 +126,17 @@
 | Tarea | Estado | Dónde / nota |
 |---|---|---|
 | Facturas A, B, C y E, notas de crédito y débito | **Cubierto** | F3. |
-| Factura M | **Planificado (FA)** | |
-| Factura de Crédito Electrónica MiPyME (FCE) | **Planificado (FA)** | |
-| Recibos, presupuestos y remitos | **Planificado (FA)** | |
-| Facturación recurrente y masiva por lote | **Cubierto** (lote) / **Planificado (FA)** (recurrente) | Lotes desde Excel, CSV o pegado, validación por fila, cola con progreso, reintentos e idempotencia, informe, ZIP y envío (B2). |
+| Factura M | **Cubierto** | Con leyenda; régimen vigente «a validar» (B3). |
+| Factura de Crédito Electrónica MiPyME (FCE) | **Cubierto** | A, B y C con CBU, transferencia y vencimiento; notas con marca de anulación (B3). La aceptación o el rechazo del cliente se ven en ARCA. |
+| Recibos, presupuestos y remitos | **Cubierto** | No fiscales, con PDF y link; presupuesto → factura (B3). |
+| Facturación recurrente y masiva por lote | **Cubierto** | Recurrentes con ajuste por IPC e interruptor «Facturar automáticamente» (B3). Lotes desde Excel, CSV o pegado, validación por fila, cola con progreso, reintentos e idempotencia, informe, ZIP y envío (B2). |
 | Panel de facturación con muchas CUIT | **Cubierto** | Operación → Facturación (B1). |
 | Puntos de venta y numeración desde ARCA | **Cubierto** | F3. |
 | CAE y QR | **Cubierto** | F3. |
 | Contingencia de ARCA caída (cola de emisión) | **Cubierto** | Cola con número previsto, emisión en orden al volver, aviso, estado de ARCA con historial (B5). |
 | Comprobantes recibidos (lectura, validación y buzón de la empresa) | **Cubierto / Planificado (FA, NU-4)** | Lectura existe; buzón e ítems por percepción, planificados. |
 | Constatación de CAE de terceros (WSCDC) | **Cubierto** | F6. |
-| Consulta de padrón al facturar | **Cubierto / Planificado (FA)** | |
+| Consulta de padrón al facturar | **Cubierto** | «Completar con ARCA» en el formulario (B3). |
 | Facturación de ventas de tiendas online | **Planificado (FA, NU-9)** | |
 | Envío de comprobantes por mail y WhatsApp | **Cubierto** | Mail; WhatsApp con link público que vence y se desactiva, en lote, por wa.me o por la API con acuses (A4). |
 | Leyendas obligatorias | **Cubierto** | §2.q etapa 5. |

@@ -593,3 +593,18 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Nada nuevo: usa el certificado y la delegación de ARCA ya pendientes.
+
+## §2.p · B3: todos los comprobantes (13 de octubre)
+
+**Qué quedó**
+- **Factura M** y **FCE MiPyME** (A, B y C, con sus notas) como variantes en el formulario; CBU y modalidad de transferencia en Ajustes; vencimiento del pago; opcionales 2101, 27 y 22; leyendas («sujeta a retención» en M y «pago en CBU informada» en la FCE). El simulador de ARCA valida los opcionales.
+- **Completar con ARCA**: autocompleta nombre, condición y domicilio del cliente desde el padrón (auditado).
+- **Presupuestos** (pasan a factura con un clic, una sola vez), **remitos** y **recibos de cobranza** con número, PDF («Documento no válido como factura»), link público y WhatsApp. En la cuenta personal («Presupuestos y más») y en ARCA de cada organización. Ruta `/api/comprobantes/<id>/pdf`.
+- **Recurrentes** con ajuste por IPC, borrador cada mes o emisión con el interruptor, sin duplicar períodos (tarea `facturacion`). Migración `0062`.
+- Ayuda: `facturacion/todos-los-comprobantes`.
+
+**Qué se probó**
+- `scripts/pruebas/comprobantes.mts` (31 verificaciones): M con IVA y leyenda, M a consumidor final no, FCE sin CBU no, CBU inválido no, FCE A y su nota con los opcionales en el pedido a ARCA, padrón, presupuestos correlativos y a factura una sola vez, remito y recibo con PDF, link y anulación, recurrente con IPC +4 %, sin duplicar, emisión con el interruptor, pausa y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Validar con la contadora la vigencia de la Factura M (RG 5762) y el monto mínimo de la FCE; cargar la serie del IPC en el Faro Manager.

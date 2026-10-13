@@ -2469,6 +2469,9 @@ export const invoice_settings = pgTable(
     address: text("address"),
     activity_start: date("activity_start"),
     iibb: text("iibb"),
+    /** §2.p (B3): CBU para la Factura de Crédito Electrónica MiPyME y su modalidad de transferencia (SCA o ADC) */
+    cbu: text("cbu"),
+    fce_transfer: text("fce_transfer").notNull().default("SCA"),
     logo_path: text("logo_path"),
     color: text("color").default("#1c2235"),
     email: text("email"),
@@ -5408,4 +5411,78 @@ export const invoice_batch_rows = pgTable(
     updated_at: updatedAt(),
   },
   (t) => [uniqueIndex("invoice_batch_rows_idx").on(t.batch_id, t.row_number), index("invoice_batch_rows_status_idx").on(t.status)],
+);
+
+/**
+ * Comprobantes no fiscales (§2.p, B3): presupuestos (que pasan a factura),
+ * remitos y recibos de cobranza. Numeración propia por organización, CUIT y tipo.
+ */
+export const commercial_docs = pgTable(
+  "commercial_docs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit").notNull(),
+    /** presupuesto | remito | recibo */
+    kind: text("kind").notNull(),
+    number: integer("number").notNull(),
+    issue_date: date("issue_date").notNull(),
+    valid_until: date("valid_until"),
+    customer_name: text("customer_name").notNull(),
+    customer_doc_type: integer("customer_doc_type").notNull().default(99),
+    customer_doc_number: text("customer_doc_number").notNull().default("0"),
+    customer_iva_condition: text("customer_iva_condition").notNull().default("consumidor_final"),
+    customer_email: text("customer_email"),
+    customer_address: text("customer_address"),
+    items: jsonb("items").$type<{ description: string; quantity: number; unitPrice: number; ivaRate: number | null }[]>().notNull().default([]),
+    total: numeric("total", { precision: 16, scale: 2 }).notNull(),
+    currency: text("currency").notNull().default("PES"),
+    /** Recibo: comprobantes que cancela y medio de pago */
+    applies_to: jsonb("applies_to").$type<string[]>().notNull().default([]),
+    payment_method: text("payment_method"),
+    /** borrador | emitido | aceptado | facturado | anulado */
+    status: text("status").notNull().default("emitido"),
+    invoice_id: uuid("invoice_id").references(() => invoices.id, { onDelete: "set null" }),
+    notes: text("notes"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("commercial_docs_number_idx").on(t.organization_id, t.cuit, t.kind, t.number), index("commercial_docs_org_idx").on(t.organization_id, t.kind, t.issue_date)],
+);
+
+/** Facturas recurrentes (abonos) con ajuste opcional por IPC */
+export const recurring_invoices = pgTable(
+  "recurring_invoices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    cuit: text("cuit").notNull(),
+    name: text("name").notNull(),
+    /** Datos del borrador (cliente, ítems, tipo, punto de venta, concepto) */
+    template: jsonb("template").$type<Record<string, unknown>>().notNull(),
+    day_of_month: integer("day_of_month").notNull().default(1),
+    next_date: date("next_date").notNull(),
+    /** ninguno | ipc (ajusta los precios por la variación del IPC desde el mes base) */
+    adjust: text("adjust").notNull().default("ninguno"),
+    base_month: text("base_month"),
+    active: boolean("active").notNull().default(true),
+    last_invoice_id: uuid("last_invoice_id").references(() => invoices.id, { onDelete: "set null" }),
+    last_run_at: timestamp("last_run_at", { withTimezone: true }),
+    last_error: text("last_error"),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [index("recurring_invoices_next_idx").on(t.active, t.next_date), index("recurring_invoices_org_idx").on(t.organization_id)],
 );

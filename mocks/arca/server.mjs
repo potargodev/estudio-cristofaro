@@ -113,7 +113,7 @@ function wsfe(op, body) {
   if (err) return wrap(op, { Errors: err });
   const cuit = tag(body, "Cuit");
   if (op === "FEParamGetPtosVenta") return wrap(op, { ResultGet: { PtoVenta: PUNTOS } });
-  if (op === "FEParamGetTiposCbte") return wrap(op, { ResultGet: { CbteTipo: [1, 2, 3, 6, 7, 8, 11, 12, 13, 19, 20, 21].map((i) => ({ Id: i, Desc: `Tipo ${i}`, FchDesde: "20100917", FchHasta: "NULL" })) } });
+  if (op === "FEParamGetTiposCbte") return wrap(op, { ResultGet: { CbteTipo: [1, 2, 3, 6, 7, 8, 11, 12, 13, 19, 20, 21, 51, 52, 53, 201, 202, 203, 206, 207, 208, 211, 212, 213].map((i) => ({ Id: i, Desc: `Tipo ${i}`, FchDesde: "20100917", FchHasta: "NULL" })) } });
   if (op === "FEParamGetTiposIva") return wrap(op, { ResultGet: { IvaTipo: [[3, "0%"], [4, "10.5%"], [5, "21%"], [6, "27%"], [8, "5%"], [9, "2.5%"]].map(([Id, Desc]) => ({ Id, Desc })) } });
   if (op === "FEParamGetTiposDoc") return wrap(op, { ResultGet: { DocTipo: [[80, "CUIT"], [86, "CUIL"], [96, "DNI"], [99, "Doc. (Otro)"]].map(([Id, Desc]) => ({ Id, Desc })) } });
   if (op === "FECompUltimoAutorizado") {
@@ -142,13 +142,20 @@ function wsfe(op, body) {
     const sum = num("ImpTotConc") + num("ImpNeto") + num("ImpOpEx") + num("ImpTrib") + num("ImpIVA");
     if (Math.abs(total - sum) > 0.01) obs.push({ Code: 10048, Msg: "ImpTotal no es la suma de ImpTotConc, ImpNeto, ImpOpEx, ImpTrib e ImpIVA" });
     const ivas = tags(det, "AlicIva");
-    const isC = [11, 12, 13].includes(tipo);
+    const isC = [11, 12, 13, 211, 212, 213].includes(tipo);
     if (isC && (ivas.length || num("ImpIVA") > 0)) obs.push({ Code: 10071, Msg: "Los comprobantes C no llevan IVA discriminado" });
     if (!isC && ![19, 20, 21].includes(tipo) && num("ImpNeto") > 0 && !ivas.length) obs.push({ Code: 10070, Msg: "Falta el detalle de IVA" });
     const ivaSum = ivas.reduce((s, x) => s + Number(tag(x, "Importe") ?? 0), 0);
     if (Math.abs(ivaSum - num("ImpIVA")) > 0.01) obs.push({ Code: 10051, Msg: "La suma de alícuotas no coincide con ImpIVA" });
-    if ([1, 2, 3].includes(tipo) && Number(tag(det, "DocTipo")) !== 80) obs.push({ Code: 10013, Msg: "Para comprobantes A el receptor tiene que identificarse con CUIT" });
-    if ([2, 3, 7, 8, 12, 13, 20, 21].includes(tipo) && !tag(det, "CbteAsoc")) obs.push({ Code: 10197, Msg: "Las notas de crédito y débito tienen que informar el comprobante asociado" });
+    if ([1, 2, 3, 51, 52, 53, 201, 202, 203].includes(tipo) && Number(tag(det, "DocTipo")) !== 80) obs.push({ Code: 10013, Msg: "Para comprobantes A y M el receptor tiene que identificarse con CUIT" });
+    if ([2, 3, 7, 8, 12, 13, 20, 21, 52, 53, 202, 203, 207, 208, 212, 213].includes(tipo) && !tag(det, "CbteAsoc")) obs.push({ Code: 10197, Msg: "Las notas de crédito y débito tienen que informar el comprobante asociado" });
+    // FCE MiPyME (B3): la factura lleva CBU (opcional 2101) y vencimiento del pago; las notas, la marca de anulación (22)
+    const opc = tags(det, "Opcional").map((o) => ({ id: tag(o, "Id"), valor: tag(o, "Valor") }));
+    if ([201, 206, 211].includes(tipo)) {
+      if (!opc.some((o) => o.id === "2101" && /^\d{22}$/.test(o.valor ?? ""))) obs.push({ Code: 10168, Msg: "Para la Factura de Crédito Electrónica MiPyME informá el CBU del emisor (opcional 2101)" });
+      if (!tag(det, "FchVtoPago")) obs.push({ Code: 10169, Msg: "La Factura de Crédito Electrónica MiPyME lleva la fecha de vencimiento del pago" });
+    }
+    if ([202, 203, 207, 208, 212, 213].includes(tipo) && !opc.some((o) => o.id === "22")) obs.push({ Code: 10173, Msg: "Las notas de la FCE MiPyME informan si anulan (opcional 22)" });
     if (!tag(det, "CondicionIVAReceptorId")) obs.push({ Code: 10242, Msg: "Falta la condición frente al IVA del receptor" });
     if (dropNext) {
       dropNext = false;

@@ -1,4 +1,5 @@
 import "server-only";
+import { lastDayOfMonth } from "@/lib/format";
 import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { invoices, legal_entities, organizations } from "@/db/schema";
@@ -39,7 +40,7 @@ export async function billingPanel(studioId: string, month: string) {
   if (!ents.length) return [];
   const orgIds = [...new Set(ents.map((x) => x.e.organization_id))];
   const from = `${month}-01`;
-  const to = `${month}-31`;
+  const to = lastDayOfMonth(month);
   const y = Number(month.slice(0, 4));
   const m = Number(month.slice(5, 7));
   const from12 = new Date(Date.UTC(y, m - 12, 1)).toISOString().slice(0, 10);

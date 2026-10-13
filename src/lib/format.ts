@@ -113,6 +113,12 @@ export function formatDate(value: Date | string | number | null | undefined, sty
 }
 
 /** Hoy en Buenos Aires (YYYY-MM-DD) */
+/** Último día de un mes «AAAA-MM» como fecha «AAAA-MM-DD» (nunca un 31 que no existe) */
+export const lastDayOfMonth = (month: string) => {
+  const [y, m] = month.split("-").map(Number);
+  return `${month}-${String(new Date(Date.UTC(y, m, 0)).getUTCDate()).padStart(2, "0")}`;
+};
+
 export const todayAR = () => new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date());
 
 /** Período "2026-09" → "septiembre 2026"; si no tiene esa forma, lo devuelve como vino */

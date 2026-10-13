@@ -17,6 +17,8 @@ const MAP: [string, string][] = [
   ["/facturacion/arca", "facturacion/mi-situacion-arca"],
   ["/facturacion/ajustes", "facturacion/delegar-en-faro"],
   ["/facturacion/lotes", "facturacion/panel-y-lotes"],
+  ["/facturacion/otros", "facturacion/todos-los-comprobantes"],
+  ["/facturacion/recurrentes", "facturacion/todos-los-comprobantes"],
   ["/facturacion", "facturacion/emitir-facturas"],
   ["/faro-manager/arca", "facturacion/certificado-homologacion"],
   ["/faro-manager/monotributo", "facturacion/semaforo-monotributo"],

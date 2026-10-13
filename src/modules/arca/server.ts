@@ -24,7 +24,7 @@ import { audit } from "@/lib/audit";
 import type { StaffUser } from "@/lib/auth";
 import { checkLimit, hasModule } from "@/lib/faro/entitlements";
 import { ownOrganization } from "@/lib/faro/tenants";
-import { allowedTypes, CBTE_TYPES, IVA_CONDITION_CODE, validCuit } from "./config";
+import { allowedTypes, CBTE_TYPES, IVA_CONDITION_CODE, validCuit, withVariants } from "./config";
 import { fromArcaDate, invoiceTotals, ivaCode, toArcaDate } from "./calc";
 import { deadlines, type TaxProfileInput } from "./calendar";
 import { checkByKey, GUIDED_CHECKS } from "./checks";
@@ -167,6 +167,9 @@ interface SettingsInput {
   website?: string | null;
   footer?: string | null;
   logoPath?: string | null;
+  /** §2.p (B3): CBU para FCE MiPyME y su modalidad (SCA o ADC) */
+  cbu?: string | null;
+  fceTransfer?: string | null;
 }
 
 export async function saveSettings(scope: IssuerScope, i: SettingsInput, actor: ArcaActor) {
@@ -187,7 +190,10 @@ export async function saveSettings(scope: IssuerScope, i: SettingsInput, actor: 
     website: i.website || null,
     footer: i.footer?.slice(0, 300) || null,
     ...(i.logoPath !== undefined ? { logo_path: i.logoPath } : {}),
+    ...(i.cbu !== undefined ? { cbu: i.cbu ? i.cbu.replace(/\D/g, "") : null } : {}),
+    ...(i.fceTransfer ? { fce_transfer: i.fceTransfer === "ADC" ? "ADC" : "SCA" } : {}),
   };
+  if (values.cbu && !/^\d{22}$/.test(values.cbu)) throw new ArcaError("El CBU tiene 22 números.");
   await db()
     .insert(invoice_settings)
     .values(values)
@@ -377,9 +383,16 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
   } else throw new ArcaError("Elegí o cargá el cliente.");
 
   const allowed = allowedTypes(settings.iva_condition, customer.ivaCondition);
-  const cbteType = i.cbteType && allowed.includes(Number(i.cbteType)) ? Number(i.cbteType) : allowed[0];
-  if (i.cbteType && !allowed.includes(Number(i.cbteType))) throw new ArcaError(`Con tu condición (${settings.iva_condition === "monotributo" ? "monotributo" : settings.iva_condition}) y la del cliente corresponde ${CBTE_TYPES[allowed[0]].label}.`);
-  if ([1, 2, 3].includes(cbteType) && customer.docType !== 80) throw new ArcaError("Para comprobantes A el cliente tiene que tener CUIT.");
+  // §2.p (B3): además de los comunes, M y FCE MiPyME de la misma familia
+  const all = withVariants(allowed);
+  const cbteType = i.cbteType && all.includes(Number(i.cbteType)) ? Number(i.cbteType) : allowed[0];
+  if (i.cbteType && !all.includes(Number(i.cbteType))) throw new ArcaError(`Con tu condición (${settings.iva_condition === "monotributo" ? "monotributo" : settings.iva_condition}) y la del cliente corresponde ${CBTE_TYPES[allowed[0]].label}.`);
+  if ((CBTE_TYPES[cbteType].letter === "A" || CBTE_TYPES[cbteType].letter === "M") && customer.docType !== 80) throw new ArcaError(`Para comprobantes ${CBTE_TYPES[cbteType].letter} el cliente tiene que tener CUIT.`);
+  if (CBTE_TYPES[cbteType].fce && customer.docType !== 80) throw new ArcaError("La Factura de Crédito Electrónica se emite a una CUIT (empresa grande).");
+  if (CBTE_TYPES[cbteType].fce && CBTE_TYPES[cbteType].kind === "factura") {
+    if (!/^\d{22}$/.test((settings.cbu ?? "").replace(/\D/g, ""))) throw new ArcaError("Para emitir una Factura de Crédito Electrónica cargá el CBU en los datos de facturación (Ajustes).");
+    if (!isDate(i.paymentDue)) throw new ArcaError("La Factura de Crédito Electrónica lleva fecha de vencimiento del pago.");
+  }
   const kind = CBTE_TYPES[cbteType].kind;
   let associated: typeof invoices.$inferSelect | null = null;
   if (kind !== "factura") {
@@ -408,7 +421,7 @@ export async function createDraft(scope: IssuerScope, i: DraftInput, actor: Arca
     concept,
     service_from: concept === 1 ? null : isDate(i.serviceFrom) ? i.serviceFrom! : month0,
     service_to: concept === 1 ? null : isDate(i.serviceTo) ? i.serviceTo! : issueDate,
-    payment_due: concept === 1 ? null : isDate(i.paymentDue) ? i.paymentDue! : issueDate,
+    payment_due: CBTE_TYPES[cbteType].fce && isDate(i.paymentDue) ? i.paymentDue! : concept === 1 ? null : isDate(i.paymentDue) ? i.paymentDue! : issueDate,
     customer_id: customer.id ?? null,
     customer_doc_type: customer.docType,
     customer_doc_number: customer.docNumber,
@@ -559,8 +572,9 @@ export async function emitInvoice(scope: IssuerScope, id: string, actor: ArcaAct
       monId: inv.currency,
       monCotiz: Number(inv.exchange_rate),
       condicionIvaReceptorId: IVA_CONDITION_CODE[inv.customer_iva_condition] ?? 5,
-      iva: letter === "A" || letter === "B" ? inv.iva_breakdown.map((x) => ({ id: ivaCode(x.rate), baseImp: x.base, importe: x.amount })) : [],
+      iva: letter === "A" || letter === "B" || letter === "M" ? inv.iva_breakdown.map((x) => ({ id: ivaCode(x.rate), baseImp: x.base, importe: x.amount })) : [],
       asociados,
+      ...(await fceOptions(inv)),
     });
     if (res.approved && res.cae) {
       const r = await finish({ status: "autorizada", legends, cae: res.cae, cae_due: fromArcaDate(res.caeDue ?? ""), observations: res.observations, raw_request: { xml: res.request }, raw_response: { xml: res.raw }, authorized_by: actor.id, authorized_at: new Date(), public_token: randomBytes(18).toString("base64url"), error: null });
@@ -610,6 +624,25 @@ export async function invoiceByToken(token: string) {
 export async function settingsForInvoice(inv: typeof invoices.$inferSelect) {
   const [s] = await db().select().from(invoice_settings).where(and(eq(invoice_settings.organization_id, inv.organization_id), eq(invoice_settings.cuit, inv.cuit), eq(invoice_settings.studio_id, inv.studio_id)));
   return s ?? null;
+}
+
+/** Padrón (B3): datos de una CUIT para autocompletar el cliente al facturar (auditado; no guarda la constancia) */
+export async function lookupTaxpayer(studioId: string, cuit: string, actor: ArcaActor) {
+  if (!(await hasModule(studioId, "arca"))) throw new ArcaError("La integración con ARCA no está incluida en tu plan.");
+  if (!/^\d{11}$/.test(cuit)) throw new ArcaError("La CUIT no es válida.");
+  const cred = await loadCredential();
+  const r = await getPersona(cred, cuit);
+  await audit({ studioId, actor, action: "arca.padron_consulta", entityType: "cuit", entityId: cuit, metadata: { razon_social: r.data.name } });
+  return r.data;
+}
+
+/** FCE MiPyME (B3): CBU del emisor y transferencia (factura) o «no anula» (notas), y el vencimiento del pago siempre */
+async function fceOptions(inv: typeof invoices.$inferSelect) {
+  const t = CBTE_TYPES[inv.cbte_type];
+  if (!t?.fce) return {};
+  if (t.kind !== "factura") return { fce: true, opcionales: [{ id: "22", valor: "N" }] };
+  const st = await settingsForInvoice(inv);
+  return { fce: true, fchVtoPago: inv.payment_due ? toArcaDate(inv.payment_due) : undefined, opcionales: [{ id: "2101", valor: (st?.cbu ?? "").replace(/\D/g, "") }, { id: "27", valor: st?.fce_transfer ?? "SCA" }] };
 }
 
 // ───────────── Semáforo de monotributo ─────────────

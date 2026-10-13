@@ -2,7 +2,7 @@ import "server-only";
 import { randomBytes, randomUUID } from "node:crypto";
 import { and, desc, eq, gt, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { documents, invoices, memberships, organizations, payroll_items, share_links, whatsapp_messages } from "@/db/schema";
+import { commercial_docs, documents, invoices, memberships, organizations, payroll_items, share_links, whatsapp_messages } from "@/db/schema";
 import { audit } from "@/lib/audit";
 import type { StaffUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
@@ -17,7 +17,7 @@ import { normalizePhone } from "@/modules/whatsapp/core";
 // «faro_documento», con acuses) y si no, con el enlace wa.me que abre el
 // WhatsApp de quien envía. Todo queda registrado y en la auditoría.
 
-export const SHARE_TYPES = { factura: "Comprobante", recibo: "Recibo de sueldo", documento: "Documento" } as const;
+export const SHARE_TYPES = { factura: "Comprobante", recibo: "Recibo de sueldo", documento: "Documento", comercial: "Presupuesto, remito o recibo" } as const;
 export type ShareType = keyof typeof SHARE_TYPES;
 export const isShareType = (t: string): t is ShareType => t in SHARE_TYPES;
 const EXPIRY_DAYS = [1, 7, 30] as const;
@@ -61,6 +61,13 @@ async function targetOf(user: StaffUser, type: ShareType, id: string): Promise<T
     if (!(staff || (await member(it.organization_id, "sueldos.gestionar")))) return null;
     const sn = it.snapshot as Record<string, unknown>;
     return { studioId: it.studio_id, organizationId: it.organization_id, title: `Recibo de sueldo de ${String(sn.name ?? "")}`.trim() };
+  }
+  if (type === "comercial") {
+    const [c] = await db().select().from(commercial_docs).where(and(eq(commercial_docs.id, id), eq(commercial_docs.studio_id, user.studioId)));
+    if (!c || c.status === "anulado") return null;
+    if (!(staff || user.role === "titular" || (await member(c.organization_id, "documentos.ver")))) return null;
+    const { DOC_KINDS } = await import("@/modules/facturacion-plus/server");
+    return { studioId: c.studio_id, organizationId: c.organization_id, title: `${DOC_KINDS[c.kind as keyof typeof DOC_KINDS] ?? "Comprobante"} ${String(c.number).padStart(8, "0")}` };
   }
   const [doc] = await db().select().from(documents).where(and(eq(documents.id, id), eq(documents.studio_id, user.studioId)));
   if (!doc) return null;
@@ -132,6 +139,12 @@ export async function fileForToken(token: string): Promise<{ data: Uint8Array; n
       const { receiptOf } = await import("@/modules/liquidacion/server");
       const r = await receiptOf({ studioId: l.studio_id, organizationId: it.org, canManage: false, fromStudio: true }, l.entity_id);
       if (r) out = { data: new Uint8Array(r.pdf), name: r.name, mime: "application/pdf" };
+    }
+  } else if (l.entity_type === "comercial") {
+    const [c] = await db().select().from(commercial_docs).where(and(eq(commercial_docs.id, l.entity_id), eq(commercial_docs.studio_id, l.studio_id)));
+    if (c && c.status !== "anulado") {
+      const { commercialPdf, issuerOf } = await import("@/modules/facturacion-plus/pdf");
+      out = { data: await commercialPdf(c, await issuerOf(c)), name: `${l.title}.pdf`, mime: "application/pdf" };
     }
   } else if (l.entity_type === "documento") {
     const [doc] = await db().select().from(documents).where(and(eq(documents.id, l.entity_id), eq(documents.studio_id, l.studio_id)));

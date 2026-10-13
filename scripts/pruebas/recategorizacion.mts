@@ -74,6 +74,8 @@ const mine = pf.rows.filter((r) => r.businessName.startsWith("Mono A5 "));
 const row = (n: string) => mine.find((r) => r.entityId === ids[n].ent)!;
 check("la cartera trae a los 30 monotributistas", mine.length === 30, String(mine.length));
 check("12 meses que terminan en el corte de la recategorización", pf.months.length === 12 && pf.months[11] === P.cutoff);
+const julio = await rc.portfolio(A, `${Number(P.key.slice(0, 4)) - (P.key.endsWith("-01") ? 1 : 0)}-07`);
+check("la de julio (corte el 30/06, un mes de 30 días) también se calcula", julio.period.cutoff.endsWith("-06") && julio.rows.length >= 30);
 check("facturación: comprobantes del período, menos notas de crédito, sin lo de afuera", row("Mantiene").income12m === 5_000_000, String(row("Mantiene").income12m));
 check("suma lo cargado a mano", row("Con lo cargado a mano").income12m === 10_000_000);
 check("mantiene, sube, baja, excluido y sin categoría", row("Mantiene").movement === "mantiene" && row("Sube").movement === "sube" && row("Sube").suggested === "C" && row("Baja").movement === "baja" && row("Baja").suggested === "B" && row("Excluido").movement === "excluido" && row("Sin categoría").movement === "sin_categoria");
