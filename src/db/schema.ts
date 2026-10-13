@@ -3832,6 +3832,8 @@ export const whatsapp_contacts = pgTable(
     attempts: integer("attempts").notNull().default(0),
     verified_at: timestamp("verified_at", { withTimezone: true }),
     opt_in_avisos: boolean("opt_in_avisos").notNull().default(true),
+    /** §2.p B6: lo que el Vigía dejó esperando respuesta (factura a confirmar o gasto esperando el ticket) */
+    pending: jsonb("pending").$type<{ type: "factura" | "gasto"; id?: string; amount?: number; description?: string; at: string } | null>(),
     created_at: createdAt(),
     updated_at: updatedAt(),
   },

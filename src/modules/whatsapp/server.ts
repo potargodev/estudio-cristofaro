@@ -318,6 +318,20 @@ async function downloadMedia(a: WaAccount, mediaId: string) {
   return { data, mime: meta.mime_type ?? "application/octet-stream" };
 }
 
+/** Audio → texto con la IA de la plataforma (si está configurada); null si no se pudo */
+async function transcribe(a: WaAccount, mediaId: string) {
+  try {
+    const { getPlatformAi, isConfigured, transcribeAudio } = await import("@/modules/copilot/platform");
+    const p = await getPlatformAi();
+    if (!isConfigured(p)) return null;
+    const file = await downloadMedia(a, mediaId);
+    const t = await transcribeAudio(p, p.model_primary!, file.data, file.mime);
+    return t.text && t.text !== "[inaudible]" ? t.text : null;
+  } catch {
+    return null;
+  }
+}
+
 const EXT: Record<string, string> = { "image/jpeg": ".jpg", "image/png": ".png", "application/pdf": ".pdf" };
 
 async function handleInbound(a: WaAccount, m: InboundMessage, ok: boolean) {
@@ -339,12 +353,31 @@ async function handleInbound(a: WaAccount, m: InboundMessage, ok: boolean) {
   if (!msg) return "repetido";
   let link: { type: string; id: string } | null = null;
   let reply = "";
-  if ((kind === "imagen" || kind === "documento") && m.mediaId && m.mime && EXT[m.mime]) {
+  // §2.p B6: el Vigía por WhatsApp (facturar, gastos, consultas, avisos)
+  const vigia = await import("./vigia");
+  const who: Parameters<typeof vigia.vigiaReply>[0] = { contactId: c.id, userId: c.user_id, email: sender.email, name: sender.name, studioId, organizationId: orgId, organizationName: sender.org, role: sender.role, pending: c.pending };
+  let text = kind === "texto" ? (m.text?.trim() ?? "") : "";
+  let intent: string | null = null;
+  if (kind === "audio" && m.mediaId) {
+    const heard = await transcribe(a, m.mediaId);
+    if (heard) {
+      text = heard;
+      await db().update(whatsapp_messages).set({ body: heard.slice(0, 5000) }).where(eq(whatsapp_messages.id, msg.id));
+    } else reply = "No pude escuchar el audio. ¿Me lo escribís?";
+  }
+  const handled = text ? await vigia.vigiaReply(who, text, m.id) : null;
+  if (handled) {
+    ({ reply, link, intent } = handled);
+    if (link) await db().update(whatsapp_messages).set({ entity_type: link.type, entity_id: link.id }).where(eq(whatsapp_messages.id, msg.id));
+  } else if ((kind === "imagen" || kind === "documento") && m.mediaId && m.mime && EXT[m.mime]) {
     const file = await downloadMedia(a, m.mediaId);
     const name = m.filename?.replace(/[^\w.\- ]/g, "").slice(0, 80) || `whatsapp-${new Date().toISOString().slice(0, 10)}${EXT[m.mime]}`;
     const f = new File([new Uint8Array(file.data)], name.endsWith(EXT[m.mime]) ? name : `${name}${EXT[m.mime]}`, { type: m.mime });
     const smart = can(sender.role, "documentos.subir") && (await hasModule(studioId, "smart_docs"));
-    if (smart) {
+    const ticket = await vigia.receiptForPending(who, f);
+    if (ticket) {
+      ({ reply, link, intent } = ticket);
+    } else if (smart) {
       const { readUpload } = await import("@/modules/smart-docs/server");
       const doc = await readUpload({ studioId, organizationId: orgId, ownerUserId: null, scope: "organizacion", canConfirm: false }, actor, f, "whatsapp");
       link = { type: "lectura", id: doc.id };
@@ -358,28 +391,28 @@ async function handleInbound(a: WaAccount, m: InboundMessage, ok: boolean) {
       link = { type: "documento", id: d.id };
       reply = "¡Recibido! Guardamos el archivo en tus documentos y el estudio lo revisa.";
     }
-    await db().update(whatsapp_messages).set({ media_path: null, entity_type: link.type, entity_id: link.id }).where(eq(whatsapp_messages.id, msg.id));
-  } else if (kind === "texto" && m.text?.trim()) {
-    // Texto: se suma a la conversación de WhatsApp abierta (7 días) o abre una solicitud nueva
+    await db().update(whatsapp_messages).set({ media_path: null, entity_type: link?.type ?? null, entity_id: link?.id ?? null }).where(eq(whatsapp_messages.id, msg.id));
+  } else if (text) {
+    // Texto (o audio transcripto): se suma a la conversación de WhatsApp abierta (7 días) o abre una solicitud nueva
     const since = new Date(Date.now() - 7 * 86400000);
     const open = (await db().select().from(requests).where(and(eq(requests.studio_id, studioId), eq(requests.organization_id, orgId), eq(requests.created_by, c.user_id), ne(requests.status, "resuelta"), gte(requests.created_at, since))).orderBy(desc(requests.created_at))).find((r) => (r.data as { canal?: string } | null)?.canal === "whatsapp");
     let requestId = open?.id;
     if (!requestId) {
-      const [r] = await db().insert(requests).values({ studio_id: studioId, organization_id: orgId, type: "consulta", subject: `Mensaje por WhatsApp: ${m.text.trim().slice(0, 60)}`, data: { canal: "whatsapp" }, created_by: c.user_id }).returning({ id: requests.id });
+      const [r] = await db().insert(requests).values({ studio_id: studioId, organization_id: orgId, type: "consulta", subject: `Mensaje por WhatsApp: ${text.slice(0, 60)}`, data: { canal: "whatsapp" }, created_by: c.user_id }).returning({ id: requests.id });
       requestId = r.id;
       await emitEvent(studioId, "solicitud.creada", { solicitud_id: r.id, organizacion_id: orgId, tipo: "consulta", asunto: "Mensaje por WhatsApp" }, r.id);
     } else await db().update(requests).set({ status: open!.status }).where(eq(requests.id, requestId));
-    await db().insert(request_messages).values({ request_id: requestId, author_id: c.user_id, from_client: true, body: m.text.trim().slice(0, 5000) });
+    await db().insert(request_messages).values({ request_id: requestId, author_id: c.user_id, from_client: true, body: `${kind === "audio" ? "🎤 " : ""}${text}`.slice(0, 5000) });
     link = { type: "solicitud", id: requestId };
     reply = open ? "" : "¡Recibido! Le pasamos tu mensaje al estudio. La respuesta te llega a tu portal.";
     await db().update(whatsapp_messages).set({ entity_type: link.type, entity_id: link.id }).where(eq(whatsapp_messages.id, msg.id));
     const { notifyStudio } = await import("@/lib/notify");
-    await notifyStudio({ kind: "solicitud", organizationId: orgId, organizationName: sender.org, subject: "Mensaje por WhatsApp", message: m.text.trim().slice(0, 1000) });
-  } else {
-    reply = "Por WhatsApp podemos recibir mensajes de texto, fotos y PDF de tus comprobantes.";
+    await notifyStudio({ kind: "solicitud", organizationId: orgId, organizationName: sender.org, subject: "Mensaje por WhatsApp", message: text.slice(0, 1000) });
+  } else if (!reply) {
+    reply = "Por WhatsApp podemos recibir mensajes de texto, audios, fotos y PDF de tus comprobantes.";
   }
-  await audit({ studioId, organizationId: orgId, actorLabel: `WhatsApp ${maskPhone(m.from)}`, action: "whatsapp.recibido", entityType: link?.type ?? "whatsapp", entityId: link?.id ?? msg.id, metadata: { tipo: kind, firma: ok } });
-  await emitEvent(studioId, "whatsapp.recibido", { mensaje_id: msg.id, organizacion_id: orgId, tipo: kind, texto: m.text ?? "" }, msg.id);
+  await audit({ studioId, organizationId: orgId, actorLabel: `WhatsApp ${maskPhone(m.from)}`, action: "whatsapp.recibido", entityType: link?.type ?? "whatsapp", entityId: link?.id ?? msg.id, metadata: { tipo: kind, firma: ok, pedido: intent } });
+  await emitEvent(studioId, "whatsapp.recibido", { mensaje_id: msg.id, organizacion_id: orgId, tipo: kind, texto: text || (m.text ?? "") }, msg.id);
   if (reply) await sendText(studioId, a, m.from, reply, orgId);
   return "procesado";
 }

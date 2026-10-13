@@ -346,7 +346,7 @@ export const FARO_MODULES: FaroModule[] = [
       { href: "/portal/whatsapp", label: "Portal → Mi cuenta → WhatsApp" },
     ],
     events: ["whatsapp.recibido"],
-    tools: ["listar_mensajes_whatsapp", "enviar_whatsapp"],
+    tools: ["listar_mensajes_whatsapp", "pedidos_whatsapp", "enviar_whatsapp"],
   },
   {
     key: "white_label",

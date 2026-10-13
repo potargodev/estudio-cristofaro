@@ -2,12 +2,12 @@
 
 Todo lo que falta para que Faro funcione con los servicios reales, en **una sola lista ordenada por prioridad**. Lo construido ya funciona contra los simuladores de `mocks/` (ver `docs/avances.md`). Cada ítem dice qué falta, quién lo hace (**Cristofaro**, **Faro** o un **proveedor**), dónde se carga y cómo se verifica.
 
-Actualizado el 12 de octubre de 2026.
+Actualizado el 13 de octubre de 2026.
 
 | Prioridad | Ítems |
 |---|---|
 | **Crítico para la reunión con Cristofaro** | 1 SMTP · 2 IA de la plataforma · 3 Staging revisado y demo cargada |
-| **Alto** | 4 Tango real · 5 ARCA · 6 Mercado Pago de Faro · 7 Mercado Pago del estudio · 8 Validaciones del contador · 9 Revisión legal · 10 Backup en el VPS · 11 IP real detrás del proxy · 12 Contenido real de la web · 13 WhatsApp de Faro |
+| **Alto** | 13 WhatsApp de Faro: verificación de Meta (arrancar ya) · 4 Tango real · 5 ARCA · 6 Mercado Pago de Faro · 7 Mercado Pago del estudio · 8 Validaciones del contador · 9 Revisión legal · 10 Backup en el VPS · 11 IP real detrás del proxy · 12 Contenido real de la web |
 | **Medio** | 14 Verificación de Google · 15 Mercado Pago para la Bitácora · 16 Serie del IPC · 17 IA de cada estudio · 18 Empleados · 19 Archivos de Tango y Xubio · 20 Factura de Faro por la suscripción · 21 Agenda pública en la Red · 28 Tiendas online reales (Stock) |
 | **Bajo** | 22 Dominio e isotipo de Faro · 23 Dominio propio de un estudio · 24 WhatsApp propio de un estudio · 25 Tareas internas y cron externo · 26 Débitos viejos de Inicial · 27 Ramas remotas viejas |
 
@@ -111,17 +111,18 @@ Actualizado el 12 de octubre de 2026.
 - **Dónde:** el equipo y los números, en esos archivos; los precios, en Configuración → Sitio web → Planes.
 - **Cómo se verifica:** estudiocristofaro.com sin «Nombre Apellido» ni «Completar con…».
 
-### 13. WhatsApp de Faro (Meta)
-- **Qué falta:** cuenta de WhatsApp Business **verificada por Meta**, el **número real** de Faro y las **plantillas** aprobadas. Meta tarda: conviene arrancarla ya.
+### 13. WhatsApp de Faro (Meta) · prioridad alta
+- **Qué falta:** cuenta de WhatsApp Business **verificada por Meta**, el **número real** de Faro y las **plantillas** aprobadas. Meta tarda semanas: **es lo primero a arrancar**, porque el Vigía por WhatsApp (facturar por texto o audio, gastos, consultas y avisos, §2.p B6) depende de esto.
 - **Quién:** Faro (owner), con el Business Manager de la empresa; Meta aprueba.
 - **Paso a paso:**
   1. En https://business.facebook.com, completar la verificación de la empresa (documentación legal y dominio).
   2. En https://developers.facebook.com, app tipo «Empresa» con el producto WhatsApp; asociar la WABA y registrar el número (no puede estar usado en la app de WhatsApp).
   3. Usuario del sistema con `whatsapp_business_messaging` y `whatsapp_business_management` y token permanente.
   4. Plantillas en `es_AR`: `faro_codigo` (autenticación: «Tu código de Faro es {{1}}. Vence en 10 minutos.»), `faro_respuesta_solicitud` («Hola {{1}}: el estudio respondió tu solicitud «{{2}}». Entrá a tu portal para verla.») `faro_aviso_general` («Hola {{1}}: {{2}}») y `faro_documento` (utilidad, A4: «Hola: te compartimos {{1}}. Lo ves o descargás acá: {{2}} (el link vence el {{3}}).»).
+  4b. Las plantillas de avisos (`faro_aviso_general`, `faro_aviso_vencimiento`) suman al final «Respondé BAJA para no recibir más avisos.» (Meta lo pide para los avisos de utilidad; Faro ya entiende BAJA y ALTA).
   5. Faro Manager → Plataforma → **WhatsApp**: Phone number ID, WABA ID, número, token y secreto de la app; **Sincronizar plantillas**.
   6. Webhook `https://app.estudiocristofaro.com/api/whatsapp/webhook` con el token de verificación que muestra Faro Manager, suscripto a `messages`. `WHATSAPP_API_URL=https://graph.facebook.com/v21.0` (valor por defecto).
-- **Cómo se verifica:** verificar un número propio desde el portal (Mi cuenta → WhatsApp), mandar un texto (crea una solicitud) y una foto (entra a Documentos o Lectura inteligente). Enviar un comprobante con «Enviar por WhatsApp» y ver el acuse de lectura en el link.
+- **Cómo se verifica:** verificar un número propio desde el portal (Mi cuenta → WhatsApp), mandar un texto (crea una solicitud) y una foto (entra a Documentos o Lectura inteligente). Escribir «facturá 1000 a Prueba por servicio» en homologación (arma el borrador y pide SÍ), mandar un audio (necesita la IA de la plataforma, ítem 2, para transcribir), «¿cuánto facturé?» y BAJA / ALTA. Enviar un comprobante con «Enviar por WhatsApp» y ver el acuse de lectura en el link.
 
 ## Medio
 

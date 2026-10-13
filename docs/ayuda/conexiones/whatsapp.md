@@ -1,9 +1,9 @@
 ---
 titulo: WhatsApp
-resumen: Avisos a tus clientes por WhatsApp con plantillas aprobadas por Meta, y mensajes y comprobantes que llegan por WhatsApp como solicitudes o a la Lectura inteligente.
+resumen: Avisos a tus clientes por WhatsApp con plantillas aprobadas por Meta, y el Vigía por WhatsApp para facturar por texto o audio, rendir gastos con la foto del ticket y consultar, además de mensajes y comprobantes que llegan al estudio.
 perfiles: [estudio, organizacion]
 modulo: whatsapp
-actualizado: 2026-10-11
+actualizado: 2026-10-13
 relacionados: [solicitudes/solicitudes, documentos/lectura-inteligente, configuracion/marca-blanca]
 ---
 
@@ -42,6 +42,21 @@ Con el número verificado, escribile al número del estudio:
 - **Una foto o un PDF de un comprobante** se guarda en tus documentos; si el estudio tiene la Lectura inteligente, la IA lo lee y queda para que el estudio lo confirme.
 
 Si escribís desde un número que no verificaste, te respondemos cómo hacerlo.
+
+## El Vigía por WhatsApp
+
+Con el número verificado también le podés pedir cosas al Vigía, por **texto o por audio** (el audio se pasa a texto y queda guardado):
+
+- **Facturar:** «facturá 25 mil a Juan Pérez por clases de inglés» o «haceme una factura de $120.000 a Gran Empresa SA CUIT 30-55566677-8 por honorarios». Faro arma la factura con la CUIT de tu organización (con CUIT, toma el nombre y la condición del cliente del padrón de ARCA) y te contesta con el detalle. **Respondé SÍ para emitirla o NO para descartarla.** Si ARCA no responde, queda en cola y sale sola cuando vuelve. Necesitás un rol que gestione las finanzas.
+- **Rendir un gasto:** «gasté 3500 en nafta» y después **mandá la foto del ticket**: queda cargado en Rendiciones para que lo apruebe quien gestiona las finanzas.
+- **Consultar:** «¿cuánto facturé este mes?», «¿qué vencimientos tengo?» o «¿cómo vengo con el monotributo?».
+- **Avisos:** escribí **BAJA** para no recibir más avisos por WhatsApp y **ALTA** para volver a recibirlos.
+
+Lo que no es un pedido sigue como mensaje al estudio.
+
+### Facturar sin confirmar cada vez
+
+El titular o su contador pueden activar **Facturar automáticamente lo pedido por WhatsApp** en Vigía → Automatizaciones. Con el interruptor activo, la factura se emite sin esperar el SÍ; se puede pausar en cualquier momento, queda en la auditoría y a las 20 h llega el resumen del día. El estudio ve lo pedido por WhatsApp preguntándole al Vigía («¿qué facturas pidieron por WhatsApp?»).
 
 ## Registro
 

@@ -442,6 +442,13 @@
       "when": 1791873294634,
       "tag": "0062_comprobantes_b3",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1791877979352,
+      "tag": "0063_whatsapp_vigia",
+      "breakpoints": true
     }
   ]
 }

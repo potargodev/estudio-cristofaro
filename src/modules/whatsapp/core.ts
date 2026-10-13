@@ -40,7 +40,7 @@ export interface InboundMessage {
   from: string;
   phoneNumberId: string;
   name: string | null;
-  type: "texto" | "imagen" | "documento" | "otro";
+  type: "texto" | "imagen" | "documento" | "audio" | "otro";
   text: string | null;
   mediaId: string | null;
   mime: string | null;
@@ -71,14 +71,14 @@ export function parseWebhook(body: unknown) {
       const pnid = String(v.metadata?.phone_number_id ?? "");
       for (const m of v.messages ?? []) {
         const type = String(m.type ?? "");
-        const media = (type === "image" ? m.image : type === "document" ? m.document : null) as { id?: string; mime_type?: string; filename?: string; caption?: string } | null;
+        const media = (type === "image" ? m.image : type === "document" ? m.document : type === "audio" ? m.audio : null) as { id?: string; mime_type?: string; filename?: string; caption?: string } | null;
         const from = String(m.from ?? "");
         messages.push({
           id: String(m.id ?? ""),
           from,
           phoneNumberId: pnid,
           name: v.contacts?.find((x) => x.wa_id === from)?.profile?.name ?? null,
-          type: type === "text" ? "texto" : type === "image" ? "imagen" : type === "document" ? "documento" : "otro",
+          type: type === "text" ? "texto" : type === "image" ? "imagen" : type === "document" ? "documento" : type === "audio" ? "audio" : "otro",
           text: type === "text" ? String((m.text as { body?: string })?.body ?? "") : (media?.caption ?? null),
           mediaId: media?.id ?? null,
           mime: media?.mime_type ?? null,

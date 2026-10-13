@@ -46,4 +46,18 @@ export const whatsappTools = [
       }
     },
   }),
+  defineTool<Record<string, never>, unknown>({
+    name: "pedidos_whatsapp",
+    title: "Facturas pedidas por WhatsApp",
+    description: "Facturas que los clientes pidieron por WhatsApp (texto o audio) en los últimos 30 días: emitidas, en cola o en borrador esperando el «SÍ» de quien las pidió.",
+    module: "whatsapp",
+    level: "lectura",
+    roles: ["dueno", "contador", "colaborador"],
+    input: z.object({}),
+    async handler(_i, ctx) {
+      const { whatsappInvoices } = await import("@/modules/whatsapp/vigia");
+      const rows = (await whatsappInvoices(ctx.studioId)).filter((r) => !ctx.allowedOrganizations || ctx.allowedOrganizations.includes(r.organizationId));
+      return { facturas: rows.map((r) => ({ fecha: r.createdAt.toISOString(), organizacion: r.organization, cliente: r.customer, total: Number(r.total), estado: r.status === "borrador" ? "esperando el SÍ" : r.status })), aviso: "Lo que queda en borrador se emite solo cuando quien lo pidió responde SÍ, o con el interruptor «Facturar automáticamente lo pedido por WhatsApp»." };
+    },
+  }),
 ];

@@ -11,10 +11,11 @@
 // - GET /:wabaId/message_templates → plantillas de la cuenta.
 // - GET /:mediaId → URL del archivo; GET /__media/:id → el archivo.
 // - POST /__inbound { webhook, app_secret, phone_number_id, from, text? |
-//   image_base64? + mime? } → simula que un cliente escribe: guarda el
+//   image_base64? | audio_base64? + mime? } → simula que un cliente escribe: guarda el
 //   archivo y manda el webhook firmado (X-Hub-Signature-256) a la app.
 // - POST /__status { webhook, app_secret, phone_number_id, id, status } → acuse
 //   de entrega o lectura.
+// - POST /__media { base64, mime } → guarda un archivo y devuelve su ID (pruebas sin webhook).
 // GET /__sent · POST /__reset
 
 import { createHmac, randomBytes } from "node:crypto";
@@ -62,7 +63,11 @@ createServer(async (req, res) => {
       const id = `wamid.IN${randomBytes(8).toString("hex")}`;
       lastInbound.set(b.from, Date.now());
       const msg = { from: b.from, id, timestamp: String(Math.floor(Date.now() / 1000)) };
-      if (b.image_base64) {
+      if (b.audio_base64) {
+        const mid = `MEDIA${randomBytes(5).toString("hex")}`;
+        media.set(mid, { data: Buffer.from(b.audio_base64, "base64"), mime: b.mime ?? "audio/ogg" });
+        Object.assign(msg, { type: "audio", audio: { id: mid, mime_type: b.mime ?? "audio/ogg", voice: true } });
+      } else if (b.image_base64) {
         const mid = `MEDIA${randomBytes(5).toString("hex")}`;
         const mime = b.mime ?? "image/jpeg";
         media.set(mid, { data: Buffer.from(b.image_base64, "base64"), mime });
@@ -71,6 +76,12 @@ createServer(async (req, res) => {
       const payload = entry(b.phone_number_id, { contacts: [{ profile: { name: b.name ?? "Cliente" }, wa_id: b.from }], messages: [msg] });
       const r = await webhook(b.webhook, b.app_secret, payload);
       return json(res, 200, { id, webhook: r });
+    }
+    if (url.pathname === "/__media" && req.method === "POST") {
+      const b = JSON.parse((await read(req)).toString());
+      const mid = `MEDIA${randomBytes(5).toString("hex")}`;
+      media.set(mid, { data: Buffer.from(b.base64, "base64"), mime: b.mime ?? "application/octet-stream" });
+      return json(res, 200, { id: mid });
     }
     if (url.pathname === "/__status" && req.method === "POST") {
       const b = JSON.parse((await read(req)).toString());

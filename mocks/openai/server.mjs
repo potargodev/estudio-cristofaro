@@ -210,12 +210,15 @@ createServer(async (req, res) => {
     res.setHeader("Content-Type", "application/json");
     return res.end(JSON.stringify({ error: { message: "Rate limit reached (prueba)", type: "rate_limit_exceeded", code: "rate_limit_exceeded" } }));
   }
-  // Transcripción de audio (Whisper): texto fijo
+  // Transcripción de audio (Whisper): texto fijo, o lo que diga el audio de
+  // prueba después de «TRANSCRIPCION:» (así se simula un audio cualquiera)
   if (req.method === "POST" && req.url?.endsWith("/audio/transcriptions")) {
-    for await (const _ of req);
+    const chunks = [];
+    for await (const c of req) chunks.push(c);
+    const said = Buffer.concat(chunks).toString("utf8").match(/TRANSCRIPCION:([^\r\n]+)/)?.[1]?.trim();
     log.push({ at: new Date().toISOString(), transcription: true });
     res.setHeader("Content-Type", "application/json");
-    return res.end(JSON.stringify({ text: "ayer 5000 de nafta y 3200 en el chino" }));
+    return res.end(JSON.stringify({ text: said || "ayer 5000 de nafta y 3200 en el chino" }));
   }
   if (req.method !== "POST" || !req.url?.endsWith("/chat/completions")) {
     res.statusCode = 404;

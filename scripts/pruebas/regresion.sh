@@ -124,6 +124,8 @@ correr recategorizacion "${S[@]}" scripts/pruebas/recategorizacion.mts
 LIMITE=1800 correr lotes "${S[@]}" scripts/pruebas/lotes.mts
 # §2.p · B3 todos los comprobantes (M, FCE, padrón, presupuestos, remitos, recibos y recurrentes)
 correr comprobantes "${S[@]}" scripts/pruebas/comprobantes.mts
+# §2.p · B6 el Vigía por WhatsApp (facturar por texto y audio, gastos, consultas, BAJA/ALTA)
+correr whatsapp-vigia "${S[@]}" scripts/pruebas/whatsapp-vigia.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

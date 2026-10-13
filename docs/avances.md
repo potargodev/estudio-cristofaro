@@ -623,3 +623,18 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Validar los diseños de registro con el aplicativo vigente del Libro IVA Digital y los umbrales del semáforo con la contadora.
+
+## §2.p · B6: el Vigía por WhatsApp (13 de octubre)
+
+**Qué quedó**
+- Por **texto o audio** (transcripto con la IA de la plataforma y guardado como origen) desde un número verificado: **facturar** (borrador + «SÍ»/«NO», o directo con el interruptor «Facturar automáticamente lo pedido por WhatsApp»; padrón de ARCA con CUIT; ARCA caído → cola), **gasto** con la foto del ticket → rendición, **consultas** (facturado del mes, vencimientos, monotributo), **BAJA/ALTA** de avisos. Lo demás sigue como solicitud; fotos y PDF sin gasto pendiente siguen a Documentos o Lectura inteligente.
+- Migración `0063` (`whatsapp_contacts.pending`). Simuladores: audios en `mocks/whatsapp` (`audio_base64`, `/__media`) y transcripción con «TRANSCRIPCION:» en `mocks/openai`.
+- Herramienta del Vigía `pedidos_whatsapp`. Pendientes: la verificación de Meta pasa a ser lo primero de prioridad alta.
+- Ayuda: `conexiones/whatsapp` («El Vigía por WhatsApp»).
+
+**Qué se probó**
+- `src/modules/whatsapp/intent.test.ts` (importes, pedidos, consultas, SÍ/NO, BAJA/ALTA).
+- `scripts/pruebas/whatsapp-vigia.mts` (30 verificaciones): factura por texto en borrador, sin duplicar el reenvío, «SÍ» emite con CAE, «NO» descarta, **factura por audio en el teléfono de prueba**, interruptor activo y en pausa, ARCA caído → cola, gasto + ticket → rendición, consultas, BAJA/ALTA auditadas, rol de consulta sin facturar, solicitud al estudio, Vigía del estudio y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Verificación de Meta, número y plantillas (pendientes, ítem 13, prioridad alta); IA de la plataforma para los audios (ítem 2).

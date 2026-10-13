@@ -139,6 +139,7 @@
 | Consulta de padrón al facturar | **Cubierto** | «Completar con ARCA» en el formulario (B3). |
 | Facturación de ventas de tiendas online | **Planificado (FA, NU-9)** | |
 | Envío de comprobantes por mail y WhatsApp | **Cubierto** | Mail; WhatsApp con link público que vence y se desactiva, en lote, por wa.me o por la API con acuses (A4). |
+| Facturar desde el celular por WhatsApp (texto o audio) | **Cubierto** | El Vigía por WhatsApp (B6): borrador y SÍ, o el interruptor «Facturar automáticamente». |
 | Leyendas obligatorias | **Cubierto** | §2.q etapa 5. |
 
 ## 7. Vínculo con el cliente
@@ -147,7 +148,7 @@
 |---|---|---|
 | Calendario de vencimientos por CUIT y avisos | **Cubierto** | Vencimientos (estudio) y calendario personal. |
 | Pedido y recepción de documentación | **Cubierto** | Documentos y solicitudes. |
-| Comunicaciones con el cliente | **Cubierto** | Mensajes, mail, avisos y WhatsApp (avisos y documentos, A4; canal completo del Vigía en B6). |
+| Comunicaciones con el cliente | **Cubierto** | Mensajes, mail, avisos y WhatsApp: avisos y documentos (A4) y el Vigía por WhatsApp (B6): facturar por texto o audio con SÍ, gastos con ticket, consultas, BAJA/ALTA. |
 | Honorarios: abonos, cobro, recordatorios y estado de cuenta | **Cubierto** | F7. |
 | Factura del estudio por los honorarios | **Cubierto** | F7 con ARCA (F3). |
 | Tareas y cartera del estudio | **Cubierto** | F9. |
