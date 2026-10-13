@@ -26,6 +26,7 @@ const payrollOrg = (await sql`select r.organization_id id from payroll_runs r jo
 const run = payrollOrg ? (await sql`select id from payroll_runs where organization_id = ${payrollOrg} order by created_at desc limit 1`)[0]?.id : null;
 const bankOrg = (await sql`select b.organization_id id from bank_statements b join studios s on s.id = b.studio_id where s.name like 'Ferreyra%' limit 1`)[0]?.id;
 const lola = await org("Indumentaria Lola%");
+const invo = (await sql`select i.id, i.organization_id org from invoices i join studios s on s.id = i.studio_id where s.name like 'Ferreyra%' and i.status = 'autorizada' limit 1`)[0];
 const stmt = bankOrg ? (await sql`select id from bank_statements where organization_id = ${bankOrg} limit 1`)[0]?.id : null;
 const task = (await sql`select t.id from agent_tasks t join studios s on s.id = t.studio_id where s.name like 'Ferreyra%' limit 1`)[0]?.id;
 const store = lola ? (await sql`select id from stock_stores where organization_id = ${lola} and platform = 'tiendanube' limit 1`)[0]?.id : null;
@@ -39,6 +40,8 @@ const nuevas = [
   run && `/admin/organizaciones/${payrollOrg}/sueldos/liquidacion/${run}`,
   run && `/admin/organizaciones/${payrollOrg}/sueldos/liquidacion/${run}?ver=informes`,
   stmt && `/admin/organizaciones/${bankOrg}/conciliacion/${stmt}`,
+  invo && `/admin/organizaciones/${invo.org}/arca/${invo.id}`,
+  invo && `/admin/organizaciones/${invo.org}?tab=documentos`,
   run && `/admin/organizaciones/${payrollOrg}/sueldos/liquidacion/${run}?ver=cambios`,
   payrollOrg && `/admin/organizaciones/${payrollOrg}?tab=iva`,
   bankOrg && `/admin/organizaciones/${bankOrg}?tab=conciliacion`,

@@ -3847,6 +3847,8 @@ export const whatsapp_messages = pgTable(
     external_id: text("external_id"),
     validation: text("validation").notNull().default("sin_validar"), // sin_validar | firma_ok | firma_invalida
     raw: jsonb("raw"),
+    /** A4: envíos en lote (un ID por tanda) */
+    batch_id: uuid("batch_id"),
     synced_at: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
     created_at: createdAt(),
   },
@@ -5254,4 +5256,34 @@ export const inflation_adjustments = pgTable(
     updated_at: updatedAt(),
   },
   (t) => [uniqueIndex("inflation_adjustments_year_idx").on(t.organization_id, t.year_end)],
+);
+
+// ───────────── A4 · Links públicos de documentos ─────────────
+
+/**
+ * Link público, revocable y con vencimiento para compartir un documento
+ * (comprobante, recibo de sueldo, documento del portal) por WhatsApp o donde
+ * sea. El token es aleatorio; cada apertura suma una vista.
+ */
+export const share_links = pgTable(
+  "share_links",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+    /** factura | recibo | documento */
+    entity_type: text("entity_type").notNull(),
+    entity_id: uuid("entity_id").notNull(),
+    token: text("token").notNull(),
+    title: text("title").notNull(),
+    expires_at: timestamp("expires_at", { withTimezone: true }).notNull(),
+    revoked_at: timestamp("revoked_at", { withTimezone: true }),
+    views: integer("views").notNull().default(0),
+    last_viewed_at: timestamp("last_viewed_at", { withTimezone: true }),
+    created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    created_at: createdAt(),
+  },
+  (t) => [uniqueIndex("share_links_token_idx").on(t.token), index("share_links_entity_idx").on(t.studio_id, t.entity_type, t.entity_id)],
 );

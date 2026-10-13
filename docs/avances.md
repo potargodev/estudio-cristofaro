@@ -549,3 +549,17 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Validar con la contadora el porcentaje computable de la Ley 25.413 por régimen y los formatos de acreditación de cada banco.
+
+## A4 · Enviar comprobantes y documentos por WhatsApp (13 de octubre)
+
+**Qué quedó**
+- **Enviar por WhatsApp** en el detalle de cada comprobante autorizado, en la lista («Enviar varios»), en cada recibo de una liquidación aprobada y en Documentos de la organización.
+- Link público `/d/<token>` por documento, con vencimiento (1, 7 o 30 días), **desactivar**, vistas contadas y auditoría (`share_links`, migración `0059`).
+- Con WhatsApp conectado: API de Meta con la plantilla `faro_documento` y acuses de entrega y lectura; si no, enlace **wa.me** listo para abrir. Lotes (`batch_id`) y registro en `whatsapp_messages`.
+- Ayuda: `facturacion/enviar-por-whatsapp`.
+
+**Qué se probó**
+- `scripts/pruebas/compartir.mts` (27 verificaciones): link de comprobante, documento y recibo; vistas; borrador no; revocado y vencido no abren; wa.me con mensaje; número inválido; lote sin repetir; API con plantilla y acuse de lectura por webhook; aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Dar de alta y hacer aprobar en Meta la plantilla `faro_documento` en la cuenta real (pendientes, WhatsApp).

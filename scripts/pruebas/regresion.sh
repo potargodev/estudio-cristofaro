@@ -116,6 +116,8 @@ correr contabilidad "${S[@]}" scripts/pruebas/contabilidad.mts
 correr inflacion "${S[@]}" scripts/pruebas/inflacion.mts
 # A3 · Reportes de cierre de sueldos e impuestos del banco
 correr cierre-sueldos "${S[@]}" scripts/pruebas/cierre-sueldos.mts
+# A4 · Enviar documentos por WhatsApp (links públicos, wa.me y la API simulada)
+correr compartir "${S[@]}" scripts/pruebas/compartir.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

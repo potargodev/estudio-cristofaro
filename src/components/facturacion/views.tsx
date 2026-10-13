@@ -27,6 +27,7 @@ import { accountSummary, notificationUrl } from "@/modules/billing/mp";
 import { SubmitButton } from "@/components/admin/ui";
 import { getSiteUrl } from "@/lib/runtime-config";
 import { cn } from "@/lib/utils";
+import { WhatsAppBatch, WhatsAppShare } from "@/components/share/WhatsAppShare";
 import { fullNumber } from "@/modules/arca/calc";
 import { CBTE_TYPES, DOC_TYPES, formatCuit, IVA_CONDITIONS } from "@/modules/arca/config";
 import { simulateRI } from "@/modules/arca/monotributo";
@@ -129,6 +130,18 @@ export async function InvoiceListView({ scope, sp }: { scope: IssuerScope; sp: S
       <p className="text-ui text-muted">
         {settings.business_name} · CUIT {formatCuit(scope.cuit) || "sin cargar"} · {IVA_CONDITIONS[settings.iva_condition]} · este mes: <span className="num text-ink">{formatAmount(monthTotal)}</span> en {authorizedMonth.length} comprobante{authorizedMonth.length === 1 ? "" : "s"}
       </p>
+      <WhatsAppBatch batch={sp.lote} />
+      {list.some((i) => i.status === "autorizada") && (
+        <WhatsAppShare
+          type="factura"
+          label="Enviar varios por WhatsApp"
+          back={scope.home}
+          choices={list
+            .filter((i) => i.status === "autorizada")
+            .slice(0, 100)
+            .map((i) => ({ id: i.id, label: `${CBTE_TYPES[i.cbte_type].label} ${fullNumber(i.point_of_sale, i.number)} · ${i.customer_name} · ${formatAmount(Number(i.total), i.currency)}` }))}
+        />
+      )}
       {list.length === 0 ? (
         <div className={cn(card, "text-center")}>
           <FileText className="mx-auto size-8 text-muted" strokeWidth={1.5} aria-hidden />
@@ -322,6 +335,10 @@ export async function InvoiceDetailView({ scope, id, sp }: { scope: IssuerScope;
               <input type="hidden" name="on" value={share ? "0" : "1"} />
               <SubmitButton variant="secondary" pendingText="…">{share ? "Desactivar el link" : "Generar un link"}</SubmitButton>
             </form>
+          </div>
+          <div className="grid gap-2 lg:col-span-2">
+            <WhatsAppBatch batch={sp.lote} />
+            <WhatsAppShare type="factura" ids={[inv.id]} back={`${scope.base}/${inv.id}`} />
           </div>
           {scope.kind === "personal" && t.kind === "factura" && (
             <div className={cn(card, "grid gap-2 lg:col-span-2")}>

@@ -12,6 +12,7 @@ import { CCTS, OWN_CCT, cctOf, scaleAt } from "@/modules/liquidacion/convenios";
 import { END_REASON, NOVELTY_LABEL } from "@/modules/liquidacion/core";
 import { FORMATS } from "@/modules/liquidacion/exportaciones";
 import { GROUPS, PAYROLL_REPORTS } from "@/modules/liquidacion/reportes";
+import { WhatsAppBatch, WhatsAppShare } from "@/components/share/WhatsAppShare";
 import { listNovelties, listRuns, reports, RUN_KIND, RUN_STATUS, runView, scaleVersions, settingsOf } from "@/modules/liquidacion/server";
 import { listEmployees } from "@/modules/payroll/server";
 import type { ResolvedPayroll } from "@/modules/payroll/scope";
@@ -548,6 +549,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
           { href: href("cambios"), label: "Cambios", active: tab === "cambios", count: run.changes.length },
         ]}
       />
+      <WhatsAppBatch batch={sp.lote} />
       {tab === "recibos" && (
         <div className="divide-y divide-line rounded-md border border-line bg-surface">
           {items.map((it) => {
@@ -587,6 +589,7 @@ export async function RunDetail({ r, id, sp }: { r: ResolvedPayroll; id: string;
                   <a href={`/api/sueldos/recibo/${it.id}`} target="_blank" rel="noreferrer" className="text-ui underline underline-offset-4">
                     {run.status === "borrador" ? "Vista previa del recibo (borrador)" : "Ver el recibo en PDF"}
                   </a>
+                  {exportable && <WhatsAppShare type="recibo" ids={[it.id]} back={`${r.base}/liquidacion/${run.id}`} label="Enviar el recibo por WhatsApp" />}
                 </div>
               </details>
             );

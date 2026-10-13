@@ -118,10 +118,10 @@ Actualizado el 12 de octubre de 2026.
   1. En https://business.facebook.com, completar la verificación de la empresa (documentación legal y dominio).
   2. En https://developers.facebook.com, app tipo «Empresa» con el producto WhatsApp; asociar la WABA y registrar el número (no puede estar usado en la app de WhatsApp).
   3. Usuario del sistema con `whatsapp_business_messaging` y `whatsapp_business_management` y token permanente.
-  4. Plantillas en `es_AR`: `faro_codigo` (autenticación: «Tu código de Faro es {{1}}. Vence en 10 minutos.»), `faro_respuesta_solicitud` («Hola {{1}}: el estudio respondió tu solicitud «{{2}}». Entrá a tu portal para verla.») y `faro_aviso_general` («Hola {{1}}: {{2}}»).
+  4. Plantillas en `es_AR`: `faro_codigo` (autenticación: «Tu código de Faro es {{1}}. Vence en 10 minutos.»), `faro_respuesta_solicitud` («Hola {{1}}: el estudio respondió tu solicitud «{{2}}». Entrá a tu portal para verla.») `faro_aviso_general` («Hola {{1}}: {{2}}») y `faro_documento` (utilidad, A4: «Hola: te compartimos {{1}}. Lo ves o descargás acá: {{2}} (el link vence el {{3}}).»).
   5. Faro Manager → Plataforma → **WhatsApp**: Phone number ID, WABA ID, número, token y secreto de la app; **Sincronizar plantillas**.
   6. Webhook `https://app.estudiocristofaro.com/api/whatsapp/webhook` con el token de verificación que muestra Faro Manager, suscripto a `messages`. `WHATSAPP_API_URL=https://graph.facebook.com/v21.0` (valor por defecto).
-- **Cómo se verifica:** verificar un número propio desde el portal (Mi cuenta → WhatsApp), mandar un texto (crea una solicitud) y una foto (entra a Documentos o Lectura inteligente).
+- **Cómo se verifica:** verificar un número propio desde el portal (Mi cuenta → WhatsApp), mandar un texto (crea una solicitud) y una foto (entra a Documentos o Lectura inteligente). Enviar un comprobante con «Enviar por WhatsApp» y ver el acuse de lectura en el link.
 
 ## Medio
 

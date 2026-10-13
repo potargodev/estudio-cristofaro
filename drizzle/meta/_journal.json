@@ -414,6 +414,13 @@
       "when": 1791865174833,
       "tag": "0058_ajuste_inflacion",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1791868009310,
+      "tag": "0059_links_whatsapp",
+      "breakpoints": true
     }
   ]
 }

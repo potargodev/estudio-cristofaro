@@ -236,7 +236,7 @@ export default async function OrganizacionPage({
         )}
         {tab === "equipo" && <StaffTab orgId={org.id} studioId={studioId} />}
         {tab === "vencimientos" && <ObligationsTab orgId={org.id} studioId={studioId} entities={entityOptions} />}
-        {tab === "documentos" && <DocumentsTab orgId={org.id} studioId={studioId} error={sp.error} entities={entityOptions} />}
+        {tab === "documentos" && <DocumentsTab orgId={org.id} studioId={studioId} error={sp.error} lote={sp.lote} entities={entityOptions} />}
         {tab === "solicitudes" && <RequestsTab orgId={org.id} studioId={studioId} />}
         {tab === "sistemas" && <SystemsTab orgId={org.id} studioId={studioId} sp={sp} />}
         {tab === "contabilidad" && <ContabilidadTab orgId={org.id} studioId={studioId} sp={sp} />}

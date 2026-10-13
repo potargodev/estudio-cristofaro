@@ -138,7 +138,7 @@
 | Constatación de CAE de terceros (WSCDC) | **Cubierto** | F6. |
 | Consulta de padrón al facturar | **Cubierto / Planificado (FA)** | |
 | Facturación de ventas de tiendas online | **Planificado (FA, NU-9)** | |
-| Envío de comprobantes por mail y WhatsApp | **Cubierto (mail) / Planificado (FA, NU-10)** | |
+| Envío de comprobantes por mail y WhatsApp | **Cubierto** | Mail; WhatsApp con link público que vence y se desactiva, en lote, por wa.me o por la API con acuses (A4). |
 | Leyendas obligatorias | **Planificado (NU-7)** | |
 
 ## 7. Vínculo con el cliente
@@ -147,7 +147,7 @@
 |---|---|---|
 | Calendario de vencimientos por CUIT y avisos | **Cubierto** | Vencimientos (estudio) y calendario personal. |
 | Pedido y recepción de documentación | **Cubierto** | Documentos y solicitudes. |
-| Comunicaciones con el cliente | **Cubierto** | Mensajes, mail, avisos; WhatsApp planificado (FA). |
+| Comunicaciones con el cliente | **Cubierto** | Mensajes, mail, avisos y WhatsApp (avisos y documentos, A4; canal completo del Vigía en B6). |
 | Honorarios: abonos, cobro, recordatorios y estado de cuenta | **Cubierto** | F7. |
 | Factura del estudio por los honorarios | **Cubierto** | F7 con ARCA (F3). |
 | Tareas y cartera del estudio | **Cubierto** | F9. |

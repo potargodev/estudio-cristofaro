@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { BadgeCheck, BookOpenCheck, Boxes, ChartLine, ClipboardCheck, Scale, ScanText, Activity, Building2, CalendarClock, FileText, Landmark, Layers, MessagesSquare, Paperclip, PlugZap, UserCog, Users, Wallet, Factory } from "lucide-react";
 import Link from "next/link";
+import { WhatsAppBatch, WhatsAppShare } from "@/components/share/WhatsAppShare";
 import { assignStaff, removeStaff, setLimitOverrides, setOrganizationModule, setOrganizationPlan } from "@/app/admin/organization-actions";
 import { isModuleAvailable } from "@/components/portal/modules/registry";
 import { deleteDocument, deleteObligation, replyRequest, saveObligation, uploadStudioDocument } from "@/app/admin/portal-actions";
@@ -312,11 +313,14 @@ export async function DocumentsTab({
   orgId,
   studioId,
   error,
+  lote,
   entities,
 }: {
   orgId: string;
   studioId: string;
   error?: string;
+  /** Lote de un envío por WhatsApp recién preparado (A4) */
+  lote?: string;
   entities: EntityOption[];
 }) {
   const db = getDb();
@@ -378,6 +382,15 @@ export async function DocumentsTab({
           </div>
         </form>
       </section>
+      <WhatsAppBatch batch={lote} />
+      {docs.length > 0 && (
+        <WhatsAppShare
+          type="documento"
+          label="Enviar documentos por WhatsApp"
+          back={`/admin/organizaciones/${orgId}?tab=documentos`}
+          choices={docs.slice(0, 60).map((d) => ({ id: d.id, label: `${d.name}${d.period ? ` · ${d.period}` : ""}` }))}
+        />
+      )}
       <section>
         <h2 className="mb-3 font-semibold">Subidos por la organización</h2>
         <DocList docs={fromClient} orgId={orgId} highlightNew={unseen} readable={readable} read={read} />

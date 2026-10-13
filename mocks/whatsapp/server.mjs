@@ -26,6 +26,7 @@ const TEMPLATES = [
   { name: "faro_aviso_vencimiento", language: "es_AR", category: "UTILITY", status: "APPROVED", body: "Hola {{1}}: {{2}} vence el {{3}}. Lo ves en tu portal." },
   { name: "faro_respuesta_solicitud", language: "es_AR", category: "UTILITY", status: "APPROVED", body: "Hola {{1}}: el estudio respondió tu solicitud «{{2}}». Entrá a tu portal para verla." },
   { name: "faro_aviso_general", language: "es_AR", category: "UTILITY", status: "APPROVED", body: "Hola {{1}}: {{2}}" },
+  { name: "faro_documento", language: "es_AR", category: "UTILITY", status: "APPROVED", body: "Hola: te compartimos {{1}}. Lo ves o descargás acá: {{2}} (el link vence el {{3}})." },
   { name: "faro_promo", language: "es_AR", category: "MARKETING", status: "PENDING", body: "Novedades del estudio: {{1}}" },
 ];
 let sent = [];

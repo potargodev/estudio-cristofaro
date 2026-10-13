@@ -129,12 +129,13 @@ interface SendInput {
   params: string[];
   organizationId?: string | null;
   entity?: { type: string; id: string } | null;
+  batchId?: string | null;
 }
 
 /** Envía una plantilla aprobada y deja el mensaje registrado */
 async function sendTemplate(studioId: string | null, a: WaAccount, i: SendInput) {
   const [t] = await db().select().from(whatsapp_templates).where(and(eq(whatsapp_templates.account_id, a.id), eq(whatsapp_templates.name, i.template)));
-  const base = { studio_id: studioId, organization_id: i.organizationId ?? null, account_id: a.id, direction: "saliente", phone: i.phone, kind: "plantilla", template: i.template, entity_type: i.entity?.type ?? null, entity_id: i.entity?.id ?? null, validation: "firma_ok" };
+  const base = { studio_id: studioId, organization_id: i.organizationId ?? null, account_id: a.id, direction: "saliente", phone: i.phone, kind: "plantilla", template: i.template, entity_type: i.entity?.type ?? null, entity_id: i.entity?.id ?? null, batch_id: i.batchId ?? null, validation: "firma_ok" };
   if (!t || t.status !== "APPROVED") {
     const [m] = await db().insert(whatsapp_messages).values({ ...base, body: null, status: "fallido", error: t ? "La plantilla todavía no está aprobada por Meta." : "La plantilla no existe en la cuenta (sincronizá las plantillas)." }).returning();
     return m;
@@ -149,6 +150,17 @@ async function sendTemplate(studioId: string | null, a: WaAccount, i: SendInput)
     const [m] = await db().insert(whatsapp_messages).values({ ...base, body: renderTemplate(t.body, params), status: "fallido", error: (e as Error).message.slice(0, 300), raw: { request: payload } }).returning();
     return m;
   }
+}
+
+/**
+ * A4: un documento compartido por la API de WhatsApp (plantilla
+ * «faro_documento»: título, link y vencimiento). Solo si el estudio tiene la
+ * cuenta activa; si no, quien envía usa el enlace wa.me.
+ */
+export async function sendDocument(studioId: string, i: { phone: string; title: string; url: string; expires: string; organizationId: string | null; linkId: string; batchId: string | null }) {
+  const a = await accountFor(studioId);
+  if (!a) return null;
+  return sendTemplate(studioId, a, { phone: i.phone, template: "faro_documento", params: [i.title, i.url, i.expires], organizationId: i.organizationId, entity: { type: "share_link", id: i.linkId }, batchId: i.batchId });
 }
 
 /** Respuesta de texto libre (solo dentro de las 24 h desde el último mensaje del contacto) */
