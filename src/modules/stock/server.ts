@@ -592,6 +592,12 @@ async function receiveOrder(store: typeof stock_stores.$inferSelect, o: RemoteOr
   const [prev] = await db().select().from(stock_store_orders).where(and(eq(stock_store_orders.store_id, store.id), eq(stock_store_orders.external_id, o.externalId)));
   if (prev) await db().update(stock_store_orders).set({ status: o.status, raw: o.raw as Record<string, unknown>, lines: o.lines }).where(eq(stock_store_orders.id, prev.id));
   else await db().insert(stock_store_orders).values({ store_id: store.id, studio_id: s.studioId, organization_id: s.organizationId, external_id: o.externalId, status: o.status, lines: o.lines, raw: o.raw as Record<string, unknown>, via }).onConflictDoNothing();
+  // §2.p B7: ventas para facturar según la regla de la tienda (las procesa la tarea «facturacion»)
+  if (store.billing_mode !== "ninguna") {
+    const [row] = await db().select({ id: stock_store_orders.id, billing: stock_store_orders.billing_status }).from(stock_store_orders).where(and(eq(stock_store_orders.store_id, store.id), eq(stock_store_orders.external_id, o.externalId)));
+    const next = o.status === "pagada" ? (row?.billing ? null : "pendiente") : row?.billing === "pendiente" || row?.billing === "error" ? "ignorada" : row?.billing === "borrador" || row?.billing === "facturada" || row?.billing === "en_cola" ? "a_anular" : null;
+    if (row && next) await db().update(stock_store_orders).set({ billing_status: next }).where(eq(stock_store_orders.id, row.id));
+  }
   const dep = store.deposit_id ?? (await deposits(s))[0].id;
   const listings = await db().select().from(stock_listings).where(eq(stock_listings.store_id, store.id));
   const at = new Date(Date.parse(o.at) || Date.now());

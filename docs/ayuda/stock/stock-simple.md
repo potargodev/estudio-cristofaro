@@ -3,7 +3,7 @@ titulo: Stock simple
 resumen: Productos con existencia por depósito, compras leídas que suman, ventas facturadas y de tiendas online que restan sin contar dos veces, conteo con el celular, alertas de mínimo e inventario valorizado a cualquier fecha.
 perfiles: [estudio, organizacion, autonomo]
 modulo: stock
-actualizado: 2026-10-12
+actualizado: 2026-10-13
 relacionados: [documentos/lectura-inteligente, facturacion/emitir-facturas, vigia/agente-contable]
 ---
 
@@ -36,3 +36,7 @@ Preguntale al Vigía «¿cuánto me queda de yerba?», «¿qué está debajo del
 
 ## Tiendas: qué falta para las reales
 Hoy las tiendas funcionan contra un simulador. Para conectar las cuentas reales hace falta registrar la app de Faro en cada plataforma (ver pendientes de configuración); el circuito y las reglas son los mismos.
+
+## Facturar las ventas
+
+Las ventas que llegan de las tiendas también se pueden facturar solas o en borrador, una por una o en un resumen por día, con nota de crédito en las devoluciones: mirá [Ventas de tiendas para facturar](/ayuda/facturacion/ventas-de-tiendas).

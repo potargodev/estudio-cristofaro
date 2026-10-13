@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Boxes, CalendarClock, FileStack, FileText, Gauge, Layers, ListChecks, Repeat, ScanText, Settings2, ShieldCheck, Users } from "lucide-react";
+import { Boxes, CalendarClock, FileStack, FileText, Gauge, Layers, ListChecks, Repeat, ScanText, Settings2, ShieldCheck, ShoppingBag, Users } from "lucide-react";
 import { PageHeader } from "@/components/admin/kit/PageHeader";
 import { AppFrame } from "@/components/app/shell/AppFrame";
 import { requirePersonal } from "@/lib/auth";
@@ -22,6 +22,7 @@ export default async function FacturacionLayout({ children }: { children: React.
           { href: "/facturacion/otros", label: "Presupuestos y más", icon: FileStack },
           { href: "/facturacion/recurrentes", label: "Recurrentes", icon: Repeat },
           { href: "/facturacion/lotes", label: "Lotes", icon: Layers },
+          { href: "/facturacion/ventas", label: "Ventas de tiendas", icon: ShoppingBag },
           { href: "/facturacion/recibidos", label: "Recibidos", icon: ScanText },
           { href: "/facturacion/clientes", label: "Clientes y productos", icon: Users },
           { href: "/facturacion/stock", label: "Stock", icon: Boxes },

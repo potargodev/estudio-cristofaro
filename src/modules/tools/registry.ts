@@ -19,6 +19,7 @@ import { consultasIaTools } from "./modulos/consultas-ia";
 import { indicadoresTools } from "./modulos/indicadores";
 import { ivaTools } from "./modulos/iva";
 import { stockTools } from "./modulos/stock";
+import { ventasTools } from "./modulos/ventas";
 import { whatsappTools } from "./modulos/whatsapp";
 import { gastosTools } from "./modulos/gastos";
 import { industriasTools } from "./modulos/industrias";
@@ -55,6 +56,7 @@ export const TOOLS: ToolDefinition[] = [
   ...consultasIaTools,
   ...indicadoresTools,
   ...whatsappTools,
+  ...ventasTools,
 ];
 
 const BY_NAME = new Map(TOOLS.map((t) => [t.name, t]));

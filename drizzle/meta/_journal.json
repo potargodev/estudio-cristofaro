@@ -449,6 +449,13 @@
       "when": 1791877979352,
       "tag": "0063_whatsapp_vigia",
       "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1791879183559,
+      "tag": "0064_ventas_tiendas",
+      "breakpoints": true
     }
   ]
 }

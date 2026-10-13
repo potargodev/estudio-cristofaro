@@ -276,7 +276,7 @@ export const FARO_MODULES: FaroModule[] = [
       { href: "/facturacion", label: "Facturación" },
     ],
     events: ["factura.emitida", "factura.rechazada", "arca.padron_consultado", "monotributo.cerca_del_tope"],
-    tools: ["preparar_factura", "listar_comprobantes", "situacion_monotributo", "situacion_arca", "analizar_libro_iva", "posicion_iva", "recategorizacion_cartera", "tareas_recategorizacion"],
+    tools: ["preparar_factura", "listar_comprobantes", "situacion_monotributo", "situacion_arca", "analizar_libro_iva", "posicion_iva", "ventas_para_facturar", "recategorizacion_cartera", "tareas_recategorizacion"],
     limit: "invoicesPerMonth",
   },
   {

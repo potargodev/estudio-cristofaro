@@ -6,7 +6,8 @@ import { invoices, notifications, studios } from "@/db/schema";
 import { todayAR } from "@/lib/format";
 
 // Tarea interna «facturacion» (§2.p): estado de ARCA cada 5 minutos, la cola
-// de ARCA caído, los lotes en curso, los recurrentes del día y el resumen
+// de ARCA caído, los lotes en curso, los recurrentes del día, las ventas de
+// las tiendas (B7) y el resumen
 // diario de lo que se facturó solo (interruptor «Facturar automáticamente»).
 
 const AUTO = ["recurrente", "tienda", "api", "whatsapp"];
@@ -48,7 +49,8 @@ export async function runBillingJobs() {
   await recoverStuckRows();
   const lotes = await processBatches(200);
   const recurrentes = await import("@/modules/facturacion-plus/server").then((m) => m.runRecurring()).catch(() => 0);
+  const ventas = await import("@/modules/ventas/server").then((m) => m.processStoreSales()).catch(() => null);
   const hour = Number(new Date().toLocaleString("en-US", { hour: "numeric", hour12: false, timeZone: "America/Argentina/Buenos_Aires" }));
   const resumenes = hour === 20 ? await dailySummaries() : 0;
-  return { cola, lotes, recurrentes, resumenes };
+  return { cola, lotes, recurrentes, ventas, resumenes };
 }

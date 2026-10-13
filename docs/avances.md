@@ -638,3 +638,17 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Verificación de Meta, número y plantillas (pendientes, ítem 13, prioridad alta); IA de la plataforma para los audios (ítem 2).
+
+## §2.p · B7: ventas de tiendas para facturar (13 de octubre)
+
+**Qué quedó**
+- **Facturación → Ventas de tiendas** (estudio y cuenta personal): regla por tienda (no facturar, una factura por venta, un resumen por día) con CUIT y punto de venta; pedidos por estado; «Facturar y emitir los elegidos» y «No facturar».
+- La tarea `facturacion` arma las facturas (comprador con CUIT o DNI, o consumidor final; precio final con IVA separado para responsables inscriptos), las emite solas con el interruptor «Facturar automáticamente las ventas de las tiendas», arma los resúmenes de los días cerrados y las **notas de crédito** de las devoluciones; borra el borrador si se cancela. Idempotente por clave.
+- Migración `0064` (regla en `stock_stores`, estado de facturación en `stock_store_orders`). Herramienta `ventas_para_facturar`.
+- Ayuda: `facturacion/ventas-de-tiendas` (y un apartado en `stock/stock-simple`).
+
+**Qué se probó**
+- `src/modules/ventas/core.test.ts` y `scripts/pruebas/ventas-tiendas.mts` (26 verificaciones): sin regla no factura, regla validada y auditada, **venta con y sin el interruptor**, emisión por una persona, sin duplicar, NC automática, cancelación de borrador, no facturar, resumen diario con devolución parcial, Vigía y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Las APIs reales de cada plataforma (pendientes, ítem 28) y validar con la contadora el tope de identificación del consumidor final y las alícuotas por producto.

@@ -4877,6 +4877,10 @@ export const stock_stores = pgTable("stock_stores", {
   webhook_token: text("webhook_token").notNull(),
   last_poll_at: timestamp("last_poll_at", { withTimezone: true }),
   last_error: text("last_error"),
+  /** §2.p B7 · Ventas para facturar: ninguna | por_venta | resumen_diario, con la CUIT y el punto de venta */
+  billing_mode: text("billing_mode").notNull().default("ninguna"),
+  billing_cuit: text("billing_cuit"),
+  billing_pos: integer("billing_pos"),
   created_by: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
   created_at: createdAt(),
   updated_at: updatedAt(),
@@ -4933,10 +4937,15 @@ export const stock_store_orders = pgTable(
     lines: jsonb("lines").$type<{ listingId: string; sku: string | null; title: string; qty: number; price: number }[]>().notNull(),
     raw: jsonb("raw").$type<unknown>(),
     via: text("via").notNull(), // webhook | consulta | importacion
+    /** §2.p B7: null (no se factura) | pendiente | borrador | facturada | en_cola | a_anular | anulada | error | ignorada */
+    billing_status: text("billing_status"),
+    invoice_id: uuid("invoice_id").references((): AnyPgColumn => invoices.id, { onDelete: "set null" }),
+    credit_note_id: uuid("credit_note_id").references((): AnyPgColumn => invoices.id, { onDelete: "set null" }),
+    billing_error: text("billing_error"),
     received_at: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
     updated_at: updatedAt(),
   },
-  (t) => [uniqueIndex("stock_store_orders_ext_idx").on(t.store_id, t.external_id)],
+  (t) => [uniqueIndex("stock_store_orders_ext_idx").on(t.store_id, t.external_id), index("stock_store_orders_billing_idx").on(t.billing_status, t.store_id)],
 );
 
 /** Ventas sin vincular: no descuentan hasta que se vinculan a un producto */

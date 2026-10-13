@@ -126,6 +126,8 @@ LIMITE=1800 correr lotes "${S[@]}" scripts/pruebas/lotes.mts
 correr comprobantes "${S[@]}" scripts/pruebas/comprobantes.mts
 # §2.p · B6 el Vigía por WhatsApp (facturar por texto y audio, gastos, consultas, BAJA/ALTA)
 correr whatsapp-vigia "${S[@]}" scripts/pruebas/whatsapp-vigia.mts
+# §2.p · B7 ventas de tiendas para facturar (por venta, resumen diario, notas de crédito, interruptor)
+correr ventas-tiendas "${S[@]}" scripts/pruebas/ventas-tiendas.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

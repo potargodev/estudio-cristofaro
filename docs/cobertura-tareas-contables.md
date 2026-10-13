@@ -137,7 +137,7 @@
 | Comprobantes recibidos (lectura, validación y buzón de la empresa) | **Cubierto / Planificado (FA, NU-4)** | Lectura existe; buzón e ítems por percepción, planificados. |
 | Constatación de CAE de terceros (WSCDC) | **Cubierto** | F6. |
 | Consulta de padrón al facturar | **Cubierto** | «Completar con ARCA» en el formulario (B3). |
-| Facturación de ventas de tiendas online | **Planificado (FA, NU-9)** | |
+| Facturación de ventas de tiendas online | **Cubierto** | Facturación → Ventas de tiendas (B7): Mercado Libre, Tiendanube, Empretienda, Shopify, WooCommerce, VTEX, Mercado Pago y el local; por venta o resumen diario, borrador o emisión con el interruptor y nota de crédito en devoluciones. APIs reales «a validar» (simulador). |
 | Envío de comprobantes por mail y WhatsApp | **Cubierto** | Mail; WhatsApp con link público que vence y se desactiva, en lote, por wa.me o por la API con acuses (A4). |
 | Facturar desde el celular por WhatsApp (texto o audio) | **Cubierto** | El Vigía por WhatsApp (B6): borrador y SÍ, o el interruptor «Facturar automáticamente». |
 | Leyendas obligatorias | **Cubierto** | §2.q etapa 5. |
