@@ -1,9 +1,9 @@
 // Pruebas del núcleo Faro (F1): planes, límites, overrides de módulos y nivel de IA.
 //   npx tsx --conditions=react-server --env-file=.env.local scripts/pruebas/f1.mts
 
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../src/db";
-import { organizations, tenant_modules, studios } from "../../src/db/schema";
+import { organizations, tenant_modules, studios, users } from "../../src/db/schema";
 import { aiCanAct, getEntitlements, organizationLimitError, staffLimitError } from "../../src/lib/faro/entitlements";
 import { createTenant, normalizeCuit } from "../../src/lib/faro/tenants";
 import { check, data, failures } from "./lib.mjs";
@@ -16,7 +16,12 @@ await db.delete(tenant_modules).where(eq(tenant_modules.studio_id, B));
 const existing = (await db.select().from(organizations).where(eq(organizations.studio_id, B))).length;
 for (let i = existing; i < 10; i++) await db.insert(organizations).values({ studio_id: B, name: `Org de prueba ${i + 1}`, status: "activa" });
 check("Inicial: con 10 organizaciones no entra la undécima", (await organizationLimitError(B)) !== null);
-check("Inicial: 1 usuario del estudio (ya lo usa el dueño)", (await staffLimitError(B)) !== null);
+// Inicial: 2 personas del estudio (B11): el dueño y una más
+await db.delete(users).where(eq(users.email, "f1-segunda@ejemplo.com"));
+const staffB = (await db.select({ id: users.id }).from(users).where(and(eq(users.studioId, B), inArray(users.role, ["dueno", "contador", "colaborador"])))).length;
+if (staffB < 2) await db.insert(users).values({ name: "Segunda persona", email: "f1-segunda@ejemplo.com", role: "contador", studioId: B, emailVerified: true });
+check("Inicial: 2 personas del estudio (con 2, no entra una tercera)", (await staffLimitError(B)) !== null);
+await db.delete(users).where(eq(users.email, "f1-segunda@ejemplo.com"));
 check("Inicial: la IA solo consulta", !(await aiCanAct(B)));
 check("Inicial: sin conector local de Tango, con Tango por archivos", !(await getEntitlements(B))!.modules.has("tango") && (await getEntitlements(B))!.modules.has("tango_files"));
 await db.update(studios).set({ plan_key: "profesional" }).where(eq(studios.id, B));
