@@ -117,6 +117,9 @@ async function buildPlan(studioId: string, t: AgentTemplate, scope: AgentScope, 
       add("Inventario valorizado de tu cuenta", "inventario_valorizado", { ...(params.date ? { fecha: params.date } : {}) }, null);
       add("Productos debajo del mínimo", "stock_bajo_minimo", {}, null);
     }
+  } else if (t.key === "recategorizacion") {
+    add("Recategorización de la cartera", "recategorizacion_cartera", {}, null);
+    add("Tareas del equipo para los que faltan", "tareas_recategorizacion", {}, null);
   } else {
     const mono = t.key === "tope_monotributo" ? await monotributoOrgs(studioId, orgs.map((o) => o.id)) : null;
     const withStock = t.key === "inventario" ? await (async () => {

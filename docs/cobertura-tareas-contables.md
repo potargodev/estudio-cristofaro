@@ -38,7 +38,7 @@
 | Monotributo: adhesión e inscripción | **Fuera de alcance** | Faro guía y deriva al contador (disparador §1.c). |
 | Monotributo: semáforo y tope de la categoría | **Cubierto** | Faro Personal. Escala "a validar". |
 | Monotributo: recategorización (enero y julio), por cliente | **Cubierto** | Faro Personal (aviso y categoría sugerida). |
-| Monotributo: recategorización masiva de la cartera del estudio | **Planificado (NU-11)** | |
+| Monotributo: recategorización masiva de la cartera del estudio | **Cubierto** | Operación → Recategorización (A5): 12 meses, parámetros físicos, sube/baja/mantiene/excluido, cuota nueva, revisión en lote, comprobante, avisos por app/mail/WhatsApp, tareas y Agente. Escala "a validar"; decide el contador. |
 | Monotributo: pago de la cuota y exclusiones | **Cubierto** (aviso) | Calendario y alerta de exclusión. El pago lo hace el contribuyente. |
 | Monotributo: relación de dependencia más actividad independiente | **Cubierto** (aviso) | §13 de principios, "a validar". |
 | Retenciones y percepciones practicadas (SICORE/SIRE): cálculo e informe | **No contemplado** | Para clientes que son agentes de retención. Ver también SIRADIG y Ganancias 4.ª categoría en §4. |

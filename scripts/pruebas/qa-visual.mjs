@@ -32,6 +32,7 @@ const task = (await sql`select t.id from agent_tasks t join studios s on s.id = 
 const store = lola ? (await sql`select id from stock_stores where organization_id = ${lola} and platform = 'tiendanube' limit 1`)[0]?.id : null;
 const nuevas = [
   "/admin/vigia?tab=agente",
+  "/admin/recategorizacion",
   task && `/admin/vigia/agente/${task}`,
   payrollOrg && `/admin/organizaciones/${payrollOrg}?tab=sueldos`,
   payrollOrg && `/admin/organizaciones/${payrollOrg}/sueldos/liquidacion`,

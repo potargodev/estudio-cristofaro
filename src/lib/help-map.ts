@@ -23,6 +23,7 @@ const MAP: [string, string][] = [
   ["/admin/organizaciones/nueva", "organizaciones/rubros"],
   ["/admin/honorarios", "cobros/honorarios"],
   ["/admin/tareas", "organizaciones/tareas"],
+  ["/admin/recategorizacion", "facturacion/recategorizacion-cartera"],
   ["/admin/configuracion/avanzado", "configuracion/marca-blanca"],
   ["/portal/whatsapp", "conexiones/whatsapp"],
   ["/faro-manager/whatsapp", "conexiones/whatsapp"],

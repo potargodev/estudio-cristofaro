@@ -5,6 +5,7 @@
 
 export type NavIcon =
   | "resumen"
+  | "recategorizacion"
   | "organizaciones"
   | "vencimientos"
   | "solicitudes"
@@ -104,6 +105,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin", label: "Inicio", icon: "resumen", exact: true },
       { href: "/admin/organizaciones", label: "Organizaciones", icon: "organizaciones", module: "core" },
       { href: "/admin/vencimientos", label: "Vencimientos", icon: "vencimientos", badge: "obligations" },
+      { href: "/admin/recategorizacion", label: "Recategorización", icon: "recategorizacion", hideWhenLocked: true },
       { href: "/admin/solicitudes", label: "Solicitudes", icon: "solicitudes", badge: "requests" },
       { href: "/admin/tareas", label: "Tareas", icon: "tareas", module: "crm", hideWhenLocked: true },
     ],

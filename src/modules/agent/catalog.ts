@@ -26,6 +26,16 @@ export interface AgentTemplate {
 
 export const AGENT_TEMPLATES: AgentTemplate[] = [
   {
+    key: "recategorizacion",
+    title: "Recategorización del monotributo de la cartera",
+    description: "Revisa la recategorización de enero o julio de todos los monotributistas: quién sube, baja, mantiene o queda excluido, con la cuota nueva, y crea una tarea por cada uno sin recategorizar.",
+    example: "Preparame la recategorización de enero de toda la cartera",
+    scopes: ["cartera"],
+    needs: [],
+    keywords: /recategoriz/,
+    routine: true,
+  },
+  {
     key: "ajuste_inflacion",
     title: "Ajuste por inflación del ejercicio",
     description: "Reexpresa el ejercicio a moneda de cierre con el índice de la FACPCE (RT 6): RECPAM, asiento de ajuste en borrador y papel de trabajo. Avisa si faltan índices.",

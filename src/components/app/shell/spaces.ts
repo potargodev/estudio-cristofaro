@@ -13,6 +13,7 @@ import type { PortalNavItem } from "@/lib/portal-nav";
 export type Space = "studio" | "personal" | "portal" | "faro";
 
 export type ShellIcon =
+  | "recategorizacion"
   | "cajas"
   | "resumen"
   | "organizaciones"

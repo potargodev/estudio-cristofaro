@@ -563,3 +563,18 @@ F1 (núcleo Faro), F2 (IA, MCP y conexiones), el MVP personal y el esqueleto de 
 
 **Qué falta configurar**
 - Dar de alta y hacer aprobar en Meta la plantilla `faro_documento` en la cuenta real (pendientes, WhatsApp).
+
+## A5 · Recategorización del monotributo de la cartera (13 de octubre)
+
+**Qué quedó**
+- **Operación → Recategorización**: todos los monotributistas del estudio para la recategorización de enero o julio, con la facturación de los 12 meses que cuentan, la categoría actual y la que coincide, sube/baja/mantiene/excluido (con el motivo), la cuota nueva y el resumen por movimiento.
+- Carga rápida de parámetros (actividad, superficie, energía, alquiler anual), **revisión en lote**, decisión del contador uno por uno, **Marcar recategorizado** con el comprobante (va a Documentos y actualiza la categoría de la CUIT), **avisos** por app, mail y WhatsApp y **tareas** del equipo con vencimiento (sin duplicar). Migración `0060`.
+- Agente: `recategorizacion_cartera`, `tareas_recategorizacion` y la tarea (y rutina) «Recategorización del monotributo de la cartera».
+- Ayuda: `facturacion/recategorizacion-cartera`.
+
+**Qué se probó**
+- `recategorizacion/core.test.ts`: períodos, meses, categoría por ingresos y parámetros, movimiento, exclusión y cuota.
+- `scripts/pruebas/recategorizacion.mts` (25 verificaciones) con **30 clientes**: facturación con notas de crédito y lo cargado a mano, los cinco movimientos, parámetros físicos, lote de 30, decisión, recategorizado con comprobante, aviso con la categoría anterior y la nueva, tareas sin duplicar, Agente y aislamiento forzando IDs.
+
+**Qué falta configurar**
+- Cargar y validar la escala vigente con sus cuotas en el Faro Manager (Catálogo → Monotributo).

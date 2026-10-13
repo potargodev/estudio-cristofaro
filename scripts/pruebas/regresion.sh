@@ -118,6 +118,8 @@ correr inflacion "${S[@]}" scripts/pruebas/inflacion.mts
 correr cierre-sueldos "${S[@]}" scripts/pruebas/cierre-sueldos.mts
 # A4 · Enviar documentos por WhatsApp (links públicos, wa.me y la API simulada)
 correr compartir "${S[@]}" scripts/pruebas/compartir.mts
+# A5 · Recategorización del monotributo de la cartera (30 clientes)
+correr recategorizacion "${S[@]}" scripts/pruebas/recategorizacion.mts
 # F4 · Flujos
 correr flujos-navegador node scripts/pruebas/flujos-navegador.mjs
 correr flujos-servidor "${S[@]}" scripts/pruebas/flujos-servidor.mts

@@ -135,4 +135,42 @@ export const facturacionTools = [
       return { consultada: true, fecha: s.fetched_at, estado: s.validation, datos: s.data, error: s.error };
     },
   }),
+  defineTool<{ periodo?: string; movimiento?: "sube" | "baja" | "mantiene" | "excluido" | "sin_categoria" }, unknown>({
+    name: "recategorizacion_cartera",
+    title: "Recategorización del monotributo de la cartera",
+    description: "Todos los monotributistas del estudio para la recategorización de enero o julio: facturación de los 12 meses que cuentan, categoría actual, la que coincide (con superficie, energía y alquiler si están cargados), si sube, baja, mantiene o queda excluido, la cuota nueva y el estado (pendiente, revisada, recategorizado). Con la escala vigente, que puede estar «a validar». La categoría la decide el contador.",
+    module: "facturacion",
+    level: "lectura",
+    roles: ["dueno", "contador", "colaborador"],
+    input: z.object({ periodo: z.string().regex(/^\d{4}-(01|07)$/).optional().describe("AAAA-01 (enero) o AAAA-07 (julio); por defecto, la que viene"), movimiento: z.enum(["sube", "baja", "mantiene", "excluido", "sin_categoria"]).optional() }),
+    async handler(input, ctx) {
+      const { portfolio, summary } = await import("@/modules/recategorizacion/server");
+      const pf = await portfolio(ctx.studioId, input.periodo ?? null);
+      const rows = input.movimiento ? pf.rows.filter((r) => r.movement === input.movimiento) : pf.rows;
+      return {
+        recategorizacion: pf.period.label,
+        vence: pf.period.deadline,
+        meses: `${pf.months[0]} a ${pf.months[11]}`,
+        escala: { vigente_desde: pf.scale.validFrom, estado: pf.scale.status },
+        resumen: summary(pf.rows),
+        monotributistas: rows.slice(0, 60).map((r) => ({ razon_social: r.businessName, cuit: r.cuit, organizacion_id: r.organizationId, facturacion_12_meses: r.income12m, actual: r.current, coincide: r.suggested, movimiento: r.movement, motivos: r.reasons, cuota_nueva: r.feeNew, estado: r.status })),
+        enlace: `/admin/recategorizacion?periodo=${pf.period.key}`,
+        aviso: "Faro muestra hechos con la escala cargada; la categoría la decide el contador.",
+      };
+    },
+  }),
+  defineTool<{ periodo?: string }, unknown>({
+    name: "tareas_recategorizacion",
+    title: "Tareas de la recategorización",
+    description: "Crea una tarea del equipo por cada monotributista sin recategorizar, con vencimiento el día de la recategorización (no duplica las que ya están).",
+    module: "facturacion",
+    level: "escritura",
+    roles: ["dueno", "contador"],
+    input: z.object({ periodo: z.string().regex(/^\d{4}-(01|07)$/).optional() }),
+    async handler(input, ctx) {
+      const { createTasks, periodOf } = await import("@/modules/recategorizacion/server");
+      const n = await createTasks(ctx.studioId, ctx.actor, input.periodo ?? null);
+      return { recategorizacion: periodOf(input.periodo).label, tareas_nuevas: n, enlace: "/admin/tareas" };
+    },
+  }),
 ];

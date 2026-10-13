@@ -5287,3 +5287,47 @@ export const share_links = pgTable(
   },
   (t) => [uniqueIndex("share_links_token_idx").on(t.token), index("share_links_entity_idx").on(t.studio_id, t.entity_type, t.entity_id)],
 );
+
+// ───────────── A5 · Recategorización del monotributo de la cartera ─────────────
+
+/** Revisión de la recategorización de un monotributista de la cartera (una por CUIT y recategorización) */
+export const recategorizations = pgTable(
+  "recategorizations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studio_id: uuid("studio_id")
+      .notNull()
+      .references(() => studios.id, { onDelete: "cascade" }),
+    organization_id: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    legal_entity_id: uuid("legal_entity_id")
+      .notNull()
+      .references(() => legal_entities.id, { onDelete: "cascade" }),
+    /** AAAA-01 (enero) o AAAA-07 (julio) */
+    period: text("period").notNull(),
+    activity: text("activity").notNull().default("servicios"), // servicios | bienes
+    surface_m2: numeric("surface_m2", { precision: 10, scale: 2 }),
+    energy_kw: numeric("energy_kw", { precision: 12, scale: 2 }),
+    rent_annual: numeric("rent_annual", { precision: 14, scale: 2 }),
+    income_12m: numeric("income_12m", { precision: 16, scale: 2 }),
+    current_category: text("current_category"),
+    suggested_category: text("suggested_category"),
+    /** La que decide el contador */
+    final_category: text("final_category"),
+    movement: text("movement"),
+    fee_new: numeric("fee_new", { precision: 14, scale: 2 }),
+    /** pendiente | revisada | recategorizado | avisado */
+    status: text("status").notNull().default("pendiente"),
+    receipt_document_id: uuid("receipt_document_id").references(() => documents.id, { onDelete: "set null" }),
+    scale_status: text("scale_status"),
+    notes: text("notes"),
+    reviewed_by: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+    reviewed_at: timestamp("reviewed_at", { withTimezone: true }),
+    recategorized_at: timestamp("recategorized_at", { withTimezone: true }),
+    notified_at: timestamp("notified_at", { withTimezone: true }),
+    created_at: createdAt(),
+    updated_at: updatedAt(),
+  },
+  (t) => [uniqueIndex("recategorizations_entity_idx").on(t.legal_entity_id, t.period), index("recategorizations_studio_idx").on(t.studio_id, t.period)],
+);

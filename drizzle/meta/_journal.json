@@ -421,6 +421,13 @@
       "when": 1791868009310,
       "tag": "0059_links_whatsapp",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1791869420512,
+      "tag": "0060_recategorizacion",
+      "breakpoints": true
     }
   ]
 }
