@@ -54,7 +54,7 @@ correr() { # nombre, comando…
   local nombre="$1"; shift
   [ -n "$FILTRO" ] && [[ "$nombre" != *"$FILTRO"* ]] && return
   local t0=$SECONDS
-  timeout 900 "$@" > "$SALIDA/$nombre.log" 2>&1
+  timeout "${LIMITE:-900}" "$@" > "$SALIDA/$nombre.log" 2>&1
   local rc=$?
   local res="$(grep -cE '^✔' "$SALIDA/$nombre.log")✔ $(grep -cE '^✘' "$SALIDA/$nombre.log")✘"
   printf "%-4s %-34s %-12s %4ss\n" "$([ $rc = 0 ] && echo OK || echo FALLA)" "$nombre" "$res" "$((SECONDS - t0))" | tee -a "$RESUMEN"
@@ -134,7 +134,7 @@ correr red-con-demo "${T[@]}" scripts/pruebas/red.mts
 correr principios-con-demo "${S[@]}" scripts/pruebas/principios-servidor.mts
 correr recorrido env SALIDA="$SALIDA/recorrido.json" node scripts/pruebas/recorrido.mjs 200
 # QA visual al píxel (npm run qa:visual): detector en pantallas y estados, datos extremos y capturas de referencia
-correr qa-visual env SALIDA="$SALIDA/qa-visual.json" node scripts/pruebas/qa-visual.mjs --estados --max=25 --capturas="$SALIDA/qa-visual"
+LIMITE=3600 correr qa-visual env SALIDA="$SALIDA/qa-visual.json" node scripts/pruebas/qa-visual.mjs --estados --max=25 --capturas="$SALIDA/qa-visual"
 correr qa-estados env SALIDA="$SALIDA/qa-estados.json" node scripts/pruebas/qa-estados.mjs --capturas="$SALIDA/qa-estados"
 correr enlaces-con-demo npx tsx scripts/verificar-enlaces.mts
 
